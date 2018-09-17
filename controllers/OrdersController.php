@@ -14,6 +14,9 @@ class OrdersController {
 
     public function getOrders() {
         $order = new Order();
+        
+        //  TODO: Pega a querystring
+        //  TODO: Envia como argumento em retrieveMany;
         $orders = $order->retrieveMany();
 
         echo json_encode($orders);

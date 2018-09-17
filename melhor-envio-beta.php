@@ -222,7 +222,7 @@ final class Base_Plugin {
         /**
          * MELHOR ENVIO ACTIONS
          */
-        add_action('wp_ajax_test', [$orders, 'getorders']);
+        add_action('wp_ajax_get_orders', [$orders, 'getorders']);
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
     }

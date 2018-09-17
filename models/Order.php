@@ -60,7 +60,8 @@ class Order extends bOrders {
     public static function retrieveMany(Array $filters = NULL) : Array
     {
         $args = array(
-            'numberposts' => -1,
+            'numberposts' => ($filters['limit']) ?: 10,
+            'per_page' => ($filters['skip']) ?: 0,
             'post_status' => 'public',
             'post_type' => 'shop_order'
         );
@@ -72,6 +73,7 @@ class Order extends bOrders {
             $order = new Order($post->ID);
             $data[] =  [
                 'id' => $order->id,
+                'total' => $order->total,
                 'products' => $order->getProducts(),
                 'cotation' => $order->getCotation(),
                 'address' => $order->address,

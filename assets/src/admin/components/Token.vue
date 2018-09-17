@@ -26,9 +26,9 @@ export default {
             })
         },
         saveToken () {
-            var bodyFormData = new FormData();
+            let bodyFormData = new FormData();
             bodyFormData.set('token', this.token);
-            var data = {token: this.token};
+            let data = {token: this.token};
             if (this.token && this.token.length > 0) {
                 axios({
                     url: `${ajaxurl}?action=save_token`,

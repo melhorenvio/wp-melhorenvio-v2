@@ -13,20 +13,20 @@ export default {
         }
     },
     methods: {
-        retrieveOrders () {
-            let data = {
-                action: 'test'
-            }
+        // retrieveOrders () {
+        //     let data = {
+        //         action: 'test'
+        //     }
 
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then((response) => {
-                this.test = response.data
-            })
-        }
+        //     this.$http.get(`${ajaxurl}`, {
+        //         params: data
+        //     }).then((response) => {
+        //         this.test = response.data
+        //     })
+        // }
     },
     mounted () {
-        this.retrieveOrders()
+        // this.retrieveOrders()
     }
 }
 </script>
