@@ -684,35 +684,52 @@ exports.default = menuFix;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
 //
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Token',
     data() {
         return {
-            test: {}
+            token: ''
         };
     },
     methods: {
-        retrieveOrders() {
-            let data = {
-                action: 'test'
-            };
-
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                this.test = response.data;
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
+                this.token = response.data.token;
             });
+        },
+        saveToken() {
+            var bodyFormData = new FormData();
+            bodyFormData.set('token', this.token);
+            var data = { token: this.token };
+            if (this.token && this.token.length > 0) {
+                __WEBPACK_IMPORTED_MODULE_0_axios___default()({
+                    url: `${ajaxurl}?action=save_token`,
+                    data: bodyFormData,
+                    method: "POST"
+                }).then(response => {
+                    this.$router.push('Configuracoes');
+                }).catch(err => console.log(err));
+            }
         }
     },
     mounted() {
-        this.retrieveOrders();
+        this.getToken();
     }
 });
 
@@ -788,18 +805,53 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "app-token" }, [
+    _c("h1", [_vm._v("Meu Token")]),
+    _vm._v(" "),
+    _c("span", [_vm._v("Insira o token gerado na Melhor Envio")]),
+    _vm._v(" "),
+    _c("p", { staticStyle: { "white-space": "pre-line" } }),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("textarea", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.token,
+          expression: "token"
+        }
+      ],
+      attrs: { placeholder: "Token" },
+      domProps: { value: _vm.token },
+      on: {
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.token = $event.target.value
+        }
+      }
+    }),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "button is-danger",
+        on: {
+          click: function($event) {
+            _vm.saveToken()
+          }
+        }
+      },
+      [_vm._v("Salvar")]
+    )
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "app-token" }, [
-      _c("h1", [_vm._v("Meu Token")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);

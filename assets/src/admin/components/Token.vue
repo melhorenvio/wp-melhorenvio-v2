@@ -1,32 +1,47 @@
 <template>
     <div class="app-token">
         <h1>Meu Token</h1>
+        <span>Insira o token gerado na Melhor Envio</span>
+        <p style="white-space: pre-line;"></p>
+        <br>
+        <textarea v-model="token" placeholder="Token"></textarea>
+        <br>
+        <button @click="saveToken()" class="button is-danger">Salvar</button>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: 'Token',
     data () {
         return {
-            test: {}
+            token: ''
         }
     },
     methods: {
-        retrieveOrders () {
-            let data = {
-                action: 'test'
-            }
-
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then((response) => {
-                this.test = response.data
+        getToken () {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+                this.token = response.data.token;
             })
+        },
+        saveToken () {
+            var bodyFormData = new FormData();
+            bodyFormData.set('token', this.token);
+            var data = {token: this.token};
+            if (this.token && this.token.length > 0) {
+                axios({
+                    url: `${ajaxurl}?action=save_token`,
+                    data: bodyFormData,
+                    method: "POST",
+                }).then( response => {
+                    this.$router.push('Configuracoes') 
+                }).catch(err => console.log(err));
+            }
         }
     },
     mounted () {
-        this.retrieveOrders()
+        this.getToken()
     }
 }
 </script>

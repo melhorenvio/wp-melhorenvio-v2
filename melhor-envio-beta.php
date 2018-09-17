@@ -48,6 +48,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
+use Controllers\TokenController;
 
 /**
  * Base_Plugin class
@@ -209,7 +210,9 @@ final class Base_Plugin {
      * @return void
      */
     public function init_hooks() {
+
         $orders = new OrdersController();
+        $token = new tokenController();
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -219,47 +222,11 @@ final class Base_Plugin {
         /**
          * MELHOR ENVIO ACTIONS
          */
-        add_action( 'wp_ajax_test', [$orders, 'getorders']);
-
-        // Send to cart
-        // add_action( 'wp_ajax_wpmelhorenvio_send_order', function() {
-        //     $order = new ordersController();
-        //     echo $order->send();
-        // });
-
-        // //Save token
-        // add_action( 'wp_ajax_wpmelhorenvio_save_token', function() {
-        //     if (!$_GET['token']) {
-        //         echo wp_send_json([
-        //             'error' => true,
-        //             'message' => 'Campo "token" é obrigatorio'
-        //         ]); 
-        //     }
-
-        //     $configuration = new ConfigurationController();
-        //     $token = $configuration->saveToken($_GET['token']);
-
-        //     echo wp_send_json([
-        //         'success' => true,
-        //         'token' => $token
-        //     ]);
-        // });
-
-        // // Get info user
-        // add_action( 'wp_ajax_wpmelhorenvio_get_user', function() {
-        //     $user = new UsersController();
-        //     $data = $user->getInfo();
-
-        //     if ($data['error']) {
-        //         echo wp_send_json($data);
-        //         die();
-        //     }
-
-        //     echo wp_send_json($data);
-        //     die();
-            
-        // });
+        add_action('wp_ajax_test', [$orders, 'getorders']);
+        add_action('wp_ajax_get_token', [$token, 'getToken']);
+        add_action('wp_ajax_save_token', [$token, 'saveToken']);
     }
+    
 
     /**
      * Instantiate the required classes
