@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from 'admin/components/Home.vue'
-import Settings from 'admin/components/Settings.vue'
+import Pedidos from 'admin/components/Pedidos.vue'
+import Configuracoes from 'admin/components/Configuracoes.vue'
+import Token from 'admin/components/Token.vue'
 
 Vue.use(Router)
 
@@ -13,9 +15,19 @@ export default new Router({
             component: Home
         },
         {
-            path: '/settings',
-            name: 'Settings',
-            component: Settings
+            path: '/pedidos',
+            name: 'Pedidos',
+            component: Pedidos
+        },
+        {
+            path: '/configuracoes',
+            name: 'Configuracoes',
+            component: Configuracoes
+        },
+        {
+            path: '/token',
+            name: 'Token',
+            component: Token
         },
     ]
 })

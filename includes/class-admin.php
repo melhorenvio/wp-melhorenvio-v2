@@ -19,13 +19,14 @@ class Admin {
         global $submenu;
 
         $capability = 'manage_options';
-        $slug       = 'vue-app';
+        $slug       = 'melhor-envio';
 
-        $hook = add_menu_page( __( 'Vue App', 'textdomain' ), __( 'Vue App', 'textdomain' ), $capability, $slug, [ $this, 'plugin_page' ], 'dashicons-text' );
+        $hook = add_menu_page( __( 'Melhor Envio (BETA)', 'textdomain' ), __( 'Melhor Envio (BETA)', 'textdomain' ), $capability, $slug, [ $this, 'plugin_page' ], 'dashicons-thumbs-up' );
 
         if ( current_user_can( $capability ) ) {
-            $submenu[ $slug ][] = array( __( 'App', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/' );
-            $submenu[ $slug ][] = array( __( 'Settings', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/settings' );
+            $submenu[ $slug ][] = array( __( 'Meus pedidos', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/pedidos' );
+            $submenu[ $slug ][] = array( __( 'Configurações', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/configuracoes' );
+            $submenu[ $slug ][] = array( __( 'Token', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/token' );
         }
 
         add_action( 'load-' . $hook, [ $this, 'init_hooks'] );

@@ -1,14 +1,12 @@
 <template>
-    <div class="app-settings">
-        <button type="button" @click="retrieveOrders">Click Me!</button>
-
-        {{ test }}
+    <div class="app-configuracoes">
+        <h1>Minhas configurações</h1>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'Settings',
+    name: 'Configuracoes',
     data () {
         return {
             test: {}
