@@ -1,11 +1,13 @@
 'use strict'
 import Axios from 'axios'
 
-const ajax = parameters => {
+const ajax = (commit, parameters) => {
     Axios.get(`${ajaxurl}`, {
         params: parameters
     }).then(function (response) {
-        return response.data
+        if (response && response.status === 200) {
+            commit(response.data)
+        }
     })
 }
 
@@ -17,6 +19,11 @@ const orders = {
     mutations: {
         retrieveMany: (state, data) => {
             state.orders = data
+        },
+        loadMore: (state, data) => {
+            data.map(item => {
+                state.orders.push(item)
+            })
         }
     },  
     getters: {
@@ -24,30 +31,38 @@ const orders = {
     },
     actions: {
         retrieveMany: ({commit}) => {
+
             let data = {
                 action: 'get_orders',
                 limit: 10,
                 skip: 0
             }
 
-            let payload = ajax(data)
+            Axios.get(`${ajaxurl}`, {
+                params: data
+            }).then(function (response) {
 
-            console.log('Payload: ', payload)
-            
+                if (response && response.status === 200) {
+                    commit('retrieveMany', response.data)
+                }
+            })
+        },
+        loadMore: ({commit}, filters) => {
+            let data = {
+                action: 'get_orders',
+                limit: (filters.limit) ? filters.limit : 10,
+                skip: (filters.skip) ? filters.skip : 0 // per_page
+            }
 
-            commit('retrieveMany', payload)
+            Axios.get(`${ajaxurl}`, {
+                params: data
+            }).then(function (response) {
+
+                if (response && response.status === 200) {
+                    commit('loadMore', response.data)
+                }
+            })
         }
-        // loadMore: ({commit}) => {
-        //     let data = {
-        //         action: 'get_orders',
-        //         limit: (filters.limit) ? filters.limit : 10,
-        //         skip: (filters.skip) ? filters.skip : 0 // per_page
-        //     }
-
-        //     data = ajax(data)
-
-        //     commit('loadMore', data)
-        // }
     }
 }
 

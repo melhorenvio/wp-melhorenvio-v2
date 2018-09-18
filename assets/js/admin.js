@@ -85,20 +85,26 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Pedidos',
-    // data () {
-    //     return {
-    //         orders: {}
-    //     }
-    // },
+    data: () => {
+        return {
+            filters: {
+                limit: 10,
+                skip: 10
+            }
+        };
+    },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore'])),
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -591,6 +597,18 @@ var render = function() {
     _c("h1", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
     _c(
+      "button",
+      {
+        on: {
+          click: function($event) {
+            _vm.loadMore(_vm.filters)
+          }
+        }
+      },
+      [_vm._v("Carregar mais")]
+    ),
+    _vm._v(" "),
+    _c(
       "table",
       { attrs: { border: "1", id: "example-1" } },
       _vm._l(_vm.orders, function(item, index) {
@@ -977,11 +995,13 @@ var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ajax = function ajax(parameters) {
+var ajax = function ajax(commit, parameters) {
     _axios2.default.get('' + ajaxurl, {
         params: parameters
     }).then(function (response) {
-        return response.data;
+        if (response && response.status === 200) {
+            commit(response.data);
+        }
     });
 };
 
@@ -993,6 +1013,11 @@ var orders = {
     mutations: {
         retrieveMany: function retrieveMany(state, data) {
             state.orders = data;
+        },
+        loadMore: function loadMore(state, data) {
+            data.map(function (item) {
+                state.orders.push(item);
+            });
         }
     },
     getters: {
@@ -1004,29 +1029,40 @@ var orders = {
         retrieveMany: function retrieveMany(_ref) {
             var commit = _ref.commit;
 
+
             var data = {
                 action: 'get_orders',
                 limit: 10,
                 skip: 0
             };
 
-            var payload = ajax(data);
+            _axios2.default.get('' + ajaxurl, {
+                params: data
+            }).then(function (response) {
 
-            console.log('Payload: ', payload);
+                if (response && response.status === 200) {
+                    commit('retrieveMany', response.data);
+                }
+            });
+        },
+        loadMore: function loadMore(_ref2, filters) {
+            var commit = _ref2.commit;
 
-            commit('retrieveMany', payload);
+            var data = {
+                action: 'get_orders',
+                limit: filters.limit ? filters.limit : 10,
+                skip: filters.skip ? filters.skip : 0 // per_page
+            };
+
+            _axios2.default.get('' + ajaxurl, {
+                params: data
+            }).then(function (response) {
+
+                if (response && response.status === 200) {
+                    commit('loadMore', response.data);
+                }
+            });
         }
-        // loadMore: ({commit}) => {
-        //     let data = {
-        //         action: 'get_orders',
-        //         limit: (filters.limit) ? filters.limit : 10,
-        //         skip: (filters.skip) ? filters.skip : 0 // per_page
-        //     }
-
-        //     data = ajax(data)
-
-        //     commit('loadMore', data)
-        // }
     }
 };
 
