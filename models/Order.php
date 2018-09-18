@@ -61,7 +61,7 @@ class Order extends bOrders {
     {
         $args = array(
             'numberposts' => ($filters['limit']) ?: 10,
-            'per_page' => ($filters['skip']) ?: 0,
+            'offset' => ($filters['skip']) ?: 0,
             'post_status' => 'public',
             'post_type' => 'shop_order'
         );

@@ -1,26 +1,23 @@
 'use strict'
 import Axios from 'axios'
 
-const ajax = (commit, parameters) => {
-    Axios.get(`${ajaxurl}`, {
-        params: parameters
-    }).then(function (response) {
-        if (response && response.status === 200) {
-            commit(response.data)
-        }
-    })
-}
-
 const orders = {
     namespaced: true,
     state: {
-        orders: []
+        orders: [],
+        filters: {
+            limit: 10,
+            skip: 10
+        }
     },
     mutations: {
         retrieveMany: (state, data) => {
             state.orders = data
         },
         loadMore: (state, data) => {
+
+            state.filters.skip += data.length
+
             data.map(item => {
                 state.orders.push(item)
             })
@@ -47,15 +44,13 @@ const orders = {
                 }
             })
         },
-        loadMore: ({commit}, filters) => {
+        loadMore: ({commit, state}) => {
             let data = {
                 action: 'get_orders',
-                limit: (filters.limit) ? filters.limit : 10,
-                skip: (filters.skip) ? filters.skip : 0 // per_page
             }
 
             Axios.get(`${ajaxurl}`, {
-                params: data
+                params: Object.assign(data, state.filters)
             }).then(function (response) {
 
                 if (response && response.status === 200) {

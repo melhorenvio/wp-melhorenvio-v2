@@ -93,14 +93,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Pedidos',
-    data: () => {
-        return {
-            filters: {
-                limit: 10,
-                skip: 10
-            }
-        };
-    },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
@@ -601,7 +593,7 @@ var render = function() {
       {
         on: {
           click: function($event) {
-            _vm.loadMore(_vm.filters)
+            _vm.loadMore()
           }
         }
       },
@@ -995,26 +987,23 @@ var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ajax = function ajax(commit, parameters) {
-    _axios2.default.get('' + ajaxurl, {
-        params: parameters
-    }).then(function (response) {
-        if (response && response.status === 200) {
-            commit(response.data);
-        }
-    });
-};
-
 var orders = {
     namespaced: true,
     state: {
-        orders: []
+        orders: [],
+        filters: {
+            limit: 10,
+            skip: 10
+        }
     },
     mutations: {
         retrieveMany: function retrieveMany(state, data) {
             state.orders = data;
         },
         loadMore: function loadMore(state, data) {
+
+            state.filters.skip += data.length;
+
             data.map(function (item) {
                 state.orders.push(item);
             });
@@ -1045,17 +1034,16 @@ var orders = {
                 }
             });
         },
-        loadMore: function loadMore(_ref2, filters) {
-            var commit = _ref2.commit;
+        loadMore: function loadMore(_ref2) {
+            var commit = _ref2.commit,
+                state = _ref2.state;
 
             var data = {
-                action: 'get_orders',
-                limit: filters.limit ? filters.limit : 10,
-                skip: filters.skip ? filters.skip : 0 // per_page
+                action: 'get_orders'
             };
 
             _axios2.default.get('' + ajaxurl, {
-                params: data
+                params: Object.assign(data, state.filters)
             }).then(function (response) {
 
                 if (response && response.status === 200) {

@@ -2,7 +2,7 @@
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
 
-        <button @click="loadMore(filters)">Carregar mais</button>
+        <button @click="loadMore()">Carregar mais</button>
 
         <table border="1" id="example-1">
             <tr v-for="(item, index) in orders" :key="index">
@@ -29,14 +29,6 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'Pedidos',
-    data: () => {
-        return {
-            filters: {
-                limit: 10,
-                skip: 10
-            }
-        }
-    },
     computed: {
         ...mapGetters('orders', {
             orders: 'getOrders'
