@@ -136,102 +136,19 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'label'   => 'Porcentagem de lucro',
 							'default' => (get_option('woocommerce_pac_pl_custom_shipping')) ? get_option('woocommerce_pac_pl_custom_shipping') : 0
 						),
-						'shipping_class' => array(
-							'title'       => 'Classe de entrega',
-							'type'        => 'select',
-							// 'description' => ''
-							'desc_tip'    => true,
-							'default'     => get_class_option_pac(),
-							'class'       => 'wc-enhanced-select',
-							'options'     => get_shipping_classes_options(),
-						),
+						// 'shipping_class' => array(
+						// 	'title'       => 'Classe de entrega',
+						// 	'type'        => 'select',
+						// 	// 'description' => ''
+						// 	'desc_tip'    => true,
+						// 	'default'     => get_class_option_pac(),
+						// 	'class'       => 'wc-enhanced-select',
+						// 	'options'     => get_shipping_classes_options(),
+						// ),
 					);
 				}   
 			}
 		}
-	}
-
-
-
-	function update_option_value_pac($key, $value) {
-		$option = get_option($key);
-		if ($option === false) {
-			return  add_option($key, $value, true);
-		}
-		return update_option($key, $value, true);
-	}
-
-	function get_use_ar_pac() {
-		$ar = get_option('woocommerce_pac_ar_custom_shipping');
-
-		if (!$ar) {
-			return false;
-		}
-
-		if($ar == 'yes') {
-			return true;
-		}
-		
-		return false;
-	}
-
-	function get_use_mp_pac() {
-		$mp = get_option('woocommerce_pac_mp_custom_shipping');
-
-		if (!$mp) {
-			return false;
-		}
-
-		if($mp == 'yes') {
-			return true;
-		}
-		
-		return false;
-	}
-
-	function get_class_option_pac() {
-
-		$co = get_option('woocommerce_pac_class_option');
-		if (!$co) {
-			return '';
-		}
-		return $co;
-	}
-
-	function calcute_value_shipping_pac($price) {
-			
-		$price = floatval($price);
-		$valueExtra = get_option('woocommerce_pac_pl_custom_shipping');
-
-		$pos = strpos($valueExtra, '%');
-		if ($pos) {
-			$percent = ($price / 100 ) * floatval($valueExtra);
-			return $percent + $price;
-		}
-
-		$valueExtra = floatval($valueExtra);
-		return $price + $valueExtra;
-	}
-
-	function calculte_pac_delivery_time($delivery_range) {
-
-		$days_extras = intval(get_option('woocommerce_pac_days_extra_custom_shipping'));	
-		$time = '';
-		if (get_option('woocommerce_pac_ee_custom_shipping') == 'yes') {
-			$days_extras = intval(get_option('woocommerce_pac_days_extra_custom_shipping'));
-
-			if ($delivery_range->min == $delivery_range->max) {
-				$time = ' (' . ($delivery_range->max + $days_extras) . ' dias)';
-				if ($delivery_range->max + $days_extras == 1) {
-					$time = '(1 dia)';
-				}
-			}
-
-			if ($delivery_range->min < $delivery_range->max) {
-				$time = ' (' . ($delivery_range->min + $days_extras) . ' à ' . ($delivery_range->max + $days_extras) . ' dias)';
-			}
-		}
-		return $time;
 	}
 	
 	function add_pac_shipping_method( $methods ) {
@@ -240,52 +157,4 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	}
 	add_filter( 'woocommerce_shipping_methods', 'add_pac_shipping_method' );
 
-	// UPDATE OPTION 
-	if (isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'shipping' && isset($_GET['instance_id']) ) {
-
-		if (isset($_POST['woocommerce_pac_shipping_class'])) {
-			update_option_value_pac('woocommerce_pac_class_option', $_POST['woocommerce_pac_shipping_class']);
-		}
-
-		if (isset($_POST['woocommerce_pac_title_custom_shipping'])) {
-			update_option_value_pac('woocommerce_pac_title_custom_shipping', $_POST['woocommerce_pac_title_custom_shipping']);
-		}
-
-		if (isset($_POST['woocommerce_pac_days_extra_custom_shipping'])) {
-			update_option_value_pac('woocommerce_pac_days_extra_custom_shipping', $_POST['woocommerce_pac_days_extra_custom_shipping']);
-		}
-
-		if (isset($_POST['woocommerce_pac_pl_custom_shipping'])) {
-			update_option_value_pac('woocommerce_pac_pl_custom_shipping', $_POST['woocommerce_pac_pl_custom_shipping']);
-		}
-
-		if (isset($_POST['woocommerce_pac_custom_shipping']) && $_POST['woocommerce_pac_custom_shipping'] == 'pac') {
-			update_option_value_pac('woocommerce_pac_ar_custom_shipping', "no");
-			if (isset($_POST['woocommerce_pac_ar_custom_shipping'])) {
-				update_option_value_pac('woocommerce_pac_ar_custom_shipping', "yes");
-			}
-		}
-
-		if (isset($_POST['woocommerce_pac_custom_shipping']) && $_POST['woocommerce_pac_custom_shipping'] == 'pac') {
-			update_option_value_pac('woocommerce_pac_vd_custom_shipping', "no");
-			if (isset($_POST['woocommerce_pac_vd_custom_shipping'])) {
-				update_option_value_pac('woocommerce_pac_vd_custom_shipping', "yes");
-			}
-		}
-
-		if (isset($_POST['woocommerce_pac_custom_shipping']) && $_POST['woocommerce_pac_custom_shipping'] == 'pac') {
-			update_option_value_pac('woocommerce_pac_ee_custom_shipping', "no");
-			if (isset($_POST['woocommerce_pac_ee_custom_shipping'])) {
-				update_option_value_pac('woocommerce_pac_ee_custom_shipping', "yes");
-			}
-		}
-
-		if (isset($_POST['woocommerce_pac_custom_shipping']) && $_POST['woocommerce_pac_custom_shipping'] == 'pac') {
-			update_option_value_pac('woocommerce_pac_mp_custom_shipping', "no");
-			if (isset($_POST['woocommerce_pac_mp_custom_shipping'])) {
-				update_option_value_pac('woocommerce_pac_mp_custom_shipping', "yes");
-			}
-		}
-
-	}
 }

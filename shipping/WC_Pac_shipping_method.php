@@ -22,18 +22,6 @@ class WC_Pac_shipping_method extends MelhorEnvioAbstract {
 		$this->title = 'PAC';
 
 		parent::__construct( $instance_id );
-
-		$this->instance_form_fields['service_type'] = array(
-			'title'       => __( 'Service Type', 'woocommerce-correios' ),
-			'type'        => 'select',
-			'description' => __( 'Choose between conventional or corporate service.', 'woocommerce-correios' ),
-			'desc_tip'    => true,
-			'default'     => 'corporate',
-			'class'       => 'wc-enhanced-select',
-			'options'     => array(
-				'corporate' => __( 'Corporate', 'woocommerce-correios' ),
-			),
-		);
 	}
 
 	/**
