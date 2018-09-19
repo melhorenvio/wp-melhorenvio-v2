@@ -45,6 +45,9 @@ if ( !defined( 'ABSPATH' ) ) exit;
  * Usages
  */
 require __DIR__ . '/vendor/autoload.php';
+include_once ABSPATH . '/wp-content/plugins/woocommerce/includes/class-woocommerce.php';
+include_once ABSPATH . '/wp-content/plugins/woocommerce/woocommerce.php';
+include_once ABSPATH . '/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
 
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
@@ -62,7 +65,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '0.1.0';
+    public $version = '2.0.0';
 
     /**
      * Holds various class instances
@@ -85,6 +88,12 @@ final class Base_Plugin {
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
         add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
+
+        // Create the methods shippings
+        foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+            include_once $filename;
+        }
+
     }
 
     /**
