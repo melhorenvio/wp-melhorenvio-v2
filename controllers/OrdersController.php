@@ -15,6 +15,7 @@ class OrdersController {
     public function getOrders() {
         $order = new Order();
         unset($_GET['action']);
+
         $orders = $order->retrieveMany($_GET);
         echo json_encode($orders);
         die;

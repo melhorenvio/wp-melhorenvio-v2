@@ -1,5 +1,8 @@
 <?php 
 
+use Controllers\PackageController;
+use Controllers\CotationController;
+
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
     add_action( 'woocommerce_shipping_init', 'pac_shipping_method_init' );
@@ -21,7 +24,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     $this->method_title       = "Correios Pac (Melhor envio)"; 
 					$this->method_description = 'Serviço Pac';
 					$this->enabled            = "yes"; 
-					$this->title              = (get_option('woocommerce_pac_title_custom_shipping')) ? get_option('woocommerce_pac_title_custom_shipping') : "Correios Pac";
+					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio PAC';
                     $this->supports = array(
                         'shipping-zones',
                         'instance-settings',
@@ -38,6 +41,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				function init() {
 					$this->init_form_fields(); 
 					$this->init_settings(); 
+					add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
 				}
 
 				/**
@@ -49,19 +53,25 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 */
 				public function calculate_shipping( $package = []) {
 					
+					$to = str_replace('-', '', $package['destination']['postcode']);
+
+					$pack = new PackageController();
+					$packageData = $pack->getPackage($package);
+					
+					$cotation = new CotationController();					
+					$result = $cotation->makeCotationPackage($packageData, [$this->code], $to);
+
 					$rate = [
 						'id' => 'melhorenvio_pac',
-						'label' => 'PAC',
-						'cost' => 24.90,
+						'label' => $result->name,
+						'cost' => $result->price,
 						'calc_tax' => 'per_item',
 						'meta_data' => [
-							'delivery_time' => 6,
+							'delivery_time' => $result->delivery_time,
 							'company' => 'Correios'
 						]
 					]; 
-
 					$this->add_rate($rate);
-                    
                 }
                 
                 /**
@@ -69,44 +79,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 */
 				function init_form_fields() {
 
-					$this->form_fields = array(
-						'custom_shipping' => array(
-							'title' => 'shipping',
-							'type' => 'hidden',
-							'default' => 'pac'
-						),
-						'title_custom_shipping' => array(
-							'title' => 'Título',
-							'description' => 'Nome do serviço exibido para o cliente',
-							'desc_tip'    => true,
+					$this->form_fields = [
+						'title' => [
+							'title' => 'Titulo',
 							'type' => 'text',
-							'default' => (get_option('woocommerce_pac_title_custom_shipping')) ? get_option('woocommerce_pac_title_custom_shipping') : "Pac"
-						),
-						'ee_custom_shipping' => array(
-							'title'   => 'Tempo de entrega',
-							'type'    => 'checkbox',
-							'description' => 'Exibir o tempo estimado de entrega em dias úteis',
-							'desc_tip'    => true,
-							'label'   => 'Exibir estimativa de entrega',
-							'default' => (get_option('woocommerce_pac_ee_custom_shipping')) ? get_option('woocommerce_pac_ee_custom_shipping') : "no"
-						),
-						'days_extra_custom_shipping' => array(
-							'title'   => 'Dias extras',
-							'type'    => 'number',
-							'description' => 'Adiciona dias na estimativa na entrega',
-							'desc_tip'    => true,
-							'label'   => 'Dias a mais a serem adicionados na exibição do Prazo de Entrega.',
-							'default' => (get_option('woocommerce_pac_days_extra_custom_shipping')) ? get_option('woocommerce_pac_days_extra_custom_shipping') : 0
-						),
-						'pl_custom_shipping' => array(
-							'title'   => 'Taxa de manuseio',
-							'type'    => 'price',
-							'description' => 'Digite um valor, por exemplo: 2.50, ou uma porcentagem, por exemplo, 5%. Deixe em branco para desabilitar',
-							'desc_tip'    => true,
-							'label'   => 'Porcentagem de lucro',
-							'default' => (get_option('woocommerce_pac_pl_custom_shipping')) ? get_option('woocommerce_pac_pl_custom_shipping') : 0
-						),
-					);
+							'default' => 'PAC'
+						],
+						'enabled' => [
+							'title' => 'Ativar',
+							'type' => 'checkbox',
+							'default' => 'yes'
+						],
+					];
 				}   
 			}
 		}
@@ -118,4 +102,35 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	}
 	add_filter( 'woocommerce_shipping_methods', 'add_pac_shipping_method' );
 
+	function pac_validate_order($posted) {
+
+		$packages = WC()->shipping->get_packages();
+		$chosen_methods = WC()->session->get('chosen_shipping_methods');
+		
+        if (is_array($chosen_methods) && in_array('melhorenvio_pac', $chosen_methods)) {
+            foreach ($packages as $i => $package) {
+                if ($chosen_methods[$i] != "melhorenvio_pac") {
+                    continue;
+                }
+                $pac_Shipping_Method = new WC_Pac_Shipping_Method();
+                $weightLimit = (int)$pac_Shipping_Method->settings['weight'];
+                $weight = 0;
+                foreach ($package['contents'] as $item_id => $values) {
+                    $_product = $values['data'];
+					$weight = $weight + $_product->get_weight() * $values['quantity'];
+                }
+                $weight = wc_get_weight($weight, 'kg');
+                // if ($weight > $weightLimit) {
+                //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'pac'), $weight, $weightLimit, $pac_Shipping_Method->title);
+                //     $messageType = "error";
+                //     if (!wc_has_notice($message, $messageType)) {
+                //         wc_add_notice($message, $messageType);
+                //     }
+				// }
+            }
+        }
+	}
+	
+	add_action('woocommerce_review_order_before_cart_contents', 'pac_validate_order', 10);
+	add_action('woocommerce_after_checkout_validation', 'pac_validate_order', 10);
 }
