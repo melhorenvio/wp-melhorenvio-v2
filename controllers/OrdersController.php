@@ -20,5 +20,9 @@ class OrdersController {
         echo json_encode($orders);
         die;
     }
+
+    public function storeCotationCart() {
+       
+    }
 }
 

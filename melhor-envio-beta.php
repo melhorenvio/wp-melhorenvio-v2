@@ -234,6 +234,11 @@ final class Base_Plugin {
         add_action('wp_ajax_get_orders', [$orders, 'getorders']);
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
+        
+        // Intercepts the freight update request.
+        if ( ! empty( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] == 'update_order_review' ) {            
+            $orders->storeCotationCart();
+        }
     }
     
 
