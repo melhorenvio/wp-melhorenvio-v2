@@ -1,8 +1,38 @@
 <?php
 
 namespace Controllers;
+use Controllers\PackageController;
 
 class CotationController {
+
+    public function __construct() {
+        // woocommerce_checkout_order_processed
+        //woocommerce_checkout_update_order_review
+        add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationCartSession'));
+    }
+
+    public function makeCotationCartSession($order_id) {
+        
+        global $woocommerce;
+
+
+        $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
+
+        // $packagecontroller   = new PackController();
+        // $dim = $packagecontroller->getPackage($woocommerce->cart);
+        $package =  [
+            "weight" => 1,
+            "width" => 12,
+            "height" => 14,
+            "length" => 17
+        ];
+
+        $result = $this->makeCotationPackage($package, [1,2,3,4,7], $to);
+
+        echo '<pre>';
+        var_dump($result);
+        die;
+    }
 
     public function makeCotationPackage($package, $services, $to) {
         return $this->makeCotation($to, $services, $package, []);
@@ -12,9 +42,7 @@ class CotationController {
 
         $package = get_post_meta($order_id, 'melhorenvio_package', true);
 
-        if(!$package) {
-
-            
+        if(!$package) {            
             $package = [
                 'width'  => $response->packages[0]->dimensions->width,
                 'height' => $response->packages[0]->dimensions->height,
@@ -24,7 +52,6 @@ class CotationController {
 
             add_post_meta($order_id, 'melhorenvio_package', $package);
             add_post_meta($order_id, 'melhorenvio_cotation', $response);
-
             return $package;
         }
 
@@ -139,3 +166,4 @@ class CotationController {
     }
 }
 
+$cotationcontroller = new CotationController();

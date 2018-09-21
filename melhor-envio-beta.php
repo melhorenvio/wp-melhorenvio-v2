@@ -52,6 +52,7 @@ include_once ABSPATH . '/wp-content/plugins/woocommerce/includes/abstracts/abstr
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
 use Controllers\TokenController;
+use Controllers\PackageController;
 
 /**
  * Base_Plugin class
@@ -221,7 +222,7 @@ final class Base_Plugin {
     public function init_hooks() {
 
         $orders = new OrdersController();
-        $token = new tokenController();
+        $token  = new tokenController();
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -235,10 +236,15 @@ final class Base_Plugin {
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
         
-        // Intercepts the freight update request.
-        if ( ! empty( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] == 'update_order_review' ) {            
-            $orders->storeCotationCart();
-        }
+        // // Intercepts the freight update request.
+        // if ( ! empty( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] == 'update_order_review' ) {       
+        //     echo '<pre>';
+        //     $orders = new OrdersController();
+
+        //     print_r($orders);
+        //     $orders->storeCotationCart();
+        //     die;     
+        // }
     }
     
 
