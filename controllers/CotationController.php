@@ -7,10 +7,10 @@ class CotationController {
 
     public function __construct() {
         //woocommerce_checkout_update_order_review ~> use this action for check when alter shipping method
-        add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationCartSession'));
+        add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
 
-    public function makeCotationCartSession($order_id) {
+    public function makeCotationOrder($order_id) {
 
         global $woocommerce;
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
@@ -30,6 +30,8 @@ class CotationController {
         $result['choose_method'] = end($woocommerce->session->get( 'chosen_shipping_methods'));
 
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
+
+        return $result;
     }
 
     public function makeCotationPackage($package, $services, $to) {

@@ -36,7 +36,7 @@ class Order extends bOrders {
         
         $this->to = $data['billing'];
         
-        // $this->cotation = $this->getCotation();
+        $this->cotation = $this->getCotation();
     }
 
     /**
@@ -76,7 +76,7 @@ class Order extends bOrders {
                 'id' => $order->id,
                 'total' => $order->total,
                 'products' => $order->getProducts(),
-                // 'cotation' => $order->getCotation(),
+                'cotation' => $order->getCotation(),
                 'address' => $order->address,
                 'to' => $order->to
             ];
@@ -123,7 +123,7 @@ class Order extends bOrders {
         if (!$cotation or empty($cotation)) {
 
             $cotationController = new CotationController();
-            return $cotationController->makeCotationOrder($this->id);
+            return  $cotationController->makeCotationOrder($this->id);
         }
         return $cotation;
     }    
