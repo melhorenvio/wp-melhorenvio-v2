@@ -6,23 +6,13 @@ use Models\Order;
 
 class OrdersController {
 
-    public function index($id = null) {
-        $order = (new Order($id))->retrieveOne();
-        var_dump($order);
-        die;
+    public function index() {
+        $orders = Order::retrieveMany();
     }
 
     public function getOrders() {
-        $order = new Order();
-        unset($_GET['action']);
-
-        $orders = $order->retrieveMany($_GET);
-        echo json_encode($orders);
-        die;
-    }
-
-    public function storeCotationCart() {
-       
+        
+        $orders = Order::getAllOrders();
+        return json_encode($orders);
     }
 }
-

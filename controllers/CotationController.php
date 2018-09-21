@@ -6,18 +6,16 @@ use Controllers\PackageController;
 class CotationController {
 
     public function __construct() {
-        // woocommerce_checkout_order_processed
-        //woocommerce_checkout_update_order_review
+        //woocommerce_checkout_update_order_review ~> use this action for check when alter shipping method
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationCartSession'));
     }
 
     public function makeCotationCartSession($order_id) {
-        
+
         global $woocommerce;
-
-
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
 
+        // TODO
         // $packagecontroller   = new PackController();
         // $dim = $packagecontroller->getPackage($woocommerce->cart);
         $package =  [
@@ -28,38 +26,19 @@ class CotationController {
         ];
 
         $result = $this->makeCotationPackage($package, [1,2,3,4,7], $to);
+        $result['date_cotation'] = date('Y-m-d H:i:s');
+        $result['choose_method'] = end($woocommerce->session->get( 'chosen_shipping_methods'));
 
-        echo '<pre>';
-        var_dump($result);
-        die;
+        add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
     }
 
     public function makeCotationPackage($package, $services, $to) {
         return $this->makeCotation($to, $services, $package, []);
     } 
 
-    public function makeCotationOrder($order_id) {
-
-        $package = get_post_meta($order_id, 'melhorenvio_package', true);
-
-        if(!$package) {            
-            $package = [
-                'width'  => $response->packages[0]->dimensions->width,
-                'height' => $response->packages[0]->dimensions->height,
-                'length' => $response->packages[0]->dimensions->length,
-                'weigth' => $response->packages[0]->weight
-            ];
-
-            add_post_meta($order_id, 'melhorenvio_package', $package);
-            add_post_meta($order_id, 'melhorenvio_cotation', $response);
-            return $package;
-        }
-
-        return $package;
-    }
-
     protected function makeCotation($to, $services, $package, $options) {
 
+        // TODO
         $token = get_option('melhorenvio_token');
         $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjFmZWEzMzIzMzQ1ZTQ4MGEzM2JiZmFkMzk4ZTU2MzFkYWNjNWZjODM5MTY2ZWU2ZDdlNDg0NmE5ODM3YjYyZWZmMTAzMzlmMjIzNjliMTFlIn0.eyJhdWQiOiIxIiwianRpIjoiMWZlYTMzMjMzNDVlNDgwYTMzYmJmYWQzOThlNTYzMWRhY2M1ZmM4MzkxNjZlZTZkN2U0ODQ2YTk4MzdiNjJlZmYxMDMzOWYyMjM2OWIxMWUiLCJpYXQiOjE1MzczODgxOTIsIm5iZiI6MTUzNzM4ODE5MiwiZXhwIjoxNTY4OTI0MTkyLCJzdWIiOiJkZmZkN2EyYy0xMzYzLTQ4ZWQtOGFkYy00ZWZiOGZlNjI5ZWEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLXdyaXRlIiwicHVyY2hhc2VzLXJlYWQiLCJzaGlwcGluZy1jYWxjdWxhdGUiLCJzaGlwcGluZy1jYW5jZWwiLCJzaGlwcGluZy1jaGVja291dCIsInNoaXBwaW5nLWNvbXBhbmllcyIsInNoaXBwaW5nLWdlbmVyYXRlIiwic2hpcHBpbmctcHJldmlldyIsInNoaXBwaW5nLXByaW50Iiwic2hpcHBpbmctc2hhcmUiLCJzaGlwcGluZy10cmFja2luZyIsImVjb21tZXJjZS1zaGlwcGluZyIsInRyYW5zYWN0aW9ucy1yZWFkIiwidXNlcnMtcmVhZCIsInVzZXJzLXdyaXRlIiwid2ViaG9va3MtcmVhZCIsIndlYmhvb2tzLXdyaXRlIl19.rzJqqNkqVvJHMD1wnKXa1xmLLSauZOV2KHlo2najYvTnllsYX8aqlC8Q4VRLphSRJB3cXjB_lgmxnplGJPMrpPhHZ3hwGBISWWDiMny1Pfam-4crLQsPqu4YZn8e2PN4IKUW7Zlx6c2ZGb0cGNtsTsNPFir4vthhQlb1y2rFLWKUW34Le0rBQJE4aOrlf74jD8yG7gQmbZXHgzYFg0Xvdj43zcHZpZkm6gSvtH-QFYJ1FuN56pWIXdcszeUTHJXdw7M6T-m2wD2Kt4I5DpeEfuYnmVw4R72KbSyLSDNLdmqM2hAJaSyiZq1KWAMp-vhEtVkBfBHxm2C2W0xRwJKpvjjGC176U5sQ5ZKbuqkrUhd3Xo4BYjlpodRC4E_jeqrVkBvOVt299YTxg_l-YdIpOWuRAyp6MDZbTGsmdgZVleQkMs5myBtLozOsCyJELWqCauVihj8S33VTlWM0BSg_n8siZ_CJb7UutCAMW_mLBEwA6ASji0zv1ojo0xz2sTQSq4vhW8bMg35zktyoLJCBIBKN81RXhoH_wwPyP8iYg8EU_l4yhfzP_MYQj8D4_Kq_EAM9DXXGvC149BRaxiCjSP76FiC0WfHE8BrnfFUylVXCLk5nF3xee5fDmfD-kd8ZFj_NbxhMzqReo416f4JnFX26Od7vM0sEbQqzsBzLdnA';
         
@@ -73,7 +52,7 @@ class CotationController {
 
         $body = [
             "from" => [
-                "postal_code" => '01023001'
+                "postal_code" => '01023001' // TODO
             ],
             'to' => [
                 'postal_code' => $to

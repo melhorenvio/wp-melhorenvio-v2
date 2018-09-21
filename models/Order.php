@@ -36,7 +36,7 @@ class Order extends bOrders {
         
         $this->to = $data['billing'];
         
-        $this->cotation = $this->getCotation();
+        // $this->cotation = $this->getCotation();
     }
 
     /**
@@ -58,7 +58,7 @@ class Order extends bOrders {
      * @param Array $filters
      * @return Array
      */
-    public static function retrieveMany(Array $filters = NULL) : Array
+    public function getAllOrders(Array $filters = NULL) : Array
     {
         $args = array(
             'numberposts' => ($filters['limit']) ?: 10,
@@ -76,7 +76,7 @@ class Order extends bOrders {
                 'id' => $order->id,
                 'total' => $order->total,
                 'products' => $order->getProducts(),
-                'cotation' => $order->getCotation(),
+                // 'cotation' => $order->getCotation(),
                 'address' => $order->address,
                 'to' => $order->to
             ];
