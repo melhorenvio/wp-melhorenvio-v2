@@ -27,9 +27,22 @@ class CotationController {
 
         $result = $this->makeCotationPackage($package, [1,2,3,4,7], $to);
         $result['date_cotation'] = date('Y-m-d H:i:s');
-        $result['choose_method'] = end($woocommerce->session->get( 'chosen_shipping_methods'));
+        $result['choose_method'] =$this->getCodeShippingSelected(end($woocommerce->session->get( 'chosen_shipping_methods')));
 
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
+    }
+
+    private function getCodeShippingSelected($choose) {
+        switch ($choose) {
+            case 'melhorenvio_pac':
+                return 1;
+                break;
+            case 'melhorenvio_sedex':
+                return 2;
+                break;
+            default:
+                return 0;
+        }
     }
 
     public function makeCotationPackage($package, $services, $to) {

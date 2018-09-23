@@ -87,6 +87,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -624,6 +632,62 @@ var render = function() {
                   _vm._s(item.to.postcode)
               )
             ])
+          ]),
+          _vm._v(" "),
+          _c("td", [
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.cotation,
+                    expression: "cotation"
+                  }
+                ],
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.cotation = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              _vm._l(item.cotation, function(option) {
+                return option.id && option.price
+                  ? _c(
+                      "option",
+                      {
+                        domProps: {
+                          selected:
+                            option.choose_method == option.id ? true : false,
+                          value: option.id
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(option.name) +
+                            " -R$" +
+                            _vm._s(option.price) +
+                            "\n                    "
+                        )
+                      ]
+                    )
+                  : _vm._e()
+              })
+            ),
+            _vm._v(" "),
+            _c("br")
           ]),
           _vm._v(" "),
           _vm._m(0, true)

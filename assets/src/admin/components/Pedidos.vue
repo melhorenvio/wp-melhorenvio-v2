@@ -13,6 +13,14 @@
                     <p>{{item.to.city}} / {{item.to.state}} - {{item.to.postcode}}</p>
                 </td>
                 <td>
+                    <select v-model="cotation">
+                        <option :selected="option.choose_method == option.id ? true : false"  v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id">
+                            {{ option.name }} -R${{ option.price }}
+                        </option>
+                    </select>
+                    <br>
+                </td>
+                <td>
                     <button>Add cart</button>
                     <button>Remove cart</button>
                 </td>
