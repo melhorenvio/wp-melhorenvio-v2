@@ -30,8 +30,6 @@ class CotationController {
         $result['choose_method'] = end($woocommerce->session->get( 'chosen_shipping_methods'));
 
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
-
-        return $result;
     }
 
     public function makeCotationPackage($package, $services, $to) {

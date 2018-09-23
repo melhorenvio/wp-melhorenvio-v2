@@ -119,9 +119,10 @@ class Order extends bOrders {
 
         if ($id) $this->id = $id; 
 
-        $cotation = get_post_meta($this->id, 'melhorenvio_cotation', true);
-        if (!$cotation or empty($cotation)) {
+        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
+        $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
+        if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
             $cotationController = new CotationController();
             return  $cotationController->makeCotationOrder($this->id);
         }

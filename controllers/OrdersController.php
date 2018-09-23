@@ -11,8 +11,8 @@ class OrdersController {
     }
 
     public function getOrders() {
-        
-        $orders = Order::getAllOrders();
+        unset($_GET['action']);
+        $orders = Order::getAllOrders($_GET);
         return json_encode($orders);
     }
 }

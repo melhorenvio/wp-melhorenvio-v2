@@ -1,9 +1,6 @@
 <template>
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
-
-        <button @click="loadMore()">Carregar mais</button>
-
         <table border="1" id="example-1">
             <tr v-for="(item, index) in orders" :key="index">
                 <td>{{ item.id }}</td>
@@ -21,6 +18,8 @@
                 </td>
             </tr>
         </table>
+
+        <button @click="loadMore()">Carregar mais</button>
     </div>
 </template>
 

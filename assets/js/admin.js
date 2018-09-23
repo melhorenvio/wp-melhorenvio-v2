@@ -87,7 +87,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -146,7 +145,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
@@ -224,7 +223,7 @@ var _vuex = __webpack_require__(4);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _axios = __webpack_require__(7);
+var _axios = __webpack_require__(5);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -382,7 +381,7 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vueRouter = __webpack_require__(6);
+var _vueRouter = __webpack_require__(7);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
@@ -589,18 +588,6 @@ var render = function() {
     _c("h1", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
     _c(
-      "button",
-      {
-        on: {
-          click: function($event) {
-            _vm.loadMore()
-          }
-        }
-      },
-      [_vm._v("Carregar mais")]
-    ),
-    _vm._v(" "),
-    _c(
       "table",
       { attrs: { border: "1", id: "example-1" } },
       _vm._l(_vm.orders, function(item, index) {
@@ -642,6 +629,18 @@ var render = function() {
           _vm._m(0, true)
         ])
       })
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        on: {
+          click: function($event) {
+            _vm.loadMore()
+          }
+        }
+      },
+      [_vm._v("Carregar mais")]
     )
   ])
 }
@@ -981,7 +980,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(7);
+var _axios = __webpack_require__(5);
 
 var _axios2 = _interopRequireDefault(_axios);
 
