@@ -69,10 +69,30 @@ class OrdersController {
             die;
         }
 
+        $this->updateDataCotation($_GET['order_id'], $response, 'cart');
+
         echo json_encode([
             'success' => true,
             'data' => $response
         ]);
         die;
+    }
+
+    private function updateDataCotation($order_id, $data, $status) {
+        $cotation = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
+
+        $cotation['choose_method'] = $data->service_id;
+        $cotation['order_id'] = $data->id;
+        $cotation['protocol'] = $data->protocol;
+        $cotation['status'] = 'cart';
+
+        $cotation = [
+            'choose_method' => $data->service_id,
+            'order_id' => $data->id,
+            'protocol' => $data->protocol,
+            'status' => $status
+        ];
+
+        add_post_meta($order_id, 'melhorenvio_cotation_v2', $cotation);
     }
 }
