@@ -736,13 +736,16 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              item.order_id
+              item.order_id && item.id
                 ? _c(
                     "button",
                     {
                       on: {
                         click: function($event) {
-                          _vm.removeCart(item.order_id)
+                          _vm.removeCart({
+                            id: item.id,
+                            order_id: item.order_id
+                          })
                         }
                       }
                     },
@@ -1202,7 +1205,7 @@ var orders = {
         removeCart: function removeCart(_ref4, data) {
             var commit = _ref4.commit;
 
-            _axios2.default.post(ajaxurl + '?action=remove_order&order_id=' + data, data).then(function (response) {
+            _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 console.log(response);
             });
         }

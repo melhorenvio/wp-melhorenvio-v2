@@ -72,7 +72,7 @@ const orders = {
             
         },
         removeCart: ({commit}, data) => {        
-            Axios.post(`${ajaxurl}?action=remove_order&order_id=${data}`, data).then(response => {
+            Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 console.log(response);
             })
         }

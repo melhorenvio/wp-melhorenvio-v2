@@ -37,7 +37,7 @@
                 </td>
                 <td>
                     <button v-if="!item.status" @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
-                    <button v-if="item.order_id" @click="removeCart(item.order_id)">Remove cart</button>
+                    <button v-if="item.order_id && item.id" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
                 </td>
             </tr>
         </table>
