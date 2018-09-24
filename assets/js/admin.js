@@ -103,7 +103,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart'])),
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -686,7 +686,24 @@ var render = function() {
             _c("br")
           ]),
           _vm._v(" "),
-          _vm._m(0, true)
+          _c("td", [
+            _c(
+              "button",
+              {
+                on: {
+                  click: function($event) {
+                    _vm.addCart({
+                      id: item.id,
+                      choosen: item.cotation.choose_method
+                    })
+                  }
+                }
+              },
+              [_vm._v("Add cart")]
+            ),
+            _vm._v(" "),
+            _c("button", [_vm._v("Remove cart")])
+          ])
         ])
       })
     ),
@@ -704,18 +721,7 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("button", [_vm._v("Add cart")]),
-      _vm._v(" "),
-      _c("button", [_vm._v("Remove cart")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1109,6 +1115,20 @@ var orders = {
                     commit('loadMore', response.data);
                 }
             });
+        },
+        addCart: function addCart(_ref3, data) {
+            var commit = _ref3.commit;
+
+            if (!data) {
+                return false;
+            }
+
+            // TODO separar data da url
+            if (data.id && data.choosen) {
+                _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen, data).then(function (response) {
+                    console.log(response);
+                });
+            }
         }
     }
 };

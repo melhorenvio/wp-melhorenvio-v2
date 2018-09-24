@@ -21,7 +21,7 @@
                     <br>
                 </td>
                 <td>
-                    <button>Add cart</button>
+                    <button @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
                     <button>Remove cart</button>
                 </td>
             </tr>
@@ -44,7 +44,8 @@ export default {
     methods: {
         ...mapActions('orders', [
             'retrieveMany',
-            'loadMore'
+            'loadMore',
+            'addCart'
         ])
     },
     mounted () {

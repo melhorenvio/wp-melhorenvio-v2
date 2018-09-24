@@ -223,6 +223,7 @@ final class Base_Plugin {
 
         // $orders = new OrdersController();
         $token  = new tokenController();
+        $order  = new OrdersController(); 
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -239,7 +240,7 @@ final class Base_Plugin {
         });
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
-        
+        add_action('wp_ajax_add_order', [$order, 'sendOrder']);
     }
     
 

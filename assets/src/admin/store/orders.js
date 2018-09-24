@@ -57,6 +57,19 @@ const orders = {
                     commit('loadMore', response.data)
                 }
             })
+        },
+        addCart: ({commit}, data) => {        
+            if (!data) {
+                return false;
+            }
+
+            // TODO separar data da url
+            if (data.id && data.choosen) {
+                Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}`, data).then(response => {
+                    console.log(response);
+                })
+            }
+            
         }
     }
 }

@@ -65,6 +65,29 @@ class UsersController {
 
     }
 
+    public function getTo($order_id) {
+        
+        $order = new \WC_Order($order_id);
+
+        return (object) [
+            "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+            "phone" => $order->get_billing_phone(),
+            "email" => $order->get_billing_email(),
+            "document" => null,
+            "company_document" => null, // (opcional) (a menos que seja transportadora e logística reversa)
+            "state_register" => null, // (opcional) (a menos que seja transportadora e logística reversa)
+            "address" => $order->get_billing_address_1(),
+            "complement" => $order->get_billing_address_2(),
+            "number" => null,
+            "district" => null,
+            "city" => $order->get_billing_city(),
+            "state_abbr" => $order->get_billing_state(),
+            "country_id" => $order->get_billing_country(),
+            "postal_code" => str_replace('-', '', $order->get_billing_postcode()),  
+        ];
+
+    }
+
     private function mask($val, $mask){
         $maskared = '';
         $k = 0;
