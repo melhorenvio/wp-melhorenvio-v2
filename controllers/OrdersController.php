@@ -107,18 +107,6 @@ class OrdersController {
         ]);
     }
 
-    private function updateDataCotation($order_id, $data, $status) {
-        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2'));
-
-        if (is_null($oldData)) {
-            add_post_meta($order_id, 'melhorenvio_status_v2', $data);
-            return true;
-        }
-    
-        $newData = array_merge($oldData, $data);
-        add_post_meta($order_id, 'melhorenvio_status_v2', $newData);
-    }
-
     private function removeDataCotation($order_id) {
         delete_post_meta($order_id, 'melhorenvio_status_v2');
     }
@@ -249,4 +237,16 @@ class OrdersController {
         ]);
         die;
     }   
+
+    private function updateDataCotation($order_id, $data, $status) {
+        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2'));
+
+        if (is_null($oldData) || empty($oldData)) {
+            add_post_meta($order_id, 'melhorenvio_status_v2', $data);
+            return true;
+        }
+    
+        $newData = array_merge($oldData, $data);
+        add_post_meta($order_id, 'melhorenvio_status_v2', $newData);
+    }
 }
