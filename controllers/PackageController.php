@@ -15,6 +15,7 @@ class PackageController {
             
             $_product = $values['data'];
             $weight = $weight + $_product->get_weight() * $values['quantity'];
+
             $width  += $_product->width;
             $height += $_product->height;
             $length += $_product->length;
@@ -32,10 +33,10 @@ class PackageController {
     public function getPackageOrder($order_id) {
 
         $weight = 0;
-        $width = 0;
+        $width  = 0;
         $height = 0;
         $length = 0;
-        $order = wc_get_order( $order_id );
+        $order  = wc_get_order( $order_id );
 
         foreach( $order->get_items() as $item_id => $item_product ){
 
@@ -58,3 +59,6 @@ class PackageController {
 
 }
 
+// TODO LIST
+// - Converter medidas g -> kg
+// - Verificar se existem todas medidas

@@ -2,6 +2,7 @@
 
 namespace Controllers;
 use Controllers\PackageController;
+use Controllers\UsersController;
 
 class CotationController {
 
@@ -45,9 +46,7 @@ class CotationController {
 
     protected function makeCotation($to, $services, $package, $options) {
 
-        // TODO
         $token = get_option('melhorenvio_token');
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjFmZWEzMzIzMzQ1ZTQ4MGEzM2JiZmFkMzk4ZTU2MzFkYWNjNWZjODM5MTY2ZWU2ZDdlNDg0NmE5ODM3YjYyZWZmMTAzMzlmMjIzNjliMTFlIn0.eyJhdWQiOiIxIiwianRpIjoiMWZlYTMzMjMzNDVlNDgwYTMzYmJmYWQzOThlNTYzMWRhY2M1ZmM4MzkxNjZlZTZkN2U0ODQ2YTk4MzdiNjJlZmYxMDMzOWYyMjM2OWIxMWUiLCJpYXQiOjE1MzczODgxOTIsIm5iZiI6MTUzNzM4ODE5MiwiZXhwIjoxNTY4OTI0MTkyLCJzdWIiOiJkZmZkN2EyYy0xMzYzLTQ4ZWQtOGFkYy00ZWZiOGZlNjI5ZWEiLCJzY29wZXMiOlsiY2FydC1yZWFkIiwiY2FydC13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiY29tcGFuaWVzLXdyaXRlIiwiY291cG9ucy1yZWFkIiwiY291cG9ucy13cml0ZSIsIm5vdGlmaWNhdGlvbnMtcmVhZCIsIm9yZGVycy1yZWFkIiwicHJvZHVjdHMtcmVhZCIsInByb2R1Y3RzLXdyaXRlIiwicHVyY2hhc2VzLXJlYWQiLCJzaGlwcGluZy1jYWxjdWxhdGUiLCJzaGlwcGluZy1jYW5jZWwiLCJzaGlwcGluZy1jaGVja291dCIsInNoaXBwaW5nLWNvbXBhbmllcyIsInNoaXBwaW5nLWdlbmVyYXRlIiwic2hpcHBpbmctcHJldmlldyIsInNoaXBwaW5nLXByaW50Iiwic2hpcHBpbmctc2hhcmUiLCJzaGlwcGluZy10cmFja2luZyIsImVjb21tZXJjZS1zaGlwcGluZyIsInRyYW5zYWN0aW9ucy1yZWFkIiwidXNlcnMtcmVhZCIsInVzZXJzLXdyaXRlIiwid2ViaG9va3MtcmVhZCIsIndlYmhvb2tzLXdyaXRlIl19.rzJqqNkqVvJHMD1wnKXa1xmLLSauZOV2KHlo2najYvTnllsYX8aqlC8Q4VRLphSRJB3cXjB_lgmxnplGJPMrpPhHZ3hwGBISWWDiMny1Pfam-4crLQsPqu4YZn8e2PN4IKUW7Zlx6c2ZGb0cGNtsTsNPFir4vthhQlb1y2rFLWKUW34Le0rBQJE4aOrlf74jD8yG7gQmbZXHgzYFg0Xvdj43zcHZpZkm6gSvtH-QFYJ1FuN56pWIXdcszeUTHJXdw7M6T-m2wD2Kt4I5DpeEfuYnmVw4R72KbSyLSDNLdmqM2hAJaSyiZq1KWAMp-vhEtVkBfBHxm2C2W0xRwJKpvjjGC176U5sQ5ZKbuqkrUhd3Xo4BYjlpodRC4E_jeqrVkBvOVt299YTxg_l-YdIpOWuRAyp6MDZbTGsmdgZVleQkMs5myBtLozOsCyJELWqCauVihj8S33VTlWM0BSg_n8siZ_CJb7UutCAMW_mLBEwA6ASji0zv1ojo0xz2sTQSq4vhW8bMg35zktyoLJCBIBKN81RXhoH_wwPyP8iYg8EU_l4yhfzP_MYQj8D4_Kq_EAM9DXXGvC149BRaxiCjSP76FiC0WfHE8BrnfFUylVXCLk5nF3xee5fDmfD-kd8ZFj_NbxhMzqReo416f4JnFX26Od7vM0sEbQqzsBzLdnA';
         
         $defaultoptions = [
             "insurance_value" => $this->total,
@@ -57,9 +56,11 @@ class CotationController {
         ];
         $opts = array_merge($defaultoptions, $options);
 
+        $user = new UsersController();
+        $from = $user->getFrom();
         $body = [
             "from" => [
-                "postal_code" => '01023001' // TODO
+                "postal_code" => $from->postal_code
             ],
             'to' => [
                 'postal_code' => $to
@@ -153,3 +154,6 @@ class CotationController {
 }
 
 $cotationcontroller = new CotationController();
+
+// TODO LIST
+// - Verificar ids de serviços e deixar de forma dinamica
