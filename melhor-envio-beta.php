@@ -233,14 +233,18 @@ final class Base_Plugin {
         /**
          * MELHOR ENVIO ACTIONS
          */
+
+        // TODO tentar passar essas actions para dentro dos controllers.
         add_action('wp_ajax_get_orders', function() {
             $order = new OrdersController();
             echo $order->getOrders();
             die;
         });
+
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
         add_action('wp_ajax_add_order', [$order, 'sendOrder']);
+        add_action('wp_ajax_remove_order', [$order, 'removeOrder']);
     }
     
 

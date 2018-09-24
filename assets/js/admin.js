@@ -118,7 +118,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart'])),
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -719,22 +719,36 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("td", [
-              _c(
-                "button",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.addCart({
-                        id: item.id,
-                        choosen: item.cotation.choose_method
-                      })
-                    }
-                  }
-                },
-                [_vm._v("Add cart")]
-              ),
+              !item.status
+                ? _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.addCart({
+                            id: item.id,
+                            choosen: item.cotation.choose_method
+                          })
+                        }
+                      }
+                    },
+                    [_vm._v("Add cart")]
+                  )
+                : _vm._e(),
               _vm._v(" "),
-              _c("button", [_vm._v("Remove cart")])
+              item.order_id
+                ? _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.removeCart(item.order_id)
+                        }
+                      }
+                    },
+                    [_vm._v("Remove cart")]
+                  )
+                : _vm._e()
             ])
           ])
         })
@@ -1184,6 +1198,13 @@ var orders = {
                     console.log(response);
                 });
             }
+        },
+        removeCart: function removeCart(_ref4, data) {
+            var commit = _ref4.commit;
+
+            _axios2.default.post(ajaxurl + '?action=remove_order&order_id=' + data, data).then(function (response) {
+                console.log(response);
+            });
         }
     }
 };

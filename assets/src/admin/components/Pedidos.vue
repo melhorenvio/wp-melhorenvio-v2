@@ -36,8 +36,8 @@
                     {{item.status}}
                 </td>
                 <td>
-                    <button @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
-                    <button>Remove cart</button>
+                    <button v-if="!item.status" @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
+                    <button v-if="item.order_id" @click="removeCart(item.order_id)">Remove cart</button>
                 </td>
             </tr>
         </table>
@@ -60,7 +60,8 @@ export default {
         ...mapActions('orders', [
             'retrieveMany',
             'loadMore',
-            'addCart'
+            'addCart',
+            'removeCart'
         ])
     },
     mounted () {

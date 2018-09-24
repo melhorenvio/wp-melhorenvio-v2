@@ -70,6 +70,11 @@ const orders = {
                 })
             }
             
+        },
+        removeCart: ({commit}, data) => {        
+            Axios.post(`${ajaxurl}?action=remove_order&order_id=${data}`, data).then(response => {
+                console.log(response);
+            })
         }
     }
 }

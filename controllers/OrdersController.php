@@ -77,6 +77,28 @@ class OrdersController {
         die;
     }
 
+    public function removeOrder() {
+
+        $token = get_option('melhorenvio_token');
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$token,
+            ],
+            'timeout'=>10,
+            'method' => 'DELETE'
+        );
+
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/cart/' . $_GET['order_id'], $params)));
+        
+        $this->removeDataCotation($_GET['order_id']);
+
+        echo json_encode([
+            'success' => true
+        ]);
+    }
+
     private function updateDataCotation($order_id, $data, $status) {
         
         $data = [
@@ -88,5 +110,9 @@ class OrdersController {
         ];
 
         add_post_meta($order_id, 'melhorenvio_status_v2', $data);
+    }
+
+    private function removeDataCotation($order_id) {
+        delete_post_meta($order_id, 'melhorenvio_status_v2');
     }
 }
