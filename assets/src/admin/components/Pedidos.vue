@@ -2,6 +2,15 @@
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
         <table border="1" id="example-1">
+            <tr>
+                <th>#</th>
+                <th>Valor pedido</th>
+                <th>Cliente</th>
+                <th>Cotação</th>
+                <th>Ordem ID (Melhor Envio)</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
             <tr v-for="(item, index) in orders" :key="index">
                 <td>{{ item.id }}</td>
                 <td>{{ item.total }}</td>
@@ -19,6 +28,12 @@
                         </option>
                     </select>
                     <br>
+                </td>
+                <td>
+                    {{item.order_id}}
+                </td>
+                <td>
+                    {{item.status}}
                 </td>
                 <td>
                     <button @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>

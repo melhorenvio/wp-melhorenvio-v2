@@ -70,7 +70,6 @@ class OrdersController {
         }
 
         $this->updateDataCotation($_GET['order_id'], $response, 'cart');
-
         echo json_encode([
             'success' => true,
             'data' => $response
@@ -79,20 +78,15 @@ class OrdersController {
     }
 
     private function updateDataCotation($order_id, $data, $status) {
-        $cotation = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
-
-        $cotation['choose_method'] = $data->service_id;
-        $cotation['order_id'] = $data->id;
-        $cotation['protocol'] = $data->protocol;
-        $cotation['status'] = 'cart';
-
-        $cotation = [
+        
+        $data = [
             'choose_method' => $data->service_id,
             'order_id' => $data->id,
             'protocol' => $data->protocol,
-            'status' => $status
+            'status' => $status,
+            'created' => date('Y-m-d H:i:s')
         ];
 
-        add_post_meta($order_id, 'melhorenvio_cotation_v2', $cotation);
+        add_post_meta($order_id, 'melhorenvio_status_v2', $data);
     }
 }

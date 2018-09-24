@@ -95,6 +95,21 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -598,114 +613,133 @@ var render = function() {
     _c(
       "table",
       { attrs: { border: "1", id: "example-1" } },
-      _vm._l(_vm.orders, function(item, index) {
-        return _c("tr", { key: index }, [
-          _c("td", [_vm._v(_vm._s(item.id))]),
-          _vm._v(" "),
-          _c("td", [_vm._v(_vm._s(item.total))]),
-          _vm._v(" "),
-          _c("td", [
-            _c("p", [
-              _c("b", [
+      [
+        _vm._m(0),
+        _vm._v(" "),
+        _vm._l(_vm.orders, function(item, index) {
+          return _c("tr", { key: index }, [
+            _c("td", [_vm._v(_vm._s(item.id))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(item.total))]),
+            _vm._v(" "),
+            _c("td", [
+              _c("p", [
+                _c("b", [
+                  _vm._v(
+                    _vm._s(item.to.first_name) + " " + _vm._s(item.to.last_name)
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("p", [_vm._v(_vm._s(item.to.email))]),
+              _vm._v(" "),
+              _c("p", [_vm._v(_vm._s(item.to.phone))]),
+              _vm._v(" "),
+              _c("p", [
                 _vm._v(
-                  _vm._s(item.to.first_name) + " " + _vm._s(item.to.last_name)
+                  _vm._s(item.to.address_1) + " " + _vm._s(item.to.address_2)
+                )
+              ]),
+              _vm._v(" "),
+              _c("p", [
+                _vm._v(
+                  _vm._s(item.to.city) +
+                    " / " +
+                    _vm._s(item.to.state) +
+                    " - " +
+                    _vm._s(item.to.postcode)
                 )
               ])
             ]),
             _vm._v(" "),
-            _c("p", [_vm._v(_vm._s(item.to.email))]),
+            _c("td", [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: item.cotation.choose_method,
+                      expression: "item.cotation.choose_method"
+                    }
+                  ],
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        item.cotation,
+                        "choose_method",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
+                    }
+                  }
+                },
+                _vm._l(item.cotation, function(option) {
+                  return option.id && option.price
+                    ? _c(
+                        "option",
+                        { key: option.id, domProps: { value: option.id } },
+                        [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(option.name) +
+                              " (R$" +
+                              _vm._s(option.price) +
+                              ") \n                    "
+                          )
+                        ]
+                      )
+                    : _vm._e()
+                })
+              ),
+              _vm._v(" "),
+              _c("br")
+            ]),
             _vm._v(" "),
-            _c("p", [_vm._v(_vm._s(item.to.phone))]),
-            _vm._v(" "),
-            _c("p", [
+            _c("td", [
               _vm._v(
-                _vm._s(item.to.address_1) + " " + _vm._s(item.to.address_2)
+                "\n                " + _vm._s(item.order_id) + "\n            "
               )
             ]),
             _vm._v(" "),
-            _c("p", [
+            _c("td", [
               _vm._v(
-                _vm._s(item.to.city) +
-                  " / " +
-                  _vm._s(item.to.state) +
-                  " - " +
-                  _vm._s(item.to.postcode)
+                "\n                " + _vm._s(item.status) + "\n            "
               )
+            ]),
+            _vm._v(" "),
+            _c("td", [
+              _c(
+                "button",
+                {
+                  on: {
+                    click: function($event) {
+                      _vm.addCart({
+                        id: item.id,
+                        choosen: item.cotation.choose_method
+                      })
+                    }
+                  }
+                },
+                [_vm._v("Add cart")]
+              ),
+              _vm._v(" "),
+              _c("button", [_vm._v("Remove cart")])
             ])
-          ]),
-          _vm._v(" "),
-          _c("td", [
-            _c(
-              "select",
-              {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: item.cotation.choose_method,
-                    expression: "item.cotation.choose_method"
-                  }
-                ],
-                on: {
-                  change: function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.$set(
-                      item.cotation,
-                      "choose_method",
-                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                    )
-                  }
-                }
-              },
-              _vm._l(item.cotation, function(option) {
-                return option.id && option.price
-                  ? _c(
-                      "option",
-                      { key: option.id, domProps: { value: option.id } },
-                      [
-                        _vm._v(
-                          "\n                        " +
-                            _vm._s(option.name) +
-                            " (R$" +
-                            _vm._s(option.price) +
-                            ") \n                    "
-                        )
-                      ]
-                    )
-                  : _vm._e()
-              })
-            ),
-            _vm._v(" "),
-            _c("br")
-          ]),
-          _vm._v(" "),
-          _c("td", [
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.addCart({
-                      id: item.id,
-                      choosen: item.cotation.choose_method
-                    })
-                  }
-                }
-              },
-              [_vm._v("Add cart")]
-            ),
-            _vm._v(" "),
-            _c("button", [_vm._v("Remove cart")])
           ])
-        ])
-      })
+        })
+      ],
+      2
     ),
     _vm._v(" "),
     _c(
@@ -721,7 +755,28 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("th", [_vm._v("#")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Valor pedido")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Cliente")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Cotação")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Ordem ID (Melhor Envio)")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Status")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Ações")])
+    ])
+  }
+]
 render._withStripped = true
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);

@@ -72,13 +72,19 @@ class Order extends bOrders {
         foreach ($posts as $post) {
 
             $order = new Order($post->ID);
+
+            $dataMelhorEnvio = $order->getDataOrder();
+
             $data[] =  [
                 'id' => $order->id,
                 'total' => $order->total,
                 'products' => $order->getProducts(),
                 'cotation' => $order->getCotation(),
                 'address' => $order->address,
-                'to' => $order->to
+                'to' => $order->to,
+                'status' => $dataMelhorEnvio['status'],
+                'order_id' => $dataMelhorEnvio['order_id'],
+                'protocol' => $dataMelhorEnvio['protocol']
             ];
         }
 
@@ -128,4 +134,21 @@ class Order extends bOrders {
         }
         return $cotation;
     }    
+
+    private function getDataOrder($id = null) {
+        if ($id) $this->id = $id; 
+        $data = get_post_meta($this->id, 'melhorenvio_status_v2', true);
+
+        $default = [
+            'status' => null,
+            'order_id' => null,
+            'protocol' => null
+        ];
+
+        if (empty($data) || !$data) {
+            return $default;
+        }
+
+        return $data;
+    }
 }   
