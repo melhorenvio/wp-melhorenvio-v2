@@ -69,7 +69,7 @@ class OrdersController {
             die;
         }
 
-        $this->updateDataCotation($_GET['order_id'], $response, 'cart');
+        $this->updateDataCotation($_GET['order_id'], $response, 'pending');
         echo json_encode([
             'success' => true,
             'data' => $response
@@ -114,5 +114,66 @@ class OrdersController {
 
     private function removeDataCotation($order_id) {
         delete_post_meta($order_id, 'melhorenvio_status_v2');
+    }
+
+    public function payTicket() {
+
+        $ticket = $this->getInfoTicket($_GET['order_id']);
+        if($ticket->status != 'pending') {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Impossivel pagar etiqueta com status ' . $ticket->status
+            ]);
+            die;
+        }
+
+        $body = [
+            'orders' => [$_GET['order_id']],
+            'wallet' => $ticket->price
+        ];
+
+        $token = get_option('melhorenvio_token');
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$token,
+            ],
+            'body' => json_encode($body),
+            'timeout'=> 10,
+            'method' => 'POST'
+        );
+
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/checkout', $params)));
+        $data = [
+            'order_paid' => $response->purchase->id,
+            'protocol_paid' => $response->purchase->protocol,
+            'choose_method' => $response->orders[0]->service_id,
+            'order_id' => $response->orders[0]->id,
+            'protocol' => $response->orders[0]->protocol,
+            'status' => 'paid',
+        ];
+
+        $this->updateDataCotation($_GET['id'], $data, 'paid');
+        echo json_encode([
+            'success' => true,
+            'data' => $response
+        ]);
+        die;
+    }
+
+    private function getInfoTicket($order_id) {
+        $token = get_option('melhorenvio_token');
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$token,
+            ],
+            'timeout'=>10,
+            'method' => 'GET'
+        );
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/cart/' . $order_id, $params)));
+        return $response;
     }
 }

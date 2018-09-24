@@ -75,6 +75,11 @@ const orders = {
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 console.log(response);
             })
+        },
+        payTicket: ({commit}, data) => {        
+            Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+                console.log(response);
+            })
         }
     }
 }

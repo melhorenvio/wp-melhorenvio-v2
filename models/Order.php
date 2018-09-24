@@ -125,6 +125,7 @@ class Order extends bOrders {
 
         if ($id) $this->id = $id; 
 
+        // TODO caso já pago, não cotar novamente.
         $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
@@ -137,8 +138,7 @@ class Order extends bOrders {
 
     private function getDataOrder($id = null) {
         if ($id) $this->id = $id; 
-        $data = get_post_meta($this->id, 'melhorenvio_status_v2', true);
-
+        $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
         $default = [
             'status' => null,
             'order_id' => null,

@@ -110,6 +110,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -118,7 +119,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket'])),
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -751,6 +752,23 @@ var render = function() {
                     },
                     [_vm._v("Remove cart")]
                   )
+                : _vm._e(),
+              _vm._v(" "),
+              item.order_id && item.id
+                ? _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.payTicket({
+                            id: item.id,
+                            order_id: item.order_id
+                          })
+                        }
+                      }
+                    },
+                    [_vm._v("Pay")]
+                  )
                 : _vm._e()
             ])
           ])
@@ -1206,6 +1224,13 @@ var orders = {
             var commit = _ref4.commit;
 
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+                console.log(response);
+            });
+        },
+        payTicket: function payTicket(_ref5, data) {
+            var commit = _ref5.commit;
+
+            _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 console.log(response);
             });
         }
