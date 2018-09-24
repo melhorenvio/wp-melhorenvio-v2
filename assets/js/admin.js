@@ -642,8 +642,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.cotation,
-                    expression: "cotation"
+                    value: item.cotation.choose_method,
+                    expression: "item.cotation.choose_method"
                   }
                 ],
                 on: {
@@ -656,9 +656,11 @@ var render = function() {
                         var val = "_value" in o ? o._value : o.value
                         return val
                       })
-                    _vm.cotation = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
+                    _vm.$set(
+                      item.cotation,
+                      "choose_method",
+                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                    )
                   }
                 }
               },
@@ -666,20 +668,14 @@ var render = function() {
                 return option.id && option.price
                   ? _c(
                       "option",
-                      {
-                        domProps: {
-                          selected:
-                            option.choose_method == option.id ? true : false,
-                          value: option.id
-                        }
-                      },
+                      { key: option.id, domProps: { value: option.id } },
                       [
                         _vm._v(
                           "\n                        " +
                             _vm._s(option.name) +
-                            " -R$" +
+                            " (R$" +
                             _vm._s(option.price) +
-                            "\n                    "
+                            ") \n                    "
                         )
                       ]
                     )

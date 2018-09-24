@@ -13,9 +13,9 @@
                     <p>{{item.to.city}} / {{item.to.state}} - {{item.to.postcode}}</p>
                 </td>
                 <td>
-                    <select v-model="cotation">
-                        <option :selected="option.choose_method == option.id ? true : false"  v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id">
-                            {{ option.name }} -R${{ option.price }}
+                    <select v-model="item.cotation.choose_method">
+                        <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
+                            {{ option.name }} (R${{ option.price }}) 
                         </option>
                     </select>
                     <br>
