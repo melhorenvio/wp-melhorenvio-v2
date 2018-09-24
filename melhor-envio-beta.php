@@ -246,6 +246,8 @@ final class Base_Plugin {
         add_action('wp_ajax_add_order', [$order, 'sendOrder']);
         add_action('wp_ajax_remove_order', [$order, 'removeOrder']);
         add_action('wp_ajax_pay_ticket', [$order, 'payTicket']);
+        add_action('wp_ajax_create_ticket', [$order, 'createTicket']);
+        add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
     }
     
 

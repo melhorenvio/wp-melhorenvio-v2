@@ -111,6 +111,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -119,7 +121,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket'])),
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -754,7 +756,11 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              item.order_id && item.id
+              item.order_id &&
+              item.id &&
+              item.status != "paid" &&
+              item.status != "generated" &&
+              item.status != "printed"
                 ? _c(
                     "button",
                     {
@@ -768,6 +774,41 @@ var render = function() {
                       }
                     },
                     [_vm._v("Pay")]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              item.status && item.status == "paid" && item.order_id
+                ? _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.createTicket({
+                            id: item.id,
+                            order_id: item.order_id
+                          })
+                        }
+                      }
+                    },
+                    [_vm._v("Create ticket")]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              item.status &&
+              (item.status == "generated" || item.status == "printed")
+                ? _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.printTicket({
+                            id: item.id,
+                            order_id: item.order_id
+                          })
+                        }
+                      }
+                    },
+                    [_vm._v("Print ticket")]
                   )
                 : _vm._e()
             ])
@@ -1232,6 +1273,20 @@ var orders = {
 
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 console.log(response);
+            });
+        },
+        createTicket: function createTicket(_ref6, data) {
+            var commit = _ref6.commit;
+
+            _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+                console.log(response);
+            });
+        },
+        printTicket: function printTicket(_ref7, data) {
+            var commit = _ref7.commit;
+
+            _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+                window.open(response.data.data.url, '_blank');
             });
         }
     }

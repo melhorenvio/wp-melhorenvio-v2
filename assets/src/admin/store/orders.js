@@ -80,6 +80,16 @@ const orders = {
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 console.log(response);
             })
+        },
+        createTicket: ({commit}, data) => {        
+            Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+                console.log(response);
+            })
+        },
+        printTicket: ({commit}, data) => {        
+            Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+                window.open(response.data.data.url,'_blank');
+            })
         }
     }
 }
