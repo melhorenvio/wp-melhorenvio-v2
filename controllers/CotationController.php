@@ -7,6 +7,7 @@ class CotationController {
 
     public function __construct() {
         //woocommerce_checkout_update_order_review ~> use this action for check when alter shipping method
+        //woocommerce_checkout_order_processed ~> use this in prodution
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
 
@@ -15,15 +16,8 @@ class CotationController {
         global $woocommerce;
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
 
-        // TODO
-        // $packagecontroller   = new PackController();
-        // $dim = $packagecontroller->getPackage($woocommerce->cart);
-        $package =  [
-            "weight" => 1,
-            "width" => 12,
-            "height" => 14,
-            "length" => 17
-        ];
+        $packagecontroller  = new PackageController();
+        $package = $packagecontroller->getPackageOrder($order_id);
 
         $result = $this->makeCotationPackage($package, [1,2,3,4,7], $to);
         $result['date_cotation'] = date('Y-m-d H:i:s');
