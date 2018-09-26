@@ -113,6 +113,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -613,11 +618,13 @@ var render = function() {
   return _c("div", { staticClass: "app-pedidos" }, [
     _c("h1", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
+    _vm._m(0),
+    _vm._v(" "),
     _c(
       "table",
       { attrs: { border: "1", id: "example-1" } },
       [
-        _vm._m(0),
+        _vm._m(1),
         _vm._v(" "),
         _vm._l(_vm.orders, function(item, index) {
           return _c("tr", { key: index }, [
@@ -713,12 +720,6 @@ var render = function() {
                 : _vm._e(),
               _vm._v(" "),
               _c("br")
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              _vm._v(
-                "\n                " + _vm._s(item.order_id) + "\n            "
-              )
             ]),
             _vm._v(" "),
             _c("td", [
@@ -841,6 +842,22 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("select", [
+      _c("option", [_vm._v("Todos")]),
+      _vm._v(" "),
+      _c("option", { attrs: { value: "printed" } }, [_vm._v("Impresso")]),
+      _vm._v(" "),
+      _c("option", { attrs: { value: "paid" } }, [_vm._v("Pago")]),
+      _vm._v(" "),
+      _c("option", { attrs: { value: "pending" } }, [_vm._v("Pendente")]),
+      _vm._v(" "),
+      _c("option", { attrs: { value: "generated" } }, [_vm._v("Gerado")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("tr", [
       _c("th", [_vm._v("#")]),
       _vm._v(" "),
@@ -849,8 +866,6 @@ var staticRenderFns = [
       _c("th", [_vm._v("Cliente")]),
       _vm._v(" "),
       _c("th", [_vm._v("Cotação")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Order id")]),
       _vm._v(" "),
       _c("th", [_vm._v("Status")]),
       _vm._v(" "),

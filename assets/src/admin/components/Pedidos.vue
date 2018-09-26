@@ -1,13 +1,21 @@
 <template>
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
+
+        <select>
+            <option>Todos</option>
+            <option value="printed">Impresso</option>
+            <option value="paid">Pago</option>
+            <option value="pending">Pendente</option>
+            <option value="generated">Gerado</option>
+        </select>
+
         <table border="1" id="example-1">
             <tr>
                 <th>#</th>
                 <th>Valor pedido</th>
                 <th>Cliente</th>
                 <th>Cotação</th>
-                <th>Order id</th>
                 <th>Status</th>
                 <th>Ações</th>
             </tr>
@@ -28,9 +36,6 @@
                         </option>
                     </select>
                     <br>
-                </td>
-                <td>
-                    {{item.order_id}}
                 </td>
                 <td>
                     {{item.status}}

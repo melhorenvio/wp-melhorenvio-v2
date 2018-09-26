@@ -240,14 +240,13 @@ class OrdersController {
     }   
 
     private function updateDataCotation($order_id, $data, $status) {
-        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2'));
 
-        if (is_null($oldData) || empty($oldData)) {
-            add_post_meta($order_id, 'melhorenvio_status_v2', $data);
-            return true;
+        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2', true));
+        if (empty($oldData || is_null($oldData))) {
+            $data = array_merge($oldData, $data);
         }
-    
-        $newData = array_merge($oldData, $data);
-        add_post_meta($order_id, 'melhorenvio_status_v2', $newData);
+        
+        delete_post_meta($order_id, 'melhorenvio_status_v2');
+        add_post_meta($order_id, 'melhorenvio_status_v2', $data);
     }
 }

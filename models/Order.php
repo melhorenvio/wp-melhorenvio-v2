@@ -64,10 +64,18 @@ class Order extends bOrders {
             'numberposts' => ($filters['limit']) ?: 10,
             'offset' => ($filters['skip']) ?: 0,
             'post_status' => 'public',
-            'post_type' => 'shop_order'
+            'post_type' => 'shop_order',
+            // 'meta_query' => array(
+            //     array(
+            //         'key' => 'melhorenvio_status_v2',
+            //         'value' => sprintf(':"%s";', 'printed'),
+            //         'compare' => 'LIKE'
+            //     )
+            // )
         );
 
         $posts =  get_posts($args);
+
         $data = [];
         foreach ($posts as $post) {
 
