@@ -7,6 +7,7 @@
                 <th>Valor pedido</th>
                 <th>Cliente</th>
                 <th>Cotação</th>
+                <th>Order id</th>
                 <th>Status</th>
                 <th>Ações</th>
             </tr>
@@ -21,12 +22,15 @@
                     <p>{{item.to.city}} / {{item.to.state}} - {{item.to.postcode}}</p>
                 </td>
                 <td>
-                    <select v-model="item.cotation.choose_method">
+                    <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
                         <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
                             {{ option.name }} (R${{ option.price }}) 
                         </option>
                     </select>
                     <br>
+                </td>
+                <td>
+                    {{item.order_id}}
                 </td>
                 <td>
                     {{item.status}}

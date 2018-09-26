@@ -109,6 +109,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -652,57 +656,69 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("td", [
-              _c(
-                "select",
-                {
-                  directives: [
+              !(
+                item.status == "paid" ||
+                item.status == "printed" ||
+                item.status == "generated"
+              )
+                ? _c(
+                    "select",
                     {
-                      name: "model",
-                      rawName: "v-model",
-                      value: item.cotation.choose_method,
-                      expression: "item.cotation.choose_method"
-                    }
-                  ],
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.$set(
-                        item.cotation,
-                        "choose_method",
-                        $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      )
-                    }
-                  }
-                },
-                _vm._l(item.cotation, function(option) {
-                  return option.id && option.price
-                    ? _c(
-                        "option",
-                        { key: option.id, domProps: { value: option.id } },
-                        [
-                          _vm._v(
-                            "\n                        " +
-                              _vm._s(option.name) +
-                              " (R$" +
-                              _vm._s(option.price) +
-                              ") \n                    "
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: item.cotation.choose_method,
+                          expression: "item.cotation.choose_method"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            item.cotation,
+                            "choose_method",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
                           )
-                        ]
-                      )
-                    : _vm._e()
-                })
-              ),
+                        }
+                      }
+                    },
+                    _vm._l(item.cotation, function(option) {
+                      return option.id && option.price
+                        ? _c(
+                            "option",
+                            { key: option.id, domProps: { value: option.id } },
+                            [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(option.name) +
+                                  " (R$" +
+                                  _vm._s(option.price) +
+                                  ") \n                    "
+                              )
+                            ]
+                          )
+                        : _vm._e()
+                    })
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _c("br")
+            ]),
+            _vm._v(" "),
+            _c("td", [
+              _vm._v(
+                "\n                " + _vm._s(item.order_id) + "\n            "
+              )
             ]),
             _vm._v(" "),
             _c("td", [
@@ -833,6 +849,8 @@ var staticRenderFns = [
       _c("th", [_vm._v("Cliente")]),
       _vm._v(" "),
       _c("th", [_vm._v("Cotação")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Order id")]),
       _vm._v(" "),
       _c("th", [_vm._v("Status")]),
       _vm._v(" "),
@@ -1201,12 +1219,13 @@ var orders = {
                 }
             });
             delete order.content.status;
+            delete order.content.order_id;
             state.orders.splice(order.position, 1, order.content);
         },
         addCart: function addCart(state, data) {
             var order = void 0;
             state.orders.find(function (item, index) {
-                if (item.id === data) {
+                if (item.id === data.id) {
                     order = {
                         position: index,
                         content: JSON.parse(JSON.stringify(item))
@@ -1214,6 +1233,7 @@ var orders = {
                 }
             });
             order.content.status = 'pending';
+            order.content.order_id = data.order_id;
             state.orders.splice(order.position, 1, order.content);
         },
         payTicket: function payTicket(state, data) {
@@ -1306,7 +1326,10 @@ var orders = {
             }
             if (data.id && data.choosen) {
                 _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen, data).then(function (response) {
-                    commit('addCart', data.id);
+                    commit('addCart', {
+                        id: data.id,
+                        order_id: response.data.data.id
+                    });
                 });
             }
         },
@@ -1336,6 +1359,8 @@ var orders = {
 
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 commit('printTicket', data.id);
+                console.log(response);
+
                 window.open(response.data.data.url, '_blank');
             });
         }

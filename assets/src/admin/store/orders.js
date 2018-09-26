@@ -32,12 +32,13 @@ const orders = {
                 }
             })
             delete order.content.status
+            delete order.content.order_id
             state.orders.splice(order.position, 1, order.content)
         },
         addCart: (state, data) => {
             let order
             state.orders.find((item, index) => {
-                if (item.id === data) {
+                if (item.id === data.id) {
                     order = {
                         position: index,
                         content: JSON.parse(JSON.stringify(item))
@@ -45,6 +46,7 @@ const orders = {
                 }
             })
             order.content.status = 'pending'
+            order.content.order_id = data.order_id
             state.orders.splice(order.position, 1, order.content)
         },
         payTicket: (state, data) => {
@@ -128,7 +130,10 @@ const orders = {
             }
             if (data.id && data.choosen) {
                 Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}`, data).then(response => {
-                    commit('addCart', data.id)
+                    commit('addCart',{
+                        id: data.id,
+                        order_id: response.data.data.id
+                    })
                 })
             }
         },
@@ -150,6 +155,8 @@ const orders = {
         printTicket: ({commit}, data) => {        
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 commit('printTicket', data.id)
+                console.log(response);
+                
                 window.open(response.data.data.url,'_blank');
             })
         }
