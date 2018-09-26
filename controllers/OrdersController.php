@@ -105,6 +105,7 @@ class OrdersController {
         echo json_encode([
             'success' => true
         ]);
+        die;
     }
 
     private function removeDataCotation($order_id) {

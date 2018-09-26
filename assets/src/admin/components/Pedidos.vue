@@ -7,7 +7,6 @@
                 <th>Valor pedido</th>
                 <th>Cliente</th>
                 <th>Cotação</th>
-                <th>Ordem ID (Melhor Envio)</th>
                 <th>Status</th>
                 <th>Ações</th>
             </tr>
@@ -30,15 +29,12 @@
                     <br>
                 </td>
                 <td>
-                    {{item.order_id}}
-                </td>
-                <td>
                     {{item.status}}
                 </td>
                 <td>
                     <button v-if="!item.status" @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
-                    <button v-if="item.order_id && item.id" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
-                    <button v-if="item.order_id && item.id && item.status != 'paid' && item.status != 'generated' && item.status != 'printed'" @click="payTicket({id:item.id, order_id:item.order_id})">Pay</button>
+                    <button v-if="item.status && item.order_id && item.id" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
+                    <button v-if="item.status && item.order_id && item.id && item.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})">Pay</button>
                     <button v-if="item.status && item.status == 'paid' && item.order_id" @click="createTicket({id:item.id, order_id:item.order_id})">Create ticket</button>
                     <button v-if="item.status && (item.status == 'generated' || item.status == 'printed' )" @click="printTicket({id:item.id, order_id:item.order_id})">Print ticket</button>
                 </td>

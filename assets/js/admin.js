@@ -109,10 +109,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -711,12 +707,6 @@ var render = function() {
             _vm._v(" "),
             _c("td", [
               _vm._v(
-                "\n                " + _vm._s(item.order_id) + "\n            "
-              )
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              _vm._v(
                 "\n                " + _vm._s(item.status) + "\n            "
               )
             ]),
@@ -739,7 +729,7 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              item.order_id && item.id
+              item.status && item.order_id && item.id
                 ? _c(
                     "button",
                     {
@@ -756,11 +746,10 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
+              item.status &&
               item.order_id &&
               item.id &&
-              item.status != "paid" &&
-              item.status != "generated" &&
-              item.status != "printed"
+              item.status == "pending"
                 ? _c(
                     "button",
                     {
@@ -844,8 +833,6 @@ var staticRenderFns = [
       _c("th", [_vm._v("Cliente")]),
       _vm._v(" "),
       _c("th", [_vm._v("Cotação")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Ordem ID (Melhor Envio)")]),
       _vm._v(" "),
       _c("th", [_vm._v("Status")]),
       _vm._v(" "),
@@ -1199,10 +1186,74 @@ var orders = {
         loadMore: function loadMore(state, data) {
 
             state.filters.skip += data.length;
-
             data.map(function (item) {
                 state.orders.push(item);
             });
+        },
+        removeCart: function removeCart(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            delete order.content.status;
+            state.orders.splice(order.position, 1, order.content);
+        },
+        addCart: function addCart(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content.status = 'pending';
+            state.orders.splice(order.position, 1, order.content);
+        },
+        payTicket: function payTicket(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content.status = 'paid';
+            state.orders.splice(order.position, 1, order.content);
+        },
+        createTicket: function createTicket(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content.status = 'generated';
+            state.orders.splice(order.position, 1, order.content);
+        },
+        printTicket: function printTicket(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content.status = 'printed';
+            state.orders.splice(order.position, 1, order.content);
         }
     },
     getters: {
@@ -1253,11 +1304,9 @@ var orders = {
             if (!data) {
                 return false;
             }
-
-            // TODO separar data da url
             if (data.id && data.choosen) {
                 _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen, data).then(function (response) {
-                    console.log(response);
+                    commit('addCart', data.id);
                 });
             }
         },
@@ -1265,27 +1314,28 @@ var orders = {
             var commit = _ref4.commit;
 
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
-                console.log(response);
+                commit('removeCart', data.id);
             });
         },
         payTicket: function payTicket(_ref5, data) {
             var commit = _ref5.commit;
 
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
-                console.log(response);
+                commit('payTicket', data.id);
             });
         },
         createTicket: function createTicket(_ref6, data) {
             var commit = _ref6.commit;
 
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
-                console.log(response);
+                commit('createTicket', data.id);
             });
         },
         printTicket: function printTicket(_ref7, data) {
             var commit = _ref7.commit;
 
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+                commit('printTicket', data.id);
                 window.open(response.data.data.url, '_blank');
             });
         }
