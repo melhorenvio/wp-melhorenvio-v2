@@ -2,8 +2,8 @@
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
 
-        <select>
-            <option>Todos</option>
+        <select v-model="status">
+            <option value="all">Todos</option>
             <option value="printed">Impresso</option>
             <option value="paid">Pago</option>
             <option value="pending">Pendente</option>
@@ -59,6 +59,11 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'Pedidos',
+    data: () => {
+        return {
+            status: 'all'
+        }
+    },
     computed: {
         ...mapGetters('orders', {
             orders: 'getOrders'
@@ -74,6 +79,11 @@ export default {
             'createTicket',
             'printTicket'
         ])
+    },
+    watch: {
+        status (status) {
+            this.retrieveMany(status)
+        }
     },
     mounted () {
         if (Object.keys(this.orders).length === 0) {

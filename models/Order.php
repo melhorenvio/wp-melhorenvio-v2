@@ -60,19 +60,22 @@ class Order extends bOrders {
      */
     public function getAllOrders(Array $filters = NULL) : Array
     {
-        $args = array(
+        $args = [
             'numberposts' => ($filters['limit']) ?: 10,
             'offset' => ($filters['skip']) ?: 0,
             'post_status' => 'public',
             'post_type' => 'shop_order',
-            // 'meta_query' => array(
-            //     array(
-            //         'key' => 'melhorenvio_status_v2',
-            //         'value' => sprintf(':"%s";', 'printed'),
-            //         'compare' => 'LIKE'
-            //     )
-            // )
-        );
+        ];
+
+        if (isset($filters['status']) && $filters['status'] != 'all') {
+            $args['meta_query'] = [
+                [
+                    'key' => 'melhorenvio_status_v2',
+                    'value' => sprintf(':"%s";', $filters['status']),
+                    'compare' => 'LIKE'
+                ]
+            ];
+        }
 
         $posts =  get_posts($args);
 

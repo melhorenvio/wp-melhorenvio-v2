@@ -93,12 +93,13 @@ const orders = {
         getOrders: state => state.orders
     },
     actions: {
-        retrieveMany: ({commit}) => {
+        retrieveMany: ({commit}, status) => {
 
             let data = {
                 action: 'get_orders',
                 limit: 10,
-                skip: 0
+                skip: 0,
+                status: status
             }
 
             Axios.get(`${ajaxurl}`, {

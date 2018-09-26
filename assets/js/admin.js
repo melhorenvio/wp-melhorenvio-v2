@@ -123,10 +123,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Pedidos',
+    data: () => {
+        return {
+            status: 'all'
+        };
+    },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     })),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket'])),
+    watch: {
+        status(status) {
+            this.retrieveMany(status);
+        }
+    },
     mounted() {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany();
@@ -618,13 +628,51 @@ var render = function() {
   return _c("div", { staticClass: "app-pedidos" }, [
     _c("h1", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
-    _vm._m(0),
+    _c(
+      "select",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.status,
+            expression: "status"
+          }
+        ],
+        on: {
+          change: function($event) {
+            var $$selectedVal = Array.prototype.filter
+              .call($event.target.options, function(o) {
+                return o.selected
+              })
+              .map(function(o) {
+                var val = "_value" in o ? o._value : o.value
+                return val
+              })
+            _vm.status = $event.target.multiple
+              ? $$selectedVal
+              : $$selectedVal[0]
+          }
+        }
+      },
+      [
+        _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "printed" } }, [_vm._v("Impresso")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "paid" } }, [_vm._v("Pago")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "pending" } }, [_vm._v("Pendente")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "generated" } }, [_vm._v("Gerado")])
+      ]
+    ),
     _vm._v(" "),
     _c(
       "table",
       { attrs: { border: "1", id: "example-1" } },
       [
-        _vm._m(1),
+        _vm._m(0),
         _vm._v(" "),
         _vm._l(_vm.orders, function(item, index) {
           return _c("tr", { key: index }, [
@@ -838,22 +886,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("select", [
-      _c("option", [_vm._v("Todos")]),
-      _vm._v(" "),
-      _c("option", { attrs: { value: "printed" } }, [_vm._v("Impresso")]),
-      _vm._v(" "),
-      _c("option", { attrs: { value: "paid" } }, [_vm._v("Pago")]),
-      _vm._v(" "),
-      _c("option", { attrs: { value: "pending" } }, [_vm._v("Pendente")]),
-      _vm._v(" "),
-      _c("option", { attrs: { value: "generated" } }, [_vm._v("Gerado")])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -1297,14 +1329,15 @@ var orders = {
         }
     },
     actions: {
-        retrieveMany: function retrieveMany(_ref) {
+        retrieveMany: function retrieveMany(_ref, status) {
             var commit = _ref.commit;
 
 
             var data = {
                 action: 'get_orders',
                 limit: 10,
-                skip: 0
+                skip: 0,
+                status: status
             };
 
             _axios2.default.get('' + ajaxurl, {
