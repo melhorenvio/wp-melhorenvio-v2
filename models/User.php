@@ -4,24 +4,26 @@ namespace Models;
 
 class User {
 
-    private $name;
-    private $phone;
-    private $email;
-    private $document;
-    private $company_document;
-    private $state_register;
-    private $address;
-    private $complement;
-    private $number;
-    private $district;
-    private $city;
-    private $state_abbr;
-    private $country_id;
-    private $postal_code;
-    private $note;
+    public function getBalance() {
 
+        $token = get_option('melhorenvio_token');
+        $params = array('headers'=>[
+            'Content-Type' => 'application/json',
+            'Accept'=>'application/json',
+            'Authorization' => 'Bearer '.$token],
+        );
 
-    public function __construct() {
+        $response = json_decode(wp_remote_retrieve_body(wp_remote_get('https://www.melhorenvio.com.br/api/v2/me/balance', $params)));
+        if (isset($response->balance)) {
+            return [
+                'success' => true,
+                'balance' => $response->balance
+            ];
+        }
         
+        return [
+            'error' => true,
+            'message' => 'Erro ao conectar a API'
+        ];
     }
 }

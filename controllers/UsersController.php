@@ -88,6 +88,14 @@ class UsersController {
 
     }
 
+    public function getBalance() {
+        $usr = new \Models\User();
+        echo json_encode(
+            $usr->getBalance()
+        );
+        die;
+    }
+
     private function mask($val, $mask){
         $maskared = '';
         $k = 0;

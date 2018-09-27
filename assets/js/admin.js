@@ -132,6 +132,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -145,8 +147,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
-    })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket'])),
+    }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance'])),
     watch: {
         status() {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
@@ -159,6 +161,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
+        this.setBalance();
     }
 });
 
@@ -749,6 +752,11 @@ var render = function() {
     _vm._v(" "),
     _c("br"),
     _vm._v(" "),
+    _c("h2", [
+      _vm._v("Saldo: R$"),
+      _c("span", [_vm._v(_vm._s(_vm.getBalance))])
+    ]),
+    _vm._v(" "),
     _vm.orders.length > 0
       ? _c(
           "table",
@@ -1298,13 +1306,18 @@ var _orders = __webpack_require__(73);
 
 var _orders2 = _interopRequireDefault(_orders);
 
+var _balance = __webpack_require__(86);
+
+var _balance2 = _interopRequireDefault(_balance);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(_vuex2.default);
 
 var store = new _vuex2.default.Store({
     modules: {
-        orders: _orders2.default
+        orders: _orders2.default,
+        balance: _balance2.default
     }
 });
 
@@ -1513,6 +1526,63 @@ var orders = {
 };
 
 exports.default = orders;
+
+/***/ }),
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _axios = __webpack_require__(5);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var balance = {
+    namespaced: true,
+    state: {
+        balance: null
+    },
+    mutations: {
+        setBalance: function setBalance(state, data) {
+            state.balance = data;
+        }
+    },
+    getters: {
+        getBalance: function getBalance(state) {
+            return state.balance;
+        }
+    },
+    actions: {
+        setBalance: function setBalance(_ref, data) {
+            var commit = _ref.commit;
+
+            _axios2.default.get(ajaxurl + '?action=get_balance', data).then(function (response) {
+                commit('setBalance', response.data.balance);
+            });
+        }
+    }
+};
+
+exports.default = balance;
 
 /***/ })
 ],[36]);

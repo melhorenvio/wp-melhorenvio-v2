@@ -53,6 +53,7 @@ use Controllers\OrdersController;
 use Controllers\ConfigurationController;
 use Controllers\TokenController;
 use Controllers\PackageController;
+use Controllers\UsersController;
 
 /**
  * Base_Plugin class
@@ -224,6 +225,7 @@ final class Base_Plugin {
         // $orders = new OrdersController();
         $token  = new tokenController();
         $order  = new OrdersController(); 
+        $users  = new UsersController();
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -248,6 +250,7 @@ final class Base_Plugin {
         add_action('wp_ajax_pay_ticket', [$order, 'payTicket']);
         add_action('wp_ajax_create_ticket', [$order, 'createTicket']);
         add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
+        add_action('wp_ajax_get_balance', [$users, 'getBalance']);
     }
     
 

@@ -24,6 +24,8 @@
         </select>
         <br>
         <br>
+
+        <h2>Saldo: R$<span>{{ getBalance }}</span></h2>
         <table v-if="orders.length > 0" border="1" id="example-1">
             <tr>
                 <th>#</th>
@@ -82,7 +84,8 @@ export default {
     computed: {
         ...mapGetters('orders', {
             orders: 'getOrders'
-        })
+        }),
+        ...mapGetters('balance', ['getBalance'])
     },
     methods: {
         ...mapActions('orders', [
@@ -92,8 +95,9 @@ export default {
             'removeCart',
             'payTicket',
             'createTicket',
-            'printTicket'
-        ])
+            'printTicket',
+        ]),
+        ...mapActions('balance', ['setBalance'])
     },
     watch: {
         status () {
@@ -107,6 +111,7 @@ export default {
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
+        this.setBalance()
     }
 }
 </script>
