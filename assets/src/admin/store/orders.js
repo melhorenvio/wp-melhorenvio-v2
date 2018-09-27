@@ -7,7 +7,9 @@ const orders = {
         orders: [],
         filters: {
             limit: 10,
-            skip: 10
+            skip: 10,
+            status: 'all',
+            wpstatus: 'all'
         }
     },
     mutations: {
@@ -93,17 +95,17 @@ const orders = {
         getOrders: state => state.orders
     },
     actions: {
-        retrieveMany: ({commit}, status) => {
-
-            let data = {
+        retrieveMany: ({commit}, data) => {
+            let content = {
                 action: 'get_orders',
                 limit: 10,
                 skip: 0,
-                status: status
+                status: (data.status) ? data.status : null,
+                wpstatus: (data.wpstatus) ? data.wpstatus : null
             }
 
             Axios.get(`${ajaxurl}`, {
-                params: data
+                params: content
             }).then(function (response) {
 
                 if (response && response.status === 200) {
@@ -111,10 +113,13 @@ const orders = {
                 }
             })
         },
-        loadMore: ({commit, state}) => {
+        loadMore: ({commit, state}, status) => {
             let data = {
                 action: 'get_orders',
             }
+            
+            state.filters.status = status.status
+            state.filters.wpstatus = status.wpstatus
 
             Axios.get(`${ajaxurl}`, {
                 params: Object.assign(data, state.filters)

@@ -118,6 +118,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -125,7 +139,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     name: 'Pedidos',
     data: () => {
         return {
-            status: 'all'
+            status: 'all',
+            wpstatus: 'all'
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
@@ -133,13 +148,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     })),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket'])),
     watch: {
-        status(status) {
-            this.retrieveMany(status);
+        status() {
+            this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
+        },
+        wpstatus() {
+            this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
     },
     mounted() {
         if (Object.keys(this.orders).length === 0) {
-            this.retrieveMany();
+            this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
     }
 });
@@ -628,6 +646,9 @@ var render = function() {
   return _c("div", { staticClass: "app-pedidos" }, [
     _c("h1", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
+    _c("label", [_vm._v("Status Melhor Envio")]),
+    _c("br"),
+    _vm._v(" "),
     _c(
       "select",
       {
@@ -667,217 +688,288 @@ var render = function() {
         _c("option", { attrs: { value: "generated" } }, [_vm._v("Gerado")])
       ]
     ),
+    _c("br"),
+    _vm._v(" "),
+    _c("label", [_vm._v("Status WooCommerce")]),
+    _c("br"),
     _vm._v(" "),
     _c(
-      "table",
-      { attrs: { border: "1", id: "example-1" } },
+      "select",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.wpstatus,
+            expression: "wpstatus"
+          }
+        ],
+        on: {
+          change: function($event) {
+            var $$selectedVal = Array.prototype.filter
+              .call($event.target.options, function(o) {
+                return o.selected
+              })
+              .map(function(o) {
+                var val = "_value" in o ? o._value : o.value
+                return val
+              })
+            _vm.wpstatus = $event.target.multiple
+              ? $$selectedVal
+              : $$selectedVal[0]
+          }
+        }
+      },
       [
-        _vm._m(0),
+        _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
         _vm._v(" "),
-        _vm._l(_vm.orders, function(item, index) {
-          return _c("tr", { key: index }, [
-            _c("td", [_vm._v(_vm._s(item.id))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(item.total))]),
-            _vm._v(" "),
-            _c("td", [
-              _c("p", [
-                _c("b", [
-                  _vm._v(
-                    _vm._s(item.to.first_name) + " " + _vm._s(item.to.last_name)
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("p", [_vm._v(_vm._s(item.to.email))]),
-              _vm._v(" "),
-              _c("p", [_vm._v(_vm._s(item.to.phone))]),
-              _vm._v(" "),
-              _c("p", [
-                _vm._v(
-                  _vm._s(item.to.address_1) + " " + _vm._s(item.to.address_2)
-                )
-              ]),
-              _vm._v(" "),
-              _c("p", [
-                _vm._v(
-                  _vm._s(item.to.city) +
-                    " / " +
-                    _vm._s(item.to.state) +
-                    " - " +
-                    _vm._s(item.to.postcode)
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              !(
-                item.status == "paid" ||
-                item.status == "printed" ||
-                item.status == "generated"
-              )
-                ? _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: item.cotation.choose_method,
-                          expression: "item.cotation.choose_method"
-                        }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            item.cotation,
-                            "choose_method",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    _vm._l(item.cotation, function(option) {
-                      return option.id && option.price
-                        ? _c(
-                            "option",
-                            { key: option.id, domProps: { value: option.id } },
-                            [
-                              _vm._v(
-                                "\n                        " +
-                                  _vm._s(option.name) +
-                                  " (R$" +
-                                  _vm._s(option.price) +
-                                  ") \n                    "
-                              )
-                            ]
-                          )
-                        : _vm._e()
-                    })
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              _c("br")
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              _vm._v(
-                "\n                " + _vm._s(item.status) + "\n            "
-              )
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              !item.status
-                ? _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.addCart({
-                            id: item.id,
-                            choosen: item.cotation.choose_method
-                          })
-                        }
-                      }
-                    },
-                    [_vm._v("Add cart")]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              item.status && item.order_id && item.id
-                ? _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.removeCart({
-                            id: item.id,
-                            order_id: item.order_id
-                          })
-                        }
-                      }
-                    },
-                    [_vm._v("Remove cart")]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              item.status &&
-              item.order_id &&
-              item.id &&
-              item.status == "pending"
-                ? _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.payTicket({
-                            id: item.id,
-                            order_id: item.order_id
-                          })
-                        }
-                      }
-                    },
-                    [_vm._v("Pay")]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              item.status && item.status == "paid" && item.order_id
-                ? _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.createTicket({
-                            id: item.id,
-                            order_id: item.order_id
-                          })
-                        }
-                      }
-                    },
-                    [_vm._v("Create ticket")]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              item.status &&
-              (item.status == "generated" || item.status == "printed")
-                ? _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.printTicket({
-                            id: item.id,
-                            order_id: item.order_id
-                          })
-                        }
-                      }
-                    },
-                    [_vm._v("Print ticket")]
-                  )
-                : _vm._e()
-            ])
-          ])
-        })
-      ],
-      2
+        _c("option", { attrs: { value: "wc-pending" } }, [_vm._v("Pendente")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-processing" } }, [
+          _vm._v("Processando")
+        ]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-on-hold" } }, [_vm._v("Pendente")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-completed" } }, [
+          _vm._v("Completo")
+        ]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-cancelled" } }, [
+          _vm._v("Cancelado")
+        ]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-refunded" } }, [_vm._v("Recusado")]),
+        _vm._v(" "),
+        _c("option", { attrs: { value: "wc-failed" } }, [_vm._v("Falhado")])
+      ]
     ),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _vm.orders.length > 0
+      ? _c(
+          "table",
+          { attrs: { border: "1", id: "example-1" } },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _vm._l(_vm.orders, function(item, index) {
+              return _c("tr", { key: index }, [
+                _c("td", [_vm._v(_vm._s(item.id))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(item.total))]),
+                _vm._v(" "),
+                _c("td", [
+                  _c("p", [
+                    _c("b", [
+                      _vm._v(
+                        _vm._s(item.to.first_name) +
+                          " " +
+                          _vm._s(item.to.last_name)
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("p", [_vm._v(_vm._s(item.to.email))]),
+                  _vm._v(" "),
+                  _c("p", [_vm._v(_vm._s(item.to.phone))]),
+                  _vm._v(" "),
+                  _c("p", [
+                    _vm._v(
+                      _vm._s(item.to.address_1) +
+                        " " +
+                        _vm._s(item.to.address_2)
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("p", [
+                    _vm._v(
+                      _vm._s(item.to.city) +
+                        " / " +
+                        _vm._s(item.to.state) +
+                        " - " +
+                        _vm._s(item.to.postcode)
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("td", [
+                  !(
+                    item.status == "paid" ||
+                    item.status == "printed" ||
+                    item.status == "generated"
+                  )
+                    ? _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: item.cotation.choose_method,
+                              expression: "item.cotation.choose_method"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                item.cotation,
+                                "choose_method",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(item.cotation, function(option) {
+                          return option.id && option.price
+                            ? _c(
+                                "option",
+                                {
+                                  key: option.id,
+                                  domProps: { value: option.id }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                        " +
+                                      _vm._s(option.name) +
+                                      " (R$" +
+                                      _vm._s(option.price) +
+                                      ") \n                    "
+                                  )
+                                ]
+                              )
+                            : _vm._e()
+                        })
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("br")
+                ]),
+                _vm._v(" "),
+                _c("td", [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(item.status) +
+                      "\n            "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("td", [
+                  !item.status
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.addCart({
+                                id: item.id,
+                                choosen: item.cotation.choose_method
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Add cart")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  item.status && item.order_id && item.id
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.removeCart({
+                                id: item.id,
+                                order_id: item.order_id
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Remove cart")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  item.status &&
+                  item.order_id &&
+                  item.id &&
+                  item.status == "pending"
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.payTicket({
+                                id: item.id,
+                                order_id: item.order_id
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Pay")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  item.status && item.status == "paid" && item.order_id
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.createTicket({
+                                id: item.id,
+                                order_id: item.order_id
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Create ticket")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  item.status &&
+                  (item.status == "generated" || item.status == "printed")
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.printTicket({
+                                id: item.id,
+                                order_id: item.order_id
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Print ticket")]
+                      )
+                    : _vm._e()
+                ])
+              ])
+            })
+          ],
+          2
+        )
+      : _c("div", [_c("p", [_vm._v("Nenhum registro encontrado")])]),
     _vm._v(" "),
     _c(
       "button",
       {
         on: {
           click: function($event) {
-            _vm.loadMore()
+            _vm.loadMore({ status: _vm.status, wpstatus: _vm.wpstatus })
           }
         }
       },
@@ -1241,7 +1333,9 @@ var orders = {
         orders: [],
         filters: {
             limit: 10,
-            skip: 10
+            skip: 10,
+            status: 'all',
+            wpstatus: 'all'
         }
     },
     mutations: {
@@ -1329,19 +1423,19 @@ var orders = {
         }
     },
     actions: {
-        retrieveMany: function retrieveMany(_ref, status) {
+        retrieveMany: function retrieveMany(_ref, data) {
             var commit = _ref.commit;
 
-
-            var data = {
+            var content = {
                 action: 'get_orders',
                 limit: 10,
                 skip: 0,
-                status: status
+                status: data.status ? data.status : null,
+                wpstatus: data.wpstatus ? data.wpstatus : null
             };
 
             _axios2.default.get('' + ajaxurl, {
-                params: data
+                params: content
             }).then(function (response) {
 
                 if (response && response.status === 200) {
@@ -1349,13 +1443,16 @@ var orders = {
                 }
             });
         },
-        loadMore: function loadMore(_ref2) {
+        loadMore: function loadMore(_ref2, status) {
             var commit = _ref2.commit,
                 state = _ref2.state;
 
             var data = {
                 action: 'get_orders'
             };
+
+            state.filters.status = status.status;
+            state.filters.wpstatus = status.wpstatus;
 
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)

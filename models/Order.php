@@ -63,7 +63,7 @@ class Order extends bOrders {
         $args = [
             'numberposts' => ($filters['limit']) ?: 10,
             'offset' => ($filters['skip']) ?: 0,
-            'post_status' => 'public',
+            'post_status' => ($filters['wp_status']) ?: 'public',
             'post_type' => 'shop_order',
         ];
 
@@ -77,8 +77,7 @@ class Order extends bOrders {
             ];
         }
 
-        $posts =  get_posts($args);
-
+        $posts =  get_posts($args);    
         $data = [];
         foreach ($posts as $post) {
 

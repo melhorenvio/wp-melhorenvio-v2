@@ -2,15 +2,29 @@
     <div class="app-pedidos">
         <h1>Meus pedidos</h1>
 
+        <label>Status Melhor Envio</label><br>
         <select v-model="status">
             <option value="all">Todos</option>
             <option value="printed">Impresso</option>
             <option value="paid">Pago</option>
             <option value="pending">Pendente</option>
             <option value="generated">Gerado</option>
-        </select>
+        </select><br>
 
-        <table border="1" id="example-1">
+        <label>Status WooCommerce</label><br>
+        <select v-model="wpstatus">
+            <option value="all">Todos</option>
+            <option value="wc-pending">Pendente</option>
+            <option value="wc-processing">Processando</option>
+            <option value="wc-on-hold">Pendente</option>
+            <option value="wc-completed">Completo</option>
+            <option value="wc-cancelled">Cancelado</option>
+            <option value="wc-refunded">Recusado</option>
+            <option value="wc-failed">Falhado</option>
+        </select>
+        <br>
+        <br>
+        <table v-if="orders.length > 0" border="1" id="example-1">
             <tr>
                 <th>#</th>
                 <th>Valor pedido</th>
@@ -49,8 +63,8 @@
                 </td>
             </tr>
         </table>
-
-        <button @click="loadMore()">Carregar mais</button>
+        <div v-else><p>Nenhum registro encontrado</p></div>
+        <button @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
     </div>
 </template>
 
@@ -61,7 +75,8 @@ export default {
     name: 'Pedidos',
     data: () => {
         return {
-            status: 'all'
+            status: 'all',
+            wpstatus: 'all'
         }
     },
     computed: {
@@ -81,13 +96,16 @@ export default {
         ])
     },
     watch: {
-        status (status) {
-            this.retrieveMany(status)
+        status () {
+            this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
+        },
+        wpstatus () {
+            this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
     },
     mounted () {
         if (Object.keys(this.orders).length === 0) {
-            this.retrieveMany()
+            this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
     }
 }
