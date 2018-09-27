@@ -1491,29 +1491,27 @@ var orders = {
                 });
             }
         },
-        removeCart: function removeCart(_ref4, data) {
-            var commit = _ref4.commit;
-
+        removeCart: function removeCart(context, data) {
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
-                commit('removeCart', data.id);
+                context.commit('removeCart', data.id);
+                context.dispatch('balance/setBalance', null, { root: true });
             });
         },
-        payTicket: function payTicket(_ref5, data) {
-            var commit = _ref5.commit;
-
+        payTicket: function payTicket(context, data) {
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
-                commit('payTicket', data.id);
+                context.commit('payTicket', data.id);
+                context.dispatch('balance/setBalance', null, { root: true });
             });
         },
-        createTicket: function createTicket(_ref6, data) {
-            var commit = _ref6.commit;
+        createTicket: function createTicket(_ref4, data) {
+            var commit = _ref4.commit;
 
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 commit('createTicket', data.id);
             });
         },
-        printTicket: function printTicket(_ref7, data) {
-            var commit = _ref7.commit;
+        printTicket: function printTicket(_ref5, data) {
+            var commit = _ref5.commit;
 
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 commit('printTicket', data.id);

@@ -143,14 +143,16 @@ const orders = {
                 })
             }
         },
-        removeCart: ({commit}, data) => {        
+        removeCart: (context, data) => {        
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-                commit('removeCart', data.id)
+                context.commit('removeCart', data.id)
+                context.dispatch('balance/setBalance', null, {root: true})
             })
         },
-        payTicket: ({commit}, data) => {        
+        payTicket: (context, data) => {        
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-                commit('payTicket', data.id)
+                context.commit('payTicket', data.id)
+                context.dispatch('balance/setBalance', null, {root: true})
             })
         },
         createTicket: ({commit}, data) => {        
