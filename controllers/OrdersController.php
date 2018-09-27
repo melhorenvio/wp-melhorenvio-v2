@@ -99,9 +99,15 @@ class OrdersController {
         );
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/cart/' . $_GET['order_id'], $params)));
-        
-        $this->removeDataCotation($_GET['id']);
+        if (isset($response->error)) {
+            echo json_encode([
+                'success' => false,
+                'error' => $response->error
+            ]);
+            die;
+        }
 
+        $this->removeDataCotation($_GET['id']);
         echo json_encode([
             'success' => true
         ]);
