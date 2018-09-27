@@ -108,6 +108,40 @@ class OrdersController {
         die;
     }
 
+    public function cancelOrder() {
+
+        $token = get_option('melhorenvio_token');
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$token,
+            ],
+            'timeout'=> 10,
+            'method' => 'POST',
+            'body' => json_encode([
+                'id' => $_GET['order_id'],
+                'reason_id' => 2,
+                'description' => 'Cancelado pelo usuário'
+            ])
+        );
+
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/cancel', $params)));
+        if (isset($response->errors)) {
+            echo json_encode([
+                'siccess' => false,
+                'errors' => $response->errors
+            ]);
+            die;
+        }
+
+        $this->removeDataCotation($_GET['id']);
+        echo json_encode([
+            'success' => true
+        ]);
+        die;
+    }
+
     private function removeDataCotation($order_id) {
         delete_post_meta($order_id, 'melhorenvio_status_v2');
     }

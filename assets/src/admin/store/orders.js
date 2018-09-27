@@ -37,6 +37,19 @@ const orders = {
             delete order.content.order_id
             state.orders.splice(order.position, 1, order.content)
         },
+        cancelCart: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+            order.content.status = 'pending'
+            state.orders.splice(order.position, 1, order.content)
+        },
         addCart: (state, data) => {
             let order
             state.orders.find((item, index) => {
@@ -146,6 +159,12 @@ const orders = {
         removeCart: (context, data) => {        
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 context.commit('removeCart', data.id)
+                context.dispatch('balance/setBalance', null, {root: true})
+            })
+        },
+        cancelCart: (context, data) => {        
+            Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+                context.commit('cancelCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
             })
         },

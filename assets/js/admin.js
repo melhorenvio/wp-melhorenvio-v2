@@ -134,6 +134,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -148,7 +149,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance'])),
     watch: {
         status() {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
@@ -893,7 +894,10 @@ var render = function() {
                       )
                     : _vm._e(),
                   _vm._v(" "),
-                  item.status && item.order_id && item.id
+                  item.status &&
+                  item.order_id &&
+                  item.id &&
+                  item.status != "paid"
                     ? _c(
                         "button",
                         {
@@ -907,6 +911,23 @@ var render = function() {
                           }
                         },
                         [_vm._v("Remove cart")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  item.status == "paid" && item.order_id && item.id
+                    ? _c(
+                        "button",
+                        {
+                          on: {
+                            click: function($event) {
+                              _vm.cancelCart({
+                                id: item.id,
+                                order_id: item.order_id
+                              })
+                            }
+                          }
+                        },
+                        [_vm._v("Cancel")]
                       )
                     : _vm._e(),
                   _vm._v(" "),
@@ -1376,6 +1397,19 @@ var orders = {
             delete order.content.order_id;
             state.orders.splice(order.position, 1, order.content);
         },
+        cancelCart: function cancelCart(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content.status = 'pending';
+            state.orders.splice(order.position, 1, order.content);
+        },
         addCart: function addCart(state, data) {
             var order = void 0;
             state.orders.find(function (item, index) {
@@ -1494,6 +1528,12 @@ var orders = {
         removeCart: function removeCart(context, data) {
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 context.commit('removeCart', data.id);
+                context.dispatch('balance/setBalance', null, { root: true });
+            });
+        },
+        cancelCart: function cancelCart(context, data) {
+            _axios2.default.post(ajaxurl + '?action=cancel_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+                context.commit('cancelCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
             });
         },

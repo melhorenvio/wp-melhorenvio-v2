@@ -58,7 +58,8 @@
                 </td>
                 <td>
                     <button v-if="!item.status" @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
-                    <button v-if="item.status && item.order_id && item.id" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
+                    <button v-if="item.status && item.order_id && item.id && item.status != 'paid'" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
+                    <button v-if="item.status == 'paid' && item.order_id && item.id" @click="cancelCart({id:item.id, order_id:item.order_id})">Cancel</button>
                     <button v-if="item.status && item.order_id && item.id && item.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})">Pay</button>
                     <button v-if="item.status && item.status == 'paid' && item.order_id" @click="createTicket({id:item.id, order_id:item.order_id})">Create ticket</button>
                     <button v-if="item.status && (item.status == 'generated' || item.status == 'printed' )" @click="printTicket({id:item.id, order_id:item.order_id})">Print ticket</button>
@@ -93,6 +94,7 @@ export default {
             'loadMore',
             'addCart',
             'removeCart',
+            'cancelCart',
             'payTicket',
             'createTicket',
             'printTicket',
