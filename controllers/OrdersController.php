@@ -30,7 +30,6 @@ class OrdersController {
             'from' => $user->getFrom(),
             'to' => $user->getTo($_GET['order_id']),
             'service' => $_GET['choosen'],
-            'agency' => null,
             'products' => $products->getProductsOrder($_GET['order_id']),
             'package' => $package->getPackageOrder($_GET['order_id']),
             'options' => [
@@ -52,17 +51,27 @@ class OrdersController {
             $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
             if (!empty($invoices)) {
                 $body['options']['invoice'] = $invoices;
-            }            
+            }       
+            
+            // TODO
+            $body['options']['non_commercial'] = false;
         }
-        
+
+        // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
+        if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
+
+            // TODO ~> 678 é inválido
+            $body['agency'] = 678;
+        }
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
                 'Authorization' => 'Bearer '.$token,
             ],
-            'body'  => json_encode($body),
-            'timeout'=>10
+            'body'  =>  json_encode($body),
+            'timeout'=> 10
         );
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/cart', $params)));
