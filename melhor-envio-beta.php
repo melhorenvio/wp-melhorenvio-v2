@@ -253,9 +253,15 @@ final class Base_Plugin {
         add_action('wp_ajax_create_ticket', [$order, 'createTicket']);
         add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
         add_action('wp_ajax_get_balance', [$users, 'getBalance']);
+        add_action('wp_ajax_insert_invoice_order', [$order, 'insertInvoiceOrder']);
+
+        // Endereços
         add_action('wp_ajax_get_addresses', [$conf, 'getAddressShopping']);
         add_action('wp_ajax_set_address', [$conf, 'setAddressShopping']);
-        add_action('wp_ajax_insert_invoice_order', [$order, 'insertInvoiceOrder']);
+
+        // Agências Jadlog 
+        add_action('wp_ajax_set_agency_jadlog', [$conf, 'setAgencyJadlog']);
+        
     }
     
 

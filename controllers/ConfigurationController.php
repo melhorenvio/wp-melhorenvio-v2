@@ -2,6 +2,7 @@
 
 namespace Controllers;
 use Models\Address;
+use Models\Agency;
 
 class ConfigurationController {
 
@@ -25,6 +26,12 @@ class ConfigurationController {
     public function setAddressShopping() {
         $address = new Address();
         echo json_encode($address->setAddressShopping($_GET['id']));
+        die;
+    }
+
+    public function setAgencyJadlog() {
+        $agency = new Agency();
+        echo json_encode($agency->setAgency($_GET['id']));
         die;
     }
 }
