@@ -253,6 +253,7 @@ final class Base_Plugin {
         add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
         add_action('wp_ajax_get_balance', [$users, 'getBalance']);
         add_action('wp_ajax_get_addresses', [$users, 'getAddressShopping']);
+        add_action('wp_ajax_insert_invoice_order', [$order, 'insertInvoiceOrder']);
     }
     
 

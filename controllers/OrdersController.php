@@ -166,6 +166,29 @@ class OrdersController {
         return $response;
     }
 
+    public function insertInvoiceOrder() {
+
+        unset($_GET['action']);
+
+        if (!isset($_GET['id']) || !isset($_GET['nf']) || !isset($_GET['key_nf']) ) {
+            return json_encode([
+                'success' => false,
+                'message' => 'Campos ID, NF, KEY_NF são obrigatorios'
+            ]);
+            die;
+        }
+
+        $result = Order::updateInvoice(
+            $_GET['id'], 
+            [
+                'nf' => $_GET['nf'],
+                'key_nf' => $_GET['key_nf']
+            ]
+        );
+        return json_encode($result);
+        die;
+    }
+
     public function payTicket() {
 
         $ticket = $this->getInfoTicket($_GET['order_id']);

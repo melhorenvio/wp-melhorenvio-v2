@@ -135,6 +135,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -149,7 +158,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+        updateInvoice(id, nf, key_nf) {
+            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&nf=${nf}&key_nf=${key_nf}`).then(response => {}).catch(error => {});
+        }
+    }),
     watch: {
         status() {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
@@ -880,6 +893,76 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", [
+                  _c("label", [_vm._v("Nota fiscal")]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: item.invoice.nf,
+                        expression: "item.invoice.nf"
+                      }
+                    ],
+                    attrs: { type: "text" },
+                    domProps: { value: item.invoice.nf },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(item.invoice, "nf", $event.target.value)
+                      }
+                    }
+                  }),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("label", [_vm._v("Chave da nota fiscal")]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: item.invoice.key_nf,
+                        expression: "item.invoice.key_nf"
+                      }
+                    ],
+                    attrs: { type: "text" },
+                    domProps: { value: item.invoice.key_nf },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(item.invoice, "key_nf", $event.target.value)
+                      }
+                    }
+                  }),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.updateInvoice(
+                            item.id,
+                            item.invoice.nf,
+                            item.invoice.key_nf
+                          )
+                        }
+                      }
+                    },
+                    [_vm._v("Salvar")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("td", [
                   _vm._v(
                     "\n                " +
                       _vm._s(item.status) +
@@ -1030,6 +1113,8 @@ var staticRenderFns = [
       _c("th", [_vm._v("Cliente")]),
       _vm._v(" "),
       _c("th", [_vm._v("Cotação")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Documentos")]),
       _vm._v(" "),
       _c("th", [_vm._v("Status")]),
       _vm._v(" "),

@@ -94,7 +94,8 @@ class Order extends bOrders {
                 'to' => $order->to,
                 'status' => $dataMelhorEnvio['status'],
                 'order_id' => $dataMelhorEnvio['order_id'],
-                'protocol' => $dataMelhorEnvio['protocol']
+                'protocol' => $dataMelhorEnvio['protocol'],
+                'invoice' => $order->getInvoice()
             ];
         }
 
@@ -159,6 +160,34 @@ class Order extends bOrders {
             return $default;
         }
 
+        return $data;
+    }
+
+    public function updateInvoice($id, $invoices) {
+
+        $oldData = end(get_post_meta($id, 'melhorenvio_invoice_v2', true));
+        if (empty($oldData || is_null($oldData))) {
+            $invoices = array_merge($oldData, $invoices);
+        }
+        delete_post_meta($id, 'melhorenvio_invoice_v2');
+        add_post_meta($id, 'melhorenvio_invoice_v2', $invoices);
+
+        return [
+            'success' => true
+        ];
+    }   
+
+    private function getInvoice($id = null) {
+        if ($id) $this->id = $id; 
+        $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
+        $default = [
+            'nf' => null,
+            'key_nf' => null
+        ];
+
+        if (empty($data) || !$data) {
+            return $default;
+        }
         return $data;
     }
 }   
