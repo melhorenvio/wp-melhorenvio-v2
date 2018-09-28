@@ -60,11 +60,10 @@ class OrdersController {
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/cart', $params)));
 
-        // TODO verificar os error de retorno
-        if ($response->error) {
+        if (!isset($response->id)) {
             echo json_encode([
-                'error' => true,
-                'message' => $response->error
+                'success' => false,
+                'message' => $response
             ]);
             die;
         }

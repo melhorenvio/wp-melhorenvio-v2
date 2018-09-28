@@ -171,35 +171,46 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(4);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 //
 //
 //
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Configuracoes',
     data() {
         return {
-            test: {}
+            address: null
         };
     },
-    methods: {
-        // retrieveOrders () {
-        //     let data = {
-        //         action: 'test'
-        //     }
-
-        //     this.$http.get(`${ajaxurl}`, {
-        //         params: data
-        //     }).then((response) => {
-        //         this.test = response.data
-        //     })
+    computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
+        addresses: 'getAddress'
+    })),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses'])),
+    watch: {
+        // address () {
+        //     this.setSelectedAddress();
         // }
     },
     mounted() {
-        // this.retrieveOrders()
+        // this.getAddress()
     }
 });
 
@@ -1108,18 +1119,69 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c(
+    "div",
+    { staticClass: "app-configuracoes" },
+    [
+      _c("h1", [_vm._v("Minhas configurações")]),
+      _vm._v(" "),
+      _c("label", [_vm._v("Endereços")]),
+      _c("br"),
+      _vm._v(" "),
+      _vm._l(_vm.addresses, function(option) {
+        return _c("div", { key: option.id, attrs: { value: option.id } }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.address,
+                expression: "address"
+              }
+            ],
+            attrs: { type: "radio", id: "one", value: "Um" },
+            domProps: { checked: _vm._q(_vm.address, "Um") },
+            on: {
+              change: function($event) {
+                _vm.address = "Um"
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "one" } }, [_vm._v("Um")]),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.address,
+                expression: "address"
+              }
+            ],
+            attrs: { type: "radio", id: "two", value: "Dois" },
+            domProps: { checked: _vm._q(_vm.address, "Dois") },
+            on: {
+              change: function($event) {
+                _vm.address = "Dois"
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "two" } }, [_vm._v("Dois")]),
+          _vm._v(" "),
+          _c("br")
+        ])
+      }),
+      _vm._v(" "),
+      _c("span", [_vm._v("Escolhido: " + _vm._s(_vm.address))])
+    ],
+    2
+  )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "app-configuracoes" }, [
-      _c("h1", [_vm._v("Minhas configurações")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1331,6 +1393,10 @@ var _balance = __webpack_require__(86);
 
 var _balance2 = _interopRequireDefault(_balance);
 
+var _configuration = __webpack_require__(87);
+
+var _configuration2 = _interopRequireDefault(_configuration);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(_vuex2.default);
@@ -1338,7 +1404,8 @@ _vue2.default.use(_vuex2.default);
 var store = new _vuex2.default.Store({
     modules: {
         orders: _orders2.default,
-        balance: _balance2.default
+        balance: _balance2.default,
+        configuration: _configuration2.default
     }
 });
 
@@ -1621,6 +1688,63 @@ var balance = {
 };
 
 exports.default = balance;
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _axios = __webpack_require__(5);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var configuration = {
+    namespaced: true,
+    state: {
+        addresses: []
+    },
+    mutations: {
+        setAddress: function setAddress(state, data) {
+            state.addresses = data;
+        }
+    },
+    getters: {
+        getAddress: function getAddress(state) {
+            return state.addresses;
+        }
+    },
+    actions: {
+        getAddresses: function getAddresses(_ref, data) {
+            var commit = _ref.commit;
+
+
+            console.log('here');
+
+            // let content = {
+            //     action: 'get_addresses',
+            // }
+
+            // Axios.get(`${ajaxurl}`, {
+            //     params: content
+            // }).then(function (response) {
+
+            //     // if (response && response.status === 200) {
+            //     //     commit('retrieveMany', response.data)
+            //     // }
+            // })
+        }
+    }
+};
+
+exports.default = configuration;
 
 /***/ })
 ],[36]);

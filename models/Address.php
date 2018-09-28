@@ -4,14 +4,40 @@ namespace Models;
 
 class Address {
 
-    private $name;
-    private $number;
+    public function getAddressesShopping() {
 
-    public function __construct() {
-        
-    }
+        $token = get_option('melhorenvio_token');
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$token,
+            ],
+            'timeout'=> 10,
+            'method' => 'GET'
+        );
 
-    public function setAttribute($attribute, $value) {
-        $this->{$attribute} = $value;
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/addresses', $params)));
+
+        $selectedAddress = get_option('melhorenvio_address_selected_v2');
+
+        $addresses = [];
+        foreach ($response->data as $address) {
+            $addresses[] = [
+                'id' => $address->id,
+                'label' => $address->label,
+                'postal_code' => $address->postal_code,
+                'number' => $address->number,
+                'disctrict' => $address->district,
+                'city' => $address->city->city,
+                'state' => $address->city->state->state,
+                'selected' => ($selectedAddress == $address->id) ? true : false
+            ];
+        }
+
+        return [
+            'success' => true,
+            'address' => $addresses
+        ];
     }
 }

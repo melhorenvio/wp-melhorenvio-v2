@@ -223,9 +223,9 @@ final class Base_Plugin {
     public function init_hooks() {
 
         // $orders = new OrdersController();
-        $token  = new tokenController();
-        $order  = new OrdersController(); 
-        $users  = new UsersController();
+        $token   = new tokenController();
+        $order   = new OrdersController(); 
+        $users   = new UsersController();
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -252,6 +252,7 @@ final class Base_Plugin {
         add_action('wp_ajax_create_ticket', [$order, 'createTicket']);
         add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
         add_action('wp_ajax_get_balance', [$users, 'getBalance']);
+        add_action('wp_ajax_get_addresses', [$users, 'getAddressShopping']);
     }
     
 
