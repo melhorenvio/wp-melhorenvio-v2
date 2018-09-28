@@ -169,6 +169,27 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         updateInvoice(id, number, key) {
             this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {}).catch(error => {});
+        },
+        buttonCartShow(...args) {
+            const [choose_method, non_commercial, number, key] = args;
+
+            if (choose_method == 1 || choose_method == 2) {
+                return true;
+            }
+
+            if ((choose_method == 3 || choose_method == 4) && non_commercial) {
+                return true;
+            }
+
+            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && key != null) {
+                return true;
+            }
+
+            if (choose_method > 3 && number != null && key != null) {
+                return true;
+            }
+
+            return false;
         }
     }),
     watch: {
@@ -1055,7 +1076,12 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", [
-                  !item.status
+                  _vm.buttonCartShow(
+                    item.cotation.choose_method,
+                    item.non_commercial,
+                    item.invoice.number,
+                    item.invoice.key
+                  )
                     ? _c(
                         "button",
                         {
@@ -1063,7 +1089,8 @@ var render = function() {
                             click: function($event) {
                               _vm.addCart({
                                 id: item.id,
-                                choosen: item.cotation.choose_method
+                                choosen: item.cotation.choose_method,
+                                non_commercial: item.non_commercial
                               })
                             }
                           }
@@ -1752,8 +1779,9 @@ var orders = {
             if (!data) {
                 return false;
             }
+
             if (data.id && data.choosen) {
-                _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen, data).then(function (response) {
+                _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
                     commit('addCart', {
                         id: data.id,
                         order_id: response.data.data.id

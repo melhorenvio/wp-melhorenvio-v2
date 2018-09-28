@@ -74,7 +74,7 @@
                     {{item.status}}
                 </td>
                 <td>
-                    <button v-if="!item.status" @click="addCart({id:item.id, choosen:item.cotation.choose_method})">Add cart</button>
+                    <button v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})">Add cart</button>
                     <button v-if="item.status && item.order_id && item.id && item.status != 'paid'" @click="removeCart({id:item.id, order_id:item.order_id})">Remove cart</button>
                     <button v-if="item.status == 'paid' && item.order_id && item.id" @click="cancelCart({id:item.id, order_id:item.order_id})">Cancel</button>
                     <button v-if="item.status && item.order_id && item.id && item.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})">Pay</button>
@@ -123,6 +123,32 @@ export default {
             }).catch(error => {
 
             })
+        },
+        buttonCartShow(...args) {
+            const [
+                choose_method, 
+                non_commercial, 
+                number, 
+                key
+            ] = args
+
+            if (choose_method == 1 || choose_method == 2) {
+                return true
+            }
+
+            if ((choose_method == 3 || choose_method == 4) && non_commercial) {
+                return true
+            }
+
+            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && key != null) {
+                return true
+            }
+
+            if (choose_method > 3 &&  number != null && key != null) {
+                return true
+            }
+            
+            return false;
         }
     },
     watch: {

@@ -147,8 +147,9 @@ const orders = {
             if (!data) {
                 return false;
             }
+
             if (data.id && data.choosen) {
-                Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}`, data).then(response => {
+                Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
                     commit('addCart',{
                         id: data.id,
                         order_id: response.data.data.id

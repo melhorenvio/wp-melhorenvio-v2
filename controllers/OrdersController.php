@@ -39,23 +39,25 @@ class OrdersController {
                 "collect" => false,
                 "reverse" => false, 
                 "non_commercial" => false, 
-                "invoice" => [
-                    "number" => null, 
-                    "key" => null 
-                ]
             ]
         ];
 
         // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
-        if ($_GET['choosen'] > 3) {
+        if ($_GET['choosen'] >= 3) {
+
             $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
-            if (!empty($invoices)) {
+            if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
                 $body['options']['invoice'] = $invoices;
             }       
-            
-            // TODO
-            $body['options']['non_commercial'] = false;
+
+            if ($_GET['non_commercial'] == 'true') {
+                $body['options']['non_commercial'] = true;
+            }
         }
+
+        // TODO remove after test
+        var_dump($body);
+        die;
 
         // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
         if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
