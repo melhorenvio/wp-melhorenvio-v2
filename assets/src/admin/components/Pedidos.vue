@@ -56,11 +56,11 @@
                 </td>
                 <td>
                     <label>Nota fiscal</label><br>
-                    <input type="text" v-model="item.invoice.nf" /><br>
+                    <input type="text" v-model="item.invoice.number" /><br>
                     <label>Chave da nota fiscal</label><br>
-                    <input type="text" v-model="item.invoice.key_nf" /><br>
+                    <input type="text" v-model="item.invoice.key" /><br>
                     <br>
-                    <button @click="updateInvoice(item.id, item.invoice.nf, item.invoice.key_nf)">Salvar</button>
+                    <button @click="updateInvoice(item.id, item.invoice.number, item.invoice.key)">Salvar</button>
                 </td>
                 <td>
                     {{item.status}}
@@ -109,8 +109,8 @@ export default {
             'printTicket',
         ]),
         ...mapActions('balance', ['setBalance']),
-        updateInvoice (id, nf, key_nf) {
-            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&nf=${nf}&key_nf=${key_nf}`).then(response => {
+        updateInvoice (id, number, key) {
+            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {
 
             }).catch(error => {
 

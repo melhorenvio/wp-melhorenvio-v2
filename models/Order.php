@@ -78,6 +78,7 @@ class Order extends bOrders {
         }
 
         $posts =  get_posts($args);    
+
         $data = [];
         foreach ($posts as $post) {
 
@@ -180,9 +181,13 @@ class Order extends bOrders {
     private function getInvoice($id = null) {
         if ($id) $this->id = $id; 
         $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
+
+        var_dump($data);
+        die;
+
         $default = [
-            'nf' => null,
-            'key_nf' => null
+            'number' => null,
+            'key' => null
         ];
 
         if (empty($data) || !$data) {

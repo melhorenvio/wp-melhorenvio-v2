@@ -159,8 +159,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         orders: 'getOrders'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
-        updateInvoice(id, nf, key_nf) {
-            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&nf=${nf}&key_nf=${key_nf}`).then(response => {}).catch(error => {});
+        updateInvoice(id, number, key) {
+            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {}).catch(error => {});
         }
     }),
     watch: {
@@ -901,18 +901,18 @@ var render = function() {
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: item.invoice.nf,
-                        expression: "item.invoice.nf"
+                        value: item.invoice.number,
+                        expression: "item.invoice.number"
                       }
                     ],
                     attrs: { type: "text" },
-                    domProps: { value: item.invoice.nf },
+                    domProps: { value: item.invoice.number },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(item.invoice, "nf", $event.target.value)
+                        _vm.$set(item.invoice, "number", $event.target.value)
                       }
                     }
                   }),
@@ -926,18 +926,18 @@ var render = function() {
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: item.invoice.key_nf,
-                        expression: "item.invoice.key_nf"
+                        value: item.invoice.key,
+                        expression: "item.invoice.key"
                       }
                     ],
                     attrs: { type: "text" },
-                    domProps: { value: item.invoice.key_nf },
+                    domProps: { value: item.invoice.key },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(item.invoice, "key_nf", $event.target.value)
+                        _vm.$set(item.invoice, "key", $event.target.value)
                       }
                     }
                   }),
@@ -952,8 +952,8 @@ var render = function() {
                         click: function($event) {
                           _vm.updateInvoice(
                             item.id,
-                            item.invoice.nf,
-                            item.invoice.key_nf
+                            item.invoice.number,
+                            item.invoice.key
                           )
                         }
                       }

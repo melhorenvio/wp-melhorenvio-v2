@@ -23,8 +23,7 @@ class OrdersController {
 
         $token = get_option('melhorenvio_token');
         $user = new UsersController();
-
-        $package = new PackageController();
+        $package  = new PackageController();
         $products = new ProductsController();
 
         $body = [
@@ -48,6 +47,14 @@ class OrdersController {
             ]
         ];
 
+        // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
+        if ($_GET['choosen'] > 3) {
+            $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
+            if (!empty($invoices)) {
+                $body['options']['invoice'] = $invoices;
+            }            
+        }
+        
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -169,11 +176,10 @@ class OrdersController {
     public function insertInvoiceOrder() {
 
         unset($_GET['action']);
-
-        if (!isset($_GET['id']) || !isset($_GET['nf']) || !isset($_GET['key_nf']) ) {
+        if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key']) ) {
             return json_encode([
                 'success' => false,
-                'message' => 'Campos ID, NF, KEY_NF são obrigatorios'
+                'message' => 'Campos ID, number, key são obrigatorios'
             ]);
             die;
         }
@@ -181,8 +187,8 @@ class OrdersController {
         $result = Order::updateInvoice(
             $_GET['id'], 
             [
-                'nf' => $_GET['nf'],
-                'key_nf' => $_GET['key_nf']
+                'number' => $_GET['number'],
+                'key' => $_GET['key']
             ]
         );
         return json_encode($result);
