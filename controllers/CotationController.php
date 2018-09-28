@@ -3,6 +3,7 @@
 namespace Controllers;
 use Controllers\PackageController;
 use Controllers\UsersController;
+use Controllers\ProductsController;
 
 class CotationController {
 
@@ -17,10 +18,10 @@ class CotationController {
         global $woocommerce;
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
 
-        $packagecontroller  = new PackageController();
-        $package = $packagecontroller->getPackageOrder($order_id);
+        $productcontroller = new ProductsController();
+        $products = $productcontroller->getProductsOrder($order_id);
 
-        $result = $this->makeCotationPackage($package, [1,2,3,4,7], $to);
+        $result = $this->makeCotationPackage($products, [1,2,3,4,7], $to);
         $result['date_cotation'] = date('Y-m-d H:i:s');
         $result['choose_method'] =$this->getCodeShippingSelected(end($woocommerce->session->get( 'chosen_shipping_methods')));
 
@@ -40,14 +41,13 @@ class CotationController {
         }
     }
 
-    public function makeCotationPackage($package, $services, $to) {
-        return $this->makeCotation($to, $services, $package, []);
+    public function makeCotationPackage($products, $services, $to) {
+        return $this->makeCotation($to, $services, $products, []);
     } 
 
-    protected function makeCotation($to, $services, $package, $options) {
+    protected function makeCotation($to, $services, $products, $options) {
 
         $token = get_option('melhorenvio_token');
-        
         $defaultoptions = [
             "insurance_value" => $this->total,
             "receipt"         => false, 
@@ -65,7 +65,7 @@ class CotationController {
             'to' => [
                 'postal_code' => $to
             ],
-            'package' => $package,
+            'products' => $products,
             'options' => $opts,
             "services" => $this->converterArrayToCsv($services)
         ];
@@ -145,8 +145,6 @@ class CotationController {
                     'name' => $item->company->name
                 ],
                 'selected' => $item->selected,
-                // 'postcode' => $postcode,
-                // 'postcode_client' => $postcodeClient
             ];
         }
         return $result;

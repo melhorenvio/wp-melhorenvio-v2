@@ -181,10 +181,6 @@ class Order extends bOrders {
     private function getInvoice($id = null) {
         if ($id) $this->id = $id; 
         $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
-
-        var_dump($data);
-        die;
-
         $default = [
             'number' => null,
             'key' => null

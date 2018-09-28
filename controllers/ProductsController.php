@@ -17,9 +17,8 @@ class ProductsController {
                 "name" => $_product->get_name(),
                 "quantity" => $item_product->get_quantity(),
                 "unitary_value" => round($_product->get_price(), 2),
-                "weight" => $_product->weight
+                "weight" => $this->converterIfNecessary($_product->weight)
             ];
-            
         }
         return $products;
     }
@@ -35,5 +34,13 @@ class ProductsController {
         }
 
         return round($total, 2);
+    }
+
+    private function converterIfNecessary($weight) {
+        $weight_unit = get_option('woocommerce_weight_unit');
+        if ($weight_unit == 'g') {
+            $weight = $weight / 1000;
+        }
+        return $weight;
     }
 }
