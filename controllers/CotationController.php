@@ -49,7 +49,7 @@ class CotationController {
     }
 
     public function makeCotationProducts($products, $services, $to) {
-        return $this->makeCotation($to, $services, $products, [], []);
+        return $this->makeCotation($to, $services, $products, [], ['']);
     }
     
     public function makeCotationPackage($package, $services, $to) {
@@ -58,9 +58,10 @@ class CotationController {
 
     protected function makeCotation($to, $services, $products = [], $package = [], $options) {
 
+        // TODO insurance_value
         $token = get_option('melhorenvio_token');
         $defaultoptions = [
-            "insurance_value" => $this->total,
+            "insurance_value" => null,
             "receipt"         => false, 
             "own_hand"        => false, 
             "collect"         => false 
@@ -76,9 +77,9 @@ class CotationController {
             'to' => [
                 'postal_code' => $to
             ],
-            'products' => $products,
-            'package' => $package,
-            'options' => $opts,
+            'products' => (!empty($products)) ? $products : null,
+            'package' => (!empty($package)) ? $package : null,
+            'options' =>  $opts,
             "services" => $this->converterArrayToCsv($services)
         ];
 

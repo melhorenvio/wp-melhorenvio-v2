@@ -17,7 +17,11 @@ class ProductsController {
                 "name" => $_product->get_name(),
                 "quantity" => $item_product->get_quantity(),
                 "unitary_value" => round($_product->get_price(), 2),
-                "weight" => $this->converterIfNecessary($_product->weight)
+                "insurance_value" => round($_product->get_price(), 2),
+                "weight" => $this->converterIfNecessary($_product->weight),
+                "width" => $_product->width,
+                "height" => $_product->height,
+                "length" => $_product->length
             ];
         }
         return $products;
@@ -38,7 +42,7 @@ class ProductsController {
                 'height' => $item_product['data']->get_height(),
                 'length' => $item_product['data']->get_length(),
                 'quantity' => $item_product['quantity'],
-                'insurance_value' => $item_product['data']->get_price()
+                'insurance_value' => round($item_product['data']->get_price(), 2)
             ];
         }
 
