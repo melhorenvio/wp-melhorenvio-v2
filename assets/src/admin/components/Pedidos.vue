@@ -55,12 +55,20 @@
                     <br>
                 </td>
                 <td>
-                    <label>Nota fiscal</label><br>
-                    <input type="text" v-model="item.invoice.number" /><br>
-                    <label>Chave da nota fiscal</label><br>
-                    <input type="text" v-model="item.invoice.key" /><br>
-                    <br>
-                    <button @click="updateInvoice(item.id, item.invoice.number, item.invoice.key)">Salvar</button>
+                    <template  v-if="item.cotation.choose_method == 3 || item.cotation.choose_method == 4" >
+                        <input type="checkbox" v-model="item.non_commercial" />
+                        <label>Usar declaração</label>
+                        <br>
+                        <br>
+                    </template>
+                    <template  v-if="(item.cotation.choose_method >= 3 && !item.non_commercial) || item.cotation.choose_method > 4">
+                        <label>Nota fiscal</label><br>
+                        <input type="text" v-model="item.invoice.number" /><br>
+                        <label>Chave da nota fiscal</label><br>
+                        <input type="text" v-model="item.invoice.key" /><br>
+                        <br>
+                        <button @click="updateInvoice(item.id, item.invoice.number, item.invoice.key)">Salvar</button>
+                    </template>
                 </td>
                 <td>
                     {{item.status}}

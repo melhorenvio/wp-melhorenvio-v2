@@ -21,7 +21,7 @@ class CotationController {
         $productcontroller = new ProductsController();
         $products = $productcontroller->getProductsOrder($order_id);
 
-        $result = $this->makeCotationProducts($products, [1,2,3,4,7], $to);
+        $result = $this->makeCotationProducts($products, [1,2,3,4,5,7,8,9], $to);
 
         if (!isset($result[0])) {
             return false;

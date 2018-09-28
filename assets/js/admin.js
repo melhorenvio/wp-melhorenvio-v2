@@ -144,6 +144,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -892,75 +900,151 @@ var render = function() {
                   _c("br")
                 ]),
                 _vm._v(" "),
-                _c("td", [
-                  _c("label", [_vm._v("Nota fiscal")]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: item.invoice.number,
-                        expression: "item.invoice.number"
-                      }
-                    ],
-                    attrs: { type: "text" },
-                    domProps: { value: item.invoice.number },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(item.invoice, "number", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("label", [_vm._v("Chave da nota fiscal")]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: item.invoice.key,
-                        expression: "item.invoice.key"
-                      }
-                    ],
-                    attrs: { type: "text" },
-                    domProps: { value: item.invoice.key },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(item.invoice, "key", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      on: {
-                        click: function($event) {
-                          _vm.updateInvoice(
-                            item.id,
-                            item.invoice.number,
-                            item.invoice.key
+                _c(
+                  "td",
+                  [
+                    item.cotation.choose_method == 3 ||
+                    item.cotation.choose_method == 4
+                      ? [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.non_commercial,
+                                expression: "item.non_commercial"
+                              }
+                            ],
+                            attrs: { type: "checkbox" },
+                            domProps: {
+                              checked: Array.isArray(item.non_commercial)
+                                ? _vm._i(item.non_commercial, null) > -1
+                                : item.non_commercial
+                            },
+                            on: {
+                              change: function($event) {
+                                var $$a = item.non_commercial,
+                                  $$el = $event.target,
+                                  $$c = $$el.checked ? true : false
+                                if (Array.isArray($$a)) {
+                                  var $$v = null,
+                                    $$i = _vm._i($$a, $$v)
+                                  if ($$el.checked) {
+                                    $$i < 0 &&
+                                      _vm.$set(
+                                        item,
+                                        "non_commercial",
+                                        $$a.concat([$$v])
+                                      )
+                                  } else {
+                                    $$i > -1 &&
+                                      _vm.$set(
+                                        item,
+                                        "non_commercial",
+                                        $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1))
+                                      )
+                                  }
+                                } else {
+                                  _vm.$set(item, "non_commercial", $$c)
+                                }
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("label", [_vm._v("Usar declaração")]),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("br")
+                        ]
+                      : _vm._e(),
+                    _vm._v(" "),
+                    (item.cotation.choose_method >= 3 &&
+                      !item.non_commercial) ||
+                    item.cotation.choose_method > 4
+                      ? [
+                          _c("label", [_vm._v("Nota fiscal")]),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.invoice.number,
+                                expression: "item.invoice.number"
+                              }
+                            ],
+                            attrs: { type: "text" },
+                            domProps: { value: item.invoice.number },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  item.invoice,
+                                  "number",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("label", [_vm._v("Chave da nota fiscal")]),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.invoice.key,
+                                expression: "item.invoice.key"
+                              }
+                            ],
+                            attrs: { type: "text" },
+                            domProps: { value: item.invoice.key },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  item.invoice,
+                                  "key",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              on: {
+                                click: function($event) {
+                                  _vm.updateInvoice(
+                                    item.id,
+                                    item.invoice.number,
+                                    item.invoice.key
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Salvar")]
                           )
-                        }
-                      }
-                    },
-                    [_vm._v("Salvar")]
-                  )
-                ]),
+                        ]
+                      : _vm._e()
+                  ],
+                  2
+                ),
                 _vm._v(" "),
                 _c("td", [
                   _vm._v(
