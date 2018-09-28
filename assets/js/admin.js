@@ -181,11 +181,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && key != null) {
+            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && number != '' && key != null && key != '') {
                 return true;
             }
 
-            if (choose_method > 3 && number != null && key != null) {
+            if (choose_method > 3 && number != null && number != '' && key != null && key != '') {
                 return true;
             }
 
