@@ -152,6 +152,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -854,68 +859,79 @@ var render = function() {
                   ])
                 ]),
                 _vm._v(" "),
-                _c("td", [
-                  !(
-                    item.status == "paid" ||
-                    item.status == "printed" ||
-                    item.status == "generated"
-                  )
-                    ? _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: item.cotation.choose_method,
-                              expression: "item.cotation.choose_method"
-                            }
-                          ],
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                item.cotation,
-                                "choose_method",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
-                            }
-                          }
-                        },
-                        _vm._l(item.cotation, function(option) {
-                          return option.id && option.price
+                _c(
+                  "td",
+                  [
+                    !item.order_id
+                      ? [
+                          !(
+                            item.status == "paid" ||
+                            item.status == "printed" ||
+                            item.status == "generated"
+                          )
                             ? _c(
-                                "option",
+                                "select",
                                 {
-                                  key: option.id,
-                                  domProps: { value: option.id }
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: item.cotation.choose_method,
+                                      expression: "item.cotation.choose_method"
+                                    }
+                                  ],
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        item.cotation,
+                                        "choose_method",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    }
+                                  }
                                 },
-                                [
-                                  _vm._v(
-                                    "\n                        " +
-                                      _vm._s(option.name) +
-                                      " (R$" +
-                                      _vm._s(option.price) +
-                                      ") \n                    "
-                                  )
-                                ]
+                                _vm._l(item.cotation, function(option) {
+                                  return option.id && option.price
+                                    ? _c(
+                                        "option",
+                                        {
+                                          key: option.id,
+                                          domProps: { value: option.id }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                            " +
+                                              _vm._s(option.name) +
+                                              " (R$" +
+                                              _vm._s(option.price) +
+                                              ") \n                        "
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e()
+                                })
                               )
                             : _vm._e()
-                        })
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("br")
-                ]),
+                        ]
+                      : [_c("span", [_vm._v(_vm._s(item.order_id))])],
+                    _vm._v(" "),
+                    _c("br")
+                  ],
+                  2
+                ),
                 _vm._v(" "),
                 _c(
                   "td",

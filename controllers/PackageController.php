@@ -37,12 +37,12 @@ class PackageController {
             return null;
         }
 
-        // TODO checar se existe esses dados
+        // TODO checar se existe esses dados IMPORTANT REVER
         $package = [
-            'width' => $data[0]->packages[0]->dimensions->width,
-            'height' => $data[0]->packages[0]->dimensions->height,
-            'length' => $data[0]->packages[0]->dimensions->length,
-            'weight' => $data[0]->packages[0]->weight
+            'width' => $data[1]->packages[0]->dimensions->width,
+            'height' => $data[1]->packages[0]->dimensions->height,
+            'length' => $data[1]->packages[0]->dimensions->length,
+            'weight' => $data[1]->packages[0]->weight
         ];
 
         return $package;
