@@ -60,8 +60,8 @@ class OrdersController {
         // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
         if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
 
-            // TODO ~> 678 é inválido
-            $body['agency'] = 678;
+            // TODO - Salvar esse post meta nas configurações
+            $body['agency'] = get_post_meta($_GET['order_id'], 'melhorenvio_agency_jadlog_v2', true);;
         }
 
         $params = array(

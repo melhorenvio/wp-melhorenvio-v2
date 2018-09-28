@@ -21,13 +21,12 @@ class PackageController {
             $length += $_product->length;
         }
         
-        return [
+        return $this->converterIfNecessary([
             "weight" => $weight,
             "width" => $width,
             "height" => $height,
             "length" => $length
-        ];
-
+        ]);
     }
 
     public function getPackageOrder($order_id) {
@@ -49,16 +48,23 @@ class PackageController {
             $length += $_product->length;
         }
 
-        return [
+        return $this->converterIfNecessary([
             "weight" => $weight,
             "width"  => $width,
             "height" => $height,
             "length" => $length
-        ];
+        ]);
+    }
+
+    private function converterIfNecessary($package) {
+        $weight_unit = get_option('woocommerce_weight_unit');
+        if ($weight_unit == 'g') {
+            $package['weight'] = $package['weight'] / 1000;
+        }
+        return $package;
     }
 
 }
 
 // TODO LIST
-// - Converter medidas g -> kg
 // - Verificar se existem todas medidas
