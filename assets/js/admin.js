@@ -176,7 +176,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {}).catch(error => {});
         },
         buttonCartShow(...args) {
-            const [choose_method, non_commercial, number, key] = args;
+            const [choose_method, non_commercial, number, key, status] = args;
+
+            if (status == 'pending') {
+                return false;
+            }
 
             if (choose_method == 1 || choose_method == 2) {
                 return true;
@@ -1092,7 +1096,8 @@ var render = function() {
                     item.cotation.choose_method,
                     item.non_commercial,
                     item.invoice.number,
-                    item.invoice.key
+                    item.invoice.key,
+                    item.status
                   )
                     ? _c(
                         "button",
