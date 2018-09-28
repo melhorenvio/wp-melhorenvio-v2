@@ -2,6 +2,7 @@
 
 use Controllers\PackageController;
 use Controllers\CotationController;
+use Controllers\ProductsController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
@@ -53,16 +54,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 */
 				public function calculate_shipping( $package = []) {
 					
+					global $woocommerce;
 					$to = str_replace('-', '', $package['destination']['postcode']);
 
-					$pack = new PackageController();
-					$packageData = $pack->getPackage($package);
+					$prod = new ProductsController();
+					$products = $prod->getProductsCart();
 					
 					$cotation = new CotationController();					
-					$result = $cotation->makeCotationPackage($packageData, [$this->code], $to);
+					$result = $cotation->makeCotationproducts($products, [$this->code], $to);
 
 					$rate = [
-						'id' => 'melhorenvio_sedex',
+						'id' => 'melhorenvio_pac',
 						'label' => $result->name,
 						'cost' => $result->price,
 						'calc_tax' => 'per_item',

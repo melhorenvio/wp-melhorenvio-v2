@@ -21,7 +21,7 @@ class CotationController {
         $productcontroller = new ProductsController();
         $products = $productcontroller->getProductsOrder($order_id);
 
-        $result = $this->makeCotationPackage($products, [1,2,3,4,7], $to);
+        $result = $this->makeCotationProducts($products, [1,2,3,4,7], $to);
 
         if (!isset($result[0])) {
             return false;
@@ -34,6 +34,8 @@ class CotationController {
     }
 
     private function getCodeShippingSelected($choose) {
+
+        // TODO
         switch ($choose) {
             case 'melhorenvio_pac':
                 return 1;
@@ -46,11 +48,15 @@ class CotationController {
         }
     }
 
-    public function makeCotationPackage($products, $services, $to) {
-        return $this->makeCotation($to, $services, $products, []);
-    } 
+    public function makeCotationProducts($products, $services, $to) {
+        return $this->makeCotation($to, $services, $products, [], []);
+    }
+    
+    public function makeCotationPackage($package, $services, $to) {
+        return $this->makeCotation($to, $services, [], $package, []);
+    }
 
-    protected function makeCotation($to, $services, $products, $options) {
+    protected function makeCotation($to, $services, $products = [], $package = [], $options) {
 
         $token = get_option('melhorenvio_token');
         $defaultoptions = [
@@ -71,6 +77,7 @@ class CotationController {
                 'postal_code' => $to
             ],
             'products' => $products,
+            'package' => $package,
             'options' => $opts,
             "services" => $this->converterArrayToCsv($services)
         ];

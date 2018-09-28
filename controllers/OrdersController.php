@@ -31,7 +31,7 @@ class OrdersController {
             'to' => $user->getTo($_GET['order_id']),
             'service' => $_GET['choosen'],
             'products' => $products->getProductsOrder($_GET['order_id']),
-            'package' => $package->getPackageOrder($_GET['order_id']),
+            'package' => $package->getPackageOrderAfterCotation($_GET['order_id']),
             'options' => [
                 "insurance_value" => $products->getInsuranceValue($_GET['order_id']), 
                 "receipt" => false,

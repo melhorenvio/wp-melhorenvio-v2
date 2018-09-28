@@ -29,6 +29,25 @@ class PackageController {
         ]);
     }
 
+    public function getPackageOrderAfterCotation($order_id) {
+    
+        $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
+
+        if (empty($data)) {
+            return null;
+        }
+
+        // TODO checar se existe esses dados
+        $package = [
+            'width' => $data[0]->packages[0]->dimensions->width,
+            'height' => $data[0]->packages[0]->dimensions->height,
+            'length' => $data[0]->packages[0]->dimensions->length,
+            'weight' => $data[0]->packages[0]->weight
+        ];
+
+        return $package;
+    }
+
     public function getPackageOrder($order_id) {
 
         $weight = 0;
