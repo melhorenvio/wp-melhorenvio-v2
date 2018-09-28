@@ -8,7 +8,6 @@
             <label :for="option.id">{{option.label}}</label>
             <br>
         </div>
-        <span>Escolhido: {{ address }}</span>
     </div>
 </template>
 

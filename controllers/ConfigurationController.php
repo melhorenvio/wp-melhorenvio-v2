@@ -3,6 +3,7 @@
 namespace Controllers;
 use Models\Address;
 use Models\Agency;
+use Models\Store;
 
 class ConfigurationController {
 
@@ -38,6 +39,18 @@ class ConfigurationController {
     public function getAgencyJadlog() {
         $agency = new Agency();
         echo json_encode($agency->getAgencies());
+        die;
+    }
+
+    public function getStories() {
+        $story = new Store();
+        echo json_encode($story->getStories());
+        die;
+    }
+
+    public function setStore() {
+        $story = new Store();
+        echo json_encode($story->setStore($_GET['id']));
         die;
     }
 }

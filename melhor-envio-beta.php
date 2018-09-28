@@ -262,7 +262,10 @@ final class Base_Plugin {
         // Agências Jadlog 
         add_action('wp_ajax_set_agency_jadlog', [$conf, 'setAgencyJadlog']);
         add_action('wp_ajax_get_agency_jadlog', [$conf, 'getAgencyJadlog']);
-        
+
+        // Minhas lojas
+        add_action('wp_ajax_get_stories', [$conf, 'getStories']);
+        add_action('wp_ajax_set_store', [$conf, 'setStore']);
     }
     
 

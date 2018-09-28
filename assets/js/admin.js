@@ -229,7 +229,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -1350,9 +1349,7 @@ var render = function() {
           _vm._v(" "),
           _c("br")
         ])
-      }),
-      _vm._v(" "),
-      _c("span", [_vm._v("Escolhido: " + _vm._s(_vm.address))])
+      })
     ],
     2
   )
