@@ -22,6 +22,11 @@ class CotationController {
         $products = $productcontroller->getProductsOrder($order_id);
 
         $result = $this->makeCotationPackage($products, [1,2,3,4,7], $to);
+
+        if (!isset($result[0])) {
+            return false;
+        }
+
         $result['date_cotation'] = date('Y-m-d H:i:s');
         $result['choose_method'] =$this->getCodeShippingSelected(end($woocommerce->session->get( 'chosen_shipping_methods')));
 
