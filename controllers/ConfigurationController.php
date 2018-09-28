@@ -34,5 +34,11 @@ class ConfigurationController {
         echo json_encode($agency->setAgency($_GET['id']));
         die;
     }
+
+    public function getAgencyJadlog() {
+        $agency = new Agency();
+        echo json_encode($agency->getAgencies());
+        die;
+    }
 }
 
