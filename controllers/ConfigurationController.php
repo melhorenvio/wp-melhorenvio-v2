@@ -1,6 +1,7 @@
 <?php
 
-namespace MelhorEnvio;
+namespace Controllers;
+use Models\Address;
 
 class ConfigurationController {
 
@@ -13,6 +14,18 @@ class ConfigurationController {
 
         update_option('melhorenvio_token', $tokenUser,true);
         return get_option('melhorenvio_token');
+    }
+
+    public function getAddressShopping() {
+        $address = new Address();
+        echo json_encode($address->getAddressesShopping());
+        die;
+    }
+
+    public function setAddressShopping() {
+        $address = new Address();
+        echo json_encode($address->setAddressShopping($_GET['id']));
+        die;
     }
 }
 

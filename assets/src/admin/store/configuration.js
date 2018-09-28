@@ -16,22 +16,21 @@ const configuration = {
     },
     actions: {
         getAddresses: ({commit}, data) => {
+            let content = {
+                action: 'get_addresses',
+            }
 
-            console.log('here');
-
-            // let content = {
-            //     action: 'get_addresses',
-            // }
-
-            // Axios.get(`${ajaxurl}`, {
-            //     params: content
-            // }).then(function (response) {
-
-            //     // if (response && response.status === 200) {
-            //     //     commit('retrieveMany', response.data)
-            //     // }
-            // })
+            Axios.get(`${ajaxurl}`, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setAddress', response.data.address)
+                }
+            })
         },
+        setSelectedAddress: ({commit}, data) => {
+            console.log(data);
+        }
     }
 }
 

@@ -114,10 +114,4 @@ class UsersController {
         }
         return $maskared;
     }
-
-    public function getAddressShopping() {
-        $address = new Address();
-        echo json_encode($address->getAddressesShopping());
-        die;
-    }
 }

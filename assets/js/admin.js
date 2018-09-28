@@ -230,9 +230,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -245,14 +242,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress'])),
     watch: {
-        // address () {
-        //     this.setSelectedAddress();
-        // }
+        address(e) {
+            this.setSelectedAddress(e);
+        }
     },
     mounted() {
-        // this.getAddress()
+        this.getAddresses();
     }
 });
 
@@ -1335,38 +1332,21 @@ var render = function() {
                 expression: "address"
               }
             ],
-            attrs: { type: "radio", id: "one", value: "Um" },
-            domProps: { checked: _vm._q(_vm.address, "Um") },
+            attrs: { type: "radio", id: option.id },
+            domProps: {
+              value: option.id,
+              checked: _vm._q(_vm.address, option.id)
+            },
             on: {
               change: function($event) {
-                _vm.address = "Um"
+                _vm.address = option.id
               }
             }
           }),
           _vm._v(" "),
-          _c("label", { attrs: { for: "one" } }, [_vm._v("Um")]),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.address,
-                expression: "address"
-              }
-            ],
-            attrs: { type: "radio", id: "two", value: "Dois" },
-            domProps: { checked: _vm._q(_vm.address, "Dois") },
-            on: {
-              change: function($event) {
-                _vm.address = "Dois"
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "two" } }, [_vm._v("Dois")]),
+          _c("label", { attrs: { for: option.id } }, [
+            _vm._v(_vm._s(option.label))
+          ]),
           _vm._v(" "),
           _c("br")
         ])
@@ -1922,21 +1902,22 @@ var configuration = {
         getAddresses: function getAddresses(_ref, data) {
             var commit = _ref.commit;
 
+            var content = {
+                action: 'get_addresses'
+            };
 
-            console.log('here');
+            _axios2.default.get('' + ajaxurl, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setAddress', response.data.address);
+                }
+            });
+        },
+        setSelectedAddress: function setSelectedAddress(_ref2, data) {
+            var commit = _ref2.commit;
 
-            // let content = {
-            //     action: 'get_addresses',
-            // }
-
-            // Axios.get(`${ajaxurl}`, {
-            //     params: content
-            // }).then(function (response) {
-
-            //     // if (response && response.status === 200) {
-            //     //     commit('retrieveMany', response.data)
-            //     // }
-            // })
+            console.log(data);
         }
     }
 };

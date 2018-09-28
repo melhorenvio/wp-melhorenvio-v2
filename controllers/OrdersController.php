@@ -55,10 +55,6 @@ class OrdersController {
             }
         }
 
-        // TODO remove after test
-        var_dump($body);
-        die;
-
         // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
         if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
 

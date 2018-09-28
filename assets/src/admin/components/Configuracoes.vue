@@ -4,11 +4,8 @@
         <label>Endereços</label><br>
 
         <div v-for="option in addresses" v-bind:value="option.id" :key="option.id">
-            <input type="radio" id="one" value="Um" v-model="address">
-            <label for="one">Um</label>
-            <br>
-            <input type="radio" id="two" value="Dois" v-model="address">
-            <label for="two">Dois</label>
+            <input type="radio" :id="option.id" :value="option.id" v-model="address">
+            <label :for="option.id">{{option.label}}</label>
             <br>
         </div>
         <span>Escolhido: {{ address }}</span>
@@ -31,16 +28,17 @@ export default {
     },
     methods: {
         ...mapActions('configuration', [
-            'getAddresses'
+            'getAddresses',
+            'setSelectedAddress'
         ]),
     },
     watch : {
-        // address () {
-        //     this.setSelectedAddress();
-        // }
+        address (e) {
+            this.setSelectedAddress(e);
+        }
     },
     mounted () {
-        // this.getAddress()
+        this.getAddresses()
     }
 }
 </script>

@@ -40,4 +40,23 @@ class Address {
             'address' => $addresses
         ];
     }
+
+    public function setAddressShopping($id) {
+        
+        $addressDefault = get_option('melhorenvio_address_selected_v2');
+
+        if  (!$addressDefault) {
+            add_option('melhorenvio_address_selected_v2', $id);
+            return [
+                'success' => true,
+                'id' => $id
+            ];
+        }
+
+        update_option('melhorenvio_address_selected_v2', $id);
+        return [
+            'success' => true,
+            'id' => $id
+        ];
+    }
 }
