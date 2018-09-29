@@ -64,7 +64,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$result = $cotation->makeCotationproducts($products, [$this->code], $to);
 
 					$rate = [
-						'id' => 'melhorenvio_jadlog_coom',
+						'id' => 'melhorenvio_jadlog_com',
 						'label' => $result->name,
 						'cost' => $result->price,
 						'calc_tax' => 'per_item',
