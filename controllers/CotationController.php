@@ -68,7 +68,6 @@ class CotationController {
         return $this->makeCotation($to, $services, [], $package, []);
     }
 
-<<<<<<< HEAD
     protected function makeCotation($to, $services, $products = [], $package = [], $options)
     {
         if ($token = get_option('melhorenvio_token')) {
@@ -112,51 +111,6 @@ class CotationController {
         
             return $response;
         }
-=======
-    protected function makeCotation($to, $services, $products = [], $package = [], $options) {
-
-        // TODO insurance_value
-        $token = get_option('melhorenvio_token');
-        $defaultoptions = [
-            "insurance_value" => null,
-            "receipt"         => false, 
-            "own_hand"        => false, 
-            "collect"         => false 
-        ];
-        $opts = array_merge($defaultoptions, $options);
-
-        $user = new UsersController();
-        $from = $user->getFrom();
-        $body = [
-            "from" => [
-                "postal_code" => $from->postal_code
-            ],
-            'to' => [
-                'postal_code' => $to
-            ],
-            'products' => (!empty($products)) ? $products : null,
-            'package' => (!empty($package)) ? $package : null,
-            'options' =>  $opts,
-            "services" => $this->converterArrayToCsv($services)
-        ];
-
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'body'  => json_encode($body),
-            'timeout'=>10
-        );
-
-        $urlApi = 'https://www.melhorenvio.com.br';
-        if(WP_ENV !== null && WP_ENV == 'develop') {
-            $urlApi = 'https://sandbox.melhorenvio.com.br';
-        } 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/shipment/calculate', $params)));
-        return $response;
->>>>>>> 2b235cada5fdadefad5904bb69a4c08caeb86cf0
 
         return false;
     }

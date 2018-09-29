@@ -14,8 +14,7 @@ class UsersController {
     {
 
         $info = $this->getInfo();
-
-        if (preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
+        if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
             return (object) [
                 "name" => $info->data->firstname . ' ' . $info->data->lastname,
                 "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
