@@ -70,7 +70,11 @@ class OrdersController {
             'timeout'=> 10
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/cart', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . 'api/v2/me/cart', $params)));
 
         if (!isset($response->id)) {
             echo json_encode([
@@ -109,7 +113,11 @@ class OrdersController {
             'method' => 'DELETE'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/cart/' . $_GET['order_id'], $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/cart/' . $_GET['order_id'], $params)));
         if (isset($response->error)) {
             echo json_encode([
                 'success' => false,
@@ -143,7 +151,11 @@ class OrdersController {
             ])
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/cancel', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/cancel', $params)));
         if (isset($response->errors)) {
             echo json_encode([
                 'siccess' => false,
@@ -174,7 +186,12 @@ class OrdersController {
             'timeout'=>10,
             'method' => 'GET'
         );
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/cart/' . $order_id, $params)));
+
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/cart/' . $order_id, $params)));
         return $response;
     }
 
@@ -228,7 +245,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/checkout', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/checkout', $params)));
         $data = [
             'order_paid' => $response->purchase->id,
             'protocol_paid' => $response->purchase->protocol,
@@ -264,7 +285,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/generate', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/generate', $params)));
 
         $data = [
             'status' => 'generated',
@@ -298,7 +323,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/print', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/print', $params)));
         $data = [
             'status' => 'printed',
             'printed_date' => date('Y-m-d H:i:s')
