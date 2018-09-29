@@ -79,17 +79,20 @@ class UsersController {
     {    
         $order = new \WC_Order($order_id);
 
+        $cpf  = get_user_meta($order->user_id, 'billing_cpf', true);
+        $cnpj = get_user_meta($order->user_id, 'billing_cnpj',true);
+
         return (object) [
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => $order->get_billing_phone(),
             "email" => $order->get_billing_email(),
-            "document" => null,
-            "company_document" => null, // (opcional) (a menos que seja transportadora e logística reversa)
+            "document" => (!empty($cpf)) ? $cpf : null,
+            "company_document" => (!empty($cnpj)) ? $cnpj : null,
             "state_register" => null, // (opcional) (a menos que seja transportadora e logística reversa)
             "address" => $order->get_billing_address_1(),
             "complement" => $order->get_billing_address_2(),
-            "number" => null,
-            "district" => null,
+            "number" => get_user_meta($order->user_id, 'billing_number',true),
+            "district" => get_user_meta($order->user_id, 'billing_neighborhood',true),
             "city" => $order->get_billing_city(),
             "state_abbr" => $order->get_billing_state(),
             "country_id" => $order->get_billing_country(),
