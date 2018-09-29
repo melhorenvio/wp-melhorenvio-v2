@@ -17,7 +17,11 @@ class Agency {
             'method' => 'GET'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/agencies?company=2&country=BR', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/agencies?company=2&country=BR', $params)));
         
         $agencies = [];
         $agencySelected = get_option('melhorenvio_agency_jadlog_v2');

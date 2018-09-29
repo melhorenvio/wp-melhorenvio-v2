@@ -105,7 +105,11 @@ class CotationController {
             'timeout'=>10
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
+        $urlApi = 'https://www.melhorenvio.com.br';
+        if(WP_ENV !== null && WP_ENV == 'develop') {
+            $urlApi = 'https://sandbox.melhorenvio.com.br';
+        } 
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/shipment/calculate', $params)));
         return $response;
 
     }
