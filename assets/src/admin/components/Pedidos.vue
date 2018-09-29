@@ -1,7 +1,7 @@
 <template>
     <div class="app-pedidos">
-        <h1>Meus pedidos</h1>
-
+        <hr>
+        <h2>Meus pedidos</h2>
         <label>Status Melhor Envio</label><br>
         <select v-model="status">
             <option value="all">Todos</option>
@@ -26,7 +26,7 @@
         <br>
 
         <h2>Saldo: R$<span>{{ getBalance }}</span></h2>
-        <table v-if="orders.length > 0" border="1" id="example-1">
+        <table v-if="orders.length > 0" >
             <tr>
                 <th>#</th>
                 <th>Valor pedido</th>

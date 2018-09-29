@@ -706,7 +706,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "app-pedidos" }, [
-    _c("h1", [_vm._v("Meus pedidos")]),
+    _c("hr"),
+    _vm._v(" "),
+    _c("h2", [_vm._v("Meus pedidos")]),
     _vm._v(" "),
     _c("label", [_vm._v("Status Melhor Envio")]),
     _c("br"),
@@ -819,7 +821,6 @@ var render = function() {
     _vm.orders.length > 0
       ? _c(
           "table",
-          { attrs: { border: "1", id: "example-1" } },
           [
             _vm._m(0),
             _vm._v(" "),
