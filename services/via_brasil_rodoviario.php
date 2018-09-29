@@ -6,13 +6,13 @@ use Controllers\ProductsController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
-    add_action( 'woocommerce_shipping_init', 'jadlog_package_shipping_method_init' );
-	function jadlog_package_shipping_method_init() {
-		if ( ! class_exists( 'WC_Jadlog_Package_Shipping_Method' ) ) {
+    add_action( 'woocommerce_shipping_init', 'via_brasil_rodoviario_shipping_method_init' );
+	function via_brasil_rodoviario_shipping_method_init() {
+		if ( ! class_exists( 'WC_via_brasil_rodoviario_Shipping_Method' ) ) {
 
-			class WC_Jadlog_Package_Shipping_Method extends WC_Shipping_Method {
+			class WC_Via_Brasil_Rodoviario_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '3';
+                protected $code = '9';
 				/**
 				 * Constructor for your shipping class
 				 *
@@ -20,12 +20,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 * @return void
 				 */
 				public function __construct($instance_id = 0) {
-					$this->id                 = "jadlog_package"; 
+					$this->id                 = "via_brasil_rodoviario"; 
                     $this->instance_id = absint( $instance_id );
-                    $this->method_title       = "Jadlog Package (Melhor envio)"; 
-					$this->method_description = 'Serviço Jadlog Package';
+                    $this->method_title       = "Via Brasil rodoviario (Melhor envio)"; 
+					$this->method_description = 'Serviço Via Brasil rodoviario';
 					$this->enabled            = "yes"; 
-					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Jadlog Package';
+					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Via Brasil Rodoviario';
                     $this->supports = array(
                         'shipping-zones',
                         'instance-settings',
@@ -64,13 +64,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$result = $cotation->makeCotationproducts($products, [$this->code], $to);
 
 					$rate = [
-						'id' => 'melhorenvio_jadlog_package',
+						'id' => 'melhorenvio_via_brasil_rodoviario',
 						'label' => $result->name,
 						'cost' => $result->price,
 						'calc_tax' => 'per_item',
 						'meta_data' => [
 							'delivery_time' => $result->delivery_time,
-							'company' => 'Jadlog'
+							'company' => 'Via Brasil'
 						]
 					]; 
 					$this->add_rate($rate);
@@ -85,7 +85,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'title' => [
 							'title' => 'Titulo',
 							'type' => 'text',
-							'default' => 'jadlog Package'
+							'default' => 'Via Brasil Rodoviario'
 						],
 						'enabled' => [
 							'title' => 'Ativar',
@@ -98,24 +98,24 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		}
 	}
 	
-	function add_jadlog_package_shipping_method( $methods ) {
-		$methods['jadlog_package'] = 'WC_Jadlog_Package_Shipping_Method';
+	function add_via_brasil_rodoviario_shipping_method( $methods ) {
+		$methods['via_brasil_rodoviario'] = 'WC_via_brasil_rodoviario_Shipping_Method';
 		return $methods;
 	}
-	add_filter( 'woocommerce_shipping_methods', 'add_jadlog_package_shipping_method' );
+	add_filter( 'woocommerce_shipping_methods', 'add_via_brasil_rodoviario_shipping_method' );
 
-	function jadlog_package_validate_order($posted) {
+	function via_brasil_rodoviario_validate_order($posted) {
 
 		$packages = WC()->shipping->get_packages();
 		$chosen_methods = WC()->session->get('chosen_shipping_methods');
 		
-        if (is_array($chosen_methods) && in_array('melhorenvio_jadlog_package', $chosen_methods)) {
+        if (is_array($chosen_methods) && in_array('melhorenvio_via_brasil_rodoviario', $chosen_methods)) {
             foreach ($packages as $i => $package) {
-                if ($chosen_methods[$i] != "melhorenvio_jadlog_package") {
+                if ($chosen_methods[$i] != "melhorenvio_via_brasil_rodoviario") {
                     continue;
                 }
-                $jadlog_package_Shipping_Method = new WC_Jadlog_Package_Shipping_Method();
-                $weightLimit = (int)$jadlog_package_Shipping_Method->settings['weight'];
+                $via_brasil_rodoviario_Shipping_Method = new WC_Via_Brasil_Rodoviario_Shipping_Method();
+                $weightLimit = (int)$via_brasil_rodoviario_Shipping_Method->settings['weight'];
                 $weight = 0;
                 foreach ($package['contents'] as $item_id => $values) {
                     $_product = $values['data'];
@@ -123,7 +123,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 }
                 $weight = wc_get_weight($weight, 'kg');
                 // if ($weight > $weightLimit) {
-                //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'jadlog_package'), $weight, $weightLimit, $jadlog_package_Shipping_Method->title);
+                //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'pac'), $weight, $weightLimit, $pac_Shipping_Method->title);
                 //     $messageType = "error";
                 //     if (!wc_has_notice($message, $messageType)) {
                 //         wc_add_notice($message, $messageType);
@@ -133,6 +133,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         }
 	}
 	
-	add_action('woocommerce_review_order_before_cart_contents', 'jadlog_package_validate_order', 10);
-	add_action('woocommerce_after_checkout_validation', 'jadlog_package_validate_order', 10);
+	add_action('woocommerce_review_order_before_cart_contents', 'via_brasil_rodoviario_validate_order', 10);
+	add_action('woocommerce_after_checkout_validation', 'via_brasil_rodoviario_validate_order', 10);
 }

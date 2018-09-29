@@ -43,6 +43,18 @@ class CotationController {
             case 'melhorenvio_sedex':
                 return 2;
                 break;
+            case 'melhorenvio_jadlog_package':
+                return 3;
+                break;
+            case 'melhorenvio_jadlog_com':
+                return 4;
+                break;
+            case 'melhorenvio_via_brasil_aero':
+                return 8;
+                break;
+            case 'melhorenvio_via_brasil_rodoviario':
+                return 9;
+                break;
             default:
                 return 0;
         }
