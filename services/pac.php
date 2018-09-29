@@ -111,31 +111,31 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 	function pac_validate_order($posted) {
 
-		$packages = WC()->shipping->get_packages();
-		$chosen_methods = WC()->session->get('chosen_shipping_methods');
+		// $packages = WC()->shipping->get_packages();
+		// $chosen_methods = WC()->session->get('chosen_shipping_methods');
 		
-        if (is_array($chosen_methods) && in_array('melhorenvio_pac', $chosen_methods)) {
-            foreach ($packages as $i => $package) {
-                if ($chosen_methods[$i] != "melhorenvio_pac") {
-                    continue;
-                }
-                $pac_Shipping_Method = new WC_Pac_Shipping_Method();
-                $weightLimit = (int)$pac_Shipping_Method->settings['weight'];
-                $weight = 0;
-                foreach ($package['contents'] as $item_id => $values) {
-                    $_product = $values['data'];
-					$weight = $weight + $_product->get_weight() * $values['quantity'];
-                }
-                $weight = wc_get_weight($weight, 'kg');
+        // if (is_array($chosen_methods) && in_array('melhorenvio_pac', $chosen_methods)) {
+        //     foreach ($packages as $i => $package) {
+        //         if ($chosen_methods[$i] != "melhorenvio_pac") {
+        //             continue;
+        //         }
+        //         $pac_Shipping_Method = new WC_Pac_Shipping_Method();
+        //         $weightLimit = (int)$pac_Shipping_Method->settings['weight'];
+        //         $weight = 0;
+        //         foreach ($package['contents'] as $item_id => $values) {
+        //             $_product = $values['data'];
+		// 			$weight = $weight + $_product->get_weight() * $values['quantity'];
+        //         }
+        //         $weight = wc_get_weight($weight, 'kg');
                 // if ($weight > $weightLimit) {
                 //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'pac'), $weight, $weightLimit, $pac_Shipping_Method->title);
                 //     $messageType = "error";
                 //     if (!wc_has_notice($message, $messageType)) {
                 //         wc_add_notice($message, $messageType);
                 //     }
-				// }
-            }
-        }
+		// 		// }
+        //     }
+        // }
 	}
 	
 	add_action('woocommerce_review_order_before_cart_contents', 'pac_validate_order', 10);

@@ -111,22 +111,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 	function jadlog_package_validate_order($posted) {
 
-		$packages = WC()->shipping->get_packages();
-		$chosen_methods = WC()->session->get('chosen_shipping_methods');
+		// $packages = WC()->shipping->get_packages();
+		// $chosen_methods = WC()->session->get('chosen_shipping_methods');
 		
-        if (is_array($chosen_methods) && in_array('melhorenvio_jadlog_package', $chosen_methods)) {
-            foreach ($packages as $i => $package) {
-                if ($chosen_methods[$i] != "melhorenvio_jadlog_package") {
-                    continue;
-                }
-                $jadlog_package_Shipping_Method = new WC_Jadlog_Package_Shipping_Method();
-                $weightLimit = (int)$jadlog_package_Shipping_Method->settings['weight'];
-                $weight = 0;
-                foreach ($package['contents'] as $item_id => $values) {
-                    $_product = $values['data'];
-					$weight = $weight + $_product->get_weight() * $values['quantity'];
-                }
-                $weight = wc_get_weight($weight, 'kg');
+        // if (is_array($chosen_methods) && in_array('melhorenvio_jadlog_package', $chosen_methods)) {
+        //     foreach ($packages as $i => $package) {
+        //         if ($chosen_methods[$i] != "melhorenvio_jadlog_package") {
+        //             continue;
+        //         }
+        //         $jadlog_package_Shipping_Method = new WC_Jadlog_Package_Shipping_Method();
+        //         $weightLimit = (int)$jadlog_package_Shipping_Method->settings['weight'];
+        //         $weight = 0;
+        //         foreach ($package['contents'] as $item_id => $values) {
+        //             $_product = $values['data'];
+		// 			$weight = $weight + $_product->get_weight() * $values['quantity'];
+        //         }
+        //         $weight = wc_get_weight($weight, 'kg');
                 // if ($weight > $weightLimit) {
                 //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'jadlog_package'), $weight, $weightLimit, $jadlog_package_Shipping_Method->title);
                 //     $messageType = "error";
@@ -134,8 +134,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 //         wc_add_notice($message, $messageType);
                 //     }
 				// }
-            }
-        }
+        //     }
+        // }
 	}
 	
 	add_action('woocommerce_review_order_before_cart_contents', 'jadlog_package_validate_order', 10);
