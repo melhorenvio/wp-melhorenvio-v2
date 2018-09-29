@@ -68,46 +68,51 @@ class CotationController {
         return $this->makeCotation($to, $services, [], $package, []);
     }
 
-    protected function makeCotation($to, $services, $products = [], $package = [], $options) {
+    protected function makeCotation($to, $services, $products = [], $package = [], $options)
+    {
+        if ($token = get_option('melhorenvio_token')) {
+            $defaultoptions = [
+                "insurance_value" => null,
+                "receipt"         => false, 
+                "own_hand"        => false, 
+                "collect"         => false 
+            ];
+            
+            $opts = array_merge($defaultoptions, $options);
+    
+            $user = new UsersController();
+            
+            $from = $user->getFrom();
+    
+            $body = [
+                "from" => [
+                    "postal_code" => $from->postal_code
+                ],
+                'to' => [
+                    'postal_code' => $to
+                ],
+                'products' => (!empty($products)) ? $products : null,
+                'package' => (!empty($package)) ? $package : null,
+                'options' =>  $opts,
+                "services" => $this->converterArrayToCsv($services)
+            ];
+    
+            $params = array(
+                'headers'           =>  [
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer '.$token,
+                ],
+                'body'  => json_encode($body),
+                'timeout'=>10
+            );
+    
+            $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
+        
+            return $response;
+        }
 
-        // TODO insurance_value
-        $token = get_option('melhorenvio_token');
-        $defaultoptions = [
-            "insurance_value" => null,
-            "receipt"         => false, 
-            "own_hand"        => false, 
-            "collect"         => false 
-        ];
-        $opts = array_merge($defaultoptions, $options);
-
-        $user = new UsersController();
-        $from = $user->getFrom();
-        $body = [
-            "from" => [
-                "postal_code" => $from->postal_code
-            ],
-            'to' => [
-                'postal_code' => $to
-            ],
-            'products' => (!empty($products)) ? $products : null,
-            'package' => (!empty($package)) ? $package : null,
-            'options' =>  $opts,
-            "services" => $this->converterArrayToCsv($services)
-        ];
-
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'body'  => json_encode($body),
-            'timeout'=>10
-        );
-
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
-        return $response;
-
+        return false;
     }
 
     private function converterArrayToCsv($services) {

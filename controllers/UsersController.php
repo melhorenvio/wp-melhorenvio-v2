@@ -10,30 +10,38 @@ class UsersController {
 
     }
 
-    public function getFrom() {
+    public function getFrom()
+    {
 
         $info = $this->getInfo();
-        return (object) [
-            "name" => $info->data->firstname . ' ' . $info->data->lastname,
-            "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
-            "email" => $info->data->email,
-            "document" => $info->data->document,
-            "company_document" => null, // TODO
-            "state_register" => null, // TODO
-            "address" => $info->data->address->address,
-            "complement" => $info->data->address->complement,
-            "number" => $info->data->address->number,
-            "district" => $info->data->address->district,
-            "city" => $info->data->address->city->city,
-            "state_abbr" => $info->data->address->city->state->state_abbr,
-            "country_id" => $info->data->address->city->state->country->id,
-            "postal_code" => $info->data->address->postal_code
-        ];
+
+        if (preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
+            return (object) [
+                "name" => $info->data->firstname . ' ' . $info->data->lastname,
+                "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
+                "email" => $info->data->email,
+                "document" => $info->data->document,
+                "company_document" => null, // TODO
+                "state_register" => null, // TODO
+                "address" => $info->data->address->address,
+                "complement" => $info->data->address->complement,
+                "number" => $info->data->address->number,
+                "district" => $info->data->address->district,
+                "city" => $info->data->address->city->city,
+                "state_abbr" => $info->data->address->city->state->state_abbr,
+                "country_id" => $info->data->address->city->state->country->id,
+                "postal_code" => $info->data->address->postal_code
+            ];   
+        }
+
+        return false;
     }
 
-    public function getInfo() {
+    public function getInfo()
+    {
 
         $dataUser = get_option('melhorenvio_user_info');
+
         if (!$dataUser) {
             $token = get_option('melhorenvio_token');
 
@@ -67,8 +75,8 @@ class UsersController {
 
     }
 
-    public function getTo($order_id) {
-        
+    public function getTo($order_id)
+    {    
         $order = new \WC_Order($order_id);
 
         return (object) [
@@ -90,7 +98,8 @@ class UsersController {
 
     }
 
-    public function getBalance() {
+    public function getBalance()
+    {
         $usr = new \Models\User();
         echo json_encode(
             $usr->getBalance()
@@ -98,9 +107,12 @@ class UsersController {
         die;
     }
 
-    private function mask($val, $mask){
+    private function mask($val, $mask)
+    {
         $maskared = '';
+
         $k = 0;
+
         for($i = 0; $i<=strlen($mask)-1; $i++) {
             if($mask[$i] == '#') {
                 if(isset($val[$k]))
@@ -112,6 +124,7 @@ class UsersController {
                 $maskared .= $mask[$i];
             }
         }
+
         return $maskared;
     }
 }

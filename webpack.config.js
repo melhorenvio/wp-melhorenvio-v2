@@ -123,12 +123,12 @@ module.exports = {
                 }
             },
             {
-                test: /\.less$/,
+                test: /\.styl$/,
                 use: extractCss.extract({
                     use: [{
                         loader: "css-loader"
                     }, {
-                        loader: "less-loader"
+                        loader: "styl-loader"
                     }]
                 })
             },

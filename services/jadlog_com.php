@@ -61,19 +61,23 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$products = $prod->getProductsCart();
 					
 					$cotation = new CotationController();					
-					$result = $cotation->makeCotationproducts($products, [$this->code], $to);
+					
+					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
+						$rate = [
+							'id' => 'melhorenvio_jadlog_coom',
+							'label' => $result->name,
+							'cost' => $result->price,
+							'calc_tax' => 'per_item',
+							'meta_data' => [
+								'delivery_time' => $result->delivery_time,
+								'company' => 'Jadlog'
+							]
+						];
 
-					$rate = [
-						'id' => 'melhorenvio_jadlog_coom',
-						'label' => $result->name,
-						'cost' => $result->price,
-						'calc_tax' => 'per_item',
-						'meta_data' => [
-							'delivery_time' => $result->delivery_time,
-							'company' => 'Jadlog'
-						]
-					]; 
-					$this->add_rate($rate);
+						$this->add_rate($rate);
+					} else {
+						return false;
+					}
                 }
                 
                 /**

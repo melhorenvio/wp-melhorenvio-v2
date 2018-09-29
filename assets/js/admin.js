@@ -59,7 +59,7 @@ pluginWebpack([0],[
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(5);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -222,7 +222,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(5);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -266,7 +266,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
@@ -340,11 +340,11 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vuex = __webpack_require__(4);
+var _vuex = __webpack_require__(5);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _axios = __webpack_require__(5);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -1576,7 +1576,7 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vuex = __webpack_require__(4);
+var _vuex = __webpack_require__(5);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
@@ -1584,11 +1584,11 @@ var _orders = __webpack_require__(73);
 
 var _orders2 = _interopRequireDefault(_orders);
 
-var _balance = __webpack_require__(86);
+var _balance = __webpack_require__(74);
 
 var _balance2 = _interopRequireDefault(_balance);
 
-var _configuration = __webpack_require__(87);
+var _configuration = __webpack_require__(75);
 
 var _configuration2 = _interopRequireDefault(_configuration);
 
@@ -1617,7 +1617,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(5);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -1829,19 +1829,7 @@ var orders = {
 exports.default = orders;
 
 /***/ }),
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1851,7 +1839,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(5);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -1886,7 +1874,7 @@ var balance = {
 exports.default = balance;
 
 /***/ }),
-/* 87 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1896,7 +1884,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(5);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
