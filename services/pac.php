@@ -21,6 +21,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 * @return void
 				 */
 				public function __construct($instance_id = 0) {
+
+					$this->init();
 					$this->id                 = "pac"; 
                     $this->instance_id = absint( $instance_id );
                     $this->method_title       = "Correios Pac (Melhor envio)"; 
@@ -30,8 +32,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     $this->supports = array(
                         'shipping-zones',
                         'instance-settings',
-                    );
-					$this->init_form_fields();
+					);
+					
+					
+					// $this->init_form_fields();
 				}
 				
 				/**

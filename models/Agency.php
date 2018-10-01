@@ -6,7 +6,7 @@ class Agency {
 
     public function getAgencies() {
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',

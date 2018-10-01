@@ -42,7 +42,7 @@ class UsersController {
         $dataUser = get_option('melhorenvio_user_info');
 
         if (!$dataUser) {
-            $token = get_option('melhorenvio_token');
+            $token = get_option('wpmelhorenvio_token');
 
             $params = array('headers'=>[
                 'Content-Type' => 'application/json',

@@ -70,7 +70,7 @@ class CotationController {
 
     protected function makeCotation($to, $services, $products = [], $package = [], $options)
     {
-        if ($token = get_option('melhorenvio_token')) {
+        if ($token = get_option('wpmelhorenvio_token')) {
             $defaultoptions = [
                 "insurance_value" => null,
                 "receipt"         => false, 

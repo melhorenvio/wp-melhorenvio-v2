@@ -9,7 +9,7 @@ class Token {
     }
 
     public function getToken() {
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         if (!$token) {
             return '';
         }
@@ -17,6 +17,6 @@ class Token {
     }
 
     public function saveToken($token) {
-        return update_option('melhorenvio_token', $token, true);
+        return update_option('wpmelhorenvio_token', $token, true);
     }
 }

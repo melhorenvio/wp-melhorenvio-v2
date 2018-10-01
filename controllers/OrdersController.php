@@ -21,7 +21,7 @@ class OrdersController {
 
     public function sendOrder() {
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $user = new UsersController();
         $package  = new PackageController();
         $products = new ProductsController();
@@ -102,7 +102,7 @@ class OrdersController {
 
     public function removeOrder() {
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -135,7 +135,7 @@ class OrdersController {
 
     public function cancelOrder() {
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -176,7 +176,7 @@ class OrdersController {
     }
 
     private function getInfoTicket($order_id) {
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -233,7 +233,7 @@ class OrdersController {
             'wallet' => $ticket->price
         ];
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -273,7 +273,7 @@ class OrdersController {
             'mode' => 'public'
         ];
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -307,7 +307,7 @@ class OrdersController {
 
     public function printTicket() {
 
-        $token = get_option('melhorenvio_token');
+        $token = get_option('wpmelhorenvio_token');
         $body = [
             'orders' => [$_GET['order_id']]
         ];
