@@ -27,14 +27,18 @@ class Address {
 
         $addresses = [];
         foreach ($response->data as $address) {
+
             $addresses[] = [
                 'id' => $address->id,
+                'address' => $address->address,
+                'complement' => $address->complement,
                 'label' => $address->label,
                 'postal_code' => $address->postal_code,
                 'number' => $address->number,
-                'disctrict' => $address->district,
+                'district' => $address->district,
                 'city' => $address->city->city,
-                'state' => $address->city->state->state,
+                'state' => $address->city->state->state_abbr,
+                'country' => $address->city->state->country->id,
                 'selected' => ($selectedAddress == $address->id) ? true : false
             ];
         }
@@ -60,5 +64,17 @@ class Address {
             'success' => true,
             'id' => $id
         ];
+    }
+
+    public function getAddressFrom() {
+        $addresses =$this->getAddressesShopping();
+        $address = null;
+        foreach($addresses['addresses'] as $item) {
+            if($item['selected']) {
+                $address = $item;
+            }
+        }
+        
+        return $address;
     }
 }

@@ -12,9 +12,14 @@ class UsersController {
 
     public function getFrom()
     {
-
         $info = $this->getInfo();
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
+
+            $address = (new Address)->getAddressFrom();
+            if (is_null($address)) {
+                return false;
+            }
+
             return (object) [
                 "name" => $info->data->firstname . ' ' . $info->data->lastname,
                 "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
@@ -22,14 +27,14 @@ class UsersController {
                 "document" => $info->data->document,
                 "company_document" => null, // TODO
                 "state_register" => null, // TODO
-                "address" => $info->data->address->address,
-                "complement" => $info->data->address->complement,
-                "number" => $info->data->address->number,
-                "district" => $info->data->address->district,
-                "city" => $info->data->address->city->city,
-                "state_abbr" => $info->data->address->city->state->state_abbr,
-                "country_id" => $info->data->address->city->state->country->id,
-                "postal_code" => $info->data->address->postal_code
+                "address" => $address['address'],
+                "complement" => $address['complement'],
+                "number" => $address['number'],
+                "district" => $address['district'],
+                "city" => $address['city'],
+                "state_abbr" => $address['state'],
+                "country_id" => $address['country'],
+                "postal_code" => $address['postal_code']
             ];   
         }
 
