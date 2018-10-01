@@ -178,9 +178,10 @@ class Order {
         if(!empty($result)){
             $result = end($result);
             $result = $result->status;
-            if ($result == 'removed') {
+            if ($result == 'removed' || $result == 'waiting') {
                 return null;
             }
+
             return $result;
         }
         return null;
