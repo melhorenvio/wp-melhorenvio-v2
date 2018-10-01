@@ -821,6 +821,7 @@ var render = function() {
     _vm.orders.length > 0
       ? _c(
           "table",
+          { attrs: { border: "1" } },
           [
             _vm._m(0),
             _vm._v(" "),

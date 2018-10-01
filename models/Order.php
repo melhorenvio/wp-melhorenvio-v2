@@ -137,7 +137,6 @@ class Order {
     public function getCotation($id = null) {
 
         if ($id) $this->id = $id; 
-
         // TODO caso já pago, não cotar novamente.
         $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
@@ -170,11 +169,34 @@ class Order {
         return $oldChooseMethod;
     }
 
+    private function getOldstatus($id) {
+
+        global $wpdb;
+        $result = null;
+        $sql = "SELECT * FROM {$wpdb->prefix}tracking_codes_wpme WHERE order_id = " . $id . " ORDER BY id DESC LIMIT 1";
+        $result = $wpdb->get_results($sql);
+        if(!empty($result)){
+            $result = end($result);
+            $result = $result->status;
+            if ($result == 'removed') {
+                return null;
+            }
+            return $result;
+        }
+        return null;
+    }
+
     private function getDataOrder($id = null) {
         if ($id) $this->id = $id; 
+
         $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
+        $status = null;
+        if ($data == false) {
+            $status = $this->getOldstatus($this->id);
+        }
+
         $default = [
-            'status' => null,
+            'status' => $status,
             'order_id' => null,
             'protocol' => null
         ];

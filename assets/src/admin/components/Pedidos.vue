@@ -26,7 +26,7 @@
         <br>
 
         <h2>Saldo: R$<span>{{ getBalance }}</span></h2>
-        <table v-if="orders.length > 0" >
+        <table v-if="orders.length > 0" border="1">
             <tr>
                 <th>#</th>
                 <th>Valor pedido</th>
