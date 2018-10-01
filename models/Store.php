@@ -31,6 +31,8 @@ class Store {
                 'id' => $store->id,
                 'name' => $store->name,
                 'company_name' => $store->company_name,
+                'document' => $store->document,
+                'state_register' => $store->state_register,
                 'selected' => ($store->id == $storeSelected) ? true : false
             ];
         }
@@ -57,6 +59,22 @@ class Store {
             'success' => true,
             'id' => $id
         ];
+    }
+
+    public function getStore() {
+        $stores = $this->getStories();
+        $store = null;
+        foreach ($stores['stores'] as $item) {
+            if ($item['selected']) {
+                $store = $item;
+            }
+        }
+
+        if ($store == null && !empty($store['stores'])) {
+            return end($store['stores']);
+        }
+
+        return $store;
     }
 
 }

@@ -75,6 +75,10 @@ class Address {
             }
         }
         
+        if ($address == null && !empty($addresses['addresses'])) {
+            return end($addresses['addresses']);
+        }
+
         return $address;
     }
 }

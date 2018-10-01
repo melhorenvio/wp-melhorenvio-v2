@@ -2,6 +2,7 @@
 
 namespace Controllers;
 use Models\Address;
+use Models\Store;
 
 
 class UsersController {
@@ -19,14 +20,16 @@ class UsersController {
             if (is_null($address)) {
                 return false;
             }
+            
+            $company = (new Store)->getStore();
 
             return (object) [
                 "name" => $info->data->firstname . ' ' . $info->data->lastname,
                 "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
                 "email" => $info->data->email,
                 "document" => $info->data->document,
-                "company_document" => null, // TODO
-                "state_register" => null, // TODO
+                "company_document" => (isset($company['document'])) ? $company['document'] : null,
+                "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null, // TODO
                 "address" => $address['address'],
                 "complement" => $address['complement'],
                 "number" => $address['number'],
@@ -41,14 +44,11 @@ class UsersController {
         return false;
     }
 
-    public function getInfo()
-    {
-
+    public function getInfo(){
         $dataUser = get_option('melhorenvio_user_info');
 
         if (!$dataUser) {
             $token = get_option('wpmelhorenvio_token');
-
             $params = array('headers'=>[
                 'Content-Type' => 'application/json',
                 'Accept'=>'application/json',
@@ -76,11 +76,9 @@ class UsersController {
             'success' => true,
             'data' => (object) $dataUser
         ];
-
     }
 
-    public function getTo($order_id)
-    {    
+    public function getTo($order_id){    
         $order = new \WC_Order($order_id);
 
         $cpf  = get_user_meta($order->user_id, 'billing_cpf', true);
