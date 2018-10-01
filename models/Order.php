@@ -5,7 +5,7 @@ namespace Models;
 use Bases\bOrders;
 use Controllers\CotationController;
 
-class Order extends bOrders {
+class Order {
     
     private $id;
     private $products;
@@ -144,10 +144,31 @@ class Order extends bOrders {
 
         if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
             $cotationController = new CotationController();
-            return  $cotationController->makeCotationOrder($this->id);
+            $cotation = $cotationController->makeCotationOrder($this->id);
+            if ($cotation['choose_method'] == 0) {
+                $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
+            }
+            return $cotation;
+        }
+
+        if ($cotation['choose_method'] == 0) {
+            $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
         }
         return $cotation;
     }    
+
+    private function getOldChooseMethod($id) {
+        $oldChooseMethod = 0;
+        $oldCot = get_post_meta($id, 'cotacao_melhor_envio', true);
+        if(!empty($oldCot)) {
+            foreach($oldCot as $item) {
+                if($item['selected']) {
+                    $oldChooseMethod = $item['id'];
+                }
+            }
+        }
+        return $oldChooseMethod;
+    }
 
     private function getDataOrder($id = null) {
         if ($id) $this->id = $id; 
