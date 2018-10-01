@@ -49,7 +49,7 @@ class Address {
         
         $addressDefault = get_option('melhorenvio_address_selected_v2');
         if  (empty($addressDefault)) {
-            update_option('melhorenvio_address_selected_v2', $id);
+            add_option('melhorenvio_address_selected_v2', $id);
             return [
                 'success' => true,
                 'id' => $id

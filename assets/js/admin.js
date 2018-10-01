@@ -249,6 +249,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -256,17 +264,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     data() {
         return {
             address: null,
-            store: null
+            store: null,
+            agency: null
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress',
-        stores: 'getStores'
+        stores: 'getStores',
+        agencies: 'getAgencies'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency']), {
         updateConfig() {
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
+            this.setSelectedAgency(this.agency);
         }
     }),
     watch: {
@@ -287,11 +298,21 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     }
                 });
             }
+        },
+        agencies() {
+            if (this.agencies.length > 0) {
+                this.agencies.filter(item => {
+                    if (item.selected) {
+                        this.agency = item.id;
+                    }
+                });
+            }
         }
     },
     mounted() {
         this.getAddresses();
         this.getStores();
+        this.getAgencies();
     }
 });
 
@@ -1374,7 +1395,7 @@ var render = function() {
     [
       _c("h1", [_vm._v("Minhas configurações")]),
       _vm._v(" "),
-      _c("label", [_vm._v("Meus endereços - " + _vm._s(_vm.address))]),
+      _c("label", [_vm._v("Meus endereços")]),
       _c("br"),
       _vm._v(" "),
       _vm._l(_vm.addresses, function(option) {
@@ -1411,7 +1432,7 @@ var render = function() {
       _c("br"),
       _c("br"),
       _vm._v(" "),
-      _c("label", [_vm._v("Minhas lojas - " + _vm._s(_vm.store))]),
+      _c("label", [_vm._v("Minhas lojas")]),
       _c("br"),
       _vm._v(" "),
       _vm._l(_vm.stores, function(option) {
@@ -1433,6 +1454,43 @@ var render = function() {
             on: {
               change: function($event) {
                 _vm.store = option.id
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: option.id } }, [
+            _vm._v(_vm._s(option.name))
+          ]),
+          _vm._v(" "),
+          _c("br")
+        ])
+      }),
+      _vm._v(" "),
+      _c("br"),
+      _c("br"),
+      _vm._v(" "),
+      _c("label", [_vm._v("Agência Jadlog para postagem")]),
+      _c("br"),
+      _vm._v(" "),
+      _vm._l(_vm.agencies, function(option) {
+        return _c("div", { key: option.id, attrs: { value: option.id } }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.agency,
+                expression: "agency"
+              }
+            ],
+            attrs: { type: "radio", id: option.id },
+            domProps: {
+              value: option.id,
+              checked: _vm._q(_vm.agency, option.id)
+            },
+            on: {
+              change: function($event) {
+                _vm.agency = option.id
               }
             }
           }),
@@ -1971,7 +2029,8 @@ var configuration = {
     namespaced: true,
     state: {
         addresses: [],
-        stores: []
+        stores: [],
+        agencies: []
     },
     mutations: {
         setAddress: function setAddress(state, data) {
@@ -1979,6 +2038,9 @@ var configuration = {
         },
         setStore: function setStore(state, data) {
             state.stores = data;
+        },
+        setAgency: function setAgency(state, data) {
+            state.agencies = data;
         }
     },
     getters: {
@@ -1987,6 +2049,9 @@ var configuration = {
         },
         getStores: function getStores(state) {
             return state.stores;
+        },
+        getAgencies: function getAgencies(state) {
+            return state.agencies;
         }
     },
     actions: {
@@ -2018,8 +2083,22 @@ var configuration = {
                 }
             });
         },
-        setSelectedAddress: function setSelectedAddress(_ref3, data) {
+        getAgencies: function getAgencies(_ref3, data) {
             var commit = _ref3.commit;
+
+            var content = {
+                action: 'get_agency_jadlog'
+            };
+            _axios2.default.get('' + ajaxurl, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setAgency', response.data.agencies);
+                }
+            });
+        },
+        setSelectedAddress: function setSelectedAddress(_ref4, data) {
+            var commit = _ref4.commit;
 
             _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
                 if (response && response.status === 200) {
@@ -2027,10 +2106,19 @@ var configuration = {
                 }
             });
         },
-        setSelectedStore: function setSelectedStore(_ref4, data) {
-            var commit = _ref4.commit;
+        setSelectedStore: function setSelectedStore(_ref5, data) {
+            var commit = _ref5.commit;
 
             _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
+                if (response && response.status === 200) {
+                    // commit('setAddress', response.data.id)
+                }
+            });
+        },
+        setSelectedAgency: function setSelectedAgency(_ref6, data) {
+            var commit = _ref6.commit;
+
+            _axios2.default.post(ajaxurl + '?action=set_agency_jadlog&id=' + data).then(function (response) {
                 if (response && response.status === 200) {
                     // commit('setAddress', response.data.id)
                 }
