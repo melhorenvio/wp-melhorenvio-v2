@@ -37,7 +37,7 @@ class Store {
 
         return [
             'success' => true,
-            'stories' => $stories
+            'stores' => $stories
         ];
     }
 

@@ -264,7 +264,7 @@ final class Base_Plugin {
         add_action('wp_ajax_get_agency_jadlog', [$conf, 'getAgencyJadlog']);
 
         // Minhas lojas
-        add_action('wp_ajax_get_stories', [$conf, 'getStories']);
+        add_action('wp_ajax_get_stores', [$conf, 'getStories']);
         add_action('wp_ajax_set_store', [$conf, 'setStore']);
     }
     

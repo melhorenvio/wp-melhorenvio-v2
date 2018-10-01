@@ -238,26 +238,60 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Configuracoes',
     data() {
         return {
-            address: null
+            address: null,
+            store: null
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
-        addresses: 'getAddress'
+        addresses: 'getAddress',
+        stores: 'getStores'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress'])),
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore']), {
+        updateConfig() {
+            this.setSelectedAddress(this.address);
+            this.setSelectedStore(this.store);
+        }
+    }),
     watch: {
-        address(e) {
-            this.setSelectedAddress(e);
+        addresses() {
+            if (this.addresses.length > 0) {
+                this.addresses.filter(item => {
+                    if (item.selected) {
+                        this.address = item.id;
+                    }
+                });
+            }
+        },
+        stores() {
+            if (this.stores.length > 0) {
+                this.stores.filter(item => {
+                    if (item.selected) {
+                        this.store = item.id;
+                    }
+                });
+            }
         }
     },
     mounted() {
         this.getAddresses();
+        this.getStores();
     }
 });
 
@@ -1340,7 +1374,7 @@ var render = function() {
     [
       _c("h1", [_vm._v("Minhas configurações")]),
       _vm._v(" "),
-      _c("label", [_vm._v("Endereços")]),
+      _c("label", [_vm._v("Meus endereços - " + _vm._s(_vm.address))]),
       _c("br"),
       _vm._v(" "),
       _vm._l(_vm.addresses, function(option) {
@@ -1372,7 +1406,49 @@ var render = function() {
           _vm._v(" "),
           _c("br")
         ])
-      })
+      }),
+      _vm._v(" "),
+      _c("br"),
+      _c("br"),
+      _vm._v(" "),
+      _c("label", [_vm._v("Minhas lojas - " + _vm._s(_vm.store))]),
+      _c("br"),
+      _vm._v(" "),
+      _vm._l(_vm.stores, function(option) {
+        return _c("div", { key: option.id, attrs: { value: option.id } }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.store,
+                expression: "store"
+              }
+            ],
+            attrs: { type: "radio", id: option.id },
+            domProps: {
+              value: option.id,
+              checked: _vm._q(_vm.store, option.id)
+            },
+            on: {
+              change: function($event) {
+                _vm.store = option.id
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: option.id } }, [
+            _vm._v(_vm._s(option.name))
+          ]),
+          _vm._v(" "),
+          _c("br")
+        ])
+      }),
+      _vm._v(" "),
+      _c("br"),
+      _c("br"),
+      _vm._v(" "),
+      _c("button", { on: { click: _vm.updateConfig } }, [_vm._v("salvar")])
     ],
     2
   )
@@ -1894,16 +1970,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var configuration = {
     namespaced: true,
     state: {
-        addresses: []
+        addresses: [],
+        stores: []
     },
     mutations: {
         setAddress: function setAddress(state, data) {
             state.addresses = data;
+        },
+        setStore: function setStore(state, data) {
+            state.stores = data;
         }
     },
     getters: {
         getAddress: function getAddress(state) {
             return state.addresses;
+        },
+        getStores: function getStores(state) {
+            return state.stores;
         }
     },
     actions: {
@@ -1913,19 +1996,45 @@ var configuration = {
             var content = {
                 action: 'get_addresses'
             };
-
             _axios2.default.get('' + ajaxurl, {
                 params: content
             }).then(function (response) {
                 if (response && response.status === 200) {
-                    commit('setAddress', response.data.address);
+                    commit('setAddress', response.data.addresses);
                 }
             });
         },
-        setSelectedAddress: function setSelectedAddress(_ref2, data) {
+        getStores: function getStores(_ref2, data) {
             var commit = _ref2.commit;
 
-            console.log(data);
+            var content = {
+                action: 'get_stores'
+            };
+            _axios2.default.get('' + ajaxurl, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setStore', response.data.stores);
+                }
+            });
+        },
+        setSelectedAddress: function setSelectedAddress(_ref3, data) {
+            var commit = _ref3.commit;
+
+            _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
+                if (response && response.status === 200) {
+                    // commit('setAddress', response.data.id)
+                }
+            });
+        },
+        setSelectedStore: function setSelectedStore(_ref4, data) {
+            var commit = _ref4.commit;
+
+            _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
+                if (response && response.status === 200) {
+                    // commit('setAddress', response.data.id)
+                }
+            });
         }
     }
 };
