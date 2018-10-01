@@ -45,7 +45,7 @@ class Order extends bOrders {
      * @param [Int] $id
      * @return object
      */
-    public function retrieveOne() : Array
+    public function retrieveOne()
     {
         return [
             'method' => 'OrdersModel@retrieveOne',
@@ -58,7 +58,7 @@ class Order extends bOrders {
      * @param Array $filters
      * @return Array
      */
-    public function getAllOrders(Array $filters = NULL) : Array
+    public function getAllOrders($filters = NULL)
     {
         $args = [
             'numberposts' => ($filters['limit']) ?: 10,

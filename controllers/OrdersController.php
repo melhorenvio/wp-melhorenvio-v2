@@ -74,7 +74,9 @@ class OrdersController {
         if(WP_ENV !== null && WP_ENV == 'develop') {
             $urlApi = 'https://sandbox.melhorenvio.com.br';
         } 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . 'api/v2/me/cart', $params)));
+
+
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/cart', $params)));
 
         if (!isset($response->id)) {
             echo json_encode([

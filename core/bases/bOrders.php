@@ -24,7 +24,7 @@ class bOrders implements iOrders {
      * @param Array $attributes
      * @return void
      */
-    public function setAttributes(Array $attributes) : void
+    public function setAttributes($attributes) 
     {
         //  code
     }
@@ -47,7 +47,7 @@ class bOrders implements iOrders {
      * @param Array $filters
      * @return Array
      */
-    public static function retrieveMany(Array $filters = NULL) : Array
+    public static function retrieveMany($filters = NULL) 
     {
         $defaults = array(
             'numberposts' => 5,
@@ -62,7 +62,7 @@ class bOrders implements iOrders {
      * @param Array $data
      * @return object
      */
-    public function update(Array $data) : Array
+    public function update($data) 
     {
         return [
             'message' => 'Testing OOP WP',
