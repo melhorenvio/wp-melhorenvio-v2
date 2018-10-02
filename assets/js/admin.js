@@ -307,6 +307,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     }
                 });
             }
+        },
+        address(e) {
+            console.log(e);
         }
     },
     mounted() {

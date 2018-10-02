@@ -2,7 +2,7 @@
     <div class="app-configuracoes">
         <h1>Minhas configurações</h1>
         <label>Meus endereços</label><br>
-        <div v-for="option in addresses" v-bind:value="option.id" :key="option.id">
+        <div v-for="option in addresses" v-bind:value="option.id" :key="option.id" >
             <input type="radio" :id="option.id" :value="option.id" v-model="address">
             <label :for="option.id">{{option.label}}</label>
             <br>
@@ -90,6 +90,9 @@ export default {
                     }
                 })
             }
+        },
+        address (e) {
+            console.log(e);
         }
     },
     mounted () {
