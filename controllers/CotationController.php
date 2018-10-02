@@ -22,7 +22,7 @@ class CotationController {
         $productcontroller = new ProductsController();
         $products = $productcontroller->getProductsOrder($order_id);
 
-        $result = $this->makeCotationProducts($products, [1,2,3,4,5,7,8,9], $to);
+        $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
 
         if (!isset($result[0])) {
             return false;
@@ -84,8 +84,7 @@ class CotationController {
             "length" =>  $_POST['data']['produto_altura']
         ];
 
-        // TODO services
-        $cotation = $this->makeCotationPackage($package, [1,2,3,4,8,9], $_POST['data']['cep_origem']);
+        $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem']);
 
         $result = [];
 
@@ -230,9 +229,18 @@ class CotationController {
         }
         return $result;
     }
+
+    public function getArrayShippingMethodsMelhorEnvio() {
+        $methods = [];
+        $shipping_methods = \WC()->shipping->get_shipping_methods();
+        foreach ($shipping_methods as $method) {
+            if (is_null($method->code)) {
+                continue;
+            }
+            $methods[] = $method->code;
+        }
+        return array_unique($methods);
+    }
 }
 
 $cotationcontroller = new CotationController();
-
-// TODO LIST
-// - Verificar ids de serviços e deixar de forma dinamica

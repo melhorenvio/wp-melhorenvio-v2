@@ -229,12 +229,12 @@ final class Base_Plugin {
         $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
         $cotacaoProd->run();
 
+
         add_action( 'init', array( $this, 'init_classes' ) );
 
         // Localize our plugin
         add_action( 'init', array( $this, 'localization_setup' ) );
 
-        // TODO tentar passar essas actions para dentro dos controllers.
         add_action('wp_ajax_get_orders', function() {
             $order = new OrdersController();
             echo $order->getOrders();

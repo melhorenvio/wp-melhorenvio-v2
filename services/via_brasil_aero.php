@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			class WC_Via_Brasil_Aero_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '8';
+                public $code = '8';
 				/**
 				 * Constructor for your shipping class
 				 *

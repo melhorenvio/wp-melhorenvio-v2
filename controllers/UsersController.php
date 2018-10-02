@@ -29,7 +29,7 @@ class UsersController {
                 "email" => $info->data->email,
                 "document" => $info->data->document,
                 "company_document" => (isset($company['document'])) ? $company['document'] : null,
-                "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null, // TODO
+                "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null,
                 "address" => $address['address'],
                 "complement" => $address['complement'],
                 "number" => $address['number'],

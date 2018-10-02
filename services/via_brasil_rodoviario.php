@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			class WC_Via_Brasil_Rodoviario_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '9';
+                public $code = '9';
 				/**
 				 * Constructor for your shipping class
 				 *

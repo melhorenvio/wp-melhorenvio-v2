@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			class WC_Sedex_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '2';
+                public $code = '2';
 				/**
 				 * Constructor for your shipping class
 				 *

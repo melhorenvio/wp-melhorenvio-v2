@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			class WC_Pac_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '1';
+                public $code = '1';
 				/**
 				 * Constructor for your shipping class
 				 *

@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			class WC_Jadlog_Com_Shipping_Method extends WC_Shipping_Method {
 
-                protected $code = '4';
+                public $code = '4';
 				/**
 				 * Constructor for your shipping class
 				 *
