@@ -67,7 +67,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 						if (isset($result->name) && isset($result->price)) {
 							$rate = [
-								'id' => 'melhorenvio_jadlog_coom',
+								'id' => 'melhorenvio_jadlog_com',
 								'label' => $result->name . (new timeController)->setLabel($result->delivery_range),
 								'cost' => $result->price,
 								'calc_tax' => 'per_item',

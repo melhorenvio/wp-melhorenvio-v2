@@ -29,36 +29,28 @@ class CotationController {
         }
 
         $result['date_cotation'] = date('Y-m-d H:i:s');
-        $result['choose_method'] =$this->getCodeShippingSelected(end($woocommerce->session->get( 'chosen_shipping_methods')));
+
+        $chooseMethodSession = $woocommerce->session->get( 'chosen_shipping_methods');
+        $chooseMethodSession = end($chooseMethodSession);
+
+        $result['choose_method'] = $this->getCodeShippingSelected($chooseMethodSession);
 
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
     }
 
     private function getCodeShippingSelected($choose) {
+        $prefix = 0;
+        $shipping_methods = \WC()->shipping->get_shipping_methods();
+        foreach ($shipping_methods as $method) {
+            if (!isset($method->code) || is_null($method->code)) {
+                continue;
+            }
 
-        // TODO
-        switch ($choose) {
-            case 'melhorenvio_pac':
-                return 1;
-                break;
-            case 'melhorenvio_sedex':
-                return 2;
-                break;
-            case 'melhorenvio_jadlog_package':
-                return 3;
-                break;
-            case 'melhorenvio_jadlog_com':
-                return 4;
-                break;
-            case 'melhorenvio_via_brasil_aero':
-                return 8;
-                break;
-            case 'melhorenvio_via_brasil_rodoviario':
-                return 9;
-                break;
-            default:
-                return 0;
+            if ($choose == 'melhorenvio_' . $method->id) {
+                return $method->code;
+            }
         }
+        return $prefix;
     }
 
     public function cotationProductPage() {
@@ -234,7 +226,7 @@ class CotationController {
         $methods = [];
         $shipping_methods = \WC()->shipping->get_shipping_methods();
         foreach ($shipping_methods as $method) {
-            if (is_null($method->code)) {
+            if (!isset($method->code) || is_null($method->code)) {
                 continue;
             }
             $methods[] = $method->code;

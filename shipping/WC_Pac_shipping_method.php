@@ -34,7 +34,6 @@ class WC_Pac_shipping_method extends MelhorEnvioAbstract {
 		if ( 18 >= $package['contents_cost'] ) {
 			return 0;
 		}
-
 		return $package['contents_cost'];
 	}
 
