@@ -24,7 +24,13 @@ class CotationController {
 
         $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
 
-        if (!isset($result[0])) {
+        if(!is_array($result)){
+            $item = $result;
+            $result = [];
+            $result[] = $item;
+        }
+
+        if (!isset($result[0]->id)) {
             return false;
         }
 
@@ -81,22 +87,18 @@ class CotationController {
         ];
 
         $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
-
+        
         $result = [];
 
-        foreach ($cotation as $item) {
-            
-            if (is_null($item->price)) {
-                continue;
+        if (count($cotation) == 1) {
+            $result[] = $this->mapObject($cotation);
+        } else {
+            foreach ($cotation as $item) {
+                if (is_null($item->price)) {
+                    continue;
+                }
+                $result[] = $this->mapObject($item);
             }
-
-            $result[] = [
-                'id' => $item->id,
-                'name' => $item->name,
-                'price' => 'R$' . number_format($item->price, 2, ',', '.'),
-                'company' => $item->company->name,
-                'delivery_time' => (new TimeController)->setLabel($item->delivery_range)
-            ];
         }
 
         echo json_encode([
@@ -104,6 +106,16 @@ class CotationController {
             'data' => $result
         ]);
         die;
+    }
+
+    private function mapObject($item) {
+        return [
+            'id' => $item->id,
+            'name' => $item->name,
+            'price' => 'R$' . number_format($item->price, 2, ',', '.'),
+            'company' => $item->company->name,
+            'delivery_time' => (new TimeController)->setLabel($item->delivery_range)
+        ];
     }
 
     public function makeCotationProducts($products, $services, $to) {
@@ -126,7 +138,6 @@ class CotationController {
             $opts = array_merge($defaultoptions, $options);
     
             $user = new UsersController();
-            
             $from = $user->getFrom();
     
             $body = [
@@ -153,7 +164,6 @@ class CotationController {
             );
     
             $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
-        
             return $response;
         }
 
@@ -227,14 +237,33 @@ class CotationController {
 
     public function getArrayShippingMethodsMelhorEnvio() {
         $methods = [];
+        $enableds = $this->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
         $shipping_methods = \WC()->shipping->get_shipping_methods();
         foreach ($shipping_methods as $method) {
             if (!isset($method->code) || is_null($method->code)) {
                 continue;
             }
-            $methods[] = $method->code;
+
+            if (in_array($method->id, $enableds)) {
+                $methods[] = $method->code;
+            }
         }
+
         return array_unique($methods);
+    }
+
+    public function getArrayShippingMethodsEnabledByZoneMelhorEnvio() {
+
+        global $wpdb;
+        $enableds = [];
+        $sql = sprintf('select * from %swoocommerce_shipping_zone_methods where is_enabled = 1', $wpdb->prefix);
+        $results = $wpdb->get_results($sql);
+        
+        foreach ($results as $item){
+            $enableds[] = $item->method_id;
+        }
+
+        return $enableds;
     }
 }
 

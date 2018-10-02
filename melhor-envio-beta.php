@@ -229,7 +229,6 @@ final class Base_Plugin {
         $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
         $cotacaoProd->run();
 
-
         add_action( 'init', array( $this, 'init_classes' ) );
 
         // Localize our plugin

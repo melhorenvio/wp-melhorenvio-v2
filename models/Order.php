@@ -139,6 +139,7 @@ class Order {
         if ($id) $this->id = $id; 
         // TODO caso já pago, não cotar novamente.
         $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
+
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
         if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
@@ -159,6 +160,7 @@ class Order {
     private function getOldChooseMethod($id) {
         $oldChooseMethod = 0;
         $oldCot = get_post_meta($id, 'cotacao_melhor_envio', true);
+
         if(!empty($oldCot)) {
             foreach($oldCot as $item) {
                 if($item['selected']) {
