@@ -212,6 +212,17 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                         div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete svg {fill:<?php echo $this->options['cor_do_texto']?>;}
                         div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {color:<?php echo $this->options['cor_do_texto']?>;}
                         div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {background-color:<?php echo $this->options['cor_do_botao']?>;}
+                        #calcular-frete {
+                            display:inline-block;
+                            color:#444;
+                            border:1px solid #CCC;
+                            background:#DDD;
+                            box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+                            cursor:pointer;
+                            vertical-align:middle;
+                            padding: 9px;
+                            text-align: center;
+                        }
                     </style>
                     <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
                     <input type="hidden" id="calculo_frete_endpoint_url" value="<?php echo admin_url( 'admin-ajax.php' ); ?>">
@@ -226,8 +237,10 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                         <div id="calcular-frete">
                             Calcular Frete
                         </div>
-                        <div id="calcular-frete-loader"></div>
                     </div>
+                    <div id="calcular-frete-loader" style="display:none;">
+                            <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/loader.gif') ?>" />
+                        </div>
                     <div class="resultado-frete">
                         <table>
                             <thead>
