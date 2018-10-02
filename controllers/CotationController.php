@@ -4,6 +4,7 @@ namespace Controllers;
 use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\ProductsController;
+use Controllers\TimeController;
 
 class CotationController {
 
@@ -93,13 +94,13 @@ class CotationController {
             if (is_null($item->price)) {
                 continue;
             }
-            
+
             $result[] = [
                 'id' => $item->id,
                 'name' => $item->name,
-                'price' => $item->price,
+                'price' => 'R$' . number_format($item->price, 2, ',', '.'),
                 'company' => $item->company->name,
-                'delivery_time' => $item->delivery_time
+                'delivery_time' => (new TimeController)->setLabel($item->delivery_range)
             ];
         }
 
