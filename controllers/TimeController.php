@@ -15,7 +15,7 @@ class TimeController {
         }
 
         if ( $data->min < $data->max ) {
-            return ' ( ' . $data->min . ' à ' . $data->max . ' dias úteis)';
+            return ' ( ' . $data->min . ' a ' . $data->max . ' dias úteis)';
         }
 
         return '';
