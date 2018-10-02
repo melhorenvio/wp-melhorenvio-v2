@@ -178,6 +178,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status] = args;
 
+            if (status == 'printed') {
+                return false;
+            }
+
+            if (status == 'generated') {
+                return false;
+            }
+
             if (status == 'pending') {
                 return false;
             }

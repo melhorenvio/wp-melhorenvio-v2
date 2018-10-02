@@ -138,6 +138,14 @@ export default {
                 status
             ] = args
 
+            if (status == 'printed') {
+                return false;
+            }
+
+            if (status == 'generated') {
+                return false;
+            }
+
             if (status == 'pending') {
                 return false;
             }
