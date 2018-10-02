@@ -110,8 +110,7 @@ class CotationController {
         return $this->makeCotation($to, $services, [], $package, []);
     }
 
-    protected function makeCotation($to, $services, $products = [], $package = [], $options)
-    {
+    protected function makeCotation($to, $services, $products = [], $package = [], $options){
         if ($token = get_option('wpmelhorenvio_token')) {
             $defaultoptions = [
                 "insurance_value" => null,
