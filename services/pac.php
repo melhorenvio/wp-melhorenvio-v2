@@ -67,8 +67,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					
 					$cotation = new CotationController();					
 					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
-
-						if (isset($result->name)) {
+						
+						if (isset($result->name) && isset($result->price)) {
 							$rate = [
 								'id' => 'melhorenvio_pac',
 								'label' => $result->name . (new timeController)->setLabel($result->delivery_range),
