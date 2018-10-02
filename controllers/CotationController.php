@@ -76,7 +76,11 @@ class CotationController {
             "length" =>  $_POST['data']['produto_altura']
         ];
 
-        $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem']);
+        $options = [
+            'insurance_value' => $_POST['data']['produto_preco']
+        ];
+
+        $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
 
         $result = [];
 
@@ -106,8 +110,8 @@ class CotationController {
         return $this->makeCotation($to, $services, $products, [], ['']);
     }
     
-    public function makeCotationPackage($package, $services, $to) {
-        return $this->makeCotation($to, $services, [], $package, []);
+    public function makeCotationPackage($package, $services, $to, $options = []) {
+        return $this->makeCotation($to, $services, [], $package, $options);
     }
 
     protected function makeCotation($to, $services, $products = [], $package = [], $options){
