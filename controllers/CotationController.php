@@ -60,6 +60,56 @@ class CotationController {
         }
     }
 
+    public function cotationProductPage() {
+
+        if (!isset($_POST['data'])) {
+            return [
+                'success' => false,
+                'message' => 'Dados incompletos'
+            ];
+        }
+
+        if (!isset($_POST['data']['cep_origem'])) {
+            return [
+                'success' => false,
+                'message' => 'Campo CEP é necessário'
+            ];
+        }
+
+        $package = [
+            "weight" =>  $_POST['data']['produto_peso'],
+            "width"  =>  $_POST['data']['produto_comprimento'],
+            "height" =>  $_POST['data']['produto_largura'],
+            "length" =>  $_POST['data']['produto_altura']
+        ];
+
+        // TODO services
+        $cotation = $this->makeCotationPackage($package, [1,2,3,4,8,9], $_POST['data']['cep_origem']);
+
+        $result = [];
+
+        foreach ($cotation as $item) {
+            
+            if (is_null($item->price)) {
+                continue;
+            }
+            
+            $result[] = [
+                'id' => $item->id,
+                'name' => $item->name,
+                'price' => $item->price,
+                'company' => $item->company->name,
+                'delivery_time' => $item->delivery_time
+            ];
+        }
+
+        echo json_encode([
+            'success' => true,
+            'data' => $result
+        ]);
+        die;
+    }
+
     public function makeCotationProducts($products, $services, $to) {
         return $this->makeCotation($to, $services, $products, [], ['']);
     }

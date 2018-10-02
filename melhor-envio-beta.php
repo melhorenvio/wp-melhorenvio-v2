@@ -54,6 +54,8 @@ use Controllers\ConfigurationController;
 use Controllers\TokenController;
 use Controllers\PackageController;
 use Controllers\UsersController;
+use Controllers\CotationController;
+use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 
 /**
  * Base_Plugin class
@@ -105,6 +107,7 @@ final class Base_Plugin {
      * and if it doesn't find one, creates it.
      */
     public static function init() {
+
         static $instance = false;
 
         if ( ! $instance ) {
@@ -180,11 +183,6 @@ final class Base_Plugin {
         update_option( 'baseplugin_version', BASEPLUGIN_VERSION );
     }
 
-    /**
-     * Placeholder for deactivation function
-     *
-     * Nothing being called here yet.
-     */
     public function deactivate() {
 
     }
@@ -221,21 +219,20 @@ final class Base_Plugin {
      * @return void
      */
     public function init_hooks() {
-
-        // $orders = new OrdersController();
+        
         $token   = new tokenController();
         $order   = new OrdersController(); 
         $users   = new UsersController();
         $conf    = new ConfigurationController();
+        $cotacao = new CotationController();
+
+        $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
+        $cotacaoProd->run();
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
         // Localize our plugin
         add_action( 'init', array( $this, 'localization_setup' ) );
-
-        /**
-         * MELHOR ENVIO ACTIONS
-         */
 
         // TODO tentar passar essas actions para dentro dos controllers.
         add_action('wp_ajax_get_orders', function() {
@@ -266,9 +263,11 @@ final class Base_Plugin {
         // Minhas lojas
         add_action('wp_ajax_get_stores', [$conf, 'getStories']);
         add_action('wp_ajax_set_store', [$conf, 'setStore']);
+
+        // Cotação por embalagem
+        add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
     }
     
-
     /**
      * Instantiate the required classes
      *
