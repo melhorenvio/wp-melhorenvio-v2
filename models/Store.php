@@ -27,12 +27,16 @@ class Store {
         $storeSelected = get_option('melhorenvio_store_v2');
         
         foreach($response->data as $store) {
+
             $stories[] = [
                 'id' => $store->id,
                 'name' => $store->name,
                 'company_name' => $store->company_name,
                 'document' => $store->document,
                 'state_register' => $store->state_register,
+                'protocol' => $store->protocol,
+                'email' => $store->email,
+                'website' => $store->website,
                 'selected' => ($store->id == $storeSelected) ? true : false
             ];
         }

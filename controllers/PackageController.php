@@ -32,20 +32,23 @@ class PackageController {
     public function getPackageOrderAfterCotation($order_id) {
     
         $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
-
-        if (empty($data)) {
-            return null;
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if(!isset($item->packages)) {
+                    continue;
+                }
+                if(!is_null(end($item->packages))) {
+                    $package = end($item->packages);
+                    return [
+                        'width'  => (isset($package->dimensions->width)) ? $package->dimensions->width : null,
+                        'height' => (isset($package->dimensions->height)) ? $package->dimensions->height : null,
+                        'length' => (isset($package->dimensions->length)) ? $package->dimensions->length : null,
+                        'weight' => (isset($package->weight)) ? $package->weight : null,
+                    ];
+                }
+            }
         }
-
-        // TODO checar se existe esses dados IMPORTANT REVER
-        $package = [
-            'width' => $data[1]->packages[0]->dimensions->width,
-            'height' => $data[1]->packages[0]->dimensions->height,
-            'length' => $data[1]->packages[0]->dimensions->length,
-            'weight' => $data[1]->packages[0]->weight
-        ];
-
-        return $package;
+        return null;
     }
 
     public function getPackageOrder($order_id) {
@@ -84,6 +87,3 @@ class PackageController {
     }
 
 }
-
-// TODO LIST
-// - Verificar se existem todas medidas

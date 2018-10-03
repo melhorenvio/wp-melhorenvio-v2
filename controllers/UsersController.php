@@ -17,6 +17,7 @@ class UsersController {
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
 
             $address = (new Address)->getAddressFrom();
+
             if (is_null($address)) {
                 return false;
             }
@@ -24,9 +25,9 @@ class UsersController {
             $company = (new Store)->getStore();
 
             return (object) [
-                "name" => $info->data->firstname . ' ' . $info->data->lastname,
+                "name" => (isset($company['name'])) ? $company['name']  : $info->data->firstname . ' ' . $info->data->lastname,
                 "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
-                "email" => $info->data->email,
+                "email" => (isset($company['email'])) ? $company['email'] : $info->data->email,
                 "document" => $info->data->document,
                 "company_document" => (isset($company['document'])) ? $company['document'] : null,
                 "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null,

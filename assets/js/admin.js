@@ -1433,7 +1433,20 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("label", { attrs: { for: option.id } }, [
-            _vm._v(_vm._s(option.label))
+            _c("b", [_vm._v(_vm._s(option.label))]),
+            _vm._v(
+              " (" +
+                _vm._s(option.address) +
+                " " +
+                _vm._s(option.number) +
+                ", " +
+                _vm._s(option.district) +
+                " - " +
+                _vm._s(option.city) +
+                "/" +
+                _vm._s(option.state) +
+                " )"
+            )
           ]),
           _vm._v(" "),
           _c("br")
@@ -1470,7 +1483,14 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("label", { attrs: { for: option.id } }, [
-            _vm._v(_vm._s(option.name))
+            _c("b", [_vm._v(_vm._s(option.name))]),
+            _vm._v(
+              " (Documento: " +
+                _vm._s(option.document) +
+                " - Registro estatual: " +
+                _vm._s(option.state_register) +
+                ")"
+            )
           ]),
           _vm._v(" "),
           _c("br")
@@ -1507,7 +1527,8 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("label", { attrs: { for: option.id } }, [
-            _vm._v(_vm._s(option.name))
+            _c("b", [_vm._v(_vm._s(option.company_name))]),
+            _vm._v(" (" + _vm._s(option.name) + ")")
           ]),
           _vm._v(" "),
           _c("br")

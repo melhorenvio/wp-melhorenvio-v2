@@ -4,7 +4,7 @@
         <label>Meus endereços</label><br>
         <div v-for="option in addresses" v-bind:value="option.id" :key="option.id" >
             <input type="radio" :id="option.id" :value="option.id" v-model="address">
-            <label :for="option.id">{{option.label}}</label>
+            <label :for="option.id"><b>{{option.label}}</b> ({{option.address}} {{option.number}}, {{option.district}} - {{option.city}}/{{option.state}} )</label>
             <br>
         </div>
         <br><br>
@@ -12,7 +12,7 @@
         <label>Minhas lojas</label><br>
         <div v-for="option in stores" v-bind:value="option.id" :key="option.id">
             <input type="radio" :id="option.id" :value="option.id" v-model="store">
-            <label :for="option.id">{{option.name}}</label>
+            <label :for="option.id"><b>{{option.name}}</b> (Documento: {{option.document}} - Registro estatual: {{option.state_register}})</label>
             <br>
         </div>
         <br><br>
@@ -20,7 +20,7 @@
         <label>Agência Jadlog para postagem</label><br>
         <div v-for="option in agencies" v-bind:value="option.id" :key="option.id">
             <input type="radio" :id="option.id" :value="option.id" v-model="agency">
-            <label :for="option.id">{{option.name}}</label>
+            <label :for="option.id"><b>{{option.company_name}}</b> ({{option.name}})</label>
             <br>
         </div>
         <br><br>
