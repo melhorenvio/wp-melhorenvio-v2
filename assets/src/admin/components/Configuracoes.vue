@@ -29,7 +29,7 @@
         </div>
         <br><br>
 
-        <button @click="updateConfig">salvar</button>
+        <button class="btn-border -green" @click="updateConfig">salvar</button>
 
     </div>
 </template>

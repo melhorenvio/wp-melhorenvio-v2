@@ -89,7 +89,7 @@ pluginWebpack([1],[
 "use strict";
 
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -226,7 +226,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 

@@ -14,7 +14,7 @@ var entryPoint = {
     frontend: './assets/src/frontend/main.js',
     admin: './assets/src/admin/main.js',
     vendor: Object.keys(package.dependencies),
-    style: './assets/less/style.less',
+    style: './assets/stylus/index.styl',
 };
 
 var exportPath = path.resolve(__dirname, './assets/js');
@@ -96,6 +96,7 @@ module.exports = {
             '@': path.resolve('./assets/src/'),
             'frontend': path.resolve('./assets/src/frontend/'),
             'admin': path.resolve('./assets/src/admin/'),
+            'me': path.resolve('./assets/styl/me-bootstrap')
         },
         modules: [
             path.resolve('./node_modules'),
@@ -104,7 +105,6 @@ module.exports = {
     },
 
     plugins,
-
         module: {
         rules: [
             {
@@ -124,13 +124,7 @@ module.exports = {
             },
             {
                 test: /\.styl$/,
-                use: extractCss.extract({
-                    use: [{
-                        loader: "css-loader"
-                    }, {
-                        loader: "styl-loader"
-                    }]
-                })
+                use: [ 'css-loader', 'stylus-loader' ]
             },
             {
                 test: /\.css$/,

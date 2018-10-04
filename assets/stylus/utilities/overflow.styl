@@ -1,0 +1,9 @@
+me-overflow( value, args... )
+    if value == ellipsis
+        white-space: nowrap
+        text-overflow: ellipsis
+        overflow: hidden
+    else
+        overflow: value args
+
+overflow = me-overflow unless me-no-conflict

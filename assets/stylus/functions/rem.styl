@@ -1,0 +1,13 @@
+me-rem-base = 16px
+
+me-rem( values )
+    base = me-rem-base is a "unit" ? me-rem-base : 16
+    result = null
+    for value in values
+      	if type( value ) == "unit" && ( unit( value ) == "px" || unit( value ) == "" )
+        		value = unit( round( value / base, 3 ), "rem" )
+        		if value == "0rem" { value = 0 }
+        result = result != null ? result value : value
+    result
+
+rem = me-rem unless me-no-conflict

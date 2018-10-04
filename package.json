@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "jeet": "^7.2.0",
+    "rupture": "^0.7.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

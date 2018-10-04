@@ -1,0 +1,6 @@
+me-percent( value, total )
+    value = _strip-units( value )
+    total = _strip-units( total )
+    value / total * 100%
+
+percent = me-percent unless me-no-conflict

@@ -406,7 +406,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 "use strict";
 
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -533,7 +533,7 @@ if (false) {(function () {
 /* 56 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+throw new Error("Module build failed: ModuleBuildError: Module build failed: CssSyntaxError: /home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/assets/src/admin/App.vue:542:1: Unknown word\n    at Input.error (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/input.js:119:22)\n    at Parser.unknownWord (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/parser.js:506:26)\n    at Parser.other (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/parser.js:171:18)\n    at Parser.parse (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/parser.js:84:26)\n    at parse (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/parse.js:24:16)\n    at new LazyResult (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/lazy-result.js:70:24)\n    at Processor.process (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/node_modules/postcss/lib/processor.js:117:12)\n    at loadPostcssConfig.then.config (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/lib/style-compiler/index.js:61:10)\n    at <anonymous>\n    at process._tickCallback (internal/process/next_tick.js:188:7)\n    at runLoaders (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/webpack/lib/NormalModule.js:195:19)\n    at /home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at loadPostcssConfig.then.catch.e (/home/samuel/Documents/GitHub/wordpress/datavolume/plugins/melhorenvio/node_modules/vue-loader/lib/style-compiler/index.js:77:7)\n    at <anonymous>\n    at process._tickCallback (internal/process/next_tick.js:188:7)");
 
 /***/ }),
 /* 57 */
@@ -568,7 +568,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -1541,7 +1541,11 @@ var render = function() {
       _c("br"),
       _c("br"),
       _vm._v(" "),
-      _c("button", { on: { click: _vm.updateConfig } }, [_vm._v("salvar")])
+      _c(
+        "button",
+        { staticClass: "btn-border -green", on: { click: _vm.updateConfig } },
+        [_vm._v("salvar")]
+      )
     ],
     2
   )
@@ -1742,7 +1746,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
