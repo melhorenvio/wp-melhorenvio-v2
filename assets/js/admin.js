@@ -157,6 +157,56 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -891,400 +941,288 @@ var render = function() {
     _vm._v(" "),
     _vm.orders.length > 0
       ? _c(
-          "table",
-          { attrs: { border: "1" } },
+          "div",
+          {
+            staticClass: "table-box",
+            class: { "-inative": !_vm.orders.length }
+          },
           [
-            _vm._m(0),
-            _vm._v(" "),
-            _vm._l(_vm.orders, function(item, index) {
-              return _c("tr", { key: index }, [
-                _c("td", [_vm._v(_vm._s(item.id))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(item.total))]),
-                _vm._v(" "),
-                _c("td", [
-                  _c("p", [
-                    _c("b", [
-                      _vm._v(
-                        _vm._s(item.to.first_name) +
-                          " " +
-                          _vm._s(item.to.last_name)
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v(_vm._s(item.to.email))]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v(_vm._s(item.to.phone))]),
-                  _vm._v(" "),
-                  _c("p", [
-                    _vm._v(
-                      _vm._s(item.to.address_1) +
-                        " " +
-                        _vm._s(item.to.address_2)
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [
-                    _vm._v(
-                      _vm._s(item.to.city) +
-                        " / " +
-                        _vm._s(item.to.state) +
-                        " - " +
-                        _vm._s(item.to.postcode)
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c(
-                  "td",
-                  [
-                    !item.order_id
-                      ? [
-                          !(
-                            item.status == "paid" ||
-                            item.status == "printed" ||
-                            item.status == "generated"
-                          )
-                            ? _c(
-                                "select",
+            _c("div", { staticClass: "table -amazon" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "ul",
+                { staticClass: "body" },
+                _vm._l(_vm.orders, function(item, index) {
+                  return _c("li", { key: index }, [
+                    _c("ul", { staticClass: "body-list" }, [
+                      _c("li", [_c("span", [_vm._v(_vm._s(item.id))])]),
+                      _vm._v(" "),
+                      _c("li", [_c("span", [_vm._v(_vm._s(item.total))])]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _c("span", [
+                          _c("strong", [
+                            _vm._v(
+                              _vm._s(item.to.first_name) +
+                                " " +
+                                _vm._s(item.to.last_name)
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(item.to.email) +
+                              " "
+                          ),
+                          _c("br"),
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(item.to.phone) +
+                              " "
+                          ),
+                          _c("br"),
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(item.to.address_1) +
+                              " " +
+                              _vm._s(item.to.address_2) +
+                              " "
+                          ),
+                          _c("br"),
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(item.to.city) +
+                              " / " +
+                              _vm._s(item.to.state) +
+                              " - " +
+                              _vm._s(item.to.postcode) +
+                              " "
+                          ),
+                          _c("br")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "-center" }, [
+                        _c("span", [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "action-button -download",
+                              attrs: {
+                                href: "javascript:;",
+                                "data-tip": "Download"
+                              }
+                            },
+                            [
+                              _c(
+                                "svg",
                                 {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: item.cotation.choose_method,
-                                      expression: "item.cotation.choose_method"
-                                    }
-                                  ],
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        item.cotation,
-                                        "choose_method",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    }
+                                  staticClass: "ico",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    viewBox: "0 0 444.92 500"
                                   }
                                 },
-                                _vm._l(item.cotation, function(option) {
-                                  return option.id && option.price
-                                    ? _c(
-                                        "option",
+                                [
+                                  _c("title", [_vm._v("Download")]),
+                                  _c(
+                                    "g",
+                                    {
+                                      attrs: {
+                                        id: "Camada_2",
+                                        "data-name": "Camada 2"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "g",
                                         {
-                                          key: option.id,
-                                          domProps: { value: option.id }
+                                          attrs: {
+                                            id: "Camada_9",
+                                            "data-name": "Camada 9"
+                                          }
                                         },
                                         [
-                                          _vm._v(
-                                            "\n                            " +
-                                              _vm._s(option.name) +
-                                              " (R$" +
-                                              _vm._s(option.price) +
-                                              ") \n                        "
-                                          )
+                                          _c("path", {
+                                            attrs: {
+                                              d:
+                                                "M344,260.9H292.45v-20a10,10,0,0,0-20,0v40h61L227.07,412.35,120.66,280.9h61V20h90.76V192.52a10,10,0,0,0,20,0V15a15,15,0,0,0-15-15H176.69a15,15,0,0,0-15,15V260.9H110.18a15,15,0,0,0-11.66,24.44l116.89,144.4a15,15,0,0,0,23.32,0l116.89-144.4A15,15,0,0,0,344,260.9Z"
+                                            }
+                                          })
+                                        ]
+                                      ),
+                                      _c(
+                                        "g",
+                                        {
+                                          attrs: {
+                                            id: "Camada_10",
+                                            "data-name": "Camada 10"
+                                          }
+                                        },
+                                        [
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M435.41,481H9.51a9.51,9.51,0,0,0,0,19H435.41a9.51,9.51,0,1,0,0-19Z"
+                                            }
+                                          })
                                         ]
                                       )
-                                    : _vm._e()
-                                })
+                                    ]
+                                  )
+                                ]
                               )
-                            : _vm._e()
-                        ]
-                      : [_c("span", [_vm._v(_vm._s(item.order_id))])],
-                    _vm._v(" "),
-                    _c("br")
-                  ],
-                  2
-                ),
-                _vm._v(" "),
-                _c(
-                  "td",
-                  [
-                    item.cotation.choose_method == 3 ||
-                    item.cotation.choose_method == 4
-                      ? [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: item.non_commercial,
-                                expression: "item.non_commercial"
-                              }
-                            ],
-                            attrs: { type: "checkbox" },
-                            domProps: {
-                              checked: Array.isArray(item.non_commercial)
-                                ? _vm._i(item.non_commercial, null) > -1
-                                : item.non_commercial
-                            },
-                            on: {
-                              change: function($event) {
-                                var $$a = item.non_commercial,
-                                  $$el = $event.target,
-                                  $$c = $$el.checked ? true : false
-                                if (Array.isArray($$a)) {
-                                  var $$v = null,
-                                    $$i = _vm._i($$a, $$v)
-                                  if ($$el.checked) {
-                                    $$i < 0 &&
-                                      _vm.$set(
-                                        item,
-                                        "non_commercial",
-                                        $$a.concat([$$v])
-                                      )
-                                  } else {
-                                    $$i > -1 &&
-                                      _vm.$set(
-                                        item,
-                                        "non_commercial",
-                                        $$a
-                                          .slice(0, $$i)
-                                          .concat($$a.slice($$i + 1))
-                                      )
-                                  }
-                                } else {
-                                  _vm.$set(item, "non_commercial", $$c)
-                                }
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("label", [_vm._v("Usar declaração")]),
-                          _vm._v(" "),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("br")
-                        ]
-                      : _vm._e(),
-                    _vm._v(" "),
-                    (item.cotation.choose_method >= 3 &&
-                      !item.non_commercial) ||
-                    item.cotation.choose_method > 4
-                      ? [
-                          _c("label", [_vm._v("Nota fiscal")]),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: item.invoice.number,
-                                expression: "item.invoice.number"
-                              }
-                            ],
-                            attrs: { type: "text" },
-                            domProps: { value: item.invoice.number },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  item.invoice,
-                                  "number",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          }),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("label", [_vm._v("Chave da nota fiscal")]),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: item.invoice.key,
-                                expression: "item.invoice.key"
-                              }
-                            ],
-                            attrs: { type: "text" },
-                            domProps: { value: item.invoice.key },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  item.invoice,
-                                  "key",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          }),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("br"),
+                            ]
+                          ),
                           _vm._v(" "),
                           _c(
-                            "button",
+                            "a",
                             {
-                              on: {
-                                click: function($event) {
-                                  _vm.updateInvoice(
-                                    item.id,
-                                    item.invoice.number,
-                                    item.invoice.key
-                                  )
-                                }
+                              staticClass: "action-button -editar",
+                              attrs: {
+                                href: "javascript:;",
+                                "data-tip": "Editar"
                               }
                             },
-                            [_vm._v("Salvar")]
+                            [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "ico",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    viewBox: "0 0 454.15 500"
+                                  }
+                                },
+                                [
+                                  _c("title", [_vm._v("Editar")]),
+                                  _c(
+                                    "g",
+                                    {
+                                      attrs: {
+                                        id: "Camada_2",
+                                        "data-name": "Camada 2"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "g",
+                                        {
+                                          attrs: {
+                                            id: "Camada_10",
+                                            "data-name": "Camada 10"
+                                          }
+                                        },
+                                        [
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M435.41,481H9.51a9.51,9.51,0,0,0,0,19H435.41a9.51,9.51,0,1,0,0-19Z"
+                                            }
+                                          }),
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M10.61,435a17,17,0,0,0,3.43,5,17.22,17.22,0,0,0,16.16,4.58L144.7,417.42a10.84,10.84,0,0,0,1.85-.61c.42-.15.85-.33,1.31-.54a17.17,17.17,0,0,0,3.31-2c.17-.12.43-.3.74-.55a9.84,9.84,0,0,0,1-.89l19.54-19.54a9.51,9.51,0,0,0,0-13.45h0a9.51,9.51,0,0,0-13.45,0l-13.48,13.48L133,380.77l160-160a9.73,9.73,0,0,0,.66-13.22,9.51,9.51,0,0,0-13.88-.46L119.54,367.32,86.81,334.6l160-160a9.73,9.73,0,0,0,.66-13.22,9.51,9.51,0,0,0-13.88-.46L73.36,321.15,60.82,308.6,288.59,80.83l84.72,84.72L192.64,346.21a9.51,9.51,0,1,0,13.45,13.45l225-225a79,79,0,0,0,0-111.62h0a79,79,0,0,0-111.62,0L41.32,301.2a10.69,10.69,0,0,0-1.16,1.38c-.22.28-.39.51-.51.68l-.11.15a17.08,17.08,0,0,0-2.11,4c-.07.16-.16.39-.27.68s-.18.49-.28.8l-.08.27L9.47,423.92a16.25,16.25,0,0,0-.41,3A10.86,10.86,0,0,0,9,428.06a17.13,17.13,0,0,0,1.06,5.7C10.24,434.22,10.42,434.62,10.61,435Zm407-398.53a60,60,0,0,1,6.45,77.06L340.56,30.06A60,60,0,0,1,417.62,36.52Zm-91.12,6.39,84.72,84.72-5.51,5.51L321,48.42Zm-19,19,84.72,84.72-5.51,5.51L302,67.38Zm-255.41,265L127.32,402l-81,19.29L52,415.63a9.51,9.51,0,0,0-13.45-13.45l-5.66,5.66Z"
+                                            }
+                                          })
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              staticClass: "action-button -excluir",
+                              attrs: {
+                                href: "javascript:;",
+                                "data-tip": "Excluir"
+                              }
+                            },
+                            [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "ico",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    viewBox: "0 0 383.2 500"
+                                  }
+                                },
+                                [
+                                  _c("title", [_vm._v("Excluir")]),
+                                  _c(
+                                    "g",
+                                    {
+                                      attrs: {
+                                        id: "Camada_2",
+                                        "data-name": "Camada 2"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "g",
+                                        {
+                                          attrs: {
+                                            id: "Camada_10",
+                                            "data-name": "Camada 10"
+                                          }
+                                        },
+                                        [
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M304.95,62.21H267.32v-.62c0-20.76-8.31-37.36-24-48C230,4.57,212.08,0,190,0s-40,4.57-53.31,13.57c-15.72,10.65-24,27.26-24,48v.62H78.25C43.15,62.21,0,106.59,0,142.7a9.41,9.41,0,0,0,9.41,9.41H15V490.59A9.41,9.41,0,0,0,24.42,500H358.54a9.41,9.41,0,0,0,9.41-9.41V462.17a9.41,9.41,0,0,0-18.83,0v19H33.83V152.12H349.12v263a9.41,9.41,0,0,0,18.83,0v-263h5.84a9.41,9.41,0,0,0,9.41-9.41C383.2,106.59,340.05,62.21,304.95,62.21Zm-173.46-.62c0-19.51,10.15-42.77,58.51-42.77s58.51,23.26,58.51,42.77v.62h-117ZM20.24,133.29c2.79-10,9.57-21.14,19-31C51.89,89.18,66.82,81,78.25,81H304.95c11.43,0,26.36,8.15,39,21.26,9.48,9.86,16.26,21,19,31Z"
+                                            }
+                                          }),
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M98.57,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+                                            }
+                                          }),
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M182.13,217.67V415.1a9.41,9.41,0,1,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+                                            }
+                                          }),
+                                          _c("path", {
+                                            staticClass: "cls-1",
+                                            attrs: {
+                                              d:
+                                                "M265.69,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+                                            }
+                                          })
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ]
                           )
-                        ]
-                      : _vm._e()
-                  ],
-                  2
-                ),
-                _vm._v(" "),
-                _c("td", [
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(item.status) +
-                      "\n            "
-                  )
-                ]),
-                _vm._v(" "),
-                _c("td", [
-                  _vm.buttonCartShow(
-                    item.cotation.choose_method,
-                    item.non_commercial,
-                    item.invoice.number,
-                    item.invoice.key,
-                    item.status
-                  )
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.addCart({
-                                id: item.id,
-                                choosen: item.cotation.choose_method,
-                                non_commercial: item.non_commercial
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Add cart")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  item.status &&
-                  item.order_id &&
-                  item.id &&
-                  item.status != "paid"
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.removeCart({
-                                id: item.id,
-                                order_id: item.order_id
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Remove cart")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  item.status == "paid" && item.order_id && item.id
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.cancelCart({
-                                id: item.id,
-                                order_id: item.order_id
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Cancel")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  item.status &&
-                  item.order_id &&
-                  item.id &&
-                  item.status == "pending"
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.payTicket({
-                                id: item.id,
-                                order_id: item.order_id
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Pay")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  item.status && item.status == "paid" && item.order_id
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.createTicket({
-                                id: item.id,
-                                order_id: item.order_id
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Create ticket")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  item.status &&
-                  (item.status == "generated" || item.status == "printed")
-                    ? _c(
-                        "button",
-                        {
-                          on: {
-                            click: function($event) {
-                              _vm.printTicket({
-                                id: item.id,
-                                order_id: item.order_id
-                              })
-                            }
-                          }
-                        },
-                        [_vm._v("Print ticket")]
-                      )
-                    : _vm._e()
-                ])
-              ])
-            })
-          ],
-          2
+                        ])
+                      ])
+                    ])
+                  ])
+                })
+              )
+            ])
+          ]
         )
       : _c("div", [_c("p", [_vm._v("Nenhum registro encontrado")])]),
     _vm._v(" "),
@@ -1306,20 +1244,12 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("tr", [
-      _c("th", [_vm._v("#")]),
+    return _c("ul", { staticClass: "head" }, [
+      _c("li", [_c("span", [_vm._v("CEP")])]),
       _vm._v(" "),
-      _c("th", [_vm._v("Valor pedido")]),
+      _c("li", [_c("span", [_vm._v("Data")])]),
       _vm._v(" "),
-      _c("th", [_vm._v("Cliente")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Cotação")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Documentos")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Status")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Ações")])
+      _c("li", { staticClass: "-center" }, [_c("span", [_vm._v("Ações")])])
     ])
   }
 ]
@@ -1544,7 +1474,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "button",
-        { staticClass: "btn-border -green", on: { click: _vm.updateConfig } },
+        { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
         [_vm._v("salvar")]
       )
     ],
