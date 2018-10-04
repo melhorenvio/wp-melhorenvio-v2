@@ -76,6 +76,14 @@ class OrdersController {
             die;
         }
 
+        if (is_null($body['package'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Embalagem é obrigatório'
+            ]);
+            die;
+        }
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
