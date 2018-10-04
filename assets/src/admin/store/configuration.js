@@ -49,7 +49,8 @@ const configuration = {
                 }
             })
         },
-        getAgencies: ({commit}, data) => {
+        getAgencies: ({commit}, data) => {            
+
             let content = {
                 action: 'get_agency_jadlog',
             }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Models;
+use Models\Agency;
 
 class Address {
 
@@ -22,11 +23,18 @@ class Address {
             $urlApi = 'https://sandbox.melhorenvio.com.br';
         } 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/addresses', $params)));
-
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
+        $agencies = (new Agency())->getAgencies();
 
         $addresses = [];
         foreach ($response->data as $address) {
+
+            $agenciesJadlog = [];
+            foreach ($agencies['agencies'] as $agency) {
+                if ($agency['address']['city'] == $address->city->city && $agency['address']['state'] == $address->city->state->state_abbr ) {
+                    $agenciesJadlog[] = $agency;
+                }
+            }
 
             $addresses[] = [
                 'id' => $address->id,
@@ -39,10 +47,11 @@ class Address {
                 'city' => $address->city->city,
                 'state' => $address->city->state->state_abbr,
                 'country' => $address->city->state->country->id,
-                'selected' => ($selectedAddress == $address->id) ? true : false
+                'selected' => ($selectedAddress == $address->id) ? true : false,
+                'jadlog' => $agenciesJadlog
             ];
         }
-
+        
         return [
             'success' => true,
             'addresses' => $addresses
@@ -67,6 +76,7 @@ class Address {
     }
 
     public function getAddressFrom() {
+
         $addresses =$this->getAddressesShopping();
         $address = null;
         foreach($addresses['addresses'] as $item) {

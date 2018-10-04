@@ -6,9 +6,12 @@
             <input type="radio" :id="option.id" :value="option.id" v-model="address">
             <label :for="option.id"><b>{{option.label}}</b> ({{option.address}} {{option.number}}, {{option.district}} - {{option.city}}/{{option.state}} )</label>
             <br>
+            <!-- <select v-model="agency">
+                <option v-for="jadlog in option.jadlog" v-bind:value="jadlog.id" :key="jadlog.id">{{jadlog.name}}</option>
+            </select> -->        
         </div>
         <br><br>
-
+    
         <label>Minhas lojas</label><br>
         <div v-for="option in stores" v-bind:value="option.id" :key="option.id">
             <input type="radio" :id="option.id" :value="option.id" v-model="store">
@@ -16,15 +19,6 @@
             <br>
         </div>
         <br><br>
-
-        <label>Agência Jadlog para postagem</label><br>
-        <div v-for="option in agencies" v-bind:value="option.id" :key="option.id">
-            <input type="radio" :id="option.id" :value="option.id" v-model="agency">
-            <label :for="option.id"><b>{{option.company_name}}</b> ({{option.name}})</label>
-            <br>
-        </div>
-        <br><br>
-
         <button @click="updateConfig">salvar</button>
 
     </div>
@@ -45,7 +39,7 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
-            agencies: 'getAgencies'
+            // agencies: 'getAgencies'
         })
     },
     methods: {
@@ -54,7 +48,7 @@ export default {
             'setSelectedAddress',
             'getStores',
             'setSelectedStore',
-            'getAgencies',
+            // 'getAgencies',
             'setSelectedAgency',
         ]),
         updateConfig() {
@@ -82,15 +76,15 @@ export default {
                 })
             }
         },
-        agencies () {
-            if (this.agencies.length > 0) {
-                this.agencies.filter(item => {
-                    if (item.selected) {
-                        this.agency = item.id
-                    }
-                })
-            }
-        },
+        // agencies () {
+        //     if (this.agencies.length > 0) {
+        //         this.agencies.filter(item => {
+        //             if (item.selected) {
+        //                 this.agency = item.id
+        //             }
+        //         })
+        //     }
+        // },
         address (e) {
             console.log(e);
         }
@@ -98,7 +92,7 @@ export default {
     mounted () {
         this.getAddresses()
         this.getStores()
-        this.getAgencies()
+        // this.getAgencies()
     }
 }
 </script>
