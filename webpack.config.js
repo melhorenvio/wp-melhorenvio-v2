@@ -51,6 +51,22 @@ plugins.push(new BrowserSyncPlugin( {
     reloadDelay: 0
 } ));
 
+plugins.push(new webpack.LoaderOptionsPlugin({
+    options: {
+        context: path.resolve(__dirname, '../src'),
+        stylus: {
+            use: [
+                require('jeet')(),
+                require('rupture')()
+            ],
+            import: [
+                path.resolve(__dirname, 'assets/stylus/index.styl')
+            ]
+            }
+        }
+    })
+);
+
 // Generate a 'manifest' chunk to be inlined in the HTML template
 // plugins.push(new webpack.optimize.CommonsChunkPlugin('manifest'));
 
