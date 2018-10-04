@@ -24,17 +24,17 @@ class Address {
         } 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/addresses', $params)));
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
-        $agencies = (new Agency())->getAgencies();
+        // $agencies = (new Agency())->getAgencies();
 
         $addresses = [];
         foreach ($response->data as $address) {
 
             $agenciesJadlog = [];
-            foreach ($agencies['agencies'] as $agency) {
-                if ($agency['address']['city'] == $address->city->city && $agency['address']['state'] == $address->city->state->state_abbr ) {
-                    $agenciesJadlog[] = $agency;
-                }
-            }
+            // foreach ($agencies['agencies'] as $agency) {
+            //     if ($agency['address']['city'] == $address->city->city && $agency['address']['state'] == $address->city->state->state_abbr ) {
+            //         $agenciesJadlog[] = $agency;
+            //     }
+            // }
 
             $addresses[] = [
                 'id' => $address->id,
@@ -51,7 +51,7 @@ class Address {
                 'jadlog' => $agenciesJadlog
             ];
         }
-        
+
         return [
             'success' => true,
             'addresses' => $addresses

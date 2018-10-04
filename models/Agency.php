@@ -23,7 +23,9 @@ class Agency {
             $urlApi = 'https://sandbox.melhorenvio.com.br';
         } 
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/agencies?company=2', $params)));
+        $address = (new Address)->getAddressFrom();
+
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
         $agencies = [];
         $agencySelected = get_option('melhorenvio_agency_jadlog_v2');
         

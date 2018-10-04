@@ -259,6 +259,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -272,12 +282,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress',
-        stores: 'getStores'
-        // agencies: 'getAgencies'
+        stores: 'getStores',
+        agencies: 'getAgencies'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore',
-    // 'getAgencies',
-    'setSelectedAgency']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency']), {
         updateConfig() {
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
@@ -303,15 +311,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 });
             }
         },
-        // agencies () {
-        //     if (this.agencies.length > 0) {
-        //         this.agencies.filter(item => {
-        //             if (item.selected) {
-        //                 this.agency = item.id
-        //             }
-        //         })
-        //     }
-        // },
+        agencies() {
+            if (this.agencies.length > 0) {
+                this.agencies.filter(item => {
+                    if (item.selected) {
+                        this.agency = item.id;
+                    }
+                });
+            }
+        },
         address(e) {
             console.log(e);
         }
@@ -319,7 +327,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     mounted() {
         this.getAddresses();
         this.getStores();
-        // this.getAgencies()
+        this.getAgencies();
     }
 });
 
@@ -1487,6 +1495,43 @@ var render = function() {
                 _vm._s(option.state_register) +
                 ")"
             )
+          ]),
+          _vm._v(" "),
+          _c("br")
+        ])
+      }),
+      _vm._v(" "),
+      _c("br"),
+      _c("br"),
+      _vm._v(" "),
+      _c("label", [_vm._v("Agências Jadlog")]),
+      _c("br"),
+      _vm._v(" "),
+      _vm._l(_vm.agencies, function(option) {
+        return _c("div", { key: option.id, attrs: { value: option.id } }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.agency,
+                expression: "agency"
+              }
+            ],
+            attrs: { type: "radio", id: option.id },
+            domProps: {
+              value: option.id,
+              checked: _vm._q(_vm.agency, option.id)
+            },
+            on: {
+              change: function($event) {
+                _vm.agency = option.id
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: option.id } }, [
+            _c("b", [_vm._v(_vm._s(option.name))])
           ]),
           _vm._v(" "),
           _c("br")

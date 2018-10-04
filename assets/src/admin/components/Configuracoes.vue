@@ -19,6 +19,16 @@
             <br>
         </div>
         <br><br>
+
+
+        <label>Agências Jadlog</label><br>
+        <div v-for="option in agencies" v-bind:value="option.id" :key="option.id">
+            <input type="radio" :id="option.id" :value="option.id" v-model="agency">
+            <label :for="option.id"><b>{{option.name}}</b></label>
+            <br>
+        </div>
+        <br><br>
+
         <button @click="updateConfig">salvar</button>
 
     </div>
@@ -39,7 +49,7 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
-            // agencies: 'getAgencies'
+            agencies: 'getAgencies'
         })
     },
     methods: {
@@ -48,7 +58,7 @@ export default {
             'setSelectedAddress',
             'getStores',
             'setSelectedStore',
-            // 'getAgencies',
+            'getAgencies',
             'setSelectedAgency',
         ]),
         updateConfig() {
@@ -76,15 +86,15 @@ export default {
                 })
             }
         },
-        // agencies () {
-        //     if (this.agencies.length > 0) {
-        //         this.agencies.filter(item => {
-        //             if (item.selected) {
-        //                 this.agency = item.id
-        //             }
-        //         })
-        //     }
-        // },
+        agencies () {
+            if (this.agencies.length > 0) {
+                this.agencies.filter(item => {
+                    if (item.selected) {
+                        this.agency = item.id
+                    }
+                })
+            }
+        },
         address (e) {
             console.log(e);
         }
@@ -92,7 +102,7 @@ export default {
     mounted () {
         this.getAddresses()
         this.getStores()
-        // this.getAgencies()
+        this.getAgencies()
     }
 }
 </script>
