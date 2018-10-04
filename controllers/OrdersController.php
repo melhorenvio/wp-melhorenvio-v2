@@ -60,6 +60,22 @@ class OrdersController {
             $body['agency'] = get_option('melhorenvio_agency_jadlog_v2');
         }
 
+        if (is_null($body['to']->postal_code)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Falta campo CEP do destino'
+            ]);
+            die;
+        }
+
+        if (is_null($body['from']->postal_code)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Falta campo CEP da origem'
+            ]);
+            die;
+        }
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
