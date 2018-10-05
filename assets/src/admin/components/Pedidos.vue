@@ -297,16 +297,15 @@
                 <div>
                     <p class="title">Atenção</p>
                     <div class="content">
-                        <p class="txt">{{msgModal}}</p>
+                        <p class="txt">{{msg_modal}}</p>
                     </div>
                     <div class="buttons -center">
-                        <button type="button" @click="closeModal" class="btn-border -full-blue">Fechar</button>
+                        <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <!-- TODO remake loader -->
         <div class="me-modal" v-show="show_loader">
         </div>
 
@@ -322,14 +321,14 @@ export default {
         return {
             status: 'all',
             wpstatus: 'all',
-            show_modal: false,
-            msgModal: ''
         }
     },
     computed: {
         ...mapGetters('orders', {
             orders: 'getOrders',
-            show_loader: 'toggleLoader'
+            show_loader: 'toggleLoader',
+            msg_modal: 'setMsgModal',
+            show_modal: 'showModal'
         }),
         ...mapGetters('balance', ['getBalance'])
     },
@@ -343,6 +342,7 @@ export default {
             'payTicket',
             'createTicket',
             'printTicket',
+            'closeModal'
         ]),
         ...mapActions('balance', ['setBalance']),
         updateInvoice (id, number, key) {
@@ -352,11 +352,8 @@ export default {
 
             })
         },
-        closeModal() {
-            this.show_modal = false
-        },
-        toggleLoader() {
-            this.show_loader = false;
+        close() {
+            this.closeModal()
         },
         buttonCartShow(...args) {
             const [

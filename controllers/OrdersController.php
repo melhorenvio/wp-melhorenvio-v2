@@ -57,7 +57,7 @@ class OrdersController {
 
         // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
         if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
-            $body['agency'] = get_option('melhorenvio_agency_jadlog_v2');
+            // $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); // TODO removi para dar erro e ver o modal
         }
 
         $params = array(

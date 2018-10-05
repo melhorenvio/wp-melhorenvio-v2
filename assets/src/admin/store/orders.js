@@ -6,6 +6,8 @@ const orders = {
     state: {
         orders: [],
         show_loader: true,
+        show_modal: false,
+        msg_modal: '',
         filters: {
             limit: 10,
             skip: 10,
@@ -106,11 +108,20 @@ const orders = {
         },
         toggleLoader: (state, data) => {
             state.show_loader = data;
+        },
+        toggleModal: (state, data) => {
+            state.show_modal = data;
+        },
+        setMsgModal: (state, data) => {
+            state.msg_modal = data;
         }
     },  
     getters: {
         getOrders: state => state.orders,
-        toggleLoader: state => state.show_loader
+        toggleLoader: state => state.show_loader,
+        setMsgModal: state => state.msg_modal,
+        showModal: state => state.show_modal
+
     },
     actions: {
         retrieveMany: ({commit}, data) => {
@@ -158,6 +169,14 @@ const orders = {
 
             if (data.id && data.choosen) {
                 Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
+
+                    if(!response.data.success) {
+                        commit('setMsgModal', response.data.message)
+                        commit('toggleLoader', false)
+                        commit('toggleModal', true)
+                        return false
+                    }
+
                     commit('addCart',{
                         id: data.id,
                         order_id: response.data.data.id
@@ -204,6 +223,9 @@ const orders = {
                 commit('toggleLoader', false)
                 window.open(response.data.data.url,'_blank');
             })
+        },
+        closeModal: ({commit}) => {
+            commit('toggleModal', false)
         }
     }
 }

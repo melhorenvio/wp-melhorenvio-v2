@@ -376,7 +376,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -385,24 +384,21 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     data: () => {
         return {
             status: 'all',
-            wpstatus: 'all',
-            show_modal: false,
-            msgModal: ''
+            wpstatus: 'all'
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('orders', {
         orders: 'getOrders',
-        show_loader: 'toggleLoader'
+        show_loader: 'toggleLoader',
+        msg_modal: 'setMsgModal',
+        show_modal: 'showModal'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         updateInvoice(id, number, key) {
             this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {}).catch(error => {});
         },
-        closeModal() {
-            this.show_modal = false;
-        },
-        toggleLoader() {
-            this.show_loader = false;
+        close() {
+            this.closeModal();
         },
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status] = args;
@@ -2114,7 +2110,7 @@ var render = function() {
               _c("p", { staticClass: "title" }, [_vm._v("Atenção")]),
               _vm._v(" "),
               _c("div", { staticClass: "content" }, [
-                _c("p", { staticClass: "txt" }, [_vm._v(_vm._s(_vm.msgModal))])
+                _c("p", { staticClass: "txt" }, [_vm._v(_vm._s(_vm.msg_modal))])
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "buttons -center" }, [
@@ -2123,7 +2119,7 @@ var render = function() {
                   {
                     staticClass: "btn-border -full-blue",
                     attrs: { type: "button" },
-                    on: { click: _vm.closeModal }
+                    on: { click: _vm.close }
                   },
                   [_vm._v("Fechar")]
                 )
@@ -2656,6 +2652,8 @@ var orders = {
     state: {
         orders: [],
         show_loader: true,
+        show_modal: false,
+        msg_modal: '',
         filters: {
             limit: 10,
             skip: 10,
@@ -2756,6 +2754,12 @@ var orders = {
         },
         toggleLoader: function toggleLoader(state, data) {
             state.show_loader = data;
+        },
+        toggleModal: function toggleModal(state, data) {
+            state.show_modal = data;
+        },
+        setMsgModal: function setMsgModal(state, data) {
+            state.msg_modal = data;
         }
     },
     getters: {
@@ -2764,7 +2768,14 @@ var orders = {
         },
         toggleLoader: function toggleLoader(state) {
             return state.show_loader;
+        },
+        setMsgModal: function setMsgModal(state) {
+            return state.msg_modal;
+        },
+        showModal: function showModal(state) {
+            return state.show_modal;
         }
+
     },
     actions: {
         retrieveMany: function retrieveMany(_ref, data) {
@@ -2819,6 +2830,14 @@ var orders = {
 
             if (data.id && data.choosen) {
                 _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
+
+                    if (!response.data.success) {
+                        commit('setMsgModal', response.data.message);
+                        commit('toggleLoader', false);
+                        commit('toggleModal', true);
+                        return false;
+                    }
+
                     commit('addCart', {
                         id: data.id,
                         order_id: response.data.data.id
@@ -2869,6 +2888,11 @@ var orders = {
                 commit('toggleLoader', false);
                 window.open(response.data.data.url, '_blank');
             });
+        },
+        closeModal: function closeModal(_ref6) {
+            var commit = _ref6.commit;
+
+            commit('toggleModal', false);
         }
     }
 };
