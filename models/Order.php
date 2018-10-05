@@ -96,7 +96,7 @@ class Order {
                 'status' => $dataMelhorEnvio['status'],
                 'order_id' => $dataMelhorEnvio['order_id'],
                 'protocol' => $dataMelhorEnvio['protocol'],
-                'non_commercial' => false,
+                'non_commercial' => true,
                 'invoice' => $order->getInvoice()
             ];
         }

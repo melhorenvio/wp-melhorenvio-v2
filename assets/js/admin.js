@@ -382,6 +382,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -1027,13 +1029,17 @@ var render = function() {
       _vm._v(" "),
       _c("table", { staticClass: "table-box", attrs: { border: "0" } }, [
         _c("tr", [
-          _c("td", [_c("h1", [_vm._v("Saldo: " + _vm._s(_vm.getBalance))])])
+          _c("td", [
+            _c("h1", [
+              _vm._v("Saldo: "),
+              _c("strong", [_vm._v(_vm._s(_vm.getBalance))])
+            ])
+          ])
         ]),
         _vm._v(" "),
         _c("tr", [
           _c("td", { attrs: { width: "50%" } }, [
-            _c("h1", [_vm._v("Etiquetas")]),
-            _c("br"),
+            _c("h3", [_vm._v("Etiquetas")]),
             _vm._v(" "),
             _c(
               "select",
@@ -1083,8 +1089,7 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("td", { attrs: { width: "50%" } }, [
-            _c("h1", [_vm._v("Pedidos")]),
-            _c("br"),
+            _c("h3", [_vm._v("Pedidos")]),
             _vm._v(" "),
             _c(
               "select",
@@ -2172,7 +2177,11 @@ var staticRenderFns = [
       _c("div", { staticClass: "grid" }, [
         _c("div", { staticClass: "col-12-12" }, [
           _c("h1", [_vm._v("Meus pedidos")])
-        ])
+        ]),
+        _vm._v(" "),
+        _c("hr"),
+        _vm._v(" "),
+        _c("br")
       ])
     ])
   },

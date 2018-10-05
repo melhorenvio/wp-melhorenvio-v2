@@ -6,6 +6,8 @@
                     <div class="col-12-12">
                         <h1>Meus pedidos</h1>
                     </div>
+                    <hr>
+                    <br>
                 </div>
             </div>
         </template>
@@ -13,12 +15,12 @@
         <table border="0" class="table-box">
             <tr>
                 <td>
-                    <h1>Saldo: {{getBalance}}</h1>
+                    <h1>Saldo: <strong>{{getBalance}}</strong></h1>
                 </td>
             </tr>
             <tr>
                 <td width="50%">
-                    <h1>Etiquetas</h1><br>
+                    <h3>Etiquetas</h3>
                     <select v-model="status">
                         <option value="all">Todas</option>
                         <option value="printed">Impressas</option>
@@ -28,7 +30,7 @@
                     </select>
                 </td>
                 <td width="50%">
-                    <h1>Pedidos</h1><br>
+                    <h3>Pedidos</h3>
                     <select v-model="wpstatus">
                         <option value="all">Todos</option>
                         <option value="wc-pending">Pendentes</option>
