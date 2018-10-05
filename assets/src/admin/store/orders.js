@@ -5,6 +5,7 @@ const orders = {
     namespaced: true,
     state: {
         orders: [],
+        show_loader: true,
         filters: {
             limit: 10,
             skip: 10,
@@ -102,10 +103,14 @@ const orders = {
             })
             order.content.status = 'printed'
             state.orders.splice(order.position, 1, order.content)
+        },
+        toggleLoader: (state, data) => {
+            state.show_loader = data;
         }
     },  
     getters: {
-        getOrders: state => state.orders
+        getOrders: state => state.orders,
+        toggleLoader: state => state.show_loader
     },
     actions: {
         retrieveMany: ({commit}, data) => {
@@ -120,13 +125,15 @@ const orders = {
             Axios.get(`${ajaxurl}`, {
                 params: content
             }).then(function (response) {
-
                 if (response && response.status === 200) {
                     commit('retrieveMany', response.data)
+                    commit('toggleLoader', false)
                 }
             })
         },
         loadMore: ({commit, state}, status) => {
+
+            commit('toggleLoader', true)
             let data = {
                 action: 'get_orders',
             }
@@ -140,6 +147,7 @@ const orders = {
 
                 if (response && response.status === 200) {
                     commit('loadMore', response.data)
+                    commit('toggleLoader', false)
                 }
             })
         },
@@ -183,10 +191,11 @@ const orders = {
         printTicket: ({commit}, data) => {        
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 commit('printTicket', data.id)
-                console.log(response);
-                
                 window.open(response.data.data.url,'_blank');
             })
+        },
+        setLoader: (status) => {
+            this.show_loader = status
         }
     }
 }

@@ -1,7 +1,19 @@
 <template>
     <div class="app-pedidos">
-        <hr>
-        <h2>Meus pedidos</h2>
+        <template>
+            <div>
+                <div class="grid">
+                    <div class="col-12-12">
+                        <h1>Meus pedidos</h1>
+                    </div>
+                    <div class="col-6-12">
+                        <h4>Saldo: <span>{{ getBalance }}</span></h4>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <h4>Filtro</h4>
         <label>Status Melhor Envio</label><br>
         <select v-model="status">
             <option value="all">Todos</option>
@@ -9,9 +21,9 @@
             <option value="paid">Pago</option>
             <option value="pending">Pendente</option>
             <option value="generated">Gerado</option>
-        </select><br>
+        </select><br><br>
 
-        <label>Status WooCommerce</label><br>
+        <label>Status</label><br>
         <select v-model="wpstatus">
             <option value="all">Todos</option>
             <option value="wc-pending">Pendente</option>
@@ -24,8 +36,6 @@
         </select>
         <br>
         <br>
-
-        <h2>Saldo: R$<span>{{ getBalance }}</span></h2>
 
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
@@ -281,6 +291,25 @@
         </div>
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
+
+        <transition name="fade">
+            <div class="me-modal" v-show="show_modal">
+                <div>
+                    <p class="title">Atenção</p>
+                    <div class="content">
+                        <p class="txt">{{msgModal}}</p>
+                    </div>
+                    <div class="buttons -center">
+                        <button type="button" @click="closeModal" class="btn-border -full-blue">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- TODO remake loader -->
+        <div class="me-modal" v-show="show_loader">
+        </div>
+
     </div>
 </template>
 
@@ -292,12 +321,15 @@ export default {
     data: () => {
         return {
             status: 'all',
-            wpstatus: 'all'
+            wpstatus: 'all',
+            show_modal: false,
+            msgModal: ''
         }
     },
     computed: {
         ...mapGetters('orders', {
-            orders: 'getOrders'
+            orders: 'getOrders',
+            show_loader: 'toggleLoader'
         }),
         ...mapGetters('balance', ['getBalance'])
     },
@@ -315,10 +347,16 @@ export default {
         ...mapActions('balance', ['setBalance']),
         updateInvoice (id, number, key) {
             this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {
-
+            
             }).catch(error => {
 
             })
+        },
+        closeModal() {
+            this.show_modal = false
+        },
+        toggleLoader() {
+            this.show_loader = false;
         },
         buttonCartShow(...args) {
             const [

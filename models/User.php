@@ -21,7 +21,7 @@ class User {
         if (isset($response->balance)) {
             return [
                 'success' => true,
-                'balance' => $response->balance
+                'balance' => 'R$ ' . number_format($response->balance, 2, ',', '.')
             ];
         }
         
