@@ -2,11 +2,14 @@
     <div class="app-token">
         <h1>Meu Token</h1>
         <span>Insira o token gerado na Melhor Envio</span>
-        <p style="white-space: pre-line;"></p>
         <br>
-        <textarea v-model="token" placeholder="Token"></textarea>
+        <textarea rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
         <br>
-        <button @click="saveToken()" class="button is-danger">Salvar</button>
+        <br>
+        <button @click="saveToken()" class="btn-border -full-green">Salvar</button>
+
+        <div class="me-modal" v-show="show_loader">
+        </div>
     </div>
 </template>
 
@@ -16,13 +19,15 @@ export default {
     name: 'Token',
     data () {
         return {
-            token: ''
+            token: '',
+            show_loader: true
         }
     },
     methods: {
         getToken () {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
                 this.token = response.data.token;
+                this.show_loader = false;
             })
         },
         saveToken () {

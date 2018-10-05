@@ -31,6 +31,9 @@
 
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
+        <div class="me-modal" v-show="show_loader">
+        </div>
+
     </div>
 </template>
 
@@ -42,7 +45,8 @@ export default {
         return {
             address: null,
             store: null,
-            agency: null
+            agency: null,
+            show_loader: true
         }
     },
     computed: {
@@ -87,6 +91,9 @@ export default {
             }
         },
         agencies () {
+
+            this.show_loader = false;
+
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {

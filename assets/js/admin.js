@@ -376,6 +376,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -494,6 +500,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -502,7 +511,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         return {
             address: null,
             store: null,
-            agency: null
+            agency: null,
+            show_loader: true
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -537,6 +547,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
         },
         agencies() {
+
+            this.show_loader = false;
+
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {
@@ -575,19 +588,24 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Token',
     data() {
         return {
-            token: ''
+            token: '',
+            show_loader: true
         };
     },
     methods: {
         getToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
                 this.token = response.data.token;
+                this.show_loader = false;
             });
         },
         saveToken() {
@@ -1005,132 +1023,131 @@ var render = function() {
     "div",
     { staticClass: "app-pedidos" },
     [
-      [
-        _c("div", [
-          _c("div", { staticClass: "grid" }, [
-            _vm._m(0),
+      [_vm._m(0)],
+      _vm._v(" "),
+      _c("table", { staticClass: "table-box", attrs: { border: "0" } }, [
+        _c("tr", [
+          _c("td", [_c("h1", [_vm._v("Saldo: " + _vm._s(_vm.getBalance))])])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { attrs: { width: "50%" } }, [
+            _c("h1", [_vm._v("Etiquetas")]),
+            _c("br"),
             _vm._v(" "),
-            _c("div", { staticClass: "col-6-12" }, [
-              _c("h4", [
-                _vm._v("Saldo: "),
-                _c("span", [_vm._v(_vm._s(_vm.getBalance))])
-              ])
-            ])
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.status,
+                    expression: "status"
+                  }
+                ],
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.status = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { value: "all" } }, [_vm._v("Todas")]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "printed" } }, [
+                  _vm._v("Impressas")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "paid" } }, [_vm._v("Pagas")]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "pending" } }, [
+                  _vm._v("Aguardando pagamento")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "generated" } }, [
+                  _vm._v("Geradas")
+                ])
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("td", { attrs: { width: "50%" } }, [
+            _c("h1", [_vm._v("Pedidos")]),
+            _c("br"),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.wpstatus,
+                    expression: "wpstatus"
+                  }
+                ],
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.wpstatus = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-pending" } }, [
+                  _vm._v("Pendentes")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-processing" } }, [
+                  _vm._v("Processando")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-on-hold" } }, [
+                  _vm._v("Em andamento")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-completed" } }, [
+                  _vm._v("Completos")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-cancelled" } }, [
+                  _vm._v("Cancelados")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-refunded" } }, [
+                  _vm._v("Recusados")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "wc-failed" } }, [
+                  _vm._v("Com erro")
+                ])
+              ]
+            )
           ])
         ])
-      ],
-      _vm._v(" "),
-      _c("h4", [_vm._v("Filtro")]),
-      _vm._v(" "),
-      _c("label", [_vm._v("Status Melhor Envio")]),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.status,
-              expression: "status"
-            }
-          ],
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.status = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        [
-          _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "printed" } }, [_vm._v("Impresso")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "paid" } }, [_vm._v("Pago")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "pending" } }, [_vm._v("Pendente")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "generated" } }, [_vm._v("Gerado")])
-        ]
-      ),
-      _c("br"),
-      _c("br"),
-      _vm._v(" "),
-      _c("label", [_vm._v("Status")]),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.wpstatus,
-              expression: "wpstatus"
-            }
-          ],
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.wpstatus = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        [
-          _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-pending" } }, [
-            _vm._v("Pendente")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-processing" } }, [
-            _vm._v("Processando")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-on-hold" } }, [
-            _vm._v("Pendente")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-completed" } }, [
-            _vm._v("Completo")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-cancelled" } }, [
-            _vm._v("Cancelado")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-refunded" } }, [
-            _vm._v("Recusado")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "wc-failed" } }, [_vm._v("Falhado")])
-        ]
-      ),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("br"),
+      ]),
       _vm._v(" "),
       _vm.orders.length > 0
         ? _c(
@@ -1396,7 +1413,9 @@ var render = function() {
                                               }),
                                               _vm._v(" "),
                                               _c("label", [
-                                                _vm._v("Usar declaração")
+                                                _vm._v(
+                                                  "Enviar com declaração de conteúdo    "
+                                                )
                                               ])
                                             ]
                                           )
@@ -2149,8 +2168,12 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-12-12" }, [
-      _c("h1", [_vm._v("Meus pedidos")])
+    return _c("div", [
+      _c("div", { staticClass: "grid" }, [
+        _c("div", { staticClass: "col-12-12" }, [
+          _c("h1", [_vm._v("Meus pedidos")])
+        ])
+      ])
     ])
   },
   function() {
@@ -2395,7 +2418,19 @@ var render = function() {
         "button",
         { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
         [_vm._v("salvar")]
-      )
+      ),
+      _vm._v(" "),
+      _c("div", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.show_loader,
+            expression: "show_loader"
+          }
+        ],
+        staticClass: "me-modal"
+      })
     ],
     2
   )
@@ -2488,8 +2523,6 @@ var render = function() {
     _vm._v(" "),
     _c("span", [_vm._v("Insira o token gerado na Melhor Envio")]),
     _vm._v(" "),
-    _c("p", { staticStyle: { "white-space": "pre-line" } }),
-    _vm._v(" "),
     _c("br"),
     _vm._v(" "),
     _c("textarea", {
@@ -2501,7 +2534,7 @@ var render = function() {
           expression: "token"
         }
       ],
-      attrs: { placeholder: "Token" },
+      attrs: { rows: "20", cols: "100", placeholder: "Token" },
       domProps: { value: _vm.token },
       on: {
         input: function($event) {
@@ -2515,10 +2548,12 @@ var render = function() {
     _vm._v(" "),
     _c("br"),
     _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
     _c(
       "button",
       {
-        staticClass: "button is-danger",
+        staticClass: "btn-border -full-green",
         on: {
           click: function($event) {
             _vm.saveToken()
@@ -2526,7 +2561,19 @@ var render = function() {
         }
       },
       [_vm._v("Salvar")]
-    )
+    ),
+    _vm._v(" "),
+    _c("div", {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.show_loader,
+          expression: "show_loader"
+        }
+      ],
+      staticClass: "me-modal"
+    })
   ])
 }
 var staticRenderFns = []

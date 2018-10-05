@@ -6,36 +6,42 @@
                     <div class="col-12-12">
                         <h1>Meus pedidos</h1>
                     </div>
-                    <div class="col-6-12">
-                        <h4>Saldo: <span>{{ getBalance }}</span></h4>
-                    </div>
                 </div>
             </div>
         </template>
 
-        <h4>Filtro</h4>
-        <label>Status Melhor Envio</label><br>
-        <select v-model="status">
-            <option value="all">Todos</option>
-            <option value="printed">Impresso</option>
-            <option value="paid">Pago</option>
-            <option value="pending">Pendente</option>
-            <option value="generated">Gerado</option>
-        </select><br><br>
-
-        <label>Status</label><br>
-        <select v-model="wpstatus">
-            <option value="all">Todos</option>
-            <option value="wc-pending">Pendente</option>
-            <option value="wc-processing">Processando</option>
-            <option value="wc-on-hold">Pendente</option>
-            <option value="wc-completed">Completo</option>
-            <option value="wc-cancelled">Cancelado</option>
-            <option value="wc-refunded">Recusado</option>
-            <option value="wc-failed">Falhado</option>
-        </select>
-        <br>
-        <br>
+        <table border="0" class="table-box">
+            <tr>
+                <td>
+                    <h1>Saldo: {{getBalance}}</h1>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <h1>Etiquetas</h1><br>
+                    <select v-model="status">
+                        <option value="all">Todas</option>
+                        <option value="printed">Impressas</option>
+                        <option value="paid">Pagas</option>
+                        <option value="pending">Aguardando pagamento</option>
+                        <option value="generated">Geradas</option>
+                    </select>
+                </td>
+                <td width="50%">
+                    <h1>Pedidos</h1><br>
+                    <select v-model="wpstatus">
+                        <option value="all">Todos</option>
+                        <option value="wc-pending">Pendentes</option>
+                        <option value="wc-processing">Processando</option>
+                        <option value="wc-on-hold">Em andamento</option>
+                        <option value="wc-completed">Completos</option>
+                        <option value="wc-cancelled">Cancelados</option>
+                        <option value="wc-refunded">Recusados</option>
+                        <option value="wc-failed">Com erro</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
 
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
@@ -91,7 +97,7 @@
                                             <fieldset class="checkLine">
                                                 <div class="inputBox">
                                                     <input type="checkbox" v-model="item.non_commercial" />
-                                                    <label>Usar declaração</label>
+                                                    <label>Enviar com declaração de conteúdo    </label>
                                                 </div>
                                             </fieldset>
                                             <br>
