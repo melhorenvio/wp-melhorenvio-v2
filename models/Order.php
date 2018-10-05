@@ -86,6 +86,13 @@ class Order {
 
             $dataMelhorEnvio = $order->getDataOrder();
 
+            $invoice = $order->getInvoice();
+
+            $non_commercial = true;
+            if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
+                $non_commercial = false;
+            }
+
             $data[] =  [
                 'id' => $order->id,
                 'total' => 'R$' . number_format($order->total, 2, ',', '.'),
@@ -96,8 +103,8 @@ class Order {
                 'status' => $dataMelhorEnvio['status'],
                 'order_id' => $dataMelhorEnvio['order_id'],
                 'protocol' => $dataMelhorEnvio['protocol'],
-                'non_commercial' => true,
-                'invoice' => $order->getInvoice()
+                'non_commercial' => $non_commercial,
+                'invoice' => $invoice
             ];
         }
 
