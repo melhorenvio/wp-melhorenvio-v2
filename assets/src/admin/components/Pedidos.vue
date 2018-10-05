@@ -59,7 +59,7 @@
                 <ul class="body">
                     <li v-for="(item, index) in orders" :key="index">
                         <ul class="body-list">
-                            <li><span><strong>{{ item.id }}</strong></span></li>
+                            <li><span><a target="_blank" :href="`/wp-admin/post.php?post=${item.id}&action=edit`"><strong>{{ item.id }}</strong></a></span></li>
                             <li><span>{{ item.total }}</span></li>
                             <li>
                                 <span>
@@ -79,7 +79,7 @@
                                                 <div class="inputBox">
                                                     <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
                                                         <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
-                                                            {{ option.name }} (R${{ option.price }}) 
+                                                            {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
                                                         </option>
                                                     </select>
                                                 </div>

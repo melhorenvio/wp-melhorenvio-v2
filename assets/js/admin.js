@@ -1172,7 +1172,21 @@ var render = function() {
                     return _c("li", { key: index }, [
                       _c("ul", { staticClass: "body-list" }, [
                         _c("li", [
-                          _c("span", [_c("strong", [_vm._v(_vm._s(item.id))])])
+                          _c("span", [
+                            _c(
+                              "a",
+                              {
+                                attrs: {
+                                  target: "_blank",
+                                  href:
+                                    "/wp-admin/post.php?post=" +
+                                    item.id +
+                                    "&action=edit"
+                                }
+                              },
+                              [_c("strong", [_vm._v(_vm._s(item.id))])]
+                            )
+                          ])
                         ]),
                         _vm._v(" "),
                         _c("li", [_c("span", [_vm._v(_vm._s(item.total))])]),
@@ -1304,6 +1318,12 @@ var render = function() {
                                                               [
                                                                 _vm._v(
                                                                   "\n                                                        " +
+                                                                    _vm._s(
+                                                                      option
+                                                                        .company
+                                                                        .name
+                                                                    ) +
+                                                                    " " +
                                                                     _vm._s(
                                                                       option.name
                                                                     ) +
