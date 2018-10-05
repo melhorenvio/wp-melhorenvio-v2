@@ -137,10 +137,8 @@ const orders = {
             let data = {
                 action: 'get_orders',
             }
-            
             state.filters.status = status.status
             state.filters.wpstatus = status.wpstatus
-
             Axios.get(`${ajaxurl}`, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
@@ -151,8 +149,10 @@ const orders = {
                 }
             })
         },
-        addCart: ({commit}, data) => {        
+        addCart: ({commit}, data) => {  
+            commit('toggleLoader', true)
             if (!data) {
+                commit('toggleLoader', false)
                 return false;
             }
 
@@ -162,40 +162,48 @@ const orders = {
                         id: data.id,
                         order_id: response.data.data.id
                     })
+                    commit('toggleLoader', false)
                 })
             }
         },
-        removeCart: (context, data) => {        
+        removeCart: (context, data) => {    
+            context.commit('toggleLoader', true) 
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 context.commit('removeCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
+                context.commit('toggleLoader', false)
             })
         },
-        cancelCart: (context, data) => {        
+        cancelCart: (context, data) => {   
+            context.commit('toggleLoader', true)      
             Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 context.commit('cancelCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
+                context.commit('toggleLoader', false) 
             })
         },
-        payTicket: (context, data) => {        
+        payTicket: (context, data) => {    
+            context.commit('toggleLoader', true)     
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
+                context.commit('toggleLoader', false) 
             })
         },
-        createTicket: ({commit}, data) => {        
+        createTicket: ({commit}, data) => {   
+            commit('toggleLoader', true)     
             Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 commit('createTicket', data.id)
+                commit('toggleLoader', false)
             })
         },
-        printTicket: ({commit}, data) => {        
+        printTicket: ({commit}, data) => {  
+            commit('toggleLoader', true)      
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
                 commit('printTicket', data.id)
+                commit('toggleLoader', false)
                 window.open(response.data.data.url,'_blank');
             })
-        },
-        setLoader: (status) => {
-            this.show_loader = status
         }
     }
 }

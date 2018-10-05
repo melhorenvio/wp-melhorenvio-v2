@@ -2796,10 +2796,8 @@ var orders = {
             var data = {
                 action: 'get_orders'
             };
-
             state.filters.status = status.status;
             state.filters.wpstatus = status.wpstatus;
-
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
@@ -2813,7 +2811,9 @@ var orders = {
         addCart: function addCart(_ref3, data) {
             var commit = _ref3.commit;
 
+            commit('toggleLoader', true);
             if (!data) {
+                commit('toggleLoader', false);
                 return false;
             }
 
@@ -2823,44 +2823,52 @@ var orders = {
                         id: data.id,
                         order_id: response.data.data.id
                     });
+                    commit('toggleLoader', false);
                 });
             }
         },
         removeCart: function removeCart(context, data) {
+            context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 context.commit('removeCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
+                context.commit('toggleLoader', false);
             });
         },
         cancelCart: function cancelCart(context, data) {
+            context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=cancel_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 context.commit('cancelCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
+                context.commit('toggleLoader', false);
             });
         },
         payTicket: function payTicket(context, data) {
+            context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 context.commit('payTicket', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
+                context.commit('toggleLoader', false);
             });
         },
         createTicket: function createTicket(_ref4, data) {
             var commit = _ref4.commit;
 
+            commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 commit('createTicket', data.id);
+                commit('toggleLoader', false);
             });
         },
         printTicket: function printTicket(_ref5, data) {
             var commit = _ref5.commit;
 
+            commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
                 commit('printTicket', data.id);
+                commit('toggleLoader', false);
                 window.open(response.data.data.url, '_blank');
             });
-        },
-        setLoader: function setLoader(status) {
-            undefined.show_loader = status;
         }
     }
 };
