@@ -1,11 +1,6 @@
 pluginWebpack([2],{
 
 /***/ 82:
-<<<<<<< HEAD
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/home/melhorenvio/projects/wordpress/datavolume/plugins/melhor-envio-beta/assets/stylus/index.styl'");
-=======
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(27)(false);
@@ -17,7 +12,6 @@ exports.push([module.i, ".box-border {\n  background: #fff;\n  border: 1px solid
 
 // exports
 
->>>>>>> feature/add-stylus
 
 /***/ })
 
