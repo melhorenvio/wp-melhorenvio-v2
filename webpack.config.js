@@ -14,7 +14,7 @@ var entryPoint = {
     frontend: './assets/src/frontend/main.js',
     admin: './assets/src/admin/main.js',
     vendor: Object.keys(package.dependencies),
-    style: './assets/less/style.less',
+    style: './assets/stylus/index.styl',
 };
 
 var exportPath = path.resolve(__dirname, './assets/js');
@@ -50,6 +50,22 @@ plugins.push(new BrowserSyncPlugin( {
     cors: true,
     reloadDelay: 0
 } ));
+
+plugins.push(new webpack.LoaderOptionsPlugin({
+    options: {
+        context: path.resolve(__dirname, '../src'),
+        stylus: {
+            use: [
+                require('jeet')(),
+                require('rupture')()
+            ],
+            import: [
+                path.resolve(__dirname, 'assets/stylus/index.styl')
+            ]
+            }
+        }
+    })
+);
 
 // Generate a 'manifest' chunk to be inlined in the HTML template
 // plugins.push(new webpack.optimize.CommonsChunkPlugin('manifest'));
@@ -96,6 +112,7 @@ module.exports = {
             '@': path.resolve('./assets/src/'),
             'frontend': path.resolve('./assets/src/frontend/'),
             'admin': path.resolve('./assets/src/admin/'),
+            'me': path.resolve('./assets/styl/me-bootstrap')
         },
         modules: [
             path.resolve('./node_modules'),
@@ -104,7 +121,6 @@ module.exports = {
     },
 
     plugins,
-
         module: {
         rules: [
             {
@@ -124,13 +140,7 @@ module.exports = {
             },
             {
                 test: /\.styl$/,
-                use: extractCss.extract({
-                    use: [{
-                        loader: "css-loader"
-                    }, {
-                        loader: "styl-loader"
-                    }]
-                })
+                use: [ 'css-loader', 'stylus-loader' ]
             },
             {
                 test: /\.css$/,

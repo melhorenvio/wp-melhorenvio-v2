@@ -88,7 +88,7 @@ class Order {
 
             $data[] =  [
                 'id' => $order->id,
-                'total' => $order->total,
+                'total' => 'R$' . number_format($order->total, 2, ',', '.'),
                 'products' => $order->getProducts(),
                 'cotation' => $order->getCotation(),
                 'address' => $order->address,

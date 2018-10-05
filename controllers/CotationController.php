@@ -139,7 +139,11 @@ class CotationController {
     
             $user = new UsersController();
             $from = $user->getFrom();
-    
+
+            if (!isset($from->postal_code)) {
+                return null;
+            }
+
             $body = [
                 "from" => [
                     "postal_code" => $from->postal_code

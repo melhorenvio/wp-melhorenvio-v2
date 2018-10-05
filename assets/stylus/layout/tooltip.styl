@@ -1,0 +1,84 @@
+.action-button
+  position relative
+  display inline-block
+  vertical-align middle
+  margin 0 5px
+  &:hover
+    &:after
+    &:before
+      display block
+      left 50%
+      transform translateX(-50%)
+
+  &:before
+    display none
+    content ''
+    position absolute
+    border-style solid
+    bottom 30px
+    border-width 10px 10px 0 10px
+    border-color ghost transparent transparent transparent
+
+  &:after
+    display none
+    content attr(data-tip)
+    font-family 'Open Sans'
+    text-align center
+    font-size rem(13px)
+    line-height 1.2em
+    position absolute
+    background-color ghost
+    color shuttleGray
+    border-radius 3px
+    padding 5px 7px
+    bottom 35px
+    z-index 2
+
+  .ico
+    size 22px 24px
+    display block
+
+  &.-homologar  
+    .ico
+      fill jungleGreen
+    &:before
+      border-top-color jungleGreen
+    &:after
+      background-color jungleGreen
+      color #ffffff
+
+  &.-adicionar  
+    .ico
+      fill jungleGreen
+    &:before
+      border-top-color jungleGreen
+    &:after
+      background-color jungleGreen
+      color #ffffff
+
+  &.-excluir
+    .ico
+      fill mandy
+    &:before
+      border-top-color mandy
+    &:after
+      background-color mandy
+      color #ffffff
+
+  &.-download
+    .ico
+      fill endeavour
+    &:before
+      border-top-color endeavour
+    &:after
+      background-color endeavour
+      color #ffffff
+
+  &.-editar
+    .ico
+      fill neonCarrot
+    &:before
+      border-top-color neonCarrot
+    &:after
+      background-color neonCarrot
+      color #ffffff

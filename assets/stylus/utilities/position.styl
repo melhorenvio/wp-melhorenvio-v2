@@ -1,0 +1,101 @@
+me-position( pos, values )
+    if last( values ) == "!important"
+        _void = pop( values )
+        important = "!important"
+    else
+        important = ""
+    if pos == sticky
+        if !( "css-sticky" in me-support-ignore-features )
+            for prefix in caniuse-prefixes( "css-sticky" )
+                position: unquote( "-" + prefix + "-sticky " + important )
+        else if me-vendors-prefixes isnt false
+                if me-vendors-prefixes isnt recommended
+                    prefixes = me-vendors-prefixes
+                if prefixes
+                    for prefix in prefixes
+                        position: unquote( "-" + prefix + "-sticky " + important )
+        position: unquote( "sticky " + important )
+    else
+        position: pos unquote( important )
+    // NOTE: this is kinda lame. Needs refactor. Probably.
+    if top in values || right in values || bottom in values || left in values
+        currentProp = null
+        props = top right bottom left
+        for value, index in values
+            if index == 0
+                if value in props
+                    currentProp = value
+                else
+                    error( "When using relative keywords in position mixin, you must start with a keyword." )
+            else if index < length( values ) - 1
+                if value in props
+                    if currentProp
+                        {currentProp}: 0
+                    currentProp = value
+                else
+                    if currentProp == null
+                        error( "When using relative keywords in position mixins, you cant make two numeric values follow." )
+                    {currentProp}: value
+                    currentProp = null
+            else
+                if value in props
+                    if currentProp
+                        {currentProp}: 0
+                    {value}: 0
+                else
+                    {currentProp}: value
+    else
+        if length( values ) == 1 && values[ 0 ] != false
+            top: values[ 0 ] unquote( important )
+            right: values[ 0 ] unquote( important )
+            bottom: values[ 0 ] unquote( important )
+            left: values[ 0 ] unquote( important )
+        if length( values ) == 2
+            top: values[ 0 ] unquote( important ) if values[ 0 ] != false
+            right: values[ 1 ] unquote( important ) if values[ 1 ] != false
+            bottom: values[ 0 ] unquote( important ) if values[ 0 ] != false
+            left: values[ 1 ] unquote( important ) if values[ 1 ] != false
+        if length( values ) == 3
+            top: values[ 0 ] unquote( important ) if values[ 0 ] != false
+            right: values[ 1 ] unquote( important ) if values[ 1 ] != false
+            bottom: values[ 2 ] unquote( important ) if values[ 2 ] != false
+            left: values[ 1 ] unquote( important ) if values[ 1 ] != false
+        if length( values ) == 4
+            top: values[ 0 ] unquote( important ) if values[ 0 ] != false
+            right: values[ 1 ] unquote( important ) if values[ 1 ] != false
+            bottom: values[ 2 ] unquote( important ) if values[ 2 ] != false
+            left: values[ 3 ] unquote( important ) if values[ 3 ] != false
+
+me-static( values... )
+    me-position( static, values )
+
+me-relative( values... )
+    me-position( relative, values )
+
+me-absolute( values... )
+    me-position( absolute, values )
+
+me-fixed( values... )
+    me-position( fixed, values )
+
+me-sticky( values... )
+    me-position( sticky, values )
+
+unless me-no-conflict
+    static( values... )
+        me-position( static, values )
+
+    relative( values... )
+        me-position( relative, values )
+
+    absolute( values... )
+        me-position( absolute, values )
+
+    fixed( values... )
+        me-position( fixed, values )
+
+    sticky( values... )
+        me-position( sticky, values )
+
+    position( value, values... )
+        me-position( value, values )

@@ -1,0 +1,9 @@
+me-hide-text()
+    overflow: hidden
+    &:before
+        content: ""
+        display: block
+        width: 0
+        height: 100%
+
+hide-text = me-hide-text unless me-no-conflict
