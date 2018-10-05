@@ -140,6 +140,11 @@ const orders = {
                     commit('retrieveMany', response.data)
                     commit('toggleLoader', false)
                 }
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                return false
             })
         },
         loadMore: ({commit, state}, status) => {
@@ -158,6 +163,11 @@ const orders = {
                     commit('loadMore', response.data)
                     commit('toggleLoader', false)
                 }
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                return false
             })
         },
         addCart: ({commit}, data) => {  
@@ -166,62 +176,129 @@ const orders = {
                 commit('toggleLoader', false)
                 return false;
             }
-
             if (data.id && data.choosen) {
                 Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
-
                     if(!response.data.success) {
                         commit('setMsgModal', response.data.message)
                         commit('toggleLoader', false)
                         commit('toggleModal', true)
                         return false
                     }
-
                     commit('addCart',{
                         id: data.id,
                         order_id: response.data.data.id
                     })
                     commit('toggleLoader', false)
+                }).catch(error => {
+                    commit('setMsgModal', error.message)
+                    commit('toggleLoader', false)
+                    commit('toggleModal', true)
+                    return false
                 })
             }
         },
         removeCart: (context, data) => {    
             context.commit('toggleLoader', true) 
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+
+                if(!response.data.success) {
+                    context.commit('setMsgModal', response.data.message)
+                    context.commit('toggleLoader', false)
+                    context.commit('toggleModal', true)
+                    return false
+                }
+
                 context.commit('removeCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false)
+            }).catch(error => {
+                context.commit('setMsgModal', error.message)
+                context.commit('toggleLoader', false)
+                context.commit('toggleModal', true)
+                return false
             })
         },
         cancelCart: (context, data) => {   
             context.commit('toggleLoader', true)      
             Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+
+                if(!response.data.success) {
+                    context.commit('setMsgModal', response.data.message)
+                    context.commit('toggleLoader', false)
+                    context.commit('toggleModal', true)
+                    return false
+                }
+
                 context.commit('cancelCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false) 
+            }).catch(error => {
+                context.commit('setMsgModal', error.message)
+                context.commit('toggleLoader', false)
+                context.commit('toggleModal', true)
+                return false
             })
         },
         payTicket: (context, data) => {    
             context.commit('toggleLoader', true)     
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+
+                if(!response.data.success) {
+                    context.commit('setMsgModal', response.data.message)
+                    context.commit('toggleLoader', false)
+                    context.commit('toggleModal', true)
+                    return false
+                }
+
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false) 
+            }).catch(error => {
+                context.commit('setMsgModal', error.message)
+                context.commit('toggleLoader', false)
+                context.commit('toggleModal', true)
+                return false
             })
         },
         createTicket: ({commit}, data) => {   
             commit('toggleLoader', true)     
             Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+
+                if(!response.data.success) {
+                    commit('setMsgModal', response.data.message)
+                    commit('toggleLoader', false)
+                    commit('toggleModal', true)
+                    return false
+                }
+
                 commit('createTicket', data.id)
                 commit('toggleLoader', false)
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                return false
             })
         },
         printTicket: ({commit}, data) => {  
             commit('toggleLoader', true)      
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+
+                if(!response.data.success) {
+                    commit('setMsgModal', response.data.message)
+                    commit('toggleLoader', false)
+                    commit('toggleModal', true)
+                    return false
+                }
+
                 commit('printTicket', data.id)
                 commit('toggleLoader', false)
                 window.open(response.data.data.url,'_blank');
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                return false
             })
         },
         closeModal: ({commit}) => {

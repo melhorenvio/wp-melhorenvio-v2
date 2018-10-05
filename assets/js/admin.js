@@ -2796,6 +2796,11 @@ var orders = {
                     commit('retrieveMany', response.data);
                     commit('toggleLoader', false);
                 }
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return false;
             });
         },
         loadMore: function loadMore(_ref2, status) {
@@ -2817,6 +2822,11 @@ var orders = {
                     commit('loadMore', response.data);
                     commit('toggleLoader', false);
                 }
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return false;
             });
         },
         addCart: function addCart(_ref3, data) {
@@ -2827,47 +2837,88 @@ var orders = {
                 commit('toggleLoader', false);
                 return false;
             }
-
             if (data.id && data.choosen) {
                 _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
-
                     if (!response.data.success) {
                         commit('setMsgModal', response.data.message);
                         commit('toggleLoader', false);
                         commit('toggleModal', true);
                         return false;
                     }
-
                     commit('addCart', {
                         id: data.id,
                         order_id: response.data.data.id
                     });
                     commit('toggleLoader', false);
+                }).catch(function (error) {
+                    commit('setMsgModal', error.message);
+                    commit('toggleLoader', false);
+                    commit('toggleModal', true);
+                    return false;
                 });
             }
         },
         removeCart: function removeCart(context, data) {
             context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=remove_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+
+                if (!response.data.success) {
+                    context.commit('setMsgModal', response.data.message);
+                    context.commit('toggleLoader', false);
+                    context.commit('toggleModal', true);
+                    return false;
+                }
+
                 context.commit('removeCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
+            }).catch(function (error) {
+                context.commit('setMsgModal', error.message);
+                context.commit('toggleLoader', false);
+                context.commit('toggleModal', true);
+                return false;
             });
         },
         cancelCart: function cancelCart(context, data) {
             context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=cancel_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+
+                if (!response.data.success) {
+                    context.commit('setMsgModal', response.data.message);
+                    context.commit('toggleLoader', false);
+                    context.commit('toggleModal', true);
+                    return false;
+                }
+
                 context.commit('cancelCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
+            }).catch(function (error) {
+                context.commit('setMsgModal', error.message);
+                context.commit('toggleLoader', false);
+                context.commit('toggleModal', true);
+                return false;
             });
         },
         payTicket: function payTicket(context, data) {
             context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+
+                if (!response.data.success) {
+                    context.commit('setMsgModal', response.data.message);
+                    context.commit('toggleLoader', false);
+                    context.commit('toggleModal', true);
+                    return false;
+                }
+
                 context.commit('payTicket', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
+            }).catch(function (error) {
+                context.commit('setMsgModal', error.message);
+                context.commit('toggleLoader', false);
+                context.commit('toggleModal', true);
+                return false;
             });
         },
         createTicket: function createTicket(_ref4, data) {
@@ -2875,8 +2926,21 @@ var orders = {
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+
+                if (!response.data.success) {
+                    commit('setMsgModal', response.data.message);
+                    commit('toggleLoader', false);
+                    commit('toggleModal', true);
+                    return false;
+                }
+
                 commit('createTicket', data.id);
                 commit('toggleLoader', false);
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return false;
             });
         },
         printTicket: function printTicket(_ref5, data) {
@@ -2884,9 +2948,22 @@ var orders = {
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
+
+                if (!response.data.success) {
+                    commit('setMsgModal', response.data.message);
+                    commit('toggleLoader', false);
+                    commit('toggleModal', true);
+                    return false;
+                }
+
                 commit('printTicket', data.id);
                 commit('toggleLoader', false);
                 window.open(response.data.data.url, '_blank');
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return false;
             });
         },
         closeModal: function closeModal(_ref6) {
