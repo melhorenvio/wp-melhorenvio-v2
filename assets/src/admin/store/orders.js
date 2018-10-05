@@ -125,6 +125,7 @@ const orders = {
     },
     actions: {
         retrieveMany: ({commit}, data) => {
+            commit('toggleLoader', true)
             let content = {
                 action: 'get_orders',
                 limit: 10,
@@ -141,6 +142,7 @@ const orders = {
                     commit('toggleLoader', false)
                 }
             }).catch(error => {
+
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -190,7 +192,7 @@ const orders = {
                     })
                     commit('toggleLoader', false)
                 }).catch(error => {
-                    commit('setMsgModal', error.message)
+                    commit('setMsgModal', errorMessage)
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false

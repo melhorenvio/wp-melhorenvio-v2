@@ -15,7 +15,7 @@
         <label>Minhas lojas</label><br>
         <div v-for="option in stores" v-bind:value="option.id" :key="option.id">
             <input type="radio" :id="option.id" :value="option.id" v-model="store">
-            <label :for="option.id"><b>{{option.name}}</b> (Documento: {{option.document}} - Registro estatual: {{option.state_register}})</label>
+            <label :for="option.id"><b>{{option.name}}</b> (Documento: {{option.document}} - Registro estadual: {{option.state_register}})</label>
             <br>
         </div>
         <br><br>

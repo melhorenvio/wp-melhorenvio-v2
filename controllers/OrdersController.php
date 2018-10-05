@@ -99,13 +99,13 @@ class OrdersController {
             $urlApi = 'https://sandbox.melhorenvio.com.br';
         } 
 
-
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/cart', $params)));
 
         if (!isset($response->id)) {
+            $error = $this->normalizeErrors($response);
             echo json_encode([
                 'success' => false,
-                'message' => $response
+                'message' => $error
             ]);
             die;
         }
@@ -376,5 +376,13 @@ class OrdersController {
         
         delete_post_meta($order_id, 'melhorenvio_status_v2');
         add_post_meta($order_id, 'melhorenvio_status_v2', $data);
+    }
+
+    private function normalizeErrors($data) {
+
+        if (isset($data->errors)) {
+            return $data->errors;
+        }
+        return 'Ocorreu um erro';
     }
 }

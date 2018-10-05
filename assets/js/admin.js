@@ -2341,7 +2341,7 @@ var render = function() {
             _vm._v(
               " (Documento: " +
                 _vm._s(option.document) +
-                " - Registro estatual: " +
+                " - Registro estadual: " +
                 _vm._s(option.state_register) +
                 ")"
             )
@@ -2781,6 +2781,7 @@ var orders = {
         retrieveMany: function retrieveMany(_ref, data) {
             var commit = _ref.commit;
 
+            commit('toggleLoader', true);
             var content = {
                 action: 'get_orders',
                 limit: 10,
@@ -2797,6 +2798,7 @@ var orders = {
                     commit('toggleLoader', false);
                 }
             }).catch(function (error) {
+
                 commit('setMsgModal', error.message);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
@@ -2851,7 +2853,7 @@ var orders = {
                     });
                     commit('toggleLoader', false);
                 }).catch(function (error) {
-                    commit('setMsgModal', error.message);
+                    commit('setMsgModal', errorMessage);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
