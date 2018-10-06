@@ -37,6 +37,7 @@ class Order {
         $this->to = $data['billing'];
         
         $this->cotation = $this->getCotation();
+
     }
 
     /**
@@ -60,8 +61,9 @@ class Order {
      */
     public function getAllOrders($filters = NULL)
     {
+        //($filters['limit'])
         $args = [
-            'numberposts' => ($filters['limit']) ?: 10,
+            'numberposts' => 1 ?: 10,
             'offset' => ($filters['skip']) ?: 0,
             'post_status' => ($filters['wpstatus']) ?: 'public',
             'post_type' => 'shop_order',
@@ -80,17 +82,20 @@ class Order {
         $posts =  get_posts($args);    
 
         $data = [];
+        $orders = [];
         foreach ($posts as $post) {
 
             $order = new Order($post->ID);
-
             $dataMelhorEnvio = $order->getDataOrder();
-
             $invoice = $order->getInvoice();
 
             $non_commercial = true;
             if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
                 $non_commercial = false;
+            }
+            
+            if (!is_null($dataMelhorEnvio['order_id'])) {
+                $orders[] = $dataMelhorEnvio['order_id'];
             }
 
             $data[] =  [
@@ -108,7 +113,34 @@ class Order {
             ];
         }
 
+        $data = $order->matchStatus($data, $orders);
         return $data;
+    }
+
+    private function matchStatus($posts, $orders) {
+
+        $statusApi = $this->getStatusApi($orders);        
+        foreach ($posts as $key => $post) {
+
+            if (array_key_exists($post['order_id'], $statusApi)) {
+                if ($post['status'] != $statusApi[$post['order_id']]) {
+
+                    $st = $statusApi[$post['order_id']];
+                    if ($st == 'released') {
+                        $st = 'paid';
+                    }
+
+                    if ($st == 'canceled') {
+                        $st = null;
+                    }
+                    $posts[$key]['status'] = $st;
+                    
+                }
+                continue;
+            }
+            $posts[$key]['status'] = null;
+        }
+        return $posts;
     }
 
     /**
@@ -244,5 +276,42 @@ class Order {
             return $default;
         }
         return $data;
+    }
+
+    private function getStatusApi($orders) {
+        
+        if ($token = get_option('wpmelhorenvio_token')) {
+            $body = [
+                "orders" => $orders
+            ];
+    
+            $params = array(
+                'headers'           =>  [
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer '.$token,
+                ],
+                'body'  => json_encode($body),
+                'timeout'=>10
+            );
+
+            $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking', $params)));
+            if(isset($response->errors)) {
+                return null;
+            }
+
+            $data = [];
+            foreach($response as $order) {
+                $data[$order->id] = $order->status;
+            }
+
+            return $data;
+        }
+
+        return null;
+    }
+
+    private function updateStatus() {
+
     }
 }   

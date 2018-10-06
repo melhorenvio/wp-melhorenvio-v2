@@ -63,6 +63,7 @@
                             <li><span>{{ item.total }}</span></li>
                             <li>
                                 <span>
+                                    {{item.status}}
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
                                     {{item.to.email}} <br>
                                     {{item.to.phone}} <br>
@@ -371,6 +372,10 @@ export default {
                 key,
                 status
             ] = args
+
+            if (status == 'paid') {
+                return false;
+            }
 
             if (status == 'printed') {
                 return false;

@@ -384,6 +384,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -410,6 +411,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status] = args;
+
+            if (status == 'paid') {
+                return false;
+            }
 
             if (status == 'printed') {
                 return false;
@@ -1193,6 +1198,11 @@ var render = function() {
                         _vm._v(" "),
                         _c("li", [
                           _c("span", [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(item.status) +
+                                "\n                                "
+                            ),
                             _c("strong", [
                               _vm._v(
                                 _vm._s(item.to.first_name) +
