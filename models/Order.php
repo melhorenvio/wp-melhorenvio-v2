@@ -61,9 +61,8 @@ class Order {
      */
     public function getAllOrders($filters = NULL)
     {
-        //($filters['limit'])
         $args = [
-            'numberposts' => 1 ?: 10,
+            'numberposts' => ($filters['limit']) ?: 10,
             'offset' => ($filters['skip']) ?: 0,
             'post_status' => ($filters['wpstatus']) ?: 'public',
             'post_type' => 'shop_order',
