@@ -124,6 +124,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <input type="hidden" id="calculo_frete_produto_peso" value="<?php echo $this->weight;?>">
                 <input type="hidden" id="calculo_frete_produto_preco" value="<?php echo $this->price;?>">
                 <input type="hidden" id="id_produto" value="<?php echo $this->id;?>">
+
                 <div class="calculo-de-frete">
                     <input class="iptCep" type="text" maxlength="9" onkeydown="return mascara(this, '#####-###');">
                     <div id="calcular-frete">
