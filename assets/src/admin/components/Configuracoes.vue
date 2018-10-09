@@ -63,7 +63,42 @@
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
         <div class="me-modal" v-show="show_load">
-            <svg style="margin-top:20%; margin-left:40%" width='240px' height='240px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(0 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-1s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(30 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.9166666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(60 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.8333333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(90 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.75s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(120 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.6666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(150 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.5833333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(180 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.5s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(210 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.4166666666666667s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(240 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.3333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(270 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.25s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(300 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.16666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='rgba(66.19297413793103%,74.43474121027721%,78%,0.51)' transform='rotate(330 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='-0.08333333333333333s' repeatCount='indefinite'/></rect></svg>
+            <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
+                    <g fill="none" fill-rule="evenodd" stroke-width="2">
+                    <circle cx="22" cy="22" r="1">
+                        <animate attributeName="r"
+                        begin="0s" dur="1.8s"
+                        values="1; 20"
+                        calcMode="spline"
+                        keyTimes="0; 1"
+                        keySplines="0.165, 0.84, 0.44, 1"
+                        repeatCount="indefinite" />
+                        <animate attributeName="stroke-opacity"
+                        begin="0s" dur="1.8s"
+                        values="1; 0"
+                        calcMode="spline"
+                        keyTimes="0; 1"
+                        keySplines="0.3, 0.61, 0.355, 1"
+                        repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="22" cy="22" r="1">
+                        <animate attributeName="r"
+                        begin="-0.9s" dur="1.8s"
+                        values="1; 20"
+                        calcMode="spline"
+                        keyTimes="0; 1"
+                        keySplines="0.165, 0.84, 0.44, 1"
+                        repeatCount="indefinite" />
+                        <animate attributeName="stroke-opacity"
+                        begin="-0.9s" dur="1.8s"
+                        values="1; 0"
+                        calcMode="spline"
+                        keyTimes="0; 1"
+                        keySplines="0.3, 0.61, 0.355, 1"
+                        repeatCount="indefinite" />
+                    </circle>
+                    </g>
+                </svg>
         </div>
 
     </div>
