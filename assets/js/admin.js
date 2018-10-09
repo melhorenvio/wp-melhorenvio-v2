@@ -537,6 +537,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -559,6 +561,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
+        },
+        showAgencies(data) {
+            this.agency = '';
+
+            this.getAgencies(data);
         }
     }),
     watch: {
@@ -2345,6 +2352,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
+    _vm._v(
+      "\n    " + _vm._s(_vm.agency) + "\n    " + _vm._s(_vm.address) + "\n    "
+    ),
     _c("div", { staticClass: "wpme_config" }, [
       _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
       _vm._v(" "),
@@ -2372,7 +2382,7 @@ var render = function() {
                     },
                     on: {
                       click: function($event) {
-                        _vm.getAgencies({
+                        _vm.showAgencies({
                           city: option.city,
                           state: option.state
                         })
@@ -2407,16 +2417,67 @@ var render = function() {
                     _c("li", [_vm._v(_vm._s("" + option.complement))]),
                     _vm._v(" "),
                     _c("li", [_vm._v(_vm._s("CEP: " + option.postal_code))])
-                  ]),
-                  _vm._v(" "),
-                  _c("label", [_vm._v("Escolha a Agencia Jadlog")])
+                  ])
                 ])
               ])
             ])
           })
         )
       ])
-    ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "table-box" }, [
+      _c("label", [_vm._v("Agências Jadlog")]),
+      _c("br"),
+      _vm._v(" "),
+      _c(
+        "select",
+        {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.agency,
+              expression: "agency"
+            }
+          ],
+          attrs: { name: "agencies", id: "agencies" },
+          on: {
+            change: function($event) {
+              var $$selectedVal = Array.prototype.filter
+                .call($event.target.options, function(o) {
+                  return o.selected
+                })
+                .map(function(o) {
+                  var val = "_value" in o ? o._value : o.value
+                  return val
+                })
+              _vm.agency = $event.target.multiple
+                ? $$selectedVal
+                : $$selectedVal[0]
+            }
+          }
+        },
+        [
+          _c("option", { attrs: { value: "" } }, [_vm._v("Selecione...")]),
+          _vm._v(" "),
+          _vm._l(_vm.agencies, function(option) {
+            return _c(
+              "option",
+              { key: option.id, domProps: { value: option.id } },
+              [_vm._v(_vm._s(option.name))]
+            )
+          })
+        ],
+        2
+      )
+    ]),
+    _vm._v(" "),
+    _c(
+      "button",
+      { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
+      [_vm._v("salvar")]
+    )
   ])
 }
 var staticRenderFns = []
