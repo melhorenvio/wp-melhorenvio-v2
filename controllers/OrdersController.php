@@ -391,7 +391,11 @@ class OrdersController {
         if (isset($data->errors)) {
             foreach($data->errors as $key => $error) {
                 if (end($error) == 'validation.nfe') {
-                    return 'Nota fiscal inválida';
+                    return 'Chave da Nota fiscal inválida';
+                }
+
+                if (end($error) == 'The options.invoice.number may not be greater than 12 characters.') {
+                    return 'A nota fiscal deve conter 12 digitos';
                 }
 
                 return end($error);
