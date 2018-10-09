@@ -31,7 +31,7 @@
                     <li>
                         <select name="agencies" id="agencies" v-model="agency">
                             <option value="">Selecione...</option>
-                            <option v-for="option in agencies" :value="option.id" :key="option.id">{{ option.company_name }} ({{option.name}})</option>
+                            <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
                         </select>
                     </li>
                 </ul>
@@ -61,6 +61,20 @@
             </div>
         </div>
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
+
+        <transition name="fade">
+            <div class="me-modal" v-show="show_modal">
+                <div>
+                    <p class="title">Atenção</p>
+                    <div class="content">
+                        <p class="txt">dados atualizados</p>
+                    </div>
+                    <div class="buttons -center">
+                        <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
 
         <div class="me-modal" v-show="show_load">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
@@ -113,6 +127,7 @@ export default {
             address: null,
             store: null,
             agency: null,
+            show_modal: false
         }
     },
     computed: {
@@ -136,11 +151,14 @@ export default {
             this.setSelectedAddress(this.address)
             this.setSelectedStore(this.store)
             this.setSelectedAgency(this.agency)
-            alert('Dados atualizados');
+            this.show_modal = true
         },
         showAgencies (data) {
             this.agency = ''
             this.getAgencies(data)
+        },
+        close() {
+            this.show_modal = false;
         }
     },
     watch : {

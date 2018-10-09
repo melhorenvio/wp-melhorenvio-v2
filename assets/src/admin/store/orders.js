@@ -253,7 +253,7 @@ const orders = {
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false)
 
-                context.commit('setMsgModal', 'Item #' + data.id + 'removido do carrinho')
+                context.commit('setMsgModal', 'Item #' + data.id + ' removido do carrinho')
                 context.commit('toggleModal', true)
 
             }).catch(error => {
@@ -274,7 +274,7 @@ const orders = {
                     return false
                 }
 
-                context.commit('setMsgModal', 'Item #' + data.id + 'Cancelado')
+                context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado')
                 context.commit('toggleModal', true)
 
                 context.commit('cancelCart', data.id)
@@ -300,7 +300,7 @@ const orders = {
 
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
-                context.commit('setMsgModal', 'Item #' + data.id + 'pago com sucesso')
+                context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso')
                 context.commit('toggleModal', true)
                 context.commit('toggleLoader', false) 
             }).catch(error => {
@@ -322,7 +322,7 @@ const orders = {
                 }
 
                 commit('createTicket', data.id)
-                commit('setMsgModal', 'Item #' + data.id + 'gerado com sucesso')
+                commit('setMsgModal', 'Item #' + data.id + ' gerado com sucesso')
                 commit('toggleModal', true)
                 commit('toggleLoader', false)
             }).catch(error => {

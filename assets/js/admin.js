@@ -609,6 +609,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -617,7 +631,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         return {
             address: null,
             store: null,
-            agency: null
+            agency: null,
+            show_modal: false
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -631,11 +646,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
-            alert('Dados atualizados');
+            this.show_modal = true;
         },
         showAgencies(data) {
             this.agency = '';
             this.getAgencies(data);
+        },
+        close() {
+            this.show_modal = false;
         }
     }),
     watch: {
@@ -2540,305 +2558,342 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "wpme_config" }, [
-      _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "wpme_flex" }, [
-        _c(
-          "ul",
-          { staticClass: "wpme_address" },
-          _vm._l(_vm.addresses, function(option) {
-            return _c("li", { key: option.id, attrs: { value: option.id } }, [
-              _c("label", { attrs: { for: "41352" } }, [
-                _c("div", { staticClass: "wpme_address-top" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.address,
-                        expression: "address"
-                      }
-                    ],
-                    attrs: { type: "radio", id: option.id },
-                    domProps: {
-                      value: option.id,
-                      checked: _vm._q(_vm.address, option.id)
-                    },
-                    on: {
-                      click: function($event) {
-                        _vm.showAgencies({
-                          city: option.city,
-                          state: option.state
-                        })
+  return _c(
+    "div",
+    [
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c(
+            "ul",
+            { staticClass: "wpme_address" },
+            _vm._l(_vm.addresses, function(option) {
+              return _c("li", { key: option.id, attrs: { value: option.id } }, [
+                _c("label", { attrs: { for: "41352" } }, [
+                  _c("div", { staticClass: "wpme_address-top" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.address,
+                          expression: "address"
+                        }
+                      ],
+                      attrs: { type: "radio", id: option.id },
+                      domProps: {
+                        value: option.id,
+                        checked: _vm._q(_vm.address, option.id)
                       },
-                      change: function($event) {
-                        _vm.address = option.id
+                      on: {
+                        click: function($event) {
+                          _vm.showAgencies({
+                            city: option.city,
+                            state: option.state
+                          })
+                        },
+                        change: function($event) {
+                          _vm.address = option.id
+                        }
                       }
-                    }
-                  }),
+                    }),
+                    _vm._v(" "),
+                    _c("h2", [_vm._v(_vm._s(option.label))])
+                  ]),
                   _vm._v(" "),
-                  _c("h2", [_vm._v(_vm._s(option.label))])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "wpme_address-body" }, [
-                  _c("ul", [
-                    _c("li", [
-                      _vm._v(_vm._s(option.address + ", " + option.number))
-                    ]),
-                    _vm._v(" "),
-                    _c("li", [
-                      _vm._v(
-                        _vm._s(
-                          option.district +
-                            " - " +
-                            option.city +
-                            "/" +
-                            option.state
+                  _c("div", { staticClass: "wpme_address-body" }, [
+                    _c("ul", [
+                      _c("li", [
+                        _vm._v(_vm._s(option.address + ", " + option.number))
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _vm._v(
+                          _vm._s(
+                            option.district +
+                              " - " +
+                              option.city +
+                              "/" +
+                              option.state
+                          )
                         )
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("li", [_vm._v(_vm._s("" + option.complement))]),
-                    _vm._v(" "),
-                    _c("li", [_vm._v(_vm._s("CEP: " + option.postal_code))])
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [_vm._v(_vm._s("" + option.complement))]),
+                      _vm._v(" "),
+                      _c("li", [_vm._v(_vm._s("CEP: " + option.postal_code))])
+                    ])
                   ])
                 ])
               ])
-            ])
-          })
-        )
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "wpme_config" }, [
-      _c("h2", [_vm._v("Escolha a unidade Jadlog")]),
+            })
+          )
+        ])
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "wpme_flex" }, [
-        _c("ul", { staticClass: "wpme_address" }, [
-          _c("li", [
-            _c(
-              "select",
-              {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.agency,
-                    expression: "agency"
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Escolha a unidade Jadlog")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c("li", [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.agency,
+                      expression: "agency"
+                    }
+                  ],
+                  attrs: { name: "agencies", id: "agencies" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.agency = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
                   }
+                },
+                [
+                  _c("option", { attrs: { value: "" } }, [
+                    _vm._v("Selecione...")
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.agencies, function(option) {
+                    return _c(
+                      "option",
+                      { key: option.id, domProps: { value: option.id } },
+                      [_c("strong", [_vm._v(_vm._s(option.name))])]
+                    )
+                  })
                 ],
-                attrs: { name: "agencies", id: "agencies" },
-                on: {
-                  change: function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.agency = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
-                  }
-                }
-              },
-              [
-                _c("option", { attrs: { value: "" } }, [
-                  _vm._v("Selecione...")
-                ]),
-                _vm._v(" "),
-                _vm._l(_vm.agencies, function(option) {
-                  return _c(
-                    "option",
-                    { key: option.id, domProps: { value: option.id } },
-                    [
-                      _vm._v(
-                        _vm._s(option.company_name) +
-                          " (" +
-                          _vm._s(option.name) +
-                          ")"
-                      )
-                    ]
-                  )
-                })
-              ],
-              2
-            )
+                2
+              )
+            ])
           ])
         ])
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "wpme_config" }, [
-      _c("h2", [_vm._v("Escolha a sua loja")]),
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "wpme_flex" }, [
-        _c(
-          "ul",
-          { staticClass: "wpme_address" },
-          _vm._l(_vm.stores, function(option) {
-            return _c("li", { key: option.id, attrs: { value: option.id } }, [
-              _c("label", { attrs: { for: "41352" } }, [
-                _c("div", { staticClass: "wpme_address-top" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.store,
-                        expression: "store"
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Escolha a sua loja")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c(
+            "ul",
+            { staticClass: "wpme_address" },
+            _vm._l(_vm.stores, function(option) {
+              return _c("li", { key: option.id, attrs: { value: option.id } }, [
+                _c("label", { attrs: { for: "41352" } }, [
+                  _c("div", { staticClass: "wpme_address-top" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.store,
+                          expression: "store"
+                        }
+                      ],
+                      attrs: { type: "radio", id: option.id },
+                      domProps: {
+                        value: option.id,
+                        checked: _vm._q(_vm.store, option.id)
+                      },
+                      on: {
+                        change: function($event) {
+                          _vm.store = option.id
+                        }
                       }
-                    ],
-                    attrs: { type: "radio", id: option.id },
-                    domProps: {
-                      value: option.id,
-                      checked: _vm._q(_vm.store, option.id)
-                    },
-                    on: {
-                      change: function($event) {
-                        _vm.store = option.id
-                      }
-                    }
-                  }),
+                    }),
+                    _vm._v(" "),
+                    _c("h2", [_vm._v(_vm._s(option.name))])
+                  ]),
                   _vm._v(" "),
-                  _c("h2", [_vm._v(_vm._s(option.name))])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "wpme_address-body" }, [
-                  _c("ul", [
-                    _c("li", [_vm._v("CNPJ " + _vm._s("" + option.document))]),
-                    _vm._v(" "),
-                    _c("li", [
-                      _vm._v(
-                        "Inscrição estadual " +
-                          _vm._s("" + option.state_register)
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("li", [_vm._v("E-mail " + _vm._s(option.email + " "))])
+                  _c("div", { staticClass: "wpme_address-body" }, [
+                    _c("ul", [
+                      _c("li", [
+                        _vm._v("CNPJ " + _vm._s("" + option.document))
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [
+                        _vm._v(
+                          "Inscrição estadual " +
+                            _vm._s("" + option.state_register)
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", [_vm._v("E-mail " + _vm._s(option.email + " "))])
+                    ])
                   ])
                 ])
               ])
-            ])
-          })
-        )
-      ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "button",
-      { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
-      [_vm._v("salvar")]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.show_load,
-            expression: "show_load"
-          }
-        ],
-        staticClass: "me-modal"
-      },
-      [
+            })
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
+        [_vm._v("salvar")]
+      ),
+      _vm._v(" "),
+      _c("transition", { attrs: { name: "fade" } }, [
         _c(
-          "svg",
+          "div",
           {
-            staticClass: "ico",
-            staticStyle: {
-              float: "left",
-              "margin-top": "10%",
-              "margin-left": "50%"
-            },
-            attrs: {
-              width: "88",
-              height: "88",
-              viewBox: "0 0 44 44",
-              xmlns: "http://www.w3.org/2000/svg",
-              stroke: "#3598dc"
-            }
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.show_modal,
+                expression: "show_modal"
+              }
+            ],
+            staticClass: "me-modal"
           },
           [
-            _c(
-              "g",
-              {
-                attrs: {
-                  fill: "none",
-                  "fill-rule": "evenodd",
-                  "stroke-width": "2"
-                }
-              },
-              [
-                _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "r",
-                      begin: "0s",
-                      dur: "1.8s",
-                      values: "1; 20",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.165, 0.84, 0.44, 1",
-                      repeatCount: "indefinite"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "stroke-opacity",
-                      begin: "0s",
-                      dur: "1.8s",
-                      values: "1; 0",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.3, 0.61, 0.355, 1",
-                      repeatCount: "indefinite"
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "r",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 20",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.165, 0.84, 0.44, 1",
-                      repeatCount: "indefinite"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "stroke-opacity",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 0",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.3, 0.61, 0.355, 1",
-                      repeatCount: "indefinite"
-                    }
-                  })
-                ])
-              ]
-            )
+            _c("div", [
+              _c("p", { staticClass: "title" }, [_vm._v("Atenção")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "content" }, [
+                _c("p", { staticClass: "txt" }, [_vm._v("dados atualizados")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "buttons -center" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn-border -full-blue",
+                    attrs: { type: "button" },
+                    on: { click: _vm.close }
+                  },
+                  [_vm._v("Fechar")]
+                )
+              ])
+            ])
           ]
         )
-      ]
-    )
-  ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.show_load,
+              expression: "show_load"
+            }
+          ],
+          staticClass: "me-modal"
+        },
+        [
+          _c(
+            "svg",
+            {
+              staticClass: "ico",
+              staticStyle: {
+                float: "left",
+                "margin-top": "10%",
+                "margin-left": "50%"
+              },
+              attrs: {
+                width: "88",
+                height: "88",
+                viewBox: "0 0 44 44",
+                xmlns: "http://www.w3.org/2000/svg",
+                stroke: "#3598dc"
+              }
+            },
+            [
+              _c(
+                "g",
+                {
+                  attrs: {
+                    fill: "none",
+                    "fill-rule": "evenodd",
+                    "stroke-width": "2"
+                  }
+                },
+                [
+                  _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "r",
+                        begin: "0s",
+                        dur: "1.8s",
+                        values: "1; 20",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.165, 0.84, 0.44, 1",
+                        repeatCount: "indefinite"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "stroke-opacity",
+                        begin: "0s",
+                        dur: "1.8s",
+                        values: "1; 0",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.3, 0.61, 0.355, 1",
+                        repeatCount: "indefinite"
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "r",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 20",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.165, 0.84, 0.44, 1",
+                        repeatCount: "indefinite"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "stroke-opacity",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 0",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.3, 0.61, 0.355, 1",
+                        repeatCount: "indefinite"
+                      }
+                    })
+                  ])
+                ]
+              )
+            ]
+          )
+        ]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -3461,7 +3516,7 @@ var orders = {
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
 
-                context.commit('setMsgModal', 'Item #' + data.id + 'removido do carrinho');
+                context.commit('setMsgModal', 'Item #' + data.id + ' removido do carrinho');
                 context.commit('toggleModal', true);
             }).catch(function (error) {
                 context.commit('setMsgModal', error.message);
@@ -3481,7 +3536,7 @@ var orders = {
                     return false;
                 }
 
-                context.commit('setMsgModal', 'Item #' + data.id + 'Cancelado');
+                context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado');
                 context.commit('toggleModal', true);
 
                 context.commit('cancelCart', data.id);
@@ -3507,7 +3562,7 @@ var orders = {
 
                 context.commit('payTicket', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
-                context.commit('setMsgModal', 'Item #' + data.id + 'pago com sucesso');
+                context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso');
                 context.commit('toggleModal', true);
                 context.commit('toggleLoader', false);
             }).catch(function (error) {
@@ -3531,7 +3586,7 @@ var orders = {
                 }
 
                 commit('createTicket', data.id);
-                commit('setMsgModal', 'Item #' + data.id + 'gerado com sucesso');
+                commit('setMsgModal', 'Item #' + data.id + ' gerado com sucesso');
                 commit('toggleModal', true);
                 commit('toggleLoader', false);
             }).catch(function (error) {
