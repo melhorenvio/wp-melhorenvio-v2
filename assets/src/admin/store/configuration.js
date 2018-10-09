@@ -49,13 +49,11 @@ const configuration = {
                 }
             })
         },
-        getAgencies: ({commit}, data) => {            
+        getAgencies: ({commit}, data) => {
+            data = Object.assign({action: 'get_agency_jadlog'}, data)
 
-            let content = {
-                action: 'get_agency_jadlog',
-            }
             Axios.get(`${ajaxurl}`, {
-                params: content
+                params: data
             }).then(function (response) {
                 if (response && response.status === 200) {
                     commit('setAgency', response.data.agencies)

@@ -494,6 +494,36 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -544,10 +574,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     }
                 });
             }
-        },
-        address(e) {
-            console.log(e);
         }
+        // ,
+        // address (e) {
+        //     console.log(e);
+        // }
     },
     mounted() {
         this.getAddresses();
@@ -2254,151 +2285,80 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "app-configuracoes" },
-    [
-      _c("h1", [_vm._v("Minhas configurações")]),
+  return _c("div", [
+    _c("div", { staticClass: "wpme_config" }, [
+      _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
       _vm._v(" "),
-      _c("label", [_vm._v("Meus endereços")]),
-      _c("br"),
-      _vm._v(" "),
-      _vm._l(_vm.addresses, function(option) {
-        return _c("div", { key: option.id, attrs: { value: option.id } }, [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.address,
-                expression: "address"
-              }
-            ],
-            attrs: { type: "radio", id: option.id },
-            domProps: {
-              value: option.id,
-              checked: _vm._q(_vm.address, option.id)
-            },
-            on: {
-              change: function($event) {
-                _vm.address = option.id
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: option.id } }, [
-            _c("b", [_vm._v(_vm._s(option.label))]),
-            _vm._v(
-              " (" +
-                _vm._s(option.address) +
-                " " +
-                _vm._s(option.number) +
-                ", " +
-                _vm._s(option.district) +
-                " - " +
-                _vm._s(option.city) +
-                "/" +
-                _vm._s(option.state) +
-                " )"
-            )
-          ]),
-          _vm._v(" "),
-          _c("br")
-        ])
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _c("br"),
-      _vm._v(" "),
-      _c("label", [_vm._v("Minhas lojas")]),
-      _c("br"),
-      _vm._v(" "),
-      _vm._l(_vm.stores, function(option) {
-        return _c("div", { key: option.id, attrs: { value: option.id } }, [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.store,
-                expression: "store"
-              }
-            ],
-            attrs: { type: "radio", id: option.id },
-            domProps: {
-              value: option.id,
-              checked: _vm._q(_vm.store, option.id)
-            },
-            on: {
-              change: function($event) {
-                _vm.store = option.id
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: option.id } }, [
-            _c("b", [_vm._v(_vm._s(option.name))]),
-            _vm._v(
-              " (Documento: " +
-                _vm._s(option.document) +
-                " - Registro estatual: " +
-                _vm._s(option.state_register) +
-                ")"
-            )
-          ]),
-          _vm._v(" "),
-          _c("br")
-        ])
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _c("br"),
-      _vm._v(" "),
-      _c("label", [_vm._v("Agências Jadlog")]),
-      _c("br"),
-      _vm._v(" "),
-      _vm._l(_vm.agencies, function(option) {
-        return _c("div", { key: option.id, attrs: { value: option.id } }, [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.agency,
-                expression: "agency"
-              }
-            ],
-            attrs: { type: "radio", id: option.id },
-            domProps: {
-              value: option.id,
-              checked: _vm._q(_vm.agency, option.id)
-            },
-            on: {
-              change: function($event) {
-                _vm.agency = option.id
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: option.id } }, [
-            _c("b", [_vm._v(_vm._s(option.name))])
-          ]),
-          _vm._v(" "),
-          _c("br")
-        ])
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
-        [_vm._v("salvar")]
-      )
-    ],
-    2
-  )
+      _c("div", { staticClass: "wpme_flex" }, [
+        _c(
+          "ul",
+          { staticClass: "wpme_address" },
+          _vm._l(_vm.addresses, function(option) {
+            return _c("li", { key: option.id, attrs: { value: option.id } }, [
+              _c("label", { attrs: { for: "41352" } }, [
+                _c("div", { staticClass: "wpme_address-top" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.address,
+                        expression: "address"
+                      }
+                    ],
+                    attrs: { type: "radio", id: option.id },
+                    domProps: {
+                      value: option.id,
+                      checked: _vm._q(_vm.address, option.id)
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.getAgencies({
+                          city: option.city,
+                          state: option.state
+                        })
+                      },
+                      change: function($event) {
+                        _vm.address = option.id
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("h2", [_vm._v(_vm._s(option.label))])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "wpme_address-body" }, [
+                  _c("ul", [
+                    _c("li", [
+                      _vm._v(_vm._s(option.address + ", " + option.number))
+                    ]),
+                    _vm._v(" "),
+                    _c("li", [
+                      _vm._v(
+                        _vm._s(
+                          option.district +
+                            " - " +
+                            option.city +
+                            "/" +
+                            option.state
+                        )
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("li", [_vm._v(_vm._s("" + option.complement))]),
+                    _vm._v(" "),
+                    _c("li", [_vm._v(_vm._s("CEP: " + option.postal_code))])
+                  ]),
+                  _vm._v(" "),
+                  _c("label", [_vm._v("Escolha a Agencia Jadlog")])
+                ])
+              ])
+            ])
+          })
+        )
+      ])
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -3099,12 +3059,10 @@ var configuration = {
         getAgencies: function getAgencies(_ref3, data) {
             var commit = _ref3.commit;
 
+            data = Object.assign({ action: 'get_agency_jadlog' }, data);
 
-            var content = {
-                action: 'get_agency_jadlog'
-            };
             _axios2.default.get('' + ajaxurl, {
-                params: content
+                params: data
             }).then(function (response) {
                 if (response && response.status === 200) {
                     commit('setAgency', response.data.agencies);
