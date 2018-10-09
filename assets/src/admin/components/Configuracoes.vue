@@ -39,7 +39,7 @@
                     <li v-for="option in stores" v-bind:value="option.id" :key="option.id">
                         <label for="41352">
                             <div class="wpme_address-top">
-                                <input type="radio" :id="option.id" :value="option.id" v-model="stores" >
+                                <input type="radio" :id="option.id" :value="option.id" v-model="store" >
                                 <h2>{{option.name}}</h2>
                             </div>
                             <div class="wpme_address-body">
@@ -90,6 +90,7 @@ export default {
             this.setSelectedAddress(this.address)
             this.setSelectedStore(this.store)
             this.setSelectedAgency(this.agency)
+            alert('Dados atualizados');
         },
         showAgencies (data) {
             this.agency = ''

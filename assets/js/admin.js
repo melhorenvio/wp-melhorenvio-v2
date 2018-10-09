@@ -553,6 +553,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
+            alert('Dados atualizados');
         },
         showAgencies(data) {
             this.agency = '';
@@ -2474,18 +2475,18 @@ var render = function() {
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.stores,
-                        expression: "stores"
+                        value: _vm.store,
+                        expression: "store"
                       }
                     ],
                     attrs: { type: "radio", id: option.id },
                     domProps: {
                       value: option.id,
-                      checked: _vm._q(_vm.stores, option.id)
+                      checked: _vm._q(_vm.store, option.id)
                     },
                     on: {
                       change: function($event) {
-                        _vm.stores = option.id
+                        _vm.store = option.id
                       }
                     }
                   }),
