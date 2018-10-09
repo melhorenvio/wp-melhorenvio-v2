@@ -1,10 +1,7 @@
 <template>
     <div>
-        {{ agency }}
-        {{ address }}
         <div class="wpme_config">
             <h2>Escolha o endereço para cálculo de frete</h2>
-
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
@@ -35,35 +32,30 @@
             </select>
         </div>
 
-        <!-- PARAMOS AQUI, FALTA MINHAS LOJAS. -->
-
+        <div class="wpme_config">
+            <h2>Escolha a sua loja</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li v-for="option in stores" v-bind:value="option.id" :key="option.id">
+                        <label for="41352">
+                            <div class="wpme_address-top">
+                                <input type="radio" :id="option.id" :value="option.id" v-model="stores" >
+                                <h2>{{option.name}}</h2>
+                            </div>
+                            <div class="wpme_address-body">
+                                <ul>
+                                    <li>CNPJ {{ `${option.document}` }}</li>
+                                    <li>Registro estadual {{ `${option.state_register}` }}</li>
+                                    <li>E-mail {{ `${option.email} ` }}</li>
+                                </ul>
+                            </div>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
     </div>
-
-    <!-- <div class="app-configuracoes">
-        <h1>Minhas configurações</h1>
-        <label>Meus endereços</label><br>
-        <div v-for="option in addresses" v-bind:value="option.id" :key="option.id" >
-            <input type="radio" :id="option.id" :value="option.id" v-model="address">
-            <label :for="option.id"><b>{{option.label}}</b> ({{option.address}} {{option.number}}, {{option.district}} - {{option.city}}/{{option.state}} )</label>
-            <br>   
-        </div>
-        <br><br>
-    
-        <label>Minhas lojas</label><br>
-        <div v-for="option in stores" v-bind:value="option.id" :key="option.id">
-            <input type="radio" :id="option.id" :value="option.id" v-model="store">
-            <label :for="option.id"><b>{{option.name}}</b> (Documento: {{option.document}} - Registro estadual: {{option.state_register}})</label>
-            <br>
-        </div>
-        <br><br>
-
-
-        
-
-        
-
-    </div> -->
 </template>
 
 <script>
@@ -136,10 +128,6 @@ export default {
                 })
             }
         }
-        // ,
-        // address (e) {
-        //     console.log(e);
-        // }
     },
     mounted () {
         this.getAddresses()

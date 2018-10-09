@@ -531,14 +531,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -599,10 +591,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 });
             }
         }
-        // ,
-        // address (e) {
-        //     console.log(e);
-        // }
     },
     mounted() {
         this.getAddresses();
@@ -2352,9 +2340,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._v(
-      "\n    " + _vm._s(_vm.agency) + "\n    " + _vm._s(_vm.address) + "\n    "
-    ),
     _c("div", { staticClass: "wpme_config" }, [
       _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
       _vm._v(" "),
@@ -2471,6 +2456,62 @@ var render = function() {
         ],
         2
       )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "wpme_config" }, [
+      _c("h2", [_vm._v("Escolha a sua loja")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_flex" }, [
+        _c(
+          "ul",
+          { staticClass: "wpme_address" },
+          _vm._l(_vm.stores, function(option) {
+            return _c("li", { key: option.id, attrs: { value: option.id } }, [
+              _c("label", { attrs: { for: "41352" } }, [
+                _c("div", { staticClass: "wpme_address-top" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.stores,
+                        expression: "stores"
+                      }
+                    ],
+                    attrs: { type: "radio", id: option.id },
+                    domProps: {
+                      value: option.id,
+                      checked: _vm._q(_vm.stores, option.id)
+                    },
+                    on: {
+                      change: function($event) {
+                        _vm.stores = option.id
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("h2", [_vm._v(_vm._s(option.name))])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "wpme_address-body" }, [
+                  _c("ul", [
+                    _c("li", [_vm._v("CNPJ " + _vm._s("" + option.document))]),
+                    _vm._v(" "),
+                    _c("li", [
+                      _vm._v(
+                        "Registro estadual " +
+                          _vm._s("" + option.state_register)
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("li", [_vm._v("E-mail " + _vm._s(option.email + " "))])
+                  ])
+                ])
+              ])
+            ])
+          })
+        )
+      ])
     ]),
     _vm._v(" "),
     _c(
