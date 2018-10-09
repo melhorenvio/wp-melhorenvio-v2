@@ -21,7 +21,7 @@ class Admin {
         $capability = 'manage_options';
         $slug       = 'melhor-envio';
 
-        $hook = add_menu_page( __( 'Melhor Envio (BETA)', 'textdomain' ), __( 'Melhor Envio (BETA)', 'textdomain' ), $capability, $slug, [ $this, 'plugin_page' ], 'dashicons-thumbs-up' );
+        $hook = add_menu_page( __( 'Melhor Envio', 'textdomain' ), __( 'Melhor Envio', 'textdomain' ), $capability, $slug, [ $this, 'plugin_page' ], 'dashicons-thumbs-up' );
 
         if ( current_user_can( $capability ) ) {
             $submenu[ $slug ][] = array( __( 'Meus pedidos', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/pedidos' );

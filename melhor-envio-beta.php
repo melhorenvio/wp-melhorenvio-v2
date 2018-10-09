@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Melhor Envio (Beta)
+Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio. Versão BETA
 Version: 2.0
