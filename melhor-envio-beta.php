@@ -264,7 +264,7 @@ final class Base_Plugin {
         add_action('wp_ajax_set_store', [$conf, 'setStore']);
 
         // Cotação por embalagem
-        add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
+        add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
     }
     
     /**
