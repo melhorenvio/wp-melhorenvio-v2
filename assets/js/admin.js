@@ -383,6 +383,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -537,6 +538,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -612,6 +614,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+//
 //
 //
 //
@@ -2207,17 +2210,372 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
-      _c("div", {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.show_loader,
-            expression: "show_loader"
-          }
-        ],
-        staticClass: "me-modal"
-      })
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.show_loader,
+              expression: "show_loader"
+            }
+          ],
+          staticClass: "me-modal"
+        },
+        [
+          _c(
+            "svg",
+            {
+              staticClass: "uil-default",
+              staticStyle: { "margin-top": "20%", "margin-left": "40%" },
+              attrs: {
+                width: "240px",
+                height: "240px",
+                xmlns: "http://www.w3.org/2000/svg",
+                viewBox: "0 0 100 100",
+                preserveAspectRatio: "xMidYMid"
+              }
+            },
+            [
+              _c("rect", {
+                staticClass: "bk",
+                attrs: {
+                  x: "0",
+                  y: "0",
+                  width: "100",
+                  height: "100",
+                  fill: "none"
+                }
+              }),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(0 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-1s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(30 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.9166666666666666s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(60 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.8333333333333334s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(90 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.75s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(120 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.6666666666666666s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(150 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.5833333333333334s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(180 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.5s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(210 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.4166666666666667s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(240 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.3333333333333333s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(270 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.25s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(300 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.16666666666666666s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              ),
+              _c(
+                "rect",
+                {
+                  attrs: {
+                    x: "46.5",
+                    y: "40",
+                    width: "7",
+                    height: "20",
+                    rx: "5",
+                    ry: "5",
+                    fill: "#e1eaed",
+                    transform: "rotate(330 50 50) translate(0 -30)"
+                  }
+                },
+                [
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "opacity",
+                      from: "1",
+                      to: "0",
+                      dur: "1s",
+                      begin: "-0.08333333333333333s",
+                      repeatCount: "indefinite"
+                    }
+                  })
+                ]
+              )
+            ]
+          )
+        ]
+      )
     ],
     2
   )
@@ -2535,17 +2893,372 @@ var render = function() {
       [_vm._v("salvar")]
     ),
     _vm._v(" "),
-    _c("div", {
-      directives: [
-        {
-          name: "show",
-          rawName: "v-show",
-          value: _vm.show_load,
-          expression: "show_load"
-        }
-      ],
-      staticClass: "me-modal"
-    })
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.show_load,
+            expression: "show_load"
+          }
+        ],
+        staticClass: "me-modal"
+      },
+      [
+        _c(
+          "svg",
+          {
+            staticClass: "uil-default",
+            staticStyle: { "margin-top": "20%", "margin-left": "40%" },
+            attrs: {
+              width: "240px",
+              height: "240px",
+              xmlns: "http://www.w3.org/2000/svg",
+              viewBox: "0 0 100 100",
+              preserveAspectRatio: "xMidYMid"
+            }
+          },
+          [
+            _c("rect", {
+              staticClass: "bk",
+              attrs: {
+                x: "0",
+                y: "0",
+                width: "100",
+                height: "100",
+                fill: "none"
+              }
+            }),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(0 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-1s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(30 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.9166666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(60 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.8333333333333334s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(90 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.75s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(120 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.6666666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(150 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.5833333333333334s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(180 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.5s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(210 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.4166666666666667s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(240 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.3333333333333333s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(270 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.25s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(300 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.16666666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(330 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.08333333333333333s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            )
+          ]
+        )
+      ]
+    )
   ])
 }
 var staticRenderFns = []
@@ -2676,17 +3389,372 @@ var render = function() {
       [_vm._v("Salvar")]
     ),
     _vm._v(" "),
-    _c("div", {
-      directives: [
-        {
-          name: "show",
-          rawName: "v-show",
-          value: _vm.show_loader,
-          expression: "show_loader"
-        }
-      ],
-      staticClass: "me-modal"
-    })
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.show_loader,
+            expression: "show_loader"
+          }
+        ],
+        staticClass: "me-modal"
+      },
+      [
+        _c(
+          "svg",
+          {
+            staticClass: "uil-default",
+            staticStyle: { "margin-top": "20%", "margin-left": "40%" },
+            attrs: {
+              width: "240px",
+              height: "240px",
+              xmlns: "http://www.w3.org/2000/svg",
+              viewBox: "0 0 100 100",
+              preserveAspectRatio: "xMidYMid"
+            }
+          },
+          [
+            _c("rect", {
+              staticClass: "bk",
+              attrs: {
+                x: "0",
+                y: "0",
+                width: "100",
+                height: "100",
+                fill: "none"
+              }
+            }),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(0 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-1s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(30 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.9166666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(60 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.8333333333333334s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(90 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.75s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(120 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.6666666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(150 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.5833333333333334s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(180 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.5s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(210 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.4166666666666667s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(240 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.3333333333333333s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(270 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.25s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(300 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.16666666666666666s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            ),
+            _c(
+              "rect",
+              {
+                attrs: {
+                  x: "46.5",
+                  y: "40",
+                  width: "7",
+                  height: "20",
+                  rx: "5",
+                  ry: "5",
+                  fill: "rgba(66.19297413793103%,74.43474121027721%,78%,0.51)",
+                  transform: "rotate(330 50 50) translate(0 -30)"
+                }
+              },
+              [
+                _c("animate", {
+                  attrs: {
+                    attributeName: "opacity",
+                    from: "1",
+                    to: "0",
+                    dur: "1s",
+                    begin: "-0.08333333333333333s",
+                    repeatCount: "indefinite"
+                  }
+                })
+              ]
+            )
+          ]
+        )
+      ]
+    )
   ])
 }
 var staticRenderFns = []

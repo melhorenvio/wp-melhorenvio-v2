@@ -157,7 +157,7 @@ const orders = {
                 if (response && response.status === 200) {
                     commit('retrieveMany', response.data.orders)
                     commit('toggleMore', response.data.load)
-                    commit('toggleLoader', false)
+                    commit('toggleLoader', false) 
                 }
             }).catch(error => {
 
