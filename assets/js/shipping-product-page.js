@@ -8,6 +8,8 @@
 		 */
 		$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete div').on('click', function(e, l) {
 
+			e.preventDefault();
+
             if ($(e.target).is('a#cfpp_credits')) { return; }
             
             var url = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_endpoint_url').val();
@@ -86,7 +88,9 @@
 
 		 			if (row == '') {
 		 				row = '<tr><td colspan="3">Desculpe, o cálculo de frete para este produto só está disponível no Carrinho, por favor, prossiga com a compra normalmente.</td></tr>';
-		 			}
+					 }
+					 
+					 row += '<tr><td></td><td></td><td>Feito com ♥ por <a href="https://www.melhorenvio.com.br/" target="_blank">Melhor Envio</a> </td></tr>'
 
 		 			$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').append(row);
 		 			esconderLoader();

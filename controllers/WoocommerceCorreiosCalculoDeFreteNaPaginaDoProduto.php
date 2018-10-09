@@ -95,6 +95,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                     div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {background-color:<?php echo $this->options['cor_do_botao']?>;}
                     #calcular-frete {
                         display:inline-block;
+                        float: left;
                         color:#444;
                         border:1px solid #CCC;
                         background:#DDD;
@@ -103,6 +104,16 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                         vertical-align:middle;
                         padding: 9px;
                         text-align: center;
+                    }
+
+                    #calcular-frete img {
+                        float: left;
+                        width: 18%;
+                    }
+                    .iptCep {
+                        float: left;
+                        width: 50%;
+                        margin-right: 2%;
                     }
                 </style>
                 <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
@@ -114,14 +125,15 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <input type="hidden" id="calculo_frete_produto_preco" value="<?php echo $this->price;?>">
                 <input type="hidden" id="id_produto" value="<?php echo $this->id;?>">
                 <div class="calculo-de-frete">
-                    <input type="text" maxlength="9" onkeydown="return mascara(this, '#####-###');">
+                    <input class="iptCep" type="text" maxlength="9" onkeydown="return mascara(this, '#####-###');">
                     <div id="calcular-frete">
-                        Calcular Frete
+                        <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/truck.png') ?>" />
+                        <span>Calcular Frete</span>
                     </div>
                 </div>
                 <div id="calcular-frete-loader" style="display:none;">
-                        <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/loader.gif') ?>" />
-                    </div>
+                    <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/loader.gif') ?>" />
+                </div>
                 <div class="resultado-frete">
                     <table>
                         <thead>
@@ -136,6 +148,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                     </table>
                 </div>
             </div>
+            <br><br>
         <?php
     }
 
