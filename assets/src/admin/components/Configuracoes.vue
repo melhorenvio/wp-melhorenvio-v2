@@ -1,14 +1,44 @@
 <template>
-    <div class="app-configuracoes">
+    <div>
+        <div class="wpme_config">
+            <h2>Escolha o endereço para cálculo de frete</h2>
+
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
+                        <label for="41352">
+                            <div class="wpme_address-top">
+                                <input type="radio" :id="option.id" :value="option.id" v-model="address" @click="getAgencies({city: option.city, state: option.state})">
+                                <h2>{{option.label}}</h2>
+                            </div>
+                            <div class="wpme_address-body">
+                                <ul>
+                                    <li>{{ `${option.address}, ${option.number}` }}</li>
+                                    <li>{{ `${option.district} - ${option.city}/${option.state}` }}</li>
+                                    <li>{{ `${option.complement}` }}</li>
+                                    <li>{{ `CEP: ${option.postal_code}` }}</li>
+                                </ul>
+
+                                <label>Escolha a Agencia Jadlog</label>
+
+                                <!-- <select name="agencies">
+                                    <option v-for="(agency, index) in option.jadlog" :key="index" :value="agency.id">Teste 1</option>
+                                </select> -->
+                            </div>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="app-configuracoes">
         <h1>Minhas configurações</h1>
         <label>Meus endereços</label><br>
         <div v-for="option in addresses" v-bind:value="option.id" :key="option.id" >
             <input type="radio" :id="option.id" :value="option.id" v-model="address">
             <label :for="option.id"><b>{{option.label}}</b> ({{option.address}} {{option.number}}, {{option.district}} - {{option.city}}/{{option.state}} )</label>
-            <br>
-            <!-- <select v-model="agency">
-                <option v-for="jadlog in option.jadlog" v-bind:value="jadlog.id" :key="jadlog.id">{{jadlog.name}}</option>
-            </select> -->        
+            <br>   
         </div>
         <br><br>
     
@@ -31,10 +61,7 @@
 
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
-        <div class="me-modal" v-show="show_loader">
-        </div>
-
-    </div>
+    </div> -->
 </template>
 
 <script>
@@ -101,10 +128,11 @@ export default {
                     }
                 })
             }
-        },
-        address (e) {
-            console.log(e);
         }
+        // ,
+        // address (e) {
+        //     console.log(e);
+        // }
     },
     mounted () {
         this.getAddresses()
