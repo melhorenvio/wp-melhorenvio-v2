@@ -6,7 +6,8 @@ const configuration = {
     state: {
         addresses: [],
         stores: [],
-        agencies: []
+        agencies: [],
+        show_load: true
     },
     mutations: {
         setAddress: (state, data) => {
@@ -17,12 +18,16 @@ const configuration = {
         },
         setAgency: (state, data) => {
             state.agencies = data;
+        },
+        toggleLoader: (state, data) => {
+            state.show_load = data
         }
     },  
     getters: {
         getAddress: state => state.addresses,
         getStores: state => state.stores,
-        getAgencies: state => state.agencies
+        getAgencies: state => state.agencies,
+        showLoad: state => state.show_load
     },
     actions: {
         getAddresses: ({commit}, data) => {
@@ -50,13 +55,14 @@ const configuration = {
             })
         },
         getAgencies: ({commit}, data) => {
+            commit('toggleLoader', true)
             data = Object.assign({action: 'get_agency_jadlog'}, data)
-
             Axios.get(`${ajaxurl}`, {
                 params: data
             }).then(function (response) {
                 if (response && response.status === 200) {
                     commit('setAgency', response.data.agencies)
+                    commit('toggleLoader', false)
                 }
             })
         },

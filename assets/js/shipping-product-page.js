@@ -8,8 +8,6 @@
 		 */
 		$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete div').on('click', function(e, l) {
 
-			e.preventDefault();
-
             if ($(e.target).is('a#cfpp_credits')) { return; }
             
             var url = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_endpoint_url').val();
@@ -131,6 +129,9 @@
 })( jQuery );
 
 function validateNumber(event) {
+
+	console.log(event);
+
     var key = window.event ? event.keyCode : event.which;
     if (event.keyCode === 8 || event.keyCode === 46) {
         return true;

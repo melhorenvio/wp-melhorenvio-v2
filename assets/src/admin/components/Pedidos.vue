@@ -62,7 +62,7 @@
                             <li><span><a target="_blank" :href="`/wp-admin/post.php?post=${item.id}&action=edit`"><strong>{{ item.id }}</strong></a></span></li>
                             <li><span>{{ item.total }}</span></li>
                             <li>
-                                <span>
+                                <span style="font-size: 14px;">
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
                                     {{item.to.email}} <br>
                                     {{item.to.phone}} <br>
@@ -298,7 +298,7 @@
             </div>
         </div>
         <div v-else><p>Nenhum registro encontrado</p></div>
-        <button class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
+        <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
         <transition name="fade">
             <div class="me-modal" v-show="show_modal">
@@ -336,7 +336,8 @@ export default {
             orders: 'getOrders',
             show_loader: 'toggleLoader',
             msg_modal: 'setMsgModal',
-            show_modal: 'showModal'
+            show_modal: 'showModal',
+            show_more: 'showMore'
         }),
         ...mapGetters('balance', ['getBalance'])
     },

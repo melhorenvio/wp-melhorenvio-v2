@@ -7,6 +7,7 @@ const orders = {
         orders: [],
         show_loader: true,
         show_modal: false,
+        show_more: true,
         msg_modal: '',
         filters: {
             limit: 5,
@@ -112,6 +113,9 @@ const orders = {
         toggleModal: (state, data) => {
             state.show_modal = data;
         },
+        toggleMore: (state, data) => {
+            state.show_more = data;
+        },
         setMsgModal: (state, data) => {
             state.msg_modal = data;
         }
@@ -120,7 +124,8 @@ const orders = {
         getOrders: state => state.orders,
         toggleLoader: state => state.show_loader,
         setMsgModal: state => state.msg_modal,
-        showModal: state => state.show_modal
+        showModal: state => state.show_modal,
+        showMore: state => state.show_more
 
     },
     actions: {
@@ -138,7 +143,8 @@ const orders = {
                 params: content
             }).then(function (response) {
                 if (response && response.status === 200) {
-                    commit('retrieveMany', response.data)
+                    commit('retrieveMany', response.data.orders)
+                    commit('toggleMore', response.data.load)
                     commit('toggleLoader', false)
                 }
             }).catch(error => {
@@ -146,6 +152,7 @@ const orders = {
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
+                commit('toggleMore', true)
                 return false
             })
         },
@@ -162,13 +169,15 @@ const orders = {
             }).then(function (response) {
 
                 if (response && response.status === 200) {
-                    commit('loadMore', response.data)
+                    commit('loadMore', response.data.orders)
+                    commit('toggleMore', response.data.load)
                     commit('toggleLoader', false)
                 }
             }).catch(error => {
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
+                commit('toggleMore', true)
                 return false
             })
         },

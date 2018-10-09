@@ -80,6 +80,13 @@ class Order {
 
         $posts =  get_posts($args);    
 
+        if (empty($posts)) {
+            return [
+                'orders' => [],
+                'load' => false
+            ];
+        }
+
         $data = [];
         $orders = [];
         foreach ($posts as $post) {
@@ -113,7 +120,18 @@ class Order {
         }
 
         $data = $order->matchStatus($data, $orders);
-        return $data;
+
+        $load = false;
+        if(count($data) == ($filters['limit']) ?: 5) {
+            $load = true;
+        }
+
+        $response = [
+            'orders' => $data,
+            'load' => $load
+        ];
+
+        return $response;
     }
 
     private function matchStatus($posts, $orders) {

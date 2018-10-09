@@ -25,10 +25,10 @@
         </div>
 
         <div class="table-box">
-            <label>Agências Jadlog</label><br>
+            <label>Unidades Jadlog</label><br>
             <select name="agencies" id="agencies" v-model="agency">
                 <option value="">Selecione...</option>
-                <option v-for="option in agencies" :value="option.id" :key="option.id">{{ option.name }}</option>
+                <option v-for="option in agencies" :value="option.id" :key="option.id">{{ option.company_name }} ({{option.name}})</option>
             </select>
         </div>
 
@@ -45,7 +45,7 @@
                             <div class="wpme_address-body">
                                 <ul>
                                     <li>CNPJ {{ `${option.document}` }}</li>
-                                    <li>Registro estadual {{ `${option.state_register}` }}</li>
+                                    <li>Inscrição estadual {{ `${option.state_register}` }}</li>
                                     <li>E-mail {{ `${option.email} ` }}</li>
                                 </ul>
                             </div>
@@ -55,6 +55,10 @@
             </div>
         </div>
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
+
+        <div class="me-modal" v-show="show_load">
+        </div>
+
     </div>
 </template>
 
@@ -67,14 +71,14 @@ export default {
             address: null,
             store: null,
             agency: null,
-            show_loader: true
         }
     },
     computed: {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
-            agencies: 'getAgencies'
+            agencies: 'getAgencies',
+            show_load: 'showLoad'
         })
     },
     methods: {

@@ -399,7 +399,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         orders: 'getOrders',
         show_loader: 'toggleLoader',
         msg_modal: 'setMsgModal',
-        show_modal: 'showModal'
+        show_modal: 'showModal',
+        show_more: 'showMore'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         updateInvoice(id, number, key) {
@@ -530,6 +531,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -538,14 +543,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         return {
             address: null,
             store: null,
-            agency: null,
-            show_loader: true
+            agency: null
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress',
         stores: 'getStores',
-        agencies: 'getAgencies'
+        agencies: 'getAgencies',
+        show_load: 'showLoad'
     })),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency']), {
         updateConfig() {
@@ -1220,7 +1225,7 @@ var render = function() {
                         _c("li", [_c("span", [_vm._v(_vm._s(item.total))])]),
                         _vm._v(" "),
                         _c("li", [
-                          _c("span", [
+                          _c("span", { staticStyle: { "font-size": "14px" } }, [
                             _c("strong", [
                               _vm._v(
                                 _vm._s(item.to.first_name) +
@@ -2153,6 +2158,14 @@ var render = function() {
       _c(
         "button",
         {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.show_more,
+              expression: "show_more"
+            }
+          ],
           staticClass: "btn-border -full-green",
           on: {
             click: function($event) {
@@ -2407,7 +2420,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "table-box" }, [
-      _c("label", [_vm._v("Agências Jadlog")]),
+      _c("label", [_vm._v("Unidades Jadlog")]),
       _c("br"),
       _vm._v(" "),
       _c(
@@ -2445,7 +2458,11 @@ var render = function() {
             return _c(
               "option",
               { key: option.id, domProps: { value: option.id } },
-              [_vm._v(_vm._s(option.name))]
+              [
+                _vm._v(
+                  _vm._s(option.company_name) + " (" + _vm._s(option.name) + ")"
+                )
+              ]
             )
           })
         ],
@@ -2494,7 +2511,7 @@ var render = function() {
                     _vm._v(" "),
                     _c("li", [
                       _vm._v(
-                        "Registro estadual " +
+                        "Inscrição estadual " +
                           _vm._s("" + option.state_register)
                       )
                     ]),
@@ -2513,7 +2530,19 @@ var render = function() {
       "button",
       { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
       [_vm._v("salvar")]
-    )
+    ),
+    _vm._v(" "),
+    _c("div", {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.show_load,
+          expression: "show_load"
+        }
+      ],
+      staticClass: "me-modal"
+    })
   ])
 }
 var staticRenderFns = []
@@ -2781,6 +2810,7 @@ var orders = {
         orders: [],
         show_loader: true,
         show_modal: false,
+        show_more: true,
         msg_modal: '',
         filters: {
             limit: 5,
@@ -2886,6 +2916,9 @@ var orders = {
         toggleModal: function toggleModal(state, data) {
             state.show_modal = data;
         },
+        toggleMore: function toggleMore(state, data) {
+            state.show_more = data;
+        },
         setMsgModal: function setMsgModal(state, data) {
             state.msg_modal = data;
         }
@@ -2902,6 +2935,9 @@ var orders = {
         },
         showModal: function showModal(state) {
             return state.show_modal;
+        },
+        showMore: function showMore(state) {
+            return state.show_more;
         }
 
     },
@@ -2922,7 +2958,8 @@ var orders = {
                 params: content
             }).then(function (response) {
                 if (response && response.status === 200) {
-                    commit('retrieveMany', response.data);
+                    commit('retrieveMany', response.data.orders);
+                    commit('toggleMore', response.data.load);
                     commit('toggleLoader', false);
                 }
             }).catch(function (error) {
@@ -2930,6 +2967,7 @@ var orders = {
                 commit('setMsgModal', error.message);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
+                commit('toggleMore', true);
                 return false;
             });
         },
@@ -2949,13 +2987,15 @@ var orders = {
             }).then(function (response) {
 
                 if (response && response.status === 200) {
-                    commit('loadMore', response.data);
+                    commit('loadMore', response.data.orders);
+                    commit('toggleMore', response.data.load);
                     commit('toggleLoader', false);
                 }
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
+                commit('toggleMore', true);
                 return false;
             });
         },
@@ -3173,7 +3213,8 @@ var configuration = {
     state: {
         addresses: [],
         stores: [],
-        agencies: []
+        agencies: [],
+        show_load: true
     },
     mutations: {
         setAddress: function setAddress(state, data) {
@@ -3184,6 +3225,9 @@ var configuration = {
         },
         setAgency: function setAgency(state, data) {
             state.agencies = data;
+        },
+        toggleLoader: function toggleLoader(state, data) {
+            state.show_load = data;
         }
     },
     getters: {
@@ -3195,6 +3239,9 @@ var configuration = {
         },
         getAgencies: function getAgencies(state) {
             return state.agencies;
+        },
+        showLoad: function showLoad(state) {
+            return state.show_load;
         }
     },
     actions: {
@@ -3229,13 +3276,14 @@ var configuration = {
         getAgencies: function getAgencies(_ref3, data) {
             var commit = _ref3.commit;
 
+            commit('toggleLoader', true);
             data = Object.assign({ action: 'get_agency_jadlog' }, data);
-
             _axios2.default.get('' + ajaxurl, {
                 params: data
             }).then(function (response) {
                 if (response && response.status === 200) {
                     commit('setAgency', response.data.agencies);
+                    commit('toggleLoader', false);
                 }
             });
         },
