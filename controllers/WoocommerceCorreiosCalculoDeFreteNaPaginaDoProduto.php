@@ -134,13 +134,13 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <div id="calcular-frete-loader" style="display:none;">
                     <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/loader.gif') ?>" />
                 </div>
-                <div class="resultado-frete">
+                <div class="resultado-frete" style="display:none;">
                     <table>
                         <thead>
                             <tr>
-                                <td>Forma de envio</td>
-                                <td>Custo estimado</td>
-                                <td>Entrega estimada</td>
+                                <td><strong>Forma de envio</strong></td>
+                                <td><strong>Custo estimado</strong></td>
+                                <td><strong>Entrega estimada</strong></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -148,6 +148,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                     </table>
                 </div>
             </div>
+            <br><br>
             <br><br>
         <?php
     }
