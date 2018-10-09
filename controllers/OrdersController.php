@@ -402,6 +402,11 @@ class OrdersController {
             }
             return $data->errors;
         }
+
+        if (isset($data->error)) {
+            return $data->error;
+        }
+
         return 'Ocorreu um erro';
     }
 }
