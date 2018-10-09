@@ -24,12 +24,18 @@
             </div>
         </div>
 
-        <div class="table-box">
-            <label>Unidades Jadlog</label><br>
-            <select name="agencies" id="agencies" v-model="agency">
-                <option value="">Selecione...</option>
-                <option v-for="option in agencies" :value="option.id" :key="option.id">{{ option.company_name }} ({{option.name}})</option>
-            </select>
+        <div class="wpme_config">
+            <h2>Escolha a unidade Jadlog</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <select name="agencies" id="agencies" v-model="agency">
+                            <option value="">Selecione...</option>
+                            <option v-for="option in agencies" :value="option.id" :key="option.id">{{ option.company_name }} ({{option.name}})</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="wpme_config">
@@ -98,7 +104,6 @@ export default {
         },
         showAgencies (data) {
             this.agency = ''
-
             this.getAgencies(data)
         }
     },

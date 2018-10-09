@@ -383,7 +383,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -402,10 +401,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_modal: 'showModal',
         show_more: 'showMore'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
-        updateInvoice(id, number, key) {
-            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {}).catch(error => {});
-        },
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -436,11 +432,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && number != '' && key != null && key != '') {
+            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && number != '') {
                 return true;
             }
 
-            if (choose_method > 3 && number != null && number != '' && key != null && key != '') {
+            if (choose_method > 3 && number != null && number != '') {
                 return true;
             }
 
@@ -535,6 +531,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -561,7 +563,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         showAgencies(data) {
             this.agency = '';
-
             this.getAgencies(data);
         }
     }),
@@ -1380,11 +1381,7 @@ var render = function() {
                                     ])
                                   ])
                                 ]
-                              : [
-                                  _c("label", [_vm._v("Ordem Melhor Envio")]),
-                                  _vm._v(" "),
-                                  _c("span", [_vm._v(_vm._s(item.order_id))])
-                                ]
+                              : [_c("span", [_vm._v(_vm._s(item.protocol))])]
                           ],
                           2
                         ),
@@ -1564,11 +1561,7 @@ var render = function() {
                                                 "btn-border -full-blue",
                                               on: {
                                                 click: function($event) {
-                                                  _vm.updateInvoice(
-                                                    item.id,
-                                                    item.invoice.number,
-                                                    item.invoice.key
-                                                  )
+                                                  _vm.insertInvoice(item)
                                                 }
                                               }
                                             },
@@ -2419,55 +2412,65 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "table-box" }, [
-      _c("label", [_vm._v("Unidades Jadlog")]),
-      _c("br"),
+    _c("div", { staticClass: "wpme_config" }, [
+      _c("h2", [_vm._v("Escolha a unidade Jadlog")]),
       _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.agency,
-              expression: "agency"
-            }
-          ],
-          attrs: { name: "agencies", id: "agencies" },
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.agency = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        [
-          _c("option", { attrs: { value: "" } }, [_vm._v("Selecione...")]),
-          _vm._v(" "),
-          _vm._l(_vm.agencies, function(option) {
-            return _c(
-              "option",
-              { key: option.id, domProps: { value: option.id } },
+      _c("div", { staticClass: "wpme_flex" }, [
+        _c("ul", { staticClass: "wpme_address" }, [
+          _c("li", [
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.agency,
+                    expression: "agency"
+                  }
+                ],
+                attrs: { name: "agencies", id: "agencies" },
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.agency = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
               [
-                _vm._v(
-                  _vm._s(option.company_name) + " (" + _vm._s(option.name) + ")"
-                )
-              ]
+                _c("option", { attrs: { value: "" } }, [
+                  _vm._v("Selecione...")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.agencies, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.id, domProps: { value: option.id } },
+                    [
+                      _vm._v(
+                        _vm._s(option.company_name) +
+                          " (" +
+                          _vm._s(option.name) +
+                          ")"
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
             )
-          })
-        ],
-        2
-      )
+          ])
+        ])
+      ])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "wpme_config" }, [
@@ -2921,6 +2924,18 @@ var orders = {
         },
         setMsgModal: function setMsgModal(state, data) {
             state.msg_modal = data;
+        },
+        updateInvoice: function updateInvoice(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id === data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            state.orders.splice(order.position, 1, order.content);
         }
     },
     getters: {
@@ -2999,8 +3014,25 @@ var orders = {
                 return false;
             });
         },
-        addCart: function addCart(_ref3, data) {
+        insertInvoice: function insertInvoice(_ref3, data) {
             var commit = _ref3.commit;
+
+            commit('toggleLoader', true);
+            _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
+                commit('updateInvoice', data);
+                commit('setMsgModal', 'Documentos atualizados');
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return true;
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                return false;
+            });
+        },
+        addCart: function addCart(_ref4, data) {
+            var commit = _ref4.commit;
 
             commit('toggleLoader', true);
             if (!data) {
@@ -3101,8 +3133,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref4, data) {
-            var commit = _ref4.commit;
+        createTicket: function createTicket(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -3125,8 +3157,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref5, data) {
-            var commit = _ref5.commit;
+        printTicket: function printTicket(_ref6, data) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -3148,8 +3180,8 @@ var orders = {
                 return false;
             });
         },
-        closeModal: function closeModal(_ref6) {
-            var commit = _ref6.commit;
+        closeModal: function closeModal(_ref7) {
+            var commit = _ref7.commit;
 
             commit('toggleModal', false);
         }

@@ -88,8 +88,7 @@
                                     </div>
                                 </template>
                                 <template v-else>
-                                    <label>Ordem Melhor Envio</label>
-                                    <span>{{ item.order_id }}</span>
+                                    <span>{{ item.protocol }}</span>
                                 </template>
                             </li>
                             <li>
@@ -112,7 +111,7 @@
                                                     <label>Chave da nota fiscal</label><br>
                                                     <input type="text" v-model="item.invoice.key" /><br>
                                                     <br>
-                                                    <button class="btn-border -full-blue" @click="updateInvoice(item.id, item.invoice.number, item.invoice.key)">Salvar</button>
+                                                    <button class="btn-border -full-blue" @click="insertInvoice(item)">Salvar</button>
                                                 </div>
                                             </fieldset>
                                         </template>
@@ -351,16 +350,10 @@ export default {
             'payTicket',
             'createTicket',
             'printTicket',
-            'closeModal'
+            'closeModal',
+            'insertInvoice'
         ]),
         ...mapActions('balance', ['setBalance']),
-        updateInvoice (id, number, key) {
-            this.$http.post(`${ajaxurl}?action=insert_invoice_order&id=${id}&number=${number}&key=${key}`).then(response => {
-            
-            }).catch(error => {
-
-            })
-        },
         close() {
             this.closeModal()
         },
@@ -397,11 +390,11 @@ export default {
                 return true
             }
 
-            if ((choose_method == 3 || choose_method == 4) && !non_commercial && (number != null && number != '') && (key != null && key != '')) {
+            if ((choose_method == 3 || choose_method == 4) && !non_commercial && (number != null && number != '')) {
                 return true
             }
 
-            if (choose_method > 3 &&  (number != null && number != '') && (key != null && key != '')) {
+            if (choose_method > 3 &&  (number != null && number != '')) {
                 return true
             }
             

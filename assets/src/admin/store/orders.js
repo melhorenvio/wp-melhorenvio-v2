@@ -118,6 +118,18 @@ const orders = {
         },
         setMsgModal: (state, data) => {
             state.msg_modal = data;
+        },
+        updateInvoice: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id === data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+            state.orders.splice(order.position, 1, order.content)
         }
     },  
     getters: {
@@ -178,6 +190,21 @@ const orders = {
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 commit('toggleMore', true)
+                return false
+            })
+        },
+        insertInvoice: ({commit}, data) => {
+            commit('toggleLoader', true)
+            Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}`).then(response => {
+                commit('updateInvoice', data);
+                commit('setMsgModal', 'Documentos atualizados')
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                return true
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
                 return false
             })
         },
