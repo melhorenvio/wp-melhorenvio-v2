@@ -82,8 +82,8 @@ class UsersController {
     public function getTo($order_id){    
         $order = new \WC_Order($order_id);
 
-        $cpf  = get_user_meta($order->user_id, 'billing_cpf', true);
-        $cnpj = get_user_meta($order->user_id, 'billing_cnpj',true);
+        $cpf  = get_post_meta($order_id, '_billing_cpf', true);
+        $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
 
         return (object) [
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),

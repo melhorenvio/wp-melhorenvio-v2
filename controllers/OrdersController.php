@@ -380,6 +380,10 @@ class OrdersController {
 
     private function normalizeErrors($data) {
 
+        if (isset($data->error)) {
+            return $data->error;
+        }
+        
         if (isset($data->errors)) {
             return $data->errors;
         }

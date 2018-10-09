@@ -195,11 +195,14 @@ const orders = {
                         commit('toggleModal', true)
                         return false
                     }
+                    commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
+                    commit('toggleModal', true)
+                    commit('toggleLoader', false)
                     commit('addCart',{
                         id: data.id,
                         order_id: response.data.data.id
                     })
-                    commit('toggleLoader', false)
+
                 }).catch(error => {
                     commit('setMsgModal', errorMessage)
                     commit('toggleLoader', false)
@@ -222,6 +225,10 @@ const orders = {
                 context.commit('removeCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false)
+
+                context.commit('setMsgModal', 'Item #' + data.id + 'removido do carrinho')
+                context.commit('toggleModal', true)
+
             }).catch(error => {
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
@@ -239,6 +246,9 @@ const orders = {
                     context.commit('toggleModal', true)
                     return false
                 }
+
+                context.commit('setMsgModal', 'Item #' + data.id + 'Cancelado')
+                context.commit('toggleModal', true)
 
                 context.commit('cancelCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
@@ -263,6 +273,8 @@ const orders = {
 
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
+                context.commit('setMsgModal', 'Item #' + data.id + 'pago com sucesso')
+                context.commit('toggleModal', true)
                 context.commit('toggleLoader', false) 
             }).catch(error => {
                 context.commit('setMsgModal', error.message)
@@ -283,6 +295,8 @@ const orders = {
                 }
 
                 commit('createTicket', data.id)
+                commit('setMsgModal', 'Item #' + data.id + 'gerado com sucesso')
+                commit('toggleModal', true)
                 commit('toggleLoader', false)
             }).catch(error => {
                 commit('setMsgModal', error.message)
