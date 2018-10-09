@@ -384,7 +384,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -1222,11 +1221,6 @@ var render = function() {
                         _vm._v(" "),
                         _c("li", [
                           _c("span", [
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(item.status) +
-                                "\n                                "
-                            ),
                             _c("strong", [
                               _vm._v(
                                 _vm._s(item.to.first_name) +
@@ -2789,8 +2783,8 @@ var orders = {
         show_modal: false,
         msg_modal: '',
         filters: {
-            limit: 10,
-            skip: 10,
+            limit: 5,
+            skip: 5,
             status: 'all',
             wpstatus: 'all'
         }
@@ -2918,7 +2912,7 @@ var orders = {
             commit('toggleLoader', true);
             var content = {
                 action: 'get_orders',
-                limit: 10,
+                limit: 5,
                 skip: 0,
                 status: data.status ? data.status : null,
                 wpstatus: data.wpstatus ? data.wpstatus : null

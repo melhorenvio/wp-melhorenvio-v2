@@ -9,8 +9,8 @@ const orders = {
         show_modal: false,
         msg_modal: '',
         filters: {
-            limit: 10,
-            skip: 10,
+            limit: 5,
+            skip: 5,
             status: 'all',
             wpstatus: 'all'
         }
@@ -128,7 +128,7 @@ const orders = {
             commit('toggleLoader', true)
             let content = {
                 action: 'get_orders',
-                limit: 10,
+                limit: 5,
                 skip: 0,
                 status: (data.status) ? data.status : null,
                 wpstatus: (data.wpstatus) ? data.wpstatus : null
