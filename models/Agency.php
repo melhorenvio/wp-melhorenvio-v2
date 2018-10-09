@@ -23,7 +23,14 @@ class Agency {
             $urlApi = 'https://sandbox.melhorenvio.com.br';
         } 
 
-        $address = (new Address)->getAddressFrom();
+        if (!isset($_GET['state']) && !isset($_GET['state']) ) {
+            $address = (new Address)->getAddressFrom();
+        } else {
+            $address = [
+                'city' => $_GET['city'],
+                'state' => $_GET['state']
+            ];
+        }
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
         $agencies = [];
