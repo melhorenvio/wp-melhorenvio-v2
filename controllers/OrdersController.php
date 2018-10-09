@@ -380,11 +380,22 @@ class OrdersController {
 
     private function normalizeErrors($data) {
 
-        if (isset($data->error)) {
+        if (isset($data->message) && !isset($data->errors)) {
+            return $data->message;
+        }
+
+        if (isset($data->error) && isset($data->message)) {
             return $data->error;
         }
         
         if (isset($data->errors)) {
+            foreach($data->errors as $key => $error) {
+                if (end($error) == 'validation.nfe') {
+                    return 'Nota fiscal inválida';
+                }
+
+                return end($error);
+            }
             return $data->errors;
         }
         return 'Ocorreu um erro';
