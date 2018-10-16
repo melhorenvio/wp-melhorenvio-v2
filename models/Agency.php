@@ -19,9 +19,6 @@ class Agency {
         );
 
         $urlApi = 'https://www.melhorenvio.com.br';
-        if(WP_ENV !== null && WP_ENV == 'develop') {
-            $urlApi = 'https://sandbox.melhorenvio.com.br';
-        } 
 
         if (!isset($_GET['state']) && !isset($_GET['state']) ) {
             $address = (new Address)->getAddressFrom();
