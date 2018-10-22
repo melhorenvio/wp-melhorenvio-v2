@@ -4,6 +4,7 @@ namespace Controllers;
 use Models\Address;
 use Models\Agency;
 use Models\Store;
+use Models\CalculatorShow;
 
 class ConfigurationController {
 
@@ -51,6 +52,18 @@ class ConfigurationController {
     public function setStore() {
         $story = new Store();
         echo json_encode($story->setStore($_GET['id']));
+        die;
+    }
+
+    public function get_calculator_show() {
+        $calc = new CalculatorShow();
+        echo json_encode($calc->get());
+        die;
+    }
+
+    public function set_calculator_show() {
+        $calc = new CalculatorShow();
+        echo json_encode($calc->set($_GET['data']));
         die;
     }
 }

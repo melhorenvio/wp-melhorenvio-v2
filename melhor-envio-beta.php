@@ -57,6 +57,7 @@ use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
+use Models\CalculatorShow;
 
 /**
  * Base_Plugin class
@@ -228,8 +229,12 @@ final class Base_Plugin {
         $cotacao = new CotationController();
         $logs    = new LogsController();
 
-        $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
-        $cotacaoProd->run();
+        $hideCalculator = (new CalculatorShow)->get();
+
+        if ($hideCalculator) {
+            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
+            $cotacaoProd->run();
+        }
 
         add_action( 'init', array( $this, 'init_classes' ) );
 
@@ -264,6 +269,10 @@ final class Base_Plugin {
         // Minhas lojas
         add_action('wp_ajax_get_stores', [$conf, 'getStories']);
         add_action('wp_ajax_set_store', [$conf, 'setStore']);
+
+        // Exibir calculadora na tela do produto
+        add_action('wp_ajax_get_calculator_show', [$conf, 'get_calculator_show']);
+        add_action('wp_ajax_set_calculator_show', [$conf, 'set_calculator_show']);
 
         // Cotação por embalagem
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);

@@ -60,6 +60,24 @@
                 </ul>
             </div>
         </div>
+
+
+        <div class="wpme_config">
+            <h2>Exibir cotação na tela do produto</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <label for="41352">
+                            <div class="wpme_address-top">
+                                <input type="checkbox" value="exibir"  v-model="show_calculator">
+                                <label for="two">exibir a calculdora na tela do produto</label>
+                            </div>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
         <transition name="fade">
@@ -127,7 +145,8 @@ export default {
             address: null,
             store: null,
             agency: null,
-            show_modal: false
+            show_modal: false,
+            show_calculator: true,
         }
     },
     computed: {
@@ -151,6 +170,7 @@ export default {
             this.setSelectedAddress(this.address)
             this.setSelectedStore(this.store)
             this.setSelectedAgency(this.agency)
+            this.setShowCalculator()
             this.show_modal = true
         },
         showAgencies (data) {
@@ -159,6 +179,23 @@ export default {
         },
         close() {
             this.show_modal = false;
+        },
+        getShowCalculator () {
+            let data = {action: 'get_calculator_show'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data
+                }
+            })
+        },
+        setShowCalculator () {
+            this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then( (response) => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data
+                }
+            })
         }
     },
     watch : {
@@ -197,6 +234,7 @@ export default {
         this.getAddresses()
         this.getStores()
         this.getAgencies()
+        this.getShowCalculator()
     }
 }
 </script>

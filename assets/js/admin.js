@@ -623,6 +623,24 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -632,7 +650,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             address: null,
             store: null,
             agency: null,
-            show_modal: false
+            show_modal: false,
+            show_calculator: true
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -646,6 +665,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
+            this.setShowCalculator();
             this.show_modal = true;
         },
         showAgencies(data) {
@@ -654,6 +674,23 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         close() {
             this.show_modal = false;
+        },
+        getShowCalculator() {
+            let data = { action: 'get_calculator_show' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data;
+                }
+            });
+        },
+        setShowCalculator() {
+            this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then(response => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data;
+                }
+            });
         }
     }),
     watch: {
@@ -692,6 +729,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         this.getAddresses();
         this.getStores();
         this.getAgencies();
+        this.getShowCalculator();
     }
 });
 
@@ -2744,6 +2782,62 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Exibir cotação na tela do produto")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c("li", [
+              _c("label", { attrs: { for: "41352" } }, [
+                _c("div", { staticClass: "wpme_address-top" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.show_calculator,
+                        expression: "show_calculator"
+                      }
+                    ],
+                    attrs: { type: "checkbox", value: "exibir" },
+                    domProps: {
+                      checked: Array.isArray(_vm.show_calculator)
+                        ? _vm._i(_vm.show_calculator, "exibir") > -1
+                        : _vm.show_calculator
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$a = _vm.show_calculator,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = "exibir",
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 && (_vm.show_calculator = $$a.concat([$$v]))
+                          } else {
+                            $$i > -1 &&
+                              (_vm.show_calculator = $$a
+                                .slice(0, $$i)
+                                .concat($$a.slice($$i + 1)))
+                          }
+                        } else {
+                          _vm.show_calculator = $$c
+                        }
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("label", { attrs: { for: "two" } }, [
+                    _vm._v("exibir a calculdora na tela do produto")
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
       _c(
         "button",
         { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
@@ -3697,6 +3791,7 @@ var configuration = {
         addresses: [],
         stores: [],
         agencies: [],
+        // calculator: true,
         show_load: true
     },
     mutations: {
@@ -3712,6 +3807,9 @@ var configuration = {
         toggleLoader: function toggleLoader(state, data) {
             state.show_load = data;
         }
+        // setCalculator: (state, data) => {
+        //     state.calculator = data
+        // }
     },
     getters: {
         getAddress: function getAddress(state) {
@@ -3723,6 +3821,7 @@ var configuration = {
         getAgencies: function getAgencies(state) {
             return state.agencies;
         },
+        // getCalculator: state => state.calculator,
         showLoad: function showLoad(state) {
             return state.show_load;
         }
@@ -3770,6 +3869,17 @@ var configuration = {
                 }
             });
         },
+        // getCalculatorShow: ({commit}, data) => {
+        //     commit('toggleLoader', true)
+        //     data = Object.assign({action: 'get_calculator_show'}, data)
+        //     Axios.get(`${ajaxurl}`, {
+        //         params: data
+        //     }).then(function (response) {
+        //         if (response && response.status === 200) {
+        //             commit('setCalculator', response.data)
+        //         }
+        //     })
+        // },
         setSelectedAddress: function setSelectedAddress(_ref4, data) {
             var commit = _ref4.commit;
 
@@ -3797,6 +3907,13 @@ var configuration = {
                 }
             });
         }
+        // setCalculatorShow: ({commit}, data) => {
+        //     Axios.post(`${ajaxurl}?action=set_calculator_show&data=${data}`).then(function (response) {
+        //         if (response && response.status === 200) {
+        //             // commit('setAddress', response.data.id)
+        //         }
+        //     })
+        // }
     }
 };
 
