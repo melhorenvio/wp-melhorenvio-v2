@@ -64,7 +64,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 					$prod = new ProductsController();
 					$products = $prod->getProductsCart();
-					
+
 					$cotation = new CotationController();					
 					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
 						

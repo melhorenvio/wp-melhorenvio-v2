@@ -5,6 +5,7 @@ use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
+use Controllers\LogsController;
 
 class CotationController {
 
@@ -23,6 +24,16 @@ class CotationController {
         $products = $productcontroller->getProductsOrder($order_id);
 
         $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
+
+        (new LogsController)->add(
+            $order_id, 
+            'Logs cotação', 
+            $products, 
+            $result, 
+            'CotationController', 
+            'makeCotationOrder', 
+            'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate'
+        );
 
         if(!is_array($result)){
             $item = $result;
@@ -77,9 +88,9 @@ class CotationController {
 
         $package = [
             "weight" =>  $_POST['data']['produto_peso'],
-            "width"  =>  $_POST['data']['produto_comprimento'],
-            "height" =>  $_POST['data']['produto_largura'],
-            "length" =>  $_POST['data']['produto_altura']
+            "width"  =>  $_POST['data']['produto_largura'],
+            "length" =>  $_POST['data']['produto_comprimento'],
+            "height" =>  $_POST['data']['produto_altura']
         ];
 
         $options = [
@@ -87,7 +98,7 @@ class CotationController {
         ];
 
         $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
-        
+
         $result = [];
 
         if (count($cotation) == 1) {
@@ -136,7 +147,6 @@ class CotationController {
             ];
             
             $opts = array_merge($defaultoptions, $options);
-    
             $user = new UsersController();
             $from = $user->getFrom();
 
@@ -166,8 +176,9 @@ class CotationController {
                 'body'  => json_encode($body),
                 'timeout'=>10
             );
-    
+
             $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
+
             return $response;
         }
 

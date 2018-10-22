@@ -56,7 +56,10 @@ class Agency {
     public function setAgency($id) {
 
         $agency = get_option('melhorenvio_agency_jadlog_v2');
+
         if (!$agency) {
+
+            delete_option('melhorenvio_agency_jadlog_v2');
             add_option('melhorenvio_agency_jadlog_v2', $id);
             return [
                 'success' => true,
@@ -64,7 +67,7 @@ class Agency {
             ];
         }
 
-        update_option('melhorenvio_agency_jadlog_v2', $id);
+        add_option('melhorenvio_agency_jadlog_v2', $id);
         return [
             'success' => true,
             'id' => $id

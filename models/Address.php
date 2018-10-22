@@ -22,7 +22,14 @@ class Address {
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/addresses', $params)));
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
-        
+
+        if (!isset($response->data)) {
+            return [
+                'success' => false,
+                'addresses' => null
+            ];
+        }
+
         $addresses = [];
         foreach ($response->data as $address) {
 
@@ -70,6 +77,11 @@ class Address {
     public function getAddressFrom() {
 
         $addresses =$this->getAddressesShopping();
+
+        if (is_null($addresses['addresses'])) {
+            return null;
+        }
+
         $address = null;
         foreach($addresses['addresses'] as $item) {
             if($item['selected']) {

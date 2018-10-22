@@ -23,7 +23,14 @@ class Store {
 
         $stories = [];
         $storeSelected = get_option('melhorenvio_store_v2');
-        
+
+        if(!isset($response->data)) {
+            return [
+                'success' => false,
+                'stores' => null
+            ];
+        }
+
         foreach($response->data as $store) {
 
             $stories[] = [
@@ -66,6 +73,11 @@ class Store {
     public function getStore() {
         $stores = $this->getStories();
         $store = null;
+
+        if (is_null($stores['stores']) || !isset($stores['stores'])) {
+            return null;
+        }
+
         foreach ($stores['stores'] as $item) {
             if ($item['selected']) {
                 $store = $item;

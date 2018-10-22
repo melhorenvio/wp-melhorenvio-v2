@@ -6,6 +6,7 @@ use Models\Order;
 use Controllers\UsersController;
 use Controllers\PackageController;
 use Controllers\ProductsController;
+use Controllers\LogsController;
 
 class OrdersController {
 
@@ -98,8 +99,18 @@ class OrdersController {
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/cart', $params)));
 
+        $logs = (new LogsController)->add(
+            $_GET['order_id'], 
+            'Enviando ordem', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'sendOrder', 
+            $urlApi . '/api/v2/me/cart'
+        );
+
         if (!isset($response->id)) {
-            $error = $this->normalizeErrors($response);
+            $error = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
             echo json_encode([
                 'success' => false,
                 'message' => $error
@@ -139,6 +150,17 @@ class OrdersController {
         $urlApi = 'https://www.melhorenvio.com.br';
 
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/cart/' . $_GET['order_id'], $params)));
+
+        (new LogsController)->add(
+            $_GET['id'], 
+            'Removendo do carrinho', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'removeOrder', 
+            $urlApi . '/api/v2/me/cart'
+        );
+
         if (isset($response->error)) {
             echo json_encode([
                 'success' => false,
@@ -165,19 +187,30 @@ class OrdersController {
             ],
             'timeout'=> 10,
             'method' => 'POST',
-            'body' => json_encode([
+            'body' => json_encode(['order' => [
                 'id' => $_GET['order_id'],
                 'reason_id' => 2,
                 'description' => 'Cancelado pelo usuário'
-            ])
+            ]])
         );
 
         $urlApi = 'https://www.melhorenvio.com.br';
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/cancel', $params)));
+
+        (new LogsController)->add(
+            $_GET['id'], 
+            'Cancelando do carrinho', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'cancelOrder', 
+            $urlApi . '/api/v2/me/shipment/cancel'
+        );
+
         if (isset($response->errors)) {
             echo json_encode([
-                'siccess' => false,
+                'success' => false,
                 'errors' => $response->errors
             ]);
             die;
@@ -265,6 +298,17 @@ class OrdersController {
         $urlApi = 'https://www.melhorenvio.com.br';
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/checkout', $params)));
+
+        (new LogsController)->add(
+            $_GET['id'], 
+            'Pagando etiqueta', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'payTicket', 
+            $urlApi . '/api/v2/me/shipment/checkout'
+        );
+
         $data = [
             'order_paid' => $response->purchase->id,
             'protocol_paid' => $response->purchase->protocol,
@@ -304,6 +348,16 @@ class OrdersController {
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/generate', $params)));
 
+        (new LogsController)->add(
+            $_GET['id'], 
+            'Criando etiqueta', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'createTicket', 
+            $urlApi . '/api/v2/me/shipment/generate'
+        );
+
         $data = [
             'status' => 'generated',
             'generated_date' => date('Y-m-d H:i:s'),
@@ -339,6 +393,17 @@ class OrdersController {
         $urlApi = 'https://www.melhorenvio.com.br';
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/print', $params)));
+
+        (new LogsController)->add(
+            $_GET['id'], 
+            'Imprimindo etiqueta', 
+            $params, 
+            $response, 
+            'OrdersController', 
+            'printTicket', 
+            $urlApi . '/api/v2/me/shipment/print'
+        );
+
         $data = [
             'status' => 'printed',
             'printed_date' => date('Y-m-d H:i:s')
@@ -363,7 +428,11 @@ class OrdersController {
         add_post_meta($order_id, 'melhorenvio_status_v2', $data);
     }
 
-    private function normalizeErrors($data) {
+    private function normalizeErrors($data, $order_id = null, $action = null) {
+
+        if (!is_null($order_id)) {
+            (new LogsController)->add($order_id, '[OrdersController] (normalizeErrors)', [], $data);
+        }
 
         if (isset($data->message) && !isset($data->errors)) {
             return $data->message;

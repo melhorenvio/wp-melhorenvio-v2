@@ -56,6 +56,7 @@ use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
+use Controllers\LogsController;
 
 /**
  * Base_Plugin class
@@ -225,6 +226,7 @@ final class Base_Plugin {
         $users   = new UsersController();
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
+        $logs    = new LogsController();
 
         $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
         $cotacaoProd->run();
@@ -266,6 +268,11 @@ final class Base_Plugin {
         // Cotação por embalagem
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
+
+        // Logs 
+        add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'index']);
+        add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detail']);
+
     }
     
     /**

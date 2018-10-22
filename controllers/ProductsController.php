@@ -56,8 +56,8 @@ class ProductsController {
 
         foreach( $order->get_items() as $item_id => $item_product ){
             $_product = $item_product->get_product();
-            $total = $total + ($_product->get_price() + $item_product->get_quantity());
-        }
+            $total = $total + ($_product->get_price() * $item_product->get_quantity());
+        }   
 
         return round($total, 2);
     }

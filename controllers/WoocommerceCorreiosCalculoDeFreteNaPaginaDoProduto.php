@@ -90,9 +90,9 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
         echo $this->inline_js(); ?>
             <div id="woocommerce-correios-calculo-de-frete-na-pagina-do-produto">
                 <style>
-                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete svg {fill:<?php echo $this->options['cor_do_texto']?>;}
-                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {color:<?php echo $this->options['cor_do_texto']?>;}
-                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {background-color:<?php echo $this->options['cor_do_botao']?>;}
+                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete svg {fill:;}
+                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {color:;}
+                    div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {background-color:;}
                     #calcular-frete {
                         display:inline-block;
                         float: left;
