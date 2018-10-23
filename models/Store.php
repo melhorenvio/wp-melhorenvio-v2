@@ -2,11 +2,17 @@
 
 namespace Models;
 
-class Store {
+class Store 
+{
+    const URL = 'https://www.melhorenvio.com.br';
 
-    public function getStories() {
-
+    /**
+     * @return void
+     */
+    public function getStories() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -17,9 +23,7 @@ class Store {
             'method' => 'GET'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/companies', $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/companies', $params)));
 
         $stories = [];
         $storeSelected = get_option('melhorenvio_store_v2');
@@ -52,7 +56,12 @@ class Store {
         ];
     }
 
-    public function setStore($id) {
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    public function setStore($id) 
+    {
         $addressDefault = get_option('melhorenvio_store_v2');
 
         if  (!$addressDefault) {
@@ -70,7 +79,11 @@ class Store {
         ];
     }
 
-    public function getStore() {
+    /**
+     * @return void
+     */
+    public function getStore() 
+    {
         $stores = $this->getStories();
         $store = null;
 
@@ -90,5 +103,4 @@ class Store {
 
         return $store;
     }
-
 }

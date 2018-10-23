@@ -1,13 +1,21 @@
 <?php
 
 namespace Models;
+
 use Models\Agency;
 
-class Address {
-
-    public function getAddressesShopping() {
-
+class Address 
+{
+    const URL = 'https://www.melhorenvio.com.br';
+    
+    /**
+     *
+     * @return void
+     */
+    public function getAddressesShopping() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -17,10 +25,8 @@ class Address {
             'timeout'=> 10,
             'method' => 'GET'
         );
-
-        $urlApi = 'https://www.melhorenvio.com.br';
         
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/addresses', $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/addresses', $params)));
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
 
         if (!isset($response->data)) {
@@ -33,8 +39,6 @@ class Address {
         $addresses = [];
         foreach ($response->data as $address) {
 
-            $agenciesJadlog = [];
-
             $addresses[] = [
                 'id' => $address->id,
                 'address' => $address->address,
@@ -46,8 +50,7 @@ class Address {
                 'city' => $address->city->city,
                 'state' => $address->city->state->state_abbr,
                 'country' => $address->city->state->country->id,
-                'selected' => ($selectedAddress == $address->id) ? true : false,
-                'jadlog' => $agenciesJadlog
+                'selected' => ($selectedAddress == $address->id) ? true : false
             ];
         }
 
@@ -57,8 +60,8 @@ class Address {
         ];
     }
 
-    public function setAddressShopping($id) {
-        
+    public function setAddressShopping($id) 
+    {    
         $addressDefault = get_option('melhorenvio_address_selected_v2');
         if  (empty($addressDefault)) {
             add_option('melhorenvio_address_selected_v2', $id);
@@ -67,6 +70,7 @@ class Address {
                 'id' => $id
             ];
         }
+
         update_option('melhorenvio_address_selected_v2', $id);
         return [
             'success' => true,
@@ -74,8 +78,8 @@ class Address {
         ];
     }
 
-    public function getAddressFrom() {
-
+    public function getAddressFrom() 
+    {
         $addresses =$this->getAddressesShopping();
 
         if (is_null($addresses['addresses'])) {

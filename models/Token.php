@@ -2,13 +2,13 @@
 
 namespace Models;
 
-class Token {
-
-    public function __construct() {
-
-    }
-
-    public function getToken() {
+class Token 
+{
+    /**
+     * @return void
+     */
+    public function getToken() 
+    {
         $token = get_option('wpmelhorenvio_token');
         if (!$token) {
             return '';
@@ -16,7 +16,12 @@ class Token {
         return $token;
     }
 
-    public function saveToken($token) {
+    /**
+     * @param [type] $token
+     * @return void
+     */
+    public function saveToken($token) 
+    {
         return update_option('wpmelhorenvio_token', $token, true);
     }
 }

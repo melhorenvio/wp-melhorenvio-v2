@@ -8,33 +8,43 @@ use Controllers\PackageController;
 use Controllers\ProductsController;
 use Controllers\LogsController;
 
-class OrdersController {
+class OrdersController 
+{
+    const URL = 'https://www.melhorenvio.com.br';
 
-    public function index() {
-        $orders = Order::retrieveMany();
-    }
-
-    public function getOrders() {
+    /**
+     * @return void
+     */
+    public function getOrders() 
+    {
         unset($_GET['action']);
         $orders = Order::getAllOrders($_GET);
         return json_encode($orders);
     }
 
-    public function sendOrder() {
+    /**
+     * @return void
+     */
+    public function sendOrder() 
+    {
+        if (!isset($_GET['order_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o ID do pedido'
+            ]);
+            die;
+        }
 
         $token = get_option('wpmelhorenvio_token');
-        $user = new UsersController();
-        $package  = new PackageController();
-        $products = new ProductsController();
 
         $body = [
-            'from' => $user->getFrom(),
-            'to' => $user->getTo($_GET['order_id']),
+            'from' => (new UsersController())->getFrom(),
+            'to' => (new UsersController())->getTo($_GET['order_id']),
             'service' => $_GET['choosen'],
-            'products' => $products->getProductsOrder($_GET['order_id']),
-            'package' => $package->getPackageOrderAfterCotation($_GET['order_id']),
+            'products' => (new ProductsController())->getProductsOrder($_GET['order_id']),
+            'package' => (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']),
             'options' => [
-                "insurance_value" => $products->getInsuranceValue($_GET['order_id']), 
+                "insurance_value" => (new ProductsController())->getInsuranceValue($_GET['order_id']), 
                 "receipt" => false,
                 "own_hand" => false,
                 "collect" => false,
@@ -95,9 +105,11 @@ class OrdersController {
             'timeout'=> 10
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_post($urlApi . '/api/v2/me/cart', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_post(self::URL . '/api/v2/me/cart', $params)
+            )
+        );
 
         $logs = (new LogsController)->add(
             $_GET['order_id'], 
@@ -106,7 +118,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'sendOrder', 
-            $urlApi . '/api/v2/me/cart'
+            self::URL . '/api/v2/me/cart'
         );
 
         if (!isset($response->id)) {
@@ -134,9 +146,13 @@ class OrdersController {
         die;
     }
 
-    public function removeOrder() {
-
+    /**
+     * @return void
+     */
+    public function removeOrder() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -147,9 +163,7 @@ class OrdersController {
             'method' => 'DELETE'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/cart/' . $_GET['order_id'], $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/cart/' . $_GET['order_id'], $params)));
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -158,7 +172,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'removeOrder', 
-            $urlApi . '/api/v2/me/cart'
+            self::URL . '/api/v2/me/cart'
         );
 
         if (isset($response->error)) {
@@ -176,9 +190,13 @@ class OrdersController {
         die;
     }
 
-    public function cancelOrder() {
-
+    /**
+     * @return boolean
+     */
+    public function cancelOrder() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -194,9 +212,11 @@ class OrdersController {
             ]])
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-        
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/cancel', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/api/v2/me/shipment/cancel', $params)
+            )
+        );
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -205,7 +225,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'cancelOrder', 
-            $urlApi . '/api/v2/me/shipment/cancel'
+            self::URL . '/api/v2/me/shipment/cancel'
         );
 
         if (isset($response->errors)) {
@@ -223,12 +243,23 @@ class OrdersController {
         die;
     }
 
-    private function removeDataCotation($order_id) {
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    private function removeDataCotation($order_id) 
+    {
         delete_post_meta($order_id, 'melhorenvio_status_v2');
     }
 
-    private function getInfoTicket($order_id) {
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    private function getInfoTicket($order_id) 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -239,15 +270,16 @@ class OrdersController {
             'method' => 'GET'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-        
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/cart/' . $order_id, $params)));
-        return $response;
+        return json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/cart/' . $order_id, $params)));
     }
 
-    public function insertInvoiceOrder() {
-
+    /**
+     * @return void
+     */
+    public function insertInvoiceOrder() 
+    {
         unset($_GET['action']);
+
         if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key']) ) {
             return json_encode([
                 'success' => false,
@@ -263,13 +295,18 @@ class OrdersController {
                 'key' => $_GET['key']
             ]
         );
+
         return json_encode($result);
         die;
     }
 
-    public function payTicket() {
-
+    /**
+     * @return void
+     */
+    public function payTicket() 
+    {
         $ticket = $this->getInfoTicket($_GET['order_id']);
+
         if($ticket->status != 'pending') {
             echo json_encode([
                 'success' => false,
@@ -284,6 +321,7 @@ class OrdersController {
         ];
 
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -295,9 +333,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-        
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/checkout', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/api/v2/me/shipment/checkout', $params)
+            )
+        );
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -306,7 +346,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'payTicket', 
-            $urlApi . '/api/v2/me/shipment/checkout'
+            self::URL . '/api/v2/me/shipment/checkout'
         );
 
         $data = [
@@ -326,7 +366,11 @@ class OrdersController {
         die;
     }
 
-    public function createTicket() {
+    /**
+     * @return void
+     */
+    public function createTicket() 
+    {
         $body = [
             'orders' => [$_GET['order_id']],
             'mode' => 'public'
@@ -344,9 +388,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-        
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/generate', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/api/v2/me/shipment/generate', $params)
+            )
+        );
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -355,7 +401,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'createTicket', 
-            $urlApi . '/api/v2/me/shipment/generate'
+            self::URL . '/api/v2/me/shipment/generate'
         );
 
         $data = [
@@ -372,9 +418,13 @@ class OrdersController {
         die;
     }
 
-    public function printTicket() {
-
+    /**
+     * @return void
+     */
+    public function printTicket() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $body = [
             'orders' => [$_GET['order_id']]
         ];
@@ -390,9 +440,11 @@ class OrdersController {
             'method' => 'POST'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-        
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/print', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/api/v2/me/shipment/print', $params)
+            )
+        );
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -401,7 +453,7 @@ class OrdersController {
             $response, 
             'OrdersController', 
             'printTicket', 
-            $urlApi . '/api/v2/me/shipment/print'
+            self::URL . '/api/v2/me/shipment/print'
         );
 
         $data = [
@@ -417,8 +469,14 @@ class OrdersController {
         die;
     }   
 
-    private function updateDataCotation($order_id, $data, $status) {
-
+    /**
+     * @param [type] $order_id
+     * @param [type] $data
+     * @param [type] $status
+     * @return void
+     */
+    private function updateDataCotation($order_id, $data, $status) 
+    {
         $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2', true));
         if (empty($oldData || is_null($oldData))) {
             $data = array_merge($oldData, $data);
@@ -428,7 +486,14 @@ class OrdersController {
         add_post_meta($order_id, 'melhorenvio_status_v2', $data);
     }
 
-    private function normalizeErrors($data, $order_id = null, $action = null) {
+    /**
+     * @param [type] $data
+     * @param [type] $order_id
+     * @param [type] $action
+     * @return void
+     */
+    private function normalizeErrors($data, $order_id = null, $action = null) 
+    {
 
         if (!is_null($order_id)) {
             (new LogsController)->add($order_id, '[OrdersController] (normalizeErrors)', [], $data);

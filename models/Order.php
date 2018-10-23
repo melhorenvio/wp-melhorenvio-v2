@@ -2,11 +2,12 @@
 
 namespace Models;
 
-use Bases\bOrders;
 use Controllers\CotationController;
 
 class Order {
     
+    const URL = 'https://www.melhorenvio.com.br';
+
     private $id;
     private $products;
     private $total;
@@ -16,6 +17,9 @@ class Order {
     private $status;
     private $address;
 
+    /**
+     * @param [type] $id
+     */
     public function __construct($id = null)
     {
         $post = get_post($id);
@@ -39,21 +43,6 @@ class Order {
         $this->cotation = $this->getCotation();
 
     }
-
-    /**
-     * Retrieve One Order by its ID.
-     *
-     * @param [Int] $id
-     * @return object
-     */
-    public function retrieveOne()
-    {
-        return [
-            'method' => 'OrdersModel@retrieveOne',
-            'data' => $this
-        ];
-    }
-
 
      /**
      * @param Array $filters
@@ -134,8 +123,13 @@ class Order {
         return $response;
     }
 
-    private function matchStatus($posts, $orders) {
-
+    /**
+     * @param [type] $posts
+     * @param [type] $orders
+     * @return void
+     */
+    private function matchStatus($posts, $orders) 
+    {
         $statusApi = $this->getStatusApi($orders);        
         foreach ($posts as $key => $post) {
 
@@ -166,7 +160,8 @@ class Order {
      * @param [Int] $id
      * @return object
      */
-    protected function getProducts() {
+    protected function getProducts() 
+    {
         $orderWc = new \WC_Order( $this->id );
         $order_items = $orderWc->get_items();
         $products = [];
@@ -183,24 +178,24 @@ class Order {
         return $products;
     }
 
-
     /**
      * Retrieve cotation.
      *
      * @param [Int] $id
      * @return object
      */
-    public function getCotation($id = null) {
-
+    public function getCotation($id = null) 
+    {
         if ($id) $this->id = $id; 
-        // TODO caso já pago, não cotar novamente.
+
         $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
 
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
         if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
-            $cotationController = new CotationController();
-            $cotation = $cotationController->makeCotationOrder($this->id);
+    
+            $cotation = (new CotationController())->makeCotationOrder($this->id);
+
             if ($cotation['choose_method'] == 0) {
                 $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
             }
@@ -210,10 +205,16 @@ class Order {
         if ($cotation['choose_method'] == 0) {
             $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
         }
+
         return $cotation;
     }    
 
-    private function getOldChooseMethod($id) {
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    private function getOldChooseMethod($id) 
+    {
         $oldChooseMethod = 0;
         $oldCot = get_post_meta($id, 'cotacao_melhor_envio', true);
 
@@ -227,11 +228,15 @@ class Order {
         return $oldChooseMethod;
     }
 
-    private function getOldstatus($id) {
-
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    private function getOldstatus($id) 
+    {
         global $wpdb;
         $result = null;
-        $sql = "SELECT * FROM {$wpdb->prefix}tracking_codes_wpme WHERE order_id = " . $id . " ORDER BY id DESC LIMIT 1";
+        $sql = sprintf("SELECT * FROM %stracking_codes_wpme WHERE order_id = '%s' ORDER BY id DESC LIMIT 1", $wpdb->prefix, $id);
         $result = $wpdb->get_results($sql);
         if(!empty($result)){
             $result = end($result);
@@ -245,7 +250,12 @@ class Order {
         return null;
     }
 
-    private function getDataOrder($id = null) {
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    private function getDataOrder($id = null) 
+    {
         if ($id) $this->id = $id; 
 
         $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
@@ -267,8 +277,13 @@ class Order {
         return $data;
     }
 
-    public function updateInvoice($id, $invoices) {
-
+    /**
+     * @param [type] $id
+     * @param [type] $invoices
+     * @return void
+     */
+    public function updateInvoice($id, $invoices) 
+    {
         $oldData = end(get_post_meta($id, 'melhorenvio_invoice_v2', true));
         if (empty($oldData || is_null($oldData))) {
             $invoices = array_merge($oldData, $invoices);
@@ -281,7 +296,12 @@ class Order {
         ];
     }   
 
-    private function getInvoice($id = null) {
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    private function getInvoice($id = null) 
+    {
         if ($id) $this->id = $id; 
         $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
         $default = [
@@ -295,8 +315,12 @@ class Order {
         return $data;
     }
 
-    private function getStatusApi($orders) {
-        
+    /**
+     * @param [type] $orders
+     * @return void
+     */
+    private function getStatusApi($orders) 
+    {
         if ($token = get_option('wpmelhorenvio_token')) {
             $body = [
                 "orders" => $orders
@@ -312,7 +336,12 @@ class Order {
                 'timeout'=>10
             );
 
-            $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking', $params)));
+            $response =  json_decode(
+                wp_remote_retrieve_body(
+                    wp_remote_post(self::URL . '/api/v2/me/shipment/tracking', $params)
+                )
+            );
+
             if(isset($response->errors)) {
                 return null;
             }
@@ -321,14 +350,8 @@ class Order {
             foreach($response as $order) {
                 $data[$order->id] = $order->status;
             }
-
             return $data;
         }
-
         return null;
-    }
-
-    private function updateStatus() {
-
     }
 }   

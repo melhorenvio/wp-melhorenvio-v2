@@ -6,10 +6,14 @@ use Models\Agency;
 use Models\Store;
 use Models\CalculatorShow;
 
-class ConfigurationController {
-
-    public function saveToken($tokenUser) {
-
+class ConfigurationController 
+{
+    /**
+     * @param [type] $tokenUser
+     * @return void
+     */
+    public function saveToken($tokenUser) 
+    {
         $token = get_option('melhorenvio_token');
         if (!$token or empty($token)) {
             add_option('melhorenvio_token', $tokenUser);
@@ -19,52 +23,107 @@ class ConfigurationController {
         return get_option('melhorenvio_token');
     }
 
-    public function getAddressShopping() {
-        $address = new Address();
-        echo json_encode($address->getAddressesShopping());
+    /**
+     * @return void
+     */
+    public function getAddressShopping() 
+    {
+        echo json_encode((new Address())->getAddressesShopping());
         die;
     }
 
-    public function setAddressShopping() {
-        $address = new Address();
-        echo json_encode($address->setAddressShopping($_GET['id']));
+    /**
+     * @return void
+     */
+    public function setAddressShopping() 
+    {
+        if (!isset($_GET['id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'É necessário infomar o ID do endereço'
+            ]);
+            die;
+        }
+
+        echo json_encode((new Address())->setAddressShopping($_GET['id']));
         die;
     }
 
-    public function setAgencyJadlog() {
-        $agency = new Agency();
-        echo json_encode($agency->setAgency($_GET['id']));
+    /**
+     * @return void
+     */
+    public function setAgencyJadlog() 
+    {
+        if (!isset($_GET['id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'É necessário infomar o ID da agência'
+            ]);
+            die;
+        }
+
+        echo json_encode((new Agency())->setAgency($_GET['id']));
         die;
     }
 
-    public function getAgencyJadlog() {
-        $agency = new Agency();
-        echo json_encode($agency->getAgencies());
+    /**
+     * @return void
+     */
+    public function getAgencyJadlog() 
+    {
+        echo json_encode((new Agency())->getAgencies());
         die;
     }
 
-    public function getStories() {
-        $story = new Store();
-        echo json_encode($story->getStories());
+    /**
+     * @return void
+     */
+    public function getStories() 
+    {
+        echo json_encode((new Store())->getStories());
         die;
     }
 
-    public function setStore() {
-        $story = new Store();
-        echo json_encode($story->setStore($_GET['id']));
+    /**
+     * @return void
+     */
+    public function setStore() 
+    {
+        if (!isset($_GET['id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'É necessário infomar o ID da loja'
+            ]);
+            die;
+        }
+
+        echo json_encode((new Store())->setStore($_GET['id']));
         die;
     }
 
-    public function get_calculator_show() {
-        $calc = new CalculatorShow();
-        echo json_encode($calc->get());
+    /**
+     * @return void
+     */
+    public function get_calculator_show() 
+    {
+        echo json_encode((new CalculatorShow())->get());
         die;
     }
 
-    public function set_calculator_show() {
-        $calc = new CalculatorShow();
-        echo json_encode($calc->set($_GET['data']));
+    /**
+     * @return void
+     */
+    public function set_calculator_show() 
+    {
+        if (!isset($_GET['data'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'É necessário infomar o parametro data ("true" ou "false")'
+            ]);
+            die;
+        }
+
+        echo json_encode((new CalculatorShow())->set($_GET['data']));
         die;
     }
 }
-

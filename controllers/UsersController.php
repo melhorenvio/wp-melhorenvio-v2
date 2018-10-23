@@ -1,16 +1,21 @@
 <?php
 
 namespace Controllers;
+
 use Models\Address;
 use Models\Store;
 
-
 class UsersController {
+
+    const URL = 'https://www.melhorenvio.com.br';
 
     public function __construct(){
 
     }
 
+    /**
+     * @return void
+     */
     public function getFrom()
     {
         $info = $this->getInfo();
@@ -45,7 +50,11 @@ class UsersController {
         return false;
     }
 
-    public function getInfo(){
+    /**
+     * @return void
+     */
+    public function getInfo()
+    {
         $dataUser = get_option('melhorenvio_user_info');
 
         if (!$dataUser) {
@@ -56,7 +65,9 @@ class UsersController {
                 'Authorization' => 'Bearer '.$token],
             );
 
-            $response = wp_remote_retrieve_body(wp_remote_get('https://www.melhorenvio.com.br/api/v2/me', $params));
+            $response = wp_remote_retrieve_body(
+                wp_remote_get(self::URL . '/api/v2/me', $params)
+            );
 
             if (is_null($response)) {
                 return [
@@ -79,7 +90,12 @@ class UsersController {
         ];
     }
 
-    public function getTo($order_id){    
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function getTo($order_id)
+    {    
         $order = new \WC_Order($order_id);
 
         $cpf  = get_post_meta($order_id, '_billing_cpf', true);
@@ -104,6 +120,9 @@ class UsersController {
 
     }
 
+    /**
+     * @return void
+     */
     public function getBalance()
     {
         $usr = new \Models\User();
@@ -113,10 +132,14 @@ class UsersController {
         die;
     }
 
+    /**
+     * @param [type] $val
+     * @param [type] $mask
+     * @return void
+     */
     private function mask($val, $mask)
     {
         $maskared = '';
-
         $k = 0;
 
         for($i = 0; $i<=strlen($mask)-1; $i++) {

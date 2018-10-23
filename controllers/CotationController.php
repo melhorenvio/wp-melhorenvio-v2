@@ -1,27 +1,33 @@
 <?php
 
 namespace Controllers;
+
 use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
 use Controllers\LogsController;
 
-class CotationController {
+class CotationController 
+{
+    const URL = 'https://www.melhorenvio.com.br';
 
-    public function __construct() {
-        //woocommerce_checkout_update_order_review ~> use this action for check when alter shipping method
-        //woocommerce_checkout_order_processed ~> use this in prodution
+    public function __construct() 
+    {
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
 
-    public function makeCotationOrder($order_id) {
-
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function makeCotationOrder($order_id) 
+    {
         global $woocommerce;
+
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
 
-        $productcontroller = new ProductsController();
-        $products = $productcontroller->getProductsOrder($order_id);
+        $products = (new ProductsController())->getProductsOrder($order_id);
 
         $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
 
@@ -35,7 +41,7 @@ class CotationController {
             'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate'
         );
 
-        if(!is_array($result)){
+        if (!is_array($result)) {
             $item = $result;
             $result = [];
             $result[] = $item;
@@ -48,6 +54,7 @@ class CotationController {
         $result['date_cotation'] = date('Y-m-d H:i:s');
 
         $chooseMethodSession = $woocommerce->session->get( 'chosen_shipping_methods');
+
         $chooseMethodSession = end($chooseMethodSession);
 
         $result['choose_method'] = $this->getCodeShippingSelected($chooseMethodSession);
@@ -55,7 +62,12 @@ class CotationController {
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
     }
 
-    private function getCodeShippingSelected($choose) {
+    /**
+     * @param [type] $choose
+     * @return void
+     */
+    private function getCodeShippingSelected($choose) 
+    {
         $prefix = 0;
         $shipping_methods = \WC()->shipping->get_shipping_methods();
         foreach ($shipping_methods as $method) {
@@ -70,7 +82,11 @@ class CotationController {
         return $prefix;
     }
 
-    public function cotationProductPage() {
+    /**
+     * @return void
+     */
+    public function cotationProductPage() 
+    {
 
         if (!isset($_POST['data'])) {
             return [
@@ -119,7 +135,12 @@ class CotationController {
         die;
     }
 
-    private function mapObject($item) {
+    /**
+     * @param [type] $item
+     * @return void
+     */
+    private function mapObject($item) 
+    {
         return [
             'id' => $item->id,
             'name' => $item->name,
@@ -129,15 +150,39 @@ class CotationController {
         ];
     }
 
-    public function makeCotationProducts($products, $services, $to) {
+    /**
+     * @param [type] $products
+     * @param [type] $services
+     * @param [type] $to
+     * @return void
+     */
+    public function makeCotationProducts($products, $services, $to) 
+    {
         return $this->makeCotation($to, $services, $products, [], ['']);
     }
-    
-    public function makeCotationPackage($package, $services, $to, $options = []) {
+
+    /**
+     * @param [type] $package
+     * @param [type] $services
+     * @param [type] $to
+     * @param array $options
+     * @return void
+     */
+    public function makeCotationPackage($package, $services, $to, $options = []) 
+    {
         return $this->makeCotation($to, $services, [], $package, $options);
     }
 
-    protected function makeCotation($to, $services, $products = [], $package = [], $options){
+    /**
+     * @param [type] $to
+     * @param [type] $services
+     * @param array $products
+     * @param array $package
+     * @param [type] $options
+     * @return void
+     */
+    protected function makeCotation($to, $services, $products = [], $package = [], $options)
+    {
         if ($token = get_option('wpmelhorenvio_token')) {
             $defaultoptions = [
                 "insurance_value" => null,
@@ -147,8 +192,8 @@ class CotationController {
             ];
             
             $opts = array_merge($defaultoptions, $options);
-            $user = new UsersController();
-            $from = $user->getFrom();
+
+            $from = (new UsersController())->getFrom();
 
             if (!isset($from->postal_code)) {
                 return null;
@@ -177,7 +222,11 @@ class CotationController {
                 'timeout'=>10
             );
 
-            $response =  json_decode(wp_remote_retrieve_body(wp_remote_post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate', $params)));
+            $response =  json_decode(
+                wp_remote_retrieve_body(
+                    wp_remote_post(self::URL . '/api/v2/me/shipment/calculate', $params)
+                )
+            );
 
             return $response;
         }
@@ -185,7 +234,12 @@ class CotationController {
         return false;
     }
 
-    private function converterArrayToCsv($services) {
+    /**
+     * @param [type] $services
+     * @return void
+     */
+    private function converterArrayToCsv($services) 
+    {
         $string = '';
 
         foreach ($services as $service) {
@@ -195,7 +249,12 @@ class CotationController {
         return rtrim($string,",");
     }
 
-    private function normalizeToArray($data) {
+    /**
+     * @param [type] $data
+     * @return void
+     */
+    private function normalizeToArray($data) 
+    {
         $result = [];
         foreach ($data as $item) {
             $packages = [];
@@ -250,7 +309,11 @@ class CotationController {
         return $result;
     }
 
-    public function getArrayShippingMethodsMelhorEnvio() {
+    /**
+     * @return void
+     */
+    public function getArrayShippingMethodsMelhorEnvio() 
+    {
         $methods = [];
         $enableds = $this->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
         $shipping_methods = \WC()->shipping->get_shipping_methods();
@@ -267,8 +330,11 @@ class CotationController {
         return array_unique($methods);
     }
 
-    public function getArrayShippingMethodsEnabledByZoneMelhorEnvio() {
-
+    /**
+     * @return void
+     */
+    public function getArrayShippingMethodsEnabledByZoneMelhorEnvio() 
+    {
         global $wpdb;
         $enableds = [];
         $sql = sprintf('select * from %swoocommerce_shipping_zone_methods where is_enabled = 1', $wpdb->prefix);

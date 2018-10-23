@@ -2,10 +2,13 @@
 
 namespace Controllers;
 
-class LogsController {
-
-    public function index() {
-
+class LogsController 
+{   
+    /**
+     * @return void
+     */
+    public function index() 
+    {
         global $wpdb;
         $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_key = "logs_melhorenvio" order by meta_id desc limit 1000', $wpdb->prefix);
         $results = $wpdb->get_results($sql);
@@ -28,6 +31,9 @@ class LogsController {
         die;
     }
 
+    /**
+     * @return void
+     */
     public function detail()
     {
         if (!isset($_GET['meta_id'])) {
@@ -55,11 +61,20 @@ class LogsController {
             'response' => $data['response']
         ]);
         die;
-
     }
 
-    public function add($order_id, $msg, $payload = [], $response = [], $class = null, $action = null, $endpoint = null) {
-
+    /**
+     * @param [type] $order_id
+     * @param [type] $msg
+     * @param array $payload
+     * @param array $response
+     * @param [type] $class
+     * @param [type] $action
+     * @param [type] $endpoint
+     * @return void
+     */
+    public function add($order_id, $msg, $payload = [], $response = [], $class = null, $action = null, $endpoint = null) 
+    {
         $log = [
             'order_id' => $order_id,
             'date' => date('Y-m-d h:i:s'),
@@ -74,4 +89,3 @@ class LogsController {
         add_post_meta($order_id, 'logs_melhorenvio', $log);
     }
 }
-

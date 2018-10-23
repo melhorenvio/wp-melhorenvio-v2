@@ -2,10 +2,14 @@
 
 namespace Controllers;
 
-class PackageController {
-
-    public function getPackage($package) {
-
+class PackageController 
+{
+    /**
+     * @param [type] $package
+     * @return void
+     */
+    public function getPackage($package) 
+    {
         $weight = 0;
         $width = 0;
         $height = 0;
@@ -29,8 +33,12 @@ class PackageController {
         ]);
     }
 
-    public function getPackageOrderAfterCotation($order_id) {
-    
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function getPackageOrderAfterCotation($order_id) 
+    {
         $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
         if (is_array($data)) {
             foreach ($data as $item) {
@@ -51,8 +59,12 @@ class PackageController {
         return null;
     }
 
-    public function getPackageOrder($order_id) {
-
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function getPackageOrder($order_id) 
+    {
         $weight = 0;
         $width  = 0;
         $height = 0;
@@ -78,7 +90,12 @@ class PackageController {
         ]);
     }
 
-    private function converterIfNecessary($package) {
+    /**
+     * @param [type] $package
+     * @return void
+     */
+    private function converterIfNecessary($package) 
+    {
         $weight_unit = get_option('woocommerce_weight_unit');
         if ($weight_unit == 'g') {
             $package['weight'] = $package['weight'] / 1000;

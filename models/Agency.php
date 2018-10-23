@@ -1,13 +1,21 @@
 <?php
 
 namespace Models;
+
 use Models\Address;
 
-class Agency {
+class Agency 
+{
 
-    public function getAgencies() {
+    const URL = 'https://www.melhorenvio.com.br';
 
+    /**
+     * @return void
+     */
+    public function getAgencies() 
+    {
         $token = get_option('wpmelhorenvio_token');
+
         $params = array(
             'headers'           =>  [
                 'Content-Type'  => 'application/json',
@@ -18,8 +26,6 @@ class Agency {
             'method' => 'GET'
         );
 
-        $urlApi = 'https://www.melhorenvio.com.br';
-
         if (!isset($_GET['state']) && !isset($_GET['state']) ) {
             $address = (new Address)->getAddressFrom();
         } else {
@@ -29,7 +35,7 @@ class Agency {
             ];
         }
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request($urlApi . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
         $agencies = [];
         $agencySelected = get_option('melhorenvio_agency_jadlog_v2');
         
@@ -53,8 +59,12 @@ class Agency {
         ];
     }
 
-    public function setAgency($id) {
-
+    /**
+     * @param [type] $id
+     * @return void
+     */
+    public function setAgency($id) 
+    {
         $agency = get_option('melhorenvio_agency_jadlog_v2');
 
         if (!$agency) {

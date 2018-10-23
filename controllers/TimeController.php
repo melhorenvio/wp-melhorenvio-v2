@@ -2,9 +2,14 @@
 
 namespace Controllers;
 
-class TimeController {
-
-    public function setlabel($data) {
+class TimeController 
+{
+    /**
+     * @param [type] $data
+     * @return void
+     */
+    public function setlabel($data) 
+    {
 
         if ($data->max == 1) {
             return ' (1 dia útil)';

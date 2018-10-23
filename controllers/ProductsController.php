@@ -2,10 +2,14 @@
 
 namespace Controllers;
 
-class ProductsController {
-
-    public function getProductsOrder($order_id) {
-
+class ProductsController 
+{
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function getProductsOrder($order_id) 
+    {
         $order  = wc_get_order( $order_id );
         $products = [];
 
@@ -27,8 +31,11 @@ class ProductsController {
         return $products;
     }
 
-    public function getProductsCart() {
-
+    /**
+     * @return void
+     */
+    public function getProductsCart() 
+    {
         global $woocommerce;
         $items = $woocommerce->cart->get_cart();
 
@@ -49,8 +56,12 @@ class ProductsController {
         return $products;
     }
 
-    public function getInsuranceValue($order_id) {
-
+    /**
+     * @param [type] $order_id
+     * @return void
+     */
+    public function getInsuranceValue($order_id) 
+    {
         $order  = wc_get_order( $order_id );
         $total = 0;
 
@@ -62,7 +73,12 @@ class ProductsController {
         return round($total, 2);
     }
 
-    private function converterIfNecessary($weight) {
+    /**
+     * @param [type] $weight
+     * @return void
+     */
+    private function converterIfNecessary($weight) 
+    {
         $weight_unit = get_option('woocommerce_weight_unit');
         if ($weight_unit == 'g') {
             $weight = $weight / 1000;
