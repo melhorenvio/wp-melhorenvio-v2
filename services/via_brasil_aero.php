@@ -4,6 +4,7 @@ use Controllers\PackageController;
 use Controllers\CotationController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
+use Controllers\MoneyController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
@@ -70,7 +71,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							$rate = [
 								'id' => 'melhorenvio_via_brasil_aero',
 								'label' => $result->name . (new timeController)->setLabel($result->delivery_range),
-								'cost' => $result->price,
+								'cost' => (new MoneyController())->setprice($result->price),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
 									'delivery_time' => $result->delivery_time,

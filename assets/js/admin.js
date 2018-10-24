@@ -641,6 +641,21 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -651,7 +666,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             store: null,
             agency: null,
             show_modal: false,
-            show_calculator: true
+            show_calculator: true,
+            tax_extra: 0,
+            time_extra: 0
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -666,6 +683,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
             this.setShowCalculator();
+            this.setFieldsExtra();
             this.show_modal = true;
         },
         showAgencies(data) {
@@ -685,8 +703,26 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
+        getFieldsExtra() {
+            let data = { action: 'get_options' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.tax_extra = response.data.tax;
+                    this.time_extra = response.data.time;
+                }
+            });
+        },
         setShowCalculator() {
             this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then(response => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data;
+                }
+            });
+        },
+        setFieldsExtra() {
+            this.$http.post(`${ajaxurl}?action=save_options&tax=${this.tax_extra}&time=${this.time_extra}`).then(response => {
                 if (response && response.status === 200) {
                     this.show_calculator = response.data;
                 }
@@ -730,6 +766,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         this.getStores();
         this.getAgencies();
         this.getShowCalculator();
+        this.getFieldsExtra();
     }
 });
 
@@ -2838,6 +2875,66 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Taxas e tempo extra")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c("li", [
+              _c("label", [_vm._v("Tempo extra")]),
+              _c("br"),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.time_extra,
+                    expression: "time_extra"
+                  }
+                ],
+                attrs: { type: "number" },
+                domProps: { value: _vm.time_extra },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.time_extra = $event.target.value
+                  }
+                }
+              }),
+              _c("br"),
+              _c("br"),
+              _vm._v(" "),
+              _c("label", [_vm._v("Taxa extra")]),
+              _c("br"),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.tax_extra,
+                    expression: "tax_extra"
+                  }
+                ],
+                attrs: { type: "number" },
+                domProps: { value: _vm.tax_extra },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.tax_extra = $event.target.value
+                  }
+                }
+              })
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
       _c(
         "button",
         { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
@@ -3405,6 +3502,7 @@ var orders = {
             });
             order.content.status = 'pending';
             order.content.order_id = data.order_id;
+            order.content.protocol = data.protocol;
             state.orders.splice(order.position, 1, order.content);
         },
         payTicket: function payTicket(state, data) {
@@ -3580,12 +3678,14 @@ var orders = {
                         commit('toggleModal', true);
                         return false;
                     }
+
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
                     commit('toggleModal', true);
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        order_id: response.data.data.id
+                        order_id: response.data.data.id,
+                        protocol: response.data.data.protocol
                     });
                 }).catch(function (error) {
                     commit('setMsgModal', errorMessage);

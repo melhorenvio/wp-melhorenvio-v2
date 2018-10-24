@@ -38,13 +38,13 @@ class Agency
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
         $agencies = [];
         $agencySelected = get_option('melhorenvio_agency_jadlog_v2');
-        
+
         foreach($response as $agency) {
             $agencies[] = [
                 'id' => $agency->id,
                 'name' => $agency->name,
                 'company_name' => $agency->company_name,
-                'selected' => ($agency->id == $agencySelected) ? true : false,
+                'selected' => ($agency->id == intval($agencySelected)) ? true : false,
                 'address' => [
                     'address' => $agency->address->address,
                     'city' => $agency->address->city->city,
@@ -65,18 +65,7 @@ class Agency
      */
     public function setAgency($id) 
     {
-        $agency = get_option('melhorenvio_agency_jadlog_v2');
-
-        if (!$agency) {
-
-            delete_option('melhorenvio_agency_jadlog_v2');
-            add_option('melhorenvio_agency_jadlog_v2', $id);
-            return [
-                'success' => true,
-                'id' => $id
-            ];
-        }
-
+        delete_option('melhorenvio_agency_jadlog_v2');
         add_option('melhorenvio_agency_jadlog_v2', $id);
         return [
             'success' => true,

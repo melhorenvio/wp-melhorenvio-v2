@@ -78,6 +78,21 @@
             </div>
         </div>
 
+        <div class="wpme_config">
+            <h2>Taxas e tempo extra</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <label>Tempo extra</label><br>
+                        <input v-model="time_extra" type="number" /><br><br>
+
+                        <label>Taxa extra</label><br>
+                        <input v-model="tax_extra" type="number" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
         <transition name="fade">
@@ -147,6 +162,8 @@ export default {
             agency: null,
             show_modal: false,
             show_calculator: true,
+            tax_extra: 0,
+            time_extra: 0
         }
     },
     computed: {
@@ -171,6 +188,7 @@ export default {
             this.setSelectedStore(this.store)
             this.setSelectedAgency(this.agency)
             this.setShowCalculator()
+            this.setFieldsExtra()
             this.show_modal = true
         },
         showAgencies (data) {
@@ -190,8 +208,26 @@ export default {
                 }
             })
         },
+        getFieldsExtra () {
+            let data = {action: 'get_options'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.tax_extra = response.data.tax
+                    this.time_extra = response.data.time
+                }
+            })
+        },
         setShowCalculator () {
             this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then( (response) => {
+                if (response && response.status === 200) {
+                    this.show_calculator = response.data
+                }
+            })
+        },
+        setFieldsExtra () {
+            this.$http.post(`${ajaxurl}?action=save_options&tax=${this.tax_extra}&time=${this.time_extra}`).then( (response) => {
                 if (response && response.status === 200) {
                     this.show_calculator = response.data
                 }
@@ -235,6 +271,7 @@ export default {
         this.getStores()
         this.getAgencies()
         this.getShowCalculator()
+        this.getFieldsExtra()
     }
 }
 </script>

@@ -57,6 +57,7 @@ use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
+use Controllers\OptionsController;
 use Models\CalculatorShow;
 
 /**
@@ -228,6 +229,7 @@ final class Base_Plugin {
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
         $logs    = new LogsController();
+        $options = new OptionsController();
 
         $hideCalculator = (new CalculatorShow)->get();
 
@@ -282,6 +284,9 @@ final class Base_Plugin {
         add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'index']);
         add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detail']);
 
+        // Opçoes de transportadoras
+        add_action('wp_ajax_save_options', [$options, 'save']);
+        add_action('wp_ajax_get_options', [$options, 'getJson']);
     }
     
     /**
