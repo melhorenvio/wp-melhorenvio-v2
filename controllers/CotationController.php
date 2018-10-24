@@ -6,6 +6,7 @@ use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
+use Controllers\MoneyController;
 use Controllers\LogsController;
 
 class CotationController 
@@ -121,6 +122,7 @@ class CotationController
             $result[] = $this->mapObject($cotation);
         } else {
             foreach ($cotation as $item) {
+
                 if (is_null($item->price)) {
                     continue;
                 }
@@ -144,7 +146,7 @@ class CotationController
         return [
             'id' => $item->id,
             'name' => $item->name,
-            'price' => 'R$' . number_format($item->price, 2, ',', '.'),
+            'price' => (new MoneyController())->setLabel($item->price),
             'company' => $item->company->name,
             'delivery_time' => (new TimeController)->setLabel($item->delivery_range)
         ];
@@ -247,66 +249,6 @@ class CotationController
         }
 
         return rtrim($string,",");
-    }
-
-    /**
-     * @param [type] $data
-     * @return void
-     */
-    private function normalizeToArray($data) 
-    {
-        $result = [];
-        foreach ($data as $item) {
-            $packages = [];
-            if (!empty($item->packages)) {
-                foreach ($item->packages as $pack) { 
-                    $products = [];
-                    foreach ($pack->products as $product) {
-                        $products[] = [
-                            'id' => $product->id,
-                            'quantity' => $product->quantity
-                        ];
-                    }
-                    $packages[] = [
-                        'price' => $pack->price,
-                        'discount' => $pack->discount,
-                        'format' => $pack->format,
-                        'dimensions' => [
-                            'height' => $pack->dimensions->height,
-                            'width' => $pack->dimensions->width,
-                            'length' => $pack->dimensions->length
-                        ],
-                        'weight' => $pack->weight,
-                        'insurance_value' => $pack->insurance_value,
-                        'products' => $products
-                    ];
-                }
-            }
-    
-            $result[] = [
-                'id' => $item->id,
-                'name' => $item->name,
-                'price' => $item->price,
-                'delivery_time' => $item->delivery_time,
-                'currency' => $item->currency,
-                'delivery_range' => [
-                    'min' => $item->delivery_range->min,
-                    'max' => $item->delivery_range->max
-                ],
-                'packages' => $packages,
-                'additional_services' => [
-                    'receipt' => $item->additional_services->receipt,
-                    'own_hand' => $item->additional_services->own_hand,
-                    'collect' => $item->additional_services->collect
-                ],
-                'company' => [
-                    'id' => $item->company->id,
-                    'name' => $item->company->name
-                ],
-                'selected' => $item->selected,
-            ];
-        }
-        return $result;
     }
 
     /**

@@ -4,6 +4,7 @@ use Controllers\PackageController;
 use Controllers\CotationController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
+use Controllers\MoneyController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
@@ -70,7 +71,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							$rate = [
 								'id' => 'melhorenvio_via_brasil_rodoviario',
 								'label' => $result->name . (new timeController)->setLabel($result->delivery_range),
-								'cost' => $result->price,
+								'cost' => (new MoneyController())->setprice($result->price),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
 									'delivery_time' => $result->delivery_time,
@@ -109,36 +110,4 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		return $methods;
 	}
 	add_filter( 'woocommerce_shipping_methods', 'add_via_brasil_rodoviario_shipping_method' );
-
-	function via_brasil_rodoviario_validate_order($posted) {
-
-		// $packages = WC()->shipping->get_packages();
-		// $chosen_methods = WC()->session->get('chosen_shipping_methods');
-		
-        // if (is_array($chosen_methods) && in_array('melhorenvio_via_brasil_rodoviario', $chosen_methods)) {
-        //     foreach ($packages as $i => $package) {
-        //         if ($chosen_methods[$i] != "melhorenvio_via_brasil_rodoviario") {
-        //             continue;
-        //         }
-        //         $via_brasil_rodoviario_Shipping_Method = new WC_Via_Brasil_Rodoviario_Shipping_Method();
-        //         $weightLimit = (int)$via_brasil_rodoviario_Shipping_Method->settings['weight'];
-        //         $weight = 0;
-        //         foreach ($package['contents'] as $item_id => $values) {
-        //             $_product = $values['data'];
-		// 			$weight = $weight + $_product->get_weight() * $values['quantity'];
-        //         }
-        //         $weight = wc_get_weight($weight, 'kg');
-                // if ($weight > $weightLimit) {
-                //     $message = sprintf(__('OOPS, %d kg increase the maximum weight of %d kg for %s', 'pac'), $weight, $weightLimit, $pac_Shipping_Method->title);
-                //     $messageType = "error";
-                //     if (!wc_has_notice($message, $messageType)) {
-                //         wc_add_notice($message, $messageType);
-                //     }
-				// }
-        //     }
-        // }
-	}
-	
-	add_action('woocommerce_review_order_before_cart_contents', 'via_brasil_rodoviario_validate_order', 10);
-	add_action('woocommerce_after_checkout_validation', 'via_brasil_rodoviario_validate_order', 10);
 }

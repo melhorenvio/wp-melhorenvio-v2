@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Controllers\OptionsController;
+
 class TimeController 
 {
     /**
@@ -10,6 +12,11 @@ class TimeController
      */
     public function setlabel($data) 
     {
+        $timeExtra = (new OptionsController())->get();
+        if ($timeExtra['time'] != 0) {
+            $data->max = $data->max + $timeExtra['time'];
+            $data->min = $data->min + $timeExtra['time'];
+        }
 
         if ($data->max == 1) {
             return ' (1 dia útil)';
