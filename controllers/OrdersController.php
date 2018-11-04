@@ -10,7 +10,7 @@ use Controllers\LogsController;
 
 class OrdersController 
 {
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     /**
      * @return void
@@ -50,6 +50,7 @@ class OrdersController
                 "collect" => false,
                 "reverse" => false, 
                 "non_commercial" => false, 
+                'platform' => 'WooCommerce V2'
             ]
         ];
 
@@ -107,7 +108,7 @@ class OrdersController
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_post(self::URL . '/api/v2/me/cart', $params)
+                wp_remote_post(self::URL . '/v2/me/cart', $params)
             )
         );
 
@@ -118,7 +119,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'sendOrder', 
-            self::URL . '/api/v2/me/cart'
+            self::URL . '/v2/me/cart'
         );
 
         if (!isset($response->id)) {
@@ -163,7 +164,7 @@ class OrdersController
             'method' => 'DELETE'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/cart/' . $_GET['order_id'], $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $_GET['order_id'], $params)));
 
         (new LogsController)->add(
             $_GET['id'], 
@@ -172,7 +173,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'removeOrder', 
-            self::URL . '/api/v2/me/cart'
+            self::URL . '/v2/me/cart'
         );
 
         if (isset($response->error)) {
@@ -214,7 +215,7 @@ class OrdersController
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/api/v2/me/shipment/cancel', $params)
+                wp_remote_request(self::URL . '/v2/me/shipment/cancel', $params)
             )
         );
 
@@ -225,7 +226,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'cancelOrder', 
-            self::URL . '/api/v2/me/shipment/cancel'
+            self::URL . '/v2/me/shipment/cancel'
         );
 
         if (isset($response->errors)) {
@@ -270,7 +271,7 @@ class OrdersController
             'method' => 'GET'
         );
 
-        return json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/cart/' . $order_id, $params)));
+        return json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $order_id, $params)));
     }
 
     /**
@@ -335,7 +336,7 @@ class OrdersController
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/api/v2/me/shipment/checkout', $params)
+                wp_remote_request(self::URL . '/v2/me/shipment/checkout', $params)
             )
         );
 
@@ -346,7 +347,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'payTicket', 
-            self::URL . '/api/v2/me/shipment/checkout'
+            self::URL . '/v2/me/shipment/checkout'
         );
 
         $data = [
@@ -390,7 +391,7 @@ class OrdersController
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/api/v2/me/shipment/generate', $params)
+                wp_remote_request(self::URL . '/v2/me/shipment/generate', $params)
             )
         );
 
@@ -401,7 +402,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'createTicket', 
-            self::URL . '/api/v2/me/shipment/generate'
+            self::URL . '/v2/me/shipment/generate'
         );
 
         $data = [
@@ -442,7 +443,7 @@ class OrdersController
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/api/v2/me/shipment/print', $params)
+                wp_remote_request(self::URL . '/v2/me/shipment/print', $params)
             )
         );
 
@@ -453,7 +454,7 @@ class OrdersController
             $response, 
             'OrdersController', 
             'printTicket', 
-            self::URL . '/api/v2/me/shipment/print'
+            self::URL . '/v2/me/shipment/print'
         );
 
         $data = [

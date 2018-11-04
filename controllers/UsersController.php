@@ -8,7 +8,7 @@ use Models\User;
 
 class UsersController {
 
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     /**
      * @return void
@@ -77,16 +77,15 @@ class UsersController {
             "document" => (!empty($cpf)) ? $cpf : null,
             "company_document" => (!empty($cnpj)) ? $cnpj : null,
             "state_register" => null, // (opcional) (a menos que seja transportadora e logística reversa)
-            "address" => $order->get_billing_address_1(),
-            "complement" => $order->get_billing_address_2(),
-            "number" => get_user_meta($order->user_id, 'billing_number',true),
-            "district" => get_user_meta($order->user_id, 'billing_neighborhood',true),
-            "city" => $order->get_billing_city(),
-            "state_abbr" => $order->get_billing_state(),
-            "country_id" => $order->get_billing_country(),
-            "postal_code" => str_replace('-', '', $order->get_billing_postcode()),  
+            "address" => $order->get_shipping_address_1(),
+            "complement" => $order->get_shipping_address_2(),
+            "number" => get_post_meta($order_id, '_shipping_number',true),
+            "district" =>get_post_meta($order_id, '_shipping_neighborhood',true),
+            "city" => $order->get_shipping_city(),
+            "state_abbr" => $order->get_shipping_state(),
+            "country_id" => $order->get_shipping_country(),
+            "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),  
         ];
-
     }
 
     /**

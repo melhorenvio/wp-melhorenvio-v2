@@ -6,7 +6,7 @@ use Models\Agency;
 
 class Address 
 {
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
     
     /**
      *
@@ -26,7 +26,7 @@ class Address
             'method' => 'GET'
         );
         
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/addresses', $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/addresses', $params)));
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
 
         if (!isset($response->data)) {

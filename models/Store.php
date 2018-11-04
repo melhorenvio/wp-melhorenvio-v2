@@ -4,7 +4,7 @@ namespace Models;
 
 class Store 
 {
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     /**
      * @return void
@@ -23,7 +23,7 @@ class Store
             'method' => 'GET'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/companies', $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/companies', $params)));
 
         $stories = [];
         $storeSelected = get_option('melhorenvio_store_v2');

@@ -4,7 +4,7 @@ namespace Models;
 
 class User 
 {
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     public function get() 
     {
@@ -19,7 +19,7 @@ class User
             );
 
             $response = wp_remote_retrieve_body(
-                wp_remote_get(self::URL . '/api/v2/me', $params)
+                wp_remote_get(self::URL . '/v2/me', $params)
             );
 
             if (is_null($response)) {
@@ -53,7 +53,7 @@ class User
             'Authorization' => 'Bearer '.$token],
         );
 
-        $response = json_decode(wp_remote_retrieve_body(wp_remote_get(self::URL . '/api/v2/me/balance', $params)));
+        $response = json_decode(wp_remote_retrieve_body(wp_remote_get(self::URL . '/v2/me/balance', $params)));
         if (isset($response->balance)) {
             return [
                 'success' => true,

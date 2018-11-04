@@ -1448,24 +1448,6 @@ var render = function() {
                                 _vm._s(item.to.phone) +
                                 " "
                             ),
-                            _c("br"),
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(item.to.address_1) +
-                                " " +
-                                _vm._s(item.to.address_2) +
-                                " "
-                            ),
-                            _c("br"),
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(item.to.city) +
-                                " / " +
-                                _vm._s(item.to.state) +
-                                " - " +
-                                _vm._s(item.to.postcode) +
-                                " "
-                            ),
                             _c("br")
                           ])
                         ]),

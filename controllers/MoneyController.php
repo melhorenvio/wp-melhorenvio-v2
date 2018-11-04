@@ -20,7 +20,7 @@ class MoneyController
         return 'R$' . number_format($value, 2, ',', '.');
     }
 
-    public function setPrice() 
+    public function setPrice($value) 
     {
         $extra = (new OptionsController())->get();
         if ($extra['tax'] != 0) {

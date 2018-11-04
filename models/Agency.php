@@ -7,7 +7,7 @@ use Models\Address;
 class Agency 
 {
 
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     /**
      * @return void
@@ -35,7 +35,7 @@ class Agency
             ];
         }
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/api/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
+        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
         $agencies = [];
         $agencySelected = get_option('melhorenvio_agency_jadlog_v2');
 

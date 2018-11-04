@@ -6,7 +6,7 @@ use Controllers\CotationController;
 
 class Order {
     
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     private $id;
     private $products;
@@ -81,6 +81,7 @@ class Order {
         foreach ($posts as $post) {
 
             $order = new Order($post->ID);
+
             $dataMelhorEnvio = $order->getDataOrder();
             $invoice = $order->getInvoice();
 
@@ -338,7 +339,7 @@ class Order {
 
             $response =  json_decode(
                 wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/api/v2/me/shipment/tracking', $params)
+                    wp_remote_post(self::URL . '/v2/me/shipment/tracking', $params)
                 )
             );
 

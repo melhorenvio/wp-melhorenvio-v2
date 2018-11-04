@@ -11,7 +11,7 @@ use Controllers\LogsController;
 
 class CotationController 
 {
-    const URL = 'https://www.melhorenvio.com.br';
+    const URL = 'https://api.melhorenvio.com';
 
     public function __construct() 
     {
@@ -39,7 +39,7 @@ class CotationController
             $result, 
             'CotationController', 
             'makeCotationOrder', 
-            'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate'
+            'https://api.melhorenvio.com/v2/me/shipment/calculate'
         );
 
         if (!is_array($result)) {
@@ -226,7 +226,7 @@ class CotationController
 
             $response =  json_decode(
                 wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/api/v2/me/shipment/calculate', $params)
+                    wp_remote_post(self::URL . '/v2/me/shipment/calculate', $params)
                 )
             );
 

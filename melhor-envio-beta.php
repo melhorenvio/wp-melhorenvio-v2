@@ -89,6 +89,31 @@ final class Base_Plugin {
      */
     public function __construct() {
 
+
+        $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
+
+        if (!in_array('woocommerce/woocommerce.php', $pluginsActiveds)) {
+            add_action( 'admin_notices', function() {
+                ?>
+                <div class="error">
+                    <p>Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio</p>
+                </div>
+                <?php
+            });
+        }
+
+        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds)) {
+            add_action( 'admin_notices', function() {
+                ?>
+                <div class="error">
+                    <p>Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio</p>
+                </div>
+                <?php
+            });
+        }
+
+        return false;
+
         $this->define_constants();
 
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
@@ -166,8 +191,11 @@ final class Base_Plugin {
      * @return void
      */
     public function init_plugin() {
+
+        
         $this->includes();
         $this->init_hooks();
+        
     }
 
     /**
