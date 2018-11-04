@@ -92,27 +92,26 @@ final class Base_Plugin {
 
         $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
 
+        $errors = [];
         if (!in_array('woocommerce/woocommerce.php', $pluginsActiveds)) {
-            add_action( 'admin_notices', function() {
-                ?>
-                <div class="error">
-                    <p>Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio</p>
-                </div>
-                <?php
-            });
+            $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
         }
 
         if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds)) {
-            add_action( 'admin_notices', function() {
-                ?>
-                <div class="error">
-                    <p>Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio</p>
-                </div>
-                <?php
-            });
+            $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
         }
 
-        return false;
+        if (!empty($errors)) {
+            foreach ($errors as $err) {
+                add_action( 'admin_notices', function() use ($err) {
+                    echo sprintf('<div class="error">
+                        <p>%s</p>
+                    </div>', $err);
+                });
+            }
+            return false;
+        }
+        
 
         $this->define_constants();
 
