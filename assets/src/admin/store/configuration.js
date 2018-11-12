@@ -7,7 +7,6 @@ const configuration = {
         addresses: [],
         stores: [],
         agencies: [],
-        // calculator: true,
         show_load: true
     },
     mutations: {
@@ -22,16 +21,12 @@ const configuration = {
         },
         toggleLoader: (state, data) => {
             state.show_load = data
-        },
-        // setCalculator: (state, data) => {
-        //     state.calculator = data
-        // }
+        }
     },  
     getters: {
         getAddress: state => state.addresses,
         getStores: state => state.stores,
         getAgencies: state => state.agencies,
-        // getCalculator: state => state.calculator,
         showLoad: state => state.show_load
     },
     actions: {
@@ -71,17 +66,6 @@ const configuration = {
                 }
             })
         },
-        // getCalculatorShow: ({commit}, data) => {
-        //     commit('toggleLoader', true)
-        //     data = Object.assign({action: 'get_calculator_show'}, data)
-        //     Axios.get(`${ajaxurl}`, {
-        //         params: data
-        //     }).then(function (response) {
-        //         if (response && response.status === 200) {
-        //             commit('setCalculator', response.data)
-        //         }
-        //     })
-        // },
         setSelectedAddress: ({commit}, data) => {
             Axios.post(`${ajaxurl}?action=set_address&id=${data}`).then(function (response) {
                 if (response && response.status === 200) {
@@ -103,13 +87,6 @@ const configuration = {
                 }
             })
         },
-        // setCalculatorShow: ({commit}, data) => {
-        //     Axios.post(`${ajaxurl}?action=set_calculator_show&data=${data}`).then(function (response) {
-        //         if (response && response.status === 200) {
-        //             // commit('setAddress', response.data.id)
-        //         }
-        //     })
-        // }
     }
 }
 

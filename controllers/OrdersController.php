@@ -37,12 +37,22 @@ class OrdersController
 
         $token = get_option('wpmelhorenvio_token');
 
+        $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
+
+        $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
+
+        $package = $packages[0];
+
+        foreach ($products as $key => $item) {
+            unset($products[$key]['insurance_value']);
+        }
+
         $body = [
             'from' => (new UsersController())->getFrom(),
             'to' => (new UsersController())->getTo($_GET['order_id']),
             'service' => $_GET['choosen'],
-            'products' => (new ProductsController())->getProductsOrder($_GET['order_id']),
-            'package' => (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']),
+            'products' => $products,
+            'package' => $package,
             'options' => [
                 "insurance_value" => (new ProductsController())->getInsuranceValue($_GET['order_id']), 
                 "receipt" => false,
@@ -478,6 +488,7 @@ class OrdersController
      */
     private function updateDataCotation($order_id, $data, $status) 
     {
+
         $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2', true));
         if (empty($oldData || is_null($oldData))) {
             $data = array_merge($oldData, $data);

@@ -81,13 +81,13 @@
         <div class="wpme_config">
             <h2>Taxas e tempo extra</h2>
             <div class="wpme_flex">
-                <ul class="wpme_address">
+                <ul v-for="option in methods_shipments" :value="option.id" :key="option.id" class="wpme_address">
                     <li>
+                        <h2>{{option.title}}</h2>
                         <label>Tempo extra</label><br>
-                        <input v-model="time_extra" type="number" /><br><br>
-
+                        <input v-model="option.time" type="number" /><br><br>
                         <label>Taxa extra</label><br>
-                        <input v-model="tax_extra" type="number" />
+                        <input v-model="option.tax" type="number" />
                     </li>
                 </ul>
             </div>
@@ -162,8 +162,7 @@ export default {
             agency: null,
             show_modal: false,
             show_calculator: true,
-            tax_extra: 0,
-            time_extra: 0
+            methods_shipments: [],
         }
     },
     computed: {
@@ -181,14 +180,14 @@ export default {
             'getStores',
             'setSelectedStore',
             'getAgencies',
-            'setSelectedAgency',
+            'setSelectedAgency'
         ]),
         updateConfig () {
             this.setSelectedAddress(this.address)
             this.setSelectedStore(this.store)
             this.setSelectedAgency(this.agency)
             this.setShowCalculator()
-            this.setFieldsExtra()
+            this.setFieldsmethodsShipments()
             this.show_modal = true
         },
         showAgencies (data) {
@@ -208,14 +207,13 @@ export default {
                 }
             })
         },
-        getFieldsExtra () {
-            let data = {action: 'get_options'}
+        getMethodsShipments () {
+            let data = {action: 'get_metodos'}
             this.$http.get(`${ajaxurl}`, {
                 params: data
             }).then( (response) => {
                 if (response && response.status === 200) {
-                    this.tax_extra = response.data.tax
-                    this.time_extra = response.data.time
+                    this.methods_shipments = response.data
                 }
             })
         },
@@ -226,12 +224,10 @@ export default {
                 }
             })
         },
-        setFieldsExtra () {
-            this.$http.post(`${ajaxurl}?action=save_options&tax=${this.tax_extra}&time=${this.time_extra}`).then( (response) => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data
-                }
-            })
+        setFieldsmethodsShipments () {
+            this.methods_shipments.forEach((item) => {
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}`).then( (response) => {})
+            });
         }
     },
     watch : {
@@ -254,9 +250,7 @@ export default {
             }
         },
         agencies () {
-
             this.show_loader = false;
-
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {
@@ -271,7 +265,7 @@ export default {
         this.getStores()
         this.getAgencies()
         this.getShowCalculator()
-        this.getFieldsExtra()
+        this.getMethodsShipments()
     }
 }
 </script>

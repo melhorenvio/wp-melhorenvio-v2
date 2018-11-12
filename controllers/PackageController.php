@@ -40,23 +40,33 @@ class PackageController
     public function getPackageOrderAfterCotation($order_id) 
     {
         $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
+        $packages = [];
         if (is_array($data)) {
             foreach ($data as $item) {
                 if(!isset($item->packages)) {
                     continue;
                 }
-                if(!is_null(end($item->packages))) {
-                    $package = end($item->packages);
-                    return [
-                        'width'  => (isset($package->dimensions->width)) ? $package->dimensions->width : null,
-                        'height' => (isset($package->dimensions->height)) ? $package->dimensions->height : null,
-                        'length' => (isset($package->dimensions->length)) ? $package->dimensions->length : null,
-                        'weight' => (isset($package->weight)) ? $package->weight : null,
-                    ];
+                if(!empty($item->packages)) {
+
+                    foreach ($item->packages as $package) {
+
+                        if($package->format != 'box'){
+                            continue;
+                        }
+
+                        $packages[] = [
+                            'width'  => (isset($package->dimensions->width)) ? $package->dimensions->width : null,
+                            'height' => (isset($package->dimensions->height)) ? $package->dimensions->height : null,
+                            'length' => (isset($package->dimensions->length)) ? $package->dimensions->length : null,
+                            'weight' => (isset($package->weight)) ? $package->weight : null,
+                            'quantity' => (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1
+                        ];
+                    }
                 }
             }
         }
-        return null;
+
+        return $packages;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Controllers\ConfigurationController;
 use Controllers\OptionsController;
 
 class TimeController 
@@ -10,12 +11,18 @@ class TimeController
      * @param [type] $data
      * @return void
      */
-    public function setlabel($data) 
+    public function setlabel($data, $id) 
     {
-        $timeExtra = (new OptionsController())->get();
-        if ($timeExtra['time'] != 0) {
-            $data->max = $data->max + $timeExtra['time'];
-            $data->min = $data->min + $timeExtra['time'];
+        $timeExtra = 0;
+        $extra = (new ConfigurationController())->getOptionsShipments();
+
+        if (isset($extra[$id]['time'])) {
+            $timeExtra = $extra[$id]['time'];
+        }
+    
+        if ($timeExtra != 0) {
+            $data->max = $data->max + $timeExtra;
+            $data->min = $data->min + $timeExtra;
         }
 
         if ($data->max == 1) {

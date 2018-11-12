@@ -15,6 +15,8 @@ class CotationController
 
     public function __construct() 
     {
+        // woocommerce_before_checkout_form
+        // woocommerce_checkout_order_processed
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
 
@@ -52,9 +54,16 @@ class CotationController
             return false;
         }
 
+        // Remove a cotação que não esta disponivel 
+        foreach ($result as $key => $item) {
+            if (!isset($item->price)) {
+                unset($result[$key]);
+            }
+        }   
+
         $result['date_cotation'] = date('Y-m-d H:i:s');
 
-        $chooseMethodSession = $woocommerce->session->get( 'chosen_shipping_methods');
+        $chooseMethodSession = $woocommerce->session->get('chosen_shipping_methods');
 
         $chooseMethodSession = end($chooseMethodSession);
 
@@ -103,33 +112,31 @@ class CotationController
             ];
         }
 
-        $package = [
-            "weight" =>  $_POST['data']['produto_peso'],
-            "width"  =>  $_POST['data']['produto_largura'],
-            "length" =>  $_POST['data']['produto_comprimento'],
-            "height" =>  $_POST['data']['produto_altura']
+        $products[] = [
+            'id' => $_POST['data']['id_produto'],
+            "weight" =>  floatval($_POST['data']['produto_peso']),
+            "width"  =>  floatval($_POST['data']['produto_largura']),
+            "length" =>  floatval($_POST['data']['produto_comprimento']),
+            "height" =>  floatval($_POST['data']['produto_altura']),
+            'quantity' => intval($_POST['data']['quantity']),
+            'insurance_value' => floatval($_POST['data']['produto_preco'])
         ];
 
-        $options = [
-            'insurance_value' => $_POST['data']['produto_preco']
-        ];
+        $options = [];
 
-        $cotation = $this->makeCotationPackage($package, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
+        $cotation = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
 
         $result = [];
-
         if (count($cotation) == 1) {
             $result[] = $this->mapObject($cotation);
         } else {
             foreach ($cotation as $item) {
-
                 if (is_null($item->price)) {
                     continue;
                 }
                 $result[] = $this->mapObject($item);
             }
         }
-
         echo json_encode([
             'success' => true,
             'data' => $result
@@ -146,9 +153,9 @@ class CotationController
         return [
             'id' => $item->id,
             'name' => $item->name,
-            'price' => (new MoneyController())->setLabel($item->price),
+            'price' => (new MoneyController())->setLabel($item->price, $item->id),
             'company' => $item->company->name,
-            'delivery_time' => (new TimeController)->setLabel($item->delivery_range)
+            'delivery_time' => (new TimeController)->setLabel($item->delivery_range, $item->id)
         ];
     }
 
@@ -201,6 +208,10 @@ class CotationController
                 return null;
             }
 
+            if (!empty($products)) {
+                unset($opts['insurance_value']);
+            }
+
             $body = [
                 "from" => [
                     "postal_code" => $from->postal_code
@@ -208,12 +219,18 @@ class CotationController
                 'to' => [
                     'postal_code' => $to
                 ],
-                'products' => (!empty($products)) ? $products : null,
-                'package' => (!empty($package)) ? $package : null,
                 'options' =>  $opts,
                 "services" => $this->converterArrayToCsv($services)
             ];
-    
+
+            if (!empty($products)) {
+                $body['products'] = $products;
+            }
+
+            if (!empty($package)) {
+                $body['package'] = $package;
+            }
+
             $params = array(
                 'headers'           =>  [
                     'Content-Type'  => 'application/json',

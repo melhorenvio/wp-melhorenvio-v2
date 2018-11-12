@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use Controllers\OptionsController;
+use Controllers\ConfigurationController;
 
 class MoneyController 
 {
@@ -10,21 +10,33 @@ class MoneyController
      * @param [type] $data
      * @return void
      */
-    public function setlabel($value) 
+    public function setlabel($value, $id) 
     {
-        $extra = (new OptionsController())->get();
-        if ($extra['tax'] != 0) {
-            $value = floatval($value) + floatval($extra['tax']);
+        $extra = 0;
+        $result = (new ConfigurationController())->getOptionsShipments();
+
+        if (isset($result[$id]['tax'])) {
+            $extra = $result[$id]['tax'];
+        }
+    
+        if ($extra != 0) {
+            $value = floatval($value) + floatval($extra);
         }
 
         return 'R$' . number_format($value, 2, ',', '.');
     }
 
-    public function setPrice($value) 
+    public function setPrice($value, $id) 
     {
-        $extra = (new OptionsController())->get();
-        if ($extra['tax'] != 0) {
-            $value = floatval($value) + floatval($extra['tax']);
+        $extra = 0;
+        $result = (new ConfigurationController())->getOptionsShipments();
+
+        if (isset($result[$id]['tax'])) {
+            $extra = $result[$id]['tax'];
+        }
+    
+        if ($extra != 0) {
+            $value = floatval($value) + floatval($extra);
         }
 
         return $value;

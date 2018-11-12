@@ -667,8 +667,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             agency: null,
             show_modal: false,
             show_calculator: true,
-            tax_extra: 0,
-            time_extra: 0
+            methods_shipments: []
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -683,7 +682,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedStore(this.store);
             this.setSelectedAgency(this.agency);
             this.setShowCalculator();
-            this.setFieldsExtra();
+            this.setFieldsmethodsShipments();
             this.show_modal = true;
         },
         showAgencies(data) {
@@ -703,14 +702,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
-        getFieldsExtra() {
-            let data = { action: 'get_options' };
+        getMethodsShipments() {
+            let data = { action: 'get_metodos' };
             this.$http.get(`${ajaxurl}`, {
                 params: data
             }).then(response => {
                 if (response && response.status === 200) {
-                    this.tax_extra = response.data.tax;
-                    this.time_extra = response.data.time;
+                    this.methods_shipments = response.data;
                 }
             });
         },
@@ -721,11 +719,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
-        setFieldsExtra() {
-            this.$http.post(`${ajaxurl}?action=save_options&tax=${this.tax_extra}&time=${this.time_extra}`).then(response => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data;
-                }
+        setFieldsmethodsShipments() {
+            this.methods_shipments.forEach(item => {
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}`).then(response => {});
             });
         }
     }),
@@ -749,9 +745,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
         },
         agencies() {
-
             this.show_loader = false;
-
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {
@@ -766,7 +760,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         this.getStores();
         this.getAgencies();
         this.getShowCalculator();
-        this.getFieldsExtra();
+        this.getMethodsShipments();
     }
 });
 
@@ -2860,61 +2854,75 @@ var render = function() {
       _c("div", { staticClass: "wpme_config" }, [
         _c("h2", [_vm._v("Taxas e tempo extra")]),
         _vm._v(" "),
-        _c("div", { staticClass: "wpme_flex" }, [
-          _c("ul", { staticClass: "wpme_address" }, [
-            _c("li", [
-              _c("label", [_vm._v("Tempo extra")]),
-              _c("br"),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.time_extra,
-                    expression: "time_extra"
-                  }
-                ],
-                attrs: { type: "number" },
-                domProps: { value: _vm.time_extra },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+        _c(
+          "div",
+          { staticClass: "wpme_flex" },
+          _vm._l(_vm.methods_shipments, function(option) {
+            return _c(
+              "ul",
+              {
+                key: option.id,
+                staticClass: "wpme_address",
+                attrs: { value: option.id }
+              },
+              [
+                _c("li", [
+                  _c("h2", [_vm._v(_vm._s(option.title))]),
+                  _vm._v(" "),
+                  _c("label", [_vm._v("Tempo extra")]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: option.time,
+                        expression: "option.time"
+                      }
+                    ],
+                    attrs: { type: "number" },
+                    domProps: { value: option.time },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(option, "time", $event.target.value)
+                      }
                     }
-                    _vm.time_extra = $event.target.value
-                  }
-                }
-              }),
-              _c("br"),
-              _c("br"),
-              _vm._v(" "),
-              _c("label", [_vm._v("Taxa extra")]),
-              _c("br"),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.tax_extra,
-                    expression: "tax_extra"
-                  }
-                ],
-                attrs: { type: "number" },
-                domProps: { value: _vm.tax_extra },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+                  }),
+                  _c("br"),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("label", [_vm._v("Taxa extra")]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: option.tax,
+                        expression: "option.tax"
+                      }
+                    ],
+                    attrs: { type: "number" },
+                    domProps: { value: option.tax },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(option, "tax", $event.target.value)
+                      }
                     }
-                    _vm.tax_extra = $event.target.value
-                  }
-                }
-              })
-            ])
-          ])
-        ])
+                  })
+                ])
+              ]
+            )
+          })
+        )
       ]),
       _vm._v(" "),
       _c(
@@ -3873,7 +3881,6 @@ var configuration = {
         addresses: [],
         stores: [],
         agencies: [],
-        // calculator: true,
         show_load: true
     },
     mutations: {
@@ -3889,9 +3896,6 @@ var configuration = {
         toggleLoader: function toggleLoader(state, data) {
             state.show_load = data;
         }
-        // setCalculator: (state, data) => {
-        //     state.calculator = data
-        // }
     },
     getters: {
         getAddress: function getAddress(state) {
@@ -3903,7 +3907,6 @@ var configuration = {
         getAgencies: function getAgencies(state) {
             return state.agencies;
         },
-        // getCalculator: state => state.calculator,
         showLoad: function showLoad(state) {
             return state.show_load;
         }
@@ -3951,17 +3954,6 @@ var configuration = {
                 }
             });
         },
-        // getCalculatorShow: ({commit}, data) => {
-        //     commit('toggleLoader', true)
-        //     data = Object.assign({action: 'get_calculator_show'}, data)
-        //     Axios.get(`${ajaxurl}`, {
-        //         params: data
-        //     }).then(function (response) {
-        //         if (response && response.status === 200) {
-        //             commit('setCalculator', response.data)
-        //         }
-        //     })
-        // },
         setSelectedAddress: function setSelectedAddress(_ref4, data) {
             var commit = _ref4.commit;
 
@@ -3989,13 +3981,6 @@ var configuration = {
                 }
             });
         }
-        // setCalculatorShow: ({commit}, data) => {
-        //     Axios.post(`${ajaxurl}?action=set_calculator_show&data=${data}`).then(function (response) {
-        //         if (response && response.status === 200) {
-        //             // commit('setAddress', response.data.id)
-        //         }
-        //     })
-        // }
     }
 };
 

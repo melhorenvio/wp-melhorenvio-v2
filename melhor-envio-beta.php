@@ -312,8 +312,11 @@ final class Base_Plugin {
         add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detail']);
 
         // Opçoes de transportadoras
-        add_action('wp_ajax_save_options', [$options, 'save']);
-        add_action('wp_ajax_get_options', [$options, 'getJson']);
+        add_action('wp_ajax_save_options', [$conf, 'save']);
+        add_action('wp_ajax_get_options', [$conf, 'getOptionsShipments']);
+
+        // Pegar metodos de envios ativos
+        add_action('wp_ajax_get_metodos', [$conf, 'getMethodsEnables']);
     }
     
     /**

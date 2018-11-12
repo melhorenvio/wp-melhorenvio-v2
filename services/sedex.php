@@ -62,15 +62,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$prod = new ProductsController();
 					$products = $prod->getProductsCart();
 					
-					$cotation = new CotationController();					
+					$cotation = new CotationController();			
 					
 					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
 
 						if (isset($result->name) && isset($result->price)) {
 							$rate = [
-								'id' => 'melhorenvio_pac',
-								'label' => $result->name . (new timeController)->setLabel($result->delivery_range),
-								'cost' => (new MoneyController())->setprice($result->price),
+								'id' => 'melhorenvio_sedex',
+								'label' => $result->name . (new timeController)->setLabel($result->delivery_range, $this->code),
+								'cost' => (new MoneyController())->setprice($result->price, $this->code),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
 									'delivery_time' => $result->delivery_time,

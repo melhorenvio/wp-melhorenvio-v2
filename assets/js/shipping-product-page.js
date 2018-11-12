@@ -34,6 +34,13 @@
 				exibirLoader();
 				esconderTabela();
 				resetarTabela();
+
+				let qty = 1;
+				let inpQty = $('.qty').val(); 
+				if (typeof inpQty != 'undefined') {
+					qty = inpQty;
+				}
+
 				$.ajax({
 					url: url,
 					type:"POST",
@@ -47,6 +54,7 @@
 							'produto_peso': peso,
 							'produto_preco': preco,
 							'id_produto': id_produto,
+							'quantity': qty
 						}
 					},
 					error:function(jqXHR, exception) {
