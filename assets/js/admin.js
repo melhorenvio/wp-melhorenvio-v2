@@ -3674,8 +3674,8 @@ var orders = {
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        order_id: response.data.data.id,
-                        protocol: response.data.data.protocol
+                        order_id: response.data.data[0].id,
+                        protocol: response.data.data[0].protocol
                     });
                 }).catch(function (error) {
                     commit('setMsgModal', errorMessage);
