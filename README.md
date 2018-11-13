@@ -22,10 +22,6 @@ Após o plugin estar clonado, e com as dependencias instaladas, é necessário r
 
 Por gentileza, leia o arquivo [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) para maiores detalhes sobre o nosso código de conduta e informações do necessário para sua contribuição ser aprovada.
 
-## Versionamento
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
 ## Authors
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
