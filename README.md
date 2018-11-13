@@ -22,7 +22,7 @@ Após o plugin estar clonado, e com as dependencias instaladas, é necessário r
 
 Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
 
-## Authors
+## Autores
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
