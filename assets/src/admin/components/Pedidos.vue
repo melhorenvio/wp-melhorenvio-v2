@@ -88,7 +88,9 @@
                                     </div>
                                 </template>
                                 <template v-else>
-                                    <span>{{ item.protocol }}</span>
+                                    <span v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
+                                        {{ prot }}
+                                    </span>
                                 </template>
                             </li>
                             <li>

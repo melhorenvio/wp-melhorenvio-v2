@@ -63,6 +63,8 @@ class OrdersController
 
         $errors = [];
         $success = [];
+        $orders_id = [];
+        $protocols = [];
 
         foreach ($packages[$_GET['choosen']] as $package) {
 
@@ -150,21 +152,23 @@ class OrdersController
 
             $success[] = $response;
 
-            $data = [
-                'choose_method' => $response->service_id,
-                'order_id' => $response->id,
-                'protocol' => $response->protocol,
-                'status' => 'pending',
-                'created' => date('Y-m-d H:i:s')
-            ];
-
-            $this->updateDataCotation($_GET['order_id'], $data, 'pending');
+            $orders_id[] = $response->id;
+            $protocols[] = $response->protocol;   
         }
+
+        $data['choose_method'] = $_GET['choosen'];
+        $data['status'] = 'pending';
+        $data['created'] = date('Y-m-d H:i:s');
+
+        $data['order_id'] = $orders_id;
+        $data['protocol'] = $protocols;
+
+        $this->updateDataCotation($_GET['order_id'], $data, 'pending');
 
         if (empty($errors)) {
             echo json_encode([
                 'success' => true,
-                'data' => $success
+                'data' => $data
             ]);die;
         }
 
@@ -192,22 +196,35 @@ class OrdersController
             'method' => 'DELETE'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $_GET['order_id'], $params)));
+        $orders = explode(',', $_GET['order_id']);
 
-        (new LogsController)->add(
-            $_GET['id'], 
-            'Removendo do carrinho', 
-            $params, 
-            $response, 
-            'OrdersController', 
-            'removeOrder', 
-            self::URL . '/v2/me/cart'
-        );
+        $errors = [];
+        $success = [];
 
-        if (isset($response->error)) {
+        foreach ($orders as $order) {
+
+            $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $order, $params)));
+
+            if (isset($response->error)) {
+                $errors[] = $response->error;
+                continue;
+            }
+
+            (new LogsController)->add(
+                $_GET['id'], 
+                'Removendo do carrinho', 
+                $params, 
+                $response, 
+                'OrdersController', 
+                'removeOrder', 
+                self::URL . '/v2/me/cart'
+            );
+        }
+
+        if (!empty($errors)) {
             echo json_encode([
                 'success' => false,
-                'error' => $response->error
+                'error' => end($errors)
             ]);
             die;
         }
@@ -334,19 +351,18 @@ class OrdersController
      */
     public function payTicket() 
     {
-        $ticket = $this->getInfoTicket($_GET['order_id']);
 
-        if($ticket->status != 'pending') {
-            echo json_encode([
-                'success' => false,
-                'error' => 'Impossivel pagar etiqueta com status ' . $ticket->status
-            ]);
-            die;
+        $orders = explode(',', $_GET['order_id']);
+
+        $wallet = 0;
+        foreach ($orders as $order) {
+            $ticket = $this->getInfoTicket($order);
+            $wallet = $wallet + $ticket->price;
         }
 
         $body = [
-            'orders' => [$_GET['order_id']],
-            'wallet' => $ticket->price
+            'orders' => $orders,
+            'wallet' => $wallet
         ];
 
         $token = get_option('wpmelhorenvio_token');
@@ -378,11 +394,19 @@ class OrdersController
             self::URL . '/v2/me/shipment/checkout'
         );
 
+        if(isset($response->error)) {
+            echo json_encode([
+                'success' => false,
+                'data' => $response->error
+            ]);
+            die;
+        }
+
         $data = [
             'order_paid' => $response->purchase->id,
             'protocol_paid' => $response->purchase->protocol,
             'choose_method' => $response->purchase->orders[0]->service_id,
-            'order_id' => $response->purchase->orders[0]->id,
+            'order_id' => $orders,
             'protocol' => $response->purchase->orders[0]->protocol,
             'status' => 'paid',
         ];
@@ -506,14 +530,16 @@ class OrdersController
      */
     private function updateDataCotation($order_id, $data, $status) 
     {
+        $newData = [];
 
-        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2', true));
-        if (empty($oldData || is_null($oldData))) {
-            $data = array_merge($oldData, $data);
-        }
+        $newData['choose_method'] = $data['choose_method'];
+        $newData['protocol'] = $data['protocol'];
+        $newData['order_id'] = $data['order_id'];
+        $newData['status'] = $status;
+        $newData['created'] = date('Y-m-d H:i:s');
         
         delete_post_meta($order_id, 'melhorenvio_status_v2');
-        add_post_meta($order_id, 'melhorenvio_status_v2', $data);
+        add_post_meta($order_id, 'melhorenvio_status_v2', $newData);
     }
 
     /**
