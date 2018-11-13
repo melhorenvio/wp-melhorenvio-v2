@@ -20,11 +20,9 @@ Após o plugin estar clonado, e com as dependencias instaladas, é necessário r
 
 ## Contribuindo com o Projeto
 
-Por gentileza, leia o arquivo [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) para maiores detalhes sobre o nosso código de conduta e informações do necessário para sua contribuição ser aprovada.
+Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
 
 ## Authors
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
-
-Futuramente, teremos a lista de contribuintes para o projeto.
