@@ -1,0 +1,28 @@
+{
+  "name": "jeet",
+  "version": "7.2.0",
+  "description": "A simple Sass and Stylus grid system. Built for humans.",
+  "homepage": "https://jeet.gs",
+  "license": "MIT",
+  "main": "./index.js",
+  "author": "Cory Simmons <cory@launchboxhq.com>",
+  "contributors": [
+    "Jake Cleary <shout@jakecleary.net> (http://jakecleary.net)",
+    "Andreas Nedbal <andy@pixelde.su> (http://pixelde.su)",
+    "Sam Saccone"
+  ],
+  "keywords": [
+    "grid",
+    "stylus",
+    "scss"
+  ],
+  "devDependencies": {
+    "node-sass": "^3.8.0",
+    "stylus": "^0.54.5"
+  },
+  "scripts": {
+    "test:node": "node test/node-stylus/node"
+  },
+  "repository": "mojotech/jeet",
+  "bugs": "https://github.com/mojotech/jeet/issues"
+}
