@@ -7,10 +7,10 @@ Clone este repositório para a pasta "plugins" do Wordpress, em seguida, execute
 
 ### Pré-requisitos
 
-PHP v.5.6
-Wordpress 4.0+
-Yarn 1.0+
-Composer 1.7+
+- PHP v.5.6
+- Wordpress 4.0+
+- Yarn 1.0+
+- Composer 1.7+
 
 ### Instalação
 
