@@ -419,6 +419,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -1558,7 +1560,18 @@ var render = function() {
                                     ])
                                   ])
                                 ]
-                              : [_c("span", [_vm._v(_vm._s(item.protocol))])]
+                              : _vm._l(item.protocol, function(
+                                  prot,
+                                  indexProtocol
+                                ) {
+                                  return _c("span", { key: indexProtocol }, [
+                                    _vm._v(
+                                      "\n                                    " +
+                                        _vm._s(prot) +
+                                        "\n                                "
+                                    )
+                                  ])
+                                })
                           ],
                           2
                         ),
@@ -3491,8 +3504,8 @@ var orders = {
                 }
             });
             order.content.status = 'pending';
-            order.content.order_id = data.order_id;
-            order.content.protocol = data.protocol;
+            order.content.order_id = data.data.order_id;
+            order.content.protocol = data.data.protocol;
             state.orders.splice(order.position, 1, order.content);
         },
         payTicket: function payTicket(state, data) {
@@ -3674,8 +3687,7 @@ var orders = {
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        order_id: response.data.data.id,
-                        protocol: response.data.data.protocol
+                        data: response.data.data
                     });
                 }).catch(function (error) {
                     commit('setMsgModal', errorMessage);
