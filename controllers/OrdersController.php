@@ -241,6 +241,18 @@ class OrdersController
      */
     public function cancelOrder() 
     {
+        $ordersIds = explode(',', $_GET['order_id']);
+        
+        $orders = [];
+
+        foreach ($ordersIds as $order) {
+            $orders[] = [
+                'id' => $order,
+                'reason_id' => 2,
+                'description' => 'Cancelado pelo usuário'
+            ];
+        }
+
         $token = get_option('wpmelhorenvio_token');
 
         $params = array(
@@ -251,11 +263,7 @@ class OrdersController
             ],
             'timeout'=> 10,
             'method' => 'POST',
-            'body' => json_encode(['order' => [
-                'id' => $_GET['order_id'],
-                'reason_id' => 2,
-                'description' => 'Cancelado pelo usuário'
-            ]])
+            'body' => ['orders' => $orders]
         );
 
         $response =  json_decode(
@@ -424,8 +432,10 @@ class OrdersController
      */
     public function createTicket() 
     {
+        $orders = explode(',', $_GET['order_id']);
+
         $body = [
-            'orders' => [$_GET['order_id']],
+            'orders' => $orders,
             'mode' => 'public'
         ];
 
@@ -478,8 +488,10 @@ class OrdersController
     {
         $token = get_option('wpmelhorenvio_token');
 
+        $orders = explode(',', $_GET['order_id']);
+
         $body = [
-            'orders' => [$_GET['order_id']]
+            'orders' => $orders
         ];
 
         $params = array(
