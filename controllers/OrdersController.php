@@ -72,7 +72,7 @@ class OrdersController
             foreach ($products as $key => $item) {
                 unset($products[$key]['insurance_value']);
                 $products[$key]['quantity'] = $package['quantity'];
-                $insurance_value = $insurance_value + ($package['quantity'] * $item['unitary_value'] );
+                $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
             }
 
             $reminder = null;
