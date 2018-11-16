@@ -53,7 +53,6 @@ class PackageController
                     $volumes = count($item->packages);
                     $v = 1;
                     foreach ($item->packages as $package) {
-
                         $quantity = (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1;
                         $weight = (isset($package->weight)) ? $package->weight : null;
 

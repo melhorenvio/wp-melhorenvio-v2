@@ -71,9 +71,10 @@ class OrdersController
             $insurance_value = 0;
             foreach ($products as $key => $item) {
                 unset($products[$key]['insurance_value']);
-                $products[$key]['quantity'] = $package['quantity'];
-                $insurance_value = $insurance_value + ($package['quantity'] * $item['unitary_value'] );
+                $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
             }
+            
+            unset($package['insurnace_value']);
 
             $reminder = null;
             if (count($packages[$_GET['choosen']]) > 1) {
@@ -87,7 +88,7 @@ class OrdersController
                 'products' => $products,
                 'package' => $package,
                 'options' => [
-                    "insurance_value" => $insurance_value, 
+                    "insurance_value" => round($insurance_value, 2), 
                     "receipt" => false,
                     "own_hand" => false,
                     "collect" => false,
