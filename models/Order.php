@@ -82,7 +82,8 @@ class Order {
 
             $order = new Order($post->ID);
 
-            $dataMelhorEnvio = $order->getDataOrder();
+            $dataMelhorEnvio = $order->getDataOrder(); 
+
             $invoice = $order->getInvoice();
 
             $non_commercial = true;
@@ -134,23 +135,26 @@ class Order {
         $statusApi = $this->getStatusApi($orders);        
         foreach ($posts as $key => $post) {
 
-            if (array_key_exists($post['order_id'], $statusApi)) {
-                if ($post['status'] != $statusApi[$post['order_id']]) {
+            foreach ($post['order_id'] as $order_id) {
 
-                    $st = $statusApi[$post['order_id']];
-                    if ($st == 'released') {
-                        $st = 'paid';
-                    }
+                if (array_key_exists($order_id, $statusApi)) {
+                    if ($post['status'] != $statusApi[$order_id]) {
 
-                    if ($st == 'canceled') {
-                        $st = null;
+                        $st = $statusApi[$order_id];
+                        if ($st == 'released') {
+                            $st = 'paid';
+                        }
+
+                        if ($st == 'canceled') {
+                            $st = null;
+                        }
+                        $posts[$key]['status'] = $st;
+                        
                     }
-                    $posts[$key]['status'] = $st;
-                    
+                    continue;
                 }
-                continue;
+                $posts[$key]['status'] = null;
             }
-            $posts[$key]['status'] = null;
         }
         return $posts;
     }
@@ -273,6 +277,14 @@ class Order {
 
         if (empty($data) || !$data) {
             return $default;
+        }
+
+        if (!is_array($data['protocol'])) {
+            $data['protocol'] = (Array) $data['protocol'];
+        }
+
+        if (!is_array($data['order_id'])) {
+            $data['order_id'] = (Array) $data['order_id'];
         }
 
         return $data;
