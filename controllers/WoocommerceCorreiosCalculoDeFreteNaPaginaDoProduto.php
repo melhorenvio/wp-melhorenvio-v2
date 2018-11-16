@@ -33,7 +33,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     }
 
     public function enqueue_css_js_frontend() {
-        wp_enqueue_script( 'produto', plugins_url('wp-melhorenvio-v2/assets/js/shipping-product-page.js'), 'jquery');
+        wp_enqueue_script( 'produto', plugins_url('melhor-envio-beta/assets/js/shipping-product-page.js'), 'jquery');
     }
 
     public function run() {
@@ -128,12 +128,12 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <div class="calculo-de-frete">
                     <input class="iptCep" type="text" maxlength="9" onkeydown="return mascara(this, '#####-###');">
                     <div id="calcular-frete">
-                        <img src="<?php echo  plugins_url('wp-melhorenvio-v2/assets/img/truck.png') ?>" />
+                        <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/truck.png') ?>" />
                         <span>Calcular Frete</span>
                     </div>
                 </div>
                 <div id="calcular-frete-loader" style="display:none;">
-                    <img src="<?php echo  plugins_url('wp-melhorenvio-v2/assets/img/loader.gif') ?>" />
+                    <img src="<?php echo  plugins_url('melhor-envio-beta/assets/img/loader.gif') ?>" />
                 </div>
                 <div class="resultado-frete" style="display:none;">
                     <table>

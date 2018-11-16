@@ -223,30 +223,13 @@ const orders = {
                         commit('toggleModal', true)
                         return false
                     }
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-
-=======
-                    
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
->>>>>>> 9e7a746235ecfb1072b637a2870dd26956502477
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
                     commit('toggleModal', true)
                     commit('toggleLoader', false)
                     commit('addCart',{
                         id: data.id,
-<<<<<<< HEAD
-                        data: response.data.data
-=======
-<<<<<<< HEAD
-                        data: response.data.data
-=======
                         order_id: response.data.data.id,
                         protocol: response.data.data.protocol
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
->>>>>>> 9e7a746235ecfb1072b637a2870dd26956502477
                     })
 
                 }).catch(error => {
