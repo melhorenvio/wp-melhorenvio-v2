@@ -1,0 +1,21 @@
+_me-calc-processing( current-property, operation, fallback )
+    prop = current-property[ 0 ]
+    operation = unquote( operation )
+    if fallback
+        add-property( prop, fallback )
+    for prefix in caniuse-prefixes( "calc" )
+        add-property( prop, s( "-%s-calc(%s)", prefix, operation ) )
+    s( "calc(%s)", operation )
+
+me-calc( operation, fallback = false )
+    if current-property
+        _me-calc-processing( current-property, operation, fallback )
+    else
+        error( "me-calc() must be used within a property" )
+
+unless me-no-conflict
+    calc( operation, fallback = false )
+        if current-property
+            _me-calc-processing( current-property, operation, fallback )
+        else
+            error( "calc() must be used within a property" )

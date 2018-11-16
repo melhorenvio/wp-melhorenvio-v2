@@ -1,0 +1,102 @@
+.btn-border
+  cursor pointer
+  display inline-block
+  text-decoration none
+  background transparent
+  line-height 30px
+  font-size 12px
+  font-family 'Open Sans'
+  text-transform uppercase
+  color #0550a0
+  font-weight 400
+  padding 0 16px
+  border 1px solid #0550a0
+  border-radius 4px
+  transition all .5s
+
+  &.-green
+    color #2bc866
+    border-color #2bc866
+    &:hover
+      background-color #2bc866
+      color white
+
+  &.-blue
+    color #0550a0
+    border-color #0550a0
+    &:hover
+      background-color #0550a0
+      color white
+
+  &.-red
+    color #E7505A
+    border-color #E7505A
+    &:hover
+      background-color #E7505A
+      color white
+
+  &.-orange
+    color #fe9037
+    border-color #fe9037
+    &:hover
+      background-color #fe9037
+      color white
+
+  &.-full-green
+    background #2bc866
+    border-color #2bc866
+    color white
+    &:hover
+      background-color transparent
+      color #2bc866
+
+  &.-full-blue
+    background #0550a0
+    border-color #0550a0
+    color white
+    &:hover
+      background-color transparent
+      color #0550a0
+
+  &.-full-red
+    background #E7505A
+    border-color #E7505A
+    color white
+    &:hover
+      background-color transparent
+      color #E7505A
+
+  &.-full-orange
+    background #fe9037
+    border-color #fe9037
+    color white
+    &:hover
+      background-color transparent
+      color #fe9037
+
+  &.-big
+    line-height 33px
+    padding 0 32px
+    border-radius 4px
+    font-size 14px
+    border-width 2px
+
+  &.-disabled
+  &:disabled
+    background-color #c8cdda
+    border-color #c8cdda
+    cursor default
+    color #3b3f51
+    &:hover
+      background-color #c8cdda
+      border-color #c8cdda
+
+.btn-box
+  margin-bottom 20px
+  clear fix
+  &.-center
+    text-align center
+  .-left
+    float left
+  .-right
+    float right

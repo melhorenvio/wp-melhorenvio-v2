@@ -1,0 +1,121 @@
+_me-support-old-flex-implementation()
+    return me-support-safari <= 6 or me-support-android-browser <= 4.3 or me-support-chrome <= 20 or me-support-ios-safari <= 6.1 or me-support-blackberry-browser <= 7
+
+me-display( value, args... )
+    if value == flex
+        if me-vendors-prefixes isnt false and !( flex in me-support-ignore-features ) and !( flexbox in me-support-ignore-features )
+            if _me-support-old-flex-implementation()
+                display: -webkit-box args
+            for prefix in caniuse-prefixes( "flexbox" )
+                if prefix is "webkit"
+                    display: -webkit-flex args
+                if prefix is "moz"
+                    display: -moz-box args
+                if prefix is "ms"
+                    display: -ms-flexbox args
+        display: flex args
+    else if value == inline-flex
+        if me-vendors-prefixes isnt false and !( flex in me-support-ignore-features ) and !( flexbox in me-support-ignore-features )
+            for prefix in caniuse-prefixes( "flexbox" )
+                display: unquote( "-" + prefix + "-inline-flex" ) args
+        display: inline-flex args
+    else
+        display: value args
+
+display = me-display unless me-no-conflict
+
+unless me-no-conflict
+    flex-grow()
+        me-vendor( "flex-grow", arguments, feature: "flexbox" )
+
+    flex-basis()
+        me-vendor( "flex-basis", arguments, feature: "flexbox" )
+
+    flex-direction( value, args... )
+        if me-vendors-prefixes isnt false and !( flex in me-support-ignore-features ) and !( flexbox in me-support-ignore-features )
+            if _me-support-old-flex-implementation()
+                if value is row
+                    -webkit-box-orient: vertical args
+                    -webkit-box-direction: normal args
+                if value is row-reverse
+                    -webkit-box-orient: vertical args
+                    -webkit-box-direction: reverse args
+                if value is column
+                    -webkit-box-orient: horizontal args
+                    -webkit-box-direction: normal args
+                if value is column-reverse
+                    -webkit-box-orient: horizontal args
+                    -webkit-box-direction: reverse args
+            for prefix in caniuse-prefixes( "flexbox" )
+                if prefix is "moz" and me-support-firefox <= 20
+                    if value is row
+                        -moz-box-orient: vertical args
+                        -moz-box-direction: normal args
+                    if value is row-reverse
+                        -moz-box-orient: vertical args
+                        -moz-box-direction: reverse args
+                    if value is column
+                        -moz-box-orient: horizontal args
+                        -moz-box-direction: normal args
+                    if value is column-reverse
+                        -moz-box-orient: horizontal args
+                        -moz-box-direction: reverse args
+                else
+                    if value is row
+                        -{prefix}-flex-direction: unquote( "row" ) args
+                    else if value is column
+                        -{prefix}-flex-direction: unquote( "column" ) args
+                    else
+                        -{prefix}-flex-direction: value args
+        if value is row
+            flex-direction: unquote( "row" ) args
+        else if value is column
+            flex-direction: unquote( "column" ) args
+        else
+            flex-direction: value args
+
+    flex-flow( dir, wrap-type, args... )
+        if dir is row
+            dir = unquote( "row" )
+        if dir is column
+            dir = unquote( "column" )
+        if me-vendors-prefixes isnt false and !( flex in me-support-ignore-features ) and !( flexbox in me-support-ignore-features )
+            for prefix in caniuse-prefixes( "flexbox" )
+                -{prefix}-flex-flow: dir wrap-type args
+        flex-flow: dir wrap-type args
+
+    flex-shrink()
+        me-vendor( "flex-shrink", arguments, feature: "flexbox" )
+
+    flex-wrap()
+        me-vendor( "flex-wrap", arguments, feature: "flexbox" )
+
+    flex()
+        me-vendor( "flex", arguments, feature: "flexbox" )
+
+    align-content()
+        me-vendor( "align-content", arguments, feature: "flexbox" )
+
+    align-items( value, args... )
+        if me-vendors-prefixes isnt false and !( flex in me-support-ignore-features ) and !( flexbox in me-support-ignore-features )
+            if _me-support-old-flex-implementation()
+                if value is flex-start
+                    -webkit-box-align: start args
+                else if value is flex-end
+                    -webkit-box-align: end args
+                else
+                    -webkit-box-align: value args
+            for prefix in caniuse-prefixes( "flexbox" )
+                if prefix is "moz" and me-support-firefox <= 20
+                    if value is flex-start
+                        -moz-box-align: start args
+                    else if value is flex-end
+                        -moz-box-align: end args
+                    else
+                        -moz-box-align: value args
+                else
+                    -{prefix}-align-items: value args
+        align-items: value args
+
+    align-self()
+        me-vendor( "align-self", arguments, feature: "flexbox" )
