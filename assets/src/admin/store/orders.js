@@ -65,8 +65,13 @@ const orders = {
                 }
             })
             order.content.status = 'pending'
+<<<<<<< HEAD
             order.content.order_id = data.data.order_id
             order.content.protocol = data.data.protocol
+=======
+            order.content.order_id = data.order_id
+            order.content.protocol = data.protocol
+>>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
             state.orders.splice(order.position, 1, order.content)
         },
         payTicket: (state, data) => {
@@ -223,13 +228,22 @@ const orders = {
                         commit('toggleModal', true)
                         return false
                     }
+<<<<<<< HEAD
 
+=======
+                    
+>>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
                     commit('toggleModal', true)
                     commit('toggleLoader', false)
                     commit('addCart',{
                         id: data.id,
+<<<<<<< HEAD
                         data: response.data.data
+=======
+                        order_id: response.data.data.id,
+                        protocol: response.data.data.protocol
+>>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
                     })
 
                 }).catch(error => {

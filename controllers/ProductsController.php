@@ -28,7 +28,10 @@ class ProductsController
                 "length" => $_product->length
             ];
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
         return $products;
     }
 
