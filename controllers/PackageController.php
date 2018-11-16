@@ -71,7 +71,6 @@ class PackageController
                 }
             }
         }
-
         return $packages;
     }
 
