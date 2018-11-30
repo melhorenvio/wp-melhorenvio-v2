@@ -1,6 +1,6 @@
 
-node_modules
-vendor
+./node_modules
+./vendor
 *.log
 wp-config.php
 wp-content/advanced-cache.php
