@@ -98,7 +98,7 @@ class Order {
             }
 
             $data[] =  [
-                'id' => $order->id,
+                'id' => (int) $order->id,
                 'total' => 'R$' . number_format($order->total, 2, ',', '.'),
                 'products' => $order->getProducts(),
                 'cotation' => $cotation ,
@@ -126,6 +126,44 @@ class Order {
         ];
 
         return $response;
+    }
+
+    // TODO refator para usar esse "getOne" na função acima.
+    public function getOne($id)
+    {
+        $order = new Order($id);
+
+        $dataMelhorEnvio = $order->getDataOrder(); 
+
+        $cotation = $order->getCotation();
+
+        $invoice = $order->getInvoice();
+
+        $non_commercial = true;
+        if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
+            $non_commercial = false;
+        }
+        
+        if (!is_null($dataMelhorEnvio['order_id'])) {
+            $orders[] = $dataMelhorEnvio['order_id'];
+        }
+
+        $data =  [
+            'id' => $order->id,
+            'total' => 'R$' . number_format($order->total, 2, ',', '.'),
+            'products' => $order->getProducts(),
+            'cotation' => $cotation ,
+            'address' => $order->address,
+            'to' => $order->to,
+            'status' => 'pending',
+            'order_id' => $dataMelhorEnvio['order_id'],
+            'protocol' => $dataMelhorEnvio['protocol'],
+            'non_commercial' => $non_commercial,
+            'invoice' => $invoice,
+            'packages' => $order->mountPackage($cotation)
+        ];
+
+        return $data;
     }
 
     private function mountPackage($cotation)
@@ -157,7 +195,10 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        $statusApi = $this->getStatusApi($orders);        
+        //63ef5eff-095d-484a-a8e2-b28b55173b77
+
+        $statusApi = $this->getStatusApi($orders);   
+
         foreach ($posts as $key => $post) {
 
             foreach ($post['order_id'] as $order_id) {
@@ -218,7 +259,9 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
-        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
+        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2');
+
+        $cotation = end($cotation);
 
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
@@ -359,9 +402,17 @@ class Order {
      */
     private function getStatusApi($orders) 
     {
+
+        $arrayOrders = [];
+        foreach ($orders as $items) {
+            foreach($items as $order){
+                $arrayOrders[] = $order;
+            }
+        }
+
         if ($token = get_option('wpmelhorenvio_token')) {
             $body = [
-                "orders" => $orders
+                "orders" => $arrayOrders
             ];
     
             $params = array(

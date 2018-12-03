@@ -444,7 +444,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_modal: 'showModal',
         show_more: 'showMore'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'refreshCotation', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -1595,7 +1595,40 @@ var render = function() {
                                         ]
                                       )
                                     ])
-                                  ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _vm.buttonCartShow(
+                                    item.cotation.choose_method,
+                                    item.non_commercial,
+                                    item.invoice.number,
+                                    item.invoice.key,
+                                    item.status
+                                  )
+                                    ? _c(
+                                        "a",
+                                        {
+                                          staticClass:
+                                            "action-button -adicionar",
+                                          attrs: {
+                                            href: "javascript:;",
+                                            "data-tip": "Recalcular"
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.refreshCotation({
+                                                id: item.id,
+                                                order_id: item.order_id
+                                              })
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    Recalcular\n                                "
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e()
                                 ]
                               : _vm._l(item.protocol, function(
                                   prot,
@@ -3458,8 +3491,24 @@ var orders = {
                 }
             });
             order.content.status = 'pending';
-            order.content.order_id = data.data.order_id;
-            order.content.protocol = data.data.protocol;
+            order.content.order_id = data.order_id;
+            order.content.protocol = data.protocol;
+            state.orders.splice(order.position, 1, order.content);
+        },
+        refreshCotation: function refreshCotation(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id == data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content = data;
+            order.content.status = null;
+            order.content.protocol = null;
+            order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content);
         },
         payTicket: function payTicket(state, data) {
@@ -3635,21 +3684,36 @@ var orders = {
                         commit('toggleModal', true);
                         return false;
                     }
+
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
                     commit('toggleModal', true);
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        order_id: response.data.data.id,
+                        order_id: response.data.data.order_id,
                         protocol: response.data.data.protocol
                     });
                 }).catch(function (error) {
-                    commit('setMsgModal', errorMessage);
+                    commit('setMsgModal', error.message);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
                 });
             }
+        },
+        refreshCotation: function refreshCotation(context, data) {
+            context.commit('toggleLoader', true);
+            _axios2.default.post(ajaxurl + '?action=update_order&id=' + data.id + '&order_id=' + data.order_id).then(function (response) {
+                context.commit('toggleLoader', false);
+                context.commit('setMsgModal', 'Item #' + data.id + ' atualizado');
+                context.commit('toggleModal', true);
+                context.commit('refreshCotation', response.data);
+            }).catch(function (error) {
+                context.commit('setMsgModal', error.message);
+                context.commit('toggleLoader', false);
+                context.commit('toggleModal', true);
+                return false;
+            });
         },
         removeCart: function removeCart(context, data) {
             context.commit('toggleLoader', true);
@@ -3688,7 +3752,6 @@ var orders = {
 
                 context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado');
                 context.commit('toggleModal', true);
-
                 context.commit('cancelCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
