@@ -421,6 +421,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -1455,6 +1460,38 @@ var render = function() {
                               ? [
                                   _c("div", { staticClass: "me-form" }, [
                                     _c("div", { staticClass: "formBox" }, [
+                                      _c("label", [_vm._v("Pacote")]),
+                                      _vm._v(" "),
+                                      _c("p", [
+                                        _vm._v(
+                                          "\n                                            " +
+                                            _vm._s(
+                                              item.packages[
+                                                item.cotation.choose_method
+                                              ].altura
+                                            ) +
+                                            "cm A x \n                                            " +
+                                            _vm._s(
+                                              item.packages[
+                                                item.cotation.choose_method
+                                              ].largura
+                                            ) +
+                                            "cm L x \n                                            " +
+                                            _vm._s(
+                                              item.packages[
+                                                item.cotation.choose_method
+                                              ].comprimento
+                                            ) +
+                                            "cm C - \n                                            " +
+                                            _vm._s(
+                                              item.packages[
+                                                item.cotation.choose_method
+                                              ].peso
+                                            ) +
+                                            "Kg\n                                        "
+                                        )
+                                      ]),
+                                      _vm._v(" "),
                                       _c("label", [_vm._v("Métodos de envio")]),
                                       _vm._v(" "),
                                       _c(
@@ -3598,13 +3635,13 @@ var orders = {
                         commit('toggleModal', true);
                         return false;
                     }
-
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
                     commit('toggleModal', true);
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        data: response.data.data
+                        order_id: response.data.data.id,
+                        protocol: response.data.data.protocol
                     });
                 }).catch(function (error) {
                     commit('setMsgModal', errorMessage);
