@@ -84,6 +84,8 @@ class Order {
 
             $dataMelhorEnvio = $order->getDataOrder(); 
 
+            $cotation = $order->getCotation();
+
             $invoice = $order->getInvoice();
 
             $non_commercial = true;
@@ -99,14 +101,15 @@ class Order {
                 'id' => $order->id,
                 'total' => 'R$' . number_format($order->total, 2, ',', '.'),
                 'products' => $order->getProducts(),
-                'cotation' => $order->getCotation(),
+                'cotation' => $cotation ,
                 'address' => $order->address,
                 'to' => $order->to,
                 'status' => $dataMelhorEnvio['status'],
                 'order_id' => $dataMelhorEnvio['order_id'],
                 'protocol' => $dataMelhorEnvio['protocol'],
                 'non_commercial' => $non_commercial,
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'packages' => $order->mountPackage($cotation)
             ];
         }
 
@@ -121,6 +124,28 @@ class Order {
             'orders' => $data,
             'load' => $load
         ];
+
+        return $response;
+    }
+
+    private function mountPackage($cotation)
+    {
+        $response = null;
+        foreach($cotation as $item){
+
+            if(is_null($item->id)) {
+                continue;
+            }
+
+            foreach($item->packages as $key => $package) {
+                $response[$item->id] = (object) [
+                    'largura' => $package->dimensions->width,
+                    'altura' => $package->dimensions->height,
+                    'comprimento' => $package->dimensions->length,
+                    'peso' => $package->weight
+                ];
+            }
+        }
 
         return $response;
     }

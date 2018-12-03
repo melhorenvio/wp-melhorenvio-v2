@@ -66,14 +66,19 @@
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
                                     {{item.to.email}} <br>
                                     {{item.to.phone}} <br>
-                                    <!-- {{item.to.address_1}} {{item.to.number}} {{item.to.address_2}} <br>
-                                    {{item.to.city}} / {{item.to.state}} - {{item.to.postcode}} <br> -->
                                 </span>
                             </li>
                             <li>
                                 <template v-if="!item.order_id">
                                     <div  class="me-form">
                                         <div class="formBox">
+                                            <label>Pacote</label>
+                                            <p>
+                                                {{ item.packages[item.cotation.choose_method].altura }}cm A x 
+                                                {{ item.packages[item.cotation.choose_method].largura }}cm L x 
+                                                {{ item.packages[item.cotation.choose_method].comprimento }}cm C - 
+                                                {{ item.packages[item.cotation.choose_method].peso }}Kg
+                                            </p>
                                             <label>Métodos de envio</label>
                                             <fieldset class="selectLine">
                                                 <div class="inputBox">
