@@ -3598,13 +3598,13 @@ var orders = {
                         commit('toggleModal', true);
                         return false;
                     }
-
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
                     commit('toggleModal', true);
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        data: response.data.data
+                        order_id: response.data.data.id,
+                        protocol: response.data.data.protocol
                     });
                 }).catch(function (error) {
                     commit('setMsgModal', errorMessage);
