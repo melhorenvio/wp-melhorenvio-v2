@@ -39,7 +39,9 @@ class PackageController
      */
     public function getPackageOrderAfterCotation($order_id) 
     {
-        $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
+        $data = get_post_meta($order_id, 'melhorenvio_cotation_v2');
+
+        $data = end($data);
 
         $packages = [];
         if (is_array($data)) {

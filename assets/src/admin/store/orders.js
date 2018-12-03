@@ -65,8 +65,24 @@ const orders = {
                 }
             })
             order.content.status = 'pending'
-            order.content.order_id = data.data.order_id
-            order.content.protocol = data.data.protocol
+            order.content.order_id = data.order_id
+            order.content.protocol = data.protocol
+            state.orders.splice(order.position, 1, order.content)
+        },
+        refreshCotation: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id == data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+            order.content = data
+            order.content.status = null;
+            order.content.protocol = null;
+            order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content)
         },
         payTicket: (state, data) => {
@@ -223,22 +239,38 @@ const orders = {
                         commit('toggleModal', true)
                         return false
                     }
+
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
                     commit('toggleModal', true)
                     commit('toggleLoader', false)
                     commit('addCart',{
                         id: data.id,
-                        order_id: response.data.data.id,
+                        order_id: response.data.data.order_id,
                         protocol: response.data.data.protocol
                     })
 
                 }).catch(error => {
-                    commit('setMsgModal', errorMessage)
+                    commit('setMsgModal', error.message)
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false
                 })
             }
+        },
+        refreshCotation: (context, data) => {
+            context.commit('toggleLoader', true)
+            Axios.post(`${ajaxurl}?action=update_order&id=${data.id}&order_id=${data.order_id}`).then(response => {
+                context.commit('toggleLoader', false)
+                context.commit('setMsgModal', 'Item #' + data.id + ' atualizado')
+                context.commit('toggleModal', true)
+                context.commit('refreshCotation', response.data)
+            }).catch(error => {
+                context.commit('setMsgModal', error.message)
+                context.commit('toggleLoader', false)
+                context.commit('toggleModal', true)
+                return false
+            })
+
         },
         removeCart: (context, data) => {    
             context.commit('toggleLoader', true) 
@@ -278,7 +310,6 @@ const orders = {
 
                 context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado')
                 context.commit('toggleModal', true)
-
                 context.commit('cancelCart', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('toggleLoader', false) 

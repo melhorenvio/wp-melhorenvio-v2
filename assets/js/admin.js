@@ -421,6 +421,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -439,7 +446,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_modal: 'showModal',
         show_more: 'showMore'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'refreshCotation', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -1454,111 +1461,194 @@ var render = function() {
                             !item.order_id
                               ? [
                                   _c("div", { staticClass: "me-form" }, [
-                                    _c("div", { staticClass: "formBox" }, [
-                                      _c("label", [_vm._v("Métodos de envio")]),
-                                      _vm._v(" "),
-                                      _c(
-                                        "fieldset",
-                                        { staticClass: "selectLine" },
-                                        [
-                                          _c(
-                                            "div",
-                                            { staticClass: "inputBox" },
-                                            [
-                                              !(
-                                                item.status == "paid" ||
-                                                item.status == "printed" ||
-                                                item.status == "generated"
-                                              )
-                                                ? _c(
-                                                    "select",
-                                                    {
-                                                      directives: [
-                                                        {
-                                                          name: "model",
-                                                          rawName: "v-model",
-                                                          value:
-                                                            item.cotation
-                                                              .choose_method,
-                                                          expression:
-                                                            "item.cotation.choose_method"
-                                                        }
-                                                      ],
-                                                      on: {
-                                                        change: function(
-                                                          $event
-                                                        ) {
-                                                          var $$selectedVal = Array.prototype.filter
-                                                            .call(
-                                                              $event.target
-                                                                .options,
-                                                              function(o) {
-                                                                return o.selected
-                                                              }
-                                                            )
-                                                            .map(function(o) {
-                                                              var val =
-                                                                "_value" in o
-                                                                  ? o._value
-                                                                  : o.value
-                                                              return val
-                                                            })
-                                                          _vm.$set(
-                                                            item.cotation,
-                                                            "choose_method",
-                                                            $event.target
-                                                              .multiple
-                                                              ? $$selectedVal
-                                                              : $$selectedVal[0]
-                                                          )
-                                                        }
-                                                      }
-                                                    },
-                                                    _vm._l(
-                                                      item.cotation,
-                                                      function(option) {
-                                                        return option.id &&
-                                                          option.price
-                                                          ? _c(
-                                                              "option",
-                                                              {
-                                                                key: option.id,
-                                                                domProps: {
-                                                                  value:
-                                                                    option.id
-                                                                }
-                                                              },
-                                                              [
-                                                                _vm._v(
-                                                                  "\n                                                        " +
-                                                                    _vm._s(
-                                                                      option
-                                                                        .company
-                                                                        .name
-                                                                    ) +
-                                                                    " " +
-                                                                    _vm._s(
-                                                                      option.name
-                                                                    ) +
-                                                                    " (R$" +
-                                                                    _vm._s(
-                                                                      option.price
-                                                                    ) +
-                                                                    ") \n                                                    "
-                                                                )
-                                                              ]
-                                                            )
-                                                          : _vm._e()
-                                                      }
-                                                    )
-                                                  )
-                                                : _vm._e()
+                                    _c(
+                                      "div",
+                                      { staticClass: "formBox" },
+                                      [
+                                        item.packages[
+                                          item.cotation.choose_method
+                                        ]
+                                          ? [
+                                              _c("label", [_vm._v("Pacote")]),
+                                              _vm._v(" "),
+                                              _c("p", [
+                                                _vm._v(
+                                                  "\n                                                " +
+                                                    _vm._s(
+                                                      item.packages[
+                                                        item.cotation
+                                                          .choose_method
+                                                      ].altura
+                                                    ) +
+                                                    "cm A x \n                                                " +
+                                                    _vm._s(
+                                                      item.packages[
+                                                        item.cotation
+                                                          .choose_method
+                                                      ].largura
+                                                    ) +
+                                                    "cm L x \n                                                " +
+                                                    _vm._s(
+                                                      item.packages[
+                                                        item.cotation
+                                                          .choose_method
+                                                      ].comprimento
+                                                    ) +
+                                                    "cm C - \n                                                " +
+                                                    _vm._s(
+                                                      item.packages[
+                                                        item.cotation
+                                                          .choose_method
+                                                      ].peso
+                                                    ) +
+                                                    "Kg\n                                            "
+                                                )
+                                              ])
                                             ]
+                                          : _vm._e(),
+                                        _vm._v(" "),
+                                        _c("label", [
+                                          _vm._v("Métodos de envio")
+                                        ]),
+                                        _vm._v(" "),
+                                        _c(
+                                          "fieldset",
+                                          { staticClass: "selectLine" },
+                                          [
+                                            _c(
+                                              "div",
+                                              { staticClass: "inputBox" },
+                                              [
+                                                !(
+                                                  item.status == "paid" ||
+                                                  item.status == "printed" ||
+                                                  item.status == "generated"
+                                                )
+                                                  ? _c(
+                                                      "select",
+                                                      {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              item.cotation
+                                                                .choose_method,
+                                                            expression:
+                                                              "item.cotation.choose_method"
+                                                          }
+                                                        ],
+                                                        on: {
+                                                          change: function(
+                                                            $event
+                                                          ) {
+                                                            var $$selectedVal = Array.prototype.filter
+                                                              .call(
+                                                                $event.target
+                                                                  .options,
+                                                                function(o) {
+                                                                  return o.selected
+                                                                }
+                                                              )
+                                                              .map(function(o) {
+                                                                var val =
+                                                                  "_value" in o
+                                                                    ? o._value
+                                                                    : o.value
+                                                                return val
+                                                              })
+                                                            _vm.$set(
+                                                              item.cotation,
+                                                              "choose_method",
+                                                              $event.target
+                                                                .multiple
+                                                                ? $$selectedVal
+                                                                : $$selectedVal[0]
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      _vm._l(
+                                                        item.cotation,
+                                                        function(option) {
+                                                          return option.id &&
+                                                            option.price
+                                                            ? _c(
+                                                                "option",
+                                                                {
+                                                                  key:
+                                                                    option.id,
+                                                                  domProps: {
+                                                                    value:
+                                                                      option.id
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _vm._v(
+                                                                    "\n                                                        " +
+                                                                      _vm._s(
+                                                                        option
+                                                                          .company
+                                                                          .name
+                                                                      ) +
+                                                                      " " +
+                                                                      _vm._s(
+                                                                        option.name
+                                                                      ) +
+                                                                      " (R$" +
+                                                                      _vm._s(
+                                                                        option.price
+                                                                      ) +
+                                                                      ") \n                                                    "
+                                                                  )
+                                                                ]
+                                                              )
+                                                            : _vm._e()
+                                                        }
+                                                      )
+                                                    )
+                                                  : _vm._e()
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ],
+                                      2
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _vm.buttonCartShow(
+                                    item.cotation.choose_method,
+                                    item.non_commercial,
+                                    item.invoice.number,
+                                    item.invoice.key,
+                                    item.status
+                                  )
+                                    ? _c(
+                                        "a",
+                                        {
+                                          staticClass:
+                                            "action-button -adicionar",
+                                          attrs: {
+                                            href: "javascript:;",
+                                            "data-tip": "Recalcular"
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.refreshCotation({
+                                                id: item.id,
+                                                order_id: item.order_id
+                                              })
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    Recalcular\n                                "
                                           )
                                         ]
                                       )
-                                    ])
-                                  ])
+                                    : _vm._e()
                                 ]
                               : _vm._l(item.protocol, function(
                                   prot,
@@ -3421,8 +3511,24 @@ var orders = {
                 }
             });
             order.content.status = 'pending';
-            order.content.order_id = data.data.order_id;
-            order.content.protocol = data.data.protocol;
+            order.content.order_id = data.order_id;
+            order.content.protocol = data.protocol;
+            state.orders.splice(order.position, 1, order.content);
+        },
+        refreshCotation: function refreshCotation(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id == data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+            order.content = data;
+            order.content.status = null;
+            order.content.protocol = null;
+            order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content);
         },
         payTicket: function payTicket(state, data) {
@@ -3604,15 +3710,30 @@ var orders = {
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        data: response.data.data
+                        order_id: response.data.data.order_id,
+                        protocol: response.data.data.protocol
                     });
                 }).catch(function (error) {
-                    commit('setMsgModal', errorMessage);
+                    commit('setMsgModal', error.message);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
                 });
             }
+        },
+        refreshCotation: function refreshCotation(context, data) {
+            context.commit('toggleLoader', true);
+            _axios2.default.post(ajaxurl + '?action=update_order&id=' + data.id + '&order_id=' + data.order_id).then(function (response) {
+                context.commit('toggleLoader', false);
+                context.commit('setMsgModal', 'Item #' + data.id + ' atualizado');
+                context.commit('toggleModal', true);
+                context.commit('refreshCotation', response.data);
+            }).catch(function (error) {
+                context.commit('setMsgModal', error.message);
+                context.commit('toggleLoader', false);
+                context.commit('toggleModal', true);
+                return false;
+            });
         },
         removeCart: function removeCart(context, data) {
             context.commit('toggleLoader', true);
@@ -3651,7 +3772,6 @@ var orders = {
 
                 context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado');
                 context.commit('toggleModal', true);
-
                 context.commit('cancelCart', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('toggleLoader', false);
