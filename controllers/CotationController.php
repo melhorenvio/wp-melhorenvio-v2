@@ -8,6 +8,8 @@ use Controllers\ProductsController;
 use Controllers\TimeController;
 use Controllers\MoneyController;
 use Controllers\LogsController;
+use Controllers\OrdersController;
+use Models\Order;
 
 class CotationController 
 {
@@ -108,6 +110,21 @@ class CotationController
             }
         }
         return $prefix;
+    }
+
+    public function refreshCotation()
+    {
+        $order_id = $_GET['id'];
+        $this->makeCotationOrder($order_id);
+        
+        $order = (new OrdersController())->get($order_id);
+
+        if (!$order) {
+            return null;
+        }
+
+        echo json_encode($order);
+        die;
     }
 
     /**

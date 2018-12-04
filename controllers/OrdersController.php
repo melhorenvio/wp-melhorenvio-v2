@@ -12,6 +12,11 @@ class OrdersController
 {
     const URL = 'https://api.melhorenvio.com';
 
+    public function get($id)
+    {
+        return Order::getOne($id);
+    }
+
     /**
      * @return void
      */
