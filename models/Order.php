@@ -218,22 +218,15 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
-        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
+        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2');
+
+        $cotation = end($cotation);
 
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
-        if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
-    
+        if (!$cotation or empty($cotation) or is_null($cotation) or  $cotation['date_cotation'] <= $end_date) {
             $cotation = (new CotationController())->makeCotationOrder($this->id);
-
-            if ($cotation['choose_method'] == 0) {
-                $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
-            }
             return $cotation;
-        }
-
-        if ($cotation['choose_method'] == 0) {
-            $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
         }
 
         return $cotation;

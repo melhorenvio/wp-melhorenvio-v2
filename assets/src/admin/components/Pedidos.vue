@@ -72,13 +72,15 @@
                                 <template v-if="!item.order_id">
                                     <div  class="me-form">
                                         <div class="formBox">
-                                            <label>Pacote</label>
-                                            <p>
-                                                {{ item.packages[item.cotation.choose_method].altura }}cm A x 
-                                                {{ item.packages[item.cotation.choose_method].largura }}cm L x 
-                                                {{ item.packages[item.cotation.choose_method].comprimento }}cm C - 
-                                                {{ item.packages[item.cotation.choose_method].peso }}Kg
-                                            </p>
+                                            <template v-if="item.packages[item.cotation.choose_method]">
+                                                <label>Pacote</label>
+                                                <p>
+                                                    {{ item.packages[item.cotation.choose_method].altura }}cm A x 
+                                                    {{ item.packages[item.cotation.choose_method].largura }}cm L x 
+                                                    {{ item.packages[item.cotation.choose_method].comprimento }}cm C - 
+                                                    {{ item.packages[item.cotation.choose_method].peso }}Kg
+                                                </p>
+                                                </template>
                                             <label>Métodos de envio</label>
                                             <fieldset class="selectLine">
                                                 <div class="inputBox">
