@@ -69,7 +69,7 @@
                                 </span>
                             </li>
                             <li>
-                                <template v-if="!item.order_id">
+                                <template v-if="!item.order_id && item.cotation != false">
                                     <div  class="me-form">
                                         <div class="formBox">
                                             <template v-if="item.packages[item.cotation.choose_method]">
@@ -93,7 +93,7 @@
                                             </fieldset>
                                         </div>
                                     </div>
-                                    <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status)" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                    <a v-if="!item.order_id" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
                                         Recalcular
                                     </a>
                                 </template>

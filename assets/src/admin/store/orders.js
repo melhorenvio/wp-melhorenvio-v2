@@ -201,7 +201,15 @@ const orders = {
                     commit('loadMore', response.data.orders)
                     commit('toggleMore', response.data.load)
                     commit('toggleLoader', false)
+                    return true;
                 }
+
+                if (response && response.status === 500) {
+                    commit('toggleMore', false);
+                    commit('toggleLoader', false)
+                    return false;
+                }
+
             }).catch(error => {
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)

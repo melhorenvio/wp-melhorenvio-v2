@@ -31,7 +31,11 @@ class CotationController
         global $woocommerce;
 
         $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
-
+        if (!$to) {
+            $order = new \WC_Order($order_id);
+            $to = str_replace('-', '', $order->get_shipping_postcode());
+        }
+    
         $products = (new ProductsController())->getProductsOrder($order_id);
 
         $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
