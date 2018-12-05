@@ -81,19 +81,27 @@
                                                     {{ item.packages[item.cotation.choose_method].peso }}Kg
                                                 </p>
                                             </template>
-                                            <label>Métodos de envio</label>
-                                            <fieldset class="selectLine">
-                                                <div class="inputBox">
-                                                    <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
-                                                        <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
-                                                            {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </fieldset>
+                                            <label>Métodos de envio</label> 
+                                            <template v-if="item.cotation.choose_method == null">
+                                                </br>
+                                                <small>Cliente não utilizou Melhor Envio</small>
+                                            </template>
+
+                                            <!-- TODO -->
+                                            <template v-if="item.packages[item.cotation.choose_method]">
+                                                <fieldset  class="selectLine">
+                                                    <div class="inputBox">
+                                                        <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
+                                                            <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
+                                                                {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </fieldset>
+                                            </template>
                                         </div>
                                     </div>
-                                    <a v-if="!item.order_id" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                    <a v-if="!item.order_id && item.cotation.choose_method != null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
                                         Recalcular
                                     </a>
                                 </template>

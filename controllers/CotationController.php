@@ -328,7 +328,7 @@ class CotationController
         return array_unique($methods);
     }
 
-        /**
+    /**
      * @return void
      */
     public function getCodeMelhorEnvioShippingMethod($method_id) 
@@ -342,7 +342,7 @@ class CotationController
             }
         }
         //TODO Rever caso nao tenha cotacao selecionada
-        return 3;
+        return null;
     }
 
     /**
