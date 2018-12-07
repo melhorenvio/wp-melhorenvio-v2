@@ -39,11 +39,10 @@ class PackageController
      */
     public function getPackageOrderAfterCotation($order_id) 
     {
-        $data = get_post_meta($order_id, 'melhorenvio_cotation_v2', true);
-<<<<<<< HEAD
+        $data = get_post_meta($order_id, 'melhorenvio_cotation_v2');
 
-=======
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
+        $data = end($data);
+
         $packages = [];
         if (is_array($data)) {
             foreach ($data as $item) {
@@ -52,7 +51,6 @@ class PackageController
                 }
                 if(!empty($item->packages)) {
 
-<<<<<<< HEAD
                     $total = $this->countTotalvolumes($item->packages);
                     $volumes = count($item->packages);
                     $v = 1;
@@ -71,26 +69,10 @@ class PackageController
                         ];
 
                         $v++;
-=======
-                    foreach ($item->packages as $package) {
-
-                        if($package->format != 'box'){
-                            continue;
-                        }
-
-                        $packages[] = [
-                            'width'  => (isset($package->dimensions->width)) ? $package->dimensions->width : null,
-                            'height' => (isset($package->dimensions->height)) ? $package->dimensions->height : null,
-                            'length' => (isset($package->dimensions->length)) ? $package->dimensions->length : null,
-                            'weight' => (isset($package->weight)) ? $package->weight : null,
-                            'quantity' => (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1
-                        ];
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
                     }
                 }
             }
         }
-<<<<<<< HEAD
         return $packages;
     }
 
@@ -115,10 +97,6 @@ class PackageController
     {
         $unit = $value / $total;
         return $unit * $quantity;
-=======
-
-        return $packages;
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
     }
 
     /**

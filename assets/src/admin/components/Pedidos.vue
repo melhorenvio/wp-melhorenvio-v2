@@ -66,36 +66,54 @@
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
                                     {{item.to.email}} <br>
                                     {{item.to.phone}} <br>
-                                    <!-- {{item.to.address_1}} {{item.to.number}} {{item.to.address_2}} <br>
-                                    {{item.to.city}} / {{item.to.state}} - {{item.to.postcode}} <br> -->
                                 </span>
                             </li>
                             <li>
-                                <template v-if="!item.order_id">
+                                <template v-if="!item.order_id && item.cotation != false">
                                     <div  class="me-form">
                                         <div class="formBox">
-                                            <label>Métodos de envio</label>
-                                            <fieldset class="selectLine">
-                                                <div class="inputBox">
-                                                    <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
-                                                        <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
-                                                            {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </fieldset>
+                                            <template v-if="item.packages && item.packages[item.cotation.choose_method] && item.cotation &&  item.cotation[item.cotation.choose_method]">
+                                                <label>Pacote</label>
+                                                <p>
+                                                    {{ item.packages[item.cotation.choose_method].altura }}cm A x 
+                                                    {{ item.packages[item.cotation.choose_method].largura }}cm L x 
+                                                    {{ item.packages[item.cotation.choose_method].comprimento }}cm C - 
+                                                    {{ item.packages[item.cotation.choose_method].peso }}Kg
+                                                </p>
+                                            </template>
+
+                                            <template v-if="item.cotation.choose_method == null">
+                                                </br>
+                                                <small>Cliente não utilizou Melhor Envio</small>
+                                            </template>
+                                            
+                                            <label>Métodos de envio</label> 
+
+                                            <!-- TODO -->
+                                            <template v-if="item.cotation[item.cotation.choose_method]">
+                                                <fieldset  class="selectLine">
+                                                    <div class="inputBox">
+                                                        <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
+                                                            <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
+                                                                {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </fieldset>
+                                            </template>
                                         </div>
                                     </div>
+                                    <a v-if="!item.order_id && item.cotation.choose_method != null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                        Recalcular
+                                    </a>
                                 </template>
+
                                 <template v-else>
-<<<<<<< HEAD
                                     <span v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
                                         {{ prot }}
                                     </span>
-=======
-                                    <span>{{ item.protocol }}</span>
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
                                 </template>
+                                
                             </li>
                             <li>
                                 <div class="me-form">
@@ -165,15 +183,6 @@
                                     </g>
                                     </svg>
                                 </a>
-<<<<<<< HEAD
-                                <!-- <a v-if="item.status == 'paid' && item.order_id && item.id" @click="cancelCart({id:item.id, order_id:item.order_id})" class="action-button -excluir" data-tip="Cancelar">
-                                    <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500"><title>Cancelar</title><g id="Camada_2" data-name="Camada 2"><g id="Camada_10" data-name="Camada 10"><path class="cls-1" d="M304.95,62.21H267.32v-.62c0-20.76-8.31-37.36-24-48C230,4.57,212.08,0,190,0s-40,4.57-53.31,13.57c-15.72,10.65-24,27.26-24,48v.62H78.25C43.15,62.21,0,106.59,0,142.7a9.41,9.41,0,0,0,9.41,9.41H15V490.59A9.41,9.41,0,0,0,24.42,500H358.54a9.41,9.41,0,0,0,9.41-9.41V462.17a9.41,9.41,0,0,0-18.83,0v19H33.83V152.12H349.12v263a9.41,9.41,0,0,0,18.83,0v-263h5.84a9.41,9.41,0,0,0,9.41-9.41C383.2,106.59,340.05,62.21,304.95,62.21Zm-173.46-.62c0-19.51,10.15-42.77,58.51-42.77s58.51,23.26,58.51,42.77v.62h-117ZM20.24,133.29c2.79-10,9.57-21.14,19-31C51.89,89.18,66.82,81,78.25,81H304.95c11.43,0,26.36,8.15,39,21.26,9.48,9.86,16.26,21,19,31Z"/><path class="cls-1" d="M98.57,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/><path class="cls-1" d="M182.13,217.67V415.1a9.41,9.41,0,1,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/><path class="cls-1" d="M265.69,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/></g></g></svg>
-                                </a> -->
-=======
-                                <a v-if="item.status == 'paid' && item.order_id && item.id" @click="cancelCart({id:item.id, order_id:item.order_id})" class="action-button -excluir" data-tip="Cancelar">
-                                    <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500"><title>Cancelar</title><g id="Camada_2" data-name="Camada 2"><g id="Camada_10" data-name="Camada 10"><path class="cls-1" d="M304.95,62.21H267.32v-.62c0-20.76-8.31-37.36-24-48C230,4.57,212.08,0,190,0s-40,4.57-53.31,13.57c-15.72,10.65-24,27.26-24,48v.62H78.25C43.15,62.21,0,106.59,0,142.7a9.41,9.41,0,0,0,9.41,9.41H15V490.59A9.41,9.41,0,0,0,24.42,500H358.54a9.41,9.41,0,0,0,9.41-9.41V462.17a9.41,9.41,0,0,0-18.83,0v19H33.83V152.12H349.12v263a9.41,9.41,0,0,0,18.83,0v-263h5.84a9.41,9.41,0,0,0,9.41-9.41C383.2,106.59,340.05,62.21,304.95,62.21Zm-173.46-.62c0-19.51,10.15-42.77,58.51-42.77s58.51,23.26,58.51,42.77v.62h-117ZM20.24,133.29c2.79-10,9.57-21.14,19-31C51.89,89.18,66.82,81,78.25,81H304.95c11.43,0,26.36,8.15,39,21.26,9.48,9.86,16.26,21,19,31Z"/><path class="cls-1" d="M98.57,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/><path class="cls-1" d="M182.13,217.67V415.1a9.41,9.41,0,1,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/><path class="cls-1" d="M265.69,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"/></g></g></svg>
-                                </a>
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
                                 <a v-if="item.status && item.order_id && item.id && item.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Pagar">
                                     <svg class="ico" version="1.1" id="pagar" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                         viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
@@ -393,6 +402,7 @@ export default {
             'retrieveMany',
             'loadMore',
             'addCart',
+            'refreshCotation',
             'removeCart',
             'cancelCart',
             'payTicket',

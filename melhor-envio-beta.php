@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio. Versão BETA
-Version: 2.0
+Version: 2.2.4
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -72,7 +72,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.0.0';
+    public $version = '2.2.4';
 
     /**
      * Holds various class instances
@@ -306,6 +306,9 @@ final class Base_Plugin {
         // Cotação por embalagem
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
+        
+        add_action('wp_ajax_update_order', [$cotacao, 'refreshCotation']);
+        add_action('wp_ajax_update_order', [$order, 'removeOrder']);
 
         // Logs 
         add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'index']);

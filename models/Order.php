@@ -3,6 +3,7 @@
 namespace Models;
 
 use Controllers\CotationController;
+use Controllers\LogsController;
 
 class Order {
     
@@ -22,25 +23,29 @@ class Order {
      */
     public function __construct($id = null)
     {
-        $post = get_post($id);
+        try {
+            $post = get_post($id);
 
-        $orderWc = new \WC_Order( $id );
-        
-        $data = $orderWc->get_data();
+            $orderWc = new \WC_Order( $id );
+            
+            $data = $orderWc->get_data();
 
-        $this->id = $id;
-        
-        $this->address = $data['shipping'];
-        
-        $this->products = $this->getProducts();
-        
-        $this->total = $orderWc->total;
-        
-        $this->shipping_total = $orderWc->shipping_total;
-        
-        $this->to = $data['billing'];
-        
-        $this->cotation = $this->getCotation();
+            $this->id = $id;
+            
+            $this->address = $data['shipping'];
+            
+            $this->products = $this->getProducts();
+            
+            $this->total = $orderWc->total;
+            
+            $this->shipping_total = $orderWc->shipping_total;
+            
+            $this->to = $data['billing'];
+            
+            $this->cotation = $this->getCotation();
+        } catch (Exception $e) {
+            
+        }
 
     }
 
@@ -48,7 +53,7 @@ class Order {
      * @param Array $filters
      * @return Array
      */
-    public function getAllOrders($filters = NULL)
+    public static function getAllOrders($filters = NULL)
     {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
@@ -80,34 +85,50 @@ class Order {
         $orders = [];
         foreach ($posts as $post) {
 
-            $order = new Order($post->ID);
+            try {
+                $order = new Order($post->ID);
 
-            $dataMelhorEnvio = $order->getDataOrder(); 
+                $dataMelhorEnvio = $order->getDataOrder(); 
 
-            $invoice = $order->getInvoice();
+                $cotation = $order->getCotation();
 
-            $non_commercial = true;
-            if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
-                $non_commercial = false;
+                $invoice = $order->getInvoice();
+
+                $non_commercial = true;
+                if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
+                    $non_commercial = false;
+                }
+                
+                if (!is_null($dataMelhorEnvio['order_id'])) {
+                    $orders[] = $dataMelhorEnvio['order_id'];
+                }
+
+                $data[] =  [
+                    'id' => (int) $order->id,
+                    'total' => 'R$' . number_format($order->total, 2, ',', '.'),
+                    'products' => $order->getProducts(),
+                    'cotation' => $cotation ,
+                    'address' => $order->address,
+                    'to' => $order->to,
+                    'status' => $dataMelhorEnvio['status'],
+                    'order_id' => $dataMelhorEnvio['order_id'],
+                    'protocol' => $dataMelhorEnvio['protocol'],
+                    'non_commercial' => $non_commercial,
+                    'invoice' => $invoice,
+                    'packages' => $order->mountPackage($cotation)
+                ];
+
+            } catch(Exception $e) {
+                (new LogsController)->add(
+                    null, 
+                    'Get Order', 
+                    [], 
+                    $e->getMessage(), 
+                    'CotationController', 
+                    'makeCotationOrder', 
+                    'https://api.melhorenvio.com/v2/me/shipment/calculate'
+                );        
             }
-            
-            if (!is_null($dataMelhorEnvio['order_id'])) {
-                $orders[] = $dataMelhorEnvio['order_id'];
-            }
-
-            $data[] =  [
-                'id' => $order->id,
-                'total' => 'R$' . number_format($order->total, 2, ',', '.'),
-                'products' => $order->getProducts(),
-                'cotation' => $order->getCotation(),
-                'address' => $order->address,
-                'to' => $order->to,
-                'status' => $dataMelhorEnvio['status'],
-                'order_id' => $dataMelhorEnvio['order_id'],
-                'protocol' => $dataMelhorEnvio['protocol'],
-                'non_commercial' => $non_commercial,
-                'invoice' => $invoice
-            ];
         }
 
         $data = $order->matchStatus($data, $orders);
@@ -125,6 +146,70 @@ class Order {
         return $response;
     }
 
+    // TODO refator para usar esse "getOne" na função acima.
+    public function getOne($id)
+    {
+        $order = new Order($id);
+
+        $dataMelhorEnvio = $order->getDataOrder(); 
+
+        $cotation = $order->getCotation();
+
+        $invoice = $order->getInvoice();
+
+        $non_commercial = true;
+        if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
+            $non_commercial = false;
+        }
+        
+        if (!is_null($dataMelhorEnvio['order_id'])) {
+            $orders[] = $dataMelhorEnvio['order_id'];
+        }
+
+        $data =  [
+            'id' => $order->id,
+            'total' => 'R$' . number_format($order->total, 2, ',', '.'),
+            'products' => $order->getProducts(),
+            'cotation' => $cotation ,
+            'address' => $order->address,
+            'to' => $order->to,
+            'status' => 'pending',
+            'order_id' => $dataMelhorEnvio['order_id'],
+            'protocol' => $dataMelhorEnvio['protocol'],
+            'non_commercial' => $non_commercial,
+            'invoice' => $invoice,
+            'packages' => $order->mountPackage($cotation)
+        ];
+
+        return $data;
+    }
+
+    private function mountPackage($cotation)
+    {
+        $response = null;
+
+        if (empty($cotation) || is_null($cotation)) {
+            return $response;
+        }
+        foreach($cotation as $item){
+
+            if(is_null($item->id) || !isset($item->id)) {
+                continue;
+            }
+
+            foreach($item->packages as $key => $package) {
+                $response[$item->id] = (object) [
+                    'largura' => $package->dimensions->width,
+                    'altura' => $package->dimensions->height,
+                    'comprimento' => $package->dimensions->length,
+                    'peso' => $package->weight
+                ];
+            }
+        }
+
+        return $response;
+    }
+
     /**
      * @param [type] $posts
      * @param [type] $orders
@@ -132,7 +217,8 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        $statusApi = $this->getStatusApi($orders);        
+        $statusApi = $this->getStatusApi($orders);   
+
         foreach ($posts as $key => $post) {
 
             foreach ($post['order_id'] as $order_id) {
@@ -193,22 +279,15 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
-        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2', true);
+        $cotation = get_post_meta($this->id, 'melhorenvio_cotation_v2');
+
+        $cotation = end($cotation);
 
         $end_date = date("Y-m-d H:i:s", strtotime("- 7 days")); 
 
-        if (!$cotation or empty($cotation) or  $cotation['date_cotation'] <= $end_date) {
-    
+        if (!$cotation or empty($cotation) or is_null($cotation) or  $cotation['date_cotation'] <= $end_date) {
             $cotation = (new CotationController())->makeCotationOrder($this->id);
-
-            if ($cotation['choose_method'] == 0) {
-                $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
-            }
             return $cotation;
-        }
-
-        if ($cotation['choose_method'] == 0) {
-            $cotation['choose_method'] = $this->getOldChooseMethod($this->id);
         }
 
         return $cotation;
@@ -263,7 +342,16 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
+        if(empty(get_post_meta($this->id, 'melhorenvio_status_v2'))) {
+            return [
+                'status' => null,
+                'order_id' => null,
+                'protocol' => null
+            ];
+        }
+
         $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
+
         $status = null;
         if ($data == false) {
             $status = $this->getOldstatus($this->id);
@@ -334,9 +422,17 @@ class Order {
      */
     private function getStatusApi($orders) 
     {
+
+        $arrayOrders = [];
+        foreach ($orders as $items) {
+            foreach($items as $order){
+                $arrayOrders[] = $order;
+            }
+        }
+
         if ($token = get_option('wpmelhorenvio_token')) {
             $body = [
-                "orders" => $orders
+                "orders" => $arrayOrders
             ];
     
             $params = array(

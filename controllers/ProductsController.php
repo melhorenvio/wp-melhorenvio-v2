@@ -17,6 +17,11 @@ class ProductsController
 
             $product_id = $item_product->get_product_id();
             $_product = $item_product->get_product();
+
+            if (is_bool($_product)) {
+                continue;
+            }
+
             $products[] = [
                 "name" => $_product->get_name(),
                 "quantity" => $item_product->get_quantity(),
@@ -28,10 +33,6 @@ class ProductsController
                 "length" => $_product->length
             ];
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> 453a83af0e05de05d37c4b2b7125ba4fa293da13
         return $products;
     }
 
