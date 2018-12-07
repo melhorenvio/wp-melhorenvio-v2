@@ -3,6 +3,7 @@
 namespace Models;
 
 use Controllers\CotationController;
+use Controllers\LogsController;
 
 class Order {
     
@@ -22,25 +23,29 @@ class Order {
      */
     public function __construct($id = null)
     {
-        $post = get_post($id);
+        try {
+            $post = get_post($id);
 
-        $orderWc = new \WC_Order( $id );
-        
-        $data = $orderWc->get_data();
+            $orderWc = new \WC_Order( $id );
+            
+            $data = $orderWc->get_data();
 
-        $this->id = $id;
-        
-        $this->address = $data['shipping'];
-        
-        $this->products = $this->getProducts();
-        
-        $this->total = $orderWc->total;
-        
-        $this->shipping_total = $orderWc->shipping_total;
-        
-        $this->to = $data['billing'];
-        
-        $this->cotation = $this->getCotation();
+            $this->id = $id;
+            
+            $this->address = $data['shipping'];
+            
+            $this->products = $this->getProducts();
+            
+            $this->total = $orderWc->total;
+            
+            $this->shipping_total = $orderWc->shipping_total;
+            
+            $this->to = $data['billing'];
+            
+            $this->cotation = $this->getCotation();
+        } catch (Exception $e) {
+            
+        }
 
     }
 
@@ -80,37 +85,50 @@ class Order {
         $orders = [];
         foreach ($posts as $post) {
 
-            $order = new Order($post->ID);
+            try {
+                $order = new Order($post->ID);
 
-            $dataMelhorEnvio = $order->getDataOrder(); 
+                $dataMelhorEnvio = $order->getDataOrder(); 
 
-            $cotation = $order->getCotation();
+                $cotation = $order->getCotation();
 
-            $invoice = $order->getInvoice();
+                $invoice = $order->getInvoice();
 
-            $non_commercial = true;
-            if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
-                $non_commercial = false;
+                $non_commercial = true;
+                if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
+                    $non_commercial = false;
+                }
+                
+                if (!is_null($dataMelhorEnvio['order_id'])) {
+                    $orders[] = $dataMelhorEnvio['order_id'];
+                }
+
+                $data[] =  [
+                    'id' => (int) $order->id,
+                    'total' => 'R$' . number_format($order->total, 2, ',', '.'),
+                    'products' => $order->getProducts(),
+                    'cotation' => $cotation ,
+                    'address' => $order->address,
+                    'to' => $order->to,
+                    'status' => $dataMelhorEnvio['status'],
+                    'order_id' => $dataMelhorEnvio['order_id'],
+                    'protocol' => $dataMelhorEnvio['protocol'],
+                    'non_commercial' => $non_commercial,
+                    'invoice' => $invoice,
+                    'packages' => $order->mountPackage($cotation)
+                ];
+
+            } catch(Exception $e) {
+                (new LogsController)->add(
+                    null, 
+                    'Get Order', 
+                    [], 
+                    $e->getMessage(), 
+                    'CotationController', 
+                    'makeCotationOrder', 
+                    'https://api.melhorenvio.com/v2/me/shipment/calculate'
+                );        
             }
-            
-            if (!is_null($dataMelhorEnvio['order_id'])) {
-                $orders[] = $dataMelhorEnvio['order_id'];
-            }
-
-            $data[] =  [
-                'id' => (int) $order->id,
-                'total' => 'R$' . number_format($order->total, 2, ',', '.'),
-                'products' => $order->getProducts(),
-                'cotation' => $cotation ,
-                'address' => $order->address,
-                'to' => $order->to,
-                'status' => $dataMelhorEnvio['status'],
-                'order_id' => $dataMelhorEnvio['order_id'],
-                'protocol' => $dataMelhorEnvio['protocol'],
-                'non_commercial' => $non_commercial,
-                'invoice' => $invoice,
-                'packages' => $order->mountPackage($cotation)
-            ];
         }
 
         $data = $order->matchStatus($data, $orders);
