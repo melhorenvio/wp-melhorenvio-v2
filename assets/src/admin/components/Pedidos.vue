@@ -72,7 +72,7 @@
                                 <template v-if="!item.order_id && item.cotation != false">
                                     <div  class="me-form">
                                         <div class="formBox">
-                                            <template v-if="item.packages[item.cotation.choose_method]">
+                                            <template v-if="item.packages && item.packages[item.cotation.choose_method] && item.cotation &&  item.cotation[item.cotation.choose_method]">
                                                 <label>Pacote</label>
                                                 <p>
                                                     {{ item.packages[item.cotation.choose_method].altura }}cm A x 
@@ -81,14 +81,16 @@
                                                     {{ item.packages[item.cotation.choose_method].peso }}Kg
                                                 </p>
                                             </template>
-                                            <label>Métodos de envio</label> 
+
                                             <template v-if="item.cotation.choose_method == null">
                                                 </br>
                                                 <small>Cliente não utilizou Melhor Envio</small>
                                             </template>
+                                            
+                                            <label>Métodos de envio</label> 
 
                                             <!-- TODO -->
-                                            <template v-if="item.packages[item.cotation.choose_method]">
+                                            <template v-if="item.cotation[item.cotation.choose_method]">
                                                 <fieldset  class="selectLine">
                                                     <div class="inputBox">
                                                         <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
@@ -105,11 +107,13 @@
                                         Recalcular
                                     </a>
                                 </template>
+
                                 <template v-else>
                                     <span v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
                                         {{ prot }}
                                     </span>
                                 </template>
+                                
                             </li>
                             <li>
                                 <div class="me-form">

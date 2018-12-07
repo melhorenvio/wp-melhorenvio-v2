@@ -17,6 +17,11 @@ class ProductsController
 
             $product_id = $item_product->get_product_id();
             $_product = $item_product->get_product();
+
+            if (is_bool($_product)) {
+                continue;
+            }
+
             $products[] = [
                 "name" => $_product->get_name(),
                 "quantity" => $item_product->get_quantity(),

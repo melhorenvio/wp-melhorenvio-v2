@@ -53,7 +53,7 @@ class Order {
      * @param Array $filters
      * @return Array
      */
-    public function getAllOrders($filters = NULL)
+    public static function getAllOrders($filters = NULL)
     {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
@@ -187,9 +187,13 @@ class Order {
     private function mountPackage($cotation)
     {
         $response = null;
+
+        if (empty($cotation) || is_null($cotation)) {
+            return $response;
+        }
         foreach($cotation as $item){
 
-            if(is_null($item->id)) {
+            if(is_null($item->id) || !isset($item->id)) {
                 continue;
             }
 
@@ -213,8 +217,6 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        //63ef5eff-095d-484a-a8e2-b28b55173b77
-
         $statusApi = $this->getStatusApi($orders);   
 
         foreach ($posts as $key => $post) {
@@ -340,7 +342,16 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
+        if(empty(get_post_meta($this->id, 'melhorenvio_status_v2'))) {
+            return [
+                'status' => null,
+                'order_id' => null,
+                'protocol' => null
+            ];
+        }
+
         $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
+
         $status = null;
         if ($data == false) {
             $status = $this->getOldstatus($this->id);
