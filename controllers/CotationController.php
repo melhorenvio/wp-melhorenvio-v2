@@ -338,7 +338,10 @@ class CotationController
         foreach ($shipping_methods as $method) {
             
             if($method_id == $method->id) {
-                return $method->code;
+                if (isset($method->code)) {
+					return $method->code;
+				}
+				return null;
             }
         }
         //TODO Rever caso nao tenha cotacao selecionada
