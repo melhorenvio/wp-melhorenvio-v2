@@ -1,5 +1,9 @@
 ### Changelog
 
+## [2.2.5] - 2018-12-10
+### fixed
+- Ajuste na função de recalcular frete
+
 ## [2.2.4] - 2018-12-07
 ### fixed
 - Remoção frase "Feito com amor por Melhor envio" da cotação da página do produto
