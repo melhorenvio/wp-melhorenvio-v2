@@ -44,7 +44,7 @@ class Address
                 'address' => $address->address,
                 'complement' => $address->complement,
                 'label' => $address->label,
-                'postal_code' => $address->postal_code,
+                'postal_code' => str_pad($address->postal_code ,8, 0,STR_PAD_LEFT),
                 'number' => $address->number,
                 'district' => $address->district,
                 'city' => $address->city->city,

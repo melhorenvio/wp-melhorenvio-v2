@@ -12,6 +12,11 @@ class OrdersController
 {
     const URL = 'https://api.melhorenvio.com';
 
+    public function get($id)
+    {
+        return Order::getOne($id);
+    }
+
     /**
      * @return void
      */
@@ -41,48 +46,11 @@ class OrdersController
 
         $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
 
-        $package = $packages[0];
+        $from = (new UsersController())->getFrom();
 
-        foreach ($products as $key => $item) {
-            unset($products[$key]['insurance_value']);
-        }
+        $to = (new UsersController())->getTo($_GET['order_id']);
 
-        $body = [
-            'from' => (new UsersController())->getFrom(),
-            'to' => (new UsersController())->getTo($_GET['order_id']),
-            'service' => $_GET['choosen'],
-            'products' => $products,
-            'package' => $package,
-            'options' => [
-                "insurance_value" => (new ProductsController())->getInsuranceValue($_GET['order_id']), 
-                "receipt" => false,
-                "own_hand" => false,
-                "collect" => false,
-                "reverse" => false, 
-                "non_commercial" => false, 
-                'platform' => 'WooCommerce V2'
-            ]
-        ];
-
-        // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
-        if ($_GET['choosen'] >= 3) {
-
-            $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
-            if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
-                $body['options']['invoice'] = $invoices;
-            }       
-
-            if ($_GET['non_commercial'] == 'true') {
-                $body['options']['non_commercial'] = true;
-            }
-        }
-
-        // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
-        if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
-            $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
-        }
-
-        if (is_null($body['to']->postal_code)) {
+        if (is_null($to->postal_code)) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Falta campo CEP do destino'
@@ -90,7 +58,7 @@ class OrdersController
             die;
         }
 
-        if (is_null($body['from']->postal_code)) {
+        if (is_null($from->postal_code)) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Falta campo CEP da origem'
@@ -98,63 +66,123 @@ class OrdersController
             die;
         }
 
-        if (is_null($body['package'])) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Embalagem é obrigatório'
-            ]);
-            die;
+        $errors = [];
+        $success = [];
+        $orders_id = [];
+        $protocols = [];
+
+        foreach ($packages[$_GET['choosen']] as $package) {
+
+            $insurance_value = 0;
+            foreach ($products as $key => $item) {
+                unset($products[$key]['insurance_value']);
+                $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
+            }
+            
+            unset($package['insurnace_value']);
+
+            $reminder = null;
+            if (count($packages[$_GET['choosen']]) > 1) {
+                $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
+            }
+
+            $body = [
+                'from' => $from,
+                'to' => $to,
+                'service' => $_GET['choosen'],
+                'products' => $products,
+                'package' => $package,
+                'options' => [
+                    "insurance_value" => round($insurance_value, 2), 
+                    "receipt" => false,
+                    "own_hand" => false,
+                    "collect" => false,
+                    "reverse" => false, 
+                    "non_commercial" => false, 
+                    'platform' => 'WooCommerce V2',
+                    'reminder' => $reminder
+                ]
+            ];
+
+            // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
+            if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
+                $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
+            }
+
+            // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
+            if ($_GET['choosen'] >= 3) {
+
+                $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
+                if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
+                    $body['options']['invoice'] = $invoices;
+                }       
+
+                if ($_GET['non_commercial'] == 'true') {
+                    $body['options']['non_commercial'] = true;
+                }
+            }
+
+            $params = array(
+                'headers'           =>  [
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer '.$token,
+                ],
+                'body'  =>  json_encode($body),
+                'timeout'=> 10
+            );
+
+            $response = json_decode(
+                wp_remote_retrieve_body(
+                    wp_remote_post(self::URL . '/v2/me/cart', $params)
+                )
+            );
+
+            $logs = (new LogsController)->add(
+                $_GET['order_id'], 
+                'Enviando ordem ' .  $reminder, 
+                $params, 
+                $response, 
+                'OrdersController', 
+                'sendOrder', 
+                self::URL . '/v2/me/cart'
+            );
+
+            if (!isset($response->id)) {
+                $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
+                if ($er != false) {
+                    $errors[] = $er;
+                    continue;
+                }
+            }
+
+            $success[] = $response;
+
+            $orders_id[] = $response->id;
+            $protocols[] = $response->protocol;   
         }
 
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'body'  =>  json_encode($body),
-            'timeout'=> 10
-        );
+        $data['choose_method'] = $_GET['choosen'];
+        $data['status'] = 'pending';
+        $data['created'] = date('Y-m-d H:i:s');
 
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_post(self::URL . '/v2/me/cart', $params)
-            )
-        );
-
-        $logs = (new LogsController)->add(
-            $_GET['order_id'], 
-            'Enviando ordem', 
-            $params, 
-            $response, 
-            'OrdersController', 
-            'sendOrder', 
-            self::URL . '/v2/me/cart'
-        );
-
-        if (!isset($response->id)) {
-            $error = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
-            echo json_encode([
-                'success' => false,
-                'message' => $error
-            ]);
-            die;
-        }
-
-        $data = [
-            'choose_method' => $response->service_id,
-            'order_id' => $response->id,
-            'protocol' => $response->protocol,
-            'status' => 'pending',
-            'created' => date('Y-m-d H:i:s')
-        ];
+        $data['order_id'] = $orders_id;
+        $data['protocol'] = $protocols;
 
         $this->updateDataCotation($_GET['order_id'], $data, 'pending');
+
+        if (empty($errors)) {
+            echo json_encode([
+                'success' => true,
+                'data' => $data
+            ]);die;
+        }
+
         echo json_encode([
-            'success' => true,
-            'data' => $response
-        ]);
-        die;
+            'success' => false,
+            'message' => end($errors)
+        ]);die;
+
     }
 
     /**
@@ -174,22 +202,35 @@ class OrdersController
             'method' => 'DELETE'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $_GET['order_id'], $params)));
+        $orders = explode(',', $_GET['order_id']);
 
-        (new LogsController)->add(
-            $_GET['id'], 
-            'Removendo do carrinho', 
-            $params, 
-            $response, 
-            'OrdersController', 
-            'removeOrder', 
-            self::URL . '/v2/me/cart'
-        );
+        $errors = [];
+        $success = [];
 
-        if (isset($response->error)) {
+        foreach ($orders as $order) {
+
+            $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $order, $params)));
+
+            if (isset($response->error)) {
+                $errors[] = $response->error;
+                continue;
+            }
+
+            (new LogsController)->add(
+                $_GET['id'], 
+                'Removendo do carrinho', 
+                $params, 
+                $response, 
+                'OrdersController', 
+                'removeOrder', 
+                self::URL . '/v2/me/cart'
+            );
+        }
+
+        if (!empty($errors)) {
             echo json_encode([
                 'success' => false,
-                'error' => $response->error
+                'error' => end($errors)
             ]);
             die;
         }
@@ -206,6 +247,18 @@ class OrdersController
      */
     public function cancelOrder() 
     {
+        $ordersIds = explode(',', $_GET['order_id']);
+        
+        $orders = [];
+
+        foreach ($ordersIds as $order) {
+            $orders[] = [
+                'id' => $order,
+                'reason_id' => 2,
+                'description' => 'Cancelado pelo usuário'
+            ];
+        }
+
         $token = get_option('wpmelhorenvio_token');
 
         $params = array(
@@ -216,11 +269,7 @@ class OrdersController
             ],
             'timeout'=> 10,
             'method' => 'POST',
-            'body' => json_encode(['order' => [
-                'id' => $_GET['order_id'],
-                'reason_id' => 2,
-                'description' => 'Cancelado pelo usuário'
-            ]])
+            'body' => ['orders' => $orders]
         );
 
         $response =  json_decode(
@@ -316,19 +365,18 @@ class OrdersController
      */
     public function payTicket() 
     {
-        $ticket = $this->getInfoTicket($_GET['order_id']);
 
-        if($ticket->status != 'pending') {
-            echo json_encode([
-                'success' => false,
-                'error' => 'Impossivel pagar etiqueta com status ' . $ticket->status
-            ]);
-            die;
+        $orders = explode(',', $_GET['order_id']);
+
+        $wallet = 0;
+        foreach ($orders as $order) {
+            $ticket = $this->getInfoTicket($order);
+            $wallet = $wallet + $ticket->price;
         }
 
         $body = [
-            'orders' => [$_GET['order_id']],
-            'wallet' => $ticket->price
+            'orders' => $orders,
+            'wallet' => $wallet
         ];
 
         $token = get_option('wpmelhorenvio_token');
@@ -360,11 +408,19 @@ class OrdersController
             self::URL . '/v2/me/shipment/checkout'
         );
 
+        if(isset($response->error)) {
+            echo json_encode([
+                'success' => false,
+                'data' => $response->error
+            ]);
+            die;
+        }
+
         $data = [
             'order_paid' => $response->purchase->id,
             'protocol_paid' => $response->purchase->protocol,
             'choose_method' => $response->purchase->orders[0]->service_id,
-            'order_id' => $response->purchase->orders[0]->id,
+            'order_id' => $orders,
             'protocol' => $response->purchase->orders[0]->protocol,
             'status' => 'paid',
         ];
@@ -382,8 +438,10 @@ class OrdersController
      */
     public function createTicket() 
     {
+        $orders = explode(',', $_GET['order_id']);
+
         $body = [
-            'orders' => [$_GET['order_id']],
+            'orders' => $orders,
             'mode' => 'public'
         ];
 
@@ -436,8 +494,10 @@ class OrdersController
     {
         $token = get_option('wpmelhorenvio_token');
 
+        $orders = explode(',', $_GET['order_id']);
+
         $body = [
-            'orders' => [$_GET['order_id']]
+            'orders' => $orders
         ];
 
         $params = array(
@@ -488,14 +548,16 @@ class OrdersController
      */
     private function updateDataCotation($order_id, $data, $status) 
     {
+        $newData = [];
 
-        $oldData = end(get_post_meta($order_id, 'melhorenvio_status_v2', true));
-        if (empty($oldData || is_null($oldData))) {
-            $data = array_merge($oldData, $data);
-        }
+        $newData['choose_method'] = $data['choose_method'];
+        $newData['protocol'] = $data['protocol'];
+        $newData['order_id'] = $data['order_id'];
+        $newData['status'] = $status;
+        $newData['created'] = date('Y-m-d H:i:s');
         
         delete_post_meta($order_id, 'melhorenvio_status_v2');
-        add_post_meta($order_id, 'melhorenvio_status_v2', $data);
+        add_post_meta($order_id, 'melhorenvio_status_v2', $newData);
     }
 
     /**
@@ -506,6 +568,9 @@ class OrdersController
      */
     private function normalizeErrors($data, $order_id = null, $action = null) 
     {
+        if (is_null($data)) {
+            return $false;
+        }
 
         if (!is_null($order_id)) {
             (new LogsController)->add($order_id, '[OrdersController] (normalizeErrors)', [], $data);
@@ -517,6 +582,10 @@ class OrdersController
 
         if (isset($data->error) && isset($data->message)) {
             return $data->error;
+        }
+
+        if (isset($data->agency)) {
+            return 'Agência Jadlog invalida';
         }
         
         if (isset($data->errors)) {
