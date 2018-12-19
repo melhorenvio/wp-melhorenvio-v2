@@ -9,6 +9,7 @@ use Controllers\TimeController;
 use Controllers\MoneyController;
 use Controllers\LogsController;
 use Controllers\OrdersController;
+use Controllers\Optionscontroller;
 use Models\Order;
 
 class CotationController 
@@ -189,11 +190,13 @@ class CotationController
      */
     private function mapObject($item) 
     {
+        $method = (new optionsController())->getName($item->id, $item->name, $item->company->name);
+
         return [
             'id' => $item->id,
-            'name' => $item->name,
+            'name' => $method['method'],
             'price' => (new MoneyController())->setLabel($item->price, $item->id),
-            'company' => $item->company->name,
+            'company' => $method['company'],
             'delivery_time' => (new TimeController)->setLabel($item->delivery_range, $item->id)
         ];
     }

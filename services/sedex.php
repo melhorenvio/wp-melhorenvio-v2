@@ -5,6 +5,7 @@ use Controllers\CotationController;
 use Controllers\ProductsController;
 use Controllers\TimeController;
 use Controllers\MoneyController;
+use Controllers\OptionsController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
@@ -67,9 +68,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
 
 						if (isset($result->name) && isset($result->price)) {
+
+							$method = (new optionsController())->getName($result->id, $result->name, '');
+
 							$rate = [
 								'id' => 'melhorenvio_sedex',
-								'label' => $result->name . (new timeController)->setLabel($result->delivery_range, $this->code),
+								'label' => $method['method'] . (new timeController)->setLabel($result->delivery_range, $this->code),
 								'cost' => (new MoneyController())->setprice($result->price, $this->code),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
