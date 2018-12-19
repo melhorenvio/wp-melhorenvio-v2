@@ -79,11 +79,13 @@
         </div>
 
         <div class="wpme_config">
-            <h2>Taxas e tempo extra</h2>
+            <h2>Personalizar métodos de envio</h2>
             <div class="wpme_flex">
                 <ul v-for="option in methods_shipments" :value="option.id" :key="option.id" class="wpme_address">
                     <li>
                         <h2>{{option.title}}</h2>
+                        <label>Nome de exibição</label><br>
+                        <input v-model="option.name" type="text" /><br><br>
                         <label>Tempo extra</label><br>
                         <input v-model="option.time" type="number" /><br><br>
                         <label>Taxa extra</label><br>
@@ -226,7 +228,7 @@ export default {
         },
         setFieldsmethodsShipments () {
             this.methods_shipments.forEach((item) => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}`).then( (response) => {})
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}`).then( (response) => {})
             });
         }
     },

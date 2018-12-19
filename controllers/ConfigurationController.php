@@ -148,6 +148,7 @@ class ConfigurationController
                 $methods[] = [
                     'code' => $method->code,
                     'title' => str_replace(' (Melhor envio)', '', $method->method_title),
+                    'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor envio)', '', $method->method_title),
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0 ,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0 
                 ];
@@ -168,6 +169,7 @@ class ConfigurationController
         add_option('melhor_envio_option_method_shipment_' . $id, $_GET);
         echo json_encode([
             'id' => $id,
+            'name' => $_GET['name'],
             'tax' => $_GET['tax'],
             'time' => $_GET['time']
         ]);die;
@@ -194,6 +196,7 @@ class ConfigurationController
 
             $data = unserialize($item->option_value);
             $options[$data['id']] = [
+                'name' => $data['name'],
                 'tax' => $data['tax'],
                 'time' => $data['time']
             ];

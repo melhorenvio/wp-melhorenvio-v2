@@ -678,6 +678,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -743,7 +745,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         setFieldsmethodsShipments() {
             this.methods_shipments.forEach(item => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}`).then(response => {});
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}`).then(response => {});
             });
         }
     }),
@@ -2914,7 +2916,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Taxas e tempo extra")]),
+        _c("h2", [_vm._v("Personalizar métodos de envio")]),
         _vm._v(" "),
         _c(
           "div",
@@ -2930,6 +2932,32 @@ var render = function() {
               [
                 _c("li", [
                   _c("h2", [_vm._v(_vm._s(option.title))]),
+                  _vm._v(" "),
+                  _c("label", [_vm._v("Nome de exibição")]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: option.name,
+                        expression: "option.name"
+                      }
+                    ],
+                    attrs: { type: "text" },
+                    domProps: { value: option.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(option, "name", $event.target.value)
+                      }
+                    }
+                  }),
+                  _c("br"),
+                  _c("br"),
                   _vm._v(" "),
                   _c("label", [_vm._v("Tempo extra")]),
                   _c("br"),
