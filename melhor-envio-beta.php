@@ -320,6 +320,10 @@ final class Base_Plugin {
 
         // Pegar metodos de envios ativos
         add_action('wp_ajax_get_metodos', [$conf, 'getMethodsEnables']);
+
+        // salvar onde é exibida a cotação na tela de produto
+        add_action('wp_ajax_save_where_calculator', [$conf, 'saveWhereCalculator']);
+        add_action('wp_ajax_get_where_calculator', [$conf, 'getWhereCalculator']);
     }
     
     /**

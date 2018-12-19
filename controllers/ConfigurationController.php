@@ -178,9 +178,7 @@ class ConfigurationController
     public function getOptionsShipments()
     {
         global $wpdb;
-
         $sql = "select * from " . $wpdb->prefix . "options where option_name like '%melhor_envio_option_method_shipment_%'";
-
         $results = $wpdb->get_results($sql);
 
         if (empty($results)) {
@@ -203,5 +201,40 @@ class ConfigurationController
         }
 
         return $options;
+    }
+
+    public function saveWhereCalculator()
+    {
+        $option = $_GET['option'];
+        delete_option('melhor_envio_option_where_show_calculator');
+        add_option('melhor_envio_option_where_show_calculator', $option);
+
+        echo json_encode([
+            'option' => $option
+        ]);die;
+    }
+
+    public function getWhereCalculator()
+    {
+        $option = get_option('melhor_envio_option_where_show_calculator');
+
+        if (!$option) {
+            echo json_encode([
+                'option' => 'woocommerce_before_add_to_cart_button'
+            ]);die;
+        }
+    
+        echo json_encode([
+            'option' => $option
+        ]);die;
+    }
+
+    public function getWhereCalculatorValue()
+    {
+        $option = get_option('melhor_envio_option_where_show_calculator');
+        if (!$option) {
+            return 'woocommerce_before_add_to_cart_button';
+        }
+        return $option;
     }
 }

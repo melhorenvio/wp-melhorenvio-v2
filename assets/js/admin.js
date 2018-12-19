@@ -680,6 +680,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -691,7 +704,42 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             agency: null,
             show_modal: false,
             show_calculator: true,
-            methods_shipments: []
+            methods_shipments: [],
+            where_calculator: null,
+            where_calculator_collect: [{
+                'id': 'woocommerce_before_single_product',
+                'name': 'Antes do titulo do produto (Depende do tema do projeto)'
+            }, {
+                'id': 'woocommerce_after_single_product',
+                'name': 'Depois do titulo do produto'
+            }, {
+                'id': 'woocommerce_single_product_summary',
+                'name': 'Antes da descrição do produto'
+            }, {
+                'id': 'woocommerce_before_add_to_cart_form',
+                'name': 'Antes do fórmulario de comprar'
+            }, {
+                'id': 'woocommerce_before_variations_form',
+                'name': 'Antes das opçoes do produto'
+            }, {
+                'id': 'woocommerce_before_add_to_cart_button',
+                'name': 'Antes do botão de comprar'
+            }, {
+                'id': 'woocommerce_before_single_variation',
+                'name': 'Antes do campo de variações'
+            }, {
+                'id': 'woocommerce_single_variation',
+                'name': 'Antes das variações'
+            }, {
+                'id': 'woocommerce_after_add_to_cart_form',
+                'name': 'Depois do botão de comprar'
+            }, {
+                'id': 'woocommerce_product_meta_start',
+                'name': 'Antes das informações do produto'
+            }, {
+                'id': 'woocommerce_share',
+                'name': 'Depois dos botões de compartilhamento'
+            }]
         };
     },
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
@@ -707,6 +755,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setSelectedAgency(this.agency);
             this.setShowCalculator();
             this.setFieldsmethodsShipments();
+            this.setWhereCalculator();
             this.show_modal = true;
         },
         showAgencies(data) {
@@ -726,6 +775,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
+        getWhereCalculator() {
+            let data = { action: 'get_where_calculator' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.where_calculator = response.data.option;
+                }
+            });
+        },
         getMethodsShipments() {
             let data = { action: 'get_metodos' };
             this.$http.get(`${ajaxurl}`, {
@@ -742,6 +801,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     this.show_calculator = response.data;
                 }
             });
+        },
+        setWhereCalculator() {
+            this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then(response => {});
         },
         setFieldsmethodsShipments() {
             this.methods_shipments.forEach(item => {
@@ -784,6 +846,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         this.getStores();
         this.getAgencies();
         this.getShowCalculator();
+        this.getWhereCalculator();
         this.getMethodsShipments();
     }
 });
@@ -2860,7 +2923,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Exibir cotação na tela do produto")]),
+        _c("h2", [_vm._v("Configuração calculadora na página de produto")]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
@@ -2910,6 +2973,53 @@ var render = function() {
                   ])
                 ])
               ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Onde deseja exibir a cotação do produto?")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c("li", [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.where_calculator,
+                      expression: "where_calculator"
+                    }
+                  ],
+                  attrs: { name: "agencies", id: "agencies" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.where_calculator = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
+                _vm._l(_vm.where_calculator_collect, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.id, domProps: { value: option.id } },
+                    [_c("strong", [_vm._v(_vm._s(option.name))])]
+                  )
+                })
+              )
             ])
           ])
         ])

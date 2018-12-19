@@ -63,7 +63,7 @@
 
 
         <div class="wpme_config">
-            <h2>Exibir cotação na tela do produto</h2>
+            <h2>Configuração calculadora na página de produto</h2>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
@@ -73,6 +73,19 @@
                                 <label for="two">exibir a calculdora na tela do produto</label>
                             </div>
                         </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="wpme_config">
+            <h2>Onde deseja exibir a cotação do produto?</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <select name="agencies" id="agencies" v-model="where_calculator">
+                            <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                        </select>
                     </li>
                 </ul>
             </div>
@@ -165,6 +178,53 @@ export default {
             show_modal: false,
             show_calculator: true,
             methods_shipments: [],
+            where_calculator: null,
+            where_calculator_collect: [
+                {
+                    'id': 'woocommerce_before_single_product',
+                    'name': 'Antes do titulo do produto (Depende do tema do projeto)'
+                },
+                {
+                    'id': 'woocommerce_after_single_product',
+                    'name': 'Depois do titulo do produto'
+                },
+                {
+                    'id': 'woocommerce_single_product_summary',
+                    'name': 'Antes da descrição do produto'
+                },
+                {
+                    'id': 'woocommerce_before_add_to_cart_form',
+                    'name': 'Antes do fórmulario de comprar'
+                },
+                {
+                    'id': 'woocommerce_before_variations_form',
+                    'name': 'Antes das opçoes do produto'
+                },
+                {
+                    'id': 'woocommerce_before_add_to_cart_button',
+                    'name': 'Antes do botão de comprar'
+                },
+                {
+                    'id': 'woocommerce_before_single_variation',
+                    'name': 'Antes do campo de variações'
+                },
+                {
+                    'id': 'woocommerce_single_variation',
+                    'name': 'Antes das variações'
+                },
+                {
+                    'id': 'woocommerce_after_add_to_cart_form',
+                    'name': 'Depois do botão de comprar'
+                },
+                {
+                    'id': 'woocommerce_product_meta_start',
+                    'name': 'Antes das informações do produto'
+                },
+                {
+                    'id': 'woocommerce_share',
+                    'name': 'Depois dos botões de compartilhamento'
+                }
+            ]
         }
     },
     computed: {
@@ -190,6 +250,7 @@ export default {
             this.setSelectedAgency(this.agency)
             this.setShowCalculator()
             this.setFieldsmethodsShipments()
+            this.setWhereCalculator()
             this.show_modal = true
         },
         showAgencies (data) {
@@ -209,6 +270,16 @@ export default {
                 }
             })
         },
+        getWhereCalculator () {
+            let data = {action: 'get_where_calculator'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.where_calculator = response.data.option
+                }
+            })
+        },
         getMethodsShipments () {
             let data = {action: 'get_metodos'}
             this.$http.get(`${ajaxurl}`, {
@@ -225,6 +296,9 @@ export default {
                     this.show_calculator = response.data
                 }
             })
+        },
+        setWhereCalculator() {
+            this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then( (response) => {})
         },
         setFieldsmethodsShipments () {
             this.methods_shipments.forEach((item) => {
@@ -267,6 +341,7 @@ export default {
         this.getStores()
         this.getAgencies()
         this.getShowCalculator()
+        this.getWhereCalculator()
         this.getMethodsShipments()
     }
 }

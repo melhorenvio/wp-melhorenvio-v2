@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use Controllers\ConfigurationsController;
 
 class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 
@@ -18,11 +19,13 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     protected $base_path;
     protected $base_url;
     protected $metodos_de_entrega;
+    protected $where_show_calculator;
 
     public function __construct() {
 
         $this->base_path = __DIR__;
         $this->base_url =  plugin_dir_url( __FILE__ );
+        $this->where_show_calculator = (new ConfigurationController())->getWhereCalculatorValue();
 
         // Hooks
         add_action( 'wp_enqueue_scripts', array($this, 'enqueue_css_js_frontend') );
@@ -38,8 +41,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 
     public function run() {
         //woocommerce_before_add_to_cart_button
-
-        add_action( 'woocommerce_before_add_to_cart_button', array($this, 'is_produto_single'));
+        add_action( $this->where_show_calculator, array($this, 'is_produto_single'));
     }
 
     private function getNameFolder()
@@ -54,7 +56,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
         global $product;
         if (is_product()) {
             $this->prepara_produto($product);
-            add_action('woocommerce_before_add_to_cart_button', array($this, 'add_calculo_de_frete'), 11);
+            add_action($this->where_show_calculator, array($this, 'add_calculo_de_frete'), 11);
         }
     }
 
