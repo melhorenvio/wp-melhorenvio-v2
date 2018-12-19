@@ -440,6 +440,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -1470,6 +1471,16 @@ var render = function() {
                         _c(
                           "li",
                           [
+                            item.cotation.melhorenvio == false
+                              ? [
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("small", [
+                                    _vm._v("Cliente não utilizou Melhor Envio")
+                                  ])
+                                ]
+                              : _vm._e(),
+                            _vm._v(" "),
                             !item.order_id && item.cotation != false
                               ? [
                                   _c("div", { staticClass: "me-form" }, [
@@ -1519,18 +1530,6 @@ var render = function() {
                                                       ].peso
                                                     ) +
                                                     "Kg\n                                            "
-                                                )
-                                              ])
-                                            ]
-                                          : _vm._e(),
-                                        _vm._v(" "),
-                                        item.cotation.choose_method == null
-                                          ? [
-                                              _c("br"),
-                                              _vm._v(" "),
-                                              _c("small", [
-                                                _vm._v(
-                                                  "Cliente não utilizou Melhor Envio"
                                                 )
                                               ])
                                             ]

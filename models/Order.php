@@ -287,10 +287,10 @@ class Order {
 
         if (!$cotation or empty($cotation) or is_null($cotation) or  $cotation['date_cotation'] <= $end_date) {
             $cotation = (new CotationController())->makeCotationOrder($this->id);
-            return $cotation;
+            return $this->setIndexCotation($cotation);
         }
 
-        return $cotation;
+        return $this->setIndexCotation($cotation);
     }    
 
     /**
@@ -462,5 +462,36 @@ class Order {
             return $data;
         }
         return null;
+    }
+
+    public function setIndexCotation($data)
+    {
+        $response = [];
+        foreach ($data as $cot) {
+            if (is_null($cot->id)) {
+                continue;
+            }
+            $response[$cot->id] =  $cot;
+        }
+        
+        $useMelhor = true;
+        if (is_null($data['choose_method'])) {
+
+            $useMelhor = false;
+            $method = null;
+            foreach ($response as $item) {
+                if (is_null($item->id)) {
+                    continue;
+                }
+                $method = $item->id;
+            }
+            $data['choose_method'] = $method;
+        }
+
+        $response['choose_method'] = $data['choose_method'];
+        $response['date_cotation'] = $data['date_cotation'];
+        $response['melhorenvio'] = $useMelhor;
+
+        return $response;
     }
 }   

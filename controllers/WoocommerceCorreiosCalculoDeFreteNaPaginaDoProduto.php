@@ -37,6 +37,8 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     }
 
     public function run() {
+        //woocommerce_before_add_to_cart_button
+
         add_action( 'woocommerce_before_add_to_cart_button', array($this, 'is_produto_single'));
     }
 
