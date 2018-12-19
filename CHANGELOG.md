@@ -1,5 +1,13 @@
 ### Changelog
 
+## [2.2.8] - 2018-12-19
+### Added
+- Alteração do nome do método de envio
+
+## [2.2.7] - 2018-12-19
+### Added
+- Filtro com status personalizados
+
 ## [2.2.5] - 2018-12-10
 ### fixed
 - Ajuste na função de recalcular frete
