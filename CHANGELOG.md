@@ -1,5 +1,9 @@
 ### Changelog
 
+## [2.2.9] - 2018-12-20
+### Added
+- testes versçoes mais atuais do Wordpress
+
 ## [2.2.8] - 2018-12-19
 ### Added
 - Alteração do nome do método de envio

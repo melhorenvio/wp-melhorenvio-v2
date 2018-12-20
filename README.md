@@ -1,3 +1,14 @@
+=== Melhor Envio V2 ===
+Version: 2.2.9
+Author: Melhor Envio
+Author URI: melhorenvio.com.br
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: baseplugin
+Tested up to: 5.0
+Requires PHP: 5.6
+
+
 # Plugin Melhor Envio
 
 Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online. 
