@@ -95,8 +95,10 @@ class PackageController
 
     private function getWeighteBox($total, $quantity, $value)
     {
-        $unit = $value / $total;
-        return $unit * $quantity;
+        // $unit = $value / $total;
+        // return $unit * $quantity;
+
+        return $value;
     }
 
     /**

@@ -137,7 +137,6 @@ class CotationController
      */
     public function cotationProductPage() 
     {
-
         if (!isset($_POST['data'])) {
             return [
                 'success' => false,
@@ -287,6 +286,16 @@ class CotationController
                 wp_remote_retrieve_body(
                     wp_remote_post(self::URL . '/v2/me/shipment/calculate', $params)
                 )
+            );
+
+            (new LogsController)->add(
+                $to, 
+                'Cotação', 
+                $params, 
+                $response, 
+                'CotationController', 
+                'makeCotation', 
+                'https://api.melhorenvio.com/v2/me/shipment/calculate'
             );
 
             return $response;

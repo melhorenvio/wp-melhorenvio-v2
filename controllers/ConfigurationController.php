@@ -5,6 +5,7 @@ use Models\Address;
 use Models\Agency;
 use Models\Store;
 use Models\CalculatorShow;
+use Models\UseInsurance;
 use Controllers\ContationControllers;
 
 class ConfigurationController 
@@ -150,12 +151,77 @@ class ConfigurationController
                     'title' => str_replace(' (Melhor envio)', '', $method->method_title),
                     'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor envio)', '', $method->method_title),
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0 ,
-                    'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0 
+                    'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
+                    'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0 
                 ];
             }
         }
 
         echo json_encode($methods);die;
+    }
+
+    public function getStyle()
+    {
+        $style = [
+            'calculo_de_frete' => [
+                'style' => (get_option('calculo_de_frete')) ? get_option('calculo_de_frete') : '',
+                'name'  => 'Div calculo de frete',
+                'id' => 'calculo_de_frete'
+            ],
+            'input_calculo_frete' => [
+                'style' => (get_option('input_calculo_frete')) ? get_option('input_calculo_frete') : '',
+                'name'  => 'Input calculo de frete',
+                'id'    => 'input_calculo_frete',
+            ],
+            'botao_calculo_frete' => [
+                'style' => (get_option('botao_calculo_frete')) ? get_option('botao_calculo_frete') : '',
+                'name'  => 'Botão calculo de frete',
+                'id' => 'botao_calculo_frete',
+            ],
+            'botao_imagem_calculo_frete' => [
+                'style' => (get_option('botao_imagem_calculo_frete')) ? get_option('botao_imagem_calculo_frete') : '',
+                'name'  => 'Imagem calculo de frete',
+                'id' => 'botao_imagem_calculo_frete',
+            ],
+            'botao_texto_calculo_frete' => [
+                'style' => (get_option('botao_texto_calculo_frete')) ? get_option('botao_texto_calculo_frete') : '',
+                'name'  => 'Texto do botão do calculo de frete',
+                'id' => 'botao_texto_calculo_frete',
+            ]
+        ];
+
+        echo json_encode($style);die;
+    }
+
+    public function saveStyle()
+    {
+        delete_option($_GET['id']);
+        add_option($_GET['id'], $_GET['style']);
+    }
+
+    public function savePathPlugins()
+    {
+        if(empty($_GET['path'])) {
+            delete_option('melhor_envio_path_plugins');
+            die;
+        }
+
+        delete_option('melhor_envio_path_plugins');
+        add_option('melhor_envio_path_plugins', $_GET['path']);
+    }
+
+    public function getPathPlugins()
+    {
+        $path = get_option('melhor_envio_path_plugins');
+
+        if (!$path) {
+            $path = ABSPATH . 'wp-content/plugins';
+        }
+
+        echo json_encode([
+            'path' => $path
+        ]); 
+        die;
     }
 
     /**
@@ -171,7 +237,8 @@ class ConfigurationController
             'id' => $id,
             'name' => $_GET['name'],
             'tax' => $_GET['tax'],
-            'time' => $_GET['time']
+            'time' => $_GET['time'],
+            'perc' => $_GET['perc']
         ]);die;
     }
 
@@ -180,6 +247,7 @@ class ConfigurationController
         global $wpdb;
         $sql = "select * from " . $wpdb->prefix . "options where option_name like '%melhor_envio_option_method_shipment_%'";
         $results = $wpdb->get_results($sql);
+
 
         if (empty($results)) {
             return false;
@@ -193,10 +261,12 @@ class ConfigurationController
             }
 
             $data = unserialize($item->option_value);
+
             $options[$data['id']] = [
                 'name' => $data['name'],
                 'tax' => $data['tax'],
-                'time' => $data['time']
+                'time' => $data['time'],
+                'perc' => $data['perc']
             ];
         }
 
@@ -237,4 +307,31 @@ class ConfigurationController
         }
         return $option;
     }
+
+    /**
+     * @return void
+     */
+    public function getUseInsurance() 
+    {
+        echo json_encode((new UseInsurance())->get());
+        die;
+    }
+
+    /**
+     * @return void
+     */
+    public function saveUseInsurance() 
+    {
+        if (!isset($_GET['data'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'É necessário infomar o parametro data ("true" ou "false")'
+            ]);
+            die;
+        }
+
+        echo json_encode((new UseInsurance())->set($_GET['data']));
+        die;
+    }
+    
 }

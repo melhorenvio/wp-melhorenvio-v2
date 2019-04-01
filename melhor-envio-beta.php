@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.2.9
+Version: 2.3.8
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -41,15 +41,19 @@ Domain Path: /languages
  */
 
 // don't call the file directly
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( !defined( 'ABSPATH' ) ) {
+    define('ABSPATH', dirname(__FILE__));
+}
 
-/**
- * Usages
- */
-require __DIR__ . '/vendor/autoload.php';
-include_once ABSPATH . '/wp-content/plugins/woocommerce/includes/class-woocommerce.php';
-include_once ABSPATH . '/wp-content/plugins/woocommerce/woocommerce.php';
-include_once ABSPATH . '/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
+    add_action( 'admin_notices', function(){
+        echo sprintf('<div class="error">
+            <p>%s</p>
+        </div>', 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin');
+    });
+    return false;
+}
+
 
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
@@ -60,6 +64,7 @@ use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
 use Controllers\OptionsController;
+use Controllers\StatusController;
 use Models\CalculatorShow;
 
 /**
@@ -74,7 +79,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.2.9';
+    public $version = '2.3.8';
 
     /**
      * Holds various class instances
@@ -91,15 +96,33 @@ final class Base_Plugin {
      */
     public function __construct() {
 
+        require __DIR__ . '/vendor/autoload.php';
 
-        $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
+        $pathPlugins = get_option('melhor_envio_path_plugins');
+        if(!$pathPlugins) {
+            $pathPlugins = ABSPATH . 'wp-content/plugins';
+        }
+
+        $errorsPath = [];
+
+        if (!file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
+            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
+        }
+
+        if (!is_dir($pathPlugins . '/woocommerce')) {
+            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
+        }
 
         $errors = [];
+
+        // $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
+        $pluginsActiveds = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+
         if (!in_array('woocommerce/woocommerce.php', $pluginsActiveds)) {
             $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
         }
 
-        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds)) {
+        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds) && !is_multisite()) {
             $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
         }
 
@@ -114,19 +137,37 @@ final class Base_Plugin {
             return false;
         }
         
-
         $this->define_constants();
 
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
+
         register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
         add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 
-        // Create the methods shippings
-        foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
-            include_once $filename;
+        function my_plugin_load_plugin_textdomain() {
+            load_plugin_textdomain( 'melhor-envio', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
         }
 
+        add_action( 'plugins_loaded', 'my_plugin_load_plugin_textdomain' );
+
+        if (empty($errorsPath)) {
+
+            include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+
+            // Create the methods shippings
+            foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+                include_once $filename;
+            }
+        } else {
+            add_action( 'admin_notices', function() {
+                echo sprintf('<div class="error">
+                    <p>%s</p>
+                </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
+            });
+        }
     }
 
     /**
@@ -243,6 +284,7 @@ final class Base_Plugin {
         if ( $this->is_request( 'rest' ) ) {
             require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
         }
+        
     }
 
     /**
@@ -259,14 +301,8 @@ final class Base_Plugin {
         $cotacao = new CotationController();
         $logs    = new LogsController();
         $options = new OptionsController();
-
-        $hideCalculator = (new CalculatorShow)->get();
-
-        if ($hideCalculator) {
-            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
-            $cotacaoProd->run();
-        }
-
+        $status  = new StatusController();
+        
         add_action( 'init', array( $this, 'init_classes' ) );
 
         // Localize our plugin
@@ -277,6 +313,15 @@ final class Base_Plugin {
             echo $order->getOrders();
             die;
         });
+
+
+        $hideCalculator = (new CalculatorShow)->get();
+
+        if ($hideCalculator) {
+            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
+            $cotacaoProd->run();
+        }
+
 
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
@@ -326,6 +371,76 @@ final class Base_Plugin {
         // salvar onde é exibida a cotação na tela de produto
         add_action('wp_ajax_save_where_calculator', [$conf, 'saveWhereCalculator']);
         add_action('wp_ajax_get_where_calculator', [$conf, 'getWhereCalculator']);
+
+        // salvar a opção de usar valor segurado nas cotações
+        add_action('wp_ajax_set_use_insurance', [$conf, 'saveUseInsurance']);
+        add_action('wp_ajax_get_use_insurance', [$conf, 'getUseInsurance']);
+
+        // salvar estilo calculadora
+        add_action('wp_ajax_get_style_calculator', [$conf, 'getStyle']);
+        add_action('wp_ajax_save_style_calculator', [$conf, 'saveStyle']);
+
+        add_action('wp_ajax_set_path_plugins', [$conf, 'savePathPlugins']);
+        add_action('wp_ajax_get_path_plugins', [$conf, 'getPathPlugins']);
+
+
+        // Status WooCommerce
+        add_action('wp_ajax_get_status_woocommerce', [$status, 'getStatus']);
+
+        // Pegar produtos de um pedido
+        add_action('wp_ajax_get_info_melhor_envio', function(){
+
+            if (!isset($_GET['cep'])) {
+                echo json_encode([
+                    'error' => 'Informar o cep de destino'
+                ]);
+                die;
+            }
+
+            $response['cep_destiny'] = $_GET['cep'];
+
+            $response['token'] = get_option('wpmelhorenvio_token');
+
+            $params = array('headers'=>[
+                'Content-Type' => 'application/json',
+                'Accept'=>'application/json',
+                'Authorization' => 'Bearer '.$response['token']],
+            );
+
+            $response['account'] = wp_remote_retrieve_body(
+                wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
+            );
+
+            $response['package'] = [
+                'width'  => (isset($_GET['width']))  ? (float) $_GET['width']  : 17 ,
+                'height' => (isset($_GET['height'])) ? (float) $_GET['height'] : 23,
+                'length' => (isset($_GET['length'])) ? (float) $_GET['length'] : 10,
+                'weight' => (isset($_GET['weight'])) ? (float) $_GET['weight'] : 1
+            ];
+
+            $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+            $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+
+            $response['user']   = (new UsersController())->getInfo();
+            $response['origem'] = (new UsersController())->getFrom();
+
+            $response['cotation'] = (new CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
+
+            $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+
+            $response['is_multisite'] = is_multisite();
+
+            $response['enableds'] = (new CotationController())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
+
+            foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+                $response['servicesFile'][] = $filename;
+            }
+
+            echo json_encode($response);
+            die;
+
+        });
+
     }
     
     /**
@@ -335,6 +450,7 @@ final class Base_Plugin {
      */
     public function init_classes() {
 
+        
         if ( $this->is_request( 'admin' ) ) {
             $this->container['admin'] = new App\Admin();
         }

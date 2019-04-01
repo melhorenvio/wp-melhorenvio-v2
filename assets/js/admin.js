@@ -435,12 +435,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -457,9 +451,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_loader: 'toggleLoader',
         msg_modal: 'setMsgModal',
         show_modal: 'showModal',
-        show_more: 'showMore'
+        show_more: 'showMore',
+        statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'refreshCotation', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'addCart', 'refreshCotation', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket', 'closeModal', 'insertInvoice', 'getStatusWooCommerce']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -514,6 +509,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
         this.setBalance();
+        this.getStatusWooCommerce();
     }
 });
 
@@ -693,6 +689,32 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -704,8 +726,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             agency: null,
             show_modal: false,
             show_calculator: true,
+            style_calculator: [],
+            use_insurance: true,
             methods_shipments: [],
             where_calculator: null,
+            path_plugins: null,
             where_calculator_collect: [{
                 'id': 'woocommerce_before_single_product',
                 'name': 'Antes do titulo do produto (Depende do tema do projeto)'
@@ -747,8 +772,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         stores: 'getStores',
         agencies: 'getAgencies',
         show_load: 'showLoad'
+        // path_plugins: 'getPathPlugins'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency', 'getPathPlugins', 'setPathPlugins']), {
         updateConfig() {
             this.setSelectedAddress(this.address);
             this.setSelectedStore(this.store);
@@ -756,6 +782,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.setShowCalculator();
             this.setFieldsmethodsShipments();
             this.setWhereCalculator();
+            this.setUseInsurance();
+            this.setStyleCalculator();
+            this.setPathPlugins();
             this.show_modal = true;
         },
         showAgencies(data) {
@@ -765,6 +794,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         close() {
             this.show_modal = false;
         },
+        getStyleCalculator() {
+            let data = { action: 'get_style_calculator' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.style_calculator = response.data;
+                }
+            });
+        },
         getShowCalculator() {
             let data = { action: 'get_calculator_show' };
             this.$http.get(`${ajaxurl}`, {
@@ -772,6 +811,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }).then(response => {
                 if (response && response.status === 200) {
                     this.show_calculator = response.data;
+                }
+            });
+        },
+        getUseInsurance() {
+            let data = { action: 'get_use_insurance' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.use_insurance = response.data;
                 }
             });
         },
@@ -802,13 +851,38 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
+        setUseInsurance() {
+            this.$http.post(`${ajaxurl}?action=set_use_insurance&data=${this.use_insurance}`).then(response => {
+                if (response && response.status === 200) {
+                    this.use_insurance = response.data;
+                }
+            });
+        },
         setWhereCalculator() {
             this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then(response => {});
         },
         setFieldsmethodsShipments() {
             this.methods_shipments.forEach(item => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}`).then(response => {});
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then(response => {});
             });
+        },
+        setStyleCalculator() {
+            Object.entries(this.style_calculator).forEach(([key, val]) => {
+                this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then(response => {});
+            });
+        },
+        getPathPlugins() {
+            let data = { action: 'get_path_plugins' };
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then(response => {
+                if (response && response.status === 200) {
+                    this.path_plugins = response.data.path;
+                }
+            });
+        },
+        setPathPlugins() {
+            this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then(response => {});
         }
     }),
     watch: {
@@ -846,8 +920,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         this.getStores();
         this.getAgencies();
         this.getShowCalculator();
+        this.getUseInsurance();
         this.getWhereCalculator();
         this.getMethodsShipments();
+        this.getStyleCalculator();
+        this.getPathPlugins();
     }
 });
 
@@ -1437,34 +1514,21 @@ var render = function() {
               [
                 _c("option", { attrs: { value: "all" } }, [_vm._v("Todos")]),
                 _vm._v(" "),
-                _c("option", { attrs: { value: "wc-pending" } }, [
-                  _vm._v("Pendentes")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-processing" } }, [
-                  _vm._v("Processando")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-on-hold" } }, [
-                  _vm._v("Em andamento")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-completed" } }, [
-                  _vm._v("Completos")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-cancelled" } }, [
-                  _vm._v("Cancelados")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-refunded" } }, [
-                  _vm._v("Recusados")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "wc-failed" } }, [
-                  _vm._v("Com erro")
-                ])
-              ]
+                _vm._l(_vm.statusWooCommerce, function(statusName, statusKey) {
+                  return _c(
+                    "option",
+                    { key: statusKey, domProps: { value: statusKey } },
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(statusName) +
+                          "\n                    "
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
             )
           ])
         ])
@@ -1729,8 +1793,7 @@ var render = function() {
                                     )
                                   ]),
                                   _vm._v(" "),
-                                  !item.order_id &&
-                                  item.cotation.choose_method != null
+                                  !item.order_id || item.order_id == null
                                     ? _c(
                                         "a",
                                         {
@@ -1780,7 +1843,8 @@ var render = function() {
                               { staticClass: "formBox paddingBox" },
                               [
                                 item.cotation.choose_method == 3 ||
-                                item.cotation.choose_method == 4
+                                item.cotation.choose_method == 4 ||
+                                item.cotation.choose_method == 10
                                   ? [
                                       _c(
                                         "fieldset",
@@ -1868,9 +1932,12 @@ var render = function() {
                                     ]
                                   : _vm._e(),
                                 _vm._v(" "),
-                                (item.cotation.choose_method >= 3 &&
+                                ((item.cotation.choose_method == 3 ||
+                                  item.cotation.choose_method == 4 ||
+                                  item.cotation.choose_method == 10) &&
                                   !item.non_commercial) ||
-                                item.cotation.choose_method > 4
+                                (item.cotation.choose_method == 8 ||
+                                  item.cotation.choose_method == 9)
                                   ? [
                                       _c("fieldset", [
                                         _c("div", [
@@ -3069,7 +3136,7 @@ var render = function() {
                   _c("br"),
                   _c("br"),
                   _vm._v(" "),
-                  _c("label", [_vm._v("Tempo extra")]),
+                  _vm._m(0, true),
                   _c("br"),
                   _vm._v(" "),
                   _c("input", {
@@ -3095,7 +3162,7 @@ var render = function() {
                   _c("br"),
                   _c("br"),
                   _vm._v(" "),
-                  _c("label", [_vm._v("Taxa extra")]),
+                  _vm._m(1, true),
                   _c("br"),
                   _vm._v(" "),
                   _c("input", {
@@ -3117,12 +3184,125 @@ var render = function() {
                         _vm.$set(option, "tax", $event.target.value)
                       }
                     }
+                  }),
+                  _c("br"),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm._m(2, true),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: option.perc,
+                        expression: "option.perc"
+                      }
+                    ],
+                    attrs: { type: "number" },
+                    domProps: { value: option.perc },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(option, "perc", $event.target.value)
+                      }
+                    }
                   })
                 ])
               ]
             )
           })
         )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Customização estilo da calculadora de frete")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "wpme_flex" },
+          _vm._l(_vm.style_calculator, function(option) {
+            return _c(
+              "ul",
+              {
+                key: option.id,
+                staticClass: "wpme_address",
+                attrs: { value: option.id }
+              },
+              [
+                _c("li", [
+                  _c("h2", [_vm._v(_vm._s(option.name))]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: option.style,
+                        expression: "option.style"
+                      }
+                    ],
+                    attrs: {
+                      type: "text",
+                      placeholder:
+                        "width:100%; height:50px; background:#e1e1e1;"
+                    },
+                    domProps: { value: option.style },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(option, "style", $event.target.value)
+                      }
+                    }
+                  })
+                ])
+              ]
+            )
+          })
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Caminho para a pasta plugins do wordpress")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c("li", [
+              _c("h2", [_vm._v("Path")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.path_plugins,
+                    expression: "path_plugins"
+                  }
+                ],
+                attrs: {
+                  type: "text",
+                  placeholder: "/home/htdocs/html/wp-content/plugins"
+                },
+                domProps: { value: _vm.path_plugins },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.path_plugins = $event.target.value
+                  }
+                }
+              }),
+              _c("br"),
+              _c("br")
+            ])
+          ])
+        ])
       ]),
       _vm._v(" "),
       _c(
@@ -3276,7 +3456,45 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", [
+      _c("b", [_vm._v("Tempo extra")]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v("Será adicionado ao tempo de previsão de entrega")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", [
+      _c("b", [_vm._v("Taxa extra")]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(
+        "Será adicionado um valor extra para o cliente sobre o valor da cotação. "
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", [
+      _c("b", [_vm._v("Percentual extra")]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(
+        "Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. "
+      )
+    ])
+  }
+]
 render._withStripped = true
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -3631,6 +3849,7 @@ var orders = {
     namespaced: true,
     state: {
         orders: [],
+        status_woocommerce: [],
         show_loader: true,
         show_modal: false,
         show_more: true,
@@ -3750,6 +3969,9 @@ var orders = {
             order.content.status = 'printed';
             state.orders.splice(order.position, 1, order.content);
         },
+        setStatusWc: function setStatusWc(state, data) {
+            state.status_woocommerce = data;
+        },
         toggleLoader: function toggleLoader(state, data) {
             state.show_loader = data;
         },
@@ -3790,6 +4012,9 @@ var orders = {
         },
         showMore: function showMore(state) {
             return state.show_more;
+        },
+        statusWooCommerce: function statusWooCommerce(state) {
+            return state.status_woocommerce;
         }
 
     },
@@ -3974,12 +4199,11 @@ var orders = {
             _axios2.default.post(ajaxurl + '?action=pay_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
 
                 if (!response.data.success) {
-                    context.commit('setMsgModal', response.data.message);
+                    context.commit('setMsgModal', response.data.data);
                     context.commit('toggleLoader', false);
                     context.commit('toggleModal', true);
                     return false;
                 }
-
                 context.commit('payTicket', data.id);
                 context.dispatch('balance/setBalance', null, { root: true });
                 context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso');
@@ -4039,8 +4263,15 @@ var orders = {
                 return false;
             });
         },
-        closeModal: function closeModal(_ref7) {
+        getStatusWooCommerce: function getStatusWooCommerce(_ref7) {
             var commit = _ref7.commit;
+
+            _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
+                commit('setStatusWc', response.data.statusWc);
+            });
+        },
+        closeModal: function closeModal(_ref8) {
+            var commit = _ref8.commit;
 
             commit('toggleModal', false);
         }
@@ -4117,9 +4348,13 @@ var configuration = {
         addresses: [],
         stores: [],
         agencies: [],
+        styleCalculator: [],
         show_load: true
     },
     mutations: {
+        setStyleCalculator: function setStyleCalculator(state, data) {
+            state.styleCalculator = data;
+        },
         setAddress: function setAddress(state, data) {
             state.addresses = data;
         },
@@ -4143,13 +4378,31 @@ var configuration = {
         getAgencies: function getAgencies(state) {
             return state.agencies;
         },
+        getStyleCalculator: function getStyleCalculator(state) {
+            return state.styleCalculator;
+        },
         showLoad: function showLoad(state) {
             return state.show_load;
         }
     },
     actions: {
-        getAddresses: function getAddresses(_ref, data) {
+        getStyleCalculator: function getStyleCalculator(_ref, data) {
             var commit = _ref.commit;
+
+            var content = {
+                action: 'get_style'
+            };
+
+            _axios2.default.get('' + ajaxurl, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setStyleCalculator', response.data.style);
+                }
+            });
+        },
+        getAddresses: function getAddresses(_ref2, data) {
+            var commit = _ref2.commit;
 
             var content = {
                 action: 'get_addresses'
@@ -4162,8 +4415,8 @@ var configuration = {
                 }
             });
         },
-        getStores: function getStores(_ref2, data) {
-            var commit = _ref2.commit;
+        getStores: function getStores(_ref3, data) {
+            var commit = _ref3.commit;
 
             var content = {
                 action: 'get_stores'
@@ -4176,8 +4429,8 @@ var configuration = {
                 }
             });
         },
-        getAgencies: function getAgencies(_ref3, data) {
-            var commit = _ref3.commit;
+        getAgencies: function getAgencies(_ref4, data) {
+            var commit = _ref4.commit;
 
             commit('toggleLoader', true);
             data = Object.assign({ action: 'get_agency_jadlog' }, data);
@@ -4190,8 +4443,8 @@ var configuration = {
                 }
             });
         },
-        setSelectedAddress: function setSelectedAddress(_ref4, data) {
-            var commit = _ref4.commit;
+        setSelectedAddress: function setSelectedAddress(_ref5, data) {
+            var commit = _ref5.commit;
 
             _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
                 if (response && response.status === 200) {
@@ -4199,8 +4452,8 @@ var configuration = {
                 }
             });
         },
-        setSelectedStore: function setSelectedStore(_ref5, data) {
-            var commit = _ref5.commit;
+        setSelectedStore: function setSelectedStore(_ref6, data) {
+            var commit = _ref6.commit;
 
             _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
                 if (response && response.status === 200) {
@@ -4208,8 +4461,8 @@ var configuration = {
                 }
             });
         },
-        setSelectedAgency: function setSelectedAgency(_ref6, data) {
-            var commit = _ref6.commit;
+        setSelectedAgency: function setSelectedAgency(_ref7, data) {
+            var commit = _ref7.commit;
 
             _axios2.default.post(ajaxurl + '?action=set_agency_jadlog&id=' + data).then(function (response) {
                 if (response && response.status === 200) {

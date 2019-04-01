@@ -33,13 +33,9 @@
                     <h3>Pedidos</h3>
                     <select v-model="wpstatus">
                         <option value="all">Todos</option>
-                        <option value="wc-pending">Pendentes</option>
-                        <option value="wc-processing">Processando</option>
-                        <option value="wc-on-hold">Em andamento</option>
-                        <option value="wc-completed">Completos</option>
-                        <option value="wc-cancelled">Cancelados</option>
-                        <option value="wc-refunded">Recusados</option>
-                        <option value="wc-failed">Com erro</option>
+                        <option v-for="(statusName, statusKey) in statusWooCommerce" :key="statusKey" v-bind:value="statusKey">
+                            {{ statusName }}
+                        </option>
                     </select>
                 </td>
             </tr>
@@ -89,8 +85,6 @@
                                             </template>
                                             
                                             <label>Métodos de envio</label> 
-
-                                            <!-- TODO -->
                                             <template v-if="item.cotation[item.cotation.choose_method]">
                                                 <fieldset  class="selectLine">
                                                     <div class="inputBox">
@@ -104,7 +98,7 @@
                                             </template>
                                         </div>
                                     </div>
-                                    <a v-if="!item.order_id && item.cotation.choose_method != null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                    <a v-if="!item.order_id || item.order_id == null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
                                         Recalcular
                                     </a>
                                 </template>
@@ -119,7 +113,7 @@
                             <li>
                                 <div class="me-form">
                                     <div class="formBox paddingBox">
-                                        <template  v-if="item.cotation.choose_method == 3 || item.cotation.choose_method == 4" >
+                                        <template  v-if="item.cotation.choose_method == 3 || item.cotation.choose_method == 4 || item.cotation.choose_method == 10" >
                                             <fieldset class="checkLine">
                                                 <div class="inputBox">
                                                     <input type="checkbox" v-model="item.non_commercial" />
@@ -128,7 +122,7 @@
                                             </fieldset>
                                             <br>
                                         </template>
-                                        <template  v-if="(item.cotation.choose_method >= 3 && !item.non_commercial) || item.cotation.choose_method > 4">
+                                        <template  v-if="((item.cotation.choose_method == 3 || item.cotation.choose_method == 4 || item.cotation.choose_method == 10 )  && !item.non_commercial) || (item.cotation.choose_method == 8 || item.cotation.choose_method == 9)">
                                             <fieldset>
                                                 <div>
                                                     <label>Nota fiscal</label><br>
@@ -394,7 +388,8 @@ export default {
             show_loader: 'toggleLoader',
             msg_modal: 'setMsgModal',
             show_modal: 'showModal',
-            show_more: 'showMore'
+            show_more: 'showMore',
+            statusWooCommerce: 'statusWooCommerce'
         }),
         ...mapGetters('balance', ['getBalance'])
     },
@@ -410,7 +405,8 @@ export default {
             'createTicket',
             'printTicket',
             'closeModal',
-            'insertInvoice'
+            'insertInvoice',
+            'getStatusWooCommerce'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {
@@ -473,6 +469,7 @@ export default {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
         this.setBalance()
+        this.getStatusWooCommerce()
     }
 }
 </script>
