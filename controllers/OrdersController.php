@@ -365,7 +365,6 @@ class OrdersController
      */
     public function payTicket() 
     {
-
         $orders = explode(',', $_GET['order_id']);
 
         $wallet = 0;

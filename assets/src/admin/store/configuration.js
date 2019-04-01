@@ -7,9 +7,13 @@ const configuration = {
         addresses: [],
         stores: [],
         agencies: [],
+        styleCalculator: [],
         show_load: true
     },
     mutations: {
+        setStyleCalculator: (state, data) => {
+            state.styleCalculator = data;
+        },
         setAddress: (state, data) => {
             state.addresses = data;
         },
@@ -27,9 +31,23 @@ const configuration = {
         getAddress: state => state.addresses,
         getStores: state => state.stores,
         getAgencies: state => state.agencies,
+        getStyleCalculator: state => state.styleCalculator,
         showLoad: state => state.show_load
     },
     actions: {
+        getStyleCalculator: ({commit}, data) => {
+            let content = {
+                action: 'get_style'
+            }
+
+            Axios.get(`${ajaxurl}`, {
+                params: content
+            }).then(function (response) {
+                if (response && response.status === 200) {
+                    commit('setStyleCalculator', response.data.style)
+                }
+            })
+        },
         getAddresses: ({commit}, data) => {
             let content = {
                 action: 'get_addresses',
