@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use Controllers\ConfigurationsController;
 
 class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 
@@ -18,11 +19,13 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     protected $base_path;
     protected $base_url;
     protected $metodos_de_entrega;
+    protected $where_show_calculator;
 
     public function __construct() {
 
-        $this->base_path = __DIR__;
+        $this->base_path = __DIR__; 
         $this->base_url =  plugin_dir_url( __FILE__ );
+        $this->where_show_calculator = (new ConfigurationController())->getWhereCalculatorValue();
 
         // Hooks
         add_action( 'wp_enqueue_scripts', array($this, 'enqueue_css_js_frontend') );
@@ -33,30 +36,26 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     }
 
     public function enqueue_css_js_frontend() {
-        wp_enqueue_script( 'produto', plugins_url($this->getNameFolder() . '/assets/js/shipping-product-page.js'), 'jquery');
+        wp_enqueue_script( 'produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', 'jquery');
     }
 
     public function run() {
-        add_action( 'woocommerce_before_add_to_cart_button', array($this, 'is_produto_single'));
-    }
-
-    private function getNameFolder()
-    {
-        $folder = plugin_dir_path( __FILE__ );
-        $folder = explode('wp-content/plugins/', $folder);
-        $folder = explode('/controllers/', $folder[1]);
-        return $folder[0];
+        //woocommerce_before_add_to_cart_button
+        add_action( $this->where_show_calculator, array($this, 'is_produto_single'));
     }
 
     public function is_produto_single() {
         global $product;
         if (is_product()) {
             $this->prepara_produto($product);
-            add_action('woocommerce_before_add_to_cart_button', array($this, 'add_calculo_de_frete'), 11);
+            add_action($this->where_show_calculator, array($this, 'add_calculo_de_frete'), 11);
         }
     }
 
     public function formata_peso_produto($peso) {
+
+        $peso = floatval($peso);
+
         $medida = get_option('woocommerce_weight_unit');
         switch ($medida) {
             case 'g':
@@ -95,13 +94,30 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     * Adiciona o HTML do cálculo de frete na página do produto
     */
     public function add_calculo_de_frete() {
+
+        $calculo_de_frete = get_option('calculo_de_frete');
+        $input_calculo_frete = get_option('input_calculo_frete');
+        $botao_calculo_frete = get_option('botao_calculo_frete');
+        $botao_imagem_calculo_frete = get_option('botao_imagem_calculo_frete');
+        $botao_texto_calculo_frete = get_option('botao_texto_calculo_frete');
+
+
         echo $this->inline_js(); ?>
             <div id="woocommerce-correios-calculo-de-frete-na-pagina-do-produto">
                 <style>
                     div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete svg {fill:;}
                     div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {color:;}
                     div#woocommerce-correios-calculo-de-frete-na-pagina-do-produto div.calculo-de-frete div#calcular-frete {background-color:;}
+
+                    .calculo-de-frete {
+                        width: 100%; */
+                        height: 50px;
+                    }
+
                     #calcular-frete {
+                        width: 25%;
+                        font-size: 15px;
+                        height: 100%;
                         display:inline-block;
                         float: left;
                         color:#444;
@@ -116,12 +132,18 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 
                     #calcular-frete img {
                         float: left;
-                        width: 18%;
+                        width: 10%;
                     }
                     .iptCep {
                         float: left;
                         width: 50%;
-                        margin-right: 2%;
+                        margin-right: 5%;
+                        height: 100%;
+                    }
+
+                    #calcular-frete span {
+                        float: left;
+                        margin-left: 2%;
                     }
                 </style>
                 <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
@@ -133,15 +155,15 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <input type="hidden" id="calculo_frete_produto_preco" value="<?php echo $this->price;?>">
                 <input type="hidden" id="id_produto" value="<?php echo $this->id;?>">
 
-                <div class="calculo-de-frete">
-                    <input class="iptCep" type="text" maxlength="9" onkeydown="return mascara(this, '#####-###');">
-                    <div id="calcular-frete">
-                        <img src="<?php echo  plugins_url($this->getNameFolder() . '/assets/img/truck.png') ?>" />
-                        <span>Calcular Frete</span>
+                <div class="calculo-de-frete" style="<?php echo $calculo_de_frete ?>">
+                    <input class="iptCep" style="<?php echo $input_calculo_frete ?>" type="text" maxlength="9" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
+                    <div id="calcular-frete" style="<?php echo $botao_calculo_frete ?>">
+                        <img style="<?php echo $botao_imagem_calculo_frete ?>" src="https://s3.amazonaws.com/wordpress-v2-assets/img/truck.png" />
+                        <span style="<?php echo $botao_texto_calculo_frete ?>"><?php echo  __('Calcular Frete', 'melhor-envio'); ?></span>
                     </div>
                 </div>
                 <div id="calcular-frete-loader" style="display:none;">
-                    <img src="<?php echo  plugins_url($this->getNameFolder() . '/assets/img/loader.gif') ?>" />
+                    <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif" />
                 </div>
                 <div class="resultado-frete" style="display:none;">
                     <table>

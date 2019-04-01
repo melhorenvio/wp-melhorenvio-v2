@@ -9,13 +9,13 @@ use Controllers\OptionsController;
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
-    add_action( 'woocommerce_shipping_init', 'sedex_shipping_method_init' );
-	function sedex_shipping_method_init() {
-		if ( ! class_exists( 'WC_Sedex_Shipping_Method' ) ) {
+    add_action( 'woocommerce_shipping_init', 'latam_shipping_method_init' );
+	function latam_shipping_method_init() {
+		if ( ! class_exists( 'WC_Latam_Shipping_Method' ) ) {
 
-			class WC_Sedex_Shipping_Method extends WC_Shipping_Method {
+			class WC_Latam_Shipping_Method extends WC_Shipping_Method {
 
-                public $code = '2';
+                public $code = '10';
 				/**
 				 * Constructor for your shipping class
 				 *
@@ -23,12 +23,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 * @return void
 				 */
 				public function __construct($instance_id = 0) {
-					$this->id                 = "sedex"; 
+					$this->id                 = "latam"; 
                     $this->instance_id = absint( $instance_id );
-                    $this->method_title       = "Correios Sedex (Melhor envio)"; 
-					$this->method_description = 'Serviço Sedex';
+                    $this->method_title       = "Latam (Melhor envio)"; 
+					$this->method_description = 'Serviço Latam';
 					$this->enabled            = "yes"; 
-					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Sedex';
+					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Latam';
                     $this->supports = array(
                         'shipping-zones',
                         'instance-settings',
@@ -72,13 +72,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							$method = (new optionsController())->getName($result->id, $result->name, '');
 
 							$rate = [
-								'id' => 'melhorenvio_sedex',
+								'id' => 'melhorenvio_latam',
 								'label' => $method['method'] . (new timeController)->setLabel($result->delivery_range, $this->code),
 								'cost' => (new MoneyController())->setprice($result->price, $this->code),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
 									'delivery_time' => $result->delivery_time,
-									'company' => 'Correios'
+									'company' => 'Latam'
 								]
 							];
 							$this->add_rate($rate);	
@@ -97,7 +97,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'title' => [
 							'title' => 'Titulo',
 							'type' => 'text',
-							'default' => 'Sedex'
+							'default' => 'Latam'
 						],
 						'enabled' => [
 							'title' => 'Ativar',
@@ -110,9 +110,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		}
 	}
 	
-	function add_sedex_shipping_method( $methods ) {
-		$methods['sedex'] = 'WC_Sedex_Shipping_Method';
+	function add_latam_shipping_method( $methods ) {
+		$methods['latam'] = 'WC_Latam_Shipping_Method';
 		return $methods;
 	}
-	add_filter( 'woocommerce_shipping_methods', 'add_sedex_shipping_method' );
+	add_filter( 'woocommerce_shipping_methods', 'add_latam_shipping_method' );
 }

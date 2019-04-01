@@ -51,7 +51,7 @@ class UsersController {
                 "district" => $address['district'],
                 "city" => $address['city'],
                 "state_abbr" => $address['state'],
-                "country_id" => $address['country'],
+                "country_id" => 'BR',
                 "postal_code" => $address['postal_code']
             ];   
         }
@@ -83,7 +83,7 @@ class UsersController {
             "district" =>get_post_meta($order_id, '_shipping_neighborhood',true),
             "city" => $order->get_shipping_city(),
             "state_abbr" => $order->get_shipping_state(),
-            "country_id" => $order->get_shipping_country(),
+            "country_id" => 'BR',
             "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),  
         ];
     }

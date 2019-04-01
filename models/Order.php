@@ -473,7 +473,7 @@ class Order {
             }
             $response[$cot->id] =  $cot;
         }
-        
+
         $useMelhor = true;
         if (is_null($data['choose_method'])) {
 
@@ -486,6 +486,10 @@ class Order {
                 $method = $item->id;
             }
             $data['choose_method'] = $method;
+        }
+
+        if(!array_key_exists(1, $response) && $data['choose_method'] == 1) {
+            $data['choose_method'] = 2;
         }
 
         $response['choose_method'] = $data['choose_method'];

@@ -33,6 +33,7 @@ class ProductsController
                 "length" => $_product->length
             ];
         }
+
         return $products;
     }
 

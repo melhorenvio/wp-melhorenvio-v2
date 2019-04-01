@@ -5,6 +5,7 @@ const orders = {
     namespaced: true,
     state: {
         orders: [],
+        status_woocommerce: [],
         show_loader: true,
         show_modal: false,
         show_more: true,
@@ -124,6 +125,9 @@ const orders = {
             order.content.status = 'printed'
             state.orders.splice(order.position, 1, order.content)
         },
+        setStatusWc: (state, data) => {
+            state.status_woocommerce = data
+        },
         toggleLoader: (state, data) => {
             state.show_loader = data;
         },
@@ -154,7 +158,8 @@ const orders = {
         toggleLoader: state => state.show_loader,
         setMsgModal: state => state.msg_modal,
         showModal: state => state.show_modal,
-        showMore: state => state.show_more
+        showMore: state => state.show_more,
+        statusWooCommerce: state => state.status_woocommerce
 
     },
     actions: {
@@ -333,12 +338,11 @@ const orders = {
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
                 if(!response.data.success) {
-                    context.commit('setMsgModal', response.data.message)
+                    context.commit('setMsgModal', response.data.data)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
                     return false
                 }
-
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, {root: true})
                 context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso')
@@ -393,6 +397,11 @@ const orders = {
                 commit('toggleModal', true)
                 return false
             })
+        },
+        getStatusWooCommerce: ({commit}) => {
+            Axios.get(`${ajaxurl}?action=get_status_woocommerce`).then(response => {
+                commit('setStatusWc', response.data.statusWc)
+            });
         },
         closeModal: ({commit}) => {
             commit('toggleModal', false)

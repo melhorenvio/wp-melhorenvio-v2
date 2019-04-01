@@ -10,7 +10,7 @@ class User
     {
         $dataUser = get_option('melhorenvio_user_info');
 
-        if (!$dataUser) {
+        if (!$dataUser || (isset($dataUser['message']) && $dataUser['message'] == 'Unauthenticated.' )) {
             $token = get_option('wpmelhorenvio_token');
             $params = array('headers'=>[
                 'Content-Type' => 'application/json',
@@ -30,6 +30,7 @@ class User
             }
 
             $data = get_object_vars(json_decode($response));
+
             add_option('melhorenvio_user_info', $data);
             return [
                 'success' => true,

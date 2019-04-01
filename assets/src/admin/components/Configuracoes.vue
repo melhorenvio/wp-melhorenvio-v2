@@ -61,9 +61,8 @@
             </div>
         </div>
 
-
         <div class="wpme_config">
-            <h2>Exibir cotação na tela do produto</h2>
+            <h2>Configuração calculadora na página de produto</h2>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
@@ -79,15 +78,57 @@
         </div>
 
         <div class="wpme_config">
-            <h2>Taxas e tempo extra</h2>
+            <h2>Onde deseja exibir a cotação do produto?</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <select name="agencies" id="agencies" v-model="where_calculator">
+                            <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="wpme_config">
+            <h2>Personalizar métodos de envio</h2>
             <div class="wpme_flex">
                 <ul v-for="option in methods_shipments" :value="option.id" :key="option.id" class="wpme_address">
                     <li>
                         <h2>{{option.title}}</h2>
-                        <label>Tempo extra</label><br>
+                        <label>Nome de exibição</label><br>
+                        <input v-model="option.name" type="text" /><br><br>
+                        <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
                         <input v-model="option.time" type="number" /><br><br>
-                        <label>Taxa extra</label><br>
-                        <input v-model="option.tax" type="number" />
+                        <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
+                        <input v-model="option.tax" type="number" /><br><br>
+                        <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
+                        <input v-model="option.perc" type="number" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="wpme_config">
+            <h2>Customização estilo da calculadora de frete</h2>
+            <div class="wpme_flex">
+                <ul v-for="option in style_calculator" :value="option.id" :key="option.id" class="wpme_address">
+                    <li>
+                        <h2>{{option.name}}</h2>
+                        <textarea v-model="option.style" type="text" placeholder="width:100%; height:50px; background:#e1e1e1;"></textarea>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="wpme_config">
+            <h2>Caminho para a pasta plugins do wordpress</h2>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <h2>Path</h2>
+                        <input v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
                     </li>
                 </ul>
             </div>
@@ -162,7 +203,57 @@ export default {
             agency: null,
             show_modal: false,
             show_calculator: true,
+            style_calculator: [],
+            use_insurance: true,
             methods_shipments: [],
+            where_calculator: null,
+            path_plugins: null,
+            where_calculator_collect: [
+                {
+                    'id': 'woocommerce_before_single_product',
+                    'name': 'Antes do titulo do produto (Depende do tema do projeto)'
+                },
+                {
+                    'id': 'woocommerce_after_single_product',
+                    'name': 'Depois do titulo do produto'
+                },
+                {
+                    'id': 'woocommerce_single_product_summary',
+                    'name': 'Antes da descrição do produto'
+                },
+                {
+                    'id': 'woocommerce_before_add_to_cart_form',
+                    'name': 'Antes do fórmulario de comprar'
+                },
+                {
+                    'id': 'woocommerce_before_variations_form',
+                    'name': 'Antes das opçoes do produto'
+                },
+                {
+                    'id': 'woocommerce_before_add_to_cart_button',
+                    'name': 'Antes do botão de comprar'
+                },
+                {
+                    'id': 'woocommerce_before_single_variation',
+                    'name': 'Antes do campo de variações'
+                },
+                {
+                    'id': 'woocommerce_single_variation',
+                    'name': 'Antes das variações'
+                },
+                {
+                    'id': 'woocommerce_after_add_to_cart_form',
+                    'name': 'Depois do botão de comprar'
+                },
+                {
+                    'id': 'woocommerce_product_meta_start',
+                    'name': 'Antes das informações do produto'
+                },
+                {
+                    'id': 'woocommerce_share',
+                    'name': 'Depois dos botões de compartilhamento'
+                }
+            ]
         }
     },
     computed: {
@@ -170,7 +261,8 @@ export default {
             addresses: 'getAddress',
             stores: 'getStores',
             agencies: 'getAgencies',
-            show_load: 'showLoad'
+            show_load: 'showLoad',
+            // path_plugins: 'getPathPlugins'
         })
     },
     methods: {
@@ -180,7 +272,9 @@ export default {
             'getStores',
             'setSelectedStore',
             'getAgencies',
-            'setSelectedAgency'
+            'setSelectedAgency',
+            'getPathPlugins',
+            'setPathPlugins'
         ]),
         updateConfig () {
             this.setSelectedAddress(this.address)
@@ -188,6 +282,10 @@ export default {
             this.setSelectedAgency(this.agency)
             this.setShowCalculator()
             this.setFieldsmethodsShipments()
+            this.setWhereCalculator()
+            this.setUseInsurance()
+            this.setStyleCalculator()
+            this.setPathPlugins()
             this.show_modal = true
         },
         showAgencies (data) {
@@ -197,6 +295,16 @@ export default {
         close() {
             this.show_modal = false;
         },
+        getStyleCalculator () {
+            let data = {action: 'get_style_calculator'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.style_calculator = response.data
+                }
+            })
+        },
         getShowCalculator () {
             let data = {action: 'get_calculator_show'}
             this.$http.get(`${ajaxurl}`, {
@@ -204,6 +312,26 @@ export default {
             }).then( (response) => {
                 if (response && response.status === 200) {
                     this.show_calculator = response.data
+                }
+            })
+        },
+        getUseInsurance () {
+            let data = {action: 'get_use_insurance'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.use_insurance = response.data
+                }
+            })
+        },
+        getWhereCalculator () {
+            let data = {action: 'get_where_calculator'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.where_calculator = response.data.option
                 }
             })
         },
@@ -224,10 +352,38 @@ export default {
                 }
             })
         },
+        setUseInsurance () {
+            this.$http.post(`${ajaxurl}?action=set_use_insurance&data=${this.use_insurance}`).then( (response) => {
+                if (response && response.status === 200) {
+                    this.use_insurance = response.data
+                }
+            })
+        },
+        setWhereCalculator() {
+            this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then( (response) => {})
+        },
         setFieldsmethodsShipments () {
             this.methods_shipments.forEach((item) => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}`).then( (response) => {})
+                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then( (response) => {})
             });
+        },
+        setStyleCalculator () {
+            Object.entries(this.style_calculator).forEach(([key, val]) => {
+                this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then( (response) => {})
+            });
+        },
+        getPathPlugins () {
+            let data = {action: 'get_path_plugins'}
+            this.$http.get(`${ajaxurl}`, {
+                params: data
+            }).then( (response) => {
+                if (response && response.status === 200) {
+                    this.path_plugins = response.data.path
+                }
+            })
+        },
+        setPathPlugins () {
+            this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then( (response) => {})
         }
     },
     watch : {
@@ -265,7 +421,11 @@ export default {
         this.getStores()
         this.getAgencies()
         this.getShowCalculator()
+        this.getUseInsurance()
+        this.getWhereCalculator()
         this.getMethodsShipments()
+        this.getStyleCalculator()
+        this.getPathPlugins()
     }
 }
 </script>
