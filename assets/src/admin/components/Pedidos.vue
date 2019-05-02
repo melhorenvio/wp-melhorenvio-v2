@@ -1,5 +1,23 @@
+<style>
+    .boxBanner {
+        float: left;
+        width: 100%;
+        margin-bottom: 1%;
+    }
+
+    .boxBanner img {
+        float: left;
+        width: 100%;
+    }
+</style>
+
 <template>
     <div class="app-pedidos">
+
+        <div class="boxBanner">
+            <img src="https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733" />
+        </div>
+
         <template>
             <div>
                 <div class="grid">
@@ -15,7 +33,9 @@
         <table border="0" class="table-box">
             <tr>
                 <td>
-                    <h1>Saldo: <strong>{{getBalance}}</strong></h1>
+                    <!-- <h4>Usuário: <strong>{{username}}</strong></h4>
+                    <h4>E-mail: <strong>{{email}}</strong></h4> -->
+                    <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
             </tr>
             <tr>
@@ -45,7 +65,7 @@
             <div class="table -woocommerce">
                 <ul class="head">
                     <li><span>ID</span></li>
-                    <li><span>Valor</span></li>
+                    <li><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
@@ -55,8 +75,8 @@
                 <ul class="body">
                     <li v-for="(item, index) in orders" :key="index">
                         <ul class="body-list">
-                            <li><span><a target="_blank" :href="`/wp-admin/post.php?post=${item.id}&action=edit`"><strong>{{ item.id }}</strong></a></span></li>
-                            <li><span>{{ item.total }}</span></li>
+                            <li><span><a target="_blank" :href="`${item.link}`"><strong>{{ item.id }}</strong></a></span></li>
+                            <li><span></span></li>
                             <li>
                                 <span style="font-size: 14px;">
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
@@ -98,15 +118,20 @@
                                             </template>
                                         </div>
                                     </div>
-                                    <a v-if="!item.order_id || item.order_id == null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                    <!-- <a v-if="!item.order_id || item.order_id == null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
                                         Recalcular
-                                    </a>
+                                    </a> -->
+
                                 </template>
 
                                 <template v-else>
                                     <span v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
                                         {{ prot }}
                                     </span>
+                                </template>
+
+                                <template v-if="item.cotation.free_shipping">
+                                    <p>*Cliente utilizou cupom de frete grátis</p>
                                 </template>
                                 
                             </li>

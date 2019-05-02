@@ -435,6 +435,31 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -715,6 +740,65 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -725,12 +809,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             store: null,
             agency: null,
             show_modal: false,
-            show_calculator: true,
-            style_calculator: [],
-            use_insurance: true,
-            methods_shipments: [],
-            where_calculator: null,
-            path_plugins: null,
+            custom_calculator: false,
+            show_calculator: false,
+            path_plugins: '',
+            show_path: false,
+            codeshiping: [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }],
+            where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [{
                 'id': 'woocommerce_before_single_product',
                 'name': 'Antes do titulo do produto (Depende do tema do projeto)'
@@ -771,118 +855,107 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         addresses: 'getAddress',
         stores: 'getStores',
         agencies: 'getAgencies',
-        show_load: 'showLoad'
-        // path_plugins: 'getPathPlugins'
+        style_calculator: 'getStyleCalculator',
+        methods_shipments: 'getMethodsShipments',
+        show_load: 'showLoad',
+        path_plugins_: 'getPathPlugins',
+        where_calculator_: 'getWhereCalculator',
+        show_calculator_: 'getShowCalculator',
+        configs: 'getConfigs'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getAddresses', 'setSelectedAddress', 'getStores', 'setSelectedStore', 'getAgencies', 'setSelectedAgency', 'getPathPlugins', 'setPathPlugins']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getConfigs', 'setSelectedAgency', 'setPathPlugins', 'setSelectedStore', 'setSelectedAddress', 'setShowCalculator', 'setLoader', 'setAgencies']), {
+        showModalEditMethod(code) {
+            this.codeshiping[code]['status'] = true;
+        },
+        closeShowModalEditMethod() {
+            this.codeshiping = [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }];
+        },
         updateConfig() {
-            this.setSelectedAddress(this.address);
-            this.setSelectedStore(this.store);
-            this.setSelectedAgency(this.agency);
-            this.setShowCalculator();
-            this.setFieldsmethodsShipments();
-            this.setWhereCalculator();
-            this.setUseInsurance();
-            this.setStyleCalculator();
-            this.setPathPlugins();
-            this.show_modal = true;
+            this.setLoader(true);
+            var p1 = this.setSelectedAddress(this.address);
+            var p2 = this.setSelectedStore(this.store);
+            var p3 = this.setSelectedAgency(this.agency);
+            var p4 = this.setShowCalculator();
+            var p5 = this.setFieldsmethodsShipments();
+            var p6 = this.setWhereCalculator();
+            var p8 = this.setStyleCalculator();
+            var p9 = this.setPathPlugins();
+            var p10 = this.clearSession();
+
+            Promise.all([p1, p2, p3, p4, p5, p6, p8, p9, p10]).then(resolve => {
+                this.setLoader(false);
+                this.show_modal = true;
+            });
         },
         showAgencies(data) {
+            this.setLoader(true);
             this.agency = '';
-            this.getAgencies(data);
+            var responseAgencies = [];
+            var promiseAgencies = new Promise((resolve, reject) => {
+                this.$http.post(`${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`).then(function (response) {
+                    if (response && response.status === 200) {
+                        responseAgencies = response.data.agencies;
+                        resolve(true);
+                    }
+                });
+            });
+
+            promiseAgencies.then(resolve => {
+                this.setAgencies(responseAgencies);
+                this.setLoader(false);
+            });
         },
         close() {
             this.show_modal = false;
         },
-        getStyleCalculator() {
-            let data = { action: 'get_style_calculator' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.style_calculator = response.data;
-                }
-            });
-        },
-        getShowCalculator() {
-            let data = { action: 'get_calculator_show' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data;
-                }
-            });
-        },
-        getUseInsurance() {
-            let data = { action: 'get_use_insurance' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.use_insurance = response.data;
-                }
-            });
-        },
-        getWhereCalculator() {
-            let data = { action: 'get_where_calculator' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.where_calculator = response.data.option;
-                }
-            });
-        },
-        getMethodsShipments() {
-            let data = { action: 'get_metodos' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.methods_shipments = response.data;
-                }
-            });
-        },
         setShowCalculator() {
-            this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then(response => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data;
-                }
-            });
-        },
-        setUseInsurance() {
-            this.$http.post(`${ajaxurl}?action=set_use_insurance&data=${this.use_insurance}`).then(response => {
-                if (response && response.status === 200) {
-                    this.use_insurance = response.data;
-                }
+            return new Promise((resolve, reject) => {
+                this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then(response => {
+                    if (response && response.status === 200) {
+                        this.show_calculator = response.data;
+                        resolve(true);
+                    }
+                });
             });
         },
         setWhereCalculator() {
-            this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then(response => {});
+            return new Promise((resolve, reject) => {
+                this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then(response => {
+                    resolve(true);
+                });
+            });
         },
         setFieldsmethodsShipments() {
-            this.methods_shipments.forEach(item => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then(response => {});
+            return new Promise((resolve, reject) => {
+                this.methods_shipments.forEach(item => {
+                    this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then(response => {
+                        resolve(true);
+                    });
+                });
             });
         },
         setStyleCalculator() {
-            Object.entries(this.style_calculator).forEach(([key, val]) => {
-                this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then(response => {});
-            });
-        },
-        getPathPlugins() {
-            let data = { action: 'get_path_plugins' };
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then(response => {
-                if (response && response.status === 200) {
-                    this.path_plugins = response.data.path;
-                }
+            return new Promise((resolve, reject) => {
+                Object.entries(this.style_calculator).forEach(([key, val]) => {
+                    this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then(response => {
+                        resolve(true);
+                    });
+                });
             });
         },
         setPathPlugins() {
-            this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then(response => {});
+            return new Promise((resolve, reject) => {
+                this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then(response => {
+                    resolve(true);
+                });
+            });
+        },
+        clearSession() {
+            return new Promise((resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=delete_melhor_envio_session`).then(response => {
+                    resolve(true);
+                });
+            });
         }
     }),
     watch: {
@@ -905,7 +978,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
         },
         agencies() {
-            this.show_loader = false;
+            this.setLoader(true);
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {
@@ -913,18 +986,24 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     }
                 });
             }
+            this.setLoader(false);
+        },
+        show_calculator_(e) {
+            this.show_calculator = e;
+        },
+        path_plugins_(e) {
+            this.path_plugins = e;
+        },
+        where_calculator_(e) {
+            this.where_calculator = e;
         }
     },
     mounted() {
-        this.getAddresses();
-        this.getStores();
-        this.getAgencies();
-        this.getShowCalculator();
-        this.getUseInsurance();
-        this.getWhereCalculator();
-        this.getMethodsShipments();
-        this.getStyleCalculator();
-        this.getPathPlugins();
+        this.setLoader(true);
+        var promiseConfigs = this.getConfigs();
+        promiseConfigs.then(resolve => {
+            this.setLoader(false);
+        });
     }
 });
 
@@ -1039,7 +1118,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* 34 */,
 /* 35 */,
 /* 36 */,
-/* 37 */
+/* 37 */,
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1057,19 +1137,19 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _App = __webpack_require__(56);
+var _App = __webpack_require__(57);
 
 var _App2 = _interopRequireDefault(_App);
 
-var _router = __webpack_require__(59);
+var _router = __webpack_require__(60);
 
 var _router2 = _interopRequireDefault(_router);
 
-var _adminMenuFix = __webpack_require__(72);
+var _adminMenuFix = __webpack_require__(75);
 
 var _adminMenuFix2 = _interopRequireDefault(_adminMenuFix);
 
-var _store = __webpack_require__(73);
+var _store = __webpack_require__(76);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -1094,7 +1174,6 @@ new _vue2.default({
 (0, _adminMenuFix2.default)('vue-app');
 
 /***/ }),
-/* 38 */,
 /* 39 */,
 /* 40 */,
 /* 41 */,
@@ -1112,18 +1191,19 @@ new _vue2.default({
 /* 53 */,
 /* 54 */,
 /* 55 */,
-/* 56 */
+/* 56 */,
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(17);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6bc4b6d8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6bc4b6d8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(59);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(57)
+  __webpack_require__(58)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1169,13 +1249,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1197,7 +1277,7 @@ if (false) {
 }
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1215,19 +1295,19 @@ var _vueRouter = __webpack_require__(7);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _Home = __webpack_require__(60);
+var _Home = __webpack_require__(61);
 
 var _Home2 = _interopRequireDefault(_Home);
 
-var _Pedidos = __webpack_require__(63);
+var _Pedidos = __webpack_require__(64);
 
 var _Pedidos2 = _interopRequireDefault(_Pedidos);
 
-var _Configuracoes = __webpack_require__(66);
+var _Configuracoes = __webpack_require__(68);
 
 var _Configuracoes2 = _interopRequireDefault(_Configuracoes);
 
-var _Token = __webpack_require__(69);
+var _Token = __webpack_require__(72);
 
 var _Token2 = _interopRequireDefault(_Token);
 
@@ -1256,18 +1336,18 @@ exports.default = new _vueRouter2.default({
 });
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Home_vue__ = __webpack_require__(18);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0ce03f2f_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Home_vue__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0ce03f2f_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Home_vue__ = __webpack_require__(63);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(61)
+  __webpack_require__(62)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1313,13 +1393,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1343,18 +1423,19 @@ if (false) {
 }
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Pedidos_vue__ = __webpack_require__(19);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a7e32e_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Pedidos_vue__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a7e32e_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Pedidos_vue__ = __webpack_require__(67);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(64)
+  __webpack_require__(65)
+  __webpack_require__(66)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1400,13 +1481,19 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 65 */
+/* 66 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1418,14 +1505,16 @@ var render = function() {
     "div",
     { staticClass: "app-pedidos" },
     [
-      [_vm._m(0)],
+      _vm._m(0),
+      _vm._v(" "),
+      [_vm._m(1)],
       _vm._v(" "),
       _c("table", { staticClass: "table-box", attrs: { border: "0" } }, [
         _c("tr", [
           _c("td", [
-            _c("h1", [
-              _vm._v("Saldo: "),
-              _c("strong", [_vm._v(_vm._s(_vm.getBalance))])
+            _c("h4", [
+              _c("b", [_vm._v("Saldo:")]),
+              _vm._v(" " + _vm._s(_vm.getBalance))
             ])
           ])
         ]),
@@ -1543,7 +1632,7 @@ var render = function() {
             },
             [
               _c("div", { staticClass: "table -woocommerce" }, [
-                _vm._m(1),
+                _vm._m(2),
                 _vm._v(" "),
                 _c(
                   "ul",
@@ -1558,10 +1647,7 @@ var render = function() {
                               {
                                 attrs: {
                                   target: "_blank",
-                                  href:
-                                    "/wp-admin/post.php?post=" +
-                                    item.id +
-                                    "&action=edit"
+                                  href: "" + item.link
                                 }
                               },
                               [_c("strong", [_vm._v(_vm._s(item.id))])]
@@ -1569,7 +1655,7 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
-                        _c("li", [_c("span", [_vm._v(_vm._s(item.total))])]),
+                        _vm._m(3, true),
                         _vm._v(" "),
                         _c("li", [
                           _c("span", { staticStyle: { "font-size": "14px" } }, [
@@ -1779,7 +1865,8 @@ var render = function() {
                                                                     )
                                                                   : _vm._e()
                                                               }
-                                                            )
+                                                            ),
+                                                            0
                                                           )
                                                         : _vm._e()
                                                     ]
@@ -1791,34 +1878,7 @@ var render = function() {
                                       ],
                                       2
                                     )
-                                  ]),
-                                  _vm._v(" "),
-                                  !item.order_id || item.order_id == null
-                                    ? _c(
-                                        "a",
-                                        {
-                                          staticClass:
-                                            "action-button -adicionar",
-                                          attrs: {
-                                            href: "javascript:;",
-                                            "data-tip": "Recalcular"
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              _vm.refreshCotation({
-                                                id: item.id,
-                                                order_id: item.order_id
-                                              })
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                    Recalcular\n                                "
-                                          )
-                                        ]
-                                      )
-                                    : _vm._e()
+                                  ])
                                 ]
                               : _vm._l(item.protocol, function(
                                   prot,
@@ -1831,7 +1891,17 @@ var render = function() {
                                         "\n                                "
                                     )
                                   ])
-                                })
+                                }),
+                            _vm._v(" "),
+                            item.cotation.free_shipping
+                              ? [
+                                  _c("p", [
+                                    _vm._v(
+                                      "*Cliente utilizou cupom de frete grátis"
+                                    )
+                                  ])
+                                ]
+                              : _vm._e()
                           ],
                           2
                         ),
@@ -2015,7 +2085,7 @@ var render = function() {
                                                 "btn-border -full-blue",
                                               on: {
                                                 click: function($event) {
-                                                  _vm.insertInvoice(item)
+                                                  return _vm.insertInvoice(item)
                                                 }
                                               }
                                             },
@@ -2049,7 +2119,7 @@ var render = function() {
                                   },
                                   on: {
                                     click: function($event) {
-                                      _vm.addCart({
+                                      return _vm.addCart({
                                         id: item.id,
                                         choosen: item.cotation.choose_method,
                                         non_commercial: item.non_commercial
@@ -2153,7 +2223,7 @@ var render = function() {
                                   },
                                   on: {
                                     click: function($event) {
-                                      _vm.payTicket({
+                                      return _vm.payTicket({
                                         id: item.id,
                                         order_id: item.order_id
                                       })
@@ -2199,7 +2269,7 @@ var render = function() {
                                   attrs: { "data-tip": "Gerar etiqueta" },
                                   on: {
                                     click: function($event) {
-                                      _vm.createTicket({
+                                      return _vm.createTicket({
                                         id: item.id,
                                         order_id: item.order_id
                                       })
@@ -2257,7 +2327,7 @@ var render = function() {
                                   attrs: { "data-tip": "Imprimir etiqueta" },
                                   on: {
                                     click: function($event) {
-                                      _vm.printTicket({
+                                      return _vm.printTicket({
                                         id: item.id,
                                         order_id: item.order_id
                                       })
@@ -2435,7 +2505,7 @@ var render = function() {
                                   },
                                   on: {
                                     click: function($event) {
-                                      _vm.removeCart({
+                                      return _vm.removeCart({
                                         id: item.id,
                                         order_id: item.order_id
                                       })
@@ -2512,7 +2582,8 @@ var render = function() {
                         ])
                       ])
                     ])
-                  })
+                  }),
+                  0
                 )
               ])
             ]
@@ -2533,7 +2604,10 @@ var render = function() {
           staticClass: "btn-border -full-green",
           on: {
             click: function($event) {
-              _vm.loadMore({ status: _vm.status, wpstatus: _vm.wpstatus })
+              return _vm.loadMore({
+                status: _vm.status,
+                wpstatus: _vm.wpstatus
+              })
             }
           }
         },
@@ -2690,6 +2764,19 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "boxBanner" }, [
+      _c("img", {
+        attrs: {
+          src:
+            "https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733"
+        }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", [
       _c("div", { staticClass: "grid" }, [
         _c("div", { staticClass: "col-12-12" }, [
@@ -2709,7 +2796,7 @@ var staticRenderFns = [
     return _c("ul", { staticClass: "head" }, [
       _c("li", [_c("span", [_vm._v("ID")])]),
       _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Valor")])]),
+      _c("li", [_c("span")]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Destinatário")])]),
       _vm._v(" "),
@@ -2719,6 +2806,12 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Ações")])])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span")])
   }
 ]
 render._withStripped = true
@@ -2732,18 +2825,19 @@ if (false) {
 }
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Configuracoes_vue__ = __webpack_require__(20);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_260cb748_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Configuracoes_vue__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_260cb748_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Configuracoes_vue__ = __webpack_require__(71);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(67)
+  __webpack_require__(69)
+  __webpack_require__(70)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -2789,13 +2883,19 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 68 */
+/* 70 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2806,8 +2906,18 @@ var render = function() {
   return _c(
     "div",
     [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("h1", [_vm._v("Configurações gerais")]),
+      _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Escolha o endereço para cálculo de frete")]),
+        _c("h2", [_vm._v("Endereço")]),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações"
+          )
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c(
@@ -2815,7 +2925,7 @@ var render = function() {
             { staticClass: "wpme_address" },
             _vm._l(_vm.addresses, function(option) {
               return _c("li", { key: option.id, attrs: { value: option.id } }, [
-                _c("label", { attrs: { for: "41352" } }, [
+                _c("label", { attrs: { for: option.id } }, [
                   _c("div", { staticClass: "wpme_address-top" }, [
                     _c("input", {
                       directives: [
@@ -2833,7 +2943,7 @@ var render = function() {
                       },
                       on: {
                         click: function($event) {
-                          _vm.showAgencies({
+                          return _vm.showAgencies({
                             city: option.city,
                             state: option.state
                           })
@@ -2850,6 +2960,7 @@ var render = function() {
                   _c("div", { staticClass: "wpme_address-body" }, [
                     _c("ul", [
                       _c("li", [
+                        _c("b", [_vm._v("Endereço: ")]),
                         _vm._v(_vm._s(option.address + ", " + option.number))
                       ]),
                       _vm._v(" "),
@@ -2865,20 +2976,34 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("li", [_vm._v(_vm._s("" + option.complement))]),
+                      option.complement
+                        ? _c("li", [_vm._v(_vm._s("" + option.complement))])
+                        : _vm._e(),
                       _vm._v(" "),
-                      _c("li", [_vm._v(_vm._s("CEP: " + option.postal_code))])
+                      _c("li", [
+                        _c("b", [_vm._v("CEP: ")]),
+                        _vm._v(_vm._s("" + option.postal_code))
+                      ])
                     ])
                   ])
                 ])
               ])
-            })
+            }),
+            0
           )
         ])
       ]),
       _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Escolha a unidade Jadlog")]),
+        _c("h2", [_vm._v("Jadlog")]),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos"
+          )
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
@@ -2931,352 +3056,625 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _vm.stores.length > 0
+        ? [
+            _c("div", { staticClass: "wpme_config" }, [
+              _c("h2", [_vm._v("Loja")]),
+              _vm._v(" "),
+              _c("p", [
+                _vm._v(
+                  "Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada."
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "wpme_flex" }, [
+                _c(
+                  "ul",
+                  { staticClass: "wpme_address" },
+                  _vm._l(_vm.stores, function(option) {
+                    return _c(
+                      "li",
+                      { key: option.id, attrs: { value: option.id } },
+                      [
+                        _c("label", { attrs: { for: option.id } }, [
+                          _c("div", { staticClass: "wpme_address-top" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.store,
+                                  expression: "store"
+                                }
+                              ],
+                              attrs: { type: "radio", id: option.id },
+                              domProps: {
+                                value: option.id,
+                                checked: _vm._q(_vm.store, option.id)
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.store = option.id
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("h2", [_vm._v(_vm._s(option.name))])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "wpme_address-body" }, [
+                            _c("ul", [
+                              option.document
+                                ? _c("li", [
+                                    _c("b", [_vm._v("CNPJ:")]),
+                                    _vm._v(" " + _vm._s("" + option.document))
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
+                              option.state_register
+                                ? _c("li", [
+                                    _c("b", [_vm._v("Inscrição estadual:")]),
+                                    _vm._v(
+                                      " " + _vm._s("" + option.state_register)
+                                    )
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
+                              option.email
+                                ? _c("li", [
+                                    _c("b", [_vm._v("E-mail:")]),
+                                    _vm._v(" " + _vm._s(option.email + " "))
+                                  ])
+                                : _vm._e()
+                            ])
+                          ])
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("hr")
+          ]
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Escolha a sua loja")]),
+        _c("h2", [_vm._v("Personalizar métodos de envio")]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c(
             "ul",
             { staticClass: "wpme_address" },
-            _vm._l(_vm.stores, function(option) {
+            _vm._l(_vm.methods_shipments, function(option) {
               return _c("li", { key: option.id, attrs: { value: option.id } }, [
-                _c("label", { attrs: { for: "41352" } }, [
-                  _c("div", { staticClass: "wpme_address-top" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.store,
-                          expression: "store"
-                        }
-                      ],
-                      attrs: { type: "radio", id: option.id },
-                      domProps: {
-                        value: option.id,
-                        checked: _vm._q(_vm.store, option.id)
-                      },
-                      on: {
-                        change: function($event) {
-                          _vm.store = option.id
-                        }
-                      }
-                    }),
+                _c(
+                  "label",
+                  { attrs: { for: option.id } },
+                  [
+                    _c("div", { staticClass: "wpme_address-top" }, [
+                      _c("h2", [_vm._v(_vm._s(option.name))])
+                    ]),
                     _vm._v(" "),
-                    _c("h2", [_vm._v(_vm._s(option.name))])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "wpme_address-body" }, [
-                    _c("ul", [
-                      _c("li", [
-                        _vm._v("CNPJ " + _vm._s("" + option.document))
+                    _c("div", { staticClass: "wpme_address-body" }, [
+                      _c("ul", [
+                        _c("li", [
+                          _c("b", [_vm._v("Nome:")]),
+                          _vm._v(" " + _vm._s(option.name))
+                        ]),
+                        _vm._v(" "),
+                        _c("li", [
+                          _c("b", [_vm._v("Tempo extra:")]),
+                          _vm._v(" " + _vm._s(option.time) + " ")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", [
+                          _c("b", [_vm._v("Taxa extra:")]),
+                          _vm._v(" " + _vm._s(option.tax) + " ")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", [
+                          _c("b", [_vm._v("Percentual extra:")]),
+                          _vm._v(" " + _vm._s(option.perc) + " ")
+                        ])
                       ]),
                       _vm._v(" "),
-                      _c("li", [
-                        _vm._v(
-                          "Inscrição estadual " +
-                            _vm._s("" + option.state_register)
-                        )
-                      ]),
+                      _c("hr"),
                       _vm._v(" "),
-                      _c("li", [_vm._v("E-mail " + _vm._s(option.email + " "))])
+                      _c(
+                        "a",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.showModalEditMethod(option.code)
+                            }
+                          }
+                        },
+                        [_vm._v("Editar")]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("transition", { attrs: { name: "fade" } }, [
+                      _c(
+                        "div",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.codeshiping[option.code]["status"],
+                              expression: "codeshiping[option.code]['status']"
+                            }
+                          ],
+                          staticClass: "me-modal"
+                        },
+                        [
+                          _c("div", [
+                            _c("p", { staticClass: "title" }, [
+                              _vm._v(_vm._s(option.name))
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "content" }, [
+                              _c("ul", [
+                                _c("li", [
+                                  _c("label", [_vm._v("Nome de exibição")]),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: option.name,
+                                        expression: "option.name"
+                                      }
+                                    ],
+                                    attrs: { type: "text" },
+                                    domProps: { value: option.name },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          option,
+                                          "name",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _c("br"),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("label", [
+                                    _c("b", [_vm._v("Tempo extra")]),
+                                    _vm._v(" "),
+                                    _c("br"),
+                                    _vm._v(
+                                      "Será adicionado ao tempo de previsão de entrega"
+                                    )
+                                  ]),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: option.time,
+                                        expression: "option.time"
+                                      }
+                                    ],
+                                    attrs: { type: "number" },
+                                    domProps: { value: option.time },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          option,
+                                          "time",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _c("br"),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("label", [
+                                    _c("b", [_vm._v("Taxa extra")]),
+                                    _vm._v(" "),
+                                    _c("br"),
+                                    _vm._v(
+                                      "Será adicionado um valor extra para o cliente sobre o valor da cotação. "
+                                    )
+                                  ]),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: option.tax,
+                                        expression: "option.tax"
+                                      }
+                                    ],
+                                    attrs: { type: "number" },
+                                    domProps: { value: option.tax },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          option,
+                                          "tax",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _c("br"),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("label", [
+                                    _c("b", [_vm._v("Percentual extra")]),
+                                    _vm._v(" "),
+                                    _c("br"),
+                                    _vm._v(
+                                      "Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. "
+                                    )
+                                  ]),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: option.perc,
+                                        expression: "option.perc"
+                                      }
+                                    ],
+                                    attrs: { type: "number" },
+                                    domProps: { value: option.perc },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          option,
+                                          "perc",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  })
+                                ])
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "buttons -center" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn-border -full-blue",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.closeShowModalEditMethod()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Fechar")]
+                              )
+                            ])
+                          ])
+                        ]
+                      )
                     ])
-                  ])
-                ])
+                  ],
+                  1
+                )
               ])
-            })
+            }),
+            0
           )
         ])
       ]),
       _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Configuração calculadora na página de produto")]),
+        _c("h2", [_vm._v("Customização estilo da calculadora de frete")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "wpme_flex" }, [
+          _c("ul", { staticClass: "wpme_address" }, [
+            _c(
+              "li",
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.custom_calculator,
+                      expression: "custom_calculator"
+                    }
+                  ],
+                  attrs: { type: "checkbox", value: "Personalizar" },
+                  domProps: {
+                    checked: Array.isArray(_vm.custom_calculator)
+                      ? _vm._i(_vm.custom_calculator, "Personalizar") > -1
+                      : _vm.custom_calculator
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.custom_calculator,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = "Personalizar",
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 && (_vm.custom_calculator = $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            (_vm.custom_calculator = $$a
+                              .slice(0, $$i)
+                              .concat($$a.slice($$i + 1)))
+                        }
+                      } else {
+                        _vm.custom_calculator = $$c
+                      }
+                    }
+                  }
+                }),
+                _vm._v(
+                  "\n                    Customizar?\n                    "
+                ),
+                _vm._l(_vm.style_calculator, function(option) {
+                  return _c(
+                    "div",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.custom_calculator,
+                          expression: "custom_calculator"
+                        }
+                      ],
+                      key: option.id,
+                      attrs: { value: option.id }
+                    },
+                    [
+                      _c("h2", [_vm._v(_vm._s(option.name))]),
+                      _vm._v(" "),
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: option.style,
+                            expression: "option.style"
+                          }
+                        ],
+                        attrs: {
+                          type: "text",
+                          placeholder:
+                            "width:100%; height:50px; background:#e1e1e1;"
+                        },
+                        domProps: { value: option.style },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(option, "style", $event.target.value)
+                          }
+                        }
+                      })
+                    ]
+                  )
+                })
+              ],
+              2
+            )
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_config" }, [
+        _c("h2", [_vm._v("Calculadora")]),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto"
+          )
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
             _c("li", [
               _c("label", { attrs: { for: "41352" } }, [
-                _c("div", { staticClass: "wpme_address-top" }, [
-                  _c("input", {
+                _c(
+                  "div",
+                  {
+                    staticClass: "wpme_address-top",
+                    staticStyle: { "border-bottom": "none" }
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.show_calculator,
+                          expression: "show_calculator"
+                        }
+                      ],
+                      attrs: { type: "checkbox", value: "exibir" },
+                      domProps: {
+                        checked: Array.isArray(_vm.show_calculator)
+                          ? _vm._i(_vm.show_calculator, "exibir") > -1
+                          : _vm.show_calculator
+                      },
+                      on: {
+                        change: function($event) {
+                          var $$a = _vm.show_calculator,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = "exibir",
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 &&
+                                (_vm.show_calculator = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.show_calculator = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.show_calculator = $$c
+                          }
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("label", { attrs: { for: "two" } }, [
+                      _vm._v("exibir a calculdora na tela do produto")
+                    ])
+                  ]
+                ),
+                _c("br"),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
                     directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.show_calculator,
+                        expression: "show_calculator"
+                      },
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.show_calculator,
-                        expression: "show_calculator"
+                        value: _vm.where_calculator,
+                        expression: "where_calculator"
                       }
                     ],
-                    attrs: { type: "checkbox", value: "exibir" },
-                    domProps: {
-                      checked: Array.isArray(_vm.show_calculator)
-                        ? _vm._i(_vm.show_calculator, "exibir") > -1
-                        : _vm.show_calculator
-                    },
+                    attrs: { name: "agencies", id: "agencies" },
                     on: {
                       change: function($event) {
-                        var $$a = _vm.show_calculator,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = "exibir",
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 && (_vm.show_calculator = $$a.concat([$$v]))
-                          } else {
-                            $$i > -1 &&
-                              (_vm.show_calculator = $$a
-                                .slice(0, $$i)
-                                .concat($$a.slice($$i + 1)))
-                          }
-                        } else {
-                          _vm.show_calculator = $$c
-                        }
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.where_calculator = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
                       }
                     }
+                  },
+                  _vm._l(_vm.where_calculator_collect, function(option) {
+                    return _c(
+                      "option",
+                      { key: option.id, domProps: { value: option.id } },
+                      [_c("strong", [_vm._v(_vm._s(option.name))])]
+                    )
                   }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "two" } }, [
-                    _vm._v("exibir a calculdora na tela do produto")
-                  ])
-                ])
+                  0
+                )
               ])
             ])
           ])
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Onde deseja exibir a cotação do produto?")]),
+      _c("hr"),
+      _vm._v(" "),
+      _c("div", { staticClass: "wpme_config", staticStyle: { width: "50%" } }, [
+        _c("h2", [_vm._v("Diretório dos plugins")]),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "Em algumas instâncias do wordpress, o caminho do diretório de plugins pode ser direferente, ocorrendo falhas no plugin, sendo necessário definir o caminho manualmente no campo abaixo. Tome cuidado ao realizar essa ação."
+          )
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
             _c("li", [
-              _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.where_calculator,
-                      expression: "where_calculator"
-                    }
-                  ],
-                  attrs: { name: "agencies", id: "agencies" },
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.where_calculator = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.show_path,
+                    expression: "show_path"
+                  }
+                ],
+                attrs: { type: "checkbox", value: "Personalizar" },
+                domProps: {
+                  checked: Array.isArray(_vm.show_path)
+                    ? _vm._i(_vm.show_path, "Personalizar") > -1
+                    : _vm.show_path
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.show_path,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = "Personalizar",
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.show_path = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.show_path = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
+                    } else {
+                      _vm.show_path = $$c
                     }
                   }
-                },
-                _vm._l(_vm.where_calculator_collect, function(option) {
-                  return _c(
-                    "option",
-                    { key: option.id, domProps: { value: option.id } },
-                    [_c("strong", [_vm._v(_vm._s(option.name))])]
-                  )
-                })
-              )
-            ])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Personalizar métodos de envio")]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "wpme_flex" },
-          _vm._l(_vm.methods_shipments, function(option) {
-            return _c(
-              "ul",
-              {
-                key: option.id,
-                staticClass: "wpme_address",
-                attrs: { value: option.id }
-              },
-              [
-                _c("li", [
-                  _c("h2", [_vm._v(_vm._s(option.title))]),
-                  _vm._v(" "),
-                  _c("label", [_vm._v("Nome de exibição")]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: option.name,
-                        expression: "option.name"
-                      }
-                    ],
-                    attrs: { type: "text" },
-                    domProps: { value: option.name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(option, "name", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _c("br"),
-                  _vm._v(" "),
-                  _vm._m(0, true),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: option.time,
-                        expression: "option.time"
-                      }
-                    ],
-                    attrs: { type: "number" },
-                    domProps: { value: option.time },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(option, "time", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _c("br"),
-                  _vm._v(" "),
-                  _vm._m(1, true),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: option.tax,
-                        expression: "option.tax"
-                      }
-                    ],
-                    attrs: { type: "number" },
-                    domProps: { value: option.tax },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(option, "tax", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _c("br"),
-                  _vm._v(" "),
-                  _vm._m(2, true),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: option.perc,
-                        expression: "option.perc"
-                      }
-                    ],
-                    attrs: { type: "number" },
-                    domProps: { value: option.perc },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(option, "perc", $event.target.value)
-                      }
-                    }
-                  })
-                ])
-              ]
-            )
-          })
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Customização estilo da calculadora de frete")]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "wpme_flex" },
-          _vm._l(_vm.style_calculator, function(option) {
-            return _c(
-              "ul",
-              {
-                key: option.id,
-                staticClass: "wpme_address",
-                attrs: { value: option.id }
-              },
-              [
-                _c("li", [
-                  _c("h2", [_vm._v(_vm._s(option.name))]),
-                  _vm._v(" "),
-                  _c("textarea", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: option.style,
-                        expression: "option.style"
-                      }
-                    ],
-                    attrs: {
-                      type: "text",
-                      placeholder:
-                        "width:100%; height:50px; background:#e1e1e1;"
-                    },
-                    domProps: { value: option.style },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(option, "style", $event.target.value)
-                      }
-                    }
-                  })
-                ])
-              ]
-            )
-          })
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "wpme_config" }, [
-        _c("h2", [_vm._v("Caminho para a pasta plugins do wordpress")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "wpme_flex" }, [
-          _c("ul", { staticClass: "wpme_address" }, [
-            _c("li", [
-              _c("h2", [_vm._v("Path")]),
+                }
+              }),
+              _vm._v(" "),
+              _c("span", [_vm._v("Estou ciente dos riscos")]),
+              _c("br"),
+              _c("br"),
               _vm._v(" "),
               _c("input", {
                 directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.show_path,
+                    expression: "show_path"
+                  },
                   {
                     name: "model",
                     rawName: "v-model",
@@ -3305,6 +3703,8 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
       _c(
         "button",
         { staticClass: "btn-border -blue", on: { click: _vm.updateConfig } },
@@ -3327,10 +3727,12 @@ var render = function() {
           },
           [
             _c("div", [
-              _c("p", { staticClass: "title" }, [_vm._v("Atenção")]),
+              _c("p", { staticClass: "title" }, [_vm._v("Sucesso!")]),
               _vm._v(" "),
               _c("div", { staticClass: "content" }, [
-                _c("p", { staticClass: "txt" }, [_vm._v("dados atualizados")])
+                _c("p", { staticClass: "txt" }, [
+                  _vm._v("dados atualizados com sucesso!")
+                ])
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "buttons -center" }, [
@@ -3453,7 +3855,7 @@ var render = function() {
         ]
       )
     ],
-    1
+    2
   )
 }
 var staticRenderFns = [
@@ -3461,37 +3863,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("label", [
-      _c("b", [_vm._v("Tempo extra")]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v("Será adicionado ao tempo de previsão de entrega")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", [
-      _c("b", [_vm._v("Taxa extra")]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(
-        "Será adicionado um valor extra para o cliente sobre o valor da cotação. "
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", [
-      _c("b", [_vm._v("Percentual extra")]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(
-        "Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. "
-      )
+    return _c("div", { staticClass: "boxBanner" }, [
+      _c("img", {
+        attrs: {
+          src:
+            "https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733"
+        }
+      })
     ])
   }
 ]
@@ -3506,18 +3884,18 @@ if (false) {
 }
 
 /***/ }),
-/* 69 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Token_vue__ = __webpack_require__(21);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1bf58fd9_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Token_vue__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1bf58fd9_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Token_vue__ = __webpack_require__(74);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(70)
+  __webpack_require__(73)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -3563,13 +3941,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 70 */
+/* 73 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 71 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3580,7 +3958,7 @@ var render = function() {
   return _c("div", { staticClass: "app-token" }, [
     _c("h1", [_vm._v("Meu Token")]),
     _vm._v(" "),
-    _c("span", [_vm._v("Insira o token gerado na Melhor Envio")]),
+    _c("span", [_vm._v("Insira o token gerado no Melhor Envio")]),
     _vm._v(" "),
     _c("br"),
     _vm._v(" "),
@@ -3615,7 +3993,7 @@ var render = function() {
         staticClass: "btn-border -full-green",
         on: {
           click: function($event) {
-            _vm.saveToken()
+            return _vm.saveToken()
           }
         }
       },
@@ -3739,7 +4117,7 @@ if (false) {
 }
 
 /***/ }),
-/* 72 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3784,7 +4162,7 @@ function menuFix(slug) {
 exports.default = menuFix;
 
 /***/ }),
-/* 73 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3802,15 +4180,15 @@ var _vuex = __webpack_require__(5);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _orders = __webpack_require__(74);
+var _orders = __webpack_require__(77);
 
 var _orders2 = _interopRequireDefault(_orders);
 
-var _balance = __webpack_require__(75);
+var _balance = __webpack_require__(78);
 
 var _balance2 = _interopRequireDefault(_balance);
 
-var _configuration = __webpack_require__(76);
+var _configuration = __webpack_require__(79);
 
 var _configuration2 = _interopRequireDefault(_configuration);
 
@@ -3829,7 +4207,7 @@ var store = new _vuex2.default.Store({
 exports.default = store;
 
 /***/ }),
-/* 74 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4281,7 +4659,7 @@ var orders = {
 exports.default = orders;
 
 /***/ }),
-/* 75 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4300,16 +4678,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var balance = {
     namespaced: true,
     state: {
-        balance: null
+        balance: null,
+        username: null,
+        email: null
     },
     mutations: {
         setBalance: function setBalance(state, data) {
             state.balance = data;
-        }
+        },
+        setUser: function setUser(state, data) {}
     },
     getters: {
         getBalance: function getBalance(state) {
             return state.balance;
+        },
+        getUsername: function getUsername(state) {
+            return state.username;
+        },
+        getEmail: function getEmail(state) {
+            return state.email;
         }
     },
     actions: {
@@ -4319,6 +4706,13 @@ var balance = {
             _axios2.default.get(ajaxurl + '?action=get_balance', data).then(function (response) {
                 commit('setBalance', response.data.balance);
             });
+        },
+        setUser: function setUser(_ref2, data) {
+            var commit = _ref2.commit;
+
+            _axios2.default.get(ajaxurl + '?action=user_info').then(function (response) {
+                commit('setUser', response.data.user);
+            });
         }
     }
 };
@@ -4326,7 +4720,7 @@ var balance = {
 exports.default = balance;
 
 /***/ }),
-/* 76 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4340,6 +4734,10 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _lodash = __webpack_require__(22);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var configuration = {
@@ -4349,7 +4747,12 @@ var configuration = {
         stores: [],
         agencies: [],
         styleCalculator: [],
-        show_load: true
+        path_plugins: null,
+        show_calculator: false,
+        where_calculator: 'woocommerce_after_add_to_cart_form',
+        methods_shipments: [],
+        show_load: true,
+        configs: []
     },
     mutations: {
         setStyleCalculator: function setStyleCalculator(state, data) {
@@ -4363,6 +4766,21 @@ var configuration = {
         },
         setAgency: function setAgency(state, data) {
             state.agencies = data;
+        },
+        setPathPlugins: function setPathPlugins(state, data) {
+            state.path_plugins = data;
+        },
+        setConfigs: function setConfigs(state, data) {
+            state.configs = data;
+        },
+        setShowCalculator: function setShowCalculator(state, data) {
+            state.show_calculator = data;
+        },
+        setMethodShipments: function setMethodShipments(state, data) {
+            state.methods_shipments = data;
+        },
+        setWhereCalculator: function setWhereCalculator(state, data) {
+            state.where_calculator = data;
         },
         toggleLoader: function toggleLoader(state, data) {
             state.show_load = data;
@@ -4381,94 +4799,123 @@ var configuration = {
         getStyleCalculator: function getStyleCalculator(state) {
             return state.styleCalculator;
         },
+        getPathPlugins: function getPathPlugins(state) {
+            return state.path_plugins;
+        },
+        getShowCalculator: function getShowCalculator(state) {
+            return state.show_calculator;
+        },
         showLoad: function showLoad(state) {
             return state.show_load;
+        },
+        getMethodsShipments: function getMethodsShipments(state) {
+            return state.methods_shipments;
+        },
+        getWhereCalculator: function getWhereCalculator(state) {
+            return state.where_calculator;
+        },
+        getConfigs: function getConfigs(state) {
+            return state.configs;
         }
     },
     actions: {
-        getStyleCalculator: function getStyleCalculator(_ref, data) {
+        getConfigs: function getConfigs(_ref, data) {
             var commit = _ref.commit;
 
             var content = {
-                action: 'get_style'
+                action: 'get_configuracoes'
             };
-
-            _axios2.default.get('' + ajaxurl, {
-                params: content
-            }).then(function (response) {
-                if (response && response.status === 200) {
-                    commit('setStyleCalculator', response.data.style);
-                }
+            return new Promise(function (resolve, reject) {
+                _axios2.default.get('' + ajaxurl, {
+                    params: content
+                }).then(function (response) {
+                    if (response && response.status === 200) {
+                        if (response.data.addresses && !_lodash2.default.isEmpty(response.data.addresses)) {
+                            commit('setAddress', response.data.addresses);
+                        }
+                        if (response.data.agencies && !_lodash2.default.isNull(response.data.agencies)) {
+                            commit('setAgency', response.data.agencies);
+                        }
+                        if (response.data.stores && !_lodash2.default.isEmpty(response.data.stores)) {
+                            commit('setStore', response.data.stores);
+                        }
+                        commit('setStyleCalculator', response.data.style_calculator);
+                        commit('setPathPlugins', response.data.path_plugins);
+                        commit('setShowCalculator', response.data.calculator);
+                        commit('setMethodShipments', response.data.metodos);
+                        commit('setWhereCalculator', response.data.where_calculator);
+                        resolve(true);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
             });
         },
-        getAddresses: function getAddresses(_ref2, data) {
+        getAgencies: function getAgencies(_ref2, data) {
             var commit = _ref2.commit;
 
-            var content = {
-                action: 'get_addresses'
-            };
-            _axios2.default.get('' + ajaxurl, {
-                params: content
-            }).then(function (response) {
-                if (response && response.status === 200) {
-                    commit('setAddress', response.data.addresses);
-                }
-            });
-        },
-        getStores: function getStores(_ref3, data) {
-            var commit = _ref3.commit;
-
-            var content = {
-                action: 'get_stores'
-            };
-            _axios2.default.get('' + ajaxurl, {
-                params: content
-            }).then(function (response) {
-                if (response && response.status === 200) {
-                    commit('setStore', response.data.stores);
-                }
-            });
-        },
-        getAgencies: function getAgencies(_ref4, data) {
-            var commit = _ref4.commit;
-
             commit('toggleLoader', true);
-            data = Object.assign({ action: 'get_agency_jadlog' }, data);
-            _axios2.default.get('' + ajaxurl, {
-                params: data
-            }).then(function (response) {
+            _axios2.default.post(ajaxurl + '?action=get_agency_jadlog&city=' + data.city + '&state=' + data.state).then(function (response) {
+                commit('toggleLoader', false);
                 if (response && response.status === 200) {
                     commit('setAgency', response.data.agencies);
-                    commit('toggleLoader', false);
                 }
             });
         },
-        setSelectedAddress: function setSelectedAddress(_ref5, data) {
+        setSelectedAddress: function setSelectedAddress(_ref3, data) {
+            var commit = _ref3.commit;
+
+            return new Promise(function (resolve, reject) {
+                _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
+                    if (response && response.status === 200) {
+                        resolve(true);
+                    }
+                });
+            });
+        },
+        setSelectedStore: function setSelectedStore(_ref4, data) {
+            var commit = _ref4.commit;
+
+            return new Promise(function (resolve, reject) {
+                _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
+                    if (response && response.status === 200) {
+                        resolve(true);
+                    }
+                });
+            });
+        },
+        setSelectedAgency: function setSelectedAgency(_ref5, data) {
             var commit = _ref5.commit;
 
-            _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
-                if (response && response.status === 200) {
-                    // commit('setAddress', response.data.id)
-                }
+            return new Promise(function (resolve, reject) {
+                _axios2.default.post(ajaxurl + '?action=set_agency_jadlog&id=' + data).then(function (response) {
+                    if (response && response.status === 200) {
+                        resolve(true);
+                    }
+                });
             });
         },
-        setSelectedStore: function setSelectedStore(_ref6, data) {
+        setShowCalculator: function setShowCalculator(_ref6, data) {
             var commit = _ref6.commit;
 
-            _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
-                if (response && response.status === 200) {
-                    // commit('setAddress', response.data.id)
-                }
+            return new Promise(function (resolve, reject) {
+                _axios2.default.post(ajaxurl + '?action=set_calculator_show&data=' + data).then(function (response) {
+                    if (response && response.status === 200) {
+                        commit('setShowCalculator', data);
+                        resolve(true);
+                    }
+                });
             });
         },
-        setSelectedAgency: function setSelectedAgency(_ref7, data) {
+        setLoader: function setLoader(_ref7, data) {
             var commit = _ref7.commit;
 
-            _axios2.default.post(ajaxurl + '?action=set_agency_jadlog&id=' + data).then(function (response) {
-                if (response && response.status === 200) {
-                    // commit('setAddress', response.data.id)
-                }
-            });
+            commit('toggleLoader', data);
+        },
+        setAgencies: function setAgencies(_ref8, data) {
+            var commit = _ref8.commit;
+
+            commit('setAgency', data);
         }
     }
 };
@@ -4476,4 +4923,4 @@ var configuration = {
 exports.default = configuration;
 
 /***/ })
-],[37]);
+],[38]);

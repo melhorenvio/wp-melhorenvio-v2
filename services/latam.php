@@ -25,10 +25,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				public function __construct($instance_id = 0) {
 					$this->id                 = "latam"; 
                     $this->instance_id = absint( $instance_id );
-                    $this->method_title       = "Latam (Melhor envio)"; 
-					$this->method_description = 'Serviço Latam';
+                    $this->method_title       = "Latam Próximo Dia (Melhor envio)"; 
+					$this->method_description = 'Serviço Latam Próximo Dia';
 					$this->enabled            = "yes"; 
-					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Latam';
+					$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Latam Próximo Dia';
                     $this->supports = array(
                         'shipping-zones',
                         'instance-settings',
@@ -57,28 +57,33 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 */
 				public function calculate_shipping( $package = []) {
 					
+					if(self::freeShipping()) {
+						return;
+					}
+
 					global $woocommerce;
+					
 					$to = str_replace('-', '', $package['destination']['postcode']);
 
-					$prod = new ProductsController();
-					$products = $prod->getProductsCart();
-					
-					$cotation = new CotationController();			
-					
-					if ($result = $cotation->makeCotationproducts($products, [$this->code], $to)) {
+					$products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new ProductsController())->getProductsCart();
+
+					$result = (new CotationController())->makeCotationProducts($products, [$this->code], $to, [], false);
+
+					if ($result) {
 
 						if (isset($result->name) && isset($result->price)) {
 
-							$method = (new optionsController())->getName($result->id, $result->name, '');
+							$method = (new optionsController())->getName($result->id, $result->name, null, null);
 
 							$rate = [
 								'id' => 'melhorenvio_latam',
-								'label' => $method['method'] . (new timeController)->setLabel($result->delivery_range, $this->code),
+								'label' => $method['method'] . (new timeController)->setLabel($result->delivery, $this->code),
 								'cost' => (new MoneyController())->setprice($result->price, $this->code),
 								'calc_tax' => 'per_item',
 								'meta_data' => [
-									'delivery_time' => $result->delivery_time,
-									'company' => 'Latam'
+									'delivery_time' => $result->delivery,
+									'company' => 'Latam',
+									'name' => $method['method']
 								]
 							];
 							$this->add_rate($rate);	
@@ -87,7 +92,41 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						return false;
 					}
                 }
-                
+				
+				function freeShipping() {
+
+					global $woocommerce;
+
+					$totalCart = 0;
+					$freeShiping = false;
+					foreach(WC()->cart->cart_contents as $cart) {
+						$totalCart += $cart['line_subtotal'];
+					}
+
+					foreach(WC()->cart->get_coupons() as $cp) {
+						if ($cp->discount_type == 'fixed_cart' && $totalCart >= $cp->amount ) {
+							$freeShiping = true;
+						}
+					}
+
+					if ($freeShiping) {
+						$rate = [
+							'id' => 'free_shipping',
+							'label' => 'Frete grátis',
+							'cost' => '',
+							'calc_tax' => 'per_item',
+							'meta_data' => [
+								'delivery_time' => '',
+								'company' => ''
+							]
+						];
+
+						$this->add_rate($rate);
+						return true;
+					}
+					return false;
+				}
+
                 /**
 				 * Initialise Gateway Settings Form Fields
 				 */

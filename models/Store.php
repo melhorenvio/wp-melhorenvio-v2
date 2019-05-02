@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use Controllers\TokenController;
+
 class Store 
 {
     const URL = 'https://api.melhorenvio.com';
@@ -10,8 +12,18 @@ class Store
      * @return void
      */
     public function getStories() 
-    {
-        $token = get_option('wpmelhorenvio_token');
+    {   
+        $codeStore = md5(get_option('home'));
+
+        if (isset($_SESSION[$codeStore]['melhorenvio_stores'])) {
+            return [
+                'success' => true,
+                'session' => true,
+                'stores' => $_SESSION[$codeStore]['melhorenvio_stores']
+            ];
+        }
+
+        $token = (new TokenController())->token();
 
         $params = array(
             'headers'           =>  [
@@ -49,6 +61,8 @@ class Store
                 'selected' => ($store->id == $storeSelected) ? true : false
             ];
         }
+
+        $_SESSION[$codeStore]['melhorenvio_stores'] = $stories;
 
         return [
             'success' => true,

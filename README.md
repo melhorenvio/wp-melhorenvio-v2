@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.3.8
+Version: 2.4.3
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -53,3 +53,12 @@ Caso queira contribuir com o projeto, o processo para isto é criar um brach sep
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
+
+### Changelog
+## 2.4.3
+- Melhorias no visual da calculdora de frete
+- Validação se produto tem as dimensões para realizar o calculo na tela do produto 
+
+### Changelog
+## 2.4.2
+-  Utilização de métodos de envios padrões do WooCommerce no calculo de frete na tela do produto

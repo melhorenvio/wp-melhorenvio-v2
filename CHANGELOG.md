@@ -1,5 +1,19 @@
 ### Changelog
 
+## [2.4.2] - 2019-04-23
+## Fixed
+- Correção erro 500
+
+## [2.4.0] - 2019-04-22
+## Fixed
+- Correção erro 500
+
+## [2.3.9] - 2019-04-18
+## Fixed
+- Melhorias no desempenho do plugin
+- utilização de cupom de frete grátis
+- Solução de bugs
+
 ## [2.3.8] - 2019-04-01
 ## Added
 - Adicionado a opção de definir o path do folder dos plugins (Solução do erro do ABSPATH de alguns usuários)

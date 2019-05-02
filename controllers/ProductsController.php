@@ -28,9 +28,9 @@ class ProductsController
                 "unitary_value" => round($_product->get_price(), 2),
                 "insurance_value" => round($_product->get_price(), 2),
                 "weight" => $this->converterIfNecessary($_product->weight),
-                "width" => $_product->width,
-                "height" => $_product->height,
-                "length" => $_product->length
+                "width" => $this->converterDimension($_product->width),
+                "height" => $this->converterDimension($_product->height),
+                "length" => $this->converterDimension($_product->length)
             ];
         }
 
@@ -51,9 +51,9 @@ class ProductsController
             $products[] = [
                 'id' => $item_product['product_id'],
                 'weight' => $this->converterIfNecessary($item_product['data']->get_weight()),
-                'width' => $item_product['data']->get_width(),
-                'height' => $item_product['data']->get_height(),
-                'length' => $item_product['data']->get_length(),
+                'width'  => $this->converterDimension($item_product['data']->get_width()),
+                'height' => $this->converterDimension($item_product['data']->get_height()),
+                'length' => $this->converterDimension($item_product['data']->get_length()),
                 'quantity' => $item_product['quantity'],
                 'insurance_value' => round($item_product['data']->get_price(), 2)
             ];
@@ -90,5 +90,19 @@ class ProductsController
             $weight = $weight / 1000;
         }
         return $weight;
+    }
+
+    private function converterDimension($value)
+    {
+        $unit = get_option('woocommerce_dimension_unit');
+        if ($unit == 'mm') {
+            return $value / 10;
+        }
+
+        if ($unit == 'm') {
+            return $value * 10;
+        }
+
+        return $value;
     }
 }

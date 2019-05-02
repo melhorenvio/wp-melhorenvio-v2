@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Agency;
+use Controllers\TokenController;
 
 class Address 
 {
@@ -14,7 +15,18 @@ class Address
      */
     public function getAddressesShopping() 
     {
-        $token = get_option('wpmelhorenvio_token');
+        $codeStore = md5(get_option('home'));
+
+        if (isset($_SESSION[$codeStore]['melhorenvio_address'])) {
+
+            return [
+                'success'   => true,
+                'session'   => true,
+                'addresses' => $_SESSION[$codeStore]['melhorenvio_address']
+            ];
+        } 
+
+        $token = (new TokenController())->token();
 
         $params = array(
             'headers'           =>  [
@@ -27,7 +39,10 @@ class Address
         );
         
         $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/addresses', $params)));
+        
         $selectedAddress = get_option('melhorenvio_address_selected_v2');
+
+        $_SESSION[$codeStore]['melhorenvio_address_selected_v2'] = get_option('melhorenvio_address_selected_v2');
 
         if (!isset($response->data)) {
             return [
@@ -53,6 +68,8 @@ class Address
                 'selected' => ($selectedAddress == $address->id) ? true : false
             ];
         }
+
+        $_SESSION[$codeStore]['melhorenvio_address'] = $addresses;
 
         return [
             'success' => true,
@@ -80,7 +97,7 @@ class Address
 
     public function getAddressFrom() 
     {
-        $addresses =$this->getAddressesShopping();
+        $addresses = $this->getAddressesShopping();
 
         if (is_null($addresses['addresses'])) {
             return null;
@@ -92,7 +109,7 @@ class Address
                 $address = $item;
             }
         }
-        
+
         if ($address == null && !empty($addresses['addresses'])) {
             return end($addresses['addresses']);
         }

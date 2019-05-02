@@ -2,43 +2,42 @@
 
 namespace Models;
 
+use Controllers\tokenController;
+
 class User 
 {
     const URL = 'https://api.melhorenvio.com';
 
     public function get() 
     {
-        $dataUser = get_option('melhorenvio_user_info');
+        $token = (new TokenController())->token();
+        
+        $params = array('headers'=>[
+            'Content-Type' => 'application/json',
+            'Accept'=>'application/json',
+            'Authorization' => 'Bearer '.$token],
+        );
 
-        if (!$dataUser || (isset($dataUser['message']) && $dataUser['message'] == 'Unauthenticated.' )) {
-            $token = get_option('wpmelhorenvio_token');
-            $params = array('headers'=>[
-                'Content-Type' => 'application/json',
-                'Accept'=>'application/json',
-                'Authorization' => 'Bearer '.$token],
-            );
+        $response = wp_remote_retrieve_body(
+            wp_remote_get(self::URL . '/v2/me', $params)
+        );
 
-            $response = wp_remote_retrieve_body(
-                wp_remote_get(self::URL . '/v2/me', $params)
-            );
-
-            if (is_null($response)) {
-                return [
-                    'error' => true,
-                    'message' => 'Erro ao consultar o servidor'
-                ];  
-            }
-
-            $data = get_object_vars(json_decode($response));
-
-            add_option('melhorenvio_user_info', $data);
+        if (is_null($response)) {
             return [
-                'success' => true,
-                'data' => $data
-            ];
-        } 
+                'error' => true,
+                'message' => 'Erro ao consultar o servidor'
+            ];  
+        }
 
-        return (object) $dataUser;
+        $data = get_object_vars(json_decode($response));
+
+        add_option('melhorenvio_user_info', $data);
+
+        return [
+            'success' => true,
+            'data'    => $data,
+            'session' => false
+        ];
     }
 
     /**

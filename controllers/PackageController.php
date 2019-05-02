@@ -44,13 +44,12 @@ class PackageController
         $data = end($data);
 
         $packages = [];
+
         if (is_array($data)) {
             foreach ($data as $item) {
-                if(!isset($item->packages)) {
-                    continue;
-                }
-                if(!empty($item->packages)) {
 
+                if (isset($item->packages) && !empty($item->packages)) {
+                
                     $total = $this->countTotalvolumes($item->packages);
                     $volumes = count($item->packages);
                     $v = 1;
@@ -71,8 +70,33 @@ class PackageController
                         $v++;
                     }
                 }
+
+                if (isset($item->volumes) && !empty($item->volumes)) {
+                
+                    $total = $this->countTotalvolumes($item->volumes);
+                    $volumes = count($item->volumes);
+                    $v = 1;
+                    foreach ($item->volumes as $package) {
+
+                        $quantity = (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1;
+                        $weight = (isset($package->weight)) ? $package->weight : null;
+
+                        $packages[$item->id][] = [
+                            'volume' => $v,
+                            'width'  => (isset($package->width)) ? $package->width : null,
+                            'height' => (isset($package->height)) ? $package->height : null,
+                            'length' => (isset($package->length)) ? $package->length : null,
+                            'weight' => $this->getWeighteBox($total, $quantity, $weight),
+                            'quantity' => $quantity,
+                            'insurnace_value' => $this->getInsuranceBox($total, $quantity, $item->custom_price)
+                        ];
+
+                        $v++;
+                    }
+                }
             }
         }
+
         return $packages;
     }
 
@@ -142,7 +166,27 @@ class PackageController
         if ($weight_unit == 'g') {
             $package['weight'] = $package['weight'] / 1000;
         }
+
+        $package['width'] = $this->converterDimension($package['width']);
+        $package['height'] = $this->converterDimension($package['height']);
+        $package['length'] = $this->converterDimension($package['length']);
+
         return $package;
+    }
+
+
+    private function converterDimension($value)
+    {
+        $unit = get_option('woocommerce_dimension_unit');
+        if ($unit == 'mm') {
+            return $value / 10;
+        }
+
+        if ($unit == 'm') {
+            return $value * 10;
+        }
+
+        return $value;
     }
 
 }

@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.3.8
+Version: 2.4.3
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -79,7 +79,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.3.8';
+    public $version = '2.4.3';
 
     /**
      * Holds various class instances
@@ -96,46 +96,9 @@ final class Base_Plugin {
      */
     public function __construct() {
 
+        session_start();
+
         require __DIR__ . '/vendor/autoload.php';
-
-        $pathPlugins = get_option('melhor_envio_path_plugins');
-        if(!$pathPlugins) {
-            $pathPlugins = ABSPATH . 'wp-content/plugins';
-        }
-
-        $errorsPath = [];
-
-        if (!file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
-            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
-        }
-
-        if (!is_dir($pathPlugins . '/woocommerce')) {
-            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
-        }
-
-        $errors = [];
-
-        // $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
-        $pluginsActiveds = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
-
-        if (!in_array('woocommerce/woocommerce.php', $pluginsActiveds)) {
-            $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
-        }
-
-        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds) && !is_multisite()) {
-            $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
-        }
-
-        if (!empty($errors)) {
-            foreach ($errors as $err) {
-                add_action( 'admin_notices', function() use ($err) {
-                    echo sprintf('<div class="error">
-                        <p>%s</p>
-                    </div>', $err);
-                });
-            }
-            return false;
-        }
         
         $this->define_constants();
 
@@ -151,23 +114,49 @@ final class Base_Plugin {
 
         add_action( 'plugins_loaded', 'my_plugin_load_plugin_textdomain' );
 
-        if (empty($errorsPath)) {
+        // self::clearCotationSession();
+    }
 
-            include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
-            include_once $pathPlugins . '/woocommerce/woocommerce.php';
-            include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+    public function clearCotationSession()
+    {   
+        $codeStore = md5(get_option('home'));
+        $dateNow = date("Y-m-d h:i:s", strtotime('-6 hours'));
 
-            // Create the methods shippings
-            foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
-                include_once $filename;
+        if(isset($_SESSION[$codeStore]['cotations'])) {
+
+            foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
+
+                if( !isset($cotation['created'])) {
+                    unset($_SESSION[$codeStore]['cotations'][$key]);
+                }
+
+                if($cotation['created'] > $dateNow) {
+                    unset($_SESSION[$codeStore]['cotations'][$key]);
+                }
             }
-        } else {
-            add_action( 'admin_notices', function() {
-                echo sprintf('<div class="error">
-                    <p>%s</p>
-                </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
-            });
         }
+    }
+
+    public function loadMelhorEnvio()
+    {        
+
+        if (isset($_GET) && $_GET['page_id'] == get_option( 'woocommerce_cart_page_id' )) {
+            return true;
+        }
+
+        if (is_admin()) {
+            return true;
+        }
+
+        if(isset($_POST['woocommerce-shipping-calculator-nonce'])) {
+            return true;
+        }
+
+        if (isset($_POST['shipping_method'])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -237,6 +226,63 @@ final class Base_Plugin {
         
         $this->includes();
         $this->init_hooks();
+
+        $pathPlugins = get_option('melhor_envio_path_plugins');
+        if(!$pathPlugins) {
+            $pathPlugins = ABSPATH . 'wp-content/plugins';
+        }
+
+        $errorsPath = [];
+
+        if (!file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
+            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
+        }
+
+        if (!is_dir($pathPlugins . '/woocommerce')) {
+            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
+        }
+
+        $errors = [];
+
+        // $pluginsActiveds = apply_filters( 'active_plugins', get_option( 'active_plugins' ));
+        $pluginsActiveds = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+
+        if (!in_array('woocommerce/woocommerce.php', $pluginsActiveds)) {
+            $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
+        }
+
+        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds) && !is_multisite()) {
+            $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
+        }
+
+        if (!empty($errors)) {
+            foreach ($errors as $err) {
+                add_action( 'admin_notices', function() use ($err) {
+                    echo sprintf('<div class="error">
+                        <p>%s</p>
+                    </div>', $err);
+                });
+            }
+            return false;
+        }
+
+        if (empty($errorsPath)) {
+
+            include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+
+            // Create the methods shippings
+            foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+                include_once $filename;
+            }
+        } else {
+            add_action( 'admin_notices', function() {
+                echo sprintf('<div class="error">
+                    <p>%s</p>
+                </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
+            });
+        }
         
     }
 
@@ -355,11 +401,30 @@ final class Base_Plugin {
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
         
         add_action('wp_ajax_update_order', [$cotacao, 'refreshCotation']);
-        add_action('wp_ajax_update_order', [$order, 'removeOrder']);
+        // add_action('wp_ajax_update_order', [$order, 'removeOrder']);
+
+        // Todas as configurações
+        add_action('wp_ajax_get_configuracoes', function(){
+
+            $data = [
+                'addresses'        => (new Models\Address())->getAddressesShopping()['addresses'],
+                'stores'           => (new Models\Store())->getStories()['stores'],
+                'agencies'         => (new Models\Agency())->getAgencies()['agencies'],
+                'calculator'       => (new Models\CalculatorShow())->get(),
+                'use_insurance'    => (new Models\UseInsurance())->get(),
+                'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
+                'metodos'          => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
+                'style_calculator' => (new Controllers\ConfigurationController())->getStyleArray(),
+                'path_plugins'     => (new Controllers\ConfigurationController())->getPathPluginsArray()
+            ];
+
+            echo json_encode($data);
+            die;
+        });
 
         // Logs 
-        add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'index']);
-        add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detail']);
+        add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'indexResponse']);
+        add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detailResponse']);
 
         // Opçoes de transportadoras
         add_action('wp_ajax_save_options', [$conf, 'save']);
@@ -383,9 +448,30 @@ final class Base_Plugin {
         add_action('wp_ajax_set_path_plugins', [$conf, 'savePathPlugins']);
         add_action('wp_ajax_get_path_plugins', [$conf, 'getPathPlugins']);
 
+        // add_action('wp_ajax_user_info');
 
         // Status WooCommerce
         add_action('wp_ajax_get_status_woocommerce', [$status, 'getStatus']);
+
+        add_action('wp_ajax_delete_melhor_envio_session', function(){
+
+            $codeStore = md5(get_option('home'));
+
+            unset($_SESSION[$codeStore]['cotations']);
+            unset($_SESSION[$codeStore]['melhorenvio_token']);
+            unset($_SESSION[$codeStore]['melhorenvio_user_info']);
+            unset($_SESSION[$codeStore]['melhorenvio_address_selected_v2']);
+            unset($_SESSION[$codeStore]['melhorenvio_address']);
+            unset($_SESSION[$codeStore]['melhorenvio_stores']);
+            unset($_SESSION[$codeStore]['melhorenvio_options']);
+            echo json_encode($_SESSION);
+            die;
+        });
+
+        add_action('wp_ajax_get_melhor_envio_session', function(){
+            echo json_encode($_SESSION);
+            die;
+        });
 
         // Pegar produtos de um pedido
         add_action('wp_ajax_get_info_melhor_envio', function(){
@@ -419,18 +505,22 @@ final class Base_Plugin {
             ];
 
             $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+
             $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
 
-            $response['user']   = (new UsersController())->getInfo();
-            $response['origem'] = (new UsersController())->getFrom();
+            $response['user']   = (new Controllers\UsersController())->getInfo();
 
-            $response['cotation'] = (new CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
+            $response['origem'] = (new Controllers\UsersController())->getFrom();
+
+            $response['cotation'] = (new Controllers\CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
 
             $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
 
             $response['is_multisite'] = is_multisite();
 
-            $response['enableds'] = (new CotationController())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
+            $response['enableds'] = (new Controllers\CotationController())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
+
+            $response['session'] = $_SESSION;
 
             foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;

@@ -1,7 +1,7 @@
 <template>
     <div class="app-token">
         <h1>Meu Token</h1>
-        <span>Insira o token gerado na Melhor Envio</span>
+        <span>Insira o token gerado no Melhor Envio</span>
         <br>
         <textarea rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
         <br>

@@ -7,6 +7,7 @@ use Controllers\UsersController;
 use Controllers\PackageController;
 use Controllers\ProductsController;
 use Controllers\LogsController;
+use Controllers\TokenController;
 
 class OrdersController 
 {
@@ -40,13 +41,45 @@ class OrdersController
             die;
         }
 
-        $token = get_option('wpmelhorenvio_token');
+        $token = (new tokenController())->token();
 
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
 
         $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
 
+        if (empty($packages)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'O pacote está vazio'
+            ]);die;
+        }
+
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1,2,3,4,5,6,7,8,9,10,11])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Verificar o código do serviço'
+            ]);die;
+        }
+
         $from = (new UsersController())->getFrom();
+
+        if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4) {
+            if(is_null($from->phone)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Por favor, informar seu telefone no seu cadastro'
+                ]);
+                die;
+            }
+
+            if (!get_option('melhorenvio_agency_jadlog_v2')) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Por favor, selecionar uma agência Jadlog no painel de configurações'
+                ]);
+                die;
+            }
+        }
 
         $to = (new UsersController())->getTo($_GET['order_id']);
 
@@ -128,7 +161,7 @@ class OrdersController
                     'Accept'        => 'application/json',
                     'Authorization' => 'Bearer '.$token,
                 ],
-                'body'  =>  json_encode($body),
+                'body'   =>  json_encode($body),
                 'timeout'=> 10
             );
 
@@ -138,15 +171,19 @@ class OrdersController
                 )
             );
 
-            $logs = (new LogsController)->add(
-                $_GET['order_id'], 
-                'Enviando ordem ' .  $reminder, 
-                $params, 
-                $response, 
-                'OrdersController', 
-                'sendOrder', 
-                self::URL . '/v2/me/cart'
-            );
+            (new LogsController)->addResponse($response, $body, $_GET['order_id']);
+
+            if(isset($response->errors)) {
+                $logs = (new LogsController)->add(
+                    $_GET['order_id'], 
+                    'Error ', 
+                    $body, 
+                    $response, 
+                    'OrdersController', 
+                    'sendOrder', 
+                    self::URL . '/v2/me/cart'
+                );
+            }
 
             if (!isset($response->id)) {
                 $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
@@ -159,7 +196,15 @@ class OrdersController
             $success[] = $response;
 
             $orders_id[] = $response->id;
+
             $protocols[] = $response->protocol;   
+        }
+
+        if (empty($success) || empty($orders_id) || empty($protocols)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro'
+            ]);die;
         }
 
         $data['choose_method'] = $_GET['choosen'];
@@ -182,7 +227,6 @@ class OrdersController
             'success' => false,
             'message' => end($errors)
         ]);die;
-
     }
 
     /**
