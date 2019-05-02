@@ -16,9 +16,10 @@ class UsersController {
     public function getInfo()
     {
         $user = (new User())->get();
+
         return (object) [
             'success' => true,
-            'data' => $user
+            'data' => $user['data']
         ];
     }
 
@@ -28,6 +29,7 @@ class UsersController {
     public function getFrom()
     {
         $info = $this->getInfo();
+        
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
 
             $address = (new Address)->getAddressFrom();
@@ -35,14 +37,24 @@ class UsersController {
             if (is_null($address)) {
                 return false;
             }
-            
+
             $company = (new Store)->getStore();
 
+            $email = null;
+
+            if (isset($company['email'])) {
+                $email = $company['email'];
+            }
+
+            if (isset($info->data['email'])) {
+                $email = $info->data['email'];
+            }
+
             return (object) [
-                "name" => (isset($company['name'])) ? $company['name']  : $info->data->firstname . ' ' . $info->data->lastname,
-                "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
-                "email" => (isset($company['email'])) ? $company['email'] : $info->data->email,
-                "document" => $info->data->document,
+                "name" => (isset($company['name'])) ? $company['name']  : $info->data['firstname'] . ' ' . $info->data['lastname'],
+                "phone" => (isset($info->data['phone']->phone)) ? $info->data['phone']->phone : null,
+                "email" => $email,
+                "document" => $info->data['document'],
                 "company_document" => (isset($company['document'])) ? $company['document'] : null,
                 "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null,
                 "address" => $address['address'],
@@ -51,7 +63,7 @@ class UsersController {
                 "district" => $address['district'],
                 "city" => $address['city'],
                 "state_abbr" => $address['state'],
-                "country_id" => $address['country'],
+                "country_id" => 'BR',
                 "postal_code" => $address['postal_code']
             ];   
         }
@@ -83,7 +95,7 @@ class UsersController {
             "district" =>get_post_meta($order_id, '_shipping_neighborhood',true),
             "city" => $order->get_shipping_city(),
             "state_abbr" => $order->get_shipping_state(),
-            "country_id" => $order->get_shipping_country(),
+            "country_id" => 'BR',
             "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),  
         ];
     }

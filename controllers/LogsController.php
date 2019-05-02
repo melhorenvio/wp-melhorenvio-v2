@@ -64,6 +64,28 @@ class LogsController
     }
 
     /**
+     * @return void
+     */
+    public function detailResponse()
+    {
+        if (!isset($_GET['meta_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o ID do erro'
+            ]);
+            die;
+        }
+
+        global $wpdb;
+        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_id = %s', $wpdb->prefix, $_GET['meta_id']);
+        $row = end($wpdb->get_results($sql));
+
+        $data = unserialize($row->meta_value);
+        echo json_encode($data);
+        die;
+    }
+
+    /**
      * @param [type] $order_id
      * @param [type] $msg
      * @param array $payload
@@ -87,5 +109,44 @@ class LogsController
         ];
 
         add_post_meta($order_id, 'logs_melhorenvio', $log);
+    }
+
+    public function addResponse($response, $body, $to) 
+    {
+    
+        $log = [
+            'date' => date('Y-m-d h:i:s'),
+            'payload' => $body,
+            'response' => $response,
+        ];
+
+        add_post_meta($to, 'logs_melhorenvio_response', $log);
+    }
+
+    /**
+     * @return void
+     */
+    public function indexResponse() 
+    {
+        global $wpdb;
+        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_key = "logs_melhorenvio_response" order by meta_id desc limit 1000', $wpdb->prefix);
+        $results = $wpdb->get_results($sql);
+        $rows = '';
+        foreach($results as $item) {
+
+            $data = unserialize($item->meta_value);
+            $link = '/wp-admin/admin-ajax.php?action=detail_log_melhorenvio&meta_id='.$item->meta_id;
+            $rows .= '<tr>
+                <td>' . $item->post_id . '</td>
+                <td>' . $data['date'] . '</td>
+                <td><a target="_blank" href="' . $link . '">ver</a></td>
+            </tr>';
+        }  
+
+        echo '<h1>Logs Melhor envio</h1>';
+        echo '<table border="1"><tr><td>CEP</td><td>Data</td><td>Link</td></tr>';
+        echo $rows;
+        echo '</table>';
+        die;
     }
 }

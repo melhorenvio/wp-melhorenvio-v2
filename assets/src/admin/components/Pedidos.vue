@@ -1,5 +1,23 @@
+<style>
+    .boxBanner {
+        float: left;
+        width: 100%;
+        margin-bottom: 1%;
+    }
+
+    .boxBanner img {
+        float: left;
+        width: 100%;
+    }
+</style>
+
 <template>
     <div class="app-pedidos">
+
+        <div class="boxBanner">
+            <img src="https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733" />
+        </div>
+
         <template>
             <div>
                 <div class="grid">
@@ -15,7 +33,9 @@
         <table border="0" class="table-box">
             <tr>
                 <td>
-                    <h1>Saldo: <strong>{{getBalance}}</strong></h1>
+                    <!-- <h4>Usuário: <strong>{{username}}</strong></h4>
+                    <h4>E-mail: <strong>{{email}}</strong></h4> -->
+                    <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
             </tr>
             <tr>
@@ -33,13 +53,9 @@
                     <h3>Pedidos</h3>
                     <select v-model="wpstatus">
                         <option value="all">Todos</option>
-                        <option value="wc-pending">Pendentes</option>
-                        <option value="wc-processing">Processando</option>
-                        <option value="wc-on-hold">Em andamento</option>
-                        <option value="wc-completed">Completos</option>
-                        <option value="wc-cancelled">Cancelados</option>
-                        <option value="wc-refunded">Recusados</option>
-                        <option value="wc-failed">Com erro</option>
+                        <option v-for="(statusName, statusKey) in statusWooCommerce" :key="statusKey" v-bind:value="statusKey">
+                            {{ statusName }}
+                        </option>
                     </select>
                 </td>
             </tr>
@@ -49,7 +65,7 @@
             <div class="table -woocommerce">
                 <ul class="head">
                     <li><span>ID</span></li>
-                    <li><span>Valor</span></li>
+                    <li><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
@@ -59,8 +75,8 @@
                 <ul class="body">
                     <li v-for="(item, index) in orders" :key="index">
                         <ul class="body-list">
-                            <li><span><a target="_blank" :href="`/wp-admin/post.php?post=${item.id}&action=edit`"><strong>{{ item.id }}</strong></a></span></li>
-                            <li><span>{{ item.total }}</span></li>
+                            <li><span><a target="_blank" :href="`${item.link}`"><strong>{{ item.id }}</strong></a></span></li>
+                            <li><span></span></li>
                             <li>
                                 <span style="font-size: 14px;">
                                     <strong>{{item.to.first_name}} {{item.to.last_name}}</strong> <br>
@@ -89,8 +105,6 @@
                                             </template>
                                             
                                             <label>Métodos de envio</label> 
-
-                                            <!-- TODO -->
                                             <template v-if="item.cotation[item.cotation.choose_method]">
                                                 <fieldset  class="selectLine">
                                                     <div class="inputBox">
@@ -104,9 +118,10 @@
                                             </template>
                                         </div>
                                     </div>
-                                    <a v-if="!item.order_id && item.cotation.choose_method != null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
+                                    <!-- <a v-if="!item.order_id || item.order_id == null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
                                         Recalcular
-                                    </a>
+                                    </a> -->
+
                                 </template>
 
                                 <template v-else>
@@ -114,12 +129,16 @@
                                         {{ prot }}
                                     </span>
                                 </template>
+
+                                <template v-if="item.cotation.free_shipping">
+                                    <p>*Cliente utilizou cupom de frete grátis</p>
+                                </template>
                                 
                             </li>
                             <li>
                                 <div class="me-form">
                                     <div class="formBox paddingBox">
-                                        <template  v-if="item.cotation.choose_method == 3 || item.cotation.choose_method == 4" >
+                                        <template  v-if="item.cotation.choose_method == 3 || item.cotation.choose_method == 4 || item.cotation.choose_method == 10" >
                                             <fieldset class="checkLine">
                                                 <div class="inputBox">
                                                     <input type="checkbox" v-model="item.non_commercial" />
@@ -128,7 +147,7 @@
                                             </fieldset>
                                             <br>
                                         </template>
-                                        <template  v-if="(item.cotation.choose_method >= 3 && !item.non_commercial) || item.cotation.choose_method > 4">
+                                        <template  v-if="((item.cotation.choose_method == 3 || item.cotation.choose_method == 4 || item.cotation.choose_method == 10 )  && !item.non_commercial) || (item.cotation.choose_method == 8 || item.cotation.choose_method == 9)">
                                             <fieldset>
                                                 <div>
                                                     <label>Nota fiscal</label><br>
@@ -394,7 +413,8 @@ export default {
             show_loader: 'toggleLoader',
             msg_modal: 'setMsgModal',
             show_modal: 'showModal',
-            show_more: 'showMore'
+            show_more: 'showMore',
+            statusWooCommerce: 'statusWooCommerce'
         }),
         ...mapGetters('balance', ['getBalance'])
     },
@@ -410,7 +430,8 @@ export default {
             'createTicket',
             'printTicket',
             'closeModal',
-            'insertInvoice'
+            'insertInvoice',
+            'getStatusWooCommerce'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {
@@ -473,6 +494,7 @@ export default {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
         this.setBalance()
+        this.getStatusWooCommerce()
     }
 }
 </script>

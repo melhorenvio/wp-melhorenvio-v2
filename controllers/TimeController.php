@@ -13,6 +13,10 @@ class TimeController
      */
     public function setlabel($data, $id) 
     {
+        if (is_null($data)) {
+            return '*';
+        }
+
         $timeExtra = 0;
         $extra = (new ConfigurationController())->getOptionsShipments();
 
@@ -37,7 +41,7 @@ class TimeController
             return ' ( ' . $data->min . ' a ' . $data->max . ' dias úteis)';
         }
 
-        return '';
+        return $data->max . ' dias úteis';
     }
 }
 

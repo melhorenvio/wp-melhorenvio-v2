@@ -49,7 +49,7 @@ class Order {
 
     }
 
-     /**
+    /**
      * @param Array $filters
      * @return Array
      */
@@ -91,7 +91,7 @@ class Order {
                 $dataMelhorEnvio = $order->getDataOrder(); 
 
                 $cotation = $order->getCotation();
-
+                
                 $invoice = $order->getInvoice();
 
                 $non_commercial = true;
@@ -115,7 +115,8 @@ class Order {
                     'protocol' => $dataMelhorEnvio['protocol'],
                     'non_commercial' => $non_commercial,
                     'invoice' => $invoice,
-                    'packages' => $order->mountPackage($cotation)
+                    'packages' => $order->mountPackage($cotation),
+                    'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $order->id)
                 ];
 
             } catch(Exception $e) {
@@ -473,7 +474,7 @@ class Order {
             }
             $response[$cot->id] =  $cot;
         }
-        
+
         $useMelhor = true;
         if (is_null($data['choose_method'])) {
 
@@ -488,9 +489,17 @@ class Order {
             $data['choose_method'] = $method;
         }
 
+        if(!array_key_exists(1, $response) && $data['choose_method'] == 1) {
+            $data['choose_method'] = 2;
+        }
+
         $response['choose_method'] = $data['choose_method'];
         $response['date_cotation'] = $data['date_cotation'];
         $response['melhorenvio'] = $useMelhor;
+
+        if (isset($data['free_shipping'])) {
+            $response['free_shipping'] = $data['free_shipping'];
+        }
 
         return $response;
     }

@@ -1,3 +1,14 @@
+=== Melhor Envio V2 ===
+Version: 2.4.3
+Author: Melhor Envio
+Author URI: melhorenvio.com.br
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: baseplugin
+Tested up to: 5.0
+Requires PHP: 5.6
+
+
 # Plugin Melhor Envio
 
 Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online. 
@@ -42,3 +53,12 @@ Caso queira contribuir com o projeto, o processo para isto é criar um brach sep
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
+
+### Changelog
+## 2.4.3
+- Melhorias no visual da calculdora de frete
+- Validação se produto tem as dimensões para realizar o calculo na tela do produto 
+
+### Changelog
+## 2.4.2
+-  Utilização de métodos de envios padrões do WooCommerce no calculo de frete na tela do produto

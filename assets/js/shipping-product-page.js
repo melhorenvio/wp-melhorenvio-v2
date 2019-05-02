@@ -4,18 +4,20 @@
 	$(function() {
 
 		
-		 /**
+		/**
 		 *	Roda quando clica para calcular o Frete
 		 */
 		// $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete div').on('click', function(e, l) {
 		$(document).on('keyup', '.iptCep', function(e) {
+
+			resetarTabela();
 
 			if($(this).val().length === 9) {
 		
 				if ($(e.target).is('a#cfpp_credits')) { return; }
 				
 				var url = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_endpoint_url').val();
-				var cep = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete input').val().replace(/\D+/g, '');
+				var cep = $('.iptCep').val();
 				var altura = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura').val();
 				var largura = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_largura').val();
 				var comprimento = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_comprimento').val();
@@ -23,10 +25,48 @@
 				var preco = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_preco').val();
 				var id_produto = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #id_produto').val();
 				
-				if (cep.length != 8) {
-				    alert('Por favor, verifique se o CEP informado é válido.');
-				    return false;
-				} 
+				// if (cep.length != 8) {
+				// 	alert('Por favor, verifique se o CEP informado é válido.');
+				// 	return false;
+				// } 
+
+				var errors = [];
+
+				if  (altura == 0) {
+					errors.push('Produto com altura não informada');
+				}
+
+				if  (largura == 0) {
+					errors.push('Produto com largura não informada');
+				}
+
+				if  (comprimento == 0) {
+					errors.push('Produto com comprimento não informada');
+				}
+
+				if  (peso == 0) {
+					errors.push('Produto com peso não informado');
+				}
+
+				if(errors.length > 0) {
+
+					var row = '';
+					row = '<tr><td colspan="3">Ocorreu um erro ao obter informações sobre o valor do frete</td></tr>';
+
+					errors.map( item => {
+						row += `<tr><td colspan="3">${item}</td></tr>`;
+					});
+
+					if (row == '') {
+						
+					}
+
+					$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').append(row);
+					esconderLoader();
+					exibirTabela();
+
+					return false;
+				}
 
 				let inpCEP = $(this);
 				inpCEP.attr('disabled','disabled');

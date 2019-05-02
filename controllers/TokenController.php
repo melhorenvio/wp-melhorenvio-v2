@@ -10,10 +10,38 @@ class TokenController
      * @return void
      */
     public function getToken() {
+
+        $codeStore = md5(get_option('home'));
+
+        if (isset($_SESSION[$codeStore]['melhorenvio_token']) && !is_null($_SESSION[$codeStore]['melhorenvio_token'])) {
+            return $_SESSION[$codeStore]['melhorenvio_token'];
+        }
+
+        $_SESSION[$codeStore]['melhorenvio_token'] = (new token())->getToken();
+
         echo json_encode([
-            'token' => (new token())->getToken()
+            'token' => $_SESSION[$codeStore]['melhorenvio_token']
         ]);
         die();
+    }
+
+    public function token()
+    {
+        $codeStore = md5(get_option('home'));
+
+        if (isset($_SESSION[$codeStore]['melhorenvio_token']) && !is_null($_SESSION[$codeStore]['melhorenvio_token'])) {
+            return $_SESSION[$codeStore]['melhorenvio_token'];
+        }
+
+        $token = (new token())->getToken();
+        
+        if (!$token) {
+            return false;
+        }
+
+        $_SESSION[$codeStore]['melhorenvio_token'] = $token;
+
+        return $token;
     }
 
     /**
@@ -21,6 +49,8 @@ class TokenController
      */
     public function saveToken() 
     {
+        $codeStore = md5(get_option('home'));
+        
         if (!isset($_POST['token'])) {
             echo json_encode([
                 'success' => false,
@@ -29,6 +59,9 @@ class TokenController
         }
 
         $result = (new Token())->saveToken($_POST['token']);
+
+        $_SESSION[$codeStore]['melhorenvio_token'] = $_POST['token'];
+
         echo json_encode([
             'success' => $result
         ]);
