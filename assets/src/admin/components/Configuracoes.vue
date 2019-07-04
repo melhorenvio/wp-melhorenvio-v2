@@ -9,6 +9,29 @@
         float: left;
         width: 100%;
     }
+
+    .input {
+        width: 100%;
+        padding: 5px 10px;
+    }
+    .group-input{
+        border: 1px solid #b0b0b0;
+        width: 100%;
+    }
+    .group-input input {
+        display: inline-block;
+        border: none;
+        width: 90%;
+        max-width: 455px;
+    }
+    .group-input p {
+        display: inline-block;
+        margin: 0 auto;
+        padding: 5px 10px;
+        background-color: #f0f0f0;
+        width: 30px;
+        text-align: center;
+    }
 </style>
 
 <template>
@@ -115,14 +138,23 @@
                                         <div class="content">
                                             <ul>
                                                 <li>
-                                                    <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" type="text" /><br><br>
+                                                    <label>Nome de exibição testeee </label><br>
+                                                    <input v-model="option.name" type="text" class="input" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
-                                                    <input v-model="option.time" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <input v-model="option.time" type="number" />
+                                                        <p> Dias </p>
+                                                    </div>
                                                     <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.tax" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.tax" v-bind="money"></money>
+                                                        <p> R$ </p>
+                                                    </div>
                                                     <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.perc" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.perc" v-bind="percent"></money>
+                                                        <p> % </p>
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -166,7 +198,7 @@
                             <div class="wpme_address-top" style="border-bottom: none;">
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
                                 <label for="two">exibir a calculdora na tela do produto</label>
-                            </div></br>
+                            </div><br>
                     
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
                                 <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
@@ -185,7 +217,7 @@
                 <ul class="wpme_address">
                     <li>
                         <input type="checkbox" value="Personalizar"  v-model="show_path">
-                        <span>Estou ciente dos riscos</span></br></br>
+                        <span>Estou ciente dos riscos</span><br><br>
                         <input v-show="show_path" v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
                     </li>
                 </ul>
@@ -253,8 +285,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Money } from 'v-money'
 export default {
     name: 'Configuracoes',
+    components: { Money },
     data () {
         return {
             address: null,
@@ -282,6 +316,18 @@ export default {
                 {'id':10, 'status':false},
                 {'id':11, 'status':false}
             ],
+            money: {
+                decimal: ',',
+                thousands: '.',
+                precision: 2,
+                masked: false
+            },
+            percent: {
+                decimal: ',',
+                thousands: '.',
+                precision: 0,
+                masked: false
+            },
             where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [
                 {
