@@ -1114,7 +1114,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
@@ -1391,14 +1391,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* 35 */,
 /* 36 */,
 /* 37 */,
-/* 38 */,
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _vue = __webpack_require__(4);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -1406,23 +1405,23 @@ var _vuex = __webpack_require__(5);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(2);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _App = __webpack_require__(58);
+var _App = __webpack_require__(56);
 
 var _App2 = _interopRequireDefault(_App);
 
-var _router = __webpack_require__(61);
+var _router = __webpack_require__(59);
 
 var _router2 = _interopRequireDefault(_router);
 
-var _adminMenuFix = __webpack_require__(80);
+var _adminMenuFix = __webpack_require__(78);
 
 var _adminMenuFix2 = _interopRequireDefault(_adminMenuFix);
 
-var _store = __webpack_require__(81);
+var _store = __webpack_require__(79);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -1447,6 +1446,7 @@ new _vue2.default({
 (0, _adminMenuFix2.default)('vue-app');
 
 /***/ }),
+/* 39 */,
 /* 40 */,
 /* 41 */,
 /* 42 */,
@@ -1463,20 +1463,18 @@ new _vue2.default({
 /* 53 */,
 /* 54 */,
 /* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(17);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6bc4b6d8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6bc4b6d8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(58);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(59)
+  __webpack_require__(57)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1522,13 +1520,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 59 */
+/* 57 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: ModuleBuildError: Module build failed: ParseError: expected \"indent\", got \"==\"\n    at Parser.error (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:259:11)\n    at Parser.expect (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:287:12)\n    at Parser.block (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:845:12)\n    at Parser.selector (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:1555:24)\n    at Parser.stmt (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:797:27)\n    at Parser.statement (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:685:21)\n    at Parser.parse (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:236:25)\n    at CachedPathEvaluator.importFile (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:73:20)\n    at CachedPathEvaluator.visitImport (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:162:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.visitBlock (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:720:39)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.importFile (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:84:18)\n    at CachedPathEvaluator.visitImport (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:162:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.visitRoot (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:707:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.evaluate (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:247:15)\n    at Renderer.render (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/renderer.js:86:26)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:167:12\n    at tryCatchReject (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:840:30)\n    at runContinuation1 (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:799:4)\n    at Fulfilled.when (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:590:4)\n    at Pending.run (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:481:13)\n    at Scheduler._drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:62:19)\n    at Scheduler.drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:27:9)\n    at runLoaders (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/webpack/lib/NormalModule.js:195:19)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:169:11\n    at Renderer.render (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/renderer.js:107:12)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:167:12\n    at tryCatchReject (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:840:30)\n    at runContinuation1 (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:799:4)\n    at Fulfilled.when (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:590:4)\n    at Pending.run (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:481:13)\n    at Scheduler._drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:62:19)\n    at Scheduler.drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:27:9)\n    at _combinedTickCallback (internal/process/next_tick.js:131:7)\n    at process._tickCallback (internal/process/next_tick.js:180:9)");
+// removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 60 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1550,7 +1548,7 @@ if (false) {
 }
 
 /***/ }),
-/* 61 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1560,7 +1558,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(4);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -1568,23 +1566,23 @@ var _vueRouter = __webpack_require__(7);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _Home = __webpack_require__(62);
+var _Home = __webpack_require__(60);
 
 var _Home2 = _interopRequireDefault(_Home);
 
-var _Pedidos = __webpack_require__(65);
+var _Pedidos = __webpack_require__(63);
 
 var _Pedidos2 = _interopRequireDefault(_Pedidos);
 
-var _Configuracoes = __webpack_require__(69);
+var _Configuracoes = __webpack_require__(67);
 
 var _Configuracoes2 = _interopRequireDefault(_Configuracoes);
 
-var _Token = __webpack_require__(73);
+var _Token = __webpack_require__(71);
 
 var _Token2 = _interopRequireDefault(_Token);
 
-var _Log = __webpack_require__(76);
+var _Log = __webpack_require__(74);
 
 var _Log2 = _interopRequireDefault(_Log);
 
@@ -1617,18 +1615,18 @@ exports.default = new _vueRouter2.default({
 });
 
 /***/ }),
-/* 62 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Home_vue__ = __webpack_require__(18);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0ce03f2f_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Home_vue__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0ce03f2f_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Home_vue__ = __webpack_require__(62);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(63)
+  __webpack_require__(61)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1674,13 +1672,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 63 */
+/* 61 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 64 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1704,19 +1702,19 @@ if (false) {
 }
 
 /***/ }),
-/* 65 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Pedidos_vue__ = __webpack_require__(19);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a7e32e_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Pedidos_vue__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a7e32e_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Pedidos_vue__ = __webpack_require__(66);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(66)
-  __webpack_require__(67)
+  __webpack_require__(64)
+  __webpack_require__(65)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -1762,19 +1760,19 @@ if (false) {(function () {
 
 
 /***/ }),
+/* 64 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
 /* 66 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3332,19 +3330,19 @@ if (false) {
 }
 
 /***/ }),
-/* 69 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Configuracoes_vue__ = __webpack_require__(20);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_260cb748_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Configuracoes_vue__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_260cb748_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Configuracoes_vue__ = __webpack_require__(70);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(70)
-  __webpack_require__(71)
+  __webpack_require__(68)
+  __webpack_require__(69)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -3390,19 +3388,19 @@ if (false) {(function () {
 
 
 /***/ }),
+/* 68 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
 /* 70 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4399,18 +4397,18 @@ if (false) {
 }
 
 /***/ }),
-/* 73 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Token_vue__ = __webpack_require__(21);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1bf58fd9_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Token_vue__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1bf58fd9_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Token_vue__ = __webpack_require__(73);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(74)
+  __webpack_require__(72)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -4456,13 +4454,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 74 */
+/* 72 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 75 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4632,19 +4630,19 @@ if (false) {
 }
 
 /***/ }),
-/* 76 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Log_vue__ = __webpack_require__(22);
 /* empty harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_ed77a4b8_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Log_vue__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_ed77a4b8_hasScoped_true_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Log_vue__ = __webpack_require__(77);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(77)
-  __webpack_require__(78)
+  __webpack_require__(75)
+  __webpack_require__(76)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -4690,19 +4688,19 @@ if (false) {(function () {
 
 
 /***/ }),
+/* 75 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
 /* 77 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 78 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5125,7 +5123,7 @@ if (false) {
 }
 
 /***/ }),
-/* 80 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5170,7 +5168,7 @@ function menuFix(slug) {
 exports.default = menuFix;
 
 /***/ }),
-/* 81 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5180,7 +5178,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _vue = __webpack_require__(4);
+var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -5188,19 +5186,19 @@ var _vuex = __webpack_require__(5);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _orders = __webpack_require__(82);
+var _orders = __webpack_require__(80);
 
 var _orders2 = _interopRequireDefault(_orders);
 
-var _balance = __webpack_require__(83);
+var _balance = __webpack_require__(81);
 
 var _balance2 = _interopRequireDefault(_balance);
 
-var _configuration = __webpack_require__(84);
+var _configuration = __webpack_require__(82);
 
 var _configuration2 = _interopRequireDefault(_configuration);
 
-var _log = __webpack_require__(86);
+var _log = __webpack_require__(84);
 
 var _log2 = _interopRequireDefault(_log);
 
@@ -5220,7 +5218,7 @@ var store = new _vuex2.default.Store({
 exports.default = store;
 
 /***/ }),
-/* 82 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5230,7 +5228,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(2);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -5670,7 +5668,7 @@ var orders = {
 exports.default = orders;
 
 /***/ }),
-/* 83 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5680,7 +5678,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(2);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -5731,7 +5729,7 @@ var balance = {
 exports.default = balance;
 
 /***/ }),
-/* 84 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5741,7 +5739,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(2);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -6023,8 +6021,8 @@ var configuration = {
 exports.default = configuration;
 
 /***/ }),
-/* 85 */,
-/* 86 */
+/* 83 */,
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6034,7 +6032,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(2);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -6075,4 +6073,4 @@ var log = {
 exports.default = log;
 
 /***/ })
-],[39]);
+],[38]);
