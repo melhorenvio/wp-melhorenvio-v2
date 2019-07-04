@@ -58,24 +58,19 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
-### [2.5.14] - 2019-07-04
+#### [2.5.14] - 2019-07-04
 - Solução do problema do loading infinito após salvar as configurações
 - Ajustes na cotaçaõ de frete na tela do produto
 - Remoção de funções não utiliazadas no core do plugin
-
-### [2.5.13] - 2019-07-01
+#### [2.5.13] - 2019-07-01
 - Problemas de JS na tela do produto
-
-### [2.5.10] - 2019-06-28
+#### [2.5.10] - 2019-06-28
 - Problemas de produtos com variações
-
-### [2.5.9] - 2019-06-27
+#### [2.5.9] - 2019-06-27
 - Diferença valor frete na tela do produto
-
 ### [2.5.8] - 2019-06-24
 - Erro ao adicionar ao carrinho
-
-### [2.5.4] - 2019-06-
+#### [2.5.4] - 2019-06-
 - Opção de escolher AR e MP nas configurações
 - Melhorias na atualização de fretes quando editado o pedido
 - Notificação de errors na listagem de pedidos
