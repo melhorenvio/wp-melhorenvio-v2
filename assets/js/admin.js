@@ -5442,8 +5442,6 @@ var orders = {
                         id: data.id,
                         order_id: response.data.data.order_id
                     });
-                    commit('setMsgModal', error.message);
-                    commit('setMsgModal', errorMessage);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
