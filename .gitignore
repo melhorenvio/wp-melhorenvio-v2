@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+
+node_modules
+vendor
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 *.log
 wp-config.php
 wp-content/advanced-cache.php
@@ -15,8 +21,11 @@ wp-content/plugins/hello.php
 /readme.html
 /sitemap.xml
 /sitemap.xml.gz
+<<<<<<< HEAD
 
 vendor/
 node_modules/
 package-lock.json
 yarn.lock
+=======
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2

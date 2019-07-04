@@ -13,7 +13,6 @@ class ProductsController
     public function getProductsOrder($order_id) 
     {
         $order  = wc_get_order( $order_id );
-
         $products = [];
 
         foreach( $order->get_items() as $item_id => $item_product ){
@@ -38,7 +37,6 @@ class ProductsController
 
         return $products;
     }
-
 
     /**
      * @param [type] $order_id

@@ -4,20 +4,31 @@
 	$(function() {
 
 		
+<<<<<<< HEAD
 		/**
+=======
+		 /**
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 		 *	Roda quando clica para calcular o Frete
 		 */
 		// $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete div').on('click', function(e, l) {
 		$(document).on('keyup', '.iptCep', function(e) {
 
+<<<<<<< HEAD
 			resetarTabela();
 
+=======
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 			if($(this).val().length === 9) {
 		
 				if ($(e.target).is('a#cfpp_credits')) { return; }
 				
 				var url = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_endpoint_url').val();
+<<<<<<< HEAD
 				var cep = $('.iptCep').val();
+=======
+				var cep = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete input').val().replace(/\D+/g, '');
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 				var altura = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura').val();
 				var largura = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_largura').val();
 				var comprimento = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_comprimento').val();
@@ -25,6 +36,7 @@
 				var preco = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_preco').val();
 				var id_produto = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #id_produto').val();
 				
+<<<<<<< HEAD
 				// if (cep.length != 8) {
 				// 	alert('Por favor, verifique se o CEP informado é válido.');
 				// 	return false;
@@ -67,6 +79,12 @@
 
 					return false;
 				}
+=======
+				if (cep.length != 8) {
+				    alert('Por favor, verifique se o CEP informado é válido.');
+				    return false;
+				} 
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 
 				let inpCEP = $(this);
 				inpCEP.attr('disabled','disabled');
@@ -136,16 +154,25 @@
 						var row = '';
 						
 						data.map( item => {
+<<<<<<< HEAD
 
 							let name = item.name.split('(');
 							name = name[0];
 							
 							row += `<tr><td>${item.company + ' ' + name}</td><td>${item.price}</td><td>${item.delivery_time}</td></tr>`;
+=======
+							row += `<tr><td>${item.company + ' ' + item.name}</td><td>${item.price}</td><td>${item.delivery_time}</td></tr>`;
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 						});
 
 						if (row == '') {
 							row = '<tr><td colspan="3">Desculpe, o cálculo de frete para este produto só está disponível no Carrinho, por favor, prossiga com a compra normalmente.</td></tr>';
 						}
+<<<<<<< HEAD
+=======
+						
+						row += '<tr><td></td><td></td><td>Feito com ♥ por <a href="https://www.melhorenvio.com.br/" target="_blank">Melhor Envio</a> </td></tr>'
+>>>>>>> c6c0a1d0e298fd0ee981c7ed3453bbc454d639b2
 
 						$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').append(row);
 						esconderLoader();

@@ -509,7 +509,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -1526,7 +1525,7 @@ if (false) {(function () {
 /* 59 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+throw new Error("Module build failed: ModuleBuildError: Module build failed: ParseError: expected \"indent\", got \"==\"\n    at Parser.error (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:259:11)\n    at Parser.expect (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:287:12)\n    at Parser.block (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:845:12)\n    at Parser.selector (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:1555:24)\n    at Parser.stmt (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:797:27)\n    at Parser.statement (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:685:21)\n    at Parser.parse (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/parser.js:236:25)\n    at CachedPathEvaluator.importFile (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:73:20)\n    at CachedPathEvaluator.visitImport (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:162:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.visitBlock (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:720:39)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.importFile (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:84:18)\n    at CachedPathEvaluator.visitImport (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/lib/evaluator.js:162:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.visitRoot (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:707:27)\n    at CachedPathEvaluator.Visitor.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/index.js:28:40)\n    at CachedPathEvaluator.Evaluator.visit (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:160:18)\n    at CachedPathEvaluator.Evaluator.evaluate (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/visitor/evaluator.js:247:15)\n    at Renderer.render (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/renderer.js:86:26)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:167:12\n    at tryCatchReject (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:840:30)\n    at runContinuation1 (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:799:4)\n    at Fulfilled.when (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:590:4)\n    at Pending.run (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:481:13)\n    at Scheduler._drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:62:19)\n    at Scheduler.drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:27:9)\n    at runLoaders (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/webpack/lib/NormalModule.js:195:19)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:169:11\n    at Renderer.render (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus/lib/renderer.js:107:12)\n    at /home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/stylus-loader/index.js:167:12\n    at tryCatchReject (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:840:30)\n    at runContinuation1 (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:799:4)\n    at Fulfilled.when (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:590:4)\n    at Pending.run (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/makePromise.js:481:13)\n    at Scheduler._drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:62:19)\n    at Scheduler.drain (/home/melhorenvio/projects/wordpress/datavolume/plugins/2.5.0/node_modules/when/lib/Scheduler.js:27:9)\n    at _combinedTickCallback (internal/process/next_tick.js:131:7)\n    at process._tickCallback (internal/process/next_tick.js:180:9)");
 
 /***/ }),
 /* 60 */
@@ -3220,33 +3219,31 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
-                  _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
-                    _c("animate", {
-                      attrs: {
-                        attributeName: "r",
-                        begin: "-0.9s",
-                        dur: "1.8s",
-                        values: "1; 20",
-                        calcMode: "spline",
-                        keyTimes: "0; 1",
-                        keySplines: "0.165, 0.84, 0.44, 1",
-                        repeatCount: "indefinite"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("animate", {
-                      attrs: {
-                        attributeName: "stroke-opacity",
-                        begin: "-0.9s",
-                        dur: "1.8s",
-                        values: "1; 0",
-                        calcMode: "spline",
-                        keyTimes: "0; 1",
-                        keySplines: "0.3, 0.61, 0.355, 1",
-                        repeatCount: "indefinite"
-                      }
-                    })
-                  ])
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "r",
+                      begin: "-0.9s",
+                      dur: "1.8s",
+                      values: "1; 20",
+                      calcMode: "spline",
+                      keyTimes: "0; 1",
+                      keySplines: "0.165, 0.84, 0.44, 1",
+                      repeatCount: "indefinite"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("animate", {
+                    attrs: {
+                      attributeName: "stroke-opacity",
+                      begin: "-0.9s",
+                      dur: "1.8s",
+                      values: "1; 0",
+                      calcMode: "spline",
+                      keyTimes: "0; 1",
+                      keySplines: "0.3, 0.61, 0.355, 1",
+                      repeatCount: "indefinite"
+                    }
+                  })
                 ]
               )
             ]
@@ -5510,17 +5507,15 @@ var orders = {
                         commit('toggleModal', true);
                         return false;
                     }
-
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
                     commit('toggleModal', true);
                     commit('toggleLoader', false);
                     commit('addCart', {
                         id: data.id,
-                        order_id: response.data.data.order_id,
-                        protocol: response.data.data.protocol
+                        order_id: response.data.data.order_id
                     });
-                }).catch(function (error) {
                     commit('setMsgModal', error.message);
+                    commit('setMsgModal', errorMessage);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
