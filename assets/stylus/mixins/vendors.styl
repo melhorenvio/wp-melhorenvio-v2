@@ -1,0 +1,185 @@
+me-vendors-prefixes = recommended
+
+me-vendor( property, value, feature = null, prefixes = null, official = true )
+    unless "vendor" in called-from
+        if me-vendors-prefixes isnt false
+            if feature isnt null and !( feature in me-support-ignore-features )
+                for prefix in caniuse-prefixes( feature )
+                    prefixedproperty = "-" + prefix + "-" + property
+                    {prefixedproperty}: value
+            else
+                if me-vendors-prefixes isnt recommended
+                    prefixes = me-vendors-prefixes
+                if prefixes
+                    for prefix in prefixes
+                        prefixedproperty = "-" + prefix + "-" + property
+                        {prefixedproperty}: value
+    if official
+        {property}: value
+
+vendor = me-vendor unless me-no-conflict
+
+unless me-no-conflict
+    animation()
+        me-vendor( "animation", arguments, feature: "css-animation" )
+    animation-delay()
+        me-vendor( "animation-delay", arguments, feature: "css-animation" )
+    animation-direction()
+        me-vendor( "animation-direction", arguments, feature: "css-animation" )
+    animation-duration()
+        me-vendor( "animation-duration", arguments, feature: "css-animation" )
+    animation-fill-mode()
+        me-vendor( "animation-fill-mode", arguments, feature: "css-animation" )
+    animation-iteration-count()
+        me-vendor( "animation-iteration-count", arguments, feature: "css-animation" )
+    animation-name()
+        me-vendor( "animation-name", arguments, feature: "css-animation" )
+    animation-play-state()
+        me-vendor( "animation-play-state", arguments, feature: "css-animation" )
+    animation-timing-function()
+        me-vendor( "animation-timing-function", arguments, feature: "css-animation" )
+
+    appearance()
+        me-vendor( "appearance", arguments, prefixes: webkit moz )
+
+    backface-visibility()
+        me-vendor( "backface-visibility", arguments, prefixes: webkit ms )
+
+    background-clip()
+        me-vendor( "background-clip", arguments, feature: "background-img-opts" )
+    background-origin()
+        me-vendor( "background-origin", arguments, feature: "background-img-opts" )
+    background-size()
+        me-vendor( "background-size", arguments, feature: "background-img-opts" )
+
+    border-image-source()
+        me-vendor( "border-image-source", arguments, feature: "border-image" )
+    border-image-slice()
+        me-vendor( "border-image-slice", arguments, feature: "border-image" )
+    border-image-width()
+        me-vendor( "border-image-width", arguments, feature: "border-image" )
+    border-image-outset()
+        me-vendor( "border-image-outset", arguments, feature: "border-image" )
+    border-image-repeat()
+        me-vendor( "border-image-repeat", arguments, feature: "border-image" )
+    border-image()
+        me-vendor( "border-image", arguments, feature: "border-image" )
+
+    box-shadow()
+        me-vendor( "box-shadow", arguments, feature: "css-boxshadow" )
+
+    box-sizing()
+        me-vendor( "box-sizing", arguments, feature: "css3-boxsizing" )
+
+    clip-path()
+        me-vendor( "clip-path", arguments, feature: "css-clip-path" )
+
+    column-count()
+        me-vendor( "column-count", arguments, feature: "multicolumn" )
+    column-fill()
+        me-vendor( "column-fill", arguments, feature: "multicolumn" )
+    column-gap()
+        me-vendor( "column-gap", arguments, feature: "multicolumn" )
+    column-rule()
+        me-vendor( "column-rule", arguments, feature: "multicolumn" )
+    column-rule-color()
+        me-vendor( "column-rule-color", arguments, feature: "multicolumn" )
+    column-rule-style()
+        me-vendor( "column-rule-style", arguments, feature: "multicolumn" )
+    column-rule-width()
+        me-vendor( "column-rule-width", arguments, feature: "multicolumn" )
+    column-span()
+        me-vendor( "column-span", arguments, feature: "multicolumn")
+    column-width()
+        me-vendor( "column-width", arguments, feature: "multicolumn" )
+    columns()
+        me-vendor( "columns", arguments, feature: "multicolumn" )
+
+    grid()
+        me-vendor( "grid", arguments, feature: "css-grid" )
+    grid-area()
+        me-vendor( "grid-area", arguments, feature: "css-grid" )
+    grid-auto-columns()
+        me-vendor( "grid-auto-columns", arguments, feature: "css-grid" )
+    grid-auto-flow()
+        me-vendor( "grid-auto-flow", arguments, feature: "css-grid" )
+    grid-auto-position()
+        me-vendor( "grid-auto-position", arguments, feature: "css-grid" )
+    grid-auto-rows()
+        me-vendor( "grid-auto-rows", arguments, feature: "css-grid" )
+    grid-column()
+        me-vendor( "grid-column", arguments, feature: "css-grid" )
+    grid-column-end()
+        me-vendor( "grid-column-end", arguments, feature: "css-grid" )
+    grid-column-start()
+        me-vendor( "grid-column-start", arguments, feature: "css-grid" )
+    grid-row()
+        me-vendor( "grid-row", arguments, feature: "css-grid" )
+    grid-row-end()
+        me-vendor( "grid-row-end", arguments, feature: "css-grid" )
+    grid-row-start()
+        me-vendor( "grid-row-start", arguments, feature: "css-grid" )
+    grid-template()
+        me-vendor( "grid-template", arguments, feature: "css-grid" )
+    grid-template-areas()
+        me-vendor( "grid-template-areas", arguments, feature: "css-grid" )
+    grid-template-columns()
+        me-vendor( "grid-template-columns", arguments, feature: "css-grid" )
+    grid-template-rows()
+        me-vendor( "grid-template-rows", arguments, feature: "css-grid" )
+
+    hyphens()
+        me-vendor( "hyphens", arguments, feature: "css-hyphens" )
+
+    justify-content()
+        me-vendor( "justify-content", arguments, feature: "flexbox" )
+
+    mask()
+        me-vendor( "mask", arguments, feature: "css-masks" )
+
+    opacity( value )
+        if value == inherit or value == initial
+            -ms-filter value
+            filter value
+        else
+            val = round( value * 100 )
+            if val == 100
+                -ms-filter: none
+                filter: none
+            else
+                -ms-filter: '"progid:DXImageTransform.Microsoft.Alpha(Opacity=%s)"' % val
+                filter: 'alpha(opacity=%s)' % val
+        opacity: value
+
+    order()
+        me-vendor( "order", arguments, feature: "flexbox" )
+
+    perspective()
+        if current-property[ 0 ] is "perspective"
+            me-vendor( "perspective", arguments, feature: "transforms3d" )
+        else
+            unquote( "perspective(" + arguments + ")" )
+
+    perspective-origin()
+        me-vendor( "perspective-origin", arguments, feature: "transforms3d" )
+
+    transform()
+        me-vendor( "transform", arguments, feature: "transforms2d" )
+    transform-origin()
+        me-vendor( "transform-origin", arguments, feature: "transforms2d" )
+    transform-style()
+        me-vendor( "transform-style", arguments, feature: "transforms3d" )
+
+    transition()
+        me-vendor( "transition", arguments, feature: "css-transitions" )
+    transition-delay()
+        me-vendor( "transition-delay", arguments, feature: "css-transitions" )
+    transition-duration()
+        me-vendor( "transition-duration", arguments, feature: "css-transitions" )
+    transition-property()
+        me-vendor( "transition-property", arguments, feature: "css-transitions" )
+    transition-timing-function()
+        me-vendor( "transition-timing-function", arguments, feature: "css-transitions" )
+
+    user-select( value )
+        me-vendor( "user-select", arguments, feature: "user-select-none" )

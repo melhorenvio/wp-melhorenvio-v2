@@ -1,0 +1,65 @@
+.me-modal
+  position fixed
+  z-index 9999
+  top 0
+  left 0
+  right 0
+  bottom 0
+  background rgba(85, 105, 118, .7)
+  > div
+    position absolute
+    top 50%
+    left 50%
+    perspective 1000px
+    transform translate3d(-50%, -51%, 0)
+    background #ffffff
+    border-radius 5px
+    width 540px
+    max-width 90%
+    border 1px solid ghost
+
+  &.-big
+    > div
+      width 890px
+
+  .me-modalClose
+    position absolute
+    top 15px
+    right 15px
+    .ico
+      stroke endeavour
+      size 25px
+    +below(800px)
+      .ico
+        size 20px
+        top 18px
+
+  .title
+    font-size 24px
+    font-weight 300
+    padding 15px
+    margin-bottom 15px
+    border-bottom 1px solid ghost
+    +below(800px)
+      font-size 18px
+
+  .buttons
+    margin-top 15px
+    border-top 1px solid ghost
+    padding 15px
+    .left
+      float left
+    .right
+      float right
+    &.-center
+      text-align center
+
+  .content
+    padding 0 15px
+    max-height 70vh
+    overflow hidden
+    overflow-y auto
+    .txt
+      font-size 12px
+      line-height 1.2em
+      margin-bottom 15px

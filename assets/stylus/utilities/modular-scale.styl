@@ -1,0 +1,22 @@
+me-golden = 1.618
+me-minor-second = 1.067
+me-major-second = 1.125
+me-minor-third = 1.2
+me-major-third = 1.25
+me-perfect-fourth = 1.333
+me-augmented-fourth = 1.414
+me-perfect-fifth = 1.5
+me-minor-sixth = 1.6
+me-major-sixth = 1.667
+me-minor-seventh = 1.778
+me-major-seventh = 1.875
+me-octave = 2
+me-major-tenth = 2.5
+me-major-eleventh = 2.667
+me-major-twelfth = 3
+me-double-octave = 4
+
+me-modular-scale( base, step, ratio = me-perfect-fifth )
+    base * ( ratio ** step )
+
+modular-scale = me-modular-scale unless me-no-conflict

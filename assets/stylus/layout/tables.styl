@@ -1,0 +1,82 @@
+.table-box
+  background #ffffff
+  border 1px solid ghost
+  border-radius 4px
+  padding 15px
+  margin-bottom 20px
+
+  &.-tabbed
+    border-top-left-radius 0
+
+  &.-inative
+    background transparent
+
+    .inative-box
+      text-align center
+      padding 40px 0
+
+.table
+  width 100%
+  text-align left
+  font-size 0
+  overflow hidden
+  overflow-x auto
+
+  .head li,
+  .body-list li
+    display inline-block
+    font-size 16px
+    vertical-align middle
+    span
+      display block
+      padding 15px
+
+  .head
+    border-bottom 1px solid ghost
+    font-size 0
+    li
+      font-weight 600
+
+  .body
+    font-size 0
+    > li
+      position relative
+      &:after
+        content ''
+        position absolute
+        top 0
+        left 10px
+        right 10px
+        height 1px
+        background catskillWhite
+      &:first-child
+        &:after
+          display none
+
+  .-center
+    text-align center
+
+  &.-woocommerce
+    .head li,
+    .body-list li
+      &:nth-child(1)
+        width calc('4%')
+        // min-width 130px
+      &:nth-child(2)
+        width calc('8%')
+        // min-width 130px
+      &:nth-child(3)
+        width calc('30%')
+        // min-width 90px
+      &:nth-child(4)
+        width calc('20%')
+        // min-width 90px
+      &:nth-child(5)
+        width calc('20%')
+        // min-width 90px
+      &:nth-child(6)
+        width calc('18%')
+        // min-width 90px
+      &:nth-child(7)
+        width calc('8%')
+        // min-width 90px
