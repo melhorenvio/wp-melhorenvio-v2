@@ -166,7 +166,7 @@
                             <div class="wpme_address-top" style="border-bottom: none;">
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
                                 <label for="two">exibir a calculdora na tela do produto</label>
-                            </div></br>
+                            </div><br>
                     
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
                                 <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
@@ -185,7 +185,7 @@
                 <ul class="wpme_address">
                     <li>
                         <input type="checkbox" value="Personalizar"  v-model="show_path">
-                        <span>Estou ciente dos riscos</span></br></br>
+                        <span>Estou ciente dos riscos</span><br><br>
                         <input v-show="show_path" v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
                     </li>
                 </ul>

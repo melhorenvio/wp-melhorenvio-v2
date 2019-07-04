@@ -400,31 +400,10 @@ final class Base_Plugin {
         add_action('wp_ajax_print_ticket', [$order, 'printTicket']);
         add_action('wp_ajax_get_balance', [$users, 'getBalance']);
         add_action('wp_ajax_insert_invoice_order', [$order, 'insertInvoiceOrder']);
-
-        // Endereços
-        add_action('wp_ajax_get_addresses', [$conf, 'getAddressShopping']);
-        add_action('wp_ajax_set_address', [$conf, 'setAddressShopping']);
-
-        // Agências Jadlog 
-        add_action('wp_ajax_set_agency_jadlog', [$conf, 'setAgencyJadlog']);
         add_action('wp_ajax_get_agency_jadlog', [$conf, 'getAgencyJadlog']);
-
-        // Minhas lojas
-        add_action('wp_ajax_get_stores', [$conf, 'getStories']);
-        add_action('wp_ajax_set_store', [$conf, 'setStore']);
-
-        // Exibir calculadora na tela do produto
-        add_action('wp_ajax_get_calculator_show', [$conf, 'get_calculator_show']);
-        add_action('wp_ajax_set_calculator_show', [$conf, 'set_calculator_show']);
-
-        // Cotação por embalagem
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
-        
         add_action('wp_ajax_update_order', [$cotacao, 'refreshCotation']);
-        // add_action('wp_ajax_update_order', [$order, 'removeOrder']);
-
-        // Test cotation
         add_action('wp_ajax_get_info_melhor_envio', function() {
 
             if (!isset($_GET['cep'])) {
@@ -583,30 +562,7 @@ final class Base_Plugin {
         add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'indexResponse']);
         add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detailResponse']);
 
-        // Opçoes de transportadoras
-        add_action('wp_ajax_save_options', [$conf, 'save']);
-        add_action('wp_ajax_get_options', [$conf, 'getOptionsShipments']);
-
-        add_action('wp_ajax_set_options_calculator', [$conf, 'saveOptionsCalculator']);
-        add_action('wp_ajax_get_options_calculator', [$conf, 'getOptionsCalculator']);
-
-        // Pegar metodos de envios ativos
         add_action('wp_ajax_get_metodos', [$conf, 'getMethodsEnables']);
-
-        // salvar onde é exibida a cotação na tela de produto
-        add_action('wp_ajax_save_where_calculator', [$conf, 'saveWhereCalculator']);
-        add_action('wp_ajax_get_where_calculator', [$conf, 'getWhereCalculator']);
-
-        // salvar a opção de usar valor segurado nas cotações
-        add_action('wp_ajax_set_use_insurance', [$conf, 'saveUseInsurance']);
-        add_action('wp_ajax_get_use_insurance', [$conf, 'getUseInsurance']);
-
-        // salvar estilo calculadora
-        add_action('wp_ajax_get_style_calculator', [$conf, 'getStyle']);
-        add_action('wp_ajax_save_style_calculator', [$conf, 'saveStyle']);
-
-        add_action('wp_ajax_set_path_plugins', [$conf, 'savePathPlugins']);
-        add_action('wp_ajax_get_path_plugins', [$conf, 'getPathPlugins']);
 
         // Status WooCommerce
         add_action('wp_ajax_get_status_woocommerce', [$status, 'getStatus']);
@@ -621,16 +577,13 @@ final class Base_Plugin {
             unset($_SESSION[$codeStore]['melhorenvio_token']);
 
             unset($_SESSION[$codeStore]['melhorenvio_user_info']);
-            // (new Models\User())->resetData();
-
+        
             unset($_SESSION[$codeStore]['melhorenvio_address_selected_v2']);
             unset($_SESSION[$codeStore]['melhorenvio_address']);
-            // (new Models\Address)->resetData();
-
+            
             unset($_SESSION[$codeStore]['melhorenvio_stores']);
             unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
-            // (new Models\Store)->resetData();
-
+        
             unset($_SESSION[$codeStore]['melhorenvio_options']);
             echo json_encode($_SESSION);
             die;
