@@ -57,73 +57,25 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
-## [2.5.13] - 2019-07-01
-## Fixed
+## CHANGELOG
+# [2.5.14] - 2019-07-04
+- Solução do problema do loading infinito após salvar as configurações
+- Ajustes na cotaçaõ de frete na tela do produto
+- Remoção de funções não utiliazadas no core do plugin
+
+# [2.5.13] - 2019-07-01
 - Problemas de JS na tela do produto
 
-## [2.5.10] - 2019-06-28
-## Fixed
+# [2.5.10] - 2019-06-28
 - Problemas de produtos com variações
 
-## [2.5.9] - 2019-06-27
-## Fixed
+# [2.5.9] - 2019-06-27
 - Diferença valor frete na tela do produto
 
-
-## [2.5.8] - 2019-06-24
-## Fixed
+# [2.5.8] - 2019-06-24
 - Erro ao adicionar ao carrinho
 
-## [2.5.4] - 2019-06-
-## Added 
+# [2.5.4] - 2019-06-
 - Opção de escolher AR e MP nas configurações
 - Melhorias na atualização de fretes quando editado o pedido
 - Notificação de errors na listagem de pedidos
-
-## [2.5.3] - 2019-06-13
-## Fixed 
-- Erro ao cotar sem cep de destino sem estar logado.
-
-## [2.5.1] - 2019-06-12
-## Fixed 
-- Ajustes de desempenho
-- Correção cupom de desconto na tela do produto
-- Não exibir calculadora para produto virtual
-- Página com histórico de cotação do pedido
-
-## [2.5.0] - 2019-05-30
-## Added
-- Suporte multisite
-
-## [2.4.10] - 2019-05-28
-## Fixed
-- Cupom de desconto exibindo frete grátis
-## Fixed
-- Melhorias no cupom de desconto
-
-## [2.4.8] - 2019-05-15
-## Fixed
-- Ajuste no acréscimo de tempo extra
-
-## [2.4.6] - 2019-05-14
-## Fixed
-- Ajuste no css dos input na tela do produto
-
-### Changelog
-## 2.4.5
-## Fixed
-- Ajuste no metodo get_product do woocommerce
-- Ajuste para não exibir prazo de entrega junto ao nome do metodo na calculadora do produto
-
-### Changelog
-## 2.4.4
-- Ajustes no layout
-
-### Changelog
-## 2.4.3
-- Melhorias no visual da calculdora de frete
-- Validação se produto tem as dimensões para realizar o calculo na tela do produto 
-
-### Changelog
-## 2.4.2
--  Utilização de métodos de envios padrões do WooCommerce no calculo de frete na tela do produto
