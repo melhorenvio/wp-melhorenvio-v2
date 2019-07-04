@@ -926,7 +926,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         options_calculator_: 'getOptionsCalculator',
         configs: 'getConfigs'
     })),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getConfigs', 'setSelectedAgency', 'setPathPlugins', 'setSelectedStore', 'setSelectedAddress', 'setShowCalculator', 'setOptionsCalculator', 'setLoader', 'setAgencies', 'saveAll']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getConfigs', 'setLoader', 'setAgencies', 'saveAll']), {
         showModalEditMethod(code) {
             this.codeshiping[code]['status'] = true;
         },
@@ -952,29 +952,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
             respSave.then(resolve => {
                 this.setLoader(false);
+                this.clearSession();
+                this.show_modal = true;
             }).catch(function (erro) {
                 this.setLoader(false);
             });
-
-            // var p1 = this.setSelectedAddress(this.address)
-            // var p2 = this.setSelectedStore(this.store)
-            // var p3 = this.setSelectedAgency(this.agency)
-
-            // var p4 = this.setShowCalculator()
-            // var p5 = this.setFieldsmethodsShipments()
-            // var p6 = this.setWhereCalculator()
-            // var p9 = this.setPathPlugins()
-            // var p10 = this.clearSession()
-            // var p11 = this.setOptionsCalculator()
-
-            // Promise.all([p1, p2, p3, p4, p5, p6, p9, p10]).then((resolve) => {
-            //     this.setLoader(false);
-            //     this.show_modal = true
-            // }).catch( function (erro) {
-            //     this.setLoader(false);
-            //     console.log("Erro: " + erro);
-            // });
-
         },
         showAgencies(data) {
             this.setLoader(true);
@@ -996,58 +978,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         close() {
             this.show_modal = false;
-        },
-        setShowCalculator() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then(response => {
-                    if (response && response.status === 200) {
-                        this.show_calculator = response.data;
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setOptionsCalculator() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_options_calculator&ar=${this.options_calculator.ar}&mp=${this.options_calculator.mp}`).then(response => {
-                    if (response && response.status === 200) {
-                        this.options_calculator = response.data;
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setWhereCalculator() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then(response => {
-                    resolve(true);
-                });
-            });
-        },
-        setFieldsmethodsShipments() {
-            return new Promise((resolve, reject) => {
-                this.methods_shipments.forEach(item => {
-                    this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}&ar=${item.ar}&mp=${item.mp}`).then(response => {
-                        resolve(true);
-                    });
-                });
-            });
-        },
-        setStyleCalculator() {
-            return new Promise((resolve, reject) => {
-                Object.entries(this.style_calculator).forEach(([key, val]) => {
-                    this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then(response => {
-                        resolve(true);
-                    });
-                });
-            });
-        },
-        setPathPlugins() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then(response => {
-                    resolve(true);
-                });
-            });
         },
         clearSession() {
             return new Promise((resolve, reject) => {
@@ -5512,8 +5442,6 @@ var orders = {
                         id: data.id,
                         order_id: response.data.data.order_id
                     });
-                    commit('setMsgModal', error.message);
-                    commit('setMsgModal', errorMessage);
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
@@ -5768,6 +5696,9 @@ var configuration = {
         configs: []
     },
     mutations: {
+        toggleLoader: function toggleLoader(state, data) {
+            state.show_load = data;
+        },
         setStyleCalculator: function setStyleCalculator(state, data) {
             state.styleCalculator = data;
         },
@@ -5794,9 +5725,6 @@ var configuration = {
         },
         setWhereCalculator: function setWhereCalculator(state, data) {
             state.where_calculator = data;
-        },
-        toggleLoader: function toggleLoader(state, data) {
-            state.show_load = data;
         },
         setOptionsCalculator: function setOptionsCalculator(state, data) {
             state.options_calculator = data;
@@ -5871,18 +5799,8 @@ var configuration = {
                 });
             });
         },
-        getOptionsCalculator: function getOptionsCalculator(_ref2, data) {
+        getAgencies: function getAgencies(_ref2, data) {
             var commit = _ref2.commit;
-
-            _axios2.default.post(ajaxurl + '?action=get_options_calculator').then(function (response) {
-                if (response && response.status === 200) {
-                    console.log(response);
-                    // commit('setAgency', response.data.agencies);
-                }
-            });
-        },
-        getAgencies: function getAgencies(_ref3, data) {
-            var commit = _ref3.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=get_agency_jadlog&city=' + data.city + '&state=' + data.state).then(function (response) {
@@ -5892,30 +5810,8 @@ var configuration = {
                 }
             });
         },
-        setSelectedAddress: function setSelectedAddress(_ref4, data) {
-            var commit = _ref4.commit;
-
-            return new Promise(function (resolve, reject) {
-                _axios2.default.post(ajaxurl + '?action=set_address&id=' + data).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setSelectedStore: function setSelectedStore(_ref5, data) {
-            var commit = _ref5.commit;
-
-            return new Promise(function (resolve, reject) {
-                _axios2.default.post(ajaxurl + '?action=set_store&id=' + data).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        saveAll: function saveAll(_ref6, data) {
-            var commit = _ref6.commit;
+        saveAll: function saveAll(_ref3, data) {
+            var commit = _ref3.commit;
 
 
             return new Promise(function (resolve, reject) {
@@ -5960,7 +5856,8 @@ var configuration = {
                 }
 
                 if (data.options_calculator != null) {
-                    form.append('options_calculator', data.options_calculator);
+                    form.append('options_calculator[ar]', data.options_calculator.ar);
+                    form.append('options_calculator[mp]', data.options_calculator.mp);
                 }
 
                 _axios2.default.post(ajaxurl + '?action=save_configuracoes', form).then(function (response) {
@@ -5970,48 +5867,13 @@ var configuration = {
                 });
             });
         },
-        setSelectedAgency: function setSelectedAgency(_ref7, data) {
-            var commit = _ref7.commit;
-
-            return new Promise(function (resolve, reject) {
-                _axios2.default.post(ajaxurl + '?action=set_agency_jadlog&id=' + data).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setShowCalculator: function setShowCalculator(_ref8, data) {
-            var commit = _ref8.commit;
-
-            return new Promise(function (resolve, reject) {
-                _axios2.default.post(ajaxurl + '?action=set_calculator_show&data=' + data).then(function (response) {
-                    if (response && response.status === 200) {
-                        commit('setShowCalculator', data);
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setOptionsCalculator: function setOptionsCalculator(_ref9, data) {
-            var commit = _ref9.commit;
-
-            return new Promise(function (resolve, reject) {
-                _axios2.default.post(ajaxurl + '?action=set_options_calculator&ar=' + data.ar + '&mp=' + data.mp).then(function (response) {
-                    if (response && response.status === 200) {
-                        commit('setOptionsCalculator', data);
-                        resolve(true);
-                    }
-                });
-            });
-        },
-        setLoader: function setLoader(_ref10, data) {
-            var commit = _ref10.commit;
+        setLoader: function setLoader(_ref4, data) {
+            var commit = _ref4.commit;
 
             commit('toggleLoader', data);
         },
-        setAgencies: function setAgencies(_ref11, data) {
-            var commit = _ref11.commit;
+        setAgencies: function setAgencies(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('setAgency', data);
         }
