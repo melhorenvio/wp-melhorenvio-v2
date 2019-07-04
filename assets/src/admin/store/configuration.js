@@ -22,6 +22,9 @@ const configuration = {
         configs: []
     },
     mutations: {
+        toggleLoader: (state, data) => {
+            state.show_load = data
+        },
         setStyleCalculator: (state, data) => {
             state.styleCalculator = data;
         },
@@ -48,9 +51,6 @@ const configuration = {
         },
         setWhereCalculator: (state, data) => {
             state.where_calculator = data
-        },
-        toggleLoader: (state, data) => {
-            state.show_load = data
         },
         setOptionsCalculator: (state, data) => {
             state.options_calculator = data;
@@ -101,14 +101,6 @@ const configuration = {
                 })
             })
         },
-        getOptionsCalculator: ({commit}, data) => {
-            Axios.post(`${ajaxurl}?action=get_options_calculator`).then(function (response) {
-                if (response && response.status === 200) {
-                    console.log(response);
-                    // commit('setAgency', response.data.agencies);
-                }
-            })
-        },
         getAgencies: ({commit}, data) => {
             commit('toggleLoader', true);
             Axios.post(`${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`).then(function (response) {
@@ -117,24 +109,6 @@ const configuration = {
                     commit('setAgency', response.data.agencies);
                 }
             })
-        },
-        setSelectedAddress: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_address&id=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            })
-        },
-        setSelectedStore: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_store&id=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            });
         },
         saveAll: ({commit}, data) => {
 
@@ -180,40 +154,12 @@ const configuration = {
                 }
 
                 if (data.options_calculator != null) {
-                    form.append('options_calculator', data.options_calculator);
+                    form.append('options_calculator[ar]', data.options_calculator.ar);
+                    form.append('options_calculator[mp]', data.options_calculator.mp);
                 }
 
                 Axios.post(`${ajaxurl}?action=save_configuracoes`, form).then(function (response) {
                     if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setSelectedAgency: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_agency_jadlog&id=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setShowCalculator: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_calculator_show&data=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        commit('setShowCalculator', data);
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setOptionsCalculator: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_options_calculator&ar=${data.ar}&mp=${data.mp}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        commit('setOptionsCalculator', data);
                         resolve(true)
                     }
                 })

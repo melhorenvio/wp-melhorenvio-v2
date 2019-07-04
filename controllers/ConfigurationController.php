@@ -550,6 +550,8 @@ class ConfigurationController
             $response['options_calculator'] = $this->setOptionsCalculator($data['options_calculator']);
         }
 
+        var_dump($data);die;
+
         return wp_send_json($response, 200);
     }
     
