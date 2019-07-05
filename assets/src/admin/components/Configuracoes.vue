@@ -485,6 +485,13 @@ export default {
         showTimeWithDay(value) {
             let val = (value == 1) ? value + ' dia' : value + ' dias'
             return val
+        },
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
+                if (!response.data.exists_token) {
+                    this.$router.push('Token') 
+                }
+            })
         }
     },
     watch : {
@@ -531,6 +538,8 @@ export default {
         }
     },
     mounted () {
+
+        this.getToken();
         this.setLoader(true);
         var promiseConfigs = this.getConfigs();
         promiseConfigs.then((resolve) => {

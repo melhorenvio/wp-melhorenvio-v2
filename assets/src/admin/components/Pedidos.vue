@@ -538,6 +538,13 @@ export default {
             }
             
             return false;
+        },
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
+                if (!response.data.exists_token) {
+                    this.$router.push('Token') 
+                }
+            })
         }
     },
     watch: {
@@ -549,6 +556,7 @@ export default {
         }
     },
     mounted () {
+        this.getToken();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }

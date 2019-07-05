@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.5.14
+Version: 2.5.15
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -79,7 +79,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.5.14';
+    public $version = '2.5.15';
 
     /**
      * Holds various class instances
@@ -223,10 +223,20 @@ final class Base_Plugin {
      * @return void
      */
     public function init_plugin() {
+        
 
         $this->includes();
         $this->init_hooks();
 
+        if (!isset($_SESSION[md5(get_option('home'))]['melhorenvio_token'])) {
+            add_action( 'admin_notices', function() {
+                echo sprintf('<div class="error">
+                    <p>%s</p>
+                </div>', 'Por favor, informar seu token Melhor Envio');
+            });
+            return;
+        }
+        
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {
             $pathPlugins = ABSPATH . 'wp-content/plugins';
@@ -595,6 +605,15 @@ final class Base_Plugin {
         });
 
         add_action('wp_ajax_get_logs_order', [$logs, 'getLogsOrder']);
+
+        add_action('wp_ajax_verify_token', function() {
+            if (!get_option('wpmelhorenvio_token')) {
+                echo json_encode(['exists_token' => false]);
+                die;
+            }
+            echo json_encode(['exists_token' => true]);
+            die;
+        });
     }
     
     /**

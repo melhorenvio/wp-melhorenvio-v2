@@ -55,7 +55,6 @@ class Order {
      */
     public static function getAllOrders($filters = NULL)
     {
-
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
             'offset' => ($filters['skip']) ?: 0,
@@ -186,11 +185,6 @@ class Order {
         ];
 
         return $data;
-    }
-
-    public function getAllWPstatus()
-    {
-        
     }
 
     private function mountPackage($cotation)

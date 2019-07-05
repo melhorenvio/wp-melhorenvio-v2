@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.5.14
+Version: 2.5.15
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -58,6 +58,8 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.5.15] - 2019-07
+
 #### [2.5.14] - 2019-07-04
 - Solução do problema do loading infinito após salvar as configurações
 - Ajustes na cotaçaõ de frete na tela do produto
