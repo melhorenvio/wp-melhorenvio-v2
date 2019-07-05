@@ -123,9 +123,9 @@
                             <div class="wpme_address-body">
                                 <ul>
                                     <li><b>Nome:</b> {{option.name}}</li>
-                                    <li><b>Tempo extra:</b> {{option.time}} </li>
-                                    <li><b>Taxa extra:</b> {{option.tax}} </li>
-                                    <li><b>Percentual extra:</b> {{option.perc}} </li>
+                                    <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
+                                    <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
+                                    <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
                                 </ul>
                                 <hr>
                                 <a @click="showModalEditMethod(option.code)">Editar</a>
@@ -138,7 +138,7 @@
                                         <div class="content">
                                             <ul>
                                                 <li>
-                                                    <label>Nome de exibição testeee </label><br>
+                                                    <label>Nome de exibição</label><br>
                                                     <input v-model="option.name" type="text" class="input" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
                                                     <div class="group-input">
@@ -437,8 +437,8 @@ export default {
             data['where_calculator']   = this.where_calculator;
             data['path_plugins']       = this.path_plugins;
             data['options_calculator'] = this.options_calculator;
- 
             var respSave = this.saveAll(data);
+            console.log(respSave);
 
             respSave.then((resolve) => {
                 this.setLoader(false);
@@ -548,6 +548,18 @@ export default {
                     resolve(true)
                 })
             });
+        },
+        formatNumber(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        formatPercent(value) {
+            let val = (value/1)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        showTimeWithDay(value) {
+            let val = (value == 1) ? value + ' dia' : value + ' dias'
+            return val
         }
     },
     watch : {
