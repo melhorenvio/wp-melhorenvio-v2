@@ -12,24 +12,28 @@
 
     .input {
         width: 100%;
+        height: 35px;
         padding: 5px 10px;
+        border: 1px solid #b0b0b0;
     }
     .group-input{
         border: 1px solid #b0b0b0;
         width: 100%;
+        font-size: 15px;
     }
     .group-input input {
         display: inline-block;
         border: none;
         width: 90%;
         max-width: 455px;
+        font-size: 15px;
     }
     .group-input p {
         display: inline-block;
         margin: 0 auto;
-        padding: 5px 10px;
+        padding: 7px 10px;
         background-color: #f0f0f0;
-        width: 30px;
+        width: 5.5%;
         text-align: center;
     }
 </style>
@@ -395,12 +399,6 @@ export default {
     methods: {
         ...mapActions('configuration', [
             'getConfigs',
-            'setSelectedAgency',
-            'setPathPlugins',
-            'setSelectedStore',
-            'setSelectedAddress',
-            'setShowCalculator',
-            'setOptionsCalculator',
             'setLoader',
             'setAgencies',
             'saveAll'
@@ -442,32 +440,11 @@ export default {
 
             respSave.then((resolve) => {
                 this.setLoader(false);
+                this.clearSession();
+                this.show_modal = true
             }).catch(function (erro) {
                 this.setLoader(false);
             });
-
-
-
-            // var p1 = this.setSelectedAddress(this.address)
-            // var p2 = this.setSelectedStore(this.store)
-            // var p3 = this.setSelectedAgency(this.agency)
-
-            // var p4 = this.setShowCalculator()
-            // var p5 = this.setFieldsmethodsShipments()
-            // var p6 = this.setWhereCalculator()
-            // var p9 = this.setPathPlugins()
-            // var p10 = this.clearSession()
-            // var p11 = this.setOptionsCalculator()
-
-            // Promise.all([p1, p2, p3, p4, p5, p6, p9, p10]).then((resolve) => {
-            //     this.setLoader(false);
-            //     this.show_modal = true
-            // }).catch( function (erro) {
-            //     this.setLoader(false);
-            //     console.log("Erro: " + erro);
-            // });
-
-
         },
         showAgencies (data) {
             this.setLoader(true);
@@ -489,58 +466,6 @@ export default {
         },
         close() {
             this.show_modal = false;
-        },
-        setShowCalculator () {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then( (response) => {
-                    if (response && response.status === 200) {
-                        this.show_calculator = response.data
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setOptionsCalculator () {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_options_calculator&ar=${this.options_calculator.ar}&mp=${this.options_calculator.mp}`).then( (response) => {
-                    if (response && response.status === 200) {
-                        this.options_calculator = response.data
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setWhereCalculator() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then( (response) => {
-                    resolve(true)
-                })
-            })
-        },
-        setFieldsmethodsShipments () {
-            return new Promise((resolve, reject) =>  {
-                this.methods_shipments.forEach((item) => {
-                    this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}&ar=${item.ar}&mp=${item.mp}`).then( (response) => {
-                        resolve(true)
-                    })
-                });
-            })
-        },
-        setStyleCalculator () {
-            return new Promise((resolve, reject) =>  {
-                Object.entries(this.style_calculator).forEach(([key, val]) => {
-                    this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then( (response) => {
-                        resolve(true)
-                    })
-                });
-            })
-        },
-        setPathPlugins () {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then( (response) => {
-                    resolve(true)
-                })
-            })
         },
         clearSession() {
             return new Promise((resolve, reject) => {
