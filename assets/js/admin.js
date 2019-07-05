@@ -59,9 +59,10 @@ pluginWebpack([0],[
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(6);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
 //
 //
 //
@@ -609,7 +610,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_v_money__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_v_money___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_v_money__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -865,10 +868,48 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'Configuracoes',
+    components: { Money: __WEBPACK_IMPORTED_MODULE_1_v_money__["Money"] },
     data() {
         return {
             address: null,
@@ -884,6 +925,18 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             path_plugins: '',
             show_path: false,
             codeshiping: [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }],
+            money: {
+                decimal: ',',
+                thousands: '.',
+                precision: 2,
+                masked: false
+            },
+            percent: {
+                decimal: ',',
+                thousands: '.',
+                precision: 0,
+                masked: false
+            },
             where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [{
                 'id': 'woocommerce_before_single_product',
@@ -955,8 +1008,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             data['where_calculator'] = this.where_calculator;
             data['path_plugins'] = this.path_plugins;
             data['options_calculator'] = this.options_calculator;
-
             var respSave = this.saveAll(data);
+            console.log(respSave);
 
             respSave.then(resolve => {
                 this.setLoader(false);
@@ -993,6 +1046,18 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     resolve(true);
                 });
             });
+        },
+        formatNumber(value) {
+            let val = (value / 1).toFixed(2).replace('.', ',');
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+        formatPercent(value) {
+            let val = value / 1;
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+        showTimeWithDay(value) {
+            let val = value == 1 ? value + ' dia' : value + ' dias';
+            return val;
         },
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then(response => {
@@ -1157,7 +1222,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(6);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -1350,7 +1415,7 @@ var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vuex = __webpack_require__(5);
+var _vuex = __webpack_require__(6);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
@@ -3166,31 +3231,33 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "r",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 20",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.165, 0.84, 0.44, 1",
-                      repeatCount: "indefinite"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "stroke-opacity",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 0",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.3, 0.61, 0.355, 1",
-                      repeatCount: "indefinite"
-                    }
-                  })
+                  _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "r",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 20",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.165, 0.84, 0.44, 1",
+                        repeatCount: "indefinite"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "stroke-opacity",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 0",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.3, 0.61, 0.355, 1",
+                        repeatCount: "indefinite"
+                      }
+                    })
+                  ])
                 ]
               )
             ]
@@ -3623,17 +3690,23 @@ var render = function() {
                         _vm._v(" "),
                         _c("li", [
                           _c("b", [_vm._v("Tempo extra:")]),
-                          _vm._v(" " + _vm._s(option.time) + " ")
+                          _vm._v(
+                            " " + _vm._s(_vm.showTimeWithDay(option.time)) + " "
+                          )
                         ]),
                         _vm._v(" "),
                         _c("li", [
                           _c("b", [_vm._v("Taxa extra:")]),
-                          _vm._v(" " + _vm._s(option.tax) + " ")
+                          _vm._v(
+                            " R$ " + _vm._s(_vm.formatNumber(option.tax)) + " "
+                          )
                         ]),
                         _vm._v(" "),
                         _c("li", [
                           _c("b", [_vm._v("Percentual extra:")]),
-                          _vm._v(" " + _vm._s(option.perc) + " ")
+                          _vm._v(
+                            " " + _vm._s(_vm.formatPercent(option.perc)) + "% "
+                          )
                         ])
                       ]),
                       _vm._v(" "),
@@ -3687,6 +3760,7 @@ var render = function() {
                                         expression: "option.name"
                                       }
                                     ],
+                                    staticClass: "input",
                                     attrs: { type: "text" },
                                     domProps: { value: option.name },
                                     on: {
@@ -3715,32 +3789,34 @@ var render = function() {
                                   ]),
                                   _c("br"),
                                   _vm._v(" "),
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: option.time,
-                                        expression: "option.time"
-                                      }
-                                    ],
-                                    attrs: { type: "number" },
-                                    domProps: { value: option.time },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
+                                  _c("div", { staticClass: "group-input" }, [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: option.time,
+                                          expression: "option.time"
                                         }
-                                        _vm.$set(
-                                          option,
-                                          "time",
-                                          $event.target.value
-                                        )
+                                      ],
+                                      attrs: { type: "number" },
+                                      domProps: { value: option.time },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            option,
+                                            "time",
+                                            $event.target.value
+                                          )
+                                        }
                                       }
-                                    }
-                                  }),
-                                  _c("br"),
-                                  _c("br"),
+                                    }),
+                                    _vm._v(" "),
+                                    _c("p", [_vm._v(" Dias ")])
+                                  ]),
                                   _vm._v(" "),
                                   _c("label", [
                                     _c("b", [_vm._v("Taxa extra")]),
@@ -3752,32 +3828,32 @@ var render = function() {
                                   ]),
                                   _c("br"),
                                   _vm._v(" "),
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: option.tax,
-                                        expression: "option.tax"
-                                      }
-                                    ],
-                                    attrs: { type: "number" },
-                                    domProps: { value: option.tax },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
-                                        }
-                                        _vm.$set(
-                                          option,
-                                          "tax",
-                                          $event.target.value
+                                  _c(
+                                    "div",
+                                    { staticClass: "group-input" },
+                                    [
+                                      _c(
+                                        "money",
+                                        _vm._b(
+                                          {
+                                            model: {
+                                              value: option.tax,
+                                              callback: function($$v) {
+                                                _vm.$set(option, "tax", $$v)
+                                              },
+                                              expression: "option.tax"
+                                            }
+                                          },
+                                          "money",
+                                          _vm.money,
+                                          false
                                         )
-                                      }
-                                    }
-                                  }),
-                                  _c("br"),
-                                  _c("br"),
+                                      ),
+                                      _vm._v(" "),
+                                      _c("p", [_vm._v(" R$ ")])
+                                    ],
+                                    1
+                                  ),
                                   _vm._v(" "),
                                   _c("label", [
                                     _c("b", [_vm._v("Percentual extra")]),
@@ -3789,32 +3865,32 @@ var render = function() {
                                   ]),
                                   _c("br"),
                                   _vm._v(" "),
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: option.perc,
-                                        expression: "option.perc"
-                                      }
-                                    ],
-                                    attrs: { type: "number" },
-                                    domProps: { value: option.perc },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
-                                        }
-                                        _vm.$set(
-                                          option,
-                                          "perc",
-                                          $event.target.value
+                                  _c(
+                                    "div",
+                                    { staticClass: "group-input" },
+                                    [
+                                      _c(
+                                        "money",
+                                        _vm._b(
+                                          {
+                                            model: {
+                                              value: option.perc,
+                                              callback: function($$v) {
+                                                _vm.$set(option, "perc", $$v)
+                                              },
+                                              expression: "option.perc"
+                                            }
+                                          },
+                                          "money",
+                                          _vm.percent,
+                                          false
                                         )
-                                      }
-                                    }
-                                  }),
-                                  _c("br"),
-                                  _c("br")
+                                      ),
+                                      _vm._v(" "),
+                                      _c("p", [_vm._v(" % ")])
+                                    ],
+                                    1
+                                  )
                                 ])
                               ])
                             ]),
@@ -5152,7 +5228,7 @@ var _vue = __webpack_require__(3);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vuex = __webpack_require__(5);
+var _vuex = __webpack_require__(6);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 

@@ -58,7 +58,7 @@ class Order {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
             'offset' => ($filters['skip']) ?: 0,
-            'post_status' => ($filters['wpstatus']) ?: 'public',
+            'post_status' => ($filters['wpstatus'] == 'all') ? array_keys( wc_get_order_statuses() ) : 'publish',
             'post_type' => 'shop_order',
         ];
 

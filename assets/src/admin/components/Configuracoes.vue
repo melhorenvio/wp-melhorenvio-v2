@@ -9,6 +9,33 @@
         float: left;
         width: 100%;
     }
+
+    .input {
+        width: 100%;
+        height: 35px;
+        padding: 5px 10px;
+        border: 1px solid #b0b0b0;
+    }
+    .group-input{
+        border: 1px solid #b0b0b0;
+        width: 100%;
+        font-size: 15px;
+    }
+    .group-input input {
+        display: inline-block;
+        border: none;
+        width: 90%;
+        max-width: 455px;
+        font-size: 15px;
+    }
+    .group-input p {
+        display: inline-block;
+        margin: 0 auto;
+        padding: 7px 10px;
+        background-color: #f0f0f0;
+        width: 5.5%;
+        text-align: center;
+    }
 </style>
 
 <template>
@@ -100,9 +127,9 @@
                             <div class="wpme_address-body">
                                 <ul>
                                     <li><b>Nome:</b> {{option.name}}</li>
-                                    <li><b>Tempo extra:</b> {{option.time}} </li>
-                                    <li><b>Taxa extra:</b> {{option.tax}} </li>
-                                    <li><b>Percentual extra:</b> {{option.perc}} </li>
+                                    <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
+                                    <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
+                                    <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
                                 </ul>
                                 <hr>
                                 <a @click="showModalEditMethod(option.code)">Editar</a>
@@ -116,13 +143,22 @@
                                             <ul>
                                                 <li>
                                                     <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" type="text" /><br><br>
+                                                    <input v-model="option.name" type="text" class="input" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
-                                                    <input v-model="option.time" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <input v-model="option.time" type="number" />
+                                                        <p> Dias </p>
+                                                    </div>
                                                     <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.tax" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.tax" v-bind="money"></money>
+                                                        <p> R$ </p>
+                                                    </div>
                                                     <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.perc" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.perc" v-bind="percent"></money>
+                                                        <p> % </p>
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -253,8 +289,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Money } from 'v-money'
 export default {
     name: 'Configuracoes',
+    components: { Money },
     data () {
         return {
             address: null,
@@ -282,6 +320,18 @@ export default {
                 {'id':10, 'status':false},
                 {'id':11, 'status':false}
             ],
+            money: {
+                decimal: ',',
+                thousands: '.',
+                precision: 2,
+                masked: false
+            },
+            percent: {
+                decimal: ',',
+                thousands: '.',
+                precision: 0,
+                masked: false
+            },
             where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [
                 {
@@ -385,8 +435,8 @@ export default {
             data['where_calculator']   = this.where_calculator;
             data['path_plugins']       = this.path_plugins;
             data['options_calculator'] = this.options_calculator;
- 
             var respSave = this.saveAll(data);
+            console.log(respSave);
 
             respSave.then((resolve) => {
                 this.setLoader(false);
@@ -423,6 +473,18 @@ export default {
                     resolve(true)
                 })
             });
+        },
+        formatNumber(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        formatPercent(value) {
+            let val = (value/1)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        showTimeWithDay(value) {
+            let val = (value == 1) ? value + ' dia' : value + ' dias'
+            return val
         },
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
