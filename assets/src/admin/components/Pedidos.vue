@@ -94,7 +94,7 @@
                             <li>
 
                                 <template v-if="item.cotation.melhorenvio == false">
-                                    </br>
+                                    <br>
                                     <small>Cliente não utilizou Melhor Envio</small>
                                 </template>
 
@@ -423,6 +423,7 @@
                         keySplines="0.3, 0.61, 0.355, 1"
                         repeatCount="indefinite" />
                     </circle>
+                    <circle cx="22" cy="22" r="1">
                         <animate attributeName="r"
                         begin="-0.9s" dur="1.8s"
                         values="1; 20"

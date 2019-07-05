@@ -509,6 +509,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -3213,31 +3214,33 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "r",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 20",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.165, 0.84, 0.44, 1",
-                      repeatCount: "indefinite"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("animate", {
-                    attrs: {
-                      attributeName: "stroke-opacity",
-                      begin: "-0.9s",
-                      dur: "1.8s",
-                      values: "1; 0",
-                      calcMode: "spline",
-                      keyTimes: "0; 1",
-                      keySplines: "0.3, 0.61, 0.355, 1",
-                      repeatCount: "indefinite"
-                    }
-                  })
+                  _c("circle", { attrs: { cx: "22", cy: "22", r: "1" } }, [
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "r",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 20",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.165, 0.84, 0.44, 1",
+                        repeatCount: "indefinite"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("animate", {
+                      attrs: {
+                        attributeName: "stroke-opacity",
+                        begin: "-0.9s",
+                        dur: "1.8s",
+                        values: "1; 0",
+                        calcMode: "spline",
+                        keyTimes: "0; 1",
+                        keySplines: "0.3, 0.61, 0.355, 1",
+                        repeatCount: "indefinite"
+                      }
+                    })
+                  ])
                 ]
               )
             ]
