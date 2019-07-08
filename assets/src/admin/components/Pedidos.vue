@@ -126,13 +126,15 @@
                                         </div>
                                     </div>
 
-                                    <template v-if="item.errors">
-                                        <div  v-for="(errors, e) in item.errors" :key="e">
-                                            <div  v-for="(error, ee) in errors" :key="ee">
-                                                <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
+                                    <div class="errosShadow" style="display:none;">
+                                        <template v-if="item.errors">
+                                            <div  v-for="(errors, e) in item.errors" :key="e">
+                                                <div  v-for="(error, ee) in errors" :key="ee">
+                                                    <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </template> 
+                                        </template> 
+                                    </div>
 
                                 </template>
                                 
@@ -501,9 +503,9 @@ export default {
                 errors
             ] = args
 
-            if (typeof errors[choose_method] == 'object') {
-                return false;
-            }
+            // if (typeof errors[choose_method] == 'object') {
+            //     return false;
+            // }
 
             if (status == 'paid') {
                 return false;
