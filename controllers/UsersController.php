@@ -86,7 +86,7 @@ class UsersController {
 
         $phone = get_post_meta($order_id, '_billing_cellphone', true);
 
-        if (empty($phone)) {
+        if (empty($phone) || is_null($phone)) {
             $phone = $order->get_billing_phone();
         }
 

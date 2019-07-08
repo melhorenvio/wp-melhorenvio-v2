@@ -13,6 +13,10 @@
     .lineGray:nth-child(odd){
         background: #e1e1e1;
     }
+
+    .text-center{
+        text-align: center;
+    }
 </style>
 
 <template>
@@ -126,13 +130,15 @@
                                         </div>
                                     </div>
 
-                                    <template v-if="item.errors">
-                                        <div  v-for="(errors, e) in item.errors" :key="e">
-                                            <div  v-for="(error, ee) in errors" :key="ee">
-                                                <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
+                                    <div class="errosShadow" style="display:none;">
+                                        <template v-if="item.errors">
+                                            <div  v-for="(errors, e) in item.errors" :key="e">
+                                                <div  v-for="(error, ee) in errors" :key="ee">
+                                                    <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </template> 
+                                        </template> 
+                                    </div>
 
                                 </template>
                                 
@@ -182,7 +188,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li>
+                            <li class="text-center">
                                 <span style="font-size: 14px;">
                                     <strong>{{item.status_texto}}</strong>
                                 </span>

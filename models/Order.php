@@ -228,25 +228,7 @@ class Order {
         $statusApi = $this->getStatusApi($orders);   
         foreach ($posts as $key => $post) {
 
-            foreach ($post['order_id'] as $order_id) {
-                // Texto status
-                $st_text = '';
-                if ($statusApi[$order_id]['status'] == 'pending') {
-                    $st_text = 'Pendente';
-                } elseif ($statusApi[$order_id]['status'] == 'released') {
-                    $st_text = 'Liberada';
-                } elseif ($statusApi[$order_id]['status'] == 'posted') {
-                    $st_text = 'Postou';
-                } elseif ($statusApi[$order_id]['status'] == 'delivered') {
-                    $st_text = 'Entregue';
-                } elseif ($statusApi[$order_id]['status'] == 'canceled') {
-                    $st_text = 'Cancelado';
-                } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
-                    $st_text = 'Não entregue';
-                } else {
-                    $st_text = 'Não informado';
-                }
-                $posts[$key]['status_texto'] = $st_text; 
+            foreach ($post['order_id'] as $order_id) {                
 
                 if (array_key_exists($order_id, $statusApi)) {
                     if ($post['status'] != $statusApi[$order_id]['status']) {
@@ -265,10 +247,27 @@ class Order {
                     continue;
                 } 
 
-                $posts[$key]['status']       = null;
-                $posts[$key]['status_texto'] = 'Não informado';
-                             
+                $posts[$key]['status']       = null;                             
             }
+
+            // Texto status
+            $st_text = '';
+            if ($statusApi[$order_id]['status'] == 'pending') {
+                $st_text = 'Pendente';
+            } elseif ($statusApi[$order_id]['status'] == 'released') {
+                $st_text = 'Liberada';
+            } elseif ($statusApi[$order_id]['status'] == 'posted') {
+                $st_text = 'Postou';
+            } elseif ($statusApi[$order_id]['status'] == 'delivered') {
+                $st_text = 'Entregue';
+            } elseif ($statusApi[$order_id]['status'] == 'canceled') {
+                $st_text = 'Cancelado';
+            } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
+                $st_text = 'Não entregue';
+            } else {
+                $st_text = 'Não informado';
+            }
+            $posts[$key]['status_texto'] = $st_text; 
         }
         return $posts;
     }

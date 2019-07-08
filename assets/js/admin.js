@@ -515,6 +515,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2216,40 +2222,58 @@ var render = function() {
                                       )
                                     ]),
                                     _vm._v(" "),
-                                    item.errors
-                                      ? _vm._l(item.errors, function(
-                                          errors,
-                                          e
-                                        ) {
-                                          return _c(
-                                            "div",
-                                            { key: e },
-                                            _vm._l(errors, function(error, ee) {
-                                              return _c("div", { key: ee }, [
-                                                item.cotation.choose_method == e
-                                                  ? _c(
-                                                      "p",
-                                                      {
-                                                        staticStyle: {
-                                                          color: "red"
-                                                        }
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          " " +
-                                                            _vm._s(
-                                                              error.message
-                                                            )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ])
-                                            }),
-                                            0
-                                          )
-                                        })
-                                      : _vm._e()
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass: "errosShadow",
+                                        staticStyle: { display: "none" }
+                                      },
+                                      [
+                                        item.errors
+                                          ? _vm._l(item.errors, function(
+                                              errors,
+                                              e
+                                            ) {
+                                              return _c(
+                                                "div",
+                                                { key: e },
+                                                _vm._l(errors, function(
+                                                  error,
+                                                  ee
+                                                ) {
+                                                  return _c(
+                                                    "div",
+                                                    { key: ee },
+                                                    [
+                                                      item.cotation
+                                                        .choose_method == e
+                                                        ? _c(
+                                                            "p",
+                                                            {
+                                                              staticStyle: {
+                                                                color: "red"
+                                                              }
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                " " +
+                                                                  _vm._s(
+                                                                    error.message
+                                                                  )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                }),
+                                                0
+                                              )
+                                            })
+                                          : _vm._e()
+                                      ],
+                                      2
+                                    )
                                   ]
                                 : _vm._e(),
                               _vm._v(" "),
@@ -2516,7 +2540,7 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
-                          _c("li", [
+                          _c("li", { staticClass: "text-center" }, [
                             _c(
                               "span",
                               { staticStyle: { "font-size": "14px" } },
