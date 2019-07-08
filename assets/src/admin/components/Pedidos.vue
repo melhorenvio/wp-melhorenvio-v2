@@ -13,6 +13,10 @@
     .lineGray:nth-child(odd){
         background: #e1e1e1;
     }
+
+    .text-center{
+        text-align: center;
+    }
 </style>
 
 <template>
@@ -69,10 +73,11 @@
             <div class="table -woocommerce">
                 <ul class="head">
                     <li><span>ID</span></li>
-                    <li><span></span></li>
+                    <li style="width="><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
+                    <li><span>Situação</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -92,7 +97,6 @@
                                 </span>
                             </li>
                             <li>
-
                                 <template v-if="item.cotation.melhorenvio == false">
                                     <br>
                                     <small>Cliente não utilizou Melhor Envio</small>
@@ -183,6 +187,11 @@
                                         </template>
                                     </div>
                                 </div>
+                            </li>
+                            <li class="text-center">
+                                <span style="font-size: 14px;">
+                                    <strong>{{item.status_texto}}</strong>
+                                </span>
                             </li>
                             <li class="-center">
                                 <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status, item.errors)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
@@ -502,11 +511,11 @@ export default {
                 status,
                 errors
             ] = args
-
-            // if (typeof errors[choose_method] == 'object') {
-            //     return false;
-            // }
-
+            /*
+            if (typeof errors[choose_method] == 'object') {
+                return false;
+            }
+            */
             if (status == 'paid') {
                 return false;
             }

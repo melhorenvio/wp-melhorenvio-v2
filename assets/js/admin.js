@@ -512,6 +512,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -542,11 +551,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status, errors] = args;
-
-            // if (typeof errors[choose_method] == 'object') {
-            //     return false;
-            // }
-
+            /*
+            if (typeof errors[choose_method] == 'object') {
+                return false;
+            }
+            */
             if (status == 'paid') {
                 return false;
             }
@@ -2531,6 +2540,18 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
+                          _c("li", { staticClass: "text-center" }, [
+                            _c(
+                              "span",
+                              { staticStyle: { "font-size": "14px" } },
+                              [
+                                _c("strong", [
+                                  _vm._v(_vm._s(item.status_texto))
+                                ])
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
                           _c("li", { staticClass: "-center" }, [
                             _vm.buttonCartShow(
                               item.cotation.choose_method,
@@ -3326,13 +3347,15 @@ var staticRenderFns = [
     return _c("ul", { staticClass: "head" }, [
       _c("li", [_c("span", [_vm._v("ID")])]),
       _vm._v(" "),
-      _c("li", [_c("span")]),
+      _c("li", { staticStyle: {} }, [_c("span")]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Destinatário")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Cotação")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Documentos")])]),
+      _vm._v(" "),
+      _c("li", [_c("span", [_vm._v("Situação")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Ações")])])
     ])
