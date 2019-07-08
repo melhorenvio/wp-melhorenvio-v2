@@ -228,14 +228,14 @@ final class Base_Plugin {
         $this->includes();
         $this->init_hooks();
 
-        if (!isset($_SESSION[md5(get_option('home'))]['melhorenvio_token'])) {
-            add_action( 'admin_notices', function() {
-                echo sprintf('<div class="error">
-                    <p>%s</p>
-                </div>', 'Por favor, informar seu token Melhor Envio');
-            });
-            return;
-        }
+        // if (!isset($_SESSION[md5(get_option('home'))]['melhorenvio_token'])) {
+        //     add_action( 'admin_notices', function() {
+        //         echo sprintf('<div class="error">
+        //             <p>%s</p>
+        //         </div>', 'Por favor, informar seu token Melhor Envio');
+        //     });
+        //     return;
+        // }
         
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {

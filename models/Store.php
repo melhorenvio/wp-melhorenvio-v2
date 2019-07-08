@@ -38,7 +38,7 @@ class Store
         }
 
         // Get data on database wordpress
-        $stores = get_option(self::OPTION_STORES, true);
+        // $stores = get_option(self::OPTION_STORES, true);
 
         if (!is_bool($stores)) {
 
@@ -106,7 +106,7 @@ class Store
 
         $_SESSION[$codeStore][self::OPTION_STORES] = $stories;
 
-        add_option(self::OPTION_STORES, $stories, true);
+        // add_option(self::OPTION_STORES, $stories, true);
 
         return array(
             'success' => true,

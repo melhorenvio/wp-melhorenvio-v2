@@ -229,11 +229,29 @@ class Order {
         foreach ($posts as $key => $post) {
 
             foreach ($post['order_id'] as $order_id) {
+                // Texto status
+                $st_text = '';
+                if ($statusApi[$order_id]['status'] == 'pending') {
+                    $st_text = 'Pendente';
+                } elseif ($statusApi[$order_id]['status'] == 'released') {
+                    $st_text = 'Liberada';
+                } elseif ($statusApi[$order_id]['status'] == 'posted') {
+                    $st_text = 'Postou';
+                } elseif ($statusApi[$order_id]['status'] == 'delivered') {
+                    $st_text = 'Entregue';
+                } elseif ($statusApi[$order_id]['status'] == 'canceled') {
+                    $st_text = 'Cancelado';
+                } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
+                    $st_text = 'Não entregue';
+                } else {
+                    $st_text = 'Não informado';
+                }
+                $posts[$key]['status_texto'] = $st_text; 
 
-                if (array_key_exists($order_id, $statusApi[$order_id])) {
-                    if ($post['status'] != $statusApi[$order_id]) {
+                if (array_key_exists($order_id, $statusApi)) {
+                    if ($post['status'] != $statusApi[$order_id]['status']) {
 
-                        $st = $statusApi[$order_id];
+                        $st = $statusApi[$order_id]['status'];
                         if ($st == 'released') {
                             $st = 'paid';
                         }
@@ -241,12 +259,15 @@ class Order {
                         if ($st == 'canceled') {
                             $st = null;
                         }
-                        $posts[$key]['status'] = $st;
-                        
+                        $posts[$key]['status'] = $st;                                               
                     }
+                    
                     continue;
-                }
-                $posts[$key]['status'] = null;
+                } 
+
+                $posts[$key]['status']       = null;
+                $posts[$key]['status_texto'] = 'Não informado';
+                             
             }
         }
         return $posts;

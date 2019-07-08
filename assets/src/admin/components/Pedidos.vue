@@ -69,7 +69,7 @@
             <div class="table -woocommerce">
                 <ul class="head">
                     <li><span>ID</span></li>
-                    <li><span></span></li>
+                    <li style="width="><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
@@ -182,7 +182,11 @@
                                     </div>
                                 </div>
                             </li>
-                            <li><span>Status</span></li>
+                            <li>
+                                <span style="font-size: 14px;">
+                                    <strong>{{item.status_texto}}</strong>
+                                </span>
+                            </li>
                             <li class="-center">
                                 <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status, item.errors)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
                                     <svg class="ico" version="1.1" id="cart-add" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -501,11 +505,11 @@ export default {
                 status,
                 errors
             ] = args
-
+            /*
             if (typeof errors[choose_method] == 'object') {
                 return false;
             }
-
+            */
             if (status == 'paid') {
                 return false;
             }

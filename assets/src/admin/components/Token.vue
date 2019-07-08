@@ -8,7 +8,7 @@
         <br>
         <button @click="saveToken()" class="btn-border -full-green">Salvar</button>
         <p>Para gerar seu token, acesse o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a></p>
-
+            
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
                     <g fill="none" fill-rule="evenodd" stroke-width="2">
