@@ -73,6 +73,7 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
+                    <li><span>Situação</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -92,7 +93,6 @@
                                 </span>
                             </li>
                             <li>
-
                                 <template v-if="item.cotation.melhorenvio == false">
                                     <br>
                                     <small>Cliente não utilizou Melhor Envio</small>
@@ -182,6 +182,7 @@
                                     </div>
                                 </div>
                             </li>
+                            <li><span>Status</span></li>
                             <li class="-center">
                                 <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status, item.errors)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
                                     <svg class="ico" version="1.1" id="cart-add" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

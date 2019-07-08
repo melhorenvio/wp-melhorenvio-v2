@@ -135,7 +135,7 @@ class Order {
         }
 
         $data = $order->matchStatus($data, $orders);
-
+        //print_r($data); die();
         $load = false;
         if(count($data) == ($filters['limit']) ?: 5) {
             $load = true;
@@ -226,12 +226,11 @@ class Order {
     private function matchStatus($posts, $orders) 
     {
         $statusApi = $this->getStatusApi($orders);   
-
         foreach ($posts as $key => $post) {
 
             foreach ($post['order_id'] as $order_id) {
 
-                if (array_key_exists($order_id, $statusApi)) {
+                if (array_key_exists($order_id, $statusApi[$order_id])) {
                     if ($post['status'] != $statusApi[$order_id]) {
 
                         $st = $statusApi[$order_id];
@@ -429,7 +428,6 @@ class Order {
      */
     private function getStatusApi($orders) 
     {
-
         $arrayOrders = [];
         foreach ($orders as $items) {
             foreach($items as $order){
@@ -464,7 +462,9 @@ class Order {
 
             $data = [];
             foreach($response as $order) {
-                $data[$order->id] = $order->status;
+                $data[$order->id]['status']       = $order->status;
+                $data[$order->id]['posted_at']    = $order->posted_at;
+                $data[$order->id]['delivered_at'] = $order->delivered_at;
             }
             return $data;
         }
