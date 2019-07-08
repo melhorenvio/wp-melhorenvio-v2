@@ -165,6 +165,14 @@ class OrdersController
                     ]);
                     die;
                 }
+
+                if (is_null($body['to']->phone) || empty($body['to']->phone)) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Telefone do destinatario é obrigatorio para serviços da jadLog'
+                    ]);
+                    die;
+                }
             }
 
             // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
@@ -214,9 +222,6 @@ class OrdersController
             } else {
                 add_post_meta($_GET['order_id'], 'melhorenvio_errors', $logErrors);
             }
-
-
-            
 
             (new Log())->register($_GET['order_id'], 'send_order', $body, $response);
 

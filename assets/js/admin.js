@@ -510,6 +510,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -541,9 +543,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status, errors] = args;
 
-            if (typeof errors[choose_method] == 'object') {
-                return false;
-            }
+            // if (typeof errors[choose_method] == 'object') {
+            //     return false;
+            // }
 
             if (status == 'paid') {
                 return false;
@@ -2211,40 +2213,58 @@ var render = function() {
                                       )
                                     ]),
                                     _vm._v(" "),
-                                    item.errors
-                                      ? _vm._l(item.errors, function(
-                                          errors,
-                                          e
-                                        ) {
-                                          return _c(
-                                            "div",
-                                            { key: e },
-                                            _vm._l(errors, function(error, ee) {
-                                              return _c("div", { key: ee }, [
-                                                item.cotation.choose_method == e
-                                                  ? _c(
-                                                      "p",
-                                                      {
-                                                        staticStyle: {
-                                                          color: "red"
-                                                        }
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          " " +
-                                                            _vm._s(
-                                                              error.message
-                                                            )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ])
-                                            }),
-                                            0
-                                          )
-                                        })
-                                      : _vm._e()
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass: "errosShadow",
+                                        staticStyle: { display: "none" }
+                                      },
+                                      [
+                                        item.errors
+                                          ? _vm._l(item.errors, function(
+                                              errors,
+                                              e
+                                            ) {
+                                              return _c(
+                                                "div",
+                                                { key: e },
+                                                _vm._l(errors, function(
+                                                  error,
+                                                  ee
+                                                ) {
+                                                  return _c(
+                                                    "div",
+                                                    { key: ee },
+                                                    [
+                                                      item.cotation
+                                                        .choose_method == e
+                                                        ? _c(
+                                                            "p",
+                                                            {
+                                                              staticStyle: {
+                                                                color: "red"
+                                                              }
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                " " +
+                                                                  _vm._s(
+                                                                    error.message
+                                                                  )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                }),
+                                                0
+                                              )
+                                            })
+                                          : _vm._e()
+                                      ],
+                                      2
+                                    )
                                   ]
                                 : _vm._e(),
                               _vm._v(" "),
