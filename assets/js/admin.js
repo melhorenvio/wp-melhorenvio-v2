@@ -521,6 +521,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2032,7 +2040,7 @@ var render = function() {
                                   ]
                                 : _vm._e(),
                               _vm._v(" "),
-                              !item.order_id && item.cotation != false
+                              item.cotation != false && item.status == null
                                 ? [
                                     _c("div", { staticClass: "me-form" }, [
                                       _c(
@@ -2275,7 +2283,31 @@ var render = function() {
                                       2
                                     )
                                   ]
-                                : _vm._e(),
+                                : [
+                                    _c("p", [
+                                      _vm._v(
+                                        "\n                                    " +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].company.name
+                                          ) +
+                                          "\n                                    " +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].name
+                                          ) +
+                                          "\n                                    R$" +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].price
+                                          ) +
+                                          "\n                                "
+                                      )
+                                    ])
+                                  ],
                               _vm._v(" "),
                               item.log
                                 ? _c(
