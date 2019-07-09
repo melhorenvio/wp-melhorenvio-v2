@@ -102,7 +102,7 @@
                                     <small>Cliente não utilizou Melhor Envio</small>
                                 </template>
 
-                                <template v-if="!item.order_id && item.cotation != false">
+                                <template v-if="item.cotation != false && (item.status == null)">
                                     <div  class="me-form">
                                         <div class="formBox">
                                             <template v-if="item.packages && item.packages[item.cotation.choose_method] && item.cotation &&  item.cotation[item.cotation.choose_method]">
