@@ -9,13 +9,21 @@
         float: left;
         width: 100%;
     }
+
+    .lineGray:nth-child(odd){
+        background: #e1e1e1;
+    }
+
+    .text-center{
+        text-align: center;
+    }
 </style>
 
 <template>
     <div class="app-pedidos">
 
         <div class="boxBanner">
-            <img src="https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733" />
+            <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
 
         <template>
@@ -65,17 +73,21 @@
             <div class="table -woocommerce">
                 <ul class="head">
                     <li><span>ID</span></li>
-                    <li><span></span></li>
+                    <li style="width="><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
+                    <li><span>Situação</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
                 <ul class="body">
-                    <li v-for="(item, index) in orders" :key="index">
+                    <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
-                            <li><span><a target="_blank" :href="`${item.link}`"><strong>{{ item.id }}</strong></a></span></li>
+                            <li>
+                                <span><a target="_blank" :href="`${item.link}`"><strong>{{ item.id }}</strong></a></span>
+                                <span style="font-size:12px"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
+                            </li>
                             <li><span></span></li>
                             <li>
                                 <span style="font-size: 14px;">
@@ -85,13 +97,12 @@
                                 </span>
                             </li>
                             <li>
-
                                 <template v-if="item.cotation.melhorenvio == false">
-                                    </br>
+                                    <br>
                                     <small>Cliente não utilizou Melhor Envio</small>
                                 </template>
 
-                                <template v-if="!item.order_id && item.cotation != false">
+                                <template v-if="item.cotation != false && (item.status == null)">
                                     <div  class="me-form">
                                         <div class="formBox">
                                             <template v-if="item.packages && item.packages[item.cotation.choose_method] && item.cotation &&  item.cotation[item.cotation.choose_method]">
@@ -118,11 +129,30 @@
                                             </template>
                                         </div>
                                     </div>
-                                    <!-- <a v-if="!item.order_id || item.order_id == null" @click="refreshCotation({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Recalcular">
-                                        Recalcular
-                                    </a> -->
+
+                                    <div class="errosShadow" style="display:none;">
+                                        <template v-if="item.errors">
+                                            <div  v-for="(errors, e) in item.errors" :key="e">
+                                                <div  v-for="(error, ee) in errors" :key="ee">
+                                                    <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
+                                                </div>
+                                            </div>
+                                        </template> 
+                                    </div>
 
                                 </template>
+
+                                <template v-else>
+                                    <p>
+                                        {{ item.cotation[item.cotation.choose_method].company.name }}
+                                        {{ item.cotation[item.cotation.choose_method].name }}
+                                        R${{ item.cotation[item.cotation.choose_method].price }}
+                                    </p>
+                                </template>
+                                
+                                <a v-if="item.log" :href="item.log" class="action-button -adicionar">
+                                    Histórico
+                                </a>
 
                                 <template v-else>
                                     <span v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
@@ -132,6 +162,10 @@
 
                                 <template v-if="item.cotation.free_shipping">
                                     <p>*Cliente utilizou cupom de frete grátis</p>
+                                </template>
+                                
+                                <template v-if="item.cotation.diff.length != 0 && item.cotation.diff[item.cotation.choose_method] && item.cotation.diff[item.cotation.choose_method].first">
+                                    <p>*O valor foi atualizado, valor pago em {{item.cotation.diff[item.cotation.choose_method].date}} R${{item.cotation.diff[item.cotation.choose_method].first}}</p>
                                 </template>
                                 
                             </li>
@@ -162,8 +196,13 @@
                                     </div>
                                 </div>
                             </li>
+                            <li class="text-center">
+                                <span style="font-size: 14px;">
+                                    <strong>{{item.status_texto}}</strong>
+                                </span>
+                            </li>
                             <li class="-center">
-                                <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
+                                <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status, item.errors)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
                                     <svg class="ico" version="1.1" id="cart-add" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                         viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
                                     <g>
@@ -333,6 +372,36 @@
                                 </a>
                             </li>
                         </ul>
+
+                        <template v-if="toggleInfo == item.id"> 
+                            <ul class="body-list">
+                                <p><b>Produtos</b></p>
+                                <li style="width:40%">
+                                    <template v-for="prod in item.products">
+                                        <p><b>Produto:</b> {{prod.quantity}}X - {{prod.name}} <br><b>Valor:</b> R${{prod.total}}</p>
+                                    </template>
+                                    <hr>
+                                </li>
+                            </ul>
+
+                            <ul class="body-list">
+                                <p><b>Pacote</b></p>
+                                <li style="width:40%">
+                                    <p><b>Dimensões:</b> 
+                                        {{item.cotation[item.cotation.choose_method].volumes[0].height}}cm A x 
+                                        {{item.cotation[item.cotation.choose_method].volumes[0].width}}cm L x 
+                                        {{item.cotation[item.cotation.choose_method].volumes[0].length}}cm C - 
+                                        {{item.cotation[item.cotation.choose_method].volumes[0].weight}}Kg</p>
+                                    <hr>
+                                    <template v-if="item.address.postcode">
+                                        <p><b>Destino:</b> 
+                                            {{item.address.postcode}}</p>
+                                        <hr>
+                                    </template>
+                                </li>
+                            </ul>
+                        </template>
+
                     </li>
                 </ul>
             </div>
@@ -405,6 +474,8 @@ export default {
         return {
             status: 'all',
             wpstatus: 'all',
+            line: 0,
+            toggleInfo: null
         }
     },
     computed: {
@@ -423,7 +494,6 @@ export default {
             'retrieveMany',
             'loadMore',
             'addCart',
-            'refreshCotation',
             'removeCart',
             'cancelCart',
             'payTicket',
@@ -437,15 +507,23 @@ export default {
         close() {
             this.closeModal()
         },
+        handleToggleInfo(id) {
+            this.toggleInfo = this.toggleInfo != id ? id : null
+        },
         buttonCartShow(...args) {
             const [
                 choose_method, 
                 non_commercial, 
                 number, 
                 key,
-                status
+                status,
+                errors
             ] = args
-
+            /*
+            if (typeof errors[choose_method] == 'object') {
+                return false;
+            }
+            */
             if (status == 'paid') {
                 return false;
             }
@@ -479,6 +557,13 @@ export default {
             }
             
             return false;
+        },
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
+                if (!response.data.exists_token) {
+                    this.$router.push('Token') 
+                }
+            })
         }
     },
     watch: {
@@ -490,6 +575,7 @@ export default {
         }
     },
     mounted () {
+        this.getToken();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }

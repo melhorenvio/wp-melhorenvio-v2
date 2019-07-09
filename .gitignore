@@ -20,3 +20,6 @@ vendor/
 node_modules/
 package-lock.json
 yarn.lock
+
+assets/css/*
+assets/js/*

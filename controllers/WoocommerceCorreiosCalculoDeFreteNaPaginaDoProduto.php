@@ -37,6 +37,10 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 
     public function enqueue_css_js_frontend() {
         wp_enqueue_script( 'produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', 'jquery');
+<<<<<<< HEAD
+=======
+        wp_enqueue_script( 'produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js', 'jquery');
+>>>>>>> master
     }
 
     public function run() {
@@ -45,8 +49,10 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
     }
 
     public function is_produto_single() {
+        
         global $product;
-        if (is_product()) {
+
+        if (is_product() && !$product-> is_virtual('yes')) {
             $this->prepara_produto($product);
             add_action($this->where_show_calculator, array($this, 'add_calculo_de_frete'), 11);
         }
@@ -105,7 +111,11 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
         echo $this->inline_js(); ?>
                 <style>
                     /* Style inputs, select elements and textareas */
+<<<<<<< HEAD
                     .container  input[type=text], select, textarea{
+=======
+                    .containerCalculator  input[type=text], .containerCalculator select, .containerCalculator textarea{
+>>>>>>> master
                     width: 100%;
                     padding: 12px;
                     border: 1px solid #ccc;
@@ -115,46 +125,78 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                     }
 
                     /* Style the label to display next to the inputs */
+<<<<<<< HEAD
                     .container   label {
+=======
+                    .containerCalculator   label {
+>>>>>>> master
                     padding: 12px 12px 12px 0;
                     display: inline-block;
                     }
 
                     /* Style the submit button */
+<<<<<<< HEAD
                     .container   input[type=submit] {
+=======
+                    .containerCalculator   input[type=submit] {
+>>>>>>> master
                     background-color: #333333;
                     color: white;
                     padding: 12px 20px;
                     border: none;
                     border-radius: 4px;
                     cursor: pointer;
+<<<<<<< HEAD
                     margin-top: 10px;
                     float: right;
                     }
 
                     /* Style the container */
                     .container {
+=======
+                    float: right;
+                    }
+
+                    /* Style the containerCalculator */
+                    .containerCalculator {
+>>>>>>> master
                     border-radius: 5px;
                     background-color: #f2f2f2;
                     padding: 20px;
                     margin-top: 10px;
+<<<<<<< HEAD
                     }
 
                     /* Floating column for labels: 25% width */
                     .container  .col-25 {
+=======
+                    margin-bottom: 20px;
+                    width: 100%;
+                    }
+
+                    /* Floating column for labels: 25% width */
+                    .containerCalculator  .col-25 {
+>>>>>>> master
                     float: left;
                     width: 25%;
                     margin-top: 6px;
                     }
 
                     /* Floating column for inputs: 75% width */
+<<<<<<< HEAD
                     .container  .col-75 {
                     float: left;
                     width: 75%;
+=======
+                    .containerCalculator  .col-75 {
+                    float: left;
+                    width: 100%;
+>>>>>>> master
                     margin-top: 6px;
                     }
 
                     /* Clear floats after the columns */
+<<<<<<< HEAD
                     .container  .row:after {
                     content: "";
                     display: table;
@@ -172,6 +214,25 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 </style>
 
             <div id="woocommerce-correios-calculo-de-frete-na-pagina-do-produto" class="container">
+=======
+                    .containerCalculator  .row:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                    }
+
+                    /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+                    @media screen and (max-width: 600px) {
+                    .containerCalculator .col-25, .containerCalculator .col-75, input[type=submit], .containerCalculator input[type=text] {
+                        width: 100%;
+                        margin-top: 10;
+                    }
+                    }
+
+                </style>
+
+            <div id="woocommerce-correios-calculo-de-frete-na-pagina-do-produto" class="containerCalculator">
+>>>>>>> master
                 
                 <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
 
@@ -182,7 +243,24 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 <input type="hidden" id="calculo_frete_produto_peso" value="<?php echo $this->weight;?>">
                 <input type="hidden" id="calculo_frete_produto_preco" value="<?php echo $this->price;?>">
                 <input type="hidden" id="id_produto" value="<?php echo $this->id;?>">
+                
+                <div style="width:100%">
+                    <div class="row">
+                        <!-- <div class="col-25">
+                            <label for="fname">CEP</label>
+                        </div> -->
+                        <div class="col-75">
+                            <input type="text" maxlength="9" class="iptCep" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
+                        </div>
+                    <!-- </div>
+                    
+                    <div class="row"> -->
+                        <!-- <div class="col-25">
+                            <input type="submit" value="Calcular">
+                        </div> -->
+                    </div>
 
+<<<<<<< HEAD
                 <div class="row">
                     <div class="col-25">
                         <label for="fname">CEP</label>
@@ -212,6 +290,25 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                         </tbody>
                     </table>
                 </div>
+=======
+                    <div id="calcular-frete-loader" style="display:none;">
+                        <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif" />
+                    </div>
+                    <div class="resultado-frete" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td><strong>Forma de envio</strong></td>
+                                    <td><strong>Custo estimado</strong></td>
+                                    <td><strong>Entrega estimada</strong></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+>>>>>>> master
 
             </div>
         <?php

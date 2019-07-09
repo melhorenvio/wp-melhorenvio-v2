@@ -12,12 +12,19 @@ const configuration = {
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
+        options_calculator: {
+            ar: false,
+            mp: false
+        },
         where_calculator: 'woocommerce_after_add_to_cart_form',
         methods_shipments: [],
         show_load: true,
         configs: []
     },
     mutations: {
+        toggleLoader: (state, data) => {
+            state.show_load = data
+        },
         setStyleCalculator: (state, data) => {
             state.styleCalculator = data;
         },
@@ -45,8 +52,8 @@ const configuration = {
         setWhereCalculator: (state, data) => {
             state.where_calculator = data
         },
-        toggleLoader: (state, data) => {
-            state.show_load = data
+        setOptionsCalculator: (state, data) => {
+            state.options_calculator = data;
         }
     },  
     getters: {
@@ -59,7 +66,8 @@ const configuration = {
         showLoad: state => state.show_load,
         getMethodsShipments: state => state.methods_shipments,
         getWhereCalculator: state => state.where_calculator,
-        getConfigs: state => state.configs
+        getConfigs: state => state.configs,
+        getOptionsCalculator: state => state.options_calculator
     },
     actions: {
         getConfigs: ({commit}, data) => {
@@ -85,6 +93,7 @@ const configuration = {
                         commit('setShowCalculator', response.data.calculator)
                         commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
+                        commit('setOptionsCalculator', response.data.options_calculator)
                         resolve(true)
                     }
                 }).catch((error) => {
@@ -101,38 +110,56 @@ const configuration = {
                 }
             })
         },
-        setSelectedAddress: ({commit}, data) => {
+        saveAll: ({commit}, data) => {
+
             return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_address&id=${data}`).then(function (response) {
+
+                const form = new FormData();
+
+                if (data.address != null) {
+                    form.append('address', data.address);
+                }
+
+                if (data.store != null) {
+                    form.append('store', data.store);
+                }
+
+                if (data.agency != null) {
+                    form.append('agency', data.agency);
+                }
+
+                if (data.show_calculator != null) {
+                    form.append('show_calculator', data.show_calculator);
+                }
+
+                if (data.methods_shipments != null) {
+
+                    data.methods_shipments.forEach(function(item, index) {
+                        form.append('methods_shipments[' + index +'][id]', item.code);
+                        form.append('methods_shipments[' + index +'][tax]', item.tax);
+                        form.append('methods_shipments[' + index +'][time]', item.time);
+                        form.append('methods_shipments[' + index +'][name]', item.name);
+                        form.append('methods_shipments[' + index +'][perc]', item.perc);
+                        form.append('methods_shipments[' + index +'][ar]', item.ar);
+                        form.append('methods_shipments[' + index +'][mp]', item.mp);
+                    });
+                }
+
+                if (data.where_calculator != null) {
+                    form.append('where_calculator', data.where_calculator);
+                }
+
+                if (data.path_plugins != null) {
+                    form.append('path_plugins', data.path_plugins);
+                }
+
+                if (data.options_calculator != null) {
+                    form.append('options_calculator[ar]', data.options_calculator.ar);
+                    form.append('options_calculator[mp]', data.options_calculator.mp);
+                }
+
+                Axios.post(`${ajaxurl}?action=save_configuracoes`, form).then(function (response) {
                     if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            })
-        },
-        setSelectedStore: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_store&id=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setSelectedAgency: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_agency_jadlog&id=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setShowCalculator: ({commit}, data) => {
-            return new Promise((resolve, reject) => {
-                Axios.post(`${ajaxurl}?action=set_calculator_show&data=${data}`).then(function (response) {
-                    if (response && response.status === 200) {
-                        commit('setShowCalculator', data);
                         resolve(true)
                     }
                 })

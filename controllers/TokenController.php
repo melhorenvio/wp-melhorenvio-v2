@@ -50,6 +50,11 @@ class TokenController
     public function saveToken() 
     {
         $codeStore = md5(get_option('home'));
+<<<<<<< HEAD
+=======
+
+        unset($_SESSION[$codeStore]);
+>>>>>>> master
         
         if (!isset($_POST['token'])) {
             echo json_encode([

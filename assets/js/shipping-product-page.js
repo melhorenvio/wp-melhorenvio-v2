@@ -136,7 +136,11 @@
 						var row = '';
 						
 						data.map( item => {
-							row += `<tr><td>${item.company + ' ' + item.name}</td><td>${item.price}</td><td>${item.delivery_time}</td></tr>`;
+
+							let name = item.name.split('(');
+							name = name[0];
+							
+							row += `<tr><td>${item.company + ' ' + name}</td><td>${item.price}</td><td>${item.delivery_time}</td></tr>`;
 						});
 
 						if (row == '') {

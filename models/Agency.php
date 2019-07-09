@@ -6,8 +6,9 @@ use Models\Address;
 
 class Agency 
 {
-
     const URL = 'https://api.melhorenvio.com';
+
+    const AGENCY_SELECTED = 'melhorenvio_agency_jadlog_v2';
 
     /**
      * @return void
@@ -17,11 +18,11 @@ class Agency
         $token = get_option('wpmelhorenvio_token');
 
         $params = array(
-            'headers'           =>  [
+            'headers'           =>  array(
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
+                'Authorization' => 'Bearer ' . $token,
+            ),
             'timeout'=> 10,
             'method' => 'GET'
         );
@@ -29,34 +30,42 @@ class Agency
         if (!isset($_GET['state']) && !isset($_GET['state']) ) {
             $address = (new Address)->getAddressFrom();
         } else {
-            $address = [
-                'city' => $_GET['city'],
+            $address['address'] = array(
+                'city'  => $_GET['city'],
                 'state' => $_GET['state']
-            ];
+            );
         }
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['state']. '&city='.$address['city'], $params)));
-        $agencies = [];
-        $agencySelected = get_option('melhorenvio_agency_jadlog_v2');
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state']. '&city='.$address['address']['city'], $params)
+            )
+        );
 
-        foreach($response as $agency) {
-            $agencies[] = [
-                'id' => $agency->id,
-                'name' => $agency->name,
+        $agencies = array();
+
+        $agencySelected = get_option(self::AGENCY_SELECTED);
+
+        foreach( $response as $agency) {
+
+            $agencies[] = array(
+                'id'           => $agency->id,
+                'name'         => $agency->name,
                 'company_name' => $agency->company_name,
-                'selected' => ($agency->id == intval($agencySelected)) ? true : false,
-                'address' => [
-                    'address' => $agency->address->address,
-                    'city' => $agency->address->city->city,
-                    'state' => $agency->address->city->state->state_abbr
-                ]
-            ];
+                'selected'     => ($agency->id == intval($agencySelected)) ? true : false,
+                'address'      => array(
+                    'address'  => $agency->address->address,
+                    'city'     => $agency->address->city->city,
+                    'state'    => $agency->address->city->state->state_abbr
+                )
+            );
         }
 
-        return [
-            'success' => true,
+        return array(
+            'success'  => true,
+            'origin'   => 'api',
             'agencies' => $agencies
-        ];
+        );
     }
 
     /**
@@ -65,11 +74,11 @@ class Agency
      */
     public function setAgency($id) 
     {
-        delete_option('melhorenvio_agency_jadlog_v2');
-        add_option('melhorenvio_agency_jadlog_v2', $id);
-        return [
+        delete_option(self::AGENCY_SELECTED);
+        add_option(self::AGENCY_SELECTED, $id);
+        return array(
             'success' => true,
             'id' => $id
-        ];
+        );
     }
 }

@@ -11,8 +11,29 @@ class TimeController
      * @param [type] $data
      * @return void
      */
-    public function setlabel($data, $id) 
+    public function setlabel($data, $id, $custom = null) 
     {
+<<<<<<< HEAD
+=======
+        if (!is_null($custom) && $data->min != $custom->min && $data->max != $custom->min ) {
+            
+            if ($data->max == 1) {
+                return ' (1 dia útil)';
+            }
+            
+            if ($data->min == $data->max) {
+                return ' (' . $data->max . ' dias úteis)';
+            }
+    
+            if ( $data->min < $data->max ) {
+                return ' ( ' . $data->min . ' a ' . $data->max . ' dias úteis)';
+            }
+    
+            return $data->max . ' dias úteis';
+        }
+
+
+>>>>>>> master
         if (is_null($data)) {
             return '*';
         }
