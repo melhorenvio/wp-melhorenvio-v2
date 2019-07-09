@@ -55,11 +55,16 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ## Autores
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
+* **Marcos Brito** - *Melhor Envio*
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
 #### [2.5.15] - 2019-07
-
+- Adição campo de situação na listagem de pedidos
+- Adição de label para campos de taxas e valores extras (máscara de valores) para os métodos de envios
+- Adição de aviso de plugin sem token do Melhor Envio
+- Ajuste para não exibir pedidos apagados
+- Ajuste para exibir o valor da etiqueta após ser enviada para o carrinho de compras
 #### [2.5.14] - 2019-07-04
 - Solução do problema do loading infinito após salvar as configurações
 - Ajustes na cotaçaõ de frete na tela do produto

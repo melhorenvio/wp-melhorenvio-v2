@@ -141,6 +141,14 @@
                                     </div>
 
                                 </template>
+
+                                <template v-else>
+                                    <p>
+                                        {{ item.cotation[item.cotation.choose_method].company.name }}
+                                        {{ item.cotation[item.cotation.choose_method].name }}
+                                        R${{ item.cotation[item.cotation.choose_method].price }}
+                                    </p>
+                                </template>
                                 
                                 <a v-if="item.log" :href="item.log" class="action-button -adicionar">
                                     Histórico
