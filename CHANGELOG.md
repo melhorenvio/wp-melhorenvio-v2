@@ -1,5 +1,18 @@
 ### Changelog
 
+## [2.4.6] - 2019-05-14
+## Fixed
+- Ajuste no css dos input na tela do produto
+
+## [2.4.5] - 2019-05-08
+## Fixed
+- Ajuste no metodo get_product do woocommerce
+- Ajuste para não exibir prazo de entrega junto ao nome do metodo na calculadora do produto
+
+## [2.4.4] - 2019-05-08
+## Fixed
+- Ajuste no layout
+
 ## [2.4.2] - 2019-04-23
 ## Fixed
 - Correção erro 500

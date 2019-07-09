@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Models\Log;
+
 class LogsController 
 {   
     /**
@@ -149,4 +151,15 @@ class LogsController
         echo '</table>';
         die;
     }
+<<<<<<< HEAD
+=======
+
+    public function getLogsOrder()
+    {
+        $response = (new Log())->getRegister(sanitize_text_field($_GET['order_id']));
+
+        echo json_encode($response);
+        die;
+    }
+>>>>>>> master
 }

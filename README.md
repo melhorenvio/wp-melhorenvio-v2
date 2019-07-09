@@ -1,12 +1,12 @@
 === Melhor Envio V2 ===
-Version: 2.4.3
+Version: 2.5.15
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
 Tested up to: 5.0
-Requires PHP: 5.6
+Requires PHP: 5.0
 
 
 # Plugin Melhor Envio
@@ -49,16 +49,35 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
 
+## Suporte
+Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhorenvio.com
+
 ## Autores
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
+* **Marcos Brito** - *Melhor Envio*
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
-### Changelog
-## 2.4.3
-- Melhorias no visual da calculdora de frete
-- Validação se produto tem as dimensões para realizar o calculo na tela do produto 
-
-### Changelog
-## 2.4.2
--  Utilização de métodos de envios padrões do WooCommerce no calculo de frete na tela do produto
+## CHANGELOG
+#### [2.5.15] - 2019-07
+- Adição campo de situação na listagem de pedidos
+- Adição de label para campos de taxas e valores extras (máscara de valores) para os métodos de envios
+- Adição de aviso de plugin sem token do Melhor Envio
+- Ajuste para não exibir pedidos apagados
+- Ajuste para exibir o valor da etiqueta após ser enviada para o carrinho de compras
+#### [2.5.14] - 2019-07-04
+- Solução do problema do loading infinito após salvar as configurações
+- Ajustes na cotaçaõ de frete na tela do produto
+- Remoção de funções não utiliazadas no core do plugin
+#### [2.5.13] - 2019-07-01
+- Problemas de JS na tela do produto
+#### [2.5.10] - 2019-06-28
+- Problemas de produtos com variações
+#### [2.5.9] - 2019-06-27
+- Diferença valor frete na tela do produto
+### [2.5.8] - 2019-06-24
+- Erro ao adicionar ao carrinho
+#### [2.5.4] - 2019-06-
+- Opção de escolher AR e MP nas configurações
+- Melhorias na atualização de fretes quando editado o pedido
+- Notificação de errors na listagem de pedidos

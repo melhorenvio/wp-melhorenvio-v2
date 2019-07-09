@@ -21,7 +21,18 @@ class Option
         return $options;
     }
 
-   /**
+    public function getOptions()
+    {
+        $ar = get_option('melhorenvio_ar');
+        $mp = get_option('melhorenvio_mp');
+
+        return (object) array( 
+            'ar' => ($ar == 'true') ? true : false,
+            'mp' => ($mp == 'true') ? true : false,
+        );
+    }
+
+    /**
     * @param [type] $options
     * @return void
     */

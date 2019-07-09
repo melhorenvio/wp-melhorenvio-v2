@@ -9,12 +9,39 @@
         float: left;
         width: 100%;
     }
+
+    .input {
+        width: 100%;
+        height: 35px;
+        padding: 5px 10px;
+        border: 1px solid #b0b0b0;
+    }
+    .group-input{
+        border: 1px solid #b0b0b0;
+        width: 100%;
+        font-size: 15px;
+    }
+    .group-input input {
+        display: inline-block;
+        border: none;
+        width: 90%;
+        max-width: 455px;
+        font-size: 15px;
+    }
+    .group-input p {
+        display: inline-block;
+        margin: 0 auto;
+        padding: 7px 10px;
+        background-color: #f0f0f0;
+        width: 5.5%;
+        text-align: center;
+    }
 </style>
 
 <template>
     <div>
         <div class="boxBanner">
-            <img src="https://ps.w.org/melhor-envio-cotacao/assets/banner-1544x500.png?rev=2030733" />
+            <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
         <h1>Configurações gerais</h1>
 
@@ -100,9 +127,9 @@
                             <div class="wpme_address-body">
                                 <ul>
                                     <li><b>Nome:</b> {{option.name}}</li>
-                                    <li><b>Tempo extra:</b> {{option.time}} </li>
-                                    <li><b>Taxa extra:</b> {{option.tax}} </li>
-                                    <li><b>Percentual extra:</b> {{option.perc}} </li>
+                                    <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
+                                    <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
+                                    <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
                                 </ul>
                                 <hr>
                                 <a @click="showModalEditMethod(option.code)">Editar</a>
@@ -116,13 +143,22 @@
                                             <ul>
                                                 <li>
                                                     <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" type="text" /><br><br>
+                                                    <input v-model="option.name" type="text" class="input" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
-                                                    <input v-model="option.time" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <input v-model="option.time" type="number" />
+                                                        <p> Dias </p>
+                                                    </div>
                                                     <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.tax" type="number" /><br><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.tax" v-bind="money"></money>
+                                                        <p> R$ </p>
+                                                    </div>
                                                     <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <input v-model="option.perc" type="number" />
+                                                    <div class="group-input">
+                                                        <money v-model="option.perc" v-bind="percent"></money>
+                                                        <p> % </p>
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -140,21 +176,21 @@
         <hr>
         
         <div class="wpme_config">
-            <h2>Customização estilo da calculadora de frete</h2>
+            <h2>Opções para cotação</h2>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <input type="checkbox" value="Personalizar"  v-model="custom_calculator">
-                        Customizar?
-                        <div v-show="custom_calculator" v-for="option in style_calculator" :value="option.id" :key="option.id">
-                            <h2>{{option.name}}</h2>
-                            <textarea v-model="option.style" type="text" placeholder="width:100%; height:50px; background:#e1e1e1;"></textarea>
-                        </div>
+                        <input type="checkbox" value="Personalizar"  v-model="options_calculator.ar">
+                        Aviso de recebimento
+                    </li>
+                    <li>
+                        <input type="checkbox" value="Personalizar"  v-model="options_calculator.mp">
+                        Mãos própria
                     </li>
                 </ul>
             </div>
         </div>
-        <hr>
+        <hr> 
 
         <div class="wpme_config">
             <h2>Calculadora</h2>
@@ -166,7 +202,7 @@
                             <div class="wpme_address-top" style="border-bottom: none;">
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
                                 <label for="two">exibir a calculdora na tela do produto</label>
-                            </div></br>
+                            </div><br>
                     
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
                                 <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
@@ -185,7 +221,7 @@
                 <ul class="wpme_address">
                     <li>
                         <input type="checkbox" value="Personalizar"  v-model="show_path">
-                        <span>Estou ciente dos riscos</span></br></br>
+                        <span>Estou ciente dos riscos</span><br><br>
                         <input v-show="show_path" v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
                     </li>
                 </ul>
@@ -253,8 +289,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Money } from 'v-money'
 export default {
     name: 'Configuracoes',
+    components: { Money },
     data () {
         return {
             address: null,
@@ -263,6 +301,10 @@ export default {
             show_modal: false,
             custom_calculator: false,
             show_calculator: false,
+            options_calculator: {
+                'ar': false,
+                'mp': true
+            },
             path_plugins: '',
             show_path: false,
             codeshiping: [
@@ -278,6 +320,18 @@ export default {
                 {'id':10, 'status':false},
                 {'id':11, 'status':false}
             ],
+            money: {
+                decimal: ',',
+                thousands: '.',
+                precision: 2,
+                masked: false
+            },
+            percent: {
+                decimal: ',',
+                thousands: '.',
+                precision: 0,
+                masked: false
+            },
             where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [
                 {
@@ -338,19 +392,16 @@ export default {
             path_plugins_: 'getPathPlugins',
             where_calculator_: 'getWhereCalculator',
             show_calculator_: 'getShowCalculator',
+            options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs'
         })
     },
     methods: {
         ...mapActions('configuration', [
             'getConfigs',
-            'setSelectedAgency',
-            'setPathPlugins',
-            'setSelectedStore',
-            'setSelectedAddress',
-            'setShowCalculator',
             'setLoader',
-            'setAgencies'
+            'setAgencies',
+            'saveAll'
         ]),
         showModalEditMethod(code) {
             this.codeshiping[code]['status'] = true;
@@ -371,21 +422,29 @@ export default {
             ];
         },
         updateConfig () {
-            this.setLoader(true);
-            var p1 = this.setSelectedAddress(this.address)
-            var p2 = this.setSelectedStore(this.store)
-            var p3 = this.setSelectedAgency(this.agency)
-            var p4 = this.setShowCalculator()
-            var p5 = this.setFieldsmethodsShipments()
-            var p6 = this.setWhereCalculator()
-            var p8 = this.setStyleCalculator()
-            var p9 = this.setPathPlugins()
-            var p10 = this.clearSession()
 
-            Promise.all([p1, p2, p3, p4, p5, p6, p8, p9, p10]).then((resolve) => {
+            this.setLoader(true);
+
+            var data = new Array();
+ 
+            data['address']            = this.address;
+            data['store']              = this.store;
+            data['agency']             = this.agency;
+            data['show_calculator']    = this.show_calculator;
+            data['methods_shipments']  = this.methods_shipments;
+            data['where_calculator']   = this.where_calculator;
+            data['path_plugins']       = this.path_plugins;
+            data['options_calculator'] = this.options_calculator;
+            var respSave = this.saveAll(data);
+            console.log(respSave);
+
+            respSave.then((resolve) => {
                 this.setLoader(false);
+                this.clearSession();
                 this.show_modal = true
-            });  
+            }).catch(function (erro) {
+                this.setLoader(false);
+            });
         },
         showAgencies (data) {
             this.setLoader(true);
@@ -408,54 +467,31 @@ export default {
         close() {
             this.show_modal = false;
         },
-        setShowCalculator () {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then( (response) => {
-                    if (response && response.status === 200) {
-                        this.show_calculator = response.data
-                        resolve(true)
-                    }
-                })
-            });
-        },
-        setWhereCalculator() {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then( (response) => {
-                    resolve(true)
-                })
-            })
-        },
-        setFieldsmethodsShipments () {
-            return new Promise((resolve, reject) =>  {
-                this.methods_shipments.forEach((item) => {
-                    this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then( (response) => {
-                        resolve(true)
-                    })
-                });
-            })
-        },
-        setStyleCalculator () {
-            return new Promise((resolve, reject) =>  {
-                Object.entries(this.style_calculator).forEach(([key, val]) => {
-                    this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then( (response) => {
-                        resolve(true)
-                    })
-                });
-            })
-        },
-        setPathPlugins () {
-            return new Promise((resolve, reject) => {
-                this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then( (response) => {
-                    resolve(true)
-                })
-            })
-        },
         clearSession() {
             return new Promise((resolve, reject) => {
                 this.$http.get(`${ajaxurl}?action=delete_melhor_envio_session`).then( (response) => {
                     resolve(true)
                 })
             });
+        },
+        formatNumber(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        formatPercent(value) {
+            let val = (value/1)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        showTimeWithDay(value) {
+            let val = (value == 1) ? value + ' dia' : value + ' dias'
+            return val
+        },
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
+                if (!response.data.exists_token) {
+                    this.$router.push('Token') 
+                }
+            })
         }
     },
     watch : {
@@ -496,9 +532,14 @@ export default {
         },
         where_calculator_(e) {
             this.where_calculator = e;
+        },
+        options_calculator_(e) {
+            this.options_calculator = e;
         }
     },
     mounted () {
+
+        this.getToken();
         this.setLoader(true);
         var promiseConfigs = this.getConfigs();
         promiseConfigs.then((resolve) => {

@@ -4,6 +4,7 @@ import Home from 'admin/components/Home.vue'
 import Pedidos from 'admin/components/Pedidos.vue'
 import Configuracoes from 'admin/components/Configuracoes.vue'
 import Token from 'admin/components/Token.vue'
+import Log from 'admin/components/Log.vue'
 
 Vue.use(Router)
 
@@ -29,5 +30,10 @@ export default new Router({
             name: 'Token',
             component: Token
         },
+        {
+            path: '/log/:id',
+            name: 'Log',
+            component: Log
+        }
     ]
 })

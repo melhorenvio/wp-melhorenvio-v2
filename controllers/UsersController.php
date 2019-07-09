@@ -29,16 +29,36 @@ class UsersController {
     public function getFrom()
     {
         $info = $this->getInfo();
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> master
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
+
+            $company = (new Store)->getStore();
 
             $address = (new Address)->getAddressFrom();
 
-            if (is_null($address)) {
+            $address = $address['address'];
+
+            if (is_null($address['address'])) {
                 return false;
             }
 
+<<<<<<< HEAD
             $company = (new Store)->getStore();
+=======
+            $email = null;
+
+            if (isset($company['email'])) {
+                $email = $company['email'];
+            }
+
+            if (isset($info->data['email'])) {
+                $email = $info->data['email'];
+            }
+>>>>>>> master
 
             $email = null;
 
@@ -82,9 +102,15 @@ class UsersController {
         $cpf  = get_post_meta($order_id, '_billing_cpf', true);
         $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
 
+        $phone = get_post_meta($order_id, '_billing_cellphone', true);
+
+        if (empty($phone) || is_null($phone)) {
+            $phone = $order->get_billing_phone();
+        }
+
         return (object) [
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-            "phone" => $order->get_billing_phone(),
+            "phone" => $phone,
             "email" => $order->get_billing_email(),
             "document" => (!empty($cpf)) ? $cpf : null,
             "company_document" => (!empty($cnpj)) ? $cnpj : null,

@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\Order;
+use Models\Log;
 use Controllers\UsersController;
 use Controllers\PackageController;
 use Controllers\ProductsController;
@@ -41,6 +42,17 @@ class OrdersController
             die;
         }
 
+<<<<<<< HEAD
+=======
+        if (!isset($_GET['choosen'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o ID do serviço selecionado'
+            ]);
+            die;
+        }
+
+>>>>>>> master
         $token = (new tokenController())->token();
 
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
@@ -52,6 +64,18 @@ class OrdersController
                 'success' => false,
                 'message' => 'O pacote está vazio'
             ]);die;
+<<<<<<< HEAD
+=======
+        }
+
+        foreach ($packages[$_GET['choosen']][0] as $key => $attribute) {
+            if (is_null($attribute)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => printf('Por favor, informar o valor para %s', $key)
+                ]);die;
+            }
+>>>>>>> master
         }
 
         if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1,2,3,4,5,6,7,8,9,10,11])) {
@@ -118,6 +142,7 @@ class OrdersController
             if (count($packages[$_GET['choosen']]) > 1) {
                 $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
             }
+<<<<<<< HEAD
 
             $body = [
                 'from' => $from,
@@ -197,6 +222,109 @@ class OrdersController
 
             $orders_id[] = $response->id;
 
+=======
+
+            $body = array(
+                'from' => $from,
+                'to' => $to,
+                'service' => $_GET['choosen'],
+                'products' => $products,
+                'package' => $package,
+                'options' => array(
+                    "insurance_value" => round($insurance_value, 2), 
+                    "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
+                    "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
+                    "collect" => false,
+                    "reverse" => false, 
+                    "non_commercial" => false, 
+                    'platform' => 'WooCommerce V2',
+                    'reminder' => $reminder
+                )
+            );
+
+            // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
+            if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
+                $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
+                if(is_null($body['agency']) || $body['agency'] == "null" ) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => printf('Para utilizar o serviço da Jadlog é necessário informar o ID da agência')
+                    ]);
+                    die;
+                }
+
+                if (is_null($body['to']->phone) || empty($body['to']->phone)) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Telefone do destinatario é obrigatorio para serviços da jadLog'
+                    ]);
+                    die;
+                }
+            }
+
+            // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
+            if ($_GET['choosen'] >= 3) {
+
+                $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
+                if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
+                    $body['options']['invoice'] = $invoices;
+                }       
+
+                if ($_GET['non_commercial'] == 'true') {
+                    $body['options']['non_commercial'] = true;
+                }
+            }
+
+            $params = array(
+                'headers'           =>  array(
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer '.$token,
+                ),
+                'body'   =>  json_encode($body),
+                'timeout'=> 10
+            );
+
+            $response = json_decode(
+                wp_remote_retrieve_body(
+                    wp_remote_post(self::URL . '/v2/me/cart', $params)
+                )
+            );
+
+            delete_post_meta($_GET['order_id'], 'melhorenvio_errors');
+            $logErrors = array();
+            if (isset($response->errors)) {
+                foreach ($response->errors as $key => $items) {
+                    foreach ($items as $item) {
+                        $logErrors[$_GET['choosen']][] = [
+                            'message' =>  $item
+                        ];
+                    }
+                }
+            }
+
+            // save erros
+            if (empty($logErrors)) {
+                delete_post_meta($_GET['order_id'], 'melhorenvio_errors');
+            } else {
+                add_post_meta($_GET['order_id'], 'melhorenvio_errors', $logErrors);
+            }
+
+            (new Log())->register($_GET['order_id'], 'send_order', $body, $response);
+
+            if (!isset($response->id)) {
+                $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
+                if ($er != false) {
+                    $errors[] = $er;
+                    continue;
+                }
+            }
+
+            $success[] = $response;
+
+            $orders_id[] = $response->id;
+
+>>>>>>> master
             $protocols[] = $response->protocol;   
         }
 
@@ -210,7 +338,10 @@ class OrdersController
         $data['choose_method'] = $_GET['choosen'];
         $data['status'] = 'pending';
         $data['created'] = date('Y-m-d H:i:s');
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         $data['order_id'] = $orders_id;
         $data['protocol'] = $protocols;
 
@@ -225,7 +356,11 @@ class OrdersController
 
         echo json_encode([
             'success' => false,
+<<<<<<< HEAD
             'message' => end($errors)
+=======
+            'message' => $errors
+>>>>>>> master
         ]);die;
     }
 

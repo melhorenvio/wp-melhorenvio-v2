@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Controllers\HelperController;
+
 class ProductsController 
 {
     /**
@@ -15,8 +17,8 @@ class ProductsController
 
         foreach( $order->get_items() as $item_id => $item_product ){
 
-            $product_id = $item_product->get_product_id();
             $_product = $item_product->get_product();
+<<<<<<< HEAD
 
             if (is_bool($_product)) {
                 continue;
@@ -36,19 +38,15 @@ class ProductsController
 
         return $products;
     }
+=======
+>>>>>>> master
 
-    /**
-     * @return void
-     */
-    public function getProductsCart() 
-    {
-        global $woocommerce;
-        $items = $woocommerce->cart->get_cart();
-
-        $products = [];
-        foreach( $items as $item_id => $item_product ){
+            if (is_bool($_product)) {
+                continue;
+            }
 
             $products[] = [
+<<<<<<< HEAD
                 'id' => $item_product['product_id'],
                 'weight' => $this->converterIfNecessary($item_product['data']->get_weight()),
                 'width'  => $this->converterDimension($item_product['data']->get_width()),
@@ -56,6 +54,16 @@ class ProductsController
                 'length' => $this->converterDimension($item_product['data']->get_length()),
                 'quantity' => $item_product['quantity'],
                 'insurance_value' => round($item_product['data']->get_price(), 2)
+=======
+                "name"            => $_product->get_name(),
+                "quantity"        => $item_product->get_quantity(),
+                "unitary_value"   => round($_product->get_price(), 2),
+                "insurance_value" => round($_product->get_price(), 2),
+                "weight"          => (new HelperController())->converterIfNecessary($_product->weight),
+                "width"           => (new HelperController())->converterDimension($_product->width),
+                "height"          => (new HelperController())->converterDimension($_product->height),
+                "length"          => (new HelperController())->converterDimension($_product->length)
+>>>>>>> master
             ];
         }
 
@@ -78,6 +86,7 @@ class ProductsController
 
         return round($total, 2);
     }
+<<<<<<< HEAD
 
     /**
      * @param [type] $weight
@@ -105,4 +114,6 @@ class ProductsController
 
         return $value;
     }
+=======
+>>>>>>> master
 }
