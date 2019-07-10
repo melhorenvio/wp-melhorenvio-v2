@@ -151,8 +151,6 @@ class LogsController
         echo '</table>';
         die;
     }
-<<<<<<< HEAD
-=======
 
     public function getLogsOrder()
     {
@@ -161,5 +159,4 @@ class LogsController
         echo json_encode($response);
         die;
     }
->>>>>>> master
 }

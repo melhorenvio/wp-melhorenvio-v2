@@ -13,8 +13,6 @@ class TimeController
      */
     public function setlabel($data, $id, $custom = null) 
     {
-<<<<<<< HEAD
-=======
         if (!is_null($custom) && $data->min != $custom->min && $data->max != $custom->min ) {
             
             if ($data->max == 1) {
@@ -33,7 +31,6 @@ class TimeController
         }
 
 
->>>>>>> master
         if (is_null($data)) {
             return '*';
         }

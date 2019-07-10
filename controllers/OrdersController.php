@@ -42,8 +42,6 @@ class OrdersController
             die;
         }
 
-<<<<<<< HEAD
-=======
         if (!isset($_GET['choosen'])) {
             echo json_encode([
                 'success' => false,
@@ -52,7 +50,6 @@ class OrdersController
             die;
         }
 
->>>>>>> master
         $token = (new tokenController())->token();
 
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
@@ -64,8 +61,6 @@ class OrdersController
                 'success' => false,
                 'message' => 'O pacote está vazio'
             ]);die;
-<<<<<<< HEAD
-=======
         }
 
         foreach ($packages[$_GET['choosen']][0] as $key => $attribute) {
@@ -75,7 +70,6 @@ class OrdersController
                     'message' => printf('Por favor, informar o valor para %s', $key)
                 ]);die;
             }
->>>>>>> master
         }
 
         if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1,2,3,4,5,6,7,8,9,10,11])) {
@@ -142,7 +136,6 @@ class OrdersController
             if (count($packages[$_GET['choosen']]) > 1) {
                 $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
             }
-<<<<<<< HEAD
 
             $body = [
                 'from' => $from,
@@ -222,7 +215,6 @@ class OrdersController
 
             $orders_id[] = $response->id;
 
-=======
 
             $body = array(
                 'from' => $from,
@@ -324,7 +316,6 @@ class OrdersController
 
             $orders_id[] = $response->id;
 
->>>>>>> master
             $protocols[] = $response->protocol;   
         }
 
@@ -338,10 +329,7 @@ class OrdersController
         $data['choose_method'] = $_GET['choosen'];
         $data['status'] = 'pending';
         $data['created'] = date('Y-m-d H:i:s');
-<<<<<<< HEAD
 
-=======
->>>>>>> master
         $data['order_id'] = $orders_id;
         $data['protocol'] = $protocols;
 
@@ -356,11 +344,8 @@ class OrdersController
 
         echo json_encode([
             'success' => false,
-<<<<<<< HEAD
-            'message' => end($errors)
-=======
+            'message' => end($errors),
             'message' => $errors
->>>>>>> master
         ]);die;
     }
 
