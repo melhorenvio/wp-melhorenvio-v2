@@ -29,11 +29,7 @@ class UsersController {
     public function getFrom()
     {
         $info = $this->getInfo();
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> master
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
 
             $company = (new Store)->getStore();
@@ -45,20 +41,6 @@ class UsersController {
             if (is_null($address['address'])) {
                 return false;
             }
-
-<<<<<<< HEAD
-            $company = (new Store)->getStore();
-=======
-            $email = null;
-
-            if (isset($company['email'])) {
-                $email = $company['email'];
-            }
-
-            if (isset($info->data['email'])) {
-                $email = $info->data['email'];
-            }
->>>>>>> master
 
             $email = null;
 

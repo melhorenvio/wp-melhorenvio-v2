@@ -137,85 +137,6 @@ class OrdersController
                 $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
             }
 
-            $body = [
-                'from' => $from,
-                'to' => $to,
-                'service' => $_GET['choosen'],
-                'products' => $products,
-                'package' => $package,
-                'options' => [
-                    "insurance_value" => round($insurance_value, 2), 
-                    "receipt" => false,
-                    "own_hand" => false,
-                    "collect" => false,
-                    "reverse" => false, 
-                    "non_commercial" => false, 
-                    'platform' => 'WooCommerce V2',
-                    'reminder' => $reminder
-                ]
-            ];
-
-            // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
-            if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
-                $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
-            }
-
-            // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
-            if ($_GET['choosen'] >= 3) {
-
-                $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
-                if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
-                    $body['options']['invoice'] = $invoices;
-                }       
-
-                if ($_GET['non_commercial'] == 'true') {
-                    $body['options']['non_commercial'] = true;
-                }
-            }
-
-            $params = array(
-                'headers'           =>  [
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
-                ],
-                'body'   =>  json_encode($body),
-                'timeout'=> 10
-            );
-
-            $response = json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/v2/me/cart', $params)
-                )
-            );
-
-            (new LogsController)->addResponse($response, $body, $_GET['order_id']);
-
-            if(isset($response->errors)) {
-                $logs = (new LogsController)->add(
-                    $_GET['order_id'], 
-                    'Error ', 
-                    $body, 
-                    $response, 
-                    'OrdersController', 
-                    'sendOrder', 
-                    self::URL . '/v2/me/cart'
-                );
-            }
-
-            if (!isset($response->id)) {
-                $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
-                if ($er != false) {
-                    $errors[] = $er;
-                    continue;
-                }
-            }
-
-            $success[] = $response;
-
-            $orders_id[] = $response->id;
-
-
             $body = array(
                 'from' => $from,
                 'to' => $to,
@@ -329,7 +250,6 @@ class OrdersController
         $data['choose_method'] = $_GET['choosen'];
         $data['status'] = 'pending';
         $data['created'] = date('Y-m-d H:i:s');
-
         $data['order_id'] = $orders_id;
         $data['protocol'] = $protocols;
 
@@ -344,7 +264,6 @@ class OrdersController
 
         echo json_encode([
             'success' => false,
-            'message' => end($errors),
             'message' => $errors
         ]);die;
     }
