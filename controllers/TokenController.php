@@ -13,8 +13,19 @@ class TokenController
 
         $codeStore = md5(get_option('home'));
 
+        if (isset($_SESSION[$codeStore]['melhorenvio_token'])) {
+            echo json_encode([
+                'token' => $_SESSION[$codeStore]['melhorenvio_token']
+            ]);
+            die();
+        }
+
         if (isset($_SESSION[$codeStore]['melhorenvio_token']) && !is_null($_SESSION[$codeStore]['melhorenvio_token'])) {
-            return $_SESSION[$codeStore]['melhorenvio_token'];
+            
+            echo json_encode([
+                'token' => $_SESSION[$codeStore]['melhorenvio_token']
+            ]);
+            die();
         }
 
         $_SESSION[$codeStore]['melhorenvio_token'] = (new token())->getToken();
