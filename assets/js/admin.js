@@ -521,6 +521,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -626,6 +634,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_v_money___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_v_money__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2032,7 +2045,7 @@ var render = function() {
                                   ]
                                 : _vm._e(),
                               _vm._v(" "),
-                              !item.order_id && item.cotation != false
+                              item.cotation != false && item.status == null
                                 ? [
                                     _c("div", { staticClass: "me-form" }, [
                                       _c(
@@ -2275,7 +2288,31 @@ var render = function() {
                                       2
                                     )
                                   ]
-                                : _vm._e(),
+                                : [
+                                    _c("p", [
+                                      _vm._v(
+                                        "\n                                    " +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].company.name
+                                          ) +
+                                          "\n                                    " +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].name
+                                          ) +
+                                          "\n                                    R$" +
+                                          _vm._s(
+                                            item.cotation[
+                                              item.cotation.choose_method
+                                            ].price
+                                          ) +
+                                          "\n                                "
+                                      )
+                                    ])
+                                  ],
                               _vm._v(" "),
                               item.log
                                 ? _c(
@@ -3641,7 +3678,11 @@ var render = function() {
                   _vm._l(_vm.stores, function(option) {
                     return _c(
                       "li",
-                      { key: option.id, attrs: { value: option.id } },
+                      {
+                        key: option.id,
+                        staticClass: "store-box",
+                        attrs: { value: option.id }
+                      },
                       [
                         _c("label", { attrs: { for: option.id } }, [
                           _c("div", { staticClass: "wpme_address-top" }, [
