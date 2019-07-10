@@ -36,6 +36,11 @@
         width: 5.5%;
         text-align: center;
     }
+    .store-box {
+        display: inline-flex !important;
+        min-height: 100px;
+    }
+    
 </style>
 
 <template>
@@ -94,7 +99,7 @@
                 <p>Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada.</p>
                 <div class="wpme_flex">
                     <ul class="wpme_address">
-                        <li  v-for="option in stores" v-bind:value="option.id" :key="option.id">
+                        <li  v-for="option in stores" v-bind:value="option.id" :key="option.id" class="store-box">
                             <label :for="option.id">
                                 <div class="wpme_address-top">
                                     <input type="radio" :id="option.id" :value="option.id" v-model="store" >
