@@ -923,6 +923,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -3673,7 +3678,11 @@ var render = function() {
                   _vm._l(_vm.stores, function(option) {
                     return _c(
                       "li",
-                      { key: option.id, attrs: { value: option.id } },
+                      {
+                        key: option.id,
+                        staticClass: "store-box",
+                        attrs: { value: option.id }
+                      },
                       [
                         _c("label", { attrs: { for: option.id } }, [
                           _c("div", { staticClass: "wpme_address-top" }, [
