@@ -39,6 +39,16 @@
     .store-box {
         display: inline-flex !important;
         min-height: 100px;
+        max-width: 25% !important;
+    }
+    .store-box h3 {
+        display: inline-flex;
+        padding: 0 0 0 8px;
+        margin: 0 0 15px;
+        text-align: left;
+        font-size: 1.1em;
+        max-width: 85%;
+        font-weight: 300;
     }
     
 </style>
@@ -103,7 +113,7 @@
                             <label :for="option.id">
                                 <div class="wpme_address-top">
                                     <input type="radio" :id="option.id" :value="option.id" v-model="store" >
-                                    <h2>{{option.name}}</h2>
+                                    <h3>{{option.name}}</h3>
                                 </div>
                                 <div class="wpme_address-body">
                                     <ul>
