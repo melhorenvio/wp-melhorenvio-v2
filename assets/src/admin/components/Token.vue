@@ -62,7 +62,7 @@ export default {
     },
     methods: {
         getToken () {
-            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => { 
                 this.token = response.data.token;
                 this.show_loader = false;
             })
