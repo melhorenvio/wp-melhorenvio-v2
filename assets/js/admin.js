@@ -928,6 +928,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3707,7 +3717,7 @@ var render = function() {
                               }
                             }),
                             _vm._v(" "),
-                            _c("h2", [_vm._v(_vm._s(option.name))])
+                            _c("h3", [_vm._v(_vm._s(option.name))])
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "wpme_address-body" }, [
