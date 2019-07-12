@@ -1116,6 +1116,18 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1124,6 +1136,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     components: { Money: __WEBPACK_IMPORTED_MODULE_1_v_money__["Money"] },
     data() {
         return {
+            canUpdate: true,
             address: null,
             store: null,
             agency: null,
@@ -1200,6 +1213,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         configs: 'getConfigs'
     })),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getConfigs', 'setLoader', 'setAgencies', 'saveAll']), {
+        requiredInput(element) {
+            if (element.length == 0 || element.length > 100) {
+                this.canUpdate = false;
+            } else {
+                this.canUpdate = true;
+            }
+        },
         showModalEditMethod(code) {
             this.codeshiping[code]['status'] = true;
         },
@@ -4098,17 +4118,14 @@ var render = function() {
                   "label",
                   { attrs: { for: option.id } },
                   [
-                    _c("div", { staticClass: "wpme_address-top" }, [
-                      _c("h2", [_vm._v(_vm._s(option.name))])
+                    _c("div", { staticClass: "wpme_address-top " }, [
+                      _c("h3", { staticClass: "title-methods" }, [
+                        _vm._v(_vm._s(option.name))
+                      ])
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "wpme_address-body" }, [
                       _c("ul", [
-                        _c("li", [
-                          _c("b", [_vm._v("Nome:")]),
-                          _vm._v(" " + _vm._s(option.name))
-                        ]),
-                        _vm._v(" "),
                         _c("li", [
                           _c("b", [_vm._v("Tempo extra:")]),
                           _vm._v(
@@ -4182,9 +4199,12 @@ var render = function() {
                                       }
                                     ],
                                     staticClass: "input",
-                                    attrs: { type: "text" },
+                                    attrs: { type: "text", maxlength: "100" },
                                     domProps: { value: option.name },
                                     on: {
+                                      keyup: function($event) {
+                                        return _vm.requiredInput(option.name)
+                                      },
                                       input: function($event) {
                                         if ($event.target.composing) {
                                           return
@@ -4210,34 +4230,32 @@ var render = function() {
                                   ]),
                                   _c("br"),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "group-input" }, [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: option.time,
-                                          expression: "option.time"
-                                        }
-                                      ],
-                                      attrs: { type: "number" },
-                                      domProps: { value: option.time },
-                                      on: {
-                                        input: function($event) {
-                                          if ($event.target.composing) {
-                                            return
-                                          }
-                                          _vm.$set(
-                                            option,
-                                            "time",
-                                            $event.target.value
-                                          )
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("p", [_vm._v(" Dias ")])
-                                  ]),
+                                  _c(
+                                    "div",
+                                    { staticClass: "group-input" },
+                                    [
+                                      _c(
+                                        "money",
+                                        _vm._b(
+                                          {
+                                            model: {
+                                              value: option.time,
+                                              callback: function($$v) {
+                                                _vm.$set(option, "time", $$v)
+                                              },
+                                              expression: "option.time"
+                                            }
+                                          },
+                                          "money",
+                                          _vm.percent,
+                                          false
+                                        )
+                                      ),
+                                      _vm._v(" "),
+                                      _c("p", [_vm._v(" Dias ")])
+                                    ],
+                                    1
+                                  ),
                                   _vm._v(" "),
                                   _c("label", [
                                     _c("b", [_vm._v("Taxa extra")]),
@@ -4316,21 +4334,33 @@ var render = function() {
                               ])
                             ]),
                             _vm._v(" "),
-                            _c("div", { staticClass: "buttons -center" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn-border -full-blue",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.closeShowModalEditMethod()
+                            _c(
+                              "div",
+                              { staticClass: "buttons -center box-buttons" },
+                              [
+                                _c(
+                                  "button",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "show",
+                                        rawName: "v-show",
+                                        value: _vm.canUpdate,
+                                        expression: "canUpdate"
+                                      }
+                                    ],
+                                    staticClass: "btn-border -full-blue",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.closeShowModalEditMethod()
+                                      }
                                     }
-                                  }
-                                },
-                                [_vm._v("Fechar")]
-                              )
-                            ])
+                                  },
+                                  [_vm._v("Fechar")]
+                                )
+                              ]
+                            )
                           ])
                         ]
                       )

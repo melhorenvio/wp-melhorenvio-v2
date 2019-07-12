@@ -50,7 +50,18 @@
         max-width: 85%;
         font-weight: 300;
     }
-    
+    .box-buttons {
+        min-height: 40px;
+    }
+    .wpme_address .wpme_address-top {   
+        min-height: 45px !important;
+    }
+    .wpme_address-top .title-methods {
+        text-align: left;
+        font-size: 1.1em;
+        font-weight: 300;
+        margin: 0;
+    }
 </style>
 
 <template>
@@ -136,12 +147,12 @@
                 <ul class="wpme_address">
                     <li v-for="option in methods_shipments" v-bind:value="option.id" :key="option.id">
                         <label :for="option.id">
-                            <div class="wpme_address-top">
-                                <h2>{{option.name}}</h2>
+                            <div class="wpme_address-top ">
+                                <h3 class="title-methods">{{option.name}}</h3>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
-                                    <li><b>Nome:</b> {{option.name}}</li>
+                                    <!--<li><b>Nome:</b> {{option.name}}</li>-->
                                     <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
                                     <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
                                     <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
@@ -158,10 +169,10 @@
                                             <ul>
                                                 <li>
                                                     <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" type="text" class="input" /><br><br>
+                                                    <input v-model="option.name" v-on:keyup="requiredInput(option.name)" type="text" class="input" maxlength="100" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
                                                     <div class="group-input">
-                                                        <input v-model="option.time" type="number" />
+                                                        <money v-model="option.time" v-bind="percent"></money>
                                                         <p> Dias </p>
                                                     </div>
                                                     <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
@@ -177,9 +188,10 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <div class="buttons -center">
-                                            <button @click="closeShowModalEditMethod()" type="button"  class="btn-border -full-blue">Fechar</button>
+                                        <div class="buttons -center box-buttons" >
+                                            <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </transition>
@@ -310,6 +322,7 @@ export default {
     components: { Money },
     data () {
         return {
+            canUpdate: true,
             address: null,
             store: null,
             agency: null,
@@ -409,7 +422,7 @@ export default {
             show_calculator_: 'getShowCalculator',
             options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs'
-        })
+        }),
     },
     methods: {
         ...mapActions('configuration', [
@@ -418,6 +431,13 @@ export default {
             'setAgencies',
             'saveAll'
         ]),
+        requiredInput(element) {
+            if (element.length == 0 || element.length > 100) {
+                this.canUpdate = false
+            } else {
+                this.canUpdate = true
+            }
+        },
         showModalEditMethod(code) {
             this.codeshiping[code]['status'] = true;
         },
