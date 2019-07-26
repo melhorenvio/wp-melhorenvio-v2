@@ -58,9 +58,16 @@ class Order {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
             'offset' => ($filters['skip']) ?: 0,
-            'post_status' => ($filters['wpstatus'] == 'all') ? array_keys( wc_get_order_statuses() ) : 'publish',
             'post_type' => 'shop_order',
         ];
+
+        if(isset($filters['wpstatus']) && $filters['wpstatus'] != 'all'){
+            $args['post_status'] = $filters['wpstatus'];
+        } else if(isset($filters['wpstatus']) && $filters['wpstatus'] == 'all') {
+            $args['post_status'] = array_keys( wc_get_order_statuses() );
+        } else {
+            $args['post_status'] = 'publish';
+        }
 
         if (isset($filters['status']) && $filters['status'] != 'all') {
             $args['meta_query'] = [
@@ -225,8 +232,9 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        $statusApi = $this->getStatusApi($orders);   
+        $statusApi = $this->getStatusApi($orders);                
         foreach ($posts as $key => $post) {
+            $posts[$key]['status_texto'] = 'Não possui';
 
             foreach ($post['order_id'] as $order_id) {                
 
@@ -240,34 +248,38 @@ class Order {
 
                         if ($st == 'canceled') {
                             $st = null;
+                            $st_text = 'Não possui';
+
                         }
                         $posts[$key]['status'] = $st;                                               
                     }
                     
-                    continue;
-                } 
+                    // Texto status
+                    if ($statusApi[$order_id]['status'] == 'pending') {
+                        $st_text = 'Pendente';
+                    } elseif ($statusApi[$order_id]['status'] == 'released') {
+                        $st_text = 'Liberada';
+                    } elseif ($statusApi[$order_id]['status'] == 'posted') {
+                        $st_text = 'Postado';
+                    } elseif ($statusApi[$order_id]['status'] == 'delivered') {
+                        $st_text = 'Entregue';
+                    } elseif ($statusApi[$order_id]['status'] == 'canceled') {
+                        $st_text = 'Cancelado';
+                    } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
+                        $st_text = 'Não entregue';
+                    } else {
+                        $st_text = 'Não possui';
+                    }
 
-                $posts[$key]['status']       = null;                             
+                    $posts[$key]['status_texto'] = $st_text;  
+                } else {
+                    $posts[$key]['status'] = null;  
+                }
+  
+                                       
             }
 
-            // Texto status
-            $st_text = '';
-            if ($statusApi[$order_id]['status'] == 'pending') {
-                $st_text = 'Pendente';
-            } elseif ($statusApi[$order_id]['status'] == 'released') {
-                $st_text = 'Liberada';
-            } elseif ($statusApi[$order_id]['status'] == 'posted') {
-                $st_text = 'Postou';
-            } elseif ($statusApi[$order_id]['status'] == 'delivered') {
-                $st_text = 'Entregue';
-            } elseif ($statusApi[$order_id]['status'] == 'canceled') {
-                $st_text = 'Cancelado';
-            } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
-                $st_text = 'Não entregue';
-            } else {
-                $st_text = 'Não informado';
-            }
-            $posts[$key]['status_texto'] = $st_text; 
+            
         }
         return $posts;
     }

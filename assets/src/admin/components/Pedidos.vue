@@ -57,10 +57,12 @@
                     <h3>Etiquetas</h3>
                     <select v-model="status">
                         <option value="all">Todas</option>
-                        <option value="printed">Impressas</option>
-                        <option value="paid">Pagas</option>
-                        <option value="pending">Aguardando pagamento</option>
-                        <option value="generated">Geradas</option>
+                        <option value="pending">Pendente</option>
+                        <option value="released">Liberada</option>
+                        <option value="posted">Postado</option>
+                        <option value="delivered">Entregue</option>
+                        <option value="canceled">Cancelado</option>
+                        <option value="undelivered">Não Entregue</option>
                     </select>
                 </td>
                 <td width="50%">
@@ -83,7 +85,7 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
-                    <li><span>Situação</span></li>
+                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
