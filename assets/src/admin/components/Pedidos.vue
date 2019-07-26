@@ -85,7 +85,7 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
-                    <li><span>Situação</span></li>
+                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
