@@ -16,10 +16,11 @@ wp-content/plugins/hello.php
 /sitemap.xml
 /sitemap.xml.gz
 
+/assets/css/*
+/assets/js/*
+
 vendor/
 node_modules/
 package-lock.json
 yarn.lock
 
-assets/css/
-assets/js/

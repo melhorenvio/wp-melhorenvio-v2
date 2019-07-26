@@ -58,9 +58,16 @@ class Order {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
             'offset' => ($filters['skip']) ?: 0,
-            'post_status' => ($filters['wpstatus'] == 'all') ? array_keys( wc_get_order_statuses() ) : 'publish',
             'post_type' => 'shop_order',
         ];
+
+        if(isset($filters['wpstatus']) && $filters['wpstatus'] != 'all'){
+            $args['post_status'] = $filters['wpstatus'];
+        } else if(isset($filters['wpstatus']) && $filters['wpstatus'] == 'all') {
+            $args['post_status'] = array_keys( wc_get_order_statuses() );
+        } else {
+            $args['post_status'] = 'publish';
+        }
 
         if (isset($filters['status']) && $filters['status'] != 'all') {
             $args['meta_query'] = [
@@ -257,7 +264,7 @@ class Order {
             } elseif ($statusApi[$order_id]['status'] == 'released') {
                 $st_text = 'Liberada';
             } elseif ($statusApi[$order_id]['status'] == 'posted') {
-                $st_text = 'Postou';
+                $st_text = 'Postado';
             } elseif ($statusApi[$order_id]['status'] == 'delivered') {
                 $st_text = 'Entregue';
             } elseif ($statusApi[$order_id]['status'] == 'canceled') {
