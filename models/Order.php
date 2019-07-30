@@ -57,8 +57,8 @@ class Order {
     {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
-            'offset' => ($filters['skip']) ?: 0,
-            'post_type' => 'shop_order',
+            'offset'      => ($filters['skip']) ?: 0,
+            'post_type'   => 'shop_order',
         ];
 
         if(isset($filters['wpstatus']) && $filters['wpstatus'] != 'all'){
@@ -82,10 +82,7 @@ class Order {
         $posts =  get_posts($args);    
 
         if (empty($posts)) {
-            return [
-                'orders' => [],
-                'load' => false
-            ];
+            return ['orders' => [], 'load' => false];
         }
 
         $data = [];
@@ -101,6 +98,8 @@ class Order {
                 
                 $invoice = $order->getInvoice();
 
+                $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
+
                 $non_commercial = true;
                 if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
                     $non_commercial = false;
@@ -111,23 +110,24 @@ class Order {
                 }
 
                 $data[] =  [
-                    'id' => (int) $order->id,
-                    'total' => 'R$' . number_format($order->total, 2, ',', '.'),
-                    'products' => $order->getProducts(),
-                    'cotation' => $cotation ,
-                    'address' => $order->address,
-                    'to' => $order->to,
-                    'status' => $dataMelhorEnvio['status'],
-                    'order_id' => $dataMelhorEnvio['order_id'],
-                    'protocol' => $dataMelhorEnvio['protocol'],
+                    'id'             => (int) $order->id,
+                    'total'          => 'R$' . number_format($order->total, 2, ',', '.'),
+                    'products'       => $order->getProducts(),
+                    'cotation'       => $cotation ,
+                    'address'        => $order->address,
+                    'to'             => $order->to,
+                    'status'         => $dataMelhorEnvio['status'],
+                    'status_texto'   => $statusTranslate,
+                    'order_id'       => $dataMelhorEnvio['order_id'],
+                    'protocol'       => $dataMelhorEnvio['protocol'],
                     'non_commercial' => $non_commercial,
-                    'invoice' => $invoice,
-                    'packages' => $order->mountPackage($cotation),
-                    'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $order->id),
-                    'log'  => admin_url() . sprintf('admin.php?page=melhor-envio#/log/%s', $order->id),
-                    'errors' => get_post_meta($order->id, 'melhorenvio_errors', true)
+                    'invoice'        => $invoice,
+                    'packages'       => $order->mountPackage($cotation),
+                    'link'           => admin_url() . sprintf('post.php?post=%d&action=edit', $order->id),
+                    'log'            => admin_url() . sprintf('admin.php?page=melhor-envio#/log/%s', $order->id),
+                    'errors'         => get_post_meta($order->id, 'melhorenvio_errors', true)
                 ];
-
+                
             } catch(Exception $e) {
                 (new LogsController)->add(
                     null, 
@@ -142,7 +142,6 @@ class Order {
         }
 
         $data = $order->matchStatus($data, $orders);
-        //print_r($data); die();
         $load = false;
         if(count($data) == ($filters['limit']) ?: 5) {
             $load = true;
@@ -234,8 +233,7 @@ class Order {
     {
         $statusApi = $this->getStatusApi($orders);                
         foreach ($posts as $key => $post) {
-            $posts[$key]['status_texto'] = 'Não possui';
-
+            
             foreach ($post['order_id'] as $order_id) {                
 
                 if (array_key_exists($order_id, $statusApi)) {
@@ -248,38 +246,14 @@ class Order {
 
                         if ($st == 'canceled') {
                             $st = null;
-                            $st_text = 'Não possui';
-
                         }
                         $posts[$key]['status'] = $st;                                               
                     }
-                    
-                    // Texto status
-                    if ($statusApi[$order_id]['status'] == 'pending') {
-                        $st_text = 'Pendente';
-                    } elseif ($statusApi[$order_id]['status'] == 'released') {
-                        $st_text = 'Liberada';
-                    } elseif ($statusApi[$order_id]['status'] == 'posted') {
-                        $st_text = 'Postado';
-                    } elseif ($statusApi[$order_id]['status'] == 'delivered') {
-                        $st_text = 'Entregue';
-                    } elseif ($statusApi[$order_id]['status'] == 'canceled') {
-                        $st_text = 'Cancelado';
-                    } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
-                        $st_text = 'Não entregue';
-                    } else {
-                        $st_text = 'Não possui';
-                    }
-
-                    $posts[$key]['status_texto'] = $st_text;  
+                      
                 } else {
                     $posts[$key]['status'] = null;  
-                }
-  
-                                       
-            }
-
-            
+                }                                       
+            }            
         }
         return $posts;
     }
@@ -414,6 +388,30 @@ class Order {
         }
 
         return $data;
+    }
+
+    private function translateNameStatus($status = null)
+    {
+        $statusTranslate = '';
+        if ($status == 'pending') {
+            $statusTranslate = 'Pendente';
+        } elseif ($status == 'released') {
+            $statusTranslate = 'Liberado';
+        } elseif ($status == 'posted') {
+            $statusTranslate = 'Postado';
+        } elseif ($status == 'delivered') {
+            $statusTranslate = 'Entregue';
+        } elseif ($status == 'canceled') {
+            $statusTranslate = 'Cancelado';
+        } elseif ($status == 'undelivered') {
+            $statusTranslate = 'Não entregue';
+        } elseif ($status == 'generated') {
+            $statusTranslate = 'Gerada';
+        } else {
+            $statusTranslate = 'Não possui';
+        }
+
+        return $statusTranslate;
     }
 
     /**
