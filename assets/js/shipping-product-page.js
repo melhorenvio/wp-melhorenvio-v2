@@ -76,7 +76,7 @@
 				resetarTabela();
 
 				let qty = 1;
-				let inpQty = $('.qty').val(); 
+				let inpQty = $('.quantity .qty:visible').val(); 
 				if (typeof inpQty != 'undefined') {
 					qty = inpQty;
 				}

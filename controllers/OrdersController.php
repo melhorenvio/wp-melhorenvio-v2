@@ -122,7 +122,7 @@ class OrdersController
         $orders_id = [];
         $protocols = [];
 
-        foreach ($packages[$_GET['choosen']] as $package) {
+        foreach ($packages[$_GET['choosen']] as $indexPackage => $package) {
 
             $insurance_value = 0;
             foreach ($products as $key => $item) {
@@ -130,21 +130,49 @@ class OrdersController
                 $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
             }
             
-            unset($package['insurnace_value']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurnace_value']);
+
+            foreach ($products as $index => $product) {
+
+                unset($products[$index]['weight']);
+                unset($products[$index]['width']);
+                unset($products[$index]['height']);
+                unset($products[$index]['length']);
+
+                foreach ($package['products'] as $index2 => $packageProduct) {
+                    if ($product['id'] == $packageProduct->id) {
+                        $products[$index]['quantity'] = $packageProduct->quantity;
+                    }
+                }   
+            }
+
+            unset($packages[$_GET['choosen']][$indexPackage]['products']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurance']);
+            unset($packages[$_GET['choosen']][$indexPackage]['quantity']);
 
             $reminder = null;
             if (count($packages[$_GET['choosen']]) > 1) {
-                $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
+                $reminder = sprintf('Volume %s/%s - ', $package['volume'], count($packages[$_GET['choosen']]));
+
+                foreach ($products as $product) {
+                    $reminder = $reminder . sprintf('%sx %s; ', $product['quantity'], $product['name']);
+                }
+
+                $size = strlen($reminder);
+                $reminder = substr($reminder,0, $size-2);
             }
+
+            unset($packages[$_GET['choosen']][$indexPackage]['volume']);
+            unset($package['volume']);
 
             $body = array(
                 'from' => $from,
                 'to' => $to,
                 'service' => $_GET['choosen'],
                 'products' => $products,
-                'package' => $package,
+                'package' => $packages[$_GET['choosen']][$indexPackage],
                 'options' => array(
-                    "insurance_value" => round($insurance_value, 2), 
+                    "insurance_value" => round($package['insurance'], 2), 
                     "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
                     "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                     "collect" => false,

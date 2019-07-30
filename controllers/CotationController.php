@@ -94,7 +94,7 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id'                 =>  $_POST['data']['id_produto'],
-                    "weight"             =>  $_POST['data']['produto_peso'],
+                    "weight"             =>  floatval($_POST['data']['produto_peso']),
                     "width"              =>  floatval($_POST['data']['produto_largura']),
                     "length"             =>  floatval($_POST['data']['produto_comprimento']),
                     "height"             =>  floatval($_POST['data']['produto_altura']),
