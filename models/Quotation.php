@@ -197,7 +197,6 @@ class Quotation
     private function prepareBody()
     {
         $options = array(
-            "insurance_value" => $this->insurance_value,
             "receipt"         => $this->options->ar, 
             "own_hand"        => $this->options->mp, 
             "collect"         => false 
@@ -225,13 +224,14 @@ class Quotation
 
         $body['options'] = $options;
 
+        $insurance_value = [];
+
         if (!empty($this->products)) {
             foreach ($this->products as $key => $product) {
 
                 $body['products'][$key] = array(
                     'id'        => $product->id,
-                    'quantity'  => intval($product->quantity),
-                    'insurance' => floatval($product->price),
+                    'quantity'  => intval($product->quantity)
                 );
 
                 $helper = new HelperController();
@@ -240,13 +240,15 @@ class Quotation
                     'height' => $helper->converterDimension($product->height),
                     'width'  => $helper->converterDimension($product->width),
                     'length' => $helper->converterDimension($product->length),
-                    'weight' => (isset($product->notConverterWeight)) ? $product->weight : $helper->converterIfNecessary($product->weight)
+                    'weight' => (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
                 );
 
-                if (is_null($body['options']['insurance_value'])) {
-                    $body['options']['insurance_value'] = floatval($product->price);
-                }
+                $insurance_value[$key] = floatval($product->price);
             }
+        }
+
+        foreach ($insurance_value as $key => $value) {
+            $body['products'][$key]['insurance'] = round($value, 2);
         }
 
         if (!empty($package)) {
@@ -278,6 +280,8 @@ class Quotation
                 'body'   => json_encode($body),
                 'timeout'=> 10
             );
+
+            // var_dump(json_encode($body));die;
 
             $this->hashCotation = md5(json_encode($body));
 
