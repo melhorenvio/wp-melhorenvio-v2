@@ -228,7 +228,7 @@
                         <label for="41352">
                             <div class="wpme_address-top" style="border-bottom: none;">
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
-                                <label for="two">exibir a calculdora na tela do produto</label>
+                                <label for="two">exibir a calculadora na tela do produto</label>
                             </div><br>
                     
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
