@@ -47,30 +47,7 @@ class PackageController
 
         if (is_array($data)) {
             foreach ($data as $item) {
-
-                if (isset($item->packages) && !empty($item->packages)) {
                 
-                    $total = $this->countTotalvolumes($item->packages);
-                    $volumes = count($item->packages);
-                    $v = 1;
-                    foreach ($item->packages as $package) {
-                        $quantity = (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1;
-                        $weight = (isset($package->weight)) ? $package->weight : null;
-
-                        $packages[$item->id][] = [
-                            'volume' => $v,
-                            'width'  => (isset($package->dimensions->width)) ? $package->dimensions->width : null,
-                            'height' => (isset($package->dimensions->height)) ? $package->dimensions->height : null,
-                            'length' => (isset($package->dimensions->length)) ? $package->dimensions->length : null,
-                            'weight' => $this->getWeighteBox($total, $quantity, $weight),
-                            'quantity' => $quantity,
-                            'insurnace_value' => $this->getInsuranceBox($total, $quantity, $item->custom_price)
-                        ];
-
-                        $v++;
-                    }
-                }
-
                 if (isset($item->volumes) && !empty($item->volumes)) {
                 
                     $total = $this->countTotalvolumes($item->volumes);
@@ -88,7 +65,9 @@ class PackageController
                             'length' => (isset($package->length)) ? $package->length : null,
                             'weight' => $this->getWeighteBox($total, $quantity, $weight),
                             'quantity' => $quantity,
-                            'insurnace_value' => $this->getInsuranceBox($total, $quantity, $item->custom_price)
+                            'insurnace_value' => $package->price,
+                            'insurance' => $package->insurance,
+                            'products' => $package->products
                         ];
 
                         $v++;

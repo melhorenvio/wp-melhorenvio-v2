@@ -24,6 +24,7 @@ class ProductsController
             }
 
             $products[] = [
+                "id"              => $_product->get_id(),
                 "name"            => $_product->get_name(),
                 "quantity"        => $item_product->get_quantity(),
                 "unitary_value"   => round($_product->get_price(), 2),
