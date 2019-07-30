@@ -252,6 +252,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -812,6 +814,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_v_money___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_v_money__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
 //
 //
 //
@@ -3363,18 +3366,28 @@ var render = function() {
               [
                 _c("option", { attrs: { value: "all" } }, [_vm._v("Todas")]),
                 _vm._v(" "),
-                _c("option", { attrs: { value: "printed" } }, [
-                  _vm._v("Impressas")
-                ]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "paid" } }, [_vm._v("Pagas")]),
-                _vm._v(" "),
                 _c("option", { attrs: { value: "pending" } }, [
-                  _vm._v("Aguardando pagamento")
+                  _vm._v("Pendente")
                 ]),
                 _vm._v(" "),
-                _c("option", { attrs: { value: "generated" } }, [
-                  _vm._v("Geradas")
+                _c("option", { attrs: { value: "released" } }, [
+                  _vm._v("Liberada")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "posted" } }, [
+                  _vm._v("Postado")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "delivered" } }, [
+                  _vm._v("Entregue")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "canceled" } }, [
+                  _vm._v("Cancelado")
+                ]),
+                _vm._v(" "),
+                _c("option", { attrs: { value: "undelivered" } }, [
+                  _vm._v("Não Entregue")
                 ])
               ]
             )
@@ -3760,7 +3773,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Documentos")])]),
       _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Situação")])]),
+      _c("li", [_c("span", [_vm._v("Etiqueta")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Ações")])])
     ])
@@ -3873,7 +3886,7 @@ var render = function() {
         _vm._v(" "),
         _c("p", [
           _vm._v(
-            "Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações"
+            "Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações."
           )
         ]),
         _vm._v(" "),
@@ -3959,7 +3972,7 @@ var render = function() {
         _vm._v(" "),
         _c("p", [
           _vm._v(
-            "Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos"
+            "Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos."
           )
         ]),
         _vm._v(" "),
@@ -4380,6 +4393,12 @@ var render = function() {
       _c("div", { staticClass: "wpme_config" }, [
         _c("h2", [_vm._v("Opções para cotação")]),
         _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada."
+          )
+        ]),
+        _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
             _c("li", [
@@ -4490,7 +4509,7 @@ var render = function() {
         _vm._v(" "),
         _c("p", [
           _vm._v(
-            "Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto"
+            "Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto."
           )
         ]),
         _vm._v(" "),
