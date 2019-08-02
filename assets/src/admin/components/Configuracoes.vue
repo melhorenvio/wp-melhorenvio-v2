@@ -74,7 +74,7 @@
 
         <div class="wpme_config">
             <h2>Endereço</h2>
-            <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações</p>
+            <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
@@ -100,7 +100,7 @@
 
         <div class="wpme_config">
             <h2>Jadlog</h2>
-            <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos</p>
+            <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
@@ -204,6 +204,7 @@
         
         <div class="wpme_config">
             <h2>Opções para cotação</h2>
+            <p>As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
@@ -221,7 +222,7 @@
 
         <div class="wpme_config">
             <h2>Calculadora</h2>
-            <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto</p>
+            <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
