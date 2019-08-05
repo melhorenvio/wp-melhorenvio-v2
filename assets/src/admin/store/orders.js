@@ -182,7 +182,6 @@ const orders = {
                     commit('toggleLoader', false) 
                 }
             }).catch(error => {
-
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)

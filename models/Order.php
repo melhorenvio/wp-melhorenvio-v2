@@ -12,10 +12,10 @@ class Order {
     private $id;
     private $products;
     private $total;
-    private $total_shipping;
+    private $shipping_total;
     private $to;
     private $cotation;
-    private $status;
+    //private $status;
     private $address;
 
     /**
@@ -36,9 +36,9 @@ class Order {
             
             $this->products = $this->getProducts();
             
-            $this->total = $orderWc->total;
+            $this->total = 0; //$orderWc->total;
             
-            $this->shipping_total = $orderWc->shipping_total;
+            $this->shipping_total = 0; //$orderWc->shipping_total;
             
             $this->to = $data['billing'];
             
@@ -508,15 +508,16 @@ class Order {
         $diff = [];
 
         foreach ($data as $cot) {
-            if (is_null($cot->id)) {
+            $cot_id = $cot->id;
+            if (is_null($cot_id)) {
                 continue;
             }
-            $response[$cot->id] =  $cot;
+            $response[$cot_id] =  $cot;
 
-            if ($firstCotation[$cot->id]->price != $cot->price) {
+            if ($firstCotation[$cot_id]->price != $cot->price) {
 
-                $diff[$cot->id] = [
-                    'first' => str_replace('.', ',', $firstCotation[$cot->id]->price),
+                $diff[$cot_id] = [
+                    'first' => str_replace('.', ',', $firstCotation[$cot_id]->price),
                     'last'  => $cot->price,
                     'date'  => date('d/m/Y', strtotime($firstCotation['date_cotation']))
                 ];

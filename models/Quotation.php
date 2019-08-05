@@ -332,7 +332,7 @@ class Quotation
             }
         } 
 
-        if (!is_null($service)) {
+        if (!is_null($service) && isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service]) ) {
             return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service];
         }
 
