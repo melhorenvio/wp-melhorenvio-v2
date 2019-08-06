@@ -42,7 +42,7 @@ class PackageController
         $data = get_post_meta($order_id, 'melhorenvio_cotation_v2');
 
         $data = end($data);
-
+        //return $data;
         $packages = [];
 
         if (is_array($data)) {
@@ -65,7 +65,7 @@ class PackageController
                             'length' => (isset($package->length)) ? $package->length : null,
                             'weight' => $this->getWeighteBox($total, $quantity, $weight),
                             'quantity' => $quantity,
-                            'insurnace_value' => $package->price,
+                            'insurance_value' => (isset($package->price) ? $package->price : 1.0 ),
                             'insurance' => $package->insurance,
                             'products' => $package->products
                         ];

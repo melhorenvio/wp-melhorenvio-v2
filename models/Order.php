@@ -91,11 +91,11 @@ class Order {
 
             try {
                 $order = new Order($post->ID);
-
+                
                 $dataMelhorEnvio = $order->getDataOrder(); 
 
                 $cotation = $order->getCotation();
-                
+
                 $invoice = $order->getInvoice();
 
                 $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
@@ -113,7 +113,7 @@ class Order {
                     'id'             => (int) $order->id,
                     'total'          => 'R$' . number_format($order->total, 2, ',', '.'),
                     'products'       => $order->getProducts(),
-                    'cotation'       => $cotation ,
+                    'cotation'       => $cotation,
                     'address'        => $order->address,
                     'to'             => $order->to,
                     'status'         => $dataMelhorEnvio['status'],
@@ -407,6 +407,8 @@ class Order {
             $statusTranslate = 'Não entregue';
         } elseif ($status == 'generated') {
             $statusTranslate = 'Gerada';
+        } elseif ($status == 'paid') {
+            $statusTranslate = 'Paga';
         } else {
             $statusTranslate = 'Não possui';
         }
