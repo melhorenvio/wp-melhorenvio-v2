@@ -217,21 +217,26 @@
                     status,
                     errors
                 ] = args
-                
+
+                this.item.status_texto = 'Não possui';
                 
                 if (status == 'paid') {
+                    this.item.status_texto = 'Pago';
                     return false;
                 }
 
                 if (status == 'printed') {
+                    this.item.status_texto = 'Impresso';
                     return false;
                 }
 
                 if (status == 'generated') {
+                    this.item.status_texto = 'Gerado';
                     return false;
                 }
 
                 if (status == 'pending') {
+                    this.item.status_texto = 'Pendente';
                     return false;
                 }
 

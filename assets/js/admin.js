@@ -711,19 +711,25 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status, errors] = args;
 
+            this.item.status_texto = 'Não possui';
+
             if (status == 'paid') {
+                this.item.status_texto = 'Pago';
                 return false;
             }
 
             if (status == 'printed') {
+                this.item.status_texto = 'Impresso';
                 return false;
             }
 
             if (status == 'generated') {
+                this.item.status_texto = 'Gerado';
                 return false;
             }
 
             if (status == 'pending') {
+                this.item.status_texto = 'Pendente';
                 return false;
             }
 
@@ -4564,7 +4570,7 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("label", { attrs: { for: "two" } }, [
-                      _vm._v("exibir a calculdora na tela do produto")
+                      _vm._v("exibir a calculadora na tela do produto")
                     ])
                   ]
                 ),
@@ -5945,7 +5951,6 @@ var orders = {
                     commit('toggleLoader', false);
                 }
             }).catch(function (error) {
-
                 commit('setMsgModal', error.message);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
