@@ -121,7 +121,6 @@ class Quotation
         $products = [];
 
         try {
-
             $orderWc = new \WC_Order( $this->id );
 
             $order_items = $orderWc->get_items();
@@ -138,11 +137,11 @@ class Quotation
                     'id'           => $data['product_id'],
                     'variation_id' => $data['variation_id'],
                     'name'         => $data['name'],
-                    'price'        => $productInfo->get_price(),
-                    'height'       => $productInfo->get_height(),
-                    'width'        => $productInfo->get_width(),
-                    'length'       => $productInfo->get_length(),
-                    'weight'       => $productInfo->get_weight(),
+                    'price'        => ( !empty($productInfo) ? $productInfo->get_price() : ''),
+                    'height'       => ( !empty($productInfo) ? $productInfo->get_height() : ''),
+                    'width'        => ( !empty($productInfo) ? $productInfo->get_width(): ''),
+                    'length'       => ( !empty($productInfo) ? $productInfo->get_length(): ''),
+                    'weight'       => ( !empty($productInfo) ? $productInfo->get_weight(): ''),
                     'quantity'     => intval($data['quantity']),
                     'total'        => floatval($data['total'])
                 );

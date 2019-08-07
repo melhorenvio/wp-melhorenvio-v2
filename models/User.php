@@ -21,7 +21,7 @@ class User
     {
         // Get info on session
         $codeStore = md5(get_option('home'));
-
+        /*
         if (isset($_SESSION[$codeStore][self::SESSION_USER_INFO])) {
             return array(
                 'success' => true,
@@ -43,7 +43,7 @@ class User
                 'data'    => $optionData
             );
         }
-
+        */
         // Get info on API Melhor Envio
         $token = (new TokenController())->token();
         
