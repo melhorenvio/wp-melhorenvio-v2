@@ -55,7 +55,7 @@ class OrdersController
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
 
         $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
-        //print_r($packages);
+        
         if (empty($packages)) {
             echo json_encode([
                 'success' => false,
@@ -65,11 +65,10 @@ class OrdersController
 
         foreach ($packages[$_GET['choosen']][0] as $key => $attribute) {
             if (is_null($attribute)) {
-                //print_r($attribute);
                 echo json_encode([
                     'success' => false,
                     'message' => printf('Por favor, informar o valor para %s', $key)
-                ]);
+                ]);die;
             }
         }
 
@@ -227,16 +226,11 @@ class OrdersController
                 'timeout'=> 10
             );
 
-            //print_r($params);
-
-
             $response = json_decode(
                 wp_remote_retrieve_body(
                     wp_remote_post(self::URL . '/v2/me/cart', $params)
                 )
             );
-
-            //print_r($response);
 
             delete_post_meta($_GET['order_id'], 'melhorenvio_errors');
             $logErrors = array();
@@ -274,6 +268,7 @@ class OrdersController
             $protocols[] = $response->protocol;   
         }
 
+        // get error message from ME Api
         if (!empty($response->error)) {
             echo json_encode([
                 'success' => false,

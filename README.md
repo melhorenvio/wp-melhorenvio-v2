@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.5.15
+Version: 2.5.17
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -55,10 +55,16 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ## Autores
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
-* **Marcos Brito** - *Melhor Envio*
+* **Marcos Brito** - *Melhor Envio* - [MarcosWillian](https://github.com/MarcosWillian)
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.5.17] - 2019-08
+- Remoção do cacheamento do título da loja.
+- Remoção do cacheamento das informações do titular da conta ME.
+- Ajustes na lógica de validação da cotação.
+#### [2.5.16] - 2019-08
+- Ajustes do erro 500 na listagem das lojas.
 #### [2.5.15] - 2019-08
 - Adição campo de situação na listagem de pedidos
 - Adição de label para campos de taxas e valores extras (máscara de valores) para os métodos de envios

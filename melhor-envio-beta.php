@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.5.15
+Version: 2.5.17
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -79,7 +79,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.5.15';
+    public $version = '2.5.17';
 
     /**
      * Holds various class instances
