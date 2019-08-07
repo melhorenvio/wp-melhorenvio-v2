@@ -3483,7 +3483,12 @@ var render = function() {
                               _vm._v(" "),
                               _c(
                                 "span",
-                                { staticStyle: { "font-size": "12px" } },
+                                {
+                                  staticStyle: {
+                                    "font-size": "12px",
+                                    cursor: "pointer"
+                                  }
+                                },
                                 [
                                   _c(
                                     "a",

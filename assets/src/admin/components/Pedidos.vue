@@ -94,7 +94,7 @@
                         <ul class="body-list">
                             <li>
                                 <Id :item="item"></Id>
-                                <span style="font-size:12px"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
+                                <span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
                             </li>
                             <li><span></span></li>
                             <li>
