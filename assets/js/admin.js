@@ -3170,6 +3170,10 @@ if (false) {
 /* unused harmony namespace reexport */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_760ccfd0_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Informacoes_vue__ = __webpack_require__(85);
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(127)
+}
 var normalizeComponent = __webpack_require__(0)
 /* script */
 
@@ -3179,7 +3183,7 @@ var normalizeComponent = __webpack_require__(0)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -3249,7 +3253,7 @@ var render = function() {
             _c("ul", { staticClass: "body-list" }, [
               _c(
                 "li",
-                { staticStyle: { width: "40%" } },
+                { staticClass: "product" },
                 [
                   _vm._l(_vm.products, function(prod) {
                     return [
@@ -4564,7 +4568,7 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("label", { attrs: { for: "two" } }, [
-                      _vm._v("exibir a calculdora na tela do produto")
+                      _vm._v("exibir a calculadora na tela do produto")
                     ])
                   ]
                 ),
@@ -5945,7 +5949,6 @@ var orders = {
                     commit('toggleLoader', false);
                 }
             }).catch(function (error) {
-
                 commit('setMsgModal', error.message);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
@@ -6519,6 +6522,34 @@ var log = {
 };
 
 exports.default = log;
+
+/***/ }),
+/* 105 */,
+/* 106 */,
+/* 107 */,
+/* 108 */,
+/* 109 */,
+/* 110 */,
+/* 111 */,
+/* 112 */,
+/* 113 */,
+/* 114 */,
+/* 115 */,
+/* 116 */,
+/* 117 */,
+/* 118 */,
+/* 119 */,
+/* 120 */,
+/* 121 */,
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
+/* 126 */,
+/* 127 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 ],[46]);
