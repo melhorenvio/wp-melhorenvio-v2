@@ -18,7 +18,7 @@
                     </td>
                     <td>
                         <ul class="body-list">
-                            <li style="width:40%">
+                            <li class="product">
                                 <template v-for="prod in products">
                                     <p>
                                         <b>Produto:</b> {{prod.quantity}}X - {{prod.name}} <br>
@@ -50,3 +50,12 @@
         }
     }
 </script>
+
+<style>
+    .table .body-list .product {
+        display: grid;
+        width: 100% !important;
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: .5rem;
+    }
+</style>
