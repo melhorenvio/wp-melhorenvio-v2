@@ -200,20 +200,39 @@ class Order {
         if (empty($cotation) || is_null($cotation)) {
             return $response;
         }
+        
         foreach($cotation as $item){
 
             if(is_null($item->id) || !isset($item->id)) {
                 continue;
             }
+            
+            if (isset($item->packages)) {
 
-            foreach($item->packages as $key => $package) {
-                $response[$item->id] = (object) [
-                    'largura' => $package->dimensions->width,
-                    'altura' => $package->dimensions->height,
-                    'comprimento' => $package->dimensions->length,
-                    'peso' => $package->weight
-                ];
+                foreach($item->packages as $key => $package) {
+                    $response[$item->id] = (object) [
+                        'largura' => $package->dimensions->width,
+                        'altura' => $package->dimensions->height,
+                        'comprimento' => $package->dimensions->length,
+                        'peso' => $package->weight
+                    ];
+                }
+
+            } elseif (isset($item->volumes)) {
+
+                foreach($item->volumes as $key => $volume) {
+                    $response[$item->id] = (object) [
+                        'largura' => $volume->width,
+                        'altura' => $volume->height,
+                        'comprimento' => $volume->length,
+                        'peso' => $volume->weight
+                    ];
+                }
+
+            } else {
+                continue;
             }
+            
         }
 
         return $response;
@@ -233,27 +252,30 @@ class Order {
     {
         $statusApi = $this->getStatusApi($orders);                
         foreach ($posts as $key => $post) {
-            
-            foreach ($post['order_id'] as $order_id) {                
 
-                if (array_key_exists($order_id, $statusApi)) {
-                    if ($post['status'] != $statusApi[$order_id]['status']) {
+            if (!empty($post['order_id'])) {
+                foreach ($post['order_id'] as $order_id) {                
 
-                        $st = $statusApi[$order_id]['status'];
-                        if ($st == 'released') {
-                            $st = 'paid';
+                    if (array_key_exists($order_id, $statusApi)) {
+                        if ($post['status'] != $statusApi[$order_id]['status']) {
+
+                            $st = $statusApi[$order_id]['status'];
+                            if ($st == 'released') {
+                                $st = 'paid';
+                            }
+
+                            if ($st == 'canceled') {
+                                $st = null;
+                            }
+                            $posts[$key]['status'] = $st;                                               
                         }
-
-                        if ($st == 'canceled') {
-                            $st = null;
-                        }
-                        $posts[$key]['status'] = $st;                                               
-                    }
-                      
-                } else {
-                    $posts[$key]['status'] = null;  
-                }                                       
-            }            
+                        
+                    } else {
+                        $posts[$key]['status'] = null;  
+                    }                                       
+                }
+            }
+                        
         }
         return $posts;
     }
@@ -442,16 +464,17 @@ class Order {
     private function getInvoice($id = null) 
     {
         if ($id) $this->id = $id; 
-        $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
-        $default = [
-            'number' => null,
-            'key' => null
-        ];
-
-        if (empty($data) || !$data) {
-            return $default;
+        $default = ['number' => null,'key' => null];
+        $return = '';
+        
+        $getPost = get_post_meta($this->id, 'melhorenvio_invoice_v2');
+        if(count($getPost) > 0){
+            $return = end($getPost);
+        } else {
+            $return = $default;
         }
-        return $data;
+       
+        return $return;
     }
 
     /**
