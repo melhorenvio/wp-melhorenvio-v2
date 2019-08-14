@@ -98,7 +98,7 @@
 /******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 105);
+/******/ 	return __webpack_require__(__webpack_require__.s = 106);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -34095,7 +34095,7 @@ module.exports = Cancel;
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(103)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(104)(module)))
 
 /***/ }),
 /* 31 */,
@@ -35366,7 +35366,8 @@ module.exports = function spread(callback) {
 /* 100 */,
 /* 101 */,
 /* 102 */,
-/* 103 */
+/* 103 */,
+/* 104 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -35394,14 +35395,14 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 104 */,
-/* 105 */
+/* 105 */,
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(3);
-__webpack_require__(106);
+__webpack_require__(107);
 __webpack_require__(30);
-__webpack_require__(109);
+__webpack_require__(110);
 __webpack_require__(27);
 __webpack_require__(4);
 __webpack_require__(7);
@@ -35409,11 +35410,11 @@ module.exports = __webpack_require__(2);
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {var path = __webpack_require__(107);
-var pkg = __webpack_require__(108);
+/* WEBPACK VAR INJECTION */(function(__dirname) {var path = __webpack_require__(108);
+var pkg = __webpack_require__(109);
 
 var jeetPath = path.join(__dirname, 'styl');
 
@@ -35436,7 +35437,7 @@ exports.version = pkg.version;
 /* WEBPACK VAR INJECTION */}.call(exports, "/"))
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
@@ -35745,13 +35746,13 @@ var substr = 'ab'.substr(-1) === 'b'
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports) {
 
 module.exports = {"name":"jeet","version":"7.2.0","description":"A simple Sass and Stylus grid system. Built for humans.","homepage":"https://jeet.gs","license":"MIT","main":"./index.js","author":"Cory Simmons <cory@launchboxhq.com>","contributors":["Jake Cleary <shout@jakecleary.net> (http://jakecleary.net)","Andreas Nedbal <andy@pixelde.su> (http://pixelde.su)","Sam Saccone"],"keywords":["grid","stylus","scss"],"devDependencies":{"node-sass":"^3.8.0","stylus":"^0.54.5"},"scripts":{"test:node":"node test/node-stylus/node"},"repository":"mojotech/jeet","bugs":"https://github.com/mojotech/jeet/issues"}
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__dirname) {module.exports = function(opts) {
@@ -35767,8 +35768,8 @@ module.exports = {"name":"jeet","version":"7.2.0","description":"A simple Sass a
 /* WEBPACK VAR INJECTION */}.call(exports, "/"))
 
 /***/ }),
-/* 110 */,
-/* 111 */
+/* 111 */,
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*

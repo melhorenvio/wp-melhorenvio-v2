@@ -1,4 +1,8 @@
 <?php
+
+session_start();
+require __DIR__ . '/vendor/autoload.php';
+
 /*
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
@@ -95,10 +99,6 @@ final class Base_Plugin {
      * within our plugin.
      */
     public function __construct() {
-
-        session_start();
-
-        require __DIR__ . '/vendor/autoload.php';
         
         $this->define_constants();
 

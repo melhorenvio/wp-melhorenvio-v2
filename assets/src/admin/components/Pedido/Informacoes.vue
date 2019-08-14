@@ -38,15 +38,13 @@
     export default {
         props: {
             volume: {
-                type: Array,
-                default: () => ({}),
+                type: Object,
+                default: {},
             },
             products: {
-                type: Array,
-                default: () => ({}),
+                type: Object,
+                default: {},
             }
-        },
-        mounted () { 
         }
     }
 </script>
