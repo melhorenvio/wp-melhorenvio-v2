@@ -91,7 +91,7 @@ const configuration = {
                         commit('setStyleCalculator', response.data.style_calculator)
                         commit('setPathPlugins', response.data.path_plugins)
                         commit('setShowCalculator', response.data.calculator)
-                        commit('setMethodShipments', removeShipmentIfNotME(response.data.metodos))
+                        commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)
                         resolve(true)
