@@ -162,38 +162,40 @@
                             </div>
 
                             <transition name="fade">
-                                <div class="me-modal" v-show="codeshiping[option.code]['status']">
-                                    <div>
-                                        <p class="title">{{option.name}}</p>
-                                        <div class="content">
-                                            <ul>
-                                                <li>
-                                                    <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" v-on:keyup="requiredInput(option.name)" type="text" class="input" maxlength="100" /><br><br>
-                                                    <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
-                                                    <div class="group-input">
-                                                        <money v-model="option.time" v-bind="percent"></money>
-                                                        <p> Dias </p>
-                                                    </div>
-                                                    <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <div class="group-input">
-                                                        <money v-model="option.tax" v-bind="money"></money>
-                                                        <p> R$ </p>
-                                                    </div>
-                                                    <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
-                                                    <div class="group-input">
-                                                        <money v-model="option.perc" v-bind="percent"></money>
-                                                        <p> % </p>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                <section v-if="inArrayKeys(option.code, codeshiping)">
+                                    <div class="me-modal" v-show="codeshiping[option.code]['status']">
+                                        <div>
+                                            <p class="title">{{option.name}}</p>
+                                            <div class="content">
+                                                <ul>
+                                                    <li>
+                                                        <label>Nome de exibição</label><br>
+                                                        <input v-model="option.name" v-on:keyup="requiredInput(option.name)" type="text" class="input" maxlength="100" /><br><br>
+                                                        <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
+                                                        <div class="group-input">
+                                                            <money v-model="option.time" v-bind="percent"></money>
+                                                            <p> Dias </p>
+                                                        </div>
+                                                        <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
+                                                        <div class="group-input">
+                                                            <money v-model="option.tax" v-bind="money"></money>
+                                                            <p> R$ </p>
+                                                        </div>
+                                                        <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
+                                                        <div class="group-input">
+                                                            <money v-model="option.perc" v-bind="percent"></money>
+                                                            <p> % </p>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="buttons -center box-buttons" >
+                                                <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
+                                            </div>
+                                            
                                         </div>
-                                        <div class="buttons -center box-buttons" >
-                                            <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
-                                        </div>
-                                        
                                     </div>
-                                </div>
+                                </section>
                             </transition>
                         </label>
                     </li>
@@ -336,19 +338,7 @@ export default {
             },
             path_plugins: '',
             show_path: false,
-            codeshiping: [
-                {'id':1, 'status':false},
-                {'id':2, 'status':false},
-                {'id':3, 'status':false},
-                {'id':4, 'status':false},
-                {'id':5, 'status':false},
-                {'id':6, 'status':false},
-                {'id':7, 'status':false},
-                {'id':8, 'status':false},
-                {'id':9, 'status':false},
-                {'id':10, 'status':false},
-                {'id':11, 'status':false}
-            ],
+            codeshiping: '',
             money: {
                 decimal: ',',
                 thousands: '.',
@@ -416,7 +406,7 @@ export default {
             stores: 'getStores',
             agencies: 'getAgencies',
             style_calculator: 'getStyleCalculator',
-            methods_shipments: 'getMethodsShipments',
+            methods_shipments: removeShipmentIfNotME('getMethodsShipments'),
             show_load: 'showLoad',
             path_plugins_: 'getPathPlugins',
             where_calculator_: 'getWhereCalculator',
@@ -432,6 +422,11 @@ export default {
             'setAgencies',
             'saveAll'
         ]),
+        inArrayKeys: function(needle, haystack) {
+            
+            if(!(needle in haystack)) return true;
+            return false;
+        },
         requiredInput(element) {
             if (element.length == 0 || element.length > 100) {
                 this.canUpdate = false
@@ -454,7 +449,13 @@ export default {
                 {'id':8, 'status':false},
                 {'id':9, 'status':false},
                 {'id':10, 'status':false},
-                {'id':11, 'status':false}
+                {'id':11, 'status':false},
+                {'id':12, 'status':false},
+                {'id':13, 'status':false},
+                {'id':14, 'status':false},
+                {'id':15, 'status':false},
+                {'id':16, 'status':false},
+                {'id':17, 'status':false}
             ];
         },
         updateConfig () {
@@ -528,6 +529,22 @@ export default {
                     this.$router.push('Token') 
                 }
             })
+        },
+        removeShipmentIfNotME(shipments){
+            if(shipments.length == 0) {
+                return [];
+            }
+
+            var servicesME = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'];
+            var length = shipments.length;
+            var shipmentsPermitteds = [];
+            for(var i=0; i<length; i++) {
+                if(servicesME.includes(shipments[i].code)) {
+                    shipmentsPermitteds.push(shipments[i]); 
+                }
+            }
+
+            return shipmentsPermitteds;
         }
     },
     watch : {
