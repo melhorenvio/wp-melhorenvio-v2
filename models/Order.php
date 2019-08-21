@@ -109,10 +109,10 @@ class Order {
                     $orders[] = $dataMelhorEnvio['order_id'];
                 }
 
-                $data[] =  [
+                $data[] = [
                     'id'             => (int) $order->id,
                     'total'          => 'R$' . number_format($order->total, 2, ',', '.'),
-                    'products'       => $order->getProducts(),
+                    'products'       => (Object) $order->getProducts(),
                     'cotation'       => $cotation,
                     'address'        => $order->address,
                     'to'             => $order->to,
@@ -200,15 +200,13 @@ class Order {
         if (empty($cotation) || is_null($cotation)) {
             return $response;
         }
-        
         foreach($cotation as $item){
 
-            if(is_null($item->id) || !isset($item->id)) {
+            if(!isset($item->id) || is_null($item->id)) {
                 continue;
             }
-            
-            if (isset($item->packages)) {
 
+            if (isset($item->packages)) {
                 foreach($item->packages as $key => $package) {
                     $response[$item->id] = (object) [
                         'largura' => $package->dimensions->width,
@@ -217,9 +215,7 @@ class Order {
                         'peso' => $package->weight
                     ];
                 }
-
             } elseif (isset($item->volumes)) {
-
                 foreach($item->volumes as $key => $volume) {
                     $response[$item->id] = (object) [
                         'largura' => $volume->width,
@@ -228,19 +224,13 @@ class Order {
                         'peso' => $volume->weight
                     ];
                 }
-
             } else {
                 continue;
             }
-            
+
         }
 
         return $response;
-    }
-
-    public function getTo()
-    {
-        
     }
 
     /**
@@ -253,9 +243,8 @@ class Order {
         $statusApi = $this->getStatusApi($orders);                
         foreach ($posts as $key => $post) {
 
-            if (!empty($post['order_id'])) {
-                foreach ($post['order_id'] as $order_id) {                
-
+            if (isset($post['order_id'])) {
+                foreach ($post['order_id'] as $order_id) {         
                     if (array_key_exists($order_id, $statusApi)) {
                         if ($post['status'] != $statusApi[$order_id]['status']) {
 
@@ -273,9 +262,9 @@ class Order {
                     } else {
                         $posts[$key]['status'] = null;  
                     }                                       
-                }
-            }
-                        
+                }  
+            } 
+
         }
         return $posts;
     }
@@ -375,8 +364,9 @@ class Order {
     private function getDataOrder($id = null) 
     {
         if ($id) $this->id = $id; 
-
-        if(empty(get_post_meta($this->id, 'melhorenvio_status_v2'))) {
+        
+        $getPost = get_post_meta($this->id, 'melhorenvio_status_v2');
+        if(empty($getPost) || count($getPost) == 0) {
             return [
                 'status' => null,
                 'order_id' => null,
@@ -384,10 +374,10 @@ class Order {
             ];
         }
 
-        $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
+        $data = end($getPost);
 
         $status = null;
-        if ($data == false) {
+        if (!$data) {
             $status = $this->getOldstatus($this->id);
         }
 
@@ -463,17 +453,17 @@ class Order {
      */
     private function getInvoice($id = null) 
     {
-        if ($id) $this->id = $id; 
-        $default = ['number' => null,'key' => null];
         $return = '';
-        
+        if ($id) $this->id = $id; 
+        $default = ['number' => null, 'key' => null ];
+
         $getPost = get_post_meta($this->id, 'melhorenvio_invoice_v2');
-        if(count($getPost) > 0){
+        if(count($getPost) > 0) {
             $return = end($getPost);
         } else {
             $return = $default;
         }
-       
+        
         return $return;
     }
 
@@ -533,7 +523,7 @@ class Order {
         $diff = [];
 
         foreach ($data as $cot) {
-            $cot_id = $cot->id;
+            $cot_id = isset($cot->id)? $cot->id : null;
             if (is_null($cot_id)) {
                 continue;
             }
