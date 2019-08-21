@@ -145,7 +145,7 @@
             <h2>Personalizar métodos de envio</h2>
             <div class="wpme_flex">
                 <ul class="wpme_address">
-                    <li v-for="option in methods_shipments" v-bind:value="option.id" :key="option.id">
+                    <li v-for="option in filteredsShipments" v-bind:value="option.id" :key="option.id">
                         <label :for="option.id">
                             <div class="wpme_address-top ">
                                 <h3 class="title-methods">{{option.name}}</h3>
@@ -424,6 +424,14 @@ export default {
             options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs'
         }),
+        filteredsShipments() {
+            let filter = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+            let filtereds = this.methods_shipments.filter(function(shipment){
+                return filter.includes(shipment.code)
+            });
+            
+            return filtereds;
+        }
     },
     methods: {
         ...mapActions('configuration', [

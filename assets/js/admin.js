@@ -1219,7 +1219,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_calculator_: 'getShowCalculator',
         options_calculator_: 'getOptionsCalculator',
         configs: 'getConfigs'
-    })),
+    }), {
+        filteredsShipments() {
+            let filter = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
+            let filtereds = this.methods_shipments.filter(function (shipment) {
+                return filter.includes(shipment.code);
+            });
+
+            return filtereds;
+        }
+    }),
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('configuration', ['getConfigs', 'setLoader', 'setAgencies', 'saveAll']), {
         requiredInput(element) {
             if (element.length == 0 || element.length > 100) {
@@ -4145,7 +4154,7 @@ var render = function() {
           _c(
             "ul",
             { staticClass: "wpme_address" },
-            _vm._l(_vm.methods_shipments, function(option) {
+            _vm._l(_vm.filteredsShipments, function(option) {
               return _c("li", { key: option.id, attrs: { value: option.id } }, [
                 _c(
                   "label",
