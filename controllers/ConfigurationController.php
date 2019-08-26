@@ -149,8 +149,8 @@ class ConfigurationController
             if (in_array($method->id, $enableds)) {
                 $methods[] = [
                     'code' => $method->code,
-                    'title' => str_replace(' (Melhor envio)', '', $method->method_title),
-                    'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor envio)', '', $method->method_title),
+                    'title' => str_replace(' (Melhor Envio)', '', $method->method_title),
+                    'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor Envio)', '', $method->method_title),
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0 ,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0, 
@@ -164,7 +164,7 @@ class ConfigurationController
     }
 
     /**
-     * @return void
+     * @return array
      */
     public function getMethodsEnablesArray()
     {   
@@ -177,7 +177,6 @@ class ConfigurationController
         $shipping_methods = \WC()->shipping->get_shipping_methods();
 
         foreach ($shipping_methods as $method) {
-
             if (!isset($method->code) || is_null($method->code)) {
                 continue;
             }
@@ -185,8 +184,8 @@ class ConfigurationController
             if (in_array($method->id, $enableds)) {
                 $methods[] = [
                     'code' => $method->code,
-                    'title' => str_replace(' (Melhor envio)', '', $method->method_title),
-                    'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor envio)', '', $method->method_title),
+                    'title' => str_replace(' (Melhor Envio)', '', $method->method_title),
+                    'name' =>  (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "" ) ? $options[$method->code]['name'] : str_replace(' (Melhor Envio)', '', $method->method_title),
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0 ,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,

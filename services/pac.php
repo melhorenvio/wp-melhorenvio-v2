@@ -27,8 +27,8 @@ function pac_shipping_method_init() {
 				$this->init();
 				$this->id                 = "pac"; 
 				$this->instance_id = absint( $instance_id );
-				$this->method_title       = "Correios Pac (Melhor envio)"; 
-				$this->method_description = 'Serviço Pac';
+				$this->method_title       = "Correios PAC (Melhor Envio)";
+				$this->method_description = 'Serviço PAC';
 				$this->enabled            = "yes"; 
 				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio PAC';
 				$this->supports = array(

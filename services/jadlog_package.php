@@ -26,7 +26,7 @@ function jadlog_package_shipping_method_init() {
 			public function __construct($instance_id = 0) {
 				$this->id                 = "jadlog_package"; 
 				$this->instance_id = absint( $instance_id );
-				$this->method_title       = "Jadlog Package (Melhor envio)"; 
+				$this->method_title       = "Jadlog Package (Melhor Envio)";
 				$this->method_description = 'Serviço Jadlog Package';
 				$this->enabled            = "yes"; 
 				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Jadlog Package';
