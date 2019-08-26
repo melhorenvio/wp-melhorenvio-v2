@@ -347,7 +347,14 @@ export default {
                 {'id':8, 'status':false},
                 {'id':9, 'status':false},
                 {'id':10, 'status':false},
-                {'id':11, 'status':false}
+                {'id':11, 'status':false},
+                {'id':12, 'status':false},
+                {'id':13, 'status':false},
+                {'id':14, 'status':false},
+                {'id':15, 'status':false},
+                {'id':16, 'status':false},
+                {'id':17, 'status':false},
+                {'id':18, 'status':false}
             ],
             money: {
                 decimal: ',',
@@ -462,7 +469,14 @@ export default {
                 {'id':8, 'status':false},
                 {'id':9, 'status':false},
                 {'id':10, 'status':false},
-                {'id':11, 'status':false}
+                {'id':11, 'status':false},
+                {'id':12, 'status':false},
+                {'id':13, 'status':false},
+                {'id':14, 'status':false},
+                {'id':15, 'status':false},
+                {'id':16, 'status':false},
+                {'id':17, 'status':false},
+                {'id':18, 'status':false}
             ];
         },
         updateConfig () {

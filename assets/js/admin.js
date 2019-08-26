@@ -1157,7 +1157,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             },
             path_plugins: '',
             show_path: false,
-            codeshiping: [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }],
+            codeshiping: [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }, { 'id': 12, 'status': false }, { 'id': 13, 'status': false }, { 'id': 14, 'status': false }, { 'id': 15, 'status': false }, { 'id': 16, 'status': false }, { 'id': 17, 'status': false }, { 'id': 18, 'status': false }],
             money: {
                 decimal: ',',
                 thousands: '.',
@@ -1241,7 +1241,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.codeshiping[code]['status'] = true;
         },
         closeShowModalEditMethod() {
-            this.codeshiping = [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }];
+            this.codeshiping = [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }, { 'id': 12, 'status': false }, { 'id': 13, 'status': false }, { 'id': 14, 'status': false }, { 'id': 15, 'status': false }, { 'id': 16, 'status': false }, { 'id': 17, 'status': false }, { 'id': 18, 'status': false }];
         },
         updateConfig() {
 
