@@ -72,7 +72,7 @@ class OrdersController
             }
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1,2,3,4,5,6,7,8,9,10,11])) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17])) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'
