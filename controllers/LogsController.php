@@ -26,7 +26,7 @@ class LogsController
             </tr>';
         }  
 
-        echo '<h1>Logs Melhor envio</h1>';
+        echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>ID</td><td>Mensagem</td><td>Data</td><td>Link</td></tr>';
         echo $rows;
         echo '</table>';
@@ -145,7 +145,7 @@ class LogsController
             </tr>';
         }  
 
-        echo '<h1>Logs Melhor envio</h1>';
+        echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>CEP</td><td>Data</td><td>Link</td></tr>';
         echo $rows;
         echo '</table>';

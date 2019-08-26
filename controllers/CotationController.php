@@ -17,7 +17,7 @@ use Models\Method;
 
 class CotationController 
 {
-    const URL = 'https://q-engine-hub.melhorenvio.com';
+    const URL = 'https://q-engine.melhorenvio.com';
 
     public function __construct() 
     {
@@ -38,6 +38,7 @@ class CotationController
 
         $totalCart = 0;
         $freeShipping = false;
+
         foreach(WC()->cart->cart_contents as $cart) {
             $totalCart += $cart['line_subtotal'];
         }
@@ -52,7 +53,7 @@ class CotationController
         $result['date_cotation'] = date('Y-m-d H:i:d'); 
         $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
         $result['free_shipping'] = $freeShipping; 
-        $result['total']         = $total;
+        $result['total']         = $total; // var não definida
         
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
 

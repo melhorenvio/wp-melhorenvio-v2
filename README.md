@@ -20,7 +20,7 @@ Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a mo
 
 Com a instalação do plugin do Woocomerce você pode ampliar ainda mais a automação dos fretes de sua loja virtual. Confira os principais benefícios e vantagens personalizadas disponíveis:
 - Cotação dos envios com as funcionalidades do Melhor Envio direto na tela do produto.
-- Conexão da Loja WooCommerce com a conta do Melhor envio para buscar automaticamente informações como endereços, lojas e documentos (CNPJ, Inscrição estadual) e saldo em carteira.
+- Conexão da Loja WooCommerce com a conta do Melhor Envio para buscar automaticamente informações como endereços, lojas e documentos (CNPJ, Inscrição estadual) e saldo em carteira.
 - Buscar todos pedidos da Loja WooCommerce do vendedor, com filtros de status da compra e por status da etiqueta de envio.
 - Cotar a compra de etiqueta usando os dados da loja e do cliente no painel.
 - Enviar etiquetas de postagem para o carrinho de compras do Melhor Envio.

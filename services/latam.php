@@ -25,10 +25,10 @@ function latam_shipping_method_init() {
 			public function __construct($instance_id = 0) {
 				$this->id                 = "latam"; 
 				$this->instance_id = absint( $instance_id );
-				$this->method_title       = "Latam Próximo Dia (Melhor envio)"; 
-				$this->method_description = 'Serviço Latam Próximo Dia';
+				$this->method_title       = "LATAM Cargo Próximo Dia (Melhor Envio)";
+				$this->method_description = 'Serviço LATAM Cargo Próximo Dia';
 				$this->enabled            = "yes"; 
-				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Latam Próximo Dia';
+				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio LATAM Cargo Próximo Dia';
 				$this->supports = array(
 					'shipping-zones',
 					'instance-settings',

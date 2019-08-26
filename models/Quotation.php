@@ -31,16 +31,17 @@ class Quotation
 
     public $response;
 
-    const URL = 'https://q-engine-hub.melhorenvio.com';
+    const URL = 'https://q-engine.melhorenvio.com';
 
     public function __construct($id = null, $products = array(), $package = array(), $to = null)
     {
         $this->id = $id;
-        $this->from            = $this->getFrom();
+
+        $this->from = $this->getFrom();
 
         if (!is_null($id)) {
-            $this->products        = $this->getProducts();    
-            $this->to              = $this->getTo();
+            $this->products = $this->getProducts();
+            $this->to = $this->getTo();
             $this->insurance_value = $this->getInsuranceValue();
             
         }
@@ -53,38 +54,34 @@ class Quotation
             $this->to = $to;
         }
 
-        $this->options         = $this->getOptions();
-        $this->codeStore       = md5(get_option('home'));
+        $this->options = $this->getOptions();
+        $this->codeStore = md5(get_option('home'));
     }
 
     /**
      * Return an object From data quotation
      *
-     * @return Object
+     * @return Object|void
      */
     public function getFrom()
     {
         try {
-
             $user = (new User())->get();
 
             $address = (new Address())->getAddressFrom();
 
-            if (!$user['success'] || !$address['success']) {
-                return false;
+            if ($user['success'] && $address['success']) {
+                $user = $user['data'];
+
+                return (object) array(
+                    'name'     => $user['firstname'] . ' ' . $user['lastname'],
+                    'email'    => $user['email'],
+                    'document' => $user['document'],
+                    'phone'    => $user['phone']->phone,
+                    'address'  => (object) $address['address']
+                );
             }
-
-            $user = $user['data'];
-
-            return (object) array(
-                'name'     => $user['firstname'] . ' ' . $user['lastname'],
-                'email'    => $user['email'],
-                'document' => $user['document'],
-                'phone'    => $user['phone']->phone,
-                'address'  => (object) $address['address']
-            );
-
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // tratar log 
         }
     }
@@ -92,12 +89,11 @@ class Quotation
     /**
      * Return an object To data quotation
      *
-     * @return Object
+     * @return Object|void
      */
     public function getTo()
     {
         try {
-
             $orderWc = new \WC_Order( $this->id );
 
             $to = $orderWc->get_data();
@@ -105,8 +101,7 @@ class Quotation
             $to = $to['shipping'];
 
             return (object) $to;
-
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // tratar log
         }
     }
@@ -114,7 +109,7 @@ class Quotation
     /**
      * Return an array with the products by quotation
      *
-     * @return Array
+     * @return array|void
      */
     public function getProducts()
     {
@@ -126,50 +121,46 @@ class Quotation
             $order_items = $orderWc->get_items();
             
             foreach ($order_items as $product) {
-
                 $data = $product->get_data();
                 
                 $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
 
-                $productInfo = wc_get_product( $productId );
+                $productInfo = wc_get_product($productId);
 
                 $products[] = (object) array(
                     'id'           => $data['product_id'],
                     'variation_id' => $data['variation_id'],
                     'name'         => $data['name'],
-                    'price'        => ( !empty($productInfo) ? $productInfo->get_price() : ''),
-                    'height'       => ( !empty($productInfo) ? $productInfo->get_height() : ''),
-                    'width'        => ( !empty($productInfo) ? $productInfo->get_width(): ''),
-                    'length'       => ( !empty($productInfo) ? $productInfo->get_length(): ''),
-                    'weight'       => ( !empty($productInfo) ? $productInfo->get_weight(): ''),
+                    'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
+                    'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
+                    'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
+                    'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
+                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
                     'quantity'     => intval($data['quantity']),
                     'total'        => floatval($data['total'])
                 );
             }
 
-        } catch (Exception $e) {
+            return $products;
+        } catch (\Exception $e) {
             // Tratar log aqui
         }
-
-        return $products;
     }
 
     /**
      * Return a insurance value by quotation
      *
-     * @return flaot
+     * @return float|void
      */
     public function getInsuranceValue()
     {
         try {
-
             $orderWc = new \WC_Order( $this->id );
 
             $data = $orderWc->get_data();
 
             return floatval($data['total']);
-        
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // tratar log
         }
     }
@@ -177,13 +168,13 @@ class Quotation
     /**
      * Return a object with the options quotation
      *
-     * @return Object
+     * @return Object|void
      */
     public function getOptions()
     {
         try {
             return (new Option())->getOptions();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // tratar log
         }
     }
@@ -191,26 +182,38 @@ class Quotation
     /**
      * Create a body to make a quotation
      *
-     * @return Array
+     * @return array
      */
     private function prepareBody()
     {
         $options = array(
-            "receipt"         => $this->options->ar, 
-            "own_hand"        => $this->options->mp, 
-            "collect"         => false 
+            'receipt' => $this->options->ar,
+            'own_hand' => $this->options->mp,
+            'collect'  => false
         );
 
         if (!isset($this->from->address->postal_code)) {
             return null;
         }
 
+        $from = $this->from->address->postal_code;
+
+        if (is_object($from) || is_array($from)) {
+            return null;
+        }
+
+        $to = isset($this->to->postcode) ? $this->to->postcode : $this->to;
+
+        if (is_object($to) || is_array($to)) {
+            return null;
+        }
+
         $body = array(
             'from' => array(
-                'postal_code' => $this->from->address->postal_code
+                'postal_code' => preg_replace('/\D/', '', $from),
             ),
             'to' => array(
-                'postal_code' => str_replace('-', '', (isset($this->to->postcode)) ? $this->to->postcode : $this->to)
+                'postal_code' => preg_replace('/\D/', '', $to),
             ),
             'settings' => array(
                 'show' => array( 
@@ -236,10 +239,10 @@ class Quotation
                 $helper = new HelperController();
 
                 $body['products'][$key]['volumes'][] = array(
-                    'height' => $helper->converterDimension($product->height),
-                    'width'  => $helper->converterDimension($product->width),
-                    'length' => $helper->converterDimension($product->length),
-                    'weight' => (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
+                    'height' => (int) $helper->converterDimension($product->height),
+                    'width'  => (int) $helper->converterDimension($product->width),
+                    'length' => (int) $helper->converterDimension($product->length),
+                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
                 );
 
                 $insurance_value[$key] = floatval($product->price);
@@ -260,16 +263,14 @@ class Quotation
     /**
      * Function to make a quotation on API Melhor Envio
      *
-     * @return Array
+     * @param null $service
+     * @return array|boolean
      */
     public function calculate($service = null)
     {
         $token = (new TokenController())->token();
 
-        if (!empty($token) || !is_null($token)) {
-
-            $body = $this->prepareBody();
-
+        if (!empty($token) || !is_null($token) && ($body = $this->prepareBody())) {
             $params = array(
                 'headers'           =>  array(
                     'Content-Type'  => 'application/json',
@@ -285,7 +286,6 @@ class Quotation
             $this->hashCotation = md5(json_encode($body));
 
             if (!isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'])) {
-
                 try {
                     $response = json_decode(
                         wp_remote_retrieve_body(
@@ -329,13 +329,13 @@ class Quotation
 
                     return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'];
 
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return false;
                 }
             }
         } 
 
-        if (!is_null($service) && isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service]) ) {
+        if (!is_null($service) && isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service])) {
             return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service];
         }
 

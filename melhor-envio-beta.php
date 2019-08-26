@@ -98,8 +98,8 @@ final class Base_Plugin {
      * Sets up all the appropriate hooks and actions
      * within our plugin.
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
         $this->define_constants();
 
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
@@ -139,8 +139,7 @@ final class Base_Plugin {
     }
 
     public function loadMelhorEnvio()
-    {        
-
+    {
         if (isset($_GET) && $_GET['page_id'] == get_option( 'woocommerce_cart_page_id' )) {
             return true;
         }
@@ -166,8 +165,8 @@ final class Base_Plugin {
      * Checks for an existing Base_Plugin() instance
      * and if it doesn't find one, creates it.
      */
-    public static function init() {
-
+    public static function init()
+    {
         static $instance = false;
 
         if ( ! $instance ) {
@@ -184,7 +183,8 @@ final class Base_Plugin {
      *
      * @return mixed
      */
-    public function __get( $prop ) {
+    public function __get($prop)
+    {
         if ( array_key_exists( $prop, $this->container ) ) {
             return $this->container[ $prop ];
         }
@@ -199,7 +199,8 @@ final class Base_Plugin {
      *
      * @return mixed
      */
-    public function __isset( $prop ) {
+    public function __isset($prop)
+    {
         return isset( $this->{$prop} ) || isset( $this->container[ $prop ] );
     }
 
@@ -208,7 +209,8 @@ final class Base_Plugin {
      *
      * @return void
      */
-    public function define_constants() {
+    public function define_constants()
+    {
         define( 'BASEPLUGIN_VERSION', $this->version );
         define( 'BASEPLUGIN_FILE', __FILE__ );
         define( 'BASEPLUGIN_PATH', dirname( BASEPLUGIN_FILE ) );
@@ -222,9 +224,8 @@ final class Base_Plugin {
      *
      * @return void
      */
-    public function init_plugin() {
-        
-
+    public function init_plugin()
+    {
         $this->includes();
         $this->init_hooks();
 
@@ -311,8 +312,8 @@ final class Base_Plugin {
      *
      * Nothing being called here yet.
      */
-    public function activate() {
-
+    public function activate()
+    {
         $installed = get_option( 'baseplugin_installed' );
 
         if ( ! $installed ) {
@@ -322,7 +323,8 @@ final class Base_Plugin {
         update_option( 'baseplugin_version', BASEPLUGIN_VERSION );
     }
 
-    public function deactivate() {
+    public function deactivate()
+    {
 
     }
 
@@ -331,8 +333,8 @@ final class Base_Plugin {
      *
      * @return void
      */
-    public function includes() {
-
+    public function includes()
+    {
         try {
 
             require_once BASEPLUGIN_INCLUDES . '/class-assets.php';
@@ -353,7 +355,7 @@ final class Base_Plugin {
                 require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             add_action( 'admin_notices', function() {
                 echo sprintf('<div class="error">
                     <p>%s</p>
@@ -361,7 +363,6 @@ final class Base_Plugin {
             });
             return false;
         }
-        
     }
 
     /**
@@ -369,8 +370,8 @@ final class Base_Plugin {
      *
      * @return void
      */
-    public function init_hooks() {
-        
+    public function init_hooks()
+    {
         $token   = new tokenController();
         $order   = new OrdersController(); 
         $users   = new UsersController();
@@ -390,7 +391,6 @@ final class Base_Plugin {
             echo $order->getOrders();
             die;
         });
-
 
         $hideCalculator = (new CalculatorShow)->get();
 
@@ -457,7 +457,7 @@ final class Base_Plugin {
     
             $response['is_multisite'] = is_multisite();
 
-            $response['pathPlugins'] = $pathPlugins;
+            $response['pathPlugins'] = $pathPlugins; // var nao definida
         
             $response['path'] = plugin_dir_path( __FILE__ );
 
@@ -641,13 +641,13 @@ final class Base_Plugin {
 
             $this->container['assets'] = new App\Assets();
             
-        } catch (Exception $e) {
-
-            add_action( 'admin_notices', function() {
+        } catch (\Exception $e) {
+            add_action( 'admin_notices', function() use ($e) {
                 echo sprintf('<div class="error">
                     <p>%s</p>
                 </div>', $e->getMessage());
             });
+
             return false;
         }
     }
@@ -657,7 +657,8 @@ final class Base_Plugin {
      *
      * @uses load_plugin_textdomain()
      */
-    public function localization_setup() {
+    public function localization_setup()
+    {
         load_plugin_textdomain( 'baseplugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
     }
 
@@ -668,7 +669,8 @@ final class Base_Plugin {
      *
      * @return bool
      */
-    private function is_request( $type ) {
+    private function is_request($type)
+    {
         switch ( $type ) {
             case 'admin' :
                 return is_admin();
