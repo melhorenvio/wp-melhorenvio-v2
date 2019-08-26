@@ -44,7 +44,6 @@ function mini_shipping_method_init() {
              * @return void
              */
             function init() {
-
                 $this->init_form_fields();
                 $this->init_settings();
                 add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
