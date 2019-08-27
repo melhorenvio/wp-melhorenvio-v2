@@ -1157,7 +1157,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             },
             path_plugins: '',
             show_path: false,
-            codeshiping: [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }],
+            codeshiping: [],
             money: {
                 decimal: ',',
                 thousands: '.',
@@ -1218,14 +1218,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         where_calculator_: 'getWhereCalculator',
         show_calculator_: 'getShowCalculator',
         options_calculator_: 'getOptionsCalculator',
-        configs: 'getConfigs'
+        configs: 'getConfigs',
+        services_codes: 'getServicesCodes'
     }), {
         filteredsShipments() {
-            let filter = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
+            let filter = this.services_codes;
             let filtereds = this.methods_shipments.filter(function (shipment) {
                 return filter.includes(shipment.code);
             });
-
             return filtereds;
         }
     }),
@@ -1238,15 +1238,34 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
         },
         showModalEditMethod(code) {
-            this.codeshiping[code]['status'] = true;
+            this.codeshiping = [];
+            for (var i = 0; i < this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                var status = false;
+                if (service == code) {
+                    status = true;
+                }
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': status
+                };
+            }
+        },
+        getServicesCodesstatus() {
+            this.codeshiping = [];
+            for (var i = 0; i < this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': false
+                };
+            }
         },
         closeShowModalEditMethod() {
-            this.codeshiping = [{ 'id': 1, 'status': false }, { 'id': 2, 'status': false }, { 'id': 3, 'status': false }, { 'id': 4, 'status': false }, { 'id': 5, 'status': false }, { 'id': 6, 'status': false }, { 'id': 7, 'status': false }, { 'id': 8, 'status': false }, { 'id': 9, 'status': false }, { 'id': 10, 'status': false }, { 'id': 11, 'status': false }];
+            this.getServicesCodesstatus();
         },
         updateConfig() {
-
             this.setLoader(true);
-
             var data = new Array();
 
             data['address'] = this.address;
@@ -1258,7 +1277,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             data['path_plugins'] = this.path_plugins;
             data['options_calculator'] = this.options_calculator;
             var respSave = this.saveAll(data);
-            console.log(respSave);
 
             respSave.then(resolve => {
                 this.setLoader(false);
@@ -1345,6 +1363,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 });
             }
             this.setLoader(false);
+        },
+        services_codes() {
+            this.getServicesCodesstatus();
         },
         show_calculator_(e) {
             this.show_calculator = e;
@@ -4213,8 +4234,11 @@ var render = function() {
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.codeshiping[option.code]["status"],
-                              expression: "codeshiping[option.code]['status']"
+                              value:
+                                _vm.codeshiping[option.code] &&
+                                _vm.codeshiping[option.code]["status"],
+                              expression:
+                                "codeshiping[option.code] && codeshiping[option.code]['status']"
                             }
                           ],
                           staticClass: "me-modal"
@@ -4222,7 +4246,7 @@ var render = function() {
                         [
                           _c("div", [
                             _c("p", { staticClass: "title" }, [
-                              _vm._v(_vm._s(option.name))
+                              _vm._v(_vm._s(option.name) + " ")
                             ]),
                             _vm._v(" "),
                             _c("div", { staticClass: "content" }, [
@@ -6307,7 +6331,8 @@ var configuration = {
         where_calculator: 'woocommerce_after_add_to_cart_form',
         methods_shipments: [],
         show_load: true,
-        configs: []
+        configs: [],
+        services_codes: []
     },
     mutations: {
         toggleLoader: function toggleLoader(state, data) {
@@ -6342,6 +6367,9 @@ var configuration = {
         },
         setOptionsCalculator: function setOptionsCalculator(state, data) {
             state.options_calculator = data;
+        },
+        setServicesCodes: function setServicesCodes(state, data) {
+            state.services_codes = data;
         }
     },
     getters: {
@@ -6377,6 +6405,9 @@ var configuration = {
         },
         getOptionsCalculator: function getOptionsCalculator(state) {
             return state.options_calculator;
+        },
+        getServicesCodes: function getServicesCodes(state) {
+            return state.services_codes;
         }
     },
     actions: {
@@ -6406,6 +6437,7 @@ var configuration = {
                         commit('setMethodShipments', response.data.metodos);
                         commit('setWhereCalculator', response.data.where_calculator);
                         commit('setOptionsCalculator', response.data.options_calculator);
+                        commit('setServicesCodes', response.data.services_codes);
                         resolve(true);
                     }
                 }).catch(function (error) {
@@ -6451,6 +6483,7 @@ var configuration = {
                 if (data.methods_shipments != null) {
 
                     data.methods_shipments.forEach(function (item, index) {
+
                         form.append('methods_shipments[' + index + '][id]', item.code);
                         form.append('methods_shipments[' + index + '][tax]', item.tax);
                         form.append('methods_shipments[' + index + '][time]', item.time);
