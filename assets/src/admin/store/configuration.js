@@ -19,7 +19,8 @@ const configuration = {
         where_calculator: 'woocommerce_after_add_to_cart_form',
         methods_shipments: [],
         show_load: true,
-        configs: []
+        configs: [],
+        services_codes: []
     },
     mutations: {
         toggleLoader: (state, data) => {
@@ -54,6 +55,9 @@ const configuration = {
         },
         setOptionsCalculator: (state, data) => {
             state.options_calculator = data;
+        },
+        setServicesCodes: (state, data) => {
+            state.services_codes = data;
         }
     },  
     getters: {
@@ -67,7 +71,8 @@ const configuration = {
         getMethodsShipments: state => state.methods_shipments,
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
-        getOptionsCalculator: state => state.options_calculator
+        getOptionsCalculator: state => state.options_calculator,
+        getServicesCodes: state => state.services_codes
     },
     actions: {
         getConfigs: ({commit}, data) => {
@@ -94,6 +99,7 @@ const configuration = {
                         commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)
+                        commit('setServicesCodes', response.data.services_codes)
                         resolve(true)
                     }
                 }).catch((error) => {
@@ -135,6 +141,7 @@ const configuration = {
                 if (data.methods_shipments != null) {
 
                     data.methods_shipments.forEach(function(item, index) {
+
                         form.append('methods_shipments[' + index +'][id]', item.code);
                         form.append('methods_shipments[' + index +'][tax]', item.tax);
                         form.append('methods_shipments[' + index +'][time]', item.time);

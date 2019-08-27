@@ -162,9 +162,9 @@
                             </div>
 
                             <transition name="fade">
-                                <div class="me-modal" v-show="codeshiping[option.code]['status']">
+                                <div class="me-modal" v-show="codeshiping[option.code] && codeshiping[option.code]['status']">
                                     <div>
-                                        <p class="title">{{option.name}}</p>
+                                        <p class="title">{{option.name}} </p>
                                         <div class="content">
                                             <ul>
                                                 <li>
@@ -336,26 +336,7 @@ export default {
             },
             path_plugins: '',
             show_path: false,
-            codeshiping: [
-                {'id':1, 'status':false},
-                {'id':2, 'status':false},
-                {'id':3, 'status':false},
-                {'id':4, 'status':false},
-                {'id':5, 'status':false},
-                {'id':6, 'status':false},
-                {'id':7, 'status':false},
-                {'id':8, 'status':false},
-                {'id':9, 'status':false},
-                {'id':10, 'status':false},
-                {'id':11, 'status':false},
-                {'id':12, 'status':false},
-                {'id':13, 'status':false},
-                {'id':14, 'status':false},
-                {'id':15, 'status':false},
-                {'id':16, 'status':false},
-                {'id':17, 'status':false},
-                {'id':18, 'status':false}
-            ],
+            codeshiping: [],
             money: {
                 decimal: ',',
                 thousands: '.',
@@ -429,14 +410,14 @@ export default {
             where_calculator_: 'getWhereCalculator',
             show_calculator_: 'getShowCalculator',
             options_calculator_: 'getOptionsCalculator',
-            configs: 'getConfigs'
+            configs: 'getConfigs',
+            services_codes: 'getServicesCodes'
         }),
         filteredsShipments() {
-            let filter = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+            let filter = this.services_codes;
             let filtereds = this.methods_shipments.filter(function(shipment){
                 return filter.includes(shipment.code)
             });
-            
             return filtereds;
         }
     },
@@ -455,34 +436,34 @@ export default {
             }
         },
         showModalEditMethod(code) {
-            this.codeshiping[code]['status'] = true;
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                var status = false;
+                if (service == code) {
+                    status = true;
+                }
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': status
+                };
+            }
+        },
+        getServicesCodesstatus(){
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': false
+                };
+            }
         },
         closeShowModalEditMethod() {
-            this.codeshiping = [
-                {'id':1, 'status':false},
-                {'id':2, 'status':false},
-                {'id':3, 'status':false},
-                {'id':4, 'status':false},
-                {'id':5, 'status':false},
-                {'id':6, 'status':false},
-                {'id':7, 'status':false},
-                {'id':8, 'status':false},
-                {'id':9, 'status':false},
-                {'id':10, 'status':false},
-                {'id':11, 'status':false},
-                {'id':12, 'status':false},
-                {'id':13, 'status':false},
-                {'id':14, 'status':false},
-                {'id':15, 'status':false},
-                {'id':16, 'status':false},
-                {'id':17, 'status':false},
-                {'id':18, 'status':false}
-            ];
+            this.getServicesCodesstatus();
         },
         updateConfig () {
-
             this.setLoader(true);
-
             var data = new Array();
  
             data['address']            = this.address;
@@ -494,7 +475,6 @@ export default {
             data['path_plugins']       = this.path_plugins;
             data['options_calculator'] = this.options_calculator;
             var respSave = this.saveAll(data);
-            console.log(respSave);
 
             respSave.then((resolve) => {
                 this.setLoader(false);
@@ -581,6 +561,9 @@ export default {
                 })
             }
             this.setLoader(false);
+        },
+        services_codes() {
+            this.getServicesCodesstatus();
         },
         show_calculator_(e) {
             this.show_calculator = e;

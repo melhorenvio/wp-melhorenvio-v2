@@ -62,13 +62,13 @@ if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
 use Controllers\TokenController;
-use Controllers\PackageController;
 use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
 use Controllers\OptionsController;
 use Controllers\StatusController;
+use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
 
 /**
@@ -229,14 +229,7 @@ final class Base_Plugin {
         $this->includes();
         $this->init_hooks();
 
-        // if (!isset($_SESSION[md5(get_option('home'))]['melhorenvio_token'])) {
-        //     add_action( 'admin_notices', function() {
-        //         echo sprintf('<div class="error">
-        //             <p>%s</p>
-        //         </div>', 'Por favor, informar seu token Melhor Envio');
-        //     });
-        //     return;
-        // }
+        (new ShippingMethodsController())->updateMethodsShippingCodeSession();
         
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {
@@ -449,10 +442,6 @@ final class Base_Plugin {
                 $response['path_test_plugin'] = str_replace('|', '/', $_GET['path_test_plugin']);
             }
     
-            // $response['cotation'] = (new CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
-
-            // $response['enableds'] = (new Method())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
-    
             $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
     
             $response['is_multisite'] = is_multisite();
@@ -552,6 +541,7 @@ final class Base_Plugin {
                 'use_insurance'    => (new Models\UseInsurance())->get(),
                 'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
                 'metodos'          => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
+                'services_codes'   => (new ShippingMethodsController())->getCodes(),
                 'style_calculator' => (new Controllers\ConfigurationController())->getStyleArray(),
                 'path_plugins'     => (new Controllers\ConfigurationController())->getPathPluginsArray(),
                 'options_calculator' => (new Controllers\ConfigurationController())->getOptionsCalculator() 

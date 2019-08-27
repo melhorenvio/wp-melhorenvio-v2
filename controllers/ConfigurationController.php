@@ -5,9 +5,7 @@ use Models\Address;
 use Models\Agency;
 use Models\Store;
 use Models\CalculatorShow;
-use Models\UseInsurance;
 use Models\Method;
-use Controllers\ContationControllers;
 
 class ConfigurationController 
 {
@@ -34,23 +32,6 @@ class ConfigurationController
         echo json_encode((new Address())->getAddressesShopping());
         die;
     }
-
-    // /**
-    //  * @return void
-    //  */
-    // public function setAddressShopping() 
-    // {
-    //     if (!isset($_GET['id'])) {
-    //         echo json_encode([
-    //             'success' => false,
-    //             'message' => 'É necessário infomar o ID do endereço'
-    //         ]);
-    //         die;
-    //     }
-
-    //     echo json_encode((new Address())->setAddressShopping($_GET['id']));
-    //     die;
-    // }
 
     /**
      * @return void
@@ -314,26 +295,6 @@ class ConfigurationController
         return $path;
     }
 
-    // /**
-    //  * @return void
-    //  */
-    // public function save() 
-    // {
-    //     $id = $_GET['id'];
-    //     delete_option('melhor_envio_option_method_shipment_' . $id);
-    //     unset($_GET['action']);
-    //     add_option('melhor_envio_option_method_shipment_' . $id, $_GET);
-    //     echo json_encode([
-    //         'id' => $id,
-    //         'name' => $_GET['name'],
-    //         'tax' => $_GET['tax'],
-    //         'time' => $_GET['time'],
-    //         'perc' => $_GET['perc'],
-    //         'ar'   => ($_GET['ar']== 'true')  ? true : false,
-    //         'mp'   => ($_GET['mp'] == 'true')  ? true : false,
-    //     ]);die;
-    // }
-
     public function saveoptionsMethod($item)
     {
         $id = $item['id'];
@@ -347,10 +308,6 @@ class ConfigurationController
     public function getOptionsShipments()
     {   
         $codeStore = md5(get_option('home'));
-
-        if (isset($_SESSION[$codeStore]['melhorenvio_options'])) {
-            return $_SESSION[$codeStore]['melhorenvio_options'];
-        }
 
         global $wpdb;
         $sql = "select * from " . $wpdb->prefix . "options where option_name like '%melhor_envio_option_method_shipment_%'";
@@ -389,16 +346,6 @@ class ConfigurationController
         return $options;
     }
 
-    // public function saveWhereCalculator()
-    // {
-    //     $option = $_GET['option'];
-    //     delete_option('melhor_envio_option_where_show_calculator');
-    //     add_option('melhor_envio_option_where_show_calculator', $option);
-
-    //     echo json_encode([
-    //         'option' => $option
-    //     ]);die;
-    // }
 
     public function setWhereCalculator($option) {
 
@@ -434,47 +381,6 @@ class ConfigurationController
         }
         return $option;
     }
-
-    // /**
-    //  * @return void
-    //  */
-    // public function getUseInsurance() 
-    // {
-    //     echo json_encode((new UseInsurance())->get());
-    //     die;
-    // }
-
-    // /**
-    //  * @return void
-    //  */
-    // public function saveUseInsurance() 
-    // {
-    //     if (!isset($_GET['data'])) {
-    //         echo json_encode([
-    //             'success' => false,
-    //             'message' => 'É necessário infomar o parametro data ("true" ou "false")'
-    //         ]);
-    //         die;
-    //     }
-
-    //     echo json_encode((new UseInsurance())->set($_GET['data']));
-    //     die;
-    // }
-
-    // public function saveOptionsCalculator()
-    // {
-    //     delete_option('melhorenvio_ar');
-    //     delete_option('melhorenvio_mp');
-
-    //     add_option('melhorenvio_ar', $_GET['ar'], true);
-    //     add_option('melhorenvio_mp', $_GET['mp'], true);
-
-    //     echo json_encode([
-    //         'ar' => (get_option('melhorenvio_ar', true) == 'true') ? true : false ,
-    //         'mp' => (get_option('melhorenvio_mp', true) == 'true') ? true : false
-    //     ]);
-    //     die;
-    // }
 
     public function setOptionsCalculator($options)
     {
