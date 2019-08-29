@@ -13757,7 +13757,7 @@ module.exports = g;
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* WEBPACK VAR INJECTION */(function(process) {/*!
-  * vue-router v3.1.2
+  * vue-router v3.1.1
   * (c) 2019 Evan You
   * @license MIT
   */
@@ -14819,9 +14819,9 @@ var Link = {
     var handler = function (e) {
       if (guardEvent(e)) {
         if (this$1.replace) {
-          router.replace(location, noop);
+          router.replace(location, null, noop);
         } else {
-          router.push(location, noop);
+          router.push(location, null, noop);
         }
       }
     };
@@ -16261,9 +16261,14 @@ function getHash () {
 
 function getUrl (path) {
   var href = window.location.href;
-  var i = href.indexOf('#');
-  var base = i >= 0 ? href.slice(0, i) : href;
-  return (base + "#" + path)
+  var hashPos = href.indexOf('#');
+  var base = hashPos > -1 ? href.slice(0, hashPos) : href;
+
+  var searchPos = base.indexOf('?');
+  var query = searchPos > -1 ? base.slice(searchPos) : '';
+  base = query ? base.slice(0, searchPos) : base;
+
+  return (base + "#" + (path + query))
 }
 
 function pushHash (path) {
@@ -16587,7 +16592,7 @@ function createHref (base, fullPath, mode) {
 }
 
 VueRouter.install = install;
-VueRouter.version = '3.1.2';
+VueRouter.version = '3.1.1';
 
 if (inBrowser && window.Vue) {
   window.Vue.use(VueRouter);

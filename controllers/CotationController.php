@@ -86,11 +86,14 @@ class CotationController
             );
         }
 
+        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+       
+
         $package = array( 
             'destination'  => array(
                 'country'  => 'BR',
-                'state'    => 'RS',
-                'postcode' => $_POST['data']['cep_origem'] 
+                'state'    => $destination['uf'],
+                'postcode' => $destination['cep'], 
             ),
             'cotationProduct' => array(
                 (object) array(
@@ -134,6 +137,25 @@ class CotationController
             'data' => $rates
         ]);
         die;
+    }
+
+    public function getAddressByCep($cep)
+    {
+        if(empty($cep)) return null;
+
+        $url = "https://location.melhorenvio.com.br/". str_replace('-', '', trim($cep));
+        
+        $curl = curl_init(); 
+        curl_setopt($curl, CURLOPT_URL, $url); 
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($curl); 
+        $error  = curl_error($curl);
+        curl_close($curl); 
+
+        if(!empty($error)) return null;
+
+        $response = json_decode($result);       
+        return $response;
     }
 
     /**
