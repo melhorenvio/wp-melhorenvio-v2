@@ -17,7 +17,7 @@ use Models\Method;
 
 class CotationController 
 {
-    const URL = 'https://q-engine.melhorenvio.com';
+    const URL = 'https://q-engine-hub.melhorenvio.com';
 
     public function __construct() 
     {
@@ -87,13 +87,14 @@ class CotationController
         }
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
-       
-
+      
+ 
         $package = array( 
+            'ship_via' => '',
             'destination'  => array(
                 'country'  => 'BR',
-                'state'    => $destination['uf'],
-                'postcode' => $destination['cep'], 
+                'state'    => $destination->uf,
+                'postcode' => $destination->cep, 
             ),
             'cotationProduct' => array(
                 (object) array(
@@ -108,17 +109,18 @@ class CotationController
                 )
             )
         );
+        
+        
 
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
-
+        
         $rates = array();
         
         $free = 0;
 
         foreach($shipping_methods as $keyMethod => $shipping_method) {
-    
             $rate = $shipping_method->get_rates_for_package( $package );
 
             if (key($rate) == 'free_shipping') {

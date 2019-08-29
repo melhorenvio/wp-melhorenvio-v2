@@ -270,7 +270,7 @@ class Quotation
     {
         $token = (new TokenController())->token();
 
-        if (!empty($token) || !is_null($token) && ($body = $this->prepareBody())) {
+        if (!empty($token) && !is_null($token) && ($body = $this->prepareBody())) {
             $params = array(
                 'headers'           =>  array(
                     'Content-Type'  => 'application/json',
@@ -280,8 +280,6 @@ class Quotation
                 'body'   => json_encode($body),
                 'timeout'=> 10
             );
-
-            // var_dump(json_encode($body));die;
 
             $this->hashCotation = md5(json_encode($body));
 

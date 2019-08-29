@@ -64,7 +64,7 @@ function jadlog_com_shipping_method_init() {
 				$products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new Cart())->getProductsOnCart();
 
 				$result = (new Quotation(null, $products, $package, $to))->calculate($this->code);
-
+				
 				if ($result) {
 
 					if (isset($result->name) && isset($result->price)) {
