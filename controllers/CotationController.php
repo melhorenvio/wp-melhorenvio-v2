@@ -73,29 +73,33 @@ class CotationController
     public function cotationProductPage() 
     {
         if (!isset($_POST['data'])) {
-            return array(
-                'success' => false,
-                'message' => 'Dados incompletos'
-            );
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+            exit();
         }
 
         if (!isset($_POST['data']['cep_origem'])) {
-            return array(
-                'success' => false,
-                'message' => 'Campo CEP é necessário'
-            );
+            echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
+            exit();
+        }
+
+        if ( strlen(trim($_POST['data']['cep_origem'])) != 9 ) {
+            echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
+            exit();
         }
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
-      
+        if(empty($destination) || is_null($destination)) {
+            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
+            exit();
+        }      
  
         $package = array( 
-            'ship_via' => '',
+            'ship_via'     => '',
             'destination'  => array(
-                'country'  => 'BR',
-                'state'    => $destination->uf,
-                'postcode' => $destination->cep, 
-            ),
+                    'country'  => 'BR',
+                    'state'    => $destination->uf,
+                    'postcode' => $destination->cep, 
+                ),
             'cotationProduct' => array(
                 (object) array(
                     'id'                 =>  $_POST['data']['id_produto'],
@@ -109,15 +113,12 @@ class CotationController
                 )
             )
         );
-        
-        
 
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         
-        $rates = array();
-        
+        $rates = array();        
         $free = 0;
 
         foreach($shipping_methods as $keyMethod => $shipping_method) {
@@ -141,7 +142,13 @@ class CotationController
         die;
     }
 
-    public function getAddressByCep($cep)
+    /**
+     * Get address information from zip code
+     *
+     * @param [string] $cep
+     * @return Json
+     */
+    private function getAddressByCep($cep)
     {
         if(empty($cep)) return null;
 
