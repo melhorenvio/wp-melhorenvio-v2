@@ -1,12 +1,12 @@
 === Melhor Envio V2 ===
-Version: 2.5.17
+Version: 2.6.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 5.0
-Requires PHP: 5.0
+Tested up to: 5.6
+Requires PHP: 5.6
 
 
 # Plugin Melhor Envio
@@ -45,6 +45,10 @@ Pronto! o plugin do Melhor Envio está funcionando.
 - Wordpress 4.0+
 - WooCommerce 4.0+
 
+### Compatibilidade
+
+Caso seja utilizado algum outro plugin que altere o Woocommerce não é garantida a sua compatibilidade, como plugins que adicionam ao Woocommerce funcionalidades de marketplace.
+
 ## Contribuindo com o Projeto
 
 Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
@@ -59,9 +63,12 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.6.0] - 2019-09
+- Adição do método de pagamento PAC MINI.
+- Ajuste na cotação de produtos quando há restrição de região.
 #### [2.5.17] - 2019-08
-- Remoção do cacheamento do título da loja.
-- Remoção do cacheamento das informações do titular da conta ME.
+- Remoção do cache do título da loja.
+- Remoção do cache das informações do titular da conta ME.
 - Ajustes na lógica de validação da cotação.
 #### [2.5.16] - 2019-08
 - Ajustes do erro 500 na listagem das lojas.
