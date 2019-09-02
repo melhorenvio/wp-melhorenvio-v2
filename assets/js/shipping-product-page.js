@@ -98,7 +98,7 @@
 						}
 					},
 					error:function(jqXHR, exception) {
-					var msg = '';
+						var msg = '';
 						if (jqXHR.status === 0) {
 							msg = 'Not connect.\n Verify Network.';
 						} else if (jqXHR.status == 404) {
@@ -121,12 +121,10 @@
 						return false;
 					},
 					success:function(result) {
-
-						let { data } = JSON.parse(result);
-						
-						if (result.erro) {
+						let response = JSON.parse(result);
+						if (!response.success || response.erro) {
 							inpCEP.removeAttr('disabled');
-							alert(result.erro);
+							alert(response.message);
 							esconderLoader();
 							esconderTabela();
 							resetarTabela();
@@ -134,9 +132,8 @@
 						}
 						
 						var row = '';
-						
+						let { data } = response;
 						data.map( item => {
-
 							let name = item.name.split('(');
 							name = name[0];
 							
