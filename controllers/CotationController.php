@@ -102,28 +102,30 @@ class CotationController
                 ),
             'cotationProduct' => array(
                 (object) array(
-                    'id'                 =>  $_POST['data']['id_produto'],
-                    "weight"             =>  floatval($_POST['data']['produto_peso']),
-                    "width"              =>  floatval($_POST['data']['produto_largura']),
-                    "length"             =>  floatval($_POST['data']['produto_comprimento']),
-                    "height"             =>  floatval($_POST['data']['produto_altura']),
-                    'quantity'           =>  intval($_POST['data']['quantity']),
-                    'price'              =>  floatval($_POST['data']['produto_preco']),
+                    'id'                 => $_POST['data']['id_produto'],
+                    "weight"             => floatval($_POST['data']['produto_peso']),
+                    "width"              => floatval($_POST['data']['produto_largura']),
+                    "length"             => floatval($_POST['data']['produto_comprimento']),
+                    "height"             => floatval($_POST['data']['produto_altura']),
+                    'quantity'           => intval($_POST['data']['quantity']),
+                    'price'              => floatval($_POST['data']['produto_preco']),
                     'notConverterWeight' => true 
                 )
             )
         );
 
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
-        
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
-        
+        if(count($shipping_methods) == 0) {
+            echo json_encode(['success' => false, 'message' => 'Não é feito envios para o CEP informado']);
+            exit();
+        }
+
         $rates = array();        
         $free = 0;
-
-        foreach($shipping_methods as $keyMethod => $shipping_method) {
+        foreach($shipping_methods as $shipping_method) 
+        {
             $rate = $shipping_method->get_rates_for_package( $package );
-
             if (key($rate) == 'free_shipping') {
                 $free++;
             }
@@ -135,11 +137,8 @@ class CotationController
             $rates[] = $this->mapObject($rate[key($rate)]);
         }   
 
-        echo json_encode([
-            'success' => true,
-            'data' => $rates
-        ]);
-        die;
+        echo json_encode(['success' => true, 'data' => $rates]);
+        exit();
     }
 
     /**
