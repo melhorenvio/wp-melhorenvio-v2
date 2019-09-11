@@ -98,6 +98,10 @@ class Order {
 
                 $invoice = $order->getInvoice();
 
+                $products = $order->getProducts();
+                
+                
+
                 $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
 
                 $non_commercial = true;
@@ -108,11 +112,13 @@ class Order {
                 if (!is_null($dataMelhorEnvio['order_id'])) {
                     $orders[] = $dataMelhorEnvio['order_id'];
                 }
-
+                
+               
+                
                 $data[] = [
                     'id'             => (int) $order->id,
-                    'total'          => 'R$' . number_format($order->total, 2, ',', '.'),
-                    'products'       => (Object) $order->getProducts(),
+                    'total'          => $order->getProductsTotal($products),
+                    'products'       => (Object) $products,
                     'cotation'       => $cotation,
                     'address'        => $order->address,
                     'to'             => $order->to,
@@ -153,6 +159,17 @@ class Order {
         ];
 
         return $response;
+    }
+
+    private function getProductsTotal($products)
+    {
+        $total = 0;
+        
+        foreach($products as $product){
+            $total += $product->total;
+        }
+
+        return $total;
     }
 
     // TODO refator para usar esse "getOne" na função acima.
