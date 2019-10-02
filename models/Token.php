@@ -13,6 +13,19 @@ class Token
         if (!$token) {
             return '';
         }
+
+        try {
+            if (!WP_Session_Tokens::verify($_SESSION[$codeStore]['melhorenvio_token'])) {
+                add_action( 'admin_notices', function(){
+                    echo sprintf('<div class="error">
+                        <p>%s</p>
+                    </div>', 'O token do Melhor Envio expirou.');
+                });
+            }
+        } catch(Exception $e) {
+            echo 'Exceção capturada: ',  $e->getMessage(), "\n";
+        }
+        
         return $token;
     }
 
