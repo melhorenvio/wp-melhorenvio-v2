@@ -41,6 +41,9 @@
                         <h1>Meus pedidos</h1>
                     </div>
                     <hr>
+                    <div class="col-12-12" v-if="error_message != ''">
+                        <p>{{ error_message }}</p>
+                    </div>
                     <br>
                 </div>
             </div>
@@ -200,7 +203,8 @@ export default {
             status: 'all',
             wpstatus: 'all',
             line: 0,
-            toggleInfo: null
+            toggleInfo: null,
+            error_message: null
         }
     },
     components: {
@@ -242,6 +246,24 @@ export default {
                     this.$router.push('Token') 
                 }
             })
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => { 
+                var token = response.data.token;
+                // JWT Token Decode
+                var base64Url = token.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                var dateExp     = new Date(tokenDecoded.exp);
+                var currentTime = new Date();
+                if (dateExp >= currentTime) {
+                    this.error_message = 'Seu Token expirou, cadastre um novo token para o plugin funcionar perfeitamente';
+                }
+            })
+            
         }
     },
     watch: {
@@ -254,6 +276,7 @@ export default {
     },
     mounted () {
         this.getToken();
+        this.validateToken();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }
