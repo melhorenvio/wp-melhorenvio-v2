@@ -99,8 +99,6 @@ class Order {
                 $invoice = $order->getInvoice();
 
                 $products = $order->getProducts();
-                
-                //FAZER ALGO PARA PEGAR OS PESOAS COMO 0 DAS COTATIONS E TRANSFORMAR EM O.1
 
                 $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
 
