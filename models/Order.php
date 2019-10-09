@@ -100,7 +100,7 @@ class Order {
 
                 $products = $order->getProducts();
                 
-                
+                //FAZER ALGO PARA PEGAR OS PESOAS COMO 0 DAS COTATIONS E TRANSFORMAR EM O.1
 
                 $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
 
@@ -328,6 +328,12 @@ class Order {
 
             $cotation = (new CotationController())->makeCotationOrder($this->id);
             return $this->setIndexCotation($cotation, $cotations[0]);
+        }
+
+        foreach ($cotation[17]->volumes as $volume) {
+            if ($volume->weight == 0) {
+                $volume->weight = 0.01;
+            }
         }
 
         return $this->setIndexCotation($cotation, $cotations[0]);

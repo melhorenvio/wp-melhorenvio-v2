@@ -165,6 +165,10 @@ class OrdersController
             unset($packages[$_GET['choosen']][$indexPackage]['volume']);
             unset($package['volume']);
 
+            if($packages[$_GET['choosen']][$indexPackage]['weight'] == 0) {
+                $packages[$_GET['choosen']][$indexPackage]['weight'] = 0.01;
+            }
+
             $body = array(
                 'from' => $from,
                 'to' => $to,
