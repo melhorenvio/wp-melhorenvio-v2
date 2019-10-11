@@ -254,6 +254,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -270,7 +281,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             status: 'all',
             wpstatus: 'all',
             line: 0,
-            toggleInfo: null
+            toggleInfo: null,
+            error_message: null
         };
     },
     components: {
@@ -299,6 +311,32 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then(response => {
                 if (!response.data.exists_token) {
+                    this.$router.push('Token');
+                }
+
+                this.validateToken();
+            });
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
+                if (response.data.token) {
+                    var token = response.data.token;
+
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal = JSON.parse(tokenDecoded);
+                    var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp > currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
+                    }
+                } else {
                     this.$router.push('Token');
                 }
             });
@@ -1140,6 +1178,26 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1148,6 +1206,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     components: { Money: __WEBPACK_IMPORTED_MODULE_1_v_money__["Money"] },
     data() {
         return {
+            error_message: null,
             canUpdate: true,
             address: null,
             store: null,
@@ -1335,6 +1394,32 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 if (!response.data.exists_token) {
                     this.$router.push('Token');
                 }
+
+                this.validateToken();
+            });
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
+                if (response.data.token) {
+                    var token = response.data.token;
+
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal = JSON.parse(tokenDecoded);
+                    var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
+                    }
+                } else {
+                    this.$router.push('Token');
+                }
             });
         }
     }),
@@ -1385,7 +1470,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         }
     },
     mounted() {
-
         this.getToken();
         this.setLoader(true);
         var promiseConfigs = this.getConfigs();
@@ -3370,7 +3454,37 @@ var render = function() {
     [
       _vm._m(0),
       _vm._v(" "),
-      [_vm._m(1)],
+      [
+        _c("div", [
+          _c("div", { staticClass: "grid" }, [
+            _vm._m(1),
+            _vm._v(" "),
+            _c("hr"),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.error_message,
+                    expression: "error_message"
+                  }
+                ],
+                staticClass: "col-12-12"
+              },
+              [
+                _c("p", { staticClass: "error-message" }, [
+                  _vm._v(_vm._s(_vm.error_message))
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c("br")
+          ])
+        ])
+      ],
       _vm._v(" "),
       _c("table", { staticClass: "table-box", attrs: { border: "0" } }, [
         _c("tr", [
@@ -3801,16 +3915,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("div", { staticClass: "grid" }, [
-        _c("div", { staticClass: "col-12-12" }, [
-          _c("h1", [_vm._v("Meus pedidos")])
-        ]),
-        _vm._v(" "),
-        _c("hr"),
-        _vm._v(" "),
-        _c("br")
-      ])
+    return _c("div", { staticClass: "col-12-12" }, [
+      _c("h1", [_vm._v("Meus pedidos")])
     ])
   },
   function() {
@@ -3934,7 +4040,37 @@ var render = function() {
     [
       _vm._m(0),
       _vm._v(" "),
-      _c("h1", [_vm._v("Configurações gerais")]),
+      [
+        _c("div", [
+          _c("div", { staticClass: "grid" }, [
+            _vm._m(1),
+            _vm._v(" "),
+            _c("hr"),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.error_message,
+                    expression: "error_message"
+                  }
+                ],
+                staticClass: "col-12-12"
+              },
+              [
+                _c("p", { staticClass: "error-message" }, [
+                  _vm._v(_vm._s(_vm.error_message))
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c("br")
+          ])
+        ])
+      ],
       _vm._v(" "),
       _c("div", { staticClass: "wpme_config" }, [
         _c("h2", [_vm._v("Endereço")]),
@@ -4936,6 +5072,14 @@ var staticRenderFns = [
             "https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png"
         }
       })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-12-12" }, [
+      _c("h1", [_vm._v("Configurações gerais")])
     ])
   }
 ]
