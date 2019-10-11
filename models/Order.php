@@ -99,8 +99,6 @@ class Order {
                 $invoice = $order->getInvoice();
 
                 $products = $order->getProducts();
-                
-                
 
                 $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
 
@@ -328,6 +326,12 @@ class Order {
 
             $cotation = (new CotationController())->makeCotationOrder($this->id);
             return $this->setIndexCotation($cotation, $cotations[0]);
+        }
+
+        foreach ($cotation[17]->volumes as $volume) {
+            if ($volume->weight == 0) {
+                $volume->weight = 0.01;
+            }
         }
 
         return $this->setIndexCotation($cotation, $cotations[0]);
