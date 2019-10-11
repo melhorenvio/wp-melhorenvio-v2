@@ -2,13 +2,13 @@
 
 namespace Controllers;
 
-class PackageController 
+class PackageController
 {
     /**
      * @param [type] $package
      * @return void
      */
-    public function getPackage($package) 
+    public function getPackage($package)
     {
         $weight = 0;
         $width = 0;
@@ -16,7 +16,7 @@ class PackageController
         $length = 0;
 
         foreach ($package['contents'] as $item_id => $values) {
-            
+
             $_product = $values['data'];
             $weight = $weight + $_product->get_weight() * $values['quantity'];
 
@@ -24,7 +24,7 @@ class PackageController
             $height += $_product->height;
             $length += $_product->length;
         }
-        
+
         return $this->converterIfNecessary([
             "weight" => $weight,
             "width" => $width,
@@ -37,7 +37,7 @@ class PackageController
      * @param [type] $order_id
      * @return void
      */
-    public function getPackageOrderAfterCotation($order_id) 
+    public function getPackageOrderAfterCotation($order_id)
     {
         $data = get_post_meta($order_id, 'melhorenvio_cotation_v2');
 
@@ -47,9 +47,9 @@ class PackageController
 
         if (is_array($data)) {
             foreach ($data as $item) {
-                
+
                 if (isset($item->volumes) && !empty($item->volumes)) {
-                
+
                     $total = $this->countTotalvolumes($item->volumes);
                     $volumes = count($item->volumes);
                     $v = 1;
@@ -67,7 +67,7 @@ class PackageController
                             'quantity' => $quantity,
                             'insurance_value' => (isset($package->price) ? $package->price : 1.0 ),
                             'insurance' => $package->insurance,
-                            'products' => $package->products
+                            'products' => isset($package->products) ? $package->products : []
                         ];
 
                         $v++;
@@ -108,7 +108,7 @@ class PackageController
      * @param [type] $order_id
      * @return void
      */
-    public function getPackageOrder($order_id) 
+    public function getPackageOrder($order_id)
     {
         $weight = 0;
         $width  = 0;
@@ -139,7 +139,7 @@ class PackageController
      * @param [type] $package
      * @return void
      */
-    private function converterIfNecessary($package) 
+    private function converterIfNecessary($package)
     {
         $weight_unit = get_option('woocommerce_weight_unit');
         if ($weight_unit == 'g') {
