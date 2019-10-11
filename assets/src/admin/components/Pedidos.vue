@@ -273,8 +273,8 @@ export default {
                     var dateExp     = new Date(parseInt(tokenFinal.exp) * 1000);
                     var currentTime = new Date();
 
-                    if (dateExp < currentTime) {
-                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin volte a funcionar perfeitamente';
+                    if (dateExp > currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
                     }
                 } else {
                     this.$router.push('Token');

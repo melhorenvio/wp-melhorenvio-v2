@@ -53,7 +53,7 @@
     .box-buttons {
         min-height: 40px;
     }
-    .wpme_address .wpme_address-top {   
+    .wpme_address .wpme_address-top {
         min-height: 45px !important;
     }
     .wpme_address-top .title-methods {
@@ -62,6 +62,13 @@
         font-weight: 300;
         margin: 0;
     }
+    .error-message {
+        width: 98%;
+        padding: 10px 0 10px 2%;
+        background-color: #d6442a;
+        color: #fff;
+        font-weight: 600;
+    }
 </style>
 
 <template>
@@ -69,8 +76,21 @@
         <div class="boxBanner">
             <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
-        <h1>Configurações gerais</h1>
 
+        <template>
+            <div>
+                <div class="grid">
+                    <div class="col-12-12">
+                        <h1>Configurações gerais</h1>
+                    </div>
+                    <hr>
+                    <div class="col-12-12" v-show="error_message">
+                        <p class="error-message">{{ error_message }}</p>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </template>
 
         <div class="wpme_config">
             <h2>Endereço</h2>
@@ -191,7 +211,7 @@
                                         <div class="buttons -center box-buttons" >
                                             <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </transition>
@@ -201,7 +221,7 @@
             </div>
         </div>
         <hr>
-        
+
         <div class="wpme_config">
             <h2>Opções para cotação</h2>
             <p>As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada.</p>
@@ -218,7 +238,7 @@
                 </ul>
             </div>
         </div>
-        <hr> 
+        <hr>
 
         <div class="wpme_config">
             <h2>Calculadora</h2>
@@ -231,7 +251,7 @@
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
                                 <label for="two">exibir a calculadora na tela do produto</label>
                             </div><br>
-                    
+
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
                                 <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
                             </select>
@@ -323,6 +343,7 @@ export default {
     components: { Money },
     data () {
         return {
+            error_message: null,
             canUpdate: true,
             address: null,
             store: null,
@@ -465,7 +486,7 @@ export default {
         updateConfig () {
             this.setLoader(true);
             var data = new Array();
- 
+
             data['address']            = this.address;
             data['store']              = this.store;
             data['agency']             = this.agency;
@@ -527,7 +548,33 @@ export default {
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
                 if (!response.data.exists_token) {
-                    this.$router.push('Token') 
+                    this.$router.push('Token')
+                }
+
+                this.validateToken();
+            })
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+                if (response.data.token) {
+                    var token = response.data.token;
+
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal  = JSON.parse(tokenDecoded);
+                    var dateExp     = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
+                    }
+                } else {
+                    this.$router.push('Token');
                 }
             })
         }
@@ -579,7 +626,6 @@ export default {
         }
     },
     mounted () {
-
         this.getToken();
         this.setLoader(true);
         var promiseConfigs = this.getConfigs();
