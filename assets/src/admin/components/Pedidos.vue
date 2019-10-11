@@ -25,6 +25,14 @@
     .styleTableMoreInfo td {
         padding: 1%;
     }
+
+    .error-message {
+        width: 98%;
+        padding: 10px 0 10px 2%;
+        background-color: #d6442a;
+        color: #fff;
+        font-weight: 600;
+    }
 </style>
 
 <template>
@@ -41,8 +49,8 @@
                         <h1>Meus pedidos</h1>
                     </div>
                     <hr>
-                    <div class="col-12-12" v-if="error_message != ''">
-                        <p>{{ error_message }}</p>
+                    <div class="col-12-12" v-show="error_message">
+                        <p class="error-message">{{ error_message }}</p>
                     </div>
                     <br>
                 </div>
@@ -118,9 +126,9 @@
                                 <Acoes :item="item"></Acoes>
                             </li>
                         </ul>
-                        <template v-if="toggleInfo == item.id"> 
-                            <informacoes 
-                                :volume="item.cotation[item.cotation.choose_method].volumes[0]" 
+                        <template v-if="toggleInfo == item.id">
+                            <informacoes
+                                :volume="item.cotation[item.cotation.choose_method].volumes[0]"
                                 :products="item.products">
                             </informacoes>
                         </template>
@@ -243,27 +251,35 @@ export default {
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
                 if (!response.data.exists_token) {
-                    this.$router.push('Token') 
+                    this.$router.push('Token')
                 }
+
+                this.validateToken();
             })
         },
         validateToken() {
-            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => { 
-                var token = response.data.token;
-                // JWT Token Decode
-                var base64Url = token.split('.')[1];
-                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+                if (response.data.token) {
+                    var token = response.data.token;
 
-                var dateExp     = new Date(tokenDecoded.exp);
-                var currentTime = new Date();
-                if (dateExp >= currentTime) {
-                    this.error_message = 'Seu Token expirou, cadastre um novo token para o plugin funcionar perfeitamente';
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal  = JSON.parse(tokenDecoded);
+                    var dateExp     = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin volte a funcionar perfeitamente';
+                    }
+                } else {
+                    this.$router.push('Token');
                 }
             })
-            
         }
     },
     watch: {
@@ -276,7 +292,6 @@ export default {
     },
     mounted () {
         this.getToken();
-        this.validateToken();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }

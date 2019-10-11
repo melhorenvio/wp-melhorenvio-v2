@@ -257,6 +257,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -305,22 +313,31 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 if (!response.data.exists_token) {
                     this.$router.push('Token');
                 }
+
+                this.validateToken();
             });
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
-                var token = response.data.token;
-                // JWT Token Decode
-                var base64Url = token.split('.')[1];
-                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
+                if (response.data.token) {
+                    var token = response.data.token;
 
-                var dateExp = new Date(tokenDecoded.exp);
-                var currentTime = new Date();
-                if (dateExp >= currentTime) {
-                    this.error_message = 'Seu Token expirou, cadastre um novo token para o plugin funcionar perfeitamente';
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal = JSON.parse(tokenDecoded);
+                    var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin volte a funcionar perfeitamente';
+                    }
+                } else {
+                    this.$router.push('Token');
                 }
             });
         }
@@ -335,7 +352,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     },
     mounted() {
         this.getToken();
-        this.validateToken();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
@@ -3399,11 +3415,25 @@ var render = function() {
             _vm._v(" "),
             _c("hr"),
             _vm._v(" "),
-            _vm.error_message != ""
-              ? _c("div", { staticClass: "col-12-12" }, [
-                  _c("p", [_vm._v(_vm._s(_vm.error_message))])
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.error_message,
+                    expression: "error_message"
+                  }
+                ],
+                staticClass: "col-12-12"
+              },
+              [
+                _c("p", { staticClass: "error-message" }, [
+                  _vm._v(_vm._s(_vm.error_message))
                 ])
-              : _vm._e(),
+              ]
+            ),
             _vm._v(" "),
             _c("br")
           ])
