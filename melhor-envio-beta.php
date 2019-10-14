@@ -7,7 +7,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.6.0
+Version: 2.6.1
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -85,7 +85,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.6.0';
+    public $version = '2.6.1';
 
     /**
      * Holds various class instances
@@ -120,7 +120,7 @@ final class Base_Plugin {
     }
 
     public function clearCotationSession()
-    {   
+    {
         $codeStore = md5(get_option('home'));
 
         $dateNow = date("Y-m-d h:i:s");
@@ -232,7 +232,7 @@ final class Base_Plugin {
         $this->init_hooks();
 
         (new ShippingMethodsController())->updateMethodsShippingCodeSession();
-        
+
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {
             $pathPlugins = ABSPATH . 'wp-content/plugins';
@@ -299,7 +299,7 @@ final class Base_Plugin {
                 </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
             });
         }
-        
+
     }
 
     /**
@@ -368,14 +368,14 @@ final class Base_Plugin {
     public function init_hooks()
     {
         $token   = new tokenController();
-        $order   = new OrdersController(); 
+        $order   = new OrdersController();
         $users   = new UsersController();
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
         $logs    = new LogsController();
         $options = new OptionsController();
         $status  = new StatusController();
-        
+
         add_action( 'init', array( $this, 'init_classes' ) );
 
         // Localize our plugin
@@ -416,9 +416,9 @@ final class Base_Plugin {
                 ]);
                 die;
             }
-    
+
             $response['cep_destiny'] = $_GET['cep'];
-    
+
             $params = array(
                 'headers'=> array(
                     'Content-Type' => 'application/json',
@@ -427,29 +427,29 @@ final class Base_Plugin {
                 )
             );
 
-    
+
             $response['package'] = [
                 'width'  => (isset($_GET['width']))  ? (float) $_GET['width']  : 17 ,
                 'height' => (isset($_GET['height'])) ? (float) $_GET['height'] : 23,
                 'length' => (isset($_GET['length'])) ? (float) $_GET['length'] : 10,
                 'weight' => (isset($_GET['weight'])) ? (float) $_GET['weight'] : 1
             ];
-    
-    
+
+
             $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
-    
+
             $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
 
             if (isset($_GET['path_test_plugin'])) {
                 $response['path_test_plugin'] = str_replace('|', '/', $_GET['path_test_plugin']);
             }
-    
+
             $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
-    
+
             $response['is_multisite'] = is_multisite();
 
             $response['pathPlugins'] = $pathPlugins; // var nao definida
-        
+
             $response['path'] = plugin_dir_path( __FILE__ );
 
             $response['pathAlternative'] = $pathPlugins;
@@ -458,7 +458,7 @@ final class Base_Plugin {
             if (!$pathPlugins) {
                 $pathPlugins = ABSPATH . 'wp-content/plugins';
             }
-    
+
             foreach ( glob( $response['pathAlternative'] . $this->version . '/services/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;
             }
@@ -480,7 +480,7 @@ final class Base_Plugin {
             $response['session'] = $_SESSION;
 
             $response['user']   = (new UsersController())->getInfo();
-    
+
             $response['origem'] = (new UsersController())->getFrom();
 
             $response['token'] = get_option('wpmelhorenvio_token');
@@ -488,7 +488,7 @@ final class Base_Plugin {
             $response['account'] = wp_remote_retrieve_body(
                 wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
             );
-    
+
             echo json_encode($response);
             die;
         });
@@ -500,7 +500,7 @@ final class Base_Plugin {
             $data['home'] = get_home_path(__FILE__);
 
             $data['plugin_dir_path'] = dirname( __FILE__ );
-            
+
             $pathPlugins = get_option('melhor_envio_path_plugins');
             if (!$pathPlugins) {
                 $pathPlugins = ABSPATH . 'wp-content/plugins';
@@ -546,7 +546,7 @@ final class Base_Plugin {
                 'services_codes'   => (new ShippingMethodsController())->getCodes(),
                 'style_calculator' => (new Controllers\ConfigurationController())->getStyleArray(),
                 'path_plugins'     => (new Controllers\ConfigurationController())->getPathPluginsArray(),
-                'options_calculator' => (new Controllers\ConfigurationController())->getOptionsCalculator() 
+                'options_calculator' => (new Controllers\ConfigurationController())->getOptionsCalculator()
             ];
 
             echo json_encode($data);
@@ -559,7 +559,7 @@ final class Base_Plugin {
             die;
         });
 
-        // Logs 
+        // Logs
         add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'indexResponse']);
         add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detailResponse']);
 
@@ -578,13 +578,13 @@ final class Base_Plugin {
             unset($_SESSION[$codeStore]['melhorenvio_token']);
 
             unset($_SESSION[$codeStore]['melhorenvio_user_info']);
-        
+
             unset($_SESSION[$codeStore]['melhorenvio_address_selected_v2']);
             unset($_SESSION[$codeStore]['melhorenvio_address']);
-            
+
             unset($_SESSION[$codeStore]['melhorenvio_stores']);
             unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
-        
+
             unset($_SESSION[$codeStore]['melhorenvio_options']);
             echo json_encode($_SESSION);
             die;
@@ -606,7 +606,7 @@ final class Base_Plugin {
             die;
         });
     }
-    
+
     /**
      * Instantiate the required classes
      *
@@ -632,7 +632,7 @@ final class Base_Plugin {
             }
 
             $this->container['assets'] = new App\Assets();
-            
+
         } catch (\Exception $e) {
             add_action( 'admin_notices', function() use ($e) {
                 echo sprintf('<div class="error">

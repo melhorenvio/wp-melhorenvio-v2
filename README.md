@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.6.0
+Version: 2.6.1
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -11,10 +11,10 @@ Requires PHP: 5.6
 
 # Plugin Melhor Envio
 
-Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online. 
-A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras. 
+Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
+A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
 Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
-Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema. 
+Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema.
 
 ### Funcionalidades do Plugin WooCommerce
 
@@ -63,6 +63,10 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.6.1] - 2019-10
+- Adicionado validação da data de expiração do Token.
+- Ajuste da validação do peso minimo do produto para o serviço PAC Mini.
+- R
 #### [2.6.0] - 2019-09
 - Adição do método de pagamento PAC MINI.
 - Ajuste na cotação de produtos quando há restrição de região.
