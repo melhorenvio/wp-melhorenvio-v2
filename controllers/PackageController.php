@@ -83,8 +83,10 @@ class PackageController
     {
         $total = 0;
         foreach ($data as $item) {
-            foreach($item->products as $prod) {
-                $total = $total + $prod->quantity;
+            if (isset($item->products)) {
+                foreach($item->products as $prod) {
+                    $total = $total + $prod->quantity;
+                }
             }
         }
         return $total;
