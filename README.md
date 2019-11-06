@@ -39,6 +39,8 @@ Agora que sua conta Melhor Envio está vinculada com nosso plugin, basta selecio
 
 Pronto! o plugin do Melhor Envio está funcionando.
 
+Caso ainda tenha duvidas ou deseja um guia com mais detalhe da integração, segue o link para o artigo com o passo a passo para ajudar na integração: <a target="_blank" href=“https://central.melhorenvio.com.br/pt-BR/articles/1919691-manual-de-integracao-plataforma-wordpress-woocommerce“>Link do artigo</a>.
+
 ### Pré-requisitos
 
 - PHP v.5.6
@@ -66,9 +68,8 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 #### [2.6.1] - 2019-10
 - Adicionado validação da data de expiração do Token.
 - Ajuste da validação do peso minimo do produto para o serviço PAC Mini.
-- R
 #### [2.6.0] - 2019-09
-- Adição do método de pagamento PAC MINI.
+- Adição do método de pagamento PAC Mini.
 - Ajuste na cotação de produtos quando há restrição de região.
 #### [2.5.17] - 2019-08
 - Remoção do cache do título da loja.
