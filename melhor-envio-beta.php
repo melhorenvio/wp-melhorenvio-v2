@@ -110,11 +110,11 @@ final class Base_Plugin {
 
         add_action( 'plugins_loaded', array( $this, 'init_plugin' ), 9, false );
 
-        function my_plugin_load_plugin_textdomain() {
+        function melhor_envio_load_plugin_textdomain() {
             load_plugin_textdomain( 'melhor-envio', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
         }
 
-        add_action( 'plugins_loaded', 'my_plugin_load_plugin_textdomain' );
+        add_action( 'plugins_loaded', 'melhor_envio_load_plugin_textdomain' );
 
         self::clearCotationSession();
     }
