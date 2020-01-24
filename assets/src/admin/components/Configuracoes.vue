@@ -124,16 +124,31 @@
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <select name="agencies" id="agencies" v-model="agency">
-                            <option value="">Selecione...</option>
-                            <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
-                        </select>
+                        <div class="wpme_address-top" style="border-bottom: none;">
+                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog">
+                            <label for="show-all-agencies" >Desejo visualizar todas as agencias do meu estado</label>
+                        </div>
+                        <br>
+
+                        <template v-if="!show_all_agencies_jadlog">
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" disabled >Selecione...</option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </template>
+
+                        <template v-else>
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" disabled >Selecione...</option>
+                                <option v-for="option in allAgencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </template>
+                        
                     </li>
                 </ul>
             </div>
         </div>
         <hr>
-
         <template v-if="stores.length > 0">
             <div class="wpme_config">
                 <h2>Loja</h2>
@@ -351,6 +366,7 @@ export default {
             show_modal: false,
             custom_calculator: false,
             show_calculator: false,
+            show_all_agencies_jadlog: false,
             options_calculator: {
                 'ar': false,
                 'mp': true
@@ -424,6 +440,7 @@ export default {
             addresses: 'getAddress',
             stores: 'getStores',
             agencies: 'getAgencies',
+            allAgencies: 'getAllAgencies',
             style_calculator: 'getStyleCalculator',
             methods_shipments: 'getMethodsShipments',
             show_load: 'showLoad',
@@ -432,7 +449,7 @@ export default {
             show_calculator_: 'getShowCalculator',
             options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs',
-            services_codes: 'getServicesCodes'
+            services_codes: 'getServicesCodes',
         }),
         filteredsShipments() {
             let filter = this.services_codes;

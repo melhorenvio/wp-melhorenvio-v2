@@ -38,15 +38,29 @@ class Agency
 
         $response =  json_decode(
             wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state']. '&city='.$address['address']['city'], $params)
+                wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state'], $params)
             )
         );
 
-        $agencies = array();
+        $agencies = [];
+        $agenciesForUser = [];
 
         $agencySelected = get_option(self::AGENCY_SELECTED);
 
         foreach( $response as $agency) {
+            if ($address['address']['state'] === $agency->address->city->state->state_abbr && $address['address']['city'] === $agency->address->city->city) {
+                $agenciesForUser[] = array(
+                    'id'           => $agency->id,
+                    'name'         => $agency->name,
+                    'company_name' => $agency->company_name,
+                    'selected'     => ($agency->id == intval($agencySelected)) ? true : false,
+                    'address'      => array(
+                        'address'  => $agency->address->address,
+                        'city'     => $agency->address->city->city,
+                        'state'    => $agency->address->city->state->state_abbr
+                    )
+                );
+            }
 
             $agencies[] = array(
                 'id'           => $agency->id,
@@ -64,7 +78,8 @@ class Agency
         return array(
             'success'  => true,
             'origin'   => 'api',
-            'agencies' => $agencies
+            'agencies' => $agenciesForUser,
+            'allAgencies' => $agencies
         );
     }
 

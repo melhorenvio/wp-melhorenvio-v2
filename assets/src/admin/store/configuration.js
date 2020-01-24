@@ -9,6 +9,7 @@ const configuration = {
         addresses: [],
         stores: [],
         agencies: [],
+        allAgencies: [],
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
@@ -38,6 +39,9 @@ const configuration = {
         setAgency: (state, data) => {
             state.agencies = data
         },
+        setAllAgency: (state, data) => {
+            state.allAgencies = data
+        },
         setPathPlugins: (state, data) => {
             state.path_plugins = data;
         },
@@ -64,6 +68,7 @@ const configuration = {
         getAddress: state => state.addresses,
         getStores: state => state.stores,
         getAgencies: state => state.agencies,
+        getAllAgencies: state => state.allAgencies,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
         getShowCalculator: state => state.show_calculator,
@@ -89,6 +94,7 @@ const configuration = {
                         }
                         if (response.data.agencies && !_.isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
+                            commit('setAllAgency', response.data.allAgencies);
                         }
                         if (response.data.stores && !_.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
@@ -116,6 +122,15 @@ const configuration = {
                 }
             })
         },
+        getAllAgencies: ({commit}, data) => {
+            commit('toggleLoader', true);
+            Axios.post(`${ajaxurl}?action=get_agency_jadlog&state=${data.state}`).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAllAgencies', response.data.agencies);
+                }
+            })
+        },
         saveAll: ({commit}, data) => {
 
             return new Promise((resolve, reject) => {
@@ -136,6 +151,10 @@ const configuration = {
 
                 if (data.show_calculator != null) {
                     form.append('show_calculator', data.show_calculator);
+                }
+
+                if (data.show_all_agencies_jadlog != null) {
+                    form.append('show_all_agencies_jadlog', data.show_all_agencies_jadlog);
                 }
 
                 if (data.methods_shipments != null) {
@@ -177,7 +196,10 @@ const configuration = {
         },
         setAgencies: ({commit}, data) => {
             commit('setAgency', data)
-        }
+        },
+        setAllAgencies: ({commit}, data) => {
+            commit('setAllAgency', data)
+        },
     }
 }
 

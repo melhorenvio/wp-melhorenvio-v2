@@ -405,6 +405,7 @@ final class Base_Plugin {
         add_action('wp_ajax_get_balance', [$users, 'getBalance']);
         add_action('wp_ajax_insert_invoice_order', [$order, 'insertInvoiceOrder']);
         add_action('wp_ajax_get_agency_jadlog', [$conf, 'getAgencyJadlog']);
+        add_action('wp_ajax_get_all_agencies_jadlog', [$conf, 'getAgencyJadlog']);
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_update_order', [$cotacao, 'refreshCotation']);
@@ -534,11 +535,14 @@ final class Base_Plugin {
 
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){
+            $agencies    = (new Models\Agency())->getAgencies()['agencies'];
+            $allAgencies = (new Models\Agency())->getAgencies()['allAgencies'];
 
             $data = [
                 'addresses'        => (new Models\Address())->getAddressesShopping()['addresses'],
                 'stores'           => (new Models\Store())->getStories()['stores'],
-                'agencies'         => (new Models\Agency())->getAgencies()['agencies'],
+                'agencies'         => $agencies,
+                'allAgencies'      => $allAgencies,
                 'calculator'       => (new Models\CalculatorShow())->get(),
                 'use_insurance'    => (new Models\UseInsurance())->get(),
                 'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
