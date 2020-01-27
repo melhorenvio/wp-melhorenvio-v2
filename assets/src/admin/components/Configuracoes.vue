@@ -133,14 +133,14 @@
                         <template v-if="!show_all_agencies_jadlog">
                             <select name="agencies" id="agencies" v-model="agency">
                                 <option value="" disabled >Selecione...</option>
-                                <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected == true"><strong>{{option.name}}</strong>  </option>
                             </select>
                         </template>
 
                         <template v-else>
                             <select name="agencies" id="agencies" v-model="agency">
                                 <option value="" disabled >Selecione...</option>
-                                <option v-for="option in allAgencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected == true"><strong>{{optionAll.name}}</strong>  </option>
                             </select>
                         </template>
                         
@@ -447,6 +447,7 @@ export default {
             path_plugins_: 'getPathPlugins',
             where_calculator_: 'getWhereCalculator',
             show_calculator_: 'getShowCalculator',
+            show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
             options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs',
             services_codes: 'getServicesCodes',
@@ -504,14 +505,15 @@ export default {
             this.setLoader(true);
             var data = new Array();
 
-            data['address']            = this.address;
-            data['store']              = this.store;
-            data['agency']             = this.agency;
-            data['show_calculator']    = this.show_calculator;
-            data['methods_shipments']  = this.methods_shipments;
-            data['where_calculator']   = this.where_calculator;
-            data['path_plugins']       = this.path_plugins;
-            data['options_calculator'] = this.options_calculator;
+            data['address']                  = this.address;
+            data['store']                    = this.store;
+            data['agency']                   = this.agency;
+            data['show_calculator']          = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
+            data['methods_shipments']        = this.methods_shipments;
+            data['where_calculator']         = this.where_calculator;
+            data['path_plugins']             = this.path_plugins;
+            data['options_calculator']       = this.options_calculator;
             var respSave = this.saveAll(data);
 
             respSave.then((resolve) => {
@@ -633,6 +635,9 @@ export default {
         },
         show_calculator_(e) {
             this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
         },
         path_plugins_(e) {
             this.path_plugins = e;

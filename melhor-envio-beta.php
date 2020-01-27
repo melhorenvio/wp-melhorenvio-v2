@@ -539,25 +539,26 @@ final class Base_Plugin {
             $allAgencies = (new Models\Agency())->getAgencies()['allAgencies'];
 
             $data = [
-                'addresses'        => (new Models\Address())->getAddressesShopping()['addresses'],
-                'stores'           => (new Models\Store())->getStories()['stores'],
-                'agencies'         => $agencies,
-                'allAgencies'      => $allAgencies,
-                'calculator'       => (new Models\CalculatorShow())->get(),
-                'use_insurance'    => (new Models\UseInsurance())->get(),
-                'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
-                'metodos'          => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
-                'services_codes'   => (new ShippingMethodsController())->getCodes(),
-                'style_calculator' => (new Controllers\ConfigurationController())->getStyleArray(),
-                'path_plugins'     => (new Controllers\ConfigurationController())->getPathPluginsArray(),
-                'options_calculator' => (new Controllers\ConfigurationController())->getOptionsCalculator()
+                'addresses'           => (new Models\Address())->getAddressesShopping()['addresses'],
+                'stores'              => (new Models\Store())->getStories()['stores'],
+                'agencies'            => $agencies,
+                'allAgencies'         => $allAgencies,
+                'calculator'          => (new Models\CalculatorShow())->get(),
+                'all_agencies_jadlog' => (new Models\JadlogAgenciesShow())->get(),
+                'use_insurance'       => (new Models\UseInsurance())->get(),
+                'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
+                'metodos'             => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
+                'services_codes'      => (new ShippingMethodsController())->getCodes(),
+                'style_calculator'    => (new Controllers\ConfigurationController())->getStyleArray(),
+                'path_plugins'        => (new Controllers\ConfigurationController())->getPathPluginsArray(),
+                'options_calculator'  => (new Controllers\ConfigurationController())->getOptionsCalculator()
             ];
 
             echo json_encode($data);
             die;
         });
 
-        // Salvar as confifurações
+        // Salvar as configurações
         add_action('wp_ajax_save_configuracoes', function() {
             echo json_encode((new Controllers\ConfigurationController())->saveAll($_POST));
             die;

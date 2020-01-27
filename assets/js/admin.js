@@ -1299,6 +1299,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         path_plugins_: 'getPathPlugins',
         where_calculator_: 'getWhereCalculator',
         show_calculator_: 'getShowCalculator',
+        show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
         options_calculator_: 'getOptionsCalculator',
         configs: 'getConfigs',
         services_codes: 'getServicesCodes'
@@ -1354,6 +1355,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             data['store'] = this.store;
             data['agency'] = this.agency;
             data['show_calculator'] = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
             data['methods_shipments'] = this.methods_shipments;
             data['where_calculator'] = this.where_calculator;
             data['path_plugins'] = this.path_plugins;
@@ -1479,6 +1481,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         show_calculator_(e) {
             this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
         },
         path_plugins_(e) {
             this.path_plugins = e;
@@ -4292,7 +4297,10 @@ var render = function() {
                               "option",
                               {
                                 key: option.id,
-                                domProps: { value: option.id }
+                                domProps: {
+                                  value: option.id,
+                                  selected: option.selected == true
+                                }
                               },
                               [_c("strong", [_vm._v(_vm._s(option.name))])]
                             )
@@ -4335,14 +4343,17 @@ var render = function() {
                             _vm._v("Selecione...")
                           ]),
                           _vm._v(" "),
-                          _vm._l(_vm.allAgencies, function(option) {
+                          _vm._l(_vm.allAgencies, function(optionAll) {
                             return _c(
                               "option",
                               {
-                                key: option.id,
-                                domProps: { value: option.id }
+                                key: optionAll.id,
+                                domProps: {
+                                  value: optionAll.id,
+                                  selected: optionAll.selected == true
+                                }
                               },
-                              [_c("strong", [_vm._v(_vm._s(option.name))])]
+                              [_c("strong", [_vm._v(_vm._s(optionAll.name))])]
                             )
                           })
                         ],
@@ -6612,6 +6623,7 @@ var configuration = {
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
+        show_all_jadlog_agencies: false,
         options_calculator: {
             ar: false,
             mp: false
@@ -6650,6 +6662,9 @@ var configuration = {
         setShowCalculator: function setShowCalculator(state, data) {
             state.show_calculator = data;
         },
+        setShowAllJadlogAgencies: function setShowAllJadlogAgencies(state, data) {
+            state.show_all_jadlog_agencies = data;
+        },
         setMethodShipments: function setMethodShipments(state, data) {
             state.methods_shipments = data;
         },
@@ -6684,6 +6699,9 @@ var configuration = {
         },
         getShowCalculator: function getShowCalculator(state) {
             return state.show_calculator;
+        },
+        getShowAllJadlogAgencies: function getShowAllJadlogAgencies(state) {
+            return state.show_all_jadlog_agencies;
         },
         showLoad: function showLoad(state) {
             return state.show_load;
@@ -6729,6 +6747,7 @@ var configuration = {
                         commit('setStyleCalculator', response.data.style_calculator);
                         commit('setPathPlugins', response.data.path_plugins);
                         commit('setShowCalculator', response.data.calculator);
+                        commit('setShowAllJadlogAgencies', response.data.all_agencies_jadlog);
                         commit('setMethodShipments', response.data.metodos);
                         commit('setWhereCalculator', response.data.where_calculator);
                         commit('setOptionsCalculator', response.data.options_calculator);

@@ -438,7 +438,7 @@ class ConfigurationController
             $response['show_calculator'] = (new CalculatorShow())->set($data['show_calculator']);
         }
 
-        if (isset($data['show_all_agencies_jadlog'])) {
+        if (isset($data['show_all_agencies_jadlog']) ) {
             $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())->set($data['show_all_agencies_jadlog']);
         }
 

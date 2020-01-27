@@ -13,6 +13,7 @@ const configuration = {
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
+        show_all_jadlog_agencies: false,
         options_calculator: {
             ar: false,
             mp: false
@@ -50,6 +51,9 @@ const configuration = {
         },
         setShowCalculator: (state, data) => {
             state.show_calculator = data
+        }, 
+        setShowAllJadlogAgencies: (state, data) => {
+            state.show_all_jadlog_agencies = data
         },
         setMethodShipments: (state, data) => {
             state.methods_shipments = data
@@ -71,7 +75,8 @@ const configuration = {
         getAllAgencies: state => state.allAgencies,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
-        getShowCalculator: state => state.show_calculator,
+        getShowCalculator: state => state.show_calculator, 
+        getShowAllJadlogAgencies: state => state.show_all_jadlog_agencies,
         showLoad: state => state.show_load,
         getMethodsShipments: state => state.methods_shipments,
         getWhereCalculator: state => state.where_calculator,
@@ -99,9 +104,10 @@ const configuration = {
                         if (response.data.stores && !_.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
                         }    
-                        commit('setStyleCalculator', response.data.style_calculator)
+                        commit('setStyleCalculator', response.data.style_calculator)  
                         commit('setPathPlugins', response.data.path_plugins)
                         commit('setShowCalculator', response.data.calculator)
+                        commit('setShowAllJadlogAgencies', response.data.all_agencies_jadlog)
                         commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)

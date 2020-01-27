@@ -11,14 +11,14 @@ class JadlogAgenciesShow
      */
     public function get() 
     {
-        $show = get_option('melhorenvio_hide_all_jadlog_agencies_product');
+        $show = get_option('melhorenvio_show_all_jadlog_agencies');
 
         if (!$show) {
-            return true;
+            return false;
         }
 
-        if ($show == "1") {
-            return false;
+        if ($show == "1" || filter_var($show, FILTER_VALIDATE_BOOLEAN)) {
+            return true;
         }
 
         return false;
@@ -30,12 +30,14 @@ class JadlogAgenciesShow
      */
     public function set($value) 
     {
-        if ($value == 'true') {
-            delete_option('melhorenvio_hide_all_jadlog_agencies_product');
-            return true;
+        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+
+        if ($value) {
+            add_option('melhorenvio_show_all_jadlog_agencies' , 1);
         } else {
-            add_option('melhorenvio_hide_all_jadlog_agencies_product' , 1);
-            return false;
+            delete_option('melhorenvio_show_all_jadlog_agencies');
         }
+
+        return $value;
     }
 }
