@@ -125,22 +125,22 @@
                 <ul class="wpme_address">
                     <li>
                         <div class="wpme_address-top" style="border-bottom: none;">
-                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog">
+                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog" @change="changeJadlogOptions()">
                             <label for="show-all-agencies" >Desejo visualizar todas as agencias do meu estado</label>
                         </div>
                         <br>
 
                         <template v-if="!show_all_agencies_jadlog">
                             <select name="agencies" id="agencies" v-model="agency">
-                                <option value="" disabled >Selecione...</option>
-                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected == true"><strong>{{option.name}}</strong>  </option>
+                                <option value="" >Selecione...</option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected"><strong>{{option.name}}</strong>  </option>
                             </select>
                         </template>
 
                         <template v-else>
                             <select name="agencies" id="agencies" v-model="agency">
-                                <option value="" disabled >Selecione...</option>
-                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected == true"><strong>{{optionAll.name}}</strong>  </option>
+                                <option value="" >Selecione...</option>
+                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected"><strong>{{optionAll.name}}</strong>  </option>
                             </select>
                         </template>
                         
@@ -439,6 +439,7 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
+            agencySelected_: 'getAgencySelected',
             agencies: 'getAgencies',
             allAgencies: 'getAllAgencies',
             style_calculator: 'getStyleCalculator',
@@ -598,7 +599,10 @@ export default {
                     this.$router.push('Token');
                 }
             })
-        }
+        },
+        changeJadlogOptions() {
+            this.agency = ''; 
+        },
     },
     watch : {
         addresses () {
@@ -629,6 +633,9 @@ export default {
                 })
             }
             this.setLoader(false);
+        },
+        agencySelected_(e) {
+            this.agency = e;
         },
         services_codes() {
             this.getServicesCodesstatus();

@@ -19,6 +19,7 @@ const configuration = {
             mp: false
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
+        agencySelected: null,
         methods_shipments: [],
         show_load: true,
         configs: [],
@@ -39,6 +40,9 @@ const configuration = {
         },
         setAgency: (state, data) => {
             state.agencies = data
+        },
+        setAgencySelected: (state, data) => { 
+            state.agencySelected = data
         },
         setAllAgency: (state, data) => {
             state.allAgencies = data
@@ -73,6 +77,7 @@ const configuration = {
         getStores: state => state.stores,
         getAgencies: state => state.agencies,
         getAllAgencies: state => state.allAgencies,
+        getAgencySelected: state => state.agencySelected,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
         getShowCalculator: state => state.show_calculator, 
@@ -104,6 +109,7 @@ const configuration = {
                         if (response.data.stores && !_.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
                         }    
+                        commit('setAgencySelected', response.data.agencySelected)
                         commit('setStyleCalculator', response.data.style_calculator)  
                         commit('setPathPlugins', response.data.path_plugins)
                         commit('setShowCalculator', response.data.calculator)

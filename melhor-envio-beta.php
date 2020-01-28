@@ -535,14 +535,14 @@ final class Base_Plugin {
 
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){
-            $agencies    = (new Models\Agency())->getAgencies()['agencies'];
-            $allAgencies = (new Models\Agency())->getAgencies()['allAgencies'];
+            $responseAgencies = (new Models\Agency())->getAgencies();
 
             $data = [
                 'addresses'           => (new Models\Address())->getAddressesShopping()['addresses'],
                 'stores'              => (new Models\Store())->getStories()['stores'],
-                'agencies'            => $agencies,
-                'allAgencies'         => $allAgencies,
+                'agencies'            => $responseAgencies['agencies'],
+                'allAgencies'         => $responseAgencies['allAgencies'],
+                'agencySelected'      => $responseAgencies['agencySelected'],
                 'calculator'          => (new Models\CalculatorShow())->get(),
                 'all_agencies_jadlog' => (new Models\JadlogAgenciesShow())->get(),
                 'use_insurance'       => (new Models\UseInsurance())->get(),

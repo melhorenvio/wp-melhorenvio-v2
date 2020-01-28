@@ -79,7 +79,8 @@ class Agency
             'success'  => true,
             'origin'   => 'api',
             'agencies' => $agenciesForUser,
-            'allAgencies' => $agencies
+            'allAgencies' => $agencies,
+            'agencySelected' => $agencySelected
         );
     }
 

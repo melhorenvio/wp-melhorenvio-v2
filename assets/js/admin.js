@@ -1291,6 +1291,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress',
         stores: 'getStores',
+        agencySelected_: 'getAgencySelected',
         agencies: 'getAgencies',
         allAgencies: 'getAllAgencies',
         style_calculator: 'getStyleCalculator',
@@ -1444,6 +1445,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     this.$router.push('Token');
                 }
             });
+        },
+        changeJadlogOptions() {
+            this.agency = '';
         }
     }),
     watch: {
@@ -1475,6 +1479,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 });
             }
             this.setLoader(false);
+        },
+        agencySelected_(e) {
+            this.agency = e;
         },
         services_codes() {
             this.getServicesCodesstatus();
@@ -4222,28 +4229,33 @@ var render = function() {
                           : _vm.show_all_agencies_jadlog
                       },
                       on: {
-                        change: function($event) {
-                          var $$a = _vm.show_all_agencies_jadlog,
-                            $$el = $event.target,
-                            $$c = $$el.checked ? true : false
-                          if (Array.isArray($$a)) {
-                            var $$v = null,
-                              $$i = _vm._i($$a, $$v)
-                            if ($$el.checked) {
-                              $$i < 0 &&
-                                (_vm.show_all_agencies_jadlog = $$a.concat([
-                                  $$v
-                                ]))
+                        change: [
+                          function($event) {
+                            var $$a = _vm.show_all_agencies_jadlog,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  (_vm.show_all_agencies_jadlog = $$a.concat([
+                                    $$v
+                                  ]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.show_all_agencies_jadlog = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
                             } else {
-                              $$i > -1 &&
-                                (_vm.show_all_agencies_jadlog = $$a
-                                  .slice(0, $$i)
-                                  .concat($$a.slice($$i + 1)))
+                              _vm.show_all_agencies_jadlog = $$c
                             }
-                          } else {
-                            _vm.show_all_agencies_jadlog = $$c
+                          },
+                          function($event) {
+                            return _vm.changeJadlogOptions()
                           }
-                        }
+                        ]
                       }
                     }),
                     _vm._v(" "),
@@ -4288,7 +4300,7 @@ var render = function() {
                           }
                         },
                         [
-                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                          _c("option", { attrs: { value: "" } }, [
                             _vm._v("Selecione...")
                           ]),
                           _vm._v(" "),
@@ -4299,7 +4311,7 @@ var render = function() {
                                 key: option.id,
                                 domProps: {
                                   value: option.id,
-                                  selected: option.selected == true
+                                  selected: option.selected
                                 }
                               },
                               [_c("strong", [_vm._v(_vm._s(option.name))])]
@@ -4339,7 +4351,7 @@ var render = function() {
                           }
                         },
                         [
-                          _c("option", { attrs: { value: "", disabled: "" } }, [
+                          _c("option", { attrs: { value: "" } }, [
                             _vm._v("Selecione...")
                           ]),
                           _vm._v(" "),
@@ -4350,7 +4362,7 @@ var render = function() {
                                 key: optionAll.id,
                                 domProps: {
                                   value: optionAll.id,
-                                  selected: optionAll.selected == true
+                                  selected: optionAll.selected
                                 }
                               },
                               [_c("strong", [_vm._v(_vm._s(optionAll.name))])]
@@ -6629,6 +6641,7 @@ var configuration = {
             mp: false
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
+        agencySelected: null,
         methods_shipments: [],
         show_load: true,
         configs: [],
@@ -6649,6 +6662,9 @@ var configuration = {
         },
         setAgency: function setAgency(state, data) {
             state.agencies = data;
+        },
+        setAgencySelected: function setAgencySelected(state, data) {
+            state.agencySelected = data;
         },
         setAllAgency: function setAllAgency(state, data) {
             state.allAgencies = data;
@@ -6690,6 +6706,9 @@ var configuration = {
         },
         getAllAgencies: function getAllAgencies(state) {
             return state.allAgencies;
+        },
+        getAgencySelected: function getAgencySelected(state) {
+            return state.agencySelected;
         },
         getStyleCalculator: function getStyleCalculator(state) {
             return state.styleCalculator;
@@ -6744,6 +6763,7 @@ var configuration = {
                         if (response.data.stores && !_lodash2.default.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores);
                         }
+                        commit('setAgencySelected', response.data.agencySelected);
                         commit('setStyleCalculator', response.data.style_calculator);
                         commit('setPathPlugins', response.data.path_plugins);
                         commit('setShowCalculator', response.data.calculator);
