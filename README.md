@@ -65,6 +65,8 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.6.2] - 2020-01
+- Adicionado opção de escolha de agencias Jadlog no estado.
 #### [2.6.1] - 2019-10
 - Adicionado validação da data de expiração do Token.
 - Ajuste da validação do peso minimo do produto para o serviço PAC Mini.
