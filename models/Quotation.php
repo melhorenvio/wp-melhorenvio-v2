@@ -321,7 +321,7 @@ class Quotation
                         'results' => $filterCotations
                     ];
 
-                    if (!is_null($service)) {
+                    if (!is_null($service) && !empty($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service])) {
                         return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service];
                     }
 
