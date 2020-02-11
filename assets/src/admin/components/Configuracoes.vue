@@ -124,16 +124,31 @@
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <select name="agencies" id="agencies" v-model="agency">
-                            <option value="">Selecione...</option>
-                            <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
-                        </select>
+                        <div class="wpme_address-top" style="border-bottom: none;">
+                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog" @change="changeJadlogOptions()">
+                            <label for="show-all-agencies" >Desejo visualizar todas as agencias do meu estado</label>
+                        </div>
+                        <br>
+
+                        <template v-if="!show_all_agencies_jadlog">
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </template>
+
+                        <template v-else>
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected"><strong>{{optionAll.name}}</strong>  </option>
+                            </select>
+                        </template>
+                        
                     </li>
                 </ul>
             </div>
         </div>
         <hr>
-
         <template v-if="stores.length > 0">
             <div class="wpme_config">
                 <h2>Loja</h2>
@@ -351,6 +366,7 @@ export default {
             show_modal: false,
             custom_calculator: false,
             show_calculator: false,
+            show_all_agencies_jadlog: false,
             options_calculator: {
                 'ar': false,
                 'mp': true
@@ -423,16 +439,19 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
+            agencySelected_: 'getAgencySelected',
             agencies: 'getAgencies',
+            allAgencies: 'getAllAgencies',
             style_calculator: 'getStyleCalculator',
             methods_shipments: 'getMethodsShipments',
             show_load: 'showLoad',
             path_plugins_: 'getPathPlugins',
             where_calculator_: 'getWhereCalculator',
             show_calculator_: 'getShowCalculator',
+            show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
             options_calculator_: 'getOptionsCalculator',
             configs: 'getConfigs',
-            services_codes: 'getServicesCodes'
+            services_codes: 'getServicesCodes',
         }),
         filteredsShipments() {
             let filter = this.services_codes;
@@ -487,14 +506,15 @@ export default {
             this.setLoader(true);
             var data = new Array();
 
-            data['address']            = this.address;
-            data['store']              = this.store;
-            data['agency']             = this.agency;
-            data['show_calculator']    = this.show_calculator;
-            data['methods_shipments']  = this.methods_shipments;
-            data['where_calculator']   = this.where_calculator;
-            data['path_plugins']       = this.path_plugins;
-            data['options_calculator'] = this.options_calculator;
+            data['address']                  = this.address;
+            data['store']                    = this.store;
+            data['agency']                   = this.agency;
+            data['show_calculator']          = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
+            data['methods_shipments']        = this.methods_shipments;
+            data['where_calculator']         = this.where_calculator;
+            data['path_plugins']             = this.path_plugins;
+            data['options_calculator']       = this.options_calculator;
             var respSave = this.saveAll(data);
 
             respSave.then((resolve) => {
@@ -579,7 +599,10 @@ export default {
                     this.$router.push('Token');
                 }
             })
-        }
+        },
+        changeJadlogOptions() {
+            this.agency = ''; 
+        },
     },
     watch : {
         addresses () {
@@ -611,11 +634,17 @@ export default {
             }
             this.setLoader(false);
         },
+        agencySelected_(e) {
+            this.agency = e;
+        },
         services_codes() {
             this.getServicesCodesstatus();
         },
         show_calculator_(e) {
             this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
         },
         path_plugins_(e) {
             this.path_plugins = e;

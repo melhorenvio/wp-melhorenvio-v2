@@ -1200,6 +1200,21 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1216,6 +1231,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             show_modal: false,
             custom_calculator: false,
             show_calculator: false,
+            show_all_agencies_jadlog: false,
             options_calculator: {
                 'ar': false,
                 'mp': true
@@ -1275,13 +1291,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('configuration', {
         addresses: 'getAddress',
         stores: 'getStores',
+        agencySelected_: 'getAgencySelected',
         agencies: 'getAgencies',
+        allAgencies: 'getAllAgencies',
         style_calculator: 'getStyleCalculator',
         methods_shipments: 'getMethodsShipments',
         show_load: 'showLoad',
         path_plugins_: 'getPathPlugins',
         where_calculator_: 'getWhereCalculator',
         show_calculator_: 'getShowCalculator',
+        show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
         options_calculator_: 'getOptionsCalculator',
         configs: 'getConfigs',
         services_codes: 'getServicesCodes'
@@ -1337,6 +1356,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             data['store'] = this.store;
             data['agency'] = this.agency;
             data['show_calculator'] = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
             data['methods_shipments'] = this.methods_shipments;
             data['where_calculator'] = this.where_calculator;
             data['path_plugins'] = this.path_plugins;
@@ -1425,6 +1445,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     this.$router.push('Token');
                 }
             });
+        },
+        changeJadlogOptions() {
+            this.agency = '';
         }
     }),
     watch: {
@@ -1457,11 +1480,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
             this.setLoader(false);
         },
+        agencySelected_(e) {
+            this.agency = e;
+        },
         services_codes() {
             this.getServicesCodesstatus();
         },
         show_calculator_(e) {
             this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
         },
         path_plugins_(e) {
             this.path_plugins = e;
@@ -4173,51 +4202,179 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "wpme_flex" }, [
           _c("ul", { staticClass: "wpme_address" }, [
-            _c("li", [
-              _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.agency,
-                      expression: "agency"
-                    }
-                  ],
-                  attrs: { name: "agencies", id: "agencies" },
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.agency = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
-                    }
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "" } }, [
-                    _vm._v("Selecione...")
-                  ]),
-                  _vm._v(" "),
-                  _vm._l(_vm.agencies, function(option) {
-                    return _c(
-                      "option",
-                      { key: option.id, domProps: { value: option.id } },
-                      [_c("strong", [_vm._v(_vm._s(option.name))])]
-                    )
-                  })
-                ],
-                2
-              )
-            ])
+            _c(
+              "li",
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass: "wpme_address-top",
+                    staticStyle: { "border-bottom": "none" }
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.show_all_agencies_jadlog,
+                          expression: "show_all_agencies_jadlog"
+                        }
+                      ],
+                      staticClass: "show-all-agencies",
+                      attrs: { type: "checkbox", id: "show-all-agencies" },
+                      domProps: {
+                        checked: Array.isArray(_vm.show_all_agencies_jadlog)
+                          ? _vm._i(_vm.show_all_agencies_jadlog, null) > -1
+                          : _vm.show_all_agencies_jadlog
+                      },
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$a = _vm.show_all_agencies_jadlog,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  (_vm.show_all_agencies_jadlog = $$a.concat([
+                                    $$v
+                                  ]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.show_all_agencies_jadlog = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.show_all_agencies_jadlog = $$c
+                            }
+                          },
+                          function($event) {
+                            return _vm.changeJadlogOptions()
+                          }
+                        ]
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("label", { attrs: { for: "show-all-agencies" } }, [
+                      _vm._v(
+                        "Desejo visualizar todas as agencias do meu estado"
+                      )
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                !_vm.show_all_agencies_jadlog
+                  ? [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.agency,
+                              expression: "agency"
+                            }
+                          ],
+                          attrs: { name: "agencies", id: "agencies" },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.agency = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("Selecione...")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.agencies, function(option) {
+                            return _c(
+                              "option",
+                              {
+                                key: option.id,
+                                domProps: {
+                                  value: option.id,
+                                  selected: option.selected
+                                }
+                              },
+                              [_c("strong", [_vm._v(_vm._s(option.name))])]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    ]
+                  : [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.agency,
+                              expression: "agency"
+                            }
+                          ],
+                          attrs: { name: "agencies", id: "agencies" },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.agency = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("Selecione...")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.allAgencies, function(optionAll) {
+                            return _c(
+                              "option",
+                              {
+                                key: optionAll.id,
+                                domProps: {
+                                  value: optionAll.id,
+                                  selected: optionAll.selected
+                                }
+                              },
+                              [_c("strong", [_vm._v(_vm._s(optionAll.name))])]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    ]
+              ],
+              2
+            )
           ])
         ])
       ]),
@@ -6474,14 +6631,17 @@ var configuration = {
         addresses: [],
         stores: [],
         agencies: [],
+        allAgencies: [],
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
+        show_all_jadlog_agencies: false,
         options_calculator: {
             ar: false,
             mp: false
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
+        agencySelected: null,
         methods_shipments: [],
         show_load: true,
         configs: [],
@@ -6503,6 +6663,12 @@ var configuration = {
         setAgency: function setAgency(state, data) {
             state.agencies = data;
         },
+        setAgencySelected: function setAgencySelected(state, data) {
+            state.agencySelected = data;
+        },
+        setAllAgency: function setAllAgency(state, data) {
+            state.allAgencies = data;
+        },
         setPathPlugins: function setPathPlugins(state, data) {
             state.path_plugins = data;
         },
@@ -6511,6 +6677,9 @@ var configuration = {
         },
         setShowCalculator: function setShowCalculator(state, data) {
             state.show_calculator = data;
+        },
+        setShowAllJadlogAgencies: function setShowAllJadlogAgencies(state, data) {
+            state.show_all_jadlog_agencies = data;
         },
         setMethodShipments: function setMethodShipments(state, data) {
             state.methods_shipments = data;
@@ -6535,6 +6704,12 @@ var configuration = {
         getAgencies: function getAgencies(state) {
             return state.agencies;
         },
+        getAllAgencies: function getAllAgencies(state) {
+            return state.allAgencies;
+        },
+        getAgencySelected: function getAgencySelected(state) {
+            return state.agencySelected;
+        },
         getStyleCalculator: function getStyleCalculator(state) {
             return state.styleCalculator;
         },
@@ -6543,6 +6718,9 @@ var configuration = {
         },
         getShowCalculator: function getShowCalculator(state) {
             return state.show_calculator;
+        },
+        getShowAllJadlogAgencies: function getShowAllJadlogAgencies(state) {
+            return state.show_all_jadlog_agencies;
         },
         showLoad: function showLoad(state) {
             return state.show_load;
@@ -6580,13 +6758,16 @@ var configuration = {
                         }
                         if (response.data.agencies && !_lodash2.default.isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
+                            commit('setAllAgency', response.data.allAgencies);
                         }
                         if (response.data.stores && !_lodash2.default.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores);
                         }
+                        commit('setAgencySelected', response.data.agencySelected);
                         commit('setStyleCalculator', response.data.style_calculator);
                         commit('setPathPlugins', response.data.path_plugins);
                         commit('setShowCalculator', response.data.calculator);
+                        commit('setShowAllJadlogAgencies', response.data.all_agencies_jadlog);
                         commit('setMethodShipments', response.data.metodos);
                         commit('setWhereCalculator', response.data.where_calculator);
                         commit('setOptionsCalculator', response.data.options_calculator);
@@ -6609,8 +6790,19 @@ var configuration = {
                 }
             });
         },
-        saveAll: function saveAll(_ref3, data) {
+        getAllAgencies: function getAllAgencies(_ref3, data) {
             var commit = _ref3.commit;
+
+            commit('toggleLoader', true);
+            _axios2.default.post(ajaxurl + '?action=get_agency_jadlog&state=' + data.state).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAllAgencies', response.data.agencies);
+                }
+            });
+        },
+        saveAll: function saveAll(_ref4, data) {
+            var commit = _ref4.commit;
 
 
             return new Promise(function (resolve, reject) {
@@ -6631,6 +6823,10 @@ var configuration = {
 
                 if (data.show_calculator != null) {
                     form.append('show_calculator', data.show_calculator);
+                }
+
+                if (data.show_all_agencies_jadlog != null) {
+                    form.append('show_all_agencies_jadlog', data.show_all_agencies_jadlog);
                 }
 
                 if (data.methods_shipments != null) {
@@ -6667,15 +6863,20 @@ var configuration = {
                 });
             });
         },
-        setLoader: function setLoader(_ref4, data) {
-            var commit = _ref4.commit;
+        setLoader: function setLoader(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', data);
         },
-        setAgencies: function setAgencies(_ref5, data) {
-            var commit = _ref5.commit;
+        setAgencies: function setAgencies(_ref6, data) {
+            var commit = _ref6.commit;
 
             commit('setAgency', data);
+        },
+        setAllAgencies: function setAllAgencies(_ref7, data) {
+            var commit = _ref7.commit;
+
+            commit('setAllAgency', data);
         }
     }
 };
