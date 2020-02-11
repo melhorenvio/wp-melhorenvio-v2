@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.6.1
+Version: 2.6.2
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -66,7 +66,8 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 
 ## CHANGELOG
 #### [2.6.2] - 2020-01
-- Adicionado opção de escolha de agencias Jadlog no estado.
+- Adicionado opção de visualizar todas as agencias Jadlog do estado.
+- Ajustes na lógica de cotação na pagina do produto.
 #### [2.6.1] - 2019-10
 - Adicionado validação da data de expiração do Token.
 - Ajuste da validação do peso minimo do produto para o serviço PAC Mini.
