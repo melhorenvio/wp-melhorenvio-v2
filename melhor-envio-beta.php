@@ -488,6 +488,8 @@ final class Base_Plugin {
                 wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
             );
 
+            $response['server'] = (new LogsController())->getServerStatus();
+
             echo json_encode($response);
             die;
         });
