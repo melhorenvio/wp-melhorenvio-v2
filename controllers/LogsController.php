@@ -159,4 +159,25 @@ class LogsController
         echo json_encode($response);
         die;
     }
+
+    public function getServerStatus()
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://location.melhorenvio.com.br/96055710"); 
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+        curl_exec($curl); 
+
+        $return = [];
+        $error  = curl_error($curl);
+        
+        if (!empty($error)) $return['error'] = $error;
+
+        $info = curl_getinfo($curl);
+        curl_close($curl); 
+        $return['info'] = $info;
+
+        return $return;
+    }
 }
