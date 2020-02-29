@@ -6,7 +6,11 @@ class ShippingMethodsController
 {
     public function getCodes()
     {
-        return $_SESSION['methods_shipping_api_melhor_envio']['methods'];       
+        if (!isset($_SESSION['methods_shipping_api_melhor_envio'])) {
+            return $this->updateMethodsShippingCodeSession();
+        }
+        
+        return $_SESSION['methods_shipping_api_melhor_envio']['methods']; 
     }
 
     public function getMethodsShippingCodesViaApi()
