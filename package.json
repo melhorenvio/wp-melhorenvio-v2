@@ -11,7 +11,7 @@
     "build": "cross-env WEBPACK_ENV=production webpack"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "jeet": "^7.2.0",
     "lodash": "^4.17.11",
     "rupture": "^0.7.1",
