@@ -1,5 +1,36 @@
 ### Changelog
 
+## [2.4.7] - 2019-08-26
+## Fixed
+- Adicionado novo serviço: Correios Mini
+
+## [2.4.6] - 2019-05-14
+## Fixed
+- Ajuste no css dos input na tela do produto
+
+## [2.4.5] - 2019-05-08
+## Fixed
+- Ajuste no metodo get_product do woocommerce
+- Ajuste para não exibir prazo de entrega junto ao nome do metodo na calculadora do produto
+
+## [2.4.4] - 2019-05-08
+## Fixed
+- Ajuste no layout
+
+## [2.4.2] - 2019-04-23
+## Fixed
+- Correção erro 500
+
+## [2.4.0] - 2019-04-22
+## Fixed
+- Correção erro 500
+
+## [2.3.9] - 2019-04-18
+## Fixed
+- Melhorias no desempenho do plugin
+- utilização de cupom de frete grátis
+- Solução de bugs
+
 ## [2.3.8] - 2019-04-01
 ## Added
 - Adicionado a opção de definir o path do folder dos plugins (Solução do erro do ABSPATH de alguns usuários)
@@ -91,7 +122,7 @@
 
 ## [2.2.4] - 2018-12-07
 ### fixed
-- Remoção frase "Feito com amor por Melhor envio" da cotação da página do produto
+- Remoção frase "Feito com amor por Melhor Envio" da cotação da página do produto
 - Ajustes na listagem de pedidos, alguns pedidos quebraram a aplicação
 
 ## [2.2.2] - 2018-12-07

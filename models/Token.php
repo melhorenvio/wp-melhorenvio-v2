@@ -13,6 +13,7 @@ class Token
         if (!$token) {
             return '';
         }
+        
         return $token;
     }
 
@@ -24,4 +25,6 @@ class Token
     {
         return update_option('wpmelhorenvio_token', $token, true);
     }
+
+    
 }

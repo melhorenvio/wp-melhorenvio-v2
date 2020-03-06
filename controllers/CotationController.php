@@ -11,15 +11,16 @@ use Controllers\LogsController;
 use Controllers\OrdersController;
 use Controllers\Optionscontroller;
 use Models\Order;
+use Models\Log;
+use Models\Quotation;
+use Models\Method;
 
 class CotationController 
 {
-    const URL = 'https://api.melhorenvio.com';
+    const URL = 'https://q-engine-hub.melhorenvio.com';
 
     public function __construct() 
     {
-        // woocommerce_before_checkout_form
-        // woocommerce_checkout_order_processed
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
 
@@ -29,106 +30,40 @@ class CotationController
      */
     public function makeCotationOrder($order_id) 
     {
+        $q = (new Quotation($order_id));
+
+        $result = $q->calculate();
+    
         global $woocommerce;
 
-        $to = str_replace('-', '', $woocommerce->customer->get_shipping_postcode());
-        if (!$to) {
-            $order = new \WC_Order($order_id);
-            $to = str_replace('-', '', $order->get_shipping_postcode());
-        }
-    
-        $products = (new ProductsController())->getProductsOrder($order_id);
+        $totalCart = 0;
+        $freeShipping = false;
 
-        $result = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $to);
-
-        (new LogsController)->add(
-            $order_id, 
-            'Logs cotação', 
-            $products, 
-            $result, 
-            'CotationController', 
-            'makeCotationOrder', 
-            'https://api.melhorenvio.com/v2/me/shipment/calculate'
-        );
-
-        if (!is_array($result)) {
-            $item = $result;
-            $result = [];
-            $result[] = $item;
+        foreach(WC()->cart->cart_contents as $cart) {
+            $totalCart += $cart['line_subtotal'];
         }
 
-        if (!isset($result[0]->id)) {
-            return false;
-        }
-
-        // Remove a cotação que não esta disponivel 
-        foreach ($result as $key => $item) {
-            if (!isset($item->price)) {
-                unset($result[$key]);
+        // Utilizado frete grátis?
+        foreach(WC()->cart->get_coupons() as $cp) {
+            if ($cp->get_free_shipping() && $totalCart >= $cp->amount ) {
+                $freeShipping = true;
             }
-        }   
+        }
 
-        $result['date_cotation'] = date('Y-m-d H:i:s');
-        $result['choose_method'] = $this->getMethodId($order_id);
-
+        $result['date_cotation'] = date('Y-m-d H:i:d'); 
+        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
+        $result['free_shipping'] = $freeShipping; 
+        $result['total']         = $total; // var não definida
+        
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
-    }
 
-    public function getMethodId($order_id)
-    {
-        global $wpdb;
-        $sql = sprintf('
-            select 
-                meta_value as method 
-            from 
-                %swoocommerce_order_itemmeta 
-            where 
-                meta_key = "method_id" and 
-                order_item_id IN (
-                    select 
-                        order_item_id 
-                    from 
-                        %swoocommerce_order_items where order_id = %d and 
-                        order_item_type = "shipping"
-                    ) ', $wpdb->prefix, $wpdb->prefix, $order_id);
-
-        $result = $wpdb->get_results($sql);
-        $result = end($result);
-        return $this->getCodeMelhorEnvioShippingMethod($result->method);
-    }
-
-    /**
-     * @param [type] $choose
-     * @return void
-     */
-    private function getCodeShippingSelected($choose) 
-    {
-        $prefix = 0;
-        $shipping_methods = \WC()->shipping->get_shipping_methods();
-        foreach ($shipping_methods as $method) {
-            if (!isset($method->code) || is_null($method->code)) {
-                continue;
-            }
-
-            if ($choose == 'melhorenvio_' . $method->id) {
-                return $method->code;
-            }
-        }
-        return $prefix;
+        return $result;
     }
 
     public function refreshCotation()
     {
-        $order_id = $_GET['id'];
-        $this->makeCotationOrder($order_id);
-        
-        $order = (new OrdersController())->get($order_id);
-
-        if (!$order) {
-            return null;
-        }
-
-        echo json_encode($order);
+        $results = $this->makeCotationOrder($_GET['id']);
+        echo json_encode($results);
         die;
     }
 
@@ -138,49 +73,98 @@ class CotationController
     public function cotationProductPage() 
     {
         if (!isset($_POST['data'])) {
-            return [
-                'success' => false,
-                'message' => 'Dados incompletos'
-            ];
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+            exit();
         }
 
         if (!isset($_POST['data']['cep_origem'])) {
-            return [
-                'success' => false,
-                'message' => 'Campo CEP é necessário'
-            ];
+            echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
+            exit();
         }
 
-        $products[] = [
-            'id' => $_POST['data']['id_produto'],
-            "weight" =>  floatval($_POST['data']['produto_peso']),
-            "width"  =>  floatval($_POST['data']['produto_largura']),
-            "length" =>  floatval($_POST['data']['produto_comprimento']),
-            "height" =>  floatval($_POST['data']['produto_altura']),
-            'quantity' => intval($_POST['data']['quantity']),
-            'insurance_value' => floatval($_POST['data']['produto_preco'])
-        ];
+        if ( strlen(trim($_POST['data']['cep_origem'])) != 9 ) {
+            echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
+            exit();
+        }
 
-        $options = [];
+        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+        if(empty($destination) || is_null($destination)) {
+            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
+            exit();
+        }      
+ 
+        $package = array( 
+            'ship_via'     => '',
+            'destination'  => array(
+                    'country'  => 'BR',
+                    'state'    => $destination->uf,
+                    'postcode' => $destination->cep, 
+                ),
+            'cotationProduct' => array(
+                (object) array(
+                    'id'                 => $_POST['data']['id_produto'],
+                    "weight"             => floatval($_POST['data']['produto_peso']),
+                    "width"              => floatval($_POST['data']['produto_largura']),
+                    "length"             => floatval($_POST['data']['produto_comprimento']),
+                    "height"             => floatval($_POST['data']['produto_altura']),
+                    'quantity'           => intval($_POST['data']['quantity']),
+                    'price'              => floatval($_POST['data']['produto_preco']),
+                    'notConverterWeight' => true 
+                )
+            )
+        );
 
-        $cotation = $this->makeCotationProducts($products, $this->getArrayShippingMethodsMelhorEnvio(), $_POST['data']['cep_origem'], $options);
+        $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
+        $shipping_methods = $shipping_zone->get_shipping_methods( true );
+        if(count($shipping_methods) == 0) {
+            echo json_encode(['success' => false, 'message' => 'Não é feito envios para o CEP informado']);
+            exit();
+        }
 
-        $result = [];
-        if (count($cotation) == 1) {
-            $result[] = $this->mapObject($cotation);
-        } else {
-            foreach ($cotation as $item) {
-                if (is_null($item->price)) {
-                    continue;
-                }
-                $result[] = $this->mapObject($item);
+        $rates = array();        
+        $free = 0;
+        foreach($shipping_methods as $shipping_method) 
+        {
+            $rate = $shipping_method->get_rates_for_package( $package );
+            if (key($rate) == 'free_shipping') {
+                $free++;
             }
-        }
-        echo json_encode([
-            'success' => true,
-            'data' => $result
-        ]);
-        die;
+
+            if (empty($rate) || (key($rate) == 'free_shipping') && $free > 1 ) {
+                continue;
+            }
+
+            $rates[] = $this->mapObject($rate[key($rate)]);
+        }   
+
+        echo json_encode(['success' => true, 'data' => $rates]);
+        exit();
+    }
+
+    /**
+     * Get address information from zip code
+     *
+     * @param [string] $cep
+     * @return Json
+     */
+    private function getAddressByCep($cep)
+    {
+        if(empty($cep)) return null;
+
+        $url = "https://location.melhorenvio.com.br/". str_replace('-', '', trim($cep));
+        
+        $curl = curl_init(); 
+        curl_setopt($curl, CURLOPT_URL, $url); 
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+        $result = curl_exec($curl); 
+        $error  = curl_error($curl);
+        curl_close($curl); 
+
+        if(!empty($error)) return null;
+
+        $response = json_decode($result);       
+        return $response;
     }
 
     /**
@@ -189,26 +173,33 @@ class CotationController
      */
     private function mapObject($item) 
     {
-        $method = (new optionsController())->getName($item->id, $item->name, $item->company->name);
+        $name = null;
+        if (isset($item->meta_data['name'])) {
+            $name = $item->meta_data['name'];
+        }
+
+        $company = null;
+        if (isset($item->meta_data['company'])) {
+            $company = $item->meta_data['company'];
+        }
+
+        $delivery = null;
+        if (isset($item->meta_data['delivery_time']->min)) {
+
+            $delivery->min = $item->meta_data['delivery_time']->min;
+            $delivery->max = $item->meta_data['delivery_time']->max;
+        }
+
+        $method = (new optionsController())->getName($item->get_id(),$name, $company, $item->get_label());
 
         return [
-            'id' => $item->id,
+            'id' => $item->get_id(),
             'name' => $method['method'],
-            'price' => (new MoneyController())->setLabel($item->price, $item->id),
+            'price' => (new MoneyController())->setLabel($item->get_cost(), $item->get_id()),
             'company' => $method['company'],
-            'delivery_time' => (new TimeController)->setLabel($item->delivery_range, $item->id)
+            'delivery_time' => (new TimeController)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
+            'added_extra' => false
         ];
-    }
-
-    /**
-     * @param [type] $products
-     * @param [type] $services
-     * @param [type] $to
-     * @return void
-     */
-    public function makeCotationProducts($products, $services, $to) 
-    {
-        return $this->makeCotation($to, $services, $products, [], ['']);
     }
 
     /**
@@ -220,161 +211,102 @@ class CotationController
      */
     public function makeCotationPackage($package, $services, $to, $options = []) 
     {
-        return $this->makeCotation($to, $services, [], $package, $options);
+        return $this->makeCotation($to, $services, [], $package, $options, false);
     }
 
-    /**
-     * @param [type] $to
-     * @param [type] $services
-     * @param array $products
-     * @param array $package
-     * @param [type] $options
-     * @return void
-     */
-    protected function makeCotation($to, $services, $products = [], $package = [], $options)
+    public function freeShipping()
     {
-        if ($token = get_option('wpmelhorenvio_token')) {
-            $defaultoptions = [
-                "insurance_value" => null,
-                "receipt"         => false, 
-                "own_hand"        => false, 
-                "collect"         => false 
-            ];
-            
-            $opts = array_merge($defaultoptions, $options);
+        global $woocommerce;
 
-            $from = (new UsersController())->getFrom();
+        $totalCart = 0;
 
-            if (!isset($from->postal_code)) {
-                return null;
+        $freeShiping = false;
+
+        foreach(WC()->cart->cart_contents as $cart) {
+            $totalCart += $cart['line_subtotal'];
+        }
+
+        foreach(WC()->cart->get_coupons() as $cp) {
+            if ($cp->get_free_shipping() && $totalCart >= $cp->amount ) {
+                $freeShiping = true;
             }
+        }
 
-            if (!empty($products)) {
-                unset($opts['insurance_value']);
-            }
-
-            $body = [
-                "from" => [
-                    "postal_code" => $from->postal_code
-                ],
-                'to' => [
-                    'postal_code' => $to
-                ],
-                'options' =>  $opts,
-                "services" => $this->converterArrayToCsv($services)
-            ];
-
-            if (!empty($products)) {
-                $body['products'] = $products;
-            }
-
-            if (!empty($package)) {
-                $body['package'] = $package;
-            }
-
-            $params = array(
-                'headers'           =>  [
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
-                ],
-                'body'  => json_encode($body),
-                'timeout'=>10
-            );
-
-            $response =  json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/v2/me/shipment/calculate', $params)
+        if ($freeShiping) {
+            return array(
+                'id' => 'free_shipping',
+                'label' => 'Frete grátis',
+                'cost' => '',
+                'calc_tax' => 'per_item',
+                'meta_data' => array(
+                    'delivery_time' => '',
+                    'company' => ''
                 )
             );
-
-            (new LogsController)->add(
-                $to, 
-                'Cotação', 
-                $params, 
-                $response, 
-                'CotationController', 
-                'makeCotation', 
-                'https://api.melhorenvio.com/v2/me/shipment/calculate'
-            );
-
-            return $response;
         }
 
         return false;
     }
 
-    /**
-     * @param [type] $services
-     * @return void
-     */
-    private function converterArrayToCsv($services) 
+    public function checkCotationTest()
     {
-        $string = '';
+        // if (!isset($_GET['cep'])) {
+        //     echo json_encode([
+        //         'error' => 'Informar o cep de destino'
+        //     ]);
+        //     die;
+        // }
 
-        foreach ($services as $service) {
-            $string .= $service . ',';
-        }
+        // $response['cep_destiny'] = $_GET['cep'];
 
-        return rtrim($string,",");
-    }
+        // $response['token'] = get_option('wpmelhorenvio_token');
 
-    /**
-     * @return void
-     */
-    public function getArrayShippingMethodsMelhorEnvio() 
-    {
-        $methods = [];
-        $enableds = $this->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
-        $shipping_methods = \WC()->shipping->get_shipping_methods();
-        foreach ($shipping_methods as $method) {
-            if (!isset($method->code) || is_null($method->code)) {
-                continue;
-            }
+        // $params = array(
+        //     'headers'=> array(
+        //         'Content-Type' => 'application/json',
+        //         'Accept'=>'application/json',
+        //         'Authorization' => 'Bearer '.$response['token']
+        //     )
+        // );
 
-            if (in_array($method->id, $enableds)) {
-                $methods[] = $method->code;
-            }
-        }
+        // $response['account'] = wp_remote_retrieve_body(
+        //     wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
+        // );
 
-        return array_unique($methods);
-    }
+        // $response['package'] = [
+        //     'width'  => (isset($_GET['width']))  ? (float) $_GET['width']  : 17 ,
+        //     'height' => (isset($_GET['height'])) ? (float) $_GET['height'] : 23,
+        //     'length' => (isset($_GET['length'])) ? (float) $_GET['length'] : 10,
+        //     'weight' => (isset($_GET['weight'])) ? (float) $_GET['weight'] : 1
+        // ];
 
-    /**
-     * @return void
-     */
-    public function getCodeMelhorEnvioShippingMethod($method_id) 
-    {
-        $method_id =  str_replace('melhorenvio_', '', $method_id);
-        $shipping_methods = \WC()->shipping->get_shipping_methods();
-        foreach ($shipping_methods as $method) {
-            
-            if($method_id == $method->id) {
-                if (isset($method->code)) {
-					return $method->code;
-				}
-				return null;
-            }
-        }
-        //TODO Rever caso nao tenha cotacao selecionada
-        return null;
-    }
 
-    /**
-     * @return void
-     */
-    public function getArrayShippingMethodsEnabledByZoneMelhorEnvio() 
-    {
-        global $wpdb;
-        $enableds = [];
-        $sql = sprintf('select * from %swoocommerce_shipping_zone_methods where is_enabled = 1', $wpdb->prefix);
-        $results = $wpdb->get_results($sql);
-        
-        foreach ($results as $item){
-            $enableds[] = $item->method_id;
-        }
+        // $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
 
-        return $enableds;
+        // $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+
+        // $response['user']   = (new UsersController())->getInfo();
+
+        // $response['origem'] = (new UsersController())->getFrom();
+
+        // // $response['cotation'] = (new CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
+
+        // $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+
+        // $response['is_multisite'] = is_multisite();
+
+        // $response['enableds'] = (new Method())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
+
+        // $response['session'] = $_SESSION;
+
+        // $response['path'] = plugin_dir_path( __FILE__ ) . 'services/*.php'  ;
+
+        // foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+        //     $response['servicesFile'][] = $filename;
+        // }
+
+        // echo json_encode($response);
+        // die;
     }
 }
 

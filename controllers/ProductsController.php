@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Controllers\HelperController;
+
 class ProductsController 
 {
     /**
@@ -15,7 +17,6 @@ class ProductsController
 
         foreach( $order->get_items() as $item_id => $item_product ){
 
-            $product_id = $item_product->get_product_id();
             $_product = $item_product->get_product();
 
             if (is_bool($_product)) {
@@ -23,39 +24,15 @@ class ProductsController
             }
 
             $products[] = [
-                "name" => $_product->get_name(),
-                "quantity" => $item_product->get_quantity(),
-                "unitary_value" => round($_product->get_price(), 2),
+                "id"              => $_product->get_id(),
+                "name"            => $_product->get_name(),
+                "quantity"        => $item_product->get_quantity(),
+                "unitary_value"   => round($_product->get_price(), 2),
                 "insurance_value" => round($_product->get_price(), 2),
-                "weight" => $this->converterIfNecessary($_product->weight),
-                "width" => $_product->width,
-                "height" => $_product->height,
-                "length" => $_product->length
-            ];
-        }
-
-        return $products;
-    }
-
-    /**
-     * @return void
-     */
-    public function getProductsCart() 
-    {
-        global $woocommerce;
-        $items = $woocommerce->cart->get_cart();
-
-        $products = [];
-        foreach( $items as $item_id => $item_product ){
-
-            $products[] = [
-                'id' => $item_product['product_id'],
-                'weight' => $this->converterIfNecessary($item_product['data']->get_weight()),
-                'width' => $item_product['data']->get_width(),
-                'height' => $item_product['data']->get_height(),
-                'length' => $item_product['data']->get_length(),
-                'quantity' => $item_product['quantity'],
-                'insurance_value' => round($item_product['data']->get_price(), 2)
+                "weight"          => (new HelperController())->converterIfNecessary($_product->weight),
+                "width"           => (new HelperController())->converterDimension($_product->width),
+                "height"          => (new HelperController())->converterDimension($_product->height),
+                "length"          => (new HelperController())->converterDimension($_product->length)
             ];
         }
 
@@ -77,18 +54,5 @@ class ProductsController
         }   
 
         return round($total, 2);
-    }
-
-    /**
-     * @param [type] $weight
-     * @return void
-     */
-    private function converterIfNecessary($weight) 
-    {
-        $weight_unit = get_option('woocommerce_weight_unit');
-        if ($weight_unit == 'g') {
-            $weight = $weight / 1000;
-        }
-        return $weight;
     }
 }

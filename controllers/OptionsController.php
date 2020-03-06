@@ -9,8 +9,14 @@ class OptionsController
     /**
      * @return void
      */
-    public function getName($id, $method, $company) 
+    public function getName($id, $method, $company, $label) 
     {
+        if (is_null($method) && is_null($company)) {
+            return [
+                'method' => $label,
+                'company' => ''
+            ];
+        }
 
         global $wpdb;
 
@@ -28,7 +34,7 @@ class OptionsController
         $data = $results[0];
         $data = unserialize($data->option_value);
 
-        if (!isset($data['name']) || $data['name'] == "" || $data['name'] == 'undefined') {
+        if (!isset($data['name']) || $data['name'] == "" || $data['name'] == 'undefined' && !is_null($company)) {
             return [
                 'method' => $method,
                 'company' => $company

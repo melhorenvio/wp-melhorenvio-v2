@@ -1,13 +1,14 @@
 <template>
     <div class="app-token">
         <h1>Meu Token</h1>
-        <span>Insira o token gerado na Melhor Envio</span>
+        <span>Insira o token gerado no Melhor Envio</span>
         <br>
         <textarea rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
         <br>
         <br>
         <button @click="saveToken()" class="btn-border -full-green">Salvar</button>
-
+        <p>Para gerar seu token, acesse o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a></p>
+            
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
                     <g fill="none" fill-rule="evenodd" stroke-width="2">
@@ -61,7 +62,7 @@ export default {
     },
     methods: {
         getToken () {
-            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => { 
                 this.token = response.data.token;
                 this.show_loader = false;
             })
