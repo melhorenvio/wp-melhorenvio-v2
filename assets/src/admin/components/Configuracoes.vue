@@ -1,21 +1,114 @@
+<style>
+    .boxBanner {
+        float: left;
+        width: 100%;
+        margin-bottom: 1%;
+    }
+
+    .boxBanner img {
+        float: left;
+        width: 100%;
+    }
+
+    .input {
+        width: 100%;
+        height: 35px;
+        padding: 5px 10px;
+        border: 1px solid #b0b0b0;
+    }
+    .group-input{
+        border: 1px solid #b0b0b0;
+        width: 100%;
+        font-size: 15px;
+    }
+    .group-input input {
+        display: inline-block;
+        border: none;
+        width: 90%;
+        max-width: 455px;
+        font-size: 15px;
+    }
+    .group-input p {
+        display: inline-block;
+        margin: 0 auto;
+        padding: 7px 10px;
+        background-color: #f0f0f0;
+        width: 5.5%;
+        text-align: center;
+    }
+    .store-box {
+        display: inline-flex !important;
+        min-height: 100px;
+        max-width: 25% !important;
+    }
+    .store-box h3 {
+        display: inline-flex;
+        padding: 0 0 0 8px;
+        margin: 0 0 15px;
+        text-align: left;
+        font-size: 1.1em;
+        max-width: 85%;
+        font-weight: 300;
+    }
+    .box-buttons {
+        min-height: 40px;
+    }
+    .wpme_address .wpme_address-top {
+        min-height: 45px !important;
+    }
+    .wpme_address-top .title-methods {
+        text-align: left;
+        font-size: 1.1em;
+        font-weight: 300;
+        margin: 0;
+    }
+    .error-message {
+        width: 98%;
+        padding: 10px 0 10px 2%;
+        background-color: #d6442a;
+        color: #fff;
+        font-weight: 600;
+    }
+</style>
+
 <template>
     <div>
+        <div class="boxBanner">
+            <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
+        </div>
+
+        <template>
+            <div>
+                <div class="grid">
+                    <div class="col-12-12">
+                        <h1>Configurações gerais</h1>
+                    </div>
+                    <hr>
+                    <div class="col-12-12" v-show="error_message">
+                        <p class="error-message">{{ error_message }}</p>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </template>
+
         <div class="wpme_config">
-            <h2>Escolha o endereço para cálculo de frete</h2>
+            <h2>Endereço</h2>
+            <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
-                        <label for="41352">
+                        <label :for="option.id">
                             <div class="wpme_address-top">
                                 <input type="radio" :id="option.id" :value="option.id" v-model="address" @click="showAgencies({city: option.city, state: option.state})">
                                 <h2>{{option.label}}</h2>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
-                                    <li>{{ `${option.address}, ${option.number}` }}</li>
+                                    <li><b>Endereço: </b>{{ `${option.address}, ${option.number}` }}</li>
                                     <li>{{ `${option.district} - ${option.city}/${option.state}` }}</li>
-                                    <li>{{ `${option.complement}` }}</li>
-                                    <li>{{ `CEP: ${option.postal_code}` }}</li>
+                                    <li v-if="option.complement">{{ `${option.complement}` }}</li>
+                                    <li><b>CEP: </b>{{ `${option.postal_code}` }}</li>
                                 </ul>
                             </div>
                         </label>
@@ -23,125 +116,190 @@
                 </ul>
             </div>
         </div>
+        <hr>
 
         <div class="wpme_config">
-            <h2>Escolha a unidade Jadlog</h2>
+            <h2>Jadlog</h2>
+            <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <select name="agencies" id="agencies" v-model="agency">
-                            <option value="">Selecione...</option>
-                            <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
-                        </select>
-                    </li>
-                </ul>
-            </div>
-        </div>
+                        <div class="wpme_address-top" style="border-bottom: none;">
+                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog" @change="changeJadlogOptions()">
+                            <label for="show-all-agencies" >Desejo visualizar todas as agencias do meu estado</label>
+                        </div>
+                        <br>
 
-        <div class="wpme_config">
-            <h2>Escolha a sua loja</h2>
-            <div class="wpme_flex">
-                <ul class="wpme_address">
-                    <li v-for="option in stores" v-bind:value="option.id" :key="option.id">
-                        <label for="41352">
-                            <div class="wpme_address-top">
-                                <input type="radio" :id="option.id" :value="option.id" v-model="store" >
-                                <h2>{{option.name}}</h2>
-                            </div>
-                            <div class="wpme_address-body">
-                                <ul>
-                                    <li>CNPJ {{ `${option.document}` }}</li>
-                                    <li>Inscrição estadual {{ `${option.state_register}` }}</li>
-                                    <li>E-mail {{ `${option.email} ` }}</li>
-                                </ul>
-                            </div>
-                        </label>
-                    </li>
-                </ul>
-            </div>
-        </div>
+                        <template v-if="!show_all_agencies_jadlog">
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </template>
 
-        <div class="wpme_config">
-            <h2>Configuração calculadora na página de produto</h2>
-            <div class="wpme_flex">
-                <ul class="wpme_address">
-                    <li>
-                        <label for="41352">
-                            <div class="wpme_address-top">
-                                <input type="checkbox" value="exibir"  v-model="show_calculator">
-                                <label for="two">exibir a calculdora na tela do produto</label>
-                            </div>
-                        </label>
+                        <template v-else>
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected"><strong>{{optionAll.name}}</strong>  </option>
+                            </select>
+                        </template>
+                        
                     </li>
                 </ul>
             </div>
         </div>
-
-        <div class="wpme_config">
-            <h2>Onde deseja exibir a cotação do produto?</h2>
-            <div class="wpme_flex">
-                <ul class="wpme_address">
-                    <li>
-                        <select name="agencies" id="agencies" v-model="where_calculator">
-                            <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
-                        </select>
-                    </li>
-                </ul>
+        <hr>
+        <template v-if="stores.length > 0">
+            <div class="wpme_config">
+                <h2>Loja</h2>
+                <p>Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada.</p>
+                <div class="wpme_flex">
+                    <ul class="wpme_address">
+                        <li  v-for="option in stores" v-bind:value="option.id" :key="option.id" class="store-box">
+                            <label :for="option.id">
+                                <div class="wpme_address-top">
+                                    <input type="radio" :id="option.id" :value="option.id" v-model="store" >
+                                    <h3>{{option.name}}</h3>
+                                </div>
+                                <div class="wpme_address-body">
+                                    <ul>
+                                        <li v-if="option.document"><b>CNPJ:</b> {{ `${option.document}` }}</li>
+                                        <li v-if="option.state_register"><b>Inscrição estadual:</b> {{ `${option.state_register}` }}</li>
+                                        <li v-if="option.email"><b>E-mail:</b> {{ `${option.email} ` }}</li>
+                                    </ul>
+                                </div>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+            <hr>
+        </template>
 
         <div class="wpme_config">
             <h2>Personalizar métodos de envio</h2>
             <div class="wpme_flex">
-                <ul v-for="option in methods_shipments" :value="option.id" :key="option.id" class="wpme_address">
-                    <li>
-                        <h2>{{option.title}}</h2>
-                        <label>Nome de exibição</label><br>
-                        <input v-model="option.name" type="text" /><br><br>
-                        <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
-                        <input v-model="option.time" type="number" /><br><br>
-                        <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
-                        <input v-model="option.tax" type="number" /><br><br>
-                        <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
-                        <input v-model="option.perc" type="number" />
+                <ul class="wpme_address">
+                    <li v-for="option in filteredsShipments" v-bind:value="option.id" :key="option.id">
+                        <label :for="option.id">
+                            <div class="wpme_address-top ">
+                                <h3 class="title-methods">{{option.name}}</h3>
+                            </div>
+                            <div class="wpme_address-body">
+                                <ul>
+                                    <!--<li><b>Nome:</b> {{option.name}}</li>-->
+                                    <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
+                                    <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
+                                    <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
+                                </ul>
+                                <hr>
+                                <a @click="showModalEditMethod(option.code)">Editar</a>
+                            </div>
+
+                            <transition name="fade">
+                                <div class="me-modal" v-show="codeshiping[option.code] && codeshiping[option.code]['status']">
+                                    <div>
+                                        <p class="title">{{option.name}} </p>
+                                        <div class="content">
+                                            <ul>
+                                                <li>
+                                                    <label>Nome de exibição</label><br>
+                                                    <input v-model="option.name" v-on:keyup="requiredInput(option.name)" type="text" class="input" maxlength="100" /><br><br>
+                                                    <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.time" v-bind="percent"></money>
+                                                        <p> Dias </p>
+                                                    </div>
+                                                    <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.tax" v-bind="money"></money>
+                                                        <p> R$ </p>
+                                                    </div>
+                                                    <label><b>Percentual extra</b> <br>Será adicionado um valor de percentual extra para o cliente sobre o valor da cotação. </label><br>
+                                                    <div class="group-input">
+                                                        <money v-model="option.perc" v-bind="percent"></money>
+                                                        <p> % </p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="buttons -center box-buttons" >
+                                            <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </transition>
+                        </label>
                     </li>
                 </ul>
             </div>
         </div>
+        <hr>
 
         <div class="wpme_config">
-            <h2>Customização estilo da calculadora de frete</h2>
-            <div class="wpme_flex">
-                <ul v-for="option in style_calculator" :value="option.id" :key="option.id" class="wpme_address">
-                    <li>
-                        <h2>{{option.name}}</h2>
-                        <textarea v-model="option.style" type="text" placeholder="width:100%; height:50px; background:#e1e1e1;"></textarea>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        <div class="wpme_config">
-            <h2>Caminho para a pasta plugins do wordpress</h2>
+            <h2>Opções para cotação</h2>
+            <p>As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <h2>Path</h2>
-                        <input v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
+                        <input type="checkbox" value="Personalizar"  v-model="options_calculator.ar">
+                        Aviso de recebimento
+                    </li>
+                    <li>
+                        <input type="checkbox" value="Personalizar"  v-model="options_calculator.mp">
+                        Mãos própria
                     </li>
                 </ul>
             </div>
         </div>
+        <hr>
+
+        <div class="wpme_config">
+            <h2>Calculadora</h2>
+            <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto.</p>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <label for="41352">
+                            <div class="wpme_address-top" style="border-bottom: none;">
+                                <input type="checkbox" value="exibir"  v-model="show_calculator">
+                                <label for="two">exibir a calculadora na tela do produto</label>
+                            </div><br>
+
+                            <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
+                                <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+
+        <div class="wpme_config" style="width:50%;">
+            <h2>Diretório dos plugins</h2>
+            <p>Em algumas instâncias do wordpress, o caminho do diretório de plugins pode ser direferente, ocorrendo falhas no plugin, sendo necessário definir o caminho manualmente no campo abaixo. Tome cuidado ao realizar essa ação.</p>
+            <div class="wpme_flex">
+                <ul class="wpme_address">
+                    <li>
+                        <input type="checkbox" value="Personalizar"  v-model="show_path">
+                        <span>Estou ciente dos riscos</span><br><br>
+                        <input v-show="show_path" v-model="path_plugins" type="text" placeholder="/home/htdocs/html/wp-content/plugins" /><br><br>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <hr>
 
         <button class="btn-border -blue" @click="updateConfig">salvar</button>
 
         <transition name="fade">
             <div class="me-modal" v-show="show_modal">
                 <div>
-                    <p class="title">Atenção</p>
+                    <p class="title">Sucesso!</p>
                     <div class="content">
-                        <p class="txt">dados atualizados</p>
+                        <p class="txt">dados atualizados com sucesso!</p>
                     </div>
                     <div class="buttons -center">
                         <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
@@ -194,20 +352,41 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Money } from 'v-money'
 export default {
     name: 'Configuracoes',
+    components: { Money },
     data () {
         return {
+            error_message: null,
+            canUpdate: true,
             address: null,
             store: null,
             agency: null,
             show_modal: false,
-            show_calculator: true,
-            style_calculator: [],
-            use_insurance: true,
-            methods_shipments: [],
-            where_calculator: null,
-            path_plugins: null,
+            custom_calculator: false,
+            show_calculator: false,
+            show_all_agencies_jadlog: false,
+            options_calculator: {
+                'ar': false,
+                'mp': true
+            },
+            path_plugins: '',
+            show_path: false,
+            codeshiping: [],
+            money: {
+                decimal: ',',
+                thousands: '.',
+                precision: 2,
+                masked: false
+            },
+            percent: {
+                decimal: ',',
+                thousands: '.',
+                precision: 0,
+                masked: false
+            },
+            where_calculator: 'woocommerce_after_add_to_cart_form',
             where_calculator_collect: [
                 {
                     'id': 'woocommerce_before_single_product',
@@ -260,131 +439,170 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
+            agencySelected_: 'getAgencySelected',
             agencies: 'getAgencies',
+            allAgencies: 'getAllAgencies',
+            style_calculator: 'getStyleCalculator',
+            methods_shipments: 'getMethodsShipments',
             show_load: 'showLoad',
-            // path_plugins: 'getPathPlugins'
-        })
+            path_plugins_: 'getPathPlugins',
+            where_calculator_: 'getWhereCalculator',
+            show_calculator_: 'getShowCalculator',
+            show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
+            options_calculator_: 'getOptionsCalculator',
+            configs: 'getConfigs',
+            services_codes: 'getServicesCodes',
+        }),
+        filteredsShipments() {
+            let filter = this.services_codes;
+            let filtereds = this.methods_shipments.filter(function(shipment){
+                return filter.includes(shipment.code)
+            });
+            return filtereds;
+        }
     },
     methods: {
         ...mapActions('configuration', [
-            'getAddresses',
-            'setSelectedAddress',
-            'getStores',
-            'setSelectedStore',
-            'getAgencies',
-            'setSelectedAgency',
-            'getPathPlugins',
-            'setPathPlugins'
+            'getConfigs',
+            'setLoader',
+            'setAgencies',
+            'saveAll'
         ]),
+        requiredInput(element) {
+            if (element.length == 0 || element.length > 100) {
+                this.canUpdate = false
+            } else {
+                this.canUpdate = true
+            }
+        },
+        showModalEditMethod(code) {
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                var status = false;
+                if (service == code) {
+                    status = true;
+                }
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': status
+                };
+            }
+        },
+        getServicesCodesstatus(){
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': false
+                };
+            }
+        },
+        closeShowModalEditMethod() {
+            this.getServicesCodesstatus();
+        },
         updateConfig () {
-            this.setSelectedAddress(this.address)
-            this.setSelectedStore(this.store)
-            this.setSelectedAgency(this.agency)
-            this.setShowCalculator()
-            this.setFieldsmethodsShipments()
-            this.setWhereCalculator()
-            this.setUseInsurance()
-            this.setStyleCalculator()
-            this.setPathPlugins()
-            this.show_modal = true
+            this.setLoader(true);
+            var data = new Array();
+
+            data['address']                  = this.address;
+            data['store']                    = this.store;
+            data['agency']                   = this.agency;
+            data['show_calculator']          = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
+            data['methods_shipments']        = this.methods_shipments;
+            data['where_calculator']         = this.where_calculator;
+            data['path_plugins']             = this.path_plugins;
+            data['options_calculator']       = this.options_calculator;
+            var respSave = this.saveAll(data);
+
+            respSave.then((resolve) => {
+                this.setLoader(false);
+                this.clearSession();
+                this.show_modal = true
+            }).catch(function (erro) {
+                this.setLoader(false);
+            });
         },
         showAgencies (data) {
+            this.setLoader(true);
             this.agency = ''
-            this.getAgencies(data)
+            var responseAgencies = [];
+            var promiseAgencies = new Promise((resolve, reject) => {
+                this.$http.post(`${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`).then(function (response) {
+                    if (response && response.status === 200) {
+                        responseAgencies = response.data.agencies;
+                        resolve(true);
+                    }
+                })
+            });
+
+            promiseAgencies.then((resolve) => {
+                this.setAgencies(responseAgencies);
+                this.setLoader(false);
+            })
         },
         close() {
             this.show_modal = false;
         },
-        getStyleCalculator () {
-            let data = {action: 'get_style_calculator'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.style_calculator = response.data
-                }
-            })
-        },
-        getShowCalculator () {
-            let data = {action: 'get_calculator_show'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data
-                }
-            })
-        },
-        getUseInsurance () {
-            let data = {action: 'get_use_insurance'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.use_insurance = response.data
-                }
-            })
-        },
-        getWhereCalculator () {
-            let data = {action: 'get_where_calculator'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.where_calculator = response.data.option
-                }
-            })
-        },
-        getMethodsShipments () {
-            let data = {action: 'get_metodos'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.methods_shipments = response.data
-                }
-            })
-        },
-        setShowCalculator () {
-            this.$http.post(`${ajaxurl}?action=set_calculator_show&data=${this.show_calculator}`).then( (response) => {
-                if (response && response.status === 200) {
-                    this.show_calculator = response.data
-                }
-            })
-        },
-        setUseInsurance () {
-            this.$http.post(`${ajaxurl}?action=set_use_insurance&data=${this.use_insurance}`).then( (response) => {
-                if (response && response.status === 200) {
-                    this.use_insurance = response.data
-                }
-            })
-        },
-        setWhereCalculator() {
-            this.$http.post(`${ajaxurl}?action=save_where_calculator&option=${this.where_calculator}`).then( (response) => {})
-        },
-        setFieldsmethodsShipments () {
-            this.methods_shipments.forEach((item) => {
-                this.$http.post(`${ajaxurl}?action=save_options&id=${item.code}&tax=${item.tax}&time=${item.time}&name=${item.name}&perc=${item.perc}`).then( (response) => {})
+        clearSession() {
+            return new Promise((resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=delete_melhor_envio_session`).then( (response) => {
+                    resolve(true)
+                })
             });
         },
-        setStyleCalculator () {
-            Object.entries(this.style_calculator).forEach(([key, val]) => {
-                this.$http.post(`${ajaxurl}?action=save_style_calculator&id=${key}&style=${val.style}`).then( (response) => {})
-            });
+        formatNumber(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        getPathPlugins () {
-            let data = {action: 'get_path_plugins'}
-            this.$http.get(`${ajaxurl}`, {
-                params: data
-            }).then( (response) => {
-                if (response && response.status === 200) {
-                    this.path_plugins = response.data.path
+        formatPercent(value) {
+            let val = (value/1)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        showTimeWithDay(value) {
+            let val = (value == 1) ? value + ' dia' : value + ' dias'
+            return val
+        },
+        getToken() {
+            this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
+                if (!response.data.exists_token) {
+                    this.$router.push('Token')
+                }
+
+                this.validateToken();
+            })
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+                if (response.data.token) {
+                    var token = response.data.token;
+
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal  = JSON.parse(tokenDecoded);
+                    var dateExp     = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
+                    } else {
+                        this.error_message = '';
+                    }
+                } else {
+                    this.$router.push('Token');
                 }
             })
         },
-        setPathPlugins () {
-            this.$http.post(`${ajaxurl}?action=set_path_plugins&path=${this.path_plugins}`).then( (response) => {})
-        }
+        changeJadlogOptions() {
+            this.agency = ''; 
+        },
     },
     watch : {
         addresses () {
@@ -406,7 +624,7 @@ export default {
             }
         },
         agencies () {
-            this.show_loader = false;
+            this.setLoader(true);
             if (this.agencies.length > 0) {
                 this.agencies.filter(item => {
                     if (item.selected) {
@@ -414,18 +632,37 @@ export default {
                     }
                 })
             }
+            this.setLoader(false);
+        },
+        agencySelected_(e) {
+            this.agency = e;
+        },
+        services_codes() {
+            this.getServicesCodesstatus();
+        },
+        show_calculator_(e) {
+            this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
+        },
+        path_plugins_(e) {
+            this.path_plugins = e;
+        },
+        where_calculator_(e) {
+            this.where_calculator = e;
+        },
+        options_calculator_(e) {
+            this.options_calculator = e;
         }
     },
     mounted () {
-        this.getAddresses()
-        this.getStores()
-        this.getAgencies()
-        this.getShowCalculator()
-        this.getUseInsurance()
-        this.getWhereCalculator()
-        this.getMethodsShipments()
-        this.getStyleCalculator()
-        this.getPathPlugins()
+        this.getToken();
+        this.setLoader(true);
+        var promiseConfigs = this.getConfigs();
+        promiseConfigs.then((resolve) => {
+            this.setLoader(false);
+        })
     }
 }
 </script>

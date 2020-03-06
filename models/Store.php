@@ -2,58 +2,116 @@
 
 namespace Models;
 
+use Controllers\TokenController;
+
 class Store 
 {
     const URL = 'https://api.melhorenvio.com';
+
+    const OPTION_STORES = 'melhorenvio_stores';
+
+    const OPTION_STORE_SELECTED = 'melhorenvio_store_v2';
+
+    const SESSION_STORES = 'melhorenvio_stores';
+
+    const SESSION_STORE_SELECTED = 'melhorenvio_store_v2';
+
+    public $store = null;
 
     /**
      * @return void
      */
     public function getStories() 
-    {
-        $token = get_option('wpmelhorenvio_token');
+    {   
+        // Get data on session
+        $codeStore = md5(get_option('home'));
+
+        //$idStoreSelected = $this->getSelectedStoreId();
+        
+        // Get stores in session
+        if (isset($_SESSION[$codeStore][self::SESSION_STORES])) {
+
+            return array(
+                'success' => true,
+                'origin'  => 'session',
+                'stores'  => $_SESSION[$codeStore][self::SESSION_STORES]
+            );
+        }
+        // Get data on database wordpress
+        // $stores = get_option(self::OPTION_STORES, true);
+        /*
+        if (!is_bool($stores)) {
+
+            foreach ($stores as $key => $store) {
+                if ($store['id'] == $idStoreSelected) {
+                    $stores[$key]['selected'] = true;
+                } else {
+                    $stores[$key]['selected'] = false;
+                }
+            }
+
+            $_SESSION[$codeStore][self::SESSION_STORES] = $stores;
+
+            return array(
+                'success' => true,
+                'origin'  => 'database',
+                'stores'  => $stores 
+            );
+        }
+        */
+        // Get data on API Melhor Envio
+        $token = (new TokenController())->token();
 
         $params = array(
-            'headers'           =>  [
+            'headers'           =>  array(
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
                 'Authorization' => 'Bearer '.$token,
-            ],
+            ),
             'timeout'=> 10,
             'method' => 'GET'
         );
 
-        $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/companies', $params)));
+        $response =  json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_request(self::URL . '/v2/me/companies', $params)
+            )
+        );
 
-        $stories = [];
-        $storeSelected = get_option('melhorenvio_store_v2');
+        $stories = array();
 
         if(!isset($response->data)) {
-            return [
+            return array(
                 'success' => false,
-                'stores' => null
-            ];
+                'stores'  => null
+            );
         }
+
+        $storeSelected = $this->getSelectedStoreId();
 
         foreach($response->data as $store) {
-
-            $stories[] = [
-                'id' => $store->id,
-                'name' => $store->name,
-                'company_name' => $store->company_name,
-                'document' => $store->document,
+            $stories[] = array(
+                'id'             => $store->id,
+                'name'           => $store->name,
+                'company_name'   => $store->company_name,
+                'document'       => $store->document,
                 'state_register' => $store->state_register,
-                'protocol' => $store->protocol,
-                'email' => $store->email,
-                'website' => $store->website,
-                'selected' => ($store->id == $storeSelected) ? true : false
-            ];
+                'protocol'       => $store->protocol,
+                'email'          => $store->email,
+                'website'        => $store->website,
+                'selected'       => ($store->id == floatval($storeSelected)) ? true : false
+            );
         }
 
-        return [
+        $_SESSION[$codeStore][self::OPTION_STORES] = $stories;
+
+        // add_option(self::OPTION_STORES, $stories, true);
+
+        return array(
             'success' => true,
-            'stores' => $stories
-        ];
+            'origin'  => 'api',
+            'stores'  =>  $stories
+        );
     }
 
     /**
@@ -62,45 +120,92 @@ class Store
      */
     public function setStore($id) 
     {
-        $addressDefault = get_option('melhorenvio_store_v2');
+        $codeStore = md5(get_option('home'));
+
+        $_SESSION[$codeStore][self::SESSION_STORE_SELECTED] = $id;        
+
+        $addressDefault = get_option(self::OPTION_STORE_SELECTED);
 
         if  (!$addressDefault) {
-            add_option('melhorenvio_store_v2', $id);
-            return [
+
+            add_option(self::OPTION_STORE_SELECTED, $id);
+            return array(
                 'success' => true,
                 'id' => $id
-            ];
+            );
         }
 
-        update_option('melhorenvio_store_v2', $id);
-        return [
+        update_option(self::OPTION_STORE_SELECTED, $id);
+
+        return array(
             'success' => true,
             'id' => $id
-        ];
+        );
     }
 
     /**
-     * @return void
+     * Return ID of store selected by user
+     *
+     * @return int
+     */
+    public function getSelectedStoreId()
+    {
+        // Find ID on session
+        $codeStore = md5(get_option('home'));
+        if (isset($_SESSION[$codeStore][self::SESSION_STORE_SELECTED]) && $_SESSION[$codeStore][self::SESSION_STORE_SELECTED]) {
+            return $_SESSION[$codeStore][self::SESSION_STORE_SELECTED];
+        }
+
+        // Find ID on database wordpress
+        $idSelected = get_option(self::OPTION_STORE_SELECTED, true);
+        if (!is_bool($idSelected)) {
+            return $idSelected;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Object Store
      */
     public function getStore() 
     {
         $stores = $this->getStories();
-        $store = null;
 
         if (is_null($stores['stores']) || !isset($stores['stores'])) {
             return null;
         }
 
+        $idSelected = $this->getSelectedStoreId();
+
         foreach ($stores['stores'] as $item) {
-            if ($item['selected']) {
-                $store = $item;
+            if ($item['id'] == $idSelected) {
+                return $item;
             }
         }
 
-        if ($store == null && !empty($store['stores'])) {
-            return end($store['stores']);
+        if (is_array($stores)) {
+            return end($stores['stores']);
         }
 
-        return $store;
+        return null;
+    }
+
+    /**
+     * Reset data of stores
+     *
+     * @return void
+     */
+    public function resetData()
+    {
+        $codeStore = md5(get_option('home'));
+
+        // unset($_SESSION[$codeStore][self::SESSION_STORES]);
+
+        // unset($_SESSION[$codeStore][self::SESSION_STORE_SELECTED]);
+
+        // delete_option(self::OPTION_STORES);
+
+        // delete_option(self::OPTION_STORE_SELECTED);
     }
 }

@@ -3,10 +3,12 @@
 namespace Controllers;
 
 use Models\Order;
+use Models\Log;
 use Controllers\UsersController;
 use Controllers\PackageController;
 use Controllers\ProductsController;
 use Controllers\LogsController;
+use Controllers\TokenController;
 
 class OrdersController 
 {
@@ -40,13 +42,62 @@ class OrdersController
             die;
         }
 
-        $token = get_option('wpmelhorenvio_token');
+        if (!isset($_GET['choosen'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o ID do serviço selecionado'
+            ]);
+            die;
+        }
+
+        $token = (new tokenController())->token();
 
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
 
         $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
+        
+        if (empty($packages)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'O pacote está vazio'
+            ]);die;
+        }
+
+        foreach ($packages[$_GET['choosen']][0] as $key => $attribute) {
+            if (is_null($attribute)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => printf('Por favor, informar o valor para %s', $key)
+                ]);die;
+            }
+        }
+
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Verificar o código do serviço'
+            ]);die;
+        }
 
         $from = (new UsersController())->getFrom();
+
+        if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4) {
+            if(is_null($from->phone)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Por favor, informar seu telefone no seu cadastro'
+                ]);
+                die;
+            }
+
+            if (!get_option('melhorenvio_agency_jadlog_v2')) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Por favor, selecionar uma agência Jadlog no painel de configurações'
+                ]);
+                die;
+            }
+        }
 
         $to = (new UsersController())->getTo($_GET['order_id']);
 
@@ -71,7 +122,7 @@ class OrdersController
         $orders_id = [];
         $protocols = [];
 
-        foreach ($packages[$_GET['choosen']] as $package) {
+        foreach ($packages[$_GET['choosen']] as $indexPackage => $package) {
 
             $insurance_value = 0;
             foreach ($products as $key => $item) {
@@ -79,34 +130,81 @@ class OrdersController
                 $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
             }
             
-            unset($package['insurnace_value']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurnace_value']);
+
+            foreach ($products as $index => $product) {
+
+                unset($products[$index]['weight']);
+                unset($products[$index]['width']);
+                unset($products[$index]['height']);
+                unset($products[$index]['length']);
+
+                foreach ($package['products'] as $index2 => $packageProduct) {
+                    if ($product['id'] == $packageProduct->id) {
+                        $products[$index]['quantity'] = $packageProduct->quantity;
+                    }
+                }   
+            }
+
+            unset($packages[$_GET['choosen']][$indexPackage]['products']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurance']);
+            unset($packages[$_GET['choosen']][$indexPackage]['quantity']);
 
             $reminder = null;
             if (count($packages[$_GET['choosen']]) > 1) {
-                $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
+                $reminder = sprintf('Volume %s/%s - ', $package['volume'], count($packages[$_GET['choosen']]));
+
+                foreach ($products as $product) {
+                    $reminder = $reminder . sprintf('%sx %s; ', $product['quantity'], $product['name']);
+                }
+
+                $size = strlen($reminder);
+                $reminder = substr($reminder,0, $size-2);
             }
 
-            $body = [
+            unset($packages[$_GET['choosen']][$indexPackage]['volume']);
+            unset($package['volume']);
+
+            if($packages[$_GET['choosen']][$indexPackage]['weight'] == 0) {
+                $packages[$_GET['choosen']][$indexPackage]['weight'] = 0.01;
+            }
+
+            $body = array(
                 'from' => $from,
                 'to' => $to,
                 'service' => $_GET['choosen'],
                 'products' => $products,
-                'package' => $package,
-                'options' => [
-                    "insurance_value" => round($insurance_value, 2), 
-                    "receipt" => false,
-                    "own_hand" => false,
+                'package' => $packages[$_GET['choosen']][$indexPackage],
+                'options' => array(
+                    "insurance_value" => round($package['insurance'], 2), 
+                    "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
+                    "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                     "collect" => false,
                     "reverse" => false, 
                     "non_commercial" => false, 
                     'platform' => 'WooCommerce V2',
                     'reminder' => $reminder
-                ]
-            ];
+                )
+            );
 
             // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
             if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
                 $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
+                if(is_null($body['agency']) || $body['agency'] == "null" ) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => printf('Para utilizar o serviço da Jadlog é necessário informar o ID da agência')
+                    ]);
+                    die;
+                }
+
+                if (is_null($body['to']->phone) || empty($body['to']->phone)) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Telefone do destinatario é obrigatorio para serviços da jadLog'
+                    ]);
+                    die;
+                }
             }
 
             // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
@@ -123,12 +221,12 @@ class OrdersController
             }
 
             $params = array(
-                'headers'           =>  [
+                'headers'           =>  array(
                     'Content-Type'  => 'application/json',
                     'Accept'        => 'application/json',
                     'Authorization' => 'Bearer '.$token,
-                ],
-                'body'  =>  json_encode($body),
+                ),
+                'body'   =>  json_encode($body),
                 'timeout'=> 10
             );
 
@@ -138,15 +236,26 @@ class OrdersController
                 )
             );
 
-            $logs = (new LogsController)->add(
-                $_GET['order_id'], 
-                'Enviando ordem ' .  $reminder, 
-                $params, 
-                $response, 
-                'OrdersController', 
-                'sendOrder', 
-                self::URL . '/v2/me/cart'
-            );
+            delete_post_meta($_GET['order_id'], 'melhorenvio_errors');
+            $logErrors = array();
+            if (isset($response->errors)) {
+                foreach ($response->errors as $key => $items) {
+                    foreach ($items as $item) {
+                        $logErrors[$_GET['choosen']][] = [
+                            'message' =>  $item
+                        ];
+                    }
+                }
+            }
+
+            // save erros
+            if (empty($logErrors)) {
+                delete_post_meta($_GET['order_id'], 'melhorenvio_errors');
+            } else {
+                add_post_meta($_GET['order_id'], 'melhorenvio_errors', $logErrors);
+            }
+
+            (new Log())->register($_GET['order_id'], 'send_order', $body, $response);
 
             if (!isset($response->id)) {
                 $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
@@ -159,13 +268,28 @@ class OrdersController
             $success[] = $response;
 
             $orders_id[] = $response->id;
+
             $protocols[] = $response->protocol;   
+        }
+
+        // get error message from ME Api
+        if (!empty($response->error)) {
+            echo json_encode([
+                'success' => false,
+                'message' => $response->error
+            ]); die;
+        }
+
+        if (empty($success) || empty($orders_id) || empty($protocols)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro'
+            ]);die;
         }
 
         $data['choose_method'] = $_GET['choosen'];
         $data['status'] = 'pending';
         $data['created'] = date('Y-m-d H:i:s');
-
         $data['order_id'] = $orders_id;
         $data['protocol'] = $protocols;
 
@@ -180,9 +304,8 @@ class OrdersController
 
         echo json_encode([
             'success' => false,
-            'message' => end($errors)
+            'message' => $errors
         ]);die;
-
     }
 
     /**

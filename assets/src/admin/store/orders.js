@@ -182,7 +182,6 @@ const orders = {
                     commit('toggleLoader', false) 
                 }
             }).catch(error => {
-
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -252,18 +251,13 @@ const orders = {
                         commit('toggleModal', true)
                         return false
                     }
-
                     commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
                     commit('toggleModal', true)
                     commit('toggleLoader', false)
                     commit('addCart',{
                         id: data.id,
                         order_id: response.data.data.order_id,
-                        protocol: response.data.data.protocol
                     })
-
-                }).catch(error => {
-                    commit('setMsgModal', error.message)
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false

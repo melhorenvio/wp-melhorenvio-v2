@@ -16,9 +16,10 @@ class UsersController {
     public function getInfo()
     {
         $user = (new User())->get();
+
         return (object) [
             'success' => true,
-            'data' => $user
+            'data' => $user['data']
         ];
     }
 
@@ -28,21 +29,34 @@ class UsersController {
     public function getFrom()
     {
         $info = $this->getInfo();
+
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
+
+            $company = (new Store)->getStore();
 
             $address = (new Address)->getAddressFrom();
 
-            if (is_null($address)) {
+            $address = $address['address'];
+
+            if (is_null($address['address'])) {
                 return false;
             }
-            
-            $company = (new Store)->getStore();
+
+            $email = null;
+
+            if (isset($company['email'])) {
+                $email = $company['email'];
+            }
+
+            if (isset($info->data['email'])) {
+                $email = $info->data['email'];
+            }
 
             return (object) [
-                "name" => (isset($company['name'])) ? $company['name']  : $info->data->firstname . ' ' . $info->data->lastname,
-                "phone" => $this->mask($info->data->phone->phone, "(##)####-####"),
-                "email" => (isset($company['email'])) ? $company['email'] : $info->data->email,
-                "document" => $info->data->document,
+                "name" => (isset($company['name'])) ? $company['name']  : $info->data['firstname'] . ' ' . $info->data['lastname'],
+                "phone" => (isset($info->data['phone']->phone)) ? $info->data['phone']->phone : null,
+                "email" => $email,
+                "document" => $info->data['document'],
                 "company_document" => (isset($company['document'])) ? $company['document'] : null,
                 "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null,
                 "address" => $address['address'],
@@ -70,9 +84,15 @@ class UsersController {
         $cpf  = get_post_meta($order_id, '_billing_cpf', true);
         $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
 
+        $phone = get_post_meta($order_id, '_billing_cellphone', true);
+
+        if (empty($phone) || is_null($phone)) {
+            $phone = $order->get_billing_phone();
+        }
+
         return (object) [
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-            "phone" => $order->get_billing_phone(),
+            "phone" => $phone,
             "email" => $order->get_billing_email(),
             "document" => (!empty($cpf)) ? $cpf : null,
             "company_document" => (!empty($cnpj)) ? $cnpj : null,
