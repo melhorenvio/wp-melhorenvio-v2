@@ -328,11 +328,14 @@ class Order {
             return $this->setIndexCotation($cotation, $cotations[0]);
         }
 
-        foreach ($cotation[17]->volumes as $volume) {
-            if ($volume->weight == 0) {
-                $volume->weight = 0.01;
+        if (isset($cotation[17])) {
+            foreach ($cotation[17]->volumes as $volume) {
+                if ($volume->weight == 0) {
+                    $volume->weight = 0.01;
+                }
             }
         }
+        
 
         return $this->setIndexCotation($cotation, $cotations[0]);
     }    
