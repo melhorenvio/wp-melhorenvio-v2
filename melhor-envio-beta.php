@@ -611,6 +611,10 @@ final class Base_Plugin {
             echo json_encode(['exists_token' => true]);
             die;
         });
+
+        add_action('wp_ajax_get_info_server_client_melhor_envio', function() {
+            phpinfo();
+        });
     }
 
     /**
