@@ -66,19 +66,11 @@ class OrdersController
             ]);die;
         }
 
-        $productService = new OrdersProductsService();
+        $products = (new OrdersProductsService())->getProductsOrder($_GET['order_id']);
 
-        $buyerService =  new BuyerService();
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
 
-        $cart = new CartService();
-
-        $orderQuotationService = new OrderQuotationService();
-
-        $products = $productService->getProductsOrder($_GET['order_id']);
-
-        $buyer = $buyerService->getDataBuyerByOrderId($_GET['order_id']);
-
-        $result = $cart->add($_GET['order_id'], $products, $buyer, $_GET['choosen']);
+        $result = (new CartService())->add($_GET['order_id'], $products, $buyer, $_GET['choosen']);
 
         if (!isset($result->id)) {
             echo json_encode([
@@ -87,7 +79,7 @@ class OrdersController
             ]);die;
         }
 
-        $orderQuotationService->updateDataCotation(
+        (new OrderQuotationService())->updateDataCotation(
             $_GET['order_id'], 
             $result->id, 
             $result->protocol, 
