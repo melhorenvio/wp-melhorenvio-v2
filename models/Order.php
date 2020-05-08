@@ -322,13 +322,17 @@ class Order {
 
         $cotation = end($cotations);
 
-        if(date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($cotation['date_cotation']))) < date("Y-m-d h:i:s")) {
 
-            $cotation = (new CotationController())->makeCotationOrder($this->id);
+        if(is_null($cotation) || date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($cotation['date_cotation']))) < date("Y-m-d h:i:s")) {
+            
+            var_dump($this->id);die;
+            $cotation = (new CotationController())->makeCotationOrder($id);
             return $this->setIndexCotation($cotation, $cotations[0]);
         }
 
-        if (isset($cotation[17])) {
+        var_dump($cotation);die;
+
+        if (isset($cotation[17]) && isset($cotation[17]->volumes)) {
             foreach ($cotation[17]->volumes as $volume) {
                 if ($volume->weight == 0) {
                     $volume->weight = 0.01;

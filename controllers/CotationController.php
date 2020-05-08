@@ -30,6 +30,8 @@ class CotationController
      */
     public function makeCotationOrder($order_id) 
     {
+
+        var_dump($order_id);die;
         $q = (new Quotation($order_id));
 
         $result = $q->calculate();
@@ -54,7 +56,7 @@ class CotationController
         $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
         $result['free_shipping'] = $freeShipping; 
         $result['total']         = $total; // var não definida
-        
+
         add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
 
         return $result;
@@ -299,9 +301,9 @@ class CotationController
 
         // $response['session'] = $_SESSION;
 
-        // $response['path'] = plugin_dir_path( __FILE__ ) . 'services/*.php'  ;
+        // $response['path'] = plugin_dir_path( __FILE__ ) . 'services_methods/*.php'  ;
 
-        // foreach ( glob( plugin_dir_path( __FILE__ ) . '/services/*.php' ) as $filename ) {
+        // foreach ( glob( plugin_dir_path( __FILE__ ) . '/services_methods/*.php' ) as $filename ) {
         //     $response['servicesFile'][] = $filename;
         // }
 

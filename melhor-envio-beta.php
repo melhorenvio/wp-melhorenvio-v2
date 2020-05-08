@@ -71,6 +71,7 @@ use Controllers\OptionsController;
 use Controllers\StatusController;
 use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
+use Models\Order;
 
 /**
  * Base_Plugin class
@@ -279,7 +280,7 @@ final class Base_Plugin {
                 include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
 
                 // Create the methods shippings
-                foreach ( glob( plugin_dir_path( __FILE__ ) . 'services/*.php' ) as $filename ) {
+                foreach ( glob( plugin_dir_path( __FILE__ ) . 'services_methods/*.php' ) as $filename ) {
                     include_once $filename;
                 }
 
@@ -459,19 +460,19 @@ final class Base_Plugin {
                 $pathPlugins = ABSPATH . 'wp-content/plugins';
             }
 
-            foreach ( glob( $response['pathAlternative'] . $this->version . '/services/*.php' ) as $filename ) {
+            foreach ( glob( $response['pathAlternative'] . $this->version . '/services_methods/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;
             }
 
-            foreach ( glob( $response['pathAlternative'] . '/2.5.0/services/*.php' ) as $filename ) {
+            foreach ( glob( $response['pathAlternative'] . '/2.5.0/services_methods/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;
             }
 
-            foreach ( glob( $response['pathAlternative'] . '/melhor-envio-cotacao/services/*.php' ) as $filename ) {
+            foreach ( glob( $response['pathAlternative'] . '/melhor-envio-cotacao/services_methods/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;
             }
 
-            foreach ( glob( $pathPlugins . 'services/*.php' ) as $filename ) {
+            foreach ( glob( $pathPlugins . 'services_methods/*.php' ) as $filename ) {
                 $response['servicesFile'][] = $filename;
             }
 
@@ -514,19 +515,19 @@ final class Base_Plugin {
                 $data['path_test'] = str_replace('%', '/', $_GET['path']);
             }
 
-            foreach ( glob( $data['path_plugins'] . '/' . $this->version . '/services/*.php' ) as $filename ) {
+            foreach ( glob( $data['path_plugins'] . '/' . $this->version . '/services_methods/*.php' ) as $filename ) {
                 $data['services_file']['current_version_' . $this->version][] = $filename;
             }
 
-            foreach ( glob( $data['path_plugins'] . '/2.5.0/services/*.php' ) as $filename ) {
+            foreach ( glob( $data['path_plugins'] . '/2.5.0/services_methods/*.php' ) as $filename ) {
                 $data['services_file']['fixed-2.5.0'][] = $filename;
             }
 
-            foreach ( glob( $data['path_plugins'] . '/melhor-envio-cotacao/services/*.php' ) as $filename ) {
+            foreach ( glob( $data['path_plugins'] . '/melhor-envio-cotacao/services_methods/*.php' ) as $filename ) {
                 $data['services_file']['producao'][] = $filename;
             }
 
-            foreach ( glob( $data['path_test'] . '/services/*.php' ) as $filename ) {
+            foreach ( glob( $data['path_test'] . '/services_methods/*.php' ) as $filename ) {
                 $data['services_file']['test'][] = $filename;
             }
 
