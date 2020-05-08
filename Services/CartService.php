@@ -51,14 +51,30 @@ class CartService
             ];
         }
 
-        $requestService = new RequestService();
-
-        return $requestService->request(
+        return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART, 
             'POST', 
             $body
         );
 
+    }
+
+    public function remove($order_id)
+    {
+        $data = (new OrderQuotationService())->getData($order_id);
+
+        if (!isset($data['order_id'])) {
+            return [
+                'success' => false,
+                'errors' => 'Pedido não encontrado.'
+            ];
+        }
+
+        return (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'], 
+            'DELETE', 
+            []
+        );
     }
 
     /**

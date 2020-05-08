@@ -2,9 +2,11 @@
 
 namespace Services;
 
+use Models\Method;
+
 class OrderQuotationService
 {
-    const POST_META_ORDER_QUOTATION = 'melhorenvio_cotation_v2';
+    const POST_META_ORDER_QUOTATION = 'melhorenvio_quotation_v2';
 
     const POST_META_ORDER_DATA = 'melhorenvio_status_v2';
 
@@ -16,16 +18,36 @@ class OrderQuotationService
      */
     public function getQuotation($order_id)
     {
-        $quotation = get_post_meta(self::POST_META_ORDER_QUOTATION, $order_id);
+        $quotation = get_post_meta($order_id, self::POST_META_ORDER_QUOTATION, true);
 
-        if (!$quotation) {
-            return (object) [
-                'error' => true,
-                'message' => 'Quotation not found in database'
-            ];
+        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
+
+            $quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
+        
+            $quotation = $this->saveQuotation($order_id, $quotation);
         }
 
         return $quotation;
+    }
+
+    /**
+     * Save quotation in postmeta wordpress.
+     *
+     * @param int $order_id
+     * @param object $quotation
+     * @return array $quotation
+     */
+    public function saveQuotation($order_id, $quotation)
+    {
+        $result = $quotation;
+        $result['date_quotation'] = date('Y-m-d H:i:d'); 
+        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO
+        $result['free_shipping'] = false; 
+
+        delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
+        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $result, true);
+
+        return $result;
     }
 
     /**
@@ -47,9 +69,9 @@ class OrderQuotationService
      * @param string $protocol
      * @param string $status
      * @param int $choose_method
-     * @return void
+     * @return array $data
      */
-    public function updateDataCotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method) 
+    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method) 
     {
         $data = [
             'choose_method' => $choose_method,
@@ -61,5 +83,30 @@ class OrderQuotationService
 
         delete_post_meta($order_id, self::POST_META_ORDER_DATA);
         add_post_meta($order_id, self::POST_META_ORDER_DATA, $data, true);
+
+        return $data;
+    }
+
+    /** 
+     * @param int $order_id
+     */
+    public function removeDataQuotation($order_id)
+    {
+        delete_post_meta($order_id, self::POST_META_ORDER_DATA);
+    }
+
+    /**
+     * Function to check if a quotation is ultrapassed.
+     *
+     * @param array $data
+     * @return boolean
+     */
+    public function isUltrapassedQuotation($data)
+    {
+        if (!isset($data['date_quotation'])) { return true; }
+
+        $date = date('Y-m-d H:i:s', strtotime("-3 day"));
+
+        ($date_quotation > $data['date_quotation']) ? false : true;
     }
 }

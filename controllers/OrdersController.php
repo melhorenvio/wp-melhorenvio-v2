@@ -19,6 +19,8 @@ class OrdersController
 {
     const URL = 'https://api.melhorenvio.com';
 
+    const SERVICES_CODE_MELHOR_ENVIO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17];
+
     public function get($id)
     {
         return Order::getOne($id);
@@ -59,7 +61,7 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17])) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], self::SERVICES_CODE_MELHOR_ENVIO)) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'
@@ -79,7 +81,7 @@ class OrdersController
             ]);die;
         }
 
-        (new OrderQuotationService())->updateDataCotation(
+        (new OrderQuotationService())->updateDataQuotation(
             $_GET['order_id'], 
             $result->id, 
             $result->protocol, 
@@ -94,56 +96,25 @@ class OrdersController
     }
 
     /**
-     * @return void
+     * Function to remove order on cart Melhor Envio.
+     * 
+     * @param GET $order_id
+     * @return json $response
      */
     public function removeOrder() 
     {
-        $token = get_option('wpmelhorenvio_token');
-
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'timeout'=>10,
-            'method' => 'DELETE'
-        );
-
-        $orders = explode(',', $_GET['order_id']);
-
-        $errors = [];
-        $success = [];
-
-        foreach ($orders as $order) {
-
-            $response =  json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $order, $params)));
-
-            if (isset($response->error)) {
-                $errors[] = $response->error;
-                continue;
-            }
-
-            (new LogsController)->add(
-                $_GET['id'], 
-                'Removendo do carrinho', 
-                $params, 
-                $response, 
-                'OrdersController', 
-                'removeOrder', 
-                self::URL . '/v2/me/cart'
-            );
-        }
-
-        if (!empty($errors)) {
+        if (!isset($_GET['order_id'])) {
             echo json_encode([
                 'success' => false,
-                'error' => end($errors)
+                'message' => 'Informar o ID do pedido'
             ]);
             die;
         }
 
-        $this->removeDataCotation($_GET['id']);
+        $result = (new CartService())->remove($_GET['id']);
+
+        (new OrderQuotationService())->removeDataQuotation($_GET['id']);
+
         echo json_encode([
             'success' => true
         ]);
@@ -204,20 +175,11 @@ class OrdersController
             die;
         }
 
-        $this->removeDataCotation($_GET['id']);
+        (new OrderQuotationService())->removeDataQuotation($_GET['id']);
         echo json_encode([
             'success' => true
         ]);
         die;
-    }
-
-    /**
-     * @param [type] $order_id
-     * @return void
-     */
-    private function removeDataCotation($order_id) 
-    {
-        delete_post_meta($order_id, 'melhorenvio_status_v2');
     }
 
     /**
