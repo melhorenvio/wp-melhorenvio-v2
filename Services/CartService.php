@@ -18,7 +18,6 @@ class CartService
      */
     public function add($products, $to, $shipping_method_id)
     {
-        
         $from = (new SellerService())->getData();
 
         $body = array(

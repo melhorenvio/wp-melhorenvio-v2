@@ -66,16 +66,17 @@ class OrdersController
             ]);die;
         }
 
-        //TODO validar telefone
-        //TODO validar agencia se não for correios
-
         $productService = new OrdersProductsService();
 
         $buyerService =  new BuyerService();
 
         $cart = new CartService();
 
-        //$orderQuotationService = new OrderQuotationService();
+        $orderQuotationService = new OrderQuotationService();
+        
+        var_dump($orderQuotationService->getStatus($_GET['order_id']));
+        die;
+
 
         $products = $productService->getProductsOrder($_GET['order_id']);
 
@@ -90,21 +91,16 @@ class OrdersController
             ]);die;
         }
 
-        $ids[] = $result->id;
-        $protocols[] = $result->protocol;
+        $orderQuotationService->updateDataCotation(
+            $_GET['order_id'], 
+            $order_id, 
+            $protocol, 
+            $status, 
+            $_GET['choosen']
+        );
 
-        $data = [
-            'choose_method' => $_GET['choosen'],
-            'status' => 'pending',
-            'created' => date('Y-m-d H:i:s'),
-            'order_id' => $ids,
-            'protocol' => $protocols
-        ]; 
-
-
-        $this->updateDataCotation($_GET['order_id'], $data, 'pending'); //TODO
-
-        if (empty($errors)) {
+        
+        /**if (empty($errors)) {
             echo json_encode([
                 'success' => true,
                 'data' => $data
@@ -114,7 +110,7 @@ class OrdersController
         echo json_encode([
             'success' => false,
             'message' => $errors
-        ]);die;
+        ]);die;*/
     }
 
     /**
