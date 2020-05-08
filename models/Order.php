@@ -111,8 +111,6 @@ class Order {
                     $orders[] = $dataMelhorEnvio['order_id'];
                 }
                 
-               
-                
                 $data[] = [
                     'id'             => (int) $order->id,
                     'total'          => $order->getProductsTotal($products),
@@ -325,12 +323,9 @@ class Order {
 
         if(is_null($cotation) || date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($cotation['date_cotation']))) < date("Y-m-d h:i:s")) {
             
-            var_dump($this->id);die;
             $cotation = (new CotationController())->makeCotationOrder($id);
             return $this->setIndexCotation($cotation, $cotations[0]);
         }
-
-        var_dump($cotation);die;
 
         if (isset($cotation[17]) && isset($cotation[17]->volumes)) {
             foreach ($cotation[17]->volumes as $volume) {
@@ -394,6 +389,7 @@ class Order {
         if ($id) $this->id = $id; 
         
         $getPost = get_post_meta($this->id, 'melhorenvio_status_v2');
+
         if(empty($getPost) || count($getPost) == 0) {
             return [
                 'status' => null,

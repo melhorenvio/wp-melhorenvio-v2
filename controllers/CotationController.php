@@ -30,8 +30,6 @@ class CotationController
      */
     public function makeCotationOrder($order_id) 
     {
-
-        var_dump($order_id);die;
         $q = (new Quotation($order_id));
 
         $result = $q->calculate();
@@ -248,67 +246,6 @@ class CotationController
         }
 
         return false;
-    }
-
-    public function checkCotationTest()
-    {
-        // if (!isset($_GET['cep'])) {
-        //     echo json_encode([
-        //         'error' => 'Informar o cep de destino'
-        //     ]);
-        //     die;
-        // }
-
-        // $response['cep_destiny'] = $_GET['cep'];
-
-        // $response['token'] = get_option('wpmelhorenvio_token');
-
-        // $params = array(
-        //     'headers'=> array(
-        //         'Content-Type' => 'application/json',
-        //         'Accept'=>'application/json',
-        //         'Authorization' => 'Bearer '.$response['token']
-        //     )
-        // );
-
-        // $response['account'] = wp_remote_retrieve_body(
-        //     wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
-        // );
-
-        // $response['package'] = [
-        //     'width'  => (isset($_GET['width']))  ? (float) $_GET['width']  : 17 ,
-        //     'height' => (isset($_GET['height'])) ? (float) $_GET['height'] : 23,
-        //     'length' => (isset($_GET['length'])) ? (float) $_GET['length'] : 10,
-        //     'weight' => (isset($_GET['weight'])) ? (float) $_GET['weight'] : 1
-        // ];
-
-
-        // $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
-
-        // $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
-
-        // $response['user']   = (new UsersController())->getInfo();
-
-        // $response['origem'] = (new UsersController())->getFrom();
-
-        // // $response['cotation'] = (new CotationController())->makeCotationPackage($response['package'], [1,2,3,4,9], $response['cep_destiny'], $options);
-
-        // $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
-
-        // $response['is_multisite'] = is_multisite();
-
-        // $response['enableds'] = (new Method())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
-
-        // $response['session'] = $_SESSION;
-
-        // $response['path'] = plugin_dir_path( __FILE__ ) . 'services_methods/*.php'  ;
-
-        // foreach ( glob( plugin_dir_path( __FILE__ ) . '/services_methods/*.php' ) as $filename ) {
-        //     $response['servicesFile'][] = $filename;
-        // }
-
-        // echo json_encode($response);
-        // die;
     }
 }
 

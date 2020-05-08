@@ -11,21 +11,24 @@ class CartService
     /**
      * Function to add item on Cart Melhor Envio
      *
+     * @param int $order_id
      * @param array $products
      * @param array $to
      * @param integer $shipping_method_id
      * @return void
      */
-    public function add($products, $to, $shipping_method_id)
+    public function add($order_id, $products, $to, $shipping_method_id)
     {
         $from = (new SellerService())->getData();
+
+        $quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
 
         $body = array(
             'from' => $from,
             'to' => $to,
             'service' => $shipping_method_id,
             'products' => $products,
-            'volumes' => $this->getVolumes($products),
+            'volumes' => $this->getVolumes($quotation, $shipping_method_id),
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
                 "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
@@ -44,7 +47,7 @@ class CartService
 
             return [
                 'success' => false,
-                'message' => $isValid
+                'errors' => $isValid
             ];
         }
 
@@ -61,20 +64,28 @@ class CartService
     /**
      * Mount array with volumes by products.
      *
-     * @param array $products
+     * @param array $quotation
+     * @param int $method_id
      * @return array $volumes
      */
-    private function getVolumes($products)
+    private function getVolumes($quotation, $method_id)
     {
         $volumes = [];
 
-        foreach ($products as $product) {
-            $volumes[] = [
-                "height" => $product['height'],
-                "width" => $product['width'],
-                "length" => $product['length'],
-                "weight" => $product['weight']
-            ];
+        foreach ($quotation as $item) {
+    
+            if ($item->id == $method_id) {
+
+                foreach ($item->packages as $package) {
+
+                    $volumes[] = [
+                        'height' => $package->dimensions->height,
+                        'width' => $package->dimensions->width,
+                        'length' => $package->dimensions->length,
+                        'weight' => $package->weight,
+                    ];
+                }
+            }
         }
 
         return $volumes;
@@ -124,7 +135,11 @@ class CartService
         }
 
         if (isset($body['service']) && $body['service'] >= 3 && !array_key_exists("agency", $body)) {
-            $errors[] = 'Informar a agÃªncia do envio';
+            $errors[] = 'Informar a agência do envio';
+        }
+
+        if (!isset($body['volumes']) ) {
+            $errors[] = 'Informar os volumess do envio';
         }
 
         return $errors;

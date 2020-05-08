@@ -78,7 +78,7 @@ class OrdersController
 
         $buyer = $buyerService->getDataBuyerByOrderId($_GET['order_id']);
 
-        $result = $cart->add($products, $buyer, $_GET['choosen']);
+        $result = $cart->add($_GET['order_id'], $products, $buyer, $_GET['choosen']);
 
         if (!isset($result->id)) {
             echo json_encode([
@@ -89,23 +89,15 @@ class OrdersController
 
         $orderQuotationService->updateDataCotation(
             $_GET['order_id'], 
-            $order_id, 
-            $protocol, 
-            $status, 
+            $result->id, 
+            $result->protocol, 
+            'pending', 
             $_GET['choosen']
         );
-        
-        //TODO fazer tratamento de erros para a view.
-        /**if (empty($errors)) {
-            echo json_encode([
-                'success' => true,
-                'data' => $data
-            ]);die;
-        }*/
 
         echo json_encode([
-            'success' => false,
-            'message' => $errors
+            'success' => true,
+            'message' => $result
         ]);die;
     }
 
@@ -463,6 +455,7 @@ class OrdersController
         die;
     }   
 
+    //TODO Refatorei essa função em OrderQuotationService.
     /**
      * @param [type] $order_id
      * @param [type] $data

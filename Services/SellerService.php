@@ -11,8 +11,8 @@ class SellerService
      */
     public function getData()
     {
-        $dataMelhorEnvio = $this->getDataApiMelhorEnvio();
-        $data = $dataMelhorEnvio;
+        $data = $this->getDataApiMelhorEnvio();
+
         return (object) [
             "name" => sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (isset($data->phone->phone)) ? $data->phone->phone : null,
@@ -43,7 +43,7 @@ class SellerService
         if (!isset($data->id)) {
             return [
                 'success' => false,
-                'message' => 'UsuÃ¡rio nÃ£o encontrado no Melhor Envio'
+                'message' => 'Usuário não encontrado no Melhor Envio'
             ];
         }
 
