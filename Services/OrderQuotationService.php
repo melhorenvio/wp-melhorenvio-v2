@@ -34,7 +34,7 @@ class OrderQuotationService
      * @param int $order_id
      * @return array $data
      */
-    public function getStatus($order_id)
+    public function getData($order_id)
     {
         return get_post_meta($order_id, self::POST_META_ORDER_DATA, true);
     }

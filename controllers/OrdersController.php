@@ -73,10 +73,6 @@ class OrdersController
         $cart = new CartService();
 
         $orderQuotationService = new OrderQuotationService();
-        
-        var_dump($orderQuotationService->getStatus($_GET['order_id']));
-        die;
-
 
         $products = $productService->getProductsOrder($_GET['order_id']);
 
@@ -98,19 +94,19 @@ class OrdersController
             $status, 
             $_GET['choosen']
         );
-
         
+        //TODO fazer tratamento de erros para a view.
         /**if (empty($errors)) {
             echo json_encode([
                 'success' => true,
                 'data' => $data
             ]);die;
-        }
+        }*/
 
         echo json_encode([
             'success' => false,
             'message' => $errors
-        ]);die;*/
+        ]);die;
     }
 
     /**
