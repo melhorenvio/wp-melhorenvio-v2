@@ -4,6 +4,13 @@ namespace Models;
 
 class Method 
 {
+    const SERVICES_CODE_MELHOR_ENVIO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17];
+
+    public function getCodesString()
+    {
+        return implode(",", self::SERVICES_CODE_MELHOR_ENVIO);
+    }
+
     public function getMethodShipmentSelected($order_id)
     {
         global $wpdb;

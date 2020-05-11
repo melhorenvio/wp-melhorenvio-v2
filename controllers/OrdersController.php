@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Models\Order;
 use Models\Log;
+use Models\Method;
 use Controllers\UsersController;
 use Controllers\PackageController;
 use Controllers\ProductsController;
@@ -19,8 +20,6 @@ use Services\OrderQuotationService;
 class OrdersController 
 {
     const URL = 'https://api.melhorenvio.com';
-
-    const SERVICES_CODE_MELHOR_ENVIO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17];
 
     public function get($id)
     {
@@ -46,6 +45,7 @@ class OrdersController
      */
     public function sendOrder() 
     {
+
         if (!isset($_GET['order_id'])) {
             echo json_encode([
                 'success' => false,
@@ -62,7 +62,7 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], self::SERVICES_CODE_MELHOR_ENVIO)) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], Method::SERVICES_CODE_MELHOR_ENVIO)) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'

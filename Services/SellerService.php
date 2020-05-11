@@ -2,6 +2,9 @@
 
 namespace Services;
 
+use Models\User;
+use Models\Address;
+
 class SellerService
 {
     /**
@@ -12,6 +15,19 @@ class SellerService
     public function getData()
     {
         $data = $this->getDataApiMelhorEnvio();
+
+        $address = (new Address())->getAddressFrom();
+
+        if(isset($address['address']['id'])) {
+
+            $data->address->address = $address['address']['address'];
+            $data->address->complement = $address['address']['complement'];
+            $data->address->number = $address['address']['number'];
+            $data->address->district = $address['address']['district'];
+            $data->address->city->city = $address['address']['city'];
+            $data->address->city->state->state_abbr = $address['address']['state'];
+            $data->address->postal_code = $address['address']['postal_code'];
+        }
 
         return (object) [
             "name" => sprintf("%s %s", $data->firstname, $data->lastname),

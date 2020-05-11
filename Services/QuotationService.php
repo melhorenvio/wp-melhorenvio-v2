@@ -2,6 +2,9 @@
 
 namespace Services;
 
+use Models\Option;
+use Models\Method;
+
 class QuotationService
 {
 
@@ -47,19 +50,18 @@ class QuotationService
             'to' => [
                 'postal_code' => $postal_code
             ],
-            'options' => [
-                'receipt' => false, //TODO
-                'own_hand' => false //TODO
-            ],
-            'services' => '1,2,3,4,17', //TODO
+            'options' => (new Option())->getOptions(),
+            'services' => Method::getCodesString(),
             'products' => $products
         ];
 
-        return (new RequestService())->request(
+        $result = (new RequestService())->request(
             self::ROUTE_API_MELHOR_CALCULATE, 
             'POST', 
             $body,
             true
         );
+
+        return $result;
     }
 }

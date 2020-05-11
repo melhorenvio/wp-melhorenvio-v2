@@ -2,6 +2,7 @@
 
 namespace Services;
 
+
 class CartService
 {
     const PLATAFORM = 'WooCommerce V2';
@@ -106,7 +107,7 @@ class CartService
 
                     $volumes[] = [
                         'height' => $package->dimensions->height,
-                        'width' => $package->dimensions->width,
+                        'width'  => $package->dimensions->width,
                         'length' => $package->dimensions->length,
                         'weight' => $package->weight,
                     ];
