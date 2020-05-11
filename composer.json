@@ -19,7 +19,9 @@
             "Controllers\\": "controllers/",
             "Models\\": "models/",
             "Interfaces\\": "core/interfaces/",
-            "Bases\\": "core/bases/"
+            "Services\\": "Services/",
+            "Bases\\": "core/bases/",
+            "Helpers\\": "Helpers/"
         }
     }
 }

@@ -4,6 +4,9 @@ namespace Models;
 
 use Controllers\CotationController;
 use Controllers\LogsController;
+use Helpers\TranslateStatusHelper;
+use Services\QuotationService;
+use Services\OrderQuotationService;
 
 class Order {
     
@@ -15,11 +18,10 @@ class Order {
     private $shipping_total;
     private $to;
     private $cotation;
-    //private $status;
     private $address;
 
     /**
-     * @param [type] $id
+     * @param int $id
      */
     public function __construct($id = null)
     {
@@ -100,7 +102,7 @@ class Order {
 
                 $products = $order->getProducts();
 
-                $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
+                $statusTranslate = (new TranslateStatusHelper())->translateNameStatus($dataMelhorEnvio['status']);
 
                 $non_commercial = true;
                 if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
@@ -110,8 +112,6 @@ class Order {
                 if (!is_null($dataMelhorEnvio['order_id'])) {
                     $orders[] = $dataMelhorEnvio['order_id'];
                 }
-                
-               
                 
                 $data[] = [
                     'id'             => (int) $order->id,
@@ -318,26 +318,10 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
-        $cotations = get_post_meta($this->id, 'melhorenvio_cotation_v2');
+        return (new OrderQuotationService())->getQuotation($this->id);
 
-        $cotation = end($cotations);
-
-        if(date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($cotation['date_cotation']))) < date("Y-m-d h:i:s")) {
-
-            $cotation = (new CotationController())->makeCotationOrder($this->id);
-            return $this->setIndexCotation($cotation, $cotations[0]);
-        }
-
-        if (isset($cotation[17])) {
-            foreach ($cotation[17]->volumes as $volume) {
-                if ($volume->weight == 0) {
-                    $volume->weight = 0.01;
-                }
-            }
-        }
-        
-
-        return $this->setIndexCotation($cotation, $cotations[0]);
+        //TODO PAREI AQUI.
+        //return $this->setIndexCotation($cotation, $cotations[0]);
     }    
 
     /**
@@ -390,6 +374,7 @@ class Order {
         if ($id) $this->id = $id; 
         
         $getPost = get_post_meta($this->id, 'melhorenvio_status_v2');
+
         if(empty($getPost) || count($getPost) == 0) {
             return [
                 'status' => null,
@@ -424,32 +409,6 @@ class Order {
         }
 
         return $data;
-    }
-
-    private function translateNameStatus($status = null)
-    {
-        $statusTranslate = '';
-        if ($status == 'pending') {
-            $statusTranslate = 'Pendente';
-        } elseif ($status == 'released') {
-            $statusTranslate = 'Liberado';
-        } elseif ($status == 'posted') {
-            $statusTranslate = 'Postado';
-        } elseif ($status == 'delivered') {
-            $statusTranslate = 'Entregue';
-        } elseif ($status == 'canceled') {
-            $statusTranslate = 'Cancelado';
-        } elseif ($status == 'undelivered') {
-            $statusTranslate = 'Não entregue';
-        } elseif ($status == 'generated') {
-            $statusTranslate = 'Gerada';
-        } elseif ($status == 'paid') {
-            $statusTranslate = 'Paga';
-        } else {
-            $statusTranslate = 'Não possui';
-        }
-
-        return $statusTranslate;
     }
 
     /**
@@ -540,7 +499,7 @@ class Order {
         return null;
     }
 
-    public function setIndexCotation($data, $firstCotation)
+    /**public function setIndexCotation($data, $firstCotation)
     {
         $response = [];
 
@@ -592,5 +551,5 @@ class Order {
         $response['diff'] = $diff;
 
         return $response;
-    }
+    }*/
 }   
