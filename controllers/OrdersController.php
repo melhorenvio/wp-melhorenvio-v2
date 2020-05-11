@@ -81,7 +81,7 @@ class OrdersController
             ]);die;
         }
 
-        (new OrderQuotationService())->updateDataQuotation(
+        $result = (new OrderQuotationService())->updateDataQuotation(
             $_GET['order_id'], 
             $result->id, 
             $result->protocol, 
@@ -91,7 +91,7 @@ class OrdersController
 
         echo json_encode([
             'success' => true,
-            'message' => $result
+            'data' => $result
         ]);die;
     }
 

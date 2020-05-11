@@ -10,6 +10,8 @@ class OrderQuotationService
 
     const POST_META_ORDER_DATA = 'melhorenvio_status_v2';
 
+    const CORREIOS_MINI_CODE = 17;
+
     /**
      * Function to get a quotation by order in postmetas by wordpress.
      *
@@ -39,13 +41,41 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
-        $result = $quotation;
+
+        $result = $this->setKeyAsCodeService($quotation);
         $result['date_quotation'] = date('Y-m-d H:i:d'); 
         $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO
         $result['free_shipping'] = false; 
+        $result['diff'] = false;
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
         add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $result, true);
+
+        return $result;
+    }
+
+    /**
+     * Set a key of quotations array as code service.
+     *
+     * @param array $quotation
+     * @return array $quotationoid
+     */
+    private function setKeyAsCodeService($quotation)
+    {
+        $result = [];
+        
+        foreach ($quotation as $item) {
+            
+            $result[$item->id] = $item;
+
+            if ($item->id == self::CORREIOS_MINI_CODE) {
+                foreach ($item->packages as $key => $package) {
+                    if ($package->weight == 0) {
+                        $result[$item->id]['packages'][$key]->weight = 0.01;
+                    }
+                }
+            }
+        }
 
         return $result;
     }

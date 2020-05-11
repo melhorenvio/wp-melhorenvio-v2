@@ -5,6 +5,8 @@ namespace Models;
 use Controllers\CotationController;
 use Controllers\LogsController;
 use Helpers\TranslateStatusHelper;
+use Services\QuotationService;
+use Services\OrderQuotationService;
 
 class Order {
     
@@ -16,11 +18,10 @@ class Order {
     private $shipping_total;
     private $to;
     private $cotation;
-    //private $status;
     private $address;
 
     /**
-     * @param [type] $id
+     * @param int $id
      */
     public function __construct($id = null)
     {
@@ -317,27 +318,10 @@ class Order {
     {
         if ($id) $this->id = $id; 
 
-        $cotations = get_post_meta($this->id, 'melhorenvio_cotation_v2');
+        return (new OrderQuotationService())->getQuotation($this->id);
 
-        $cotation = end($cotations);
-
-
-        if(is_null($cotation) || date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($cotation['date_cotation']))) < date("Y-m-d h:i:s")) {
-            
-            $cotation = (new CotationController())->makeCotationOrder($id);
-            return $this->setIndexCotation($cotation, $cotations[0]);
-        }
-
-        if (isset($cotation[17]) && isset($cotation[17]->volumes)) {
-            foreach ($cotation[17]->volumes as $volume) {
-                if ($volume->weight == 0) {
-                    $volume->weight = 0.01;
-                }
-            }
-        }
-        
-
-        return $this->setIndexCotation($cotation, $cotations[0]);
+        //TODO PAREI AQUI.
+        //return $this->setIndexCotation($cotation, $cotations[0]);
     }    
 
     /**
@@ -515,7 +499,7 @@ class Order {
         return null;
     }
 
-    public function setIndexCotation($data, $firstCotation)
+    /**public function setIndexCotation($data, $firstCotation)
     {
         $response = [];
 
@@ -567,5 +551,5 @@ class Order {
         $response['diff'] = $diff;
 
         return $response;
-    }
+    }*/
 }   
