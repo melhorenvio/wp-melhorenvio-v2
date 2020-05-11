@@ -10,6 +10,7 @@ use Models\Method;
 use Models\Address;
 use Controllers\TokenController;
 use Controllers\HelperController;
+use Helpers\DimensionsHelper;
 
 class Quotation 
 {  
@@ -236,12 +237,10 @@ class Quotation
                     'quantity'  => intval($product->quantity)
                 );
 
-                $helper = new HelperController();
-
                 $body['products'][$key]['volumes'][] = array(
-                    'height' => (int) $helper->converterDimension($product->height),
-                    'width'  => (int) $helper->converterDimension($product->width),
-                    'length' => (int) $helper->converterDimension($product->length),
+                    'height' => (int) (new DimensionsHelper())->converterDimension($product->height),
+                    'width'  => (int) (new DimensionsHelper())->converterDimension($product->width),
+                    'length' => (int) (new DimensionsHelper())->converterDimension($product->length),
                     'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
                 );
 
