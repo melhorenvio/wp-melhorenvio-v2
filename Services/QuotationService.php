@@ -55,12 +55,11 @@ class QuotationService
             'products' => $products
         ];
 
-        $requestService = new RequestService();
-
-        return $requestService->request(
+        return (new RequestService())->request(
             self::ROUTE_API_MELHOR_CALCULATE, 
             'POST', 
-            $body
+            $body,
+            true
         );
     }
 }

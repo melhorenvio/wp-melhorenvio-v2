@@ -13,6 +13,7 @@ use Services\QuotationService;
 use Services\OrdersProductsService;
 use Services\BuyerService;
 use Services\CartService;
+use Services\OrderService;
 use Services\OrderQuotationService;
 
 class OrdersController 
@@ -72,22 +73,19 @@ class OrdersController
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
 
-        $result = (new CartService())->add($_GET['order_id'], $products, $buyer, $_GET['choosen']);
+        $result = (new CartService())->add(
+            $_GET['order_id'], 
+            $products, 
+            $buyer, 
+            $_GET['choosen']
+        );
 
-        if (!isset($result->id)) {
+        if (!isset($result['order_id'])) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.'
             ]);die;
         }
-
-        $result = (new OrderQuotationService())->updateDataQuotation(
-            $_GET['order_id'], 
-            $result->id, 
-            $result->protocol, 
-            'pending', 
-            $_GET['choosen']
-        );
 
         echo json_encode([
             'success' => true,
@@ -113,8 +111,6 @@ class OrdersController
 
         $result = (new CartService())->remove($_GET['id']);
 
-        (new OrderQuotationService())->removeDataQuotation($_GET['id']);
-
         echo json_encode([
             'success' => true
         ]);
@@ -126,56 +122,18 @@ class OrdersController
      */
     public function cancelOrder() 
     {
-        $ordersIds = explode(',', $_GET['order_id']);
-        
-        $orders = [];
-
-        foreach ($ordersIds as $order) {
-            $orders[] = [
-                'id' => $order,
-                'reason_id' => 2,
-                'description' => 'Cancelado pelo usuário'
-            ];
-        }
-
-        $token = get_option('wpmelhorenvio_token');
-
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'timeout'=> 10,
-            'method' => 'POST',
-            'body' => ['orders' => $orders]
-        );
-
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/shipment/cancel', $params)
-            )
-        );
-
-        (new LogsController)->add(
-            $_GET['id'], 
-            'Cancelando do carrinho', 
-            $params, 
-            $response, 
-            'OrdersController', 
-            'cancelOrder', 
-            self::URL . '/v2/me/shipment/cancel'
-        );
-
-        if (isset($response->errors)) {
+        if (!isset($_GET['order_id'])) {
             echo json_encode([
                 'success' => false,
-                'errors' => $response->errors
+                'message' => 'Informar o ID do pedido'
             ]);
             die;
         }
 
-        (new OrderQuotationService())->removeDataQuotation($_GET['id']);
+        $result = (new OrderService())->remove(
+            explode(',', $_GET['order_id'])
+        );
+
         echo json_encode([
             'success' => true
         ]);

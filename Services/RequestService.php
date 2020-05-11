@@ -31,15 +31,19 @@ class RequestService
      * @param array $body
      * @return array $response
      */
-    public function request($route, $type_request, $body)
+    public function request($route, $type_request, $body, $useJson = true)
     {
         try {
 
+            if ($useJson) {
+                $body = json_encode($body);
+            }
+
             $params = array(
-                'headers' =>  $this->headers,
-                'method' => $type_request,
-                'body'   => json_encode($body),
-                'timeout'=> self::TIMEOUT
+                'headers' => $this->headers,
+                'method'  => $type_request,
+                'body'    => $body,
+                'timeout '=> self::TIMEOUT
             );
 
             $response = json_decode(
