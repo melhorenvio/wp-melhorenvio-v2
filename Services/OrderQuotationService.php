@@ -112,8 +112,6 @@ class OrderQuotationService
             'created' => date('Y-m-d H:i:s')
         ];
 
-        //var_dump($data);die;
-
         delete_post_meta($order_id, self::POST_META_ORDER_DATA);
         add_post_meta($order_id, self::POST_META_ORDER_DATA, $data, true);
 

@@ -12,33 +12,39 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_CHECKOUT = '/shipment/checkout';
 
+    const ROUTE_MELHOR_ENVIO_CREATE_LABEL = '/shipment/generate';
+
+    const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
+
     /**
      * Function to cancel order on api Melhor Envio.
      *
-     * @param array $ordersIds
+     * @param int $post_id
      * @return array $response
      */
-    public function cancel($ordersIds)
+    public function cancel($post_id)
     {
-        $orders = [];
+        $order_id = $this->getOrderIdByPostId($post_id);
 
-        foreach ($ordersIds as $order) {
-
-            $orders[] = [
-                'id'          => $order,
-                'reason_id'   => self::REASON_CANCELED_USER,
-                'description' => 'Cancelado pelo usuário'
+        if (is_null($order_id)) {
+            return [
+                'success' => false,
+                'message' => 'Pedido não encontrado'
             ];
         }
 
-        foreach ($orders as $order) {
-            (new OrderQuotationService())->removeDataQuotation($order);
-        }
-
+        $orders[] = [
+            'id'          => $order_id,
+            'reason_id'   => self::REASON_CANCELED_USER,
+            'description' => 'Cancelado pelo usuário'
+        ];
+        
+        (new OrderQuotationService())->removeDataQuotation($order_id);
+        
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CANCEL, 
             'POST', 
-            ['orders' => $orders ], 
+            ['orders' => $orders], 
             false
         );
     }
@@ -69,39 +75,11 @@ class OrderService
     }
 
     /**
-     * Function to get info about order in api Melhor Envio.
+     * Function to create a label on Melhor Envio.
      *
-     * @param int $order_id
+     * @param array $posts_id
      * @return array $response
      */
-    public function infoOrderId($order_id)
-    {   
-        return (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_CART . '/' . $order_id,
-            'GET',
-            [],
-            false
-        );
-    }
-
-    /**
-     * Function to get order_id by post_id
-     *
-     * @param int $post_id
-     * @return string $order_id
-     */
-    public function getOrderIdByPostId($post_id)
-    {
-        $data = (new OrderQuotationService())->getData($post_id);
-
-        if (!isset($data['order_id'])) {
-            return null;
-        }
-
-        return $data['order_id'];
-    }
-
-
     public function pay($posts_id)
     {
         $wallet = 0;
@@ -140,12 +118,117 @@ class OrderService
         );
 
         return (new OrderQuotationService())->updateDataQuotation(
-            end($posts_id),
-            end($result->purchase->orders)->id,
-            end($result->purchase->orders)->protocol,
-            $result->purchase->status,
-            end($result->purchase->orders)->service_id,
-            $result->purchase->id
+            end($posts_id), //post_id
+            end($result->purchase->orders)->id, //order_id
+            end($result->purchase->orders)->protocol, //protocol
+            $result->purchase->status, //status
+            end($result->purchase->orders)->service_id,//choose_method
+            $result->purchase->id //purchase_id
         );
+    }
+
+    /**
+     * Function to create a label printble on melhor envio.
+     *
+     * @param int $post_id
+     * @return void
+     */
+    public function createLabel($post_id)
+    {
+        $order_id = $this->getOrderIdByPostId($post_id);
+
+        $body = [
+            'orders' => (array) $order_id,
+            'mode' => 'public'
+        ];
+
+        $result = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_CREATE_LABEL,
+            'POST',
+            $body,
+            true
+        );
+
+        $data = (new OrderQuotationService())->getData($post_id);
+
+        $data = (new OrderQuotationService())->updateDataQuotation(
+            $post_id,
+            $data['order_id'],
+            $data['protocol'],
+            'generated',
+            $data['choose_method'],
+            $data['purchase_id']
+        );
+
+        return $data;
+    }
+
+    public function printLabel($post_id)
+    {
+        $order_id = $this->getOrderIdByPostId($post_id);
+
+        $body = [
+            'orders' => (array) $order_id
+        ];
+
+        $result = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_PRINT_LABEL,
+            'POST',
+            $body,
+            true
+        );
+
+        if (!isset($result->url)) {
+            return [
+                'success' => false,
+                'message' => 'Não foi possível imprimir a etiqueta'
+            ];
+        }
+
+        $data = (new OrderQuotationService())->getData($post_id);
+
+        $data = (new OrderQuotationService())->updateDataQuotation(
+            $post_id,
+            $data['order_id'],
+            $data['protocol'],
+            'printed',
+            $data['choose_method'],
+            $data['purchase_id']
+        );
+
+        return $result;
+    }
+
+    /**
+     * Function to get info about order in api Melhor Envio.
+     *
+     * @param int $order_id
+     * @return array $response
+     */
+    public function infoOrderId($order_id)
+    {   
+        return (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_CART . '/' . $order_id,
+            'GET',
+            [],
+            false
+        );
+    }
+
+    /**
+     * Function to get order_id by post_id.
+     *
+     * @param int $post_id
+     * @return string $order_id
+     */
+    public function getOrderIdByPostId($post_id)
+    {
+        $data = (new OrderQuotationService())->getData($post_id);
+
+        if (!isset($data['order_id'])) {
+            return null;
+        }
+
+        return $data['order_id'];
     }
 }
