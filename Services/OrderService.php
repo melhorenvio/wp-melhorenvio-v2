@@ -8,6 +8,14 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_CANCEL = '/shipment/cancel';
 
+    const ROUTE_MELHOR_ENVIO_CART = '/cart';
+
+    /**
+     * Function to cancel order on api Melhor Envio.
+     *
+     * @param array $ordersIds
+     * @return array $response
+     */
     public function cancel($ordersIds)
     {
         $orders = [];
@@ -31,5 +39,32 @@ class OrderService
             ['orders' => $orders ], 
             false
         );
+    }
+
+    /**
+     * Function to get info about order in api Melhor Envio.
+     *
+     * @param int $order_id
+     * @return array $response
+     */
+    public function info($order_id)
+    {   
+        $data = (new OrderQuotationService())->getData($order_id);
+
+        if(!$data || !isset($data['order_id'])) {
+            return [
+                'success' => false,
+                'message' => 'Ordem não encontrada no Melhor Envio'
+            ];
+        }
+
+        $result = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_CART . '/' . $data['order_id'],
+            'GET',
+            [],
+            false
+        );
+
+        return (array) $result;
     }
 }

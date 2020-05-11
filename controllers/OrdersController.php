@@ -31,6 +31,11 @@ class OrdersController
      */
     public function getOrders() 
     {
+
+
+        (new OrderService())->info(12);
+        die;
+
         unset($_GET['action']);
         $orders = Order::getAllOrders($_GET);
         return json_encode($orders);
@@ -141,7 +146,7 @@ class OrdersController
     }
 
     /**
-     * @param [type] $order_id
+     * @param int $order_id
      * @return void
      */
     private function getInfoTicket($order_id) 
