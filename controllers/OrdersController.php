@@ -31,11 +31,6 @@ class OrdersController
      */
     public function getOrders() 
     {
-
-
-        (new OrderService())->info(12);
-        die;
-
         unset($_GET['action']);
         $orders = Order::getAllOrders($_GET);
         return json_encode($orders);
@@ -50,7 +45,6 @@ class OrdersController
      */
     public function sendOrder() 
     {
-
         if (!isset($_GET['order_id'])) {
             echo json_encode([
                 'success' => false,
@@ -123,7 +117,10 @@ class OrdersController
     }
 
     /**
-     * @return boolean
+     * Function to cancel orderm on api Melhor Envio.
+     * 
+     * @param GET $order_id
+     * @return array $response
      */
     public function cancelOrder() 
     {
@@ -146,24 +143,56 @@ class OrdersController
     }
 
     /**
+     * Function to pay a order Melhor Envio.
+     * 
+     * @param GET $order_id
+     * @return array $response
+     */
+    public function payTicket() 
+    {
+        $posts = explode(',', $_GET['id']);
+
+        $result = (new OrderService())->pay($posts);
+
+        if (!isset($result['purchase_id']) || is_null($result['purchase_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao realizar o pagamento'
+            ]);
+            die; 
+        }
+
+        echo json_encode([
+            'success' => true,
+            'data' => $result
+        ]);
+        die; 
+    }
+
+    /**
+     * Function to get info about order on cart Melhor Envio.
+     * 
      * @param int $order_id
      * @return void
      */
-    private function getInfoTicket($order_id) 
+    private function getInfoTicket() 
     {
-        $token = get_option('wpmelhorenvio_token');
+        if (!isset($_GET['order_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o ID do pedido'
+            ]);
+            die;
+        }
 
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'timeout'=>10,
-            'method' => 'GET'
+        $result = (new RequestService())->request(
+            '/cart/' . $_GET['order_id'],
+            'GET',
+            [],
+            false
         );
 
-        return json_decode(wp_remote_retrieve_body(wp_remote_request(self::URL . '/v2/me/cart/' . $order_id, $params)));
+        return json_decode($result);
     }
 
     /**
@@ -193,78 +222,7 @@ class OrdersController
         die;
     }
 
-    /**
-     * @return void
-     */
-    public function payTicket() 
-    {
-        $orders = explode(',', $_GET['order_id']);
-
-        $wallet = 0;
-        foreach ($orders as $order) {
-            $ticket = $this->getInfoTicket($order);
-            $wallet = $wallet + $ticket->price;
-        }
-
-        $body = [
-            'orders' => $orders,
-            'wallet' => $wallet
-        ];
-
-        $token = get_option('wpmelhorenvio_token');
-
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ],
-            'body' => json_encode($body),
-            'timeout'=> 10,
-            'method' => 'POST'
-        );
-
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/shipment/checkout', $params)
-            )
-        );
-
-        (new LogsController)->add(
-            $_GET['id'], 
-            'Pagando etiqueta', 
-            $params, 
-            $response, 
-            'OrdersController', 
-            'payTicket', 
-            self::URL . '/v2/me/shipment/checkout'
-        );
-
-        if(isset($response->error)) {
-            echo json_encode([
-                'success' => false,
-                'data' => $response->error
-            ]);
-            die;
-        }
-
-        $data = [
-            'order_paid' => $response->purchase->id,
-            'protocol_paid' => $response->purchase->protocol,
-            'choose_method' => $response->purchase->orders[0]->service_id,
-            'order_id' => $orders,
-            'protocol' => $response->purchase->orders[0]->protocol,
-            'status' => 'paid',
-        ];
-
-        $this->updateDataCotation($_GET['id'], $data, 'paid');
-        echo json_encode([
-            'success' => true,
-            'data' => $response
-        ]);
-        die;
-    }
-
+    
     /**
      * @return void
      */
