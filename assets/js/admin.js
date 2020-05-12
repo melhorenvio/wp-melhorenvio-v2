@@ -2603,11 +2603,13 @@ var render = function() {
           ],
       _vm._v(" "),
       _vm.item.protocol && _vm.item.status != null
-        ? _vm._l(_vm.item.protocol, function(prot, indexProtocol) {
-            return _c("p", { key: indexProtocol }, [
-              _vm._v("\n            " + _vm._s(prot) + "\n        ")
+        ? [
+            _c("p", [
+              _vm._v(
+                "\n            " + _vm._s(_vm.item.protocol) + "\n        "
+              )
             ])
-          })
+          ]
         : _vm._e(),
       _vm._v(" "),
       _vm.item.cotation.free_shipping

@@ -54,8 +54,8 @@
         </template>
 
         <template v-if="item.protocol && item.status != null">
-            <p v-for="(prot, indexProtocol) in item.protocol" :key="indexProtocol">
-                {{ prot }}
+            <p>
+                {{ item.protocol }}
             </p>
         </template>
 

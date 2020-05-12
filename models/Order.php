@@ -378,9 +378,9 @@ class Order {
     {
         if ($id) $this->id = $id; 
         
-        $getPost = get_post_meta($this->id, 'melhorenvio_status_v2');
+        $data = (new OrderQuotationService())->getData($this->id);
 
-        if(empty($getPost) || count($getPost) == 0) {
+        if(empty($data) || count($data) == 0) {
             return [
                 'status' => null,
                 'order_id' => null,
@@ -388,17 +388,18 @@ class Order {
             ];
         }
 
-        $data = end($getPost);
-
-        $status = null;
+        $status = $data['status'];
+        $protocol = $data['protocol'];
+        $order_id = $data['order_id'];
+        
         if (!$data) {
             $status = $this->getOldstatus($this->id);
         }
 
         $default = [
             'status' => $status,
-            'order_id' => null,
-            'protocol' => null
+            'order_id' => $order_id,
+            'protocol' => $protocol
         ];
 
         if (empty($data) || !$data) {
@@ -406,11 +407,11 @@ class Order {
         }
 
         if (!is_array($data['protocol'])) {
-            $data['protocol'] = (Array) $data['protocol'];
+            $data['protocol'] = $data['protocol'];
         }
 
         if (!is_array($data['order_id'])) {
-            $data['order_id'] = (Array) $data['order_id'];
+            $data['order_id'] = $data['order_id'];
         }
 
         return $data;
