@@ -10,7 +10,16 @@ class OrderQuotationService
 
     const POST_META_ORDER_DATA = 'melhorenvio_status_v2';
 
+    const OPTION_TOKEN_ENVIRONMENT = 'wpmelhorenvio_token_environment';
+
     const CORREIOS_MINI_CODE = 17;
+
+    protected $env;
+
+    public function __construct()
+    {
+        $this->env = $this->getEnvironmentToSave();
+    }
 
     /**
      * Function to get a quotation by order in postmetas by wordpress.
@@ -87,8 +96,8 @@ class OrderQuotationService
      * @return array $data
      */
     public function getData($order_id)
-    {
-        return get_post_meta($order_id, self::POST_META_ORDER_DATA, true);
+    {   
+        return get_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, true);
     }
 
     /**
@@ -112,8 +121,8 @@ class OrderQuotationService
             'created' => date('Y-m-d H:i:s')
         ];
 
-        delete_post_meta($order_id, self::POST_META_ORDER_DATA);
-        add_post_meta($order_id, self::POST_META_ORDER_DATA, $data, true);
+        delete_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env);
+        add_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, $data, true);
 
         return $data;
     }
@@ -139,5 +148,16 @@ class OrderQuotationService
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
         ($date_quotation > $data['date_quotation']) ? false : true;
+    }
+
+    public function getEnvironmentToSave()
+    {
+        $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
+        $env = null;
+        if ($environment == 'sandbox') {
+            $env = '_sandbox';
+        }
+
+        return $env;
     }
 }
