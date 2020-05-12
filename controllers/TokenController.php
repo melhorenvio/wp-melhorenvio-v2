@@ -15,15 +15,23 @@ class TokenController
 
         if (isset($_SESSION[$codeStore]['melhorenvio_token'])) {
             echo json_encode([
-                'token' => $_SESSION[$codeStore]['melhorenvio_token']
+                'token' => $_SESSION[$codeStore]['melhorenvio_token'],
+                'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
+                'token_environment' => $_SESSION[$codeStore]['melhorenvio_token_environment']
             ]);
             die();
         }
 
-        if (isset($_SESSION[$codeStore]['melhorenvio_token']) && !is_null($_SESSION[$codeStore]['melhorenvio_token'])) {
+        if (
+            isset($_SESSION[$codeStore]['melhorenvio_token']) && !is_null($_SESSION[$codeStore]['melhorenvio_token']) &&
+            isset($_SESSION[$codeStore]['melhorenvio_token_sandbox']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_sandbox']) &&
+            isset($_SESSION[$codeStore]['melhorenvio_token_environment']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_environment'])
+        ) {
             
             echo json_encode([
-                'token' => $_SESSION[$codeStore]['melhorenvio_token']
+                'token' => $_SESSION[$codeStore]['melhorenvio_token'],
+                'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
+                'environment' => $_SESSION[$codeStore]['melhorenvio_token_environment']
             ]);
             die();
         }
@@ -31,7 +39,9 @@ class TokenController
         $_SESSION[$codeStore]['melhorenvio_token'] = (new token())->getToken();
 
         echo json_encode([
-            'token' => $_SESSION[$codeStore]['melhorenvio_token']
+            'token' => $_SESSION[$codeStore]['melhorenvio_token']['token'],
+            'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token']['token_sandbox'],
+            'environment' => $_SESSION[$codeStore]['melhorenvio_token']['token_environment']
         ]);
         die();
     }
@@ -71,9 +81,11 @@ class TokenController
             ]);
         }
 
-        $result = (new Token())->saveToken($_POST['token']);
+        $result = (new Token())->saveToken($_POST['token'], $_POST['token_sandbox'], $_POST['environment']);
 
-        $_SESSION[$codeStore]['melhorenvio_token'] = $_POST['token'];
+        $_SESSION[$codeStore]['melhorenvio_token']['token']         = $_POST['token'];
+        $_SESSION[$codeStore]['melhorenvio_token']['token_sandbox'] = $_POST['token_sandbox'];
+        $_SESSION[$codeStore]['melhorenvio_token']['environment']   = $_POST['environment'];
 
         echo json_encode([
             'success' => $result

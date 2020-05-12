@@ -6,15 +6,27 @@ class RequestService
 {
     const URL = 'https://api.melhorenvio.com';
 
+    const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api';
+
     const TIMEOUT = 10;
 
     protected $token;
 
     protected $headers;
+
+    protected $url;
     
     public function __construct()
     {
-        $this->token = (new TokenService())->get();
+        $tokenData = (new TokenService())->get();
+
+        if ($tokenData['token_environment'] == 'production') {
+            $this->token = $tokenData['token'];
+            $this->url = self::URL;
+        } else {
+            $this->token = $tokenData['token_sandbox'];
+            $this->url = self::SANDBOX_URL;
+        }
 
         $this->headers = array(
             'Content-Type'  => 'application/json',
@@ -48,7 +60,7 @@ class RequestService
 
             $response = json_decode(
                 wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/v2/me' . $route, $params)
+                    wp_remote_post($this->url . '/v2/me' . $route, $params)
                 )
             );
 

@@ -6,6 +6,10 @@ class TokenService
 {
     const OPTION_TOKEN = 'wpmelhorenvio_token';
 
+    const OPTION_TOKEN_SANDBOX = 'wpmelhorenvio_token_sandbox';
+
+    const OPTION_TOKEN_ENVIRONMENT = 'wpmelhorenvio_token_environment';
+
     /**
      * Get token Melhor Envio.
      *
@@ -14,24 +18,32 @@ class TokenService
     public function get()
     {
         $token = get_option(self::OPTION_TOKEN); 
+        $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
+        $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
 
-        if (!$token) {
+        if (!$token || !$token_environment) {
             return [
                 'success' => false,
-                'message' => 'Token nÃ£o salvo'
+                'message' => 'Token não salvo'
             ];
         }
 
-        return $token;
+        return [
+            'token' => $token,
+            'token_sandbox' => $token_sandbox,
+            'token_environment' => $token_environment
+        ];
     }
 
     /**
      * Service to save token Melhor Envio.
      *
      * @param string $token
+     * @param string $token_sandbox
+     * @param string $token_environment
      * @return array $response
      */
-    public function save($token)
+    public function save($token, $token_sandbox, $token_environment)
     {
         $tokenSaved = $this->get();
 
@@ -46,6 +58,8 @@ class TokenService
         }
 
         update_option(self::OPTION_TOKEN, $token, true);
+        update_option(self::OPTION_TOKEN_SANDBOX, $token_sandbox, true);
+        update_option(self::OPTION_TOKEN_ENVIRONMENT, $token_environment, true);
 
         return [
             'success' => true,

@@ -7,8 +7,6 @@ use Services\RequestService;
 
 class Agency 
 {
-    const URL = 'https://api.melhorenvio.com';
-
     const AGENCY_SELECTED = 'melhorenvio_agency_jadlog_v2';
 
     /**
@@ -81,7 +79,7 @@ class Agency
             'agencies' => $agenciesForUser,
             'allAgencies' => $agencies,
             'agencySelected' => $agencySelected
-        ); */
+        ); 
     }
 
     /**

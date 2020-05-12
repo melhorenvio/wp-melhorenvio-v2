@@ -1572,6 +1572,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -1579,6 +1592,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     data() {
         return {
             token: '',
+            token_sandbox: '',
+            environment: 'production',
             show_loader: true
         };
     },
@@ -1586,13 +1601,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         getToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
                 this.token = response.data.token;
+                this.token_sandbox = response.data.token_sandbox;
+                this.environment = response.data.environment;
                 this.show_loader = false;
             });
         },
         saveToken() {
             let bodyFormData = new FormData();
-            bodyFormData.set('token', this.token);
-            let data = { token: this.token };
+            bodyFormData.append('token', this.token);
+            bodyFormData.append('token_sandbox', this.token_sandbox);
+            bodyFormData.append('environment', this.environment);
             if (this.token && this.token.length > 0) {
                 __WEBPACK_IMPORTED_MODULE_0_axios___default()({
                     url: `${ajaxurl}?action=save_token`,
@@ -2759,8 +2777,8 @@ var render = function() {
           _vm.item.cotation.choose_method == 4 ||
           _vm.item.cotation.choose_method == 10) &&
           !_vm.item.non_commercial) ||
-        _vm.item.cotation.choose_method == 8 ||
-          _vm.item.cotation.choose_method == 9
+        (_vm.item.cotation.choose_method == 8 ||
+          _vm.item.cotation.choose_method == 9)
           ? [
               _c("fieldset", [
                 _c("div", [
@@ -5356,6 +5374,76 @@ var render = function() {
     _vm._v(" "),
     _c("br"),
     _vm._v(" "),
+    _c("p", [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.environment,
+            expression: "environment"
+          }
+        ],
+        attrs: {
+          type: "checkbox",
+          "true-value": "sandbox",
+          "false-value": "production"
+        },
+        domProps: {
+          checked: Array.isArray(_vm.environment)
+            ? _vm._i(_vm.environment, null) > -1
+            : _vm._q(_vm.environment, "sandbox")
+        },
+        on: {
+          change: function($event) {
+            var $$a = _vm.environment,
+              $$el = $event.target,
+              $$c = $$el.checked ? "sandbox" : "production"
+            if (Array.isArray($$a)) {
+              var $$v = null,
+                $$i = _vm._i($$a, $$v)
+              if ($$el.checked) {
+                $$i < 0 && (_vm.environment = $$a.concat([$$v]))
+              } else {
+                $$i > -1 &&
+                  (_vm.environment = $$a
+                    .slice(0, $$i)
+                    .concat($$a.slice($$i + 1)))
+              }
+            } else {
+              _vm.environment = $$c
+            }
+          }
+        }
+      }),
+      _vm._v("\n\n    Utilizar ambiente Sandbox ")
+    ]),
+    _vm._v(" "),
+    _vm.environment == "sandbox"
+      ? _c("textarea", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.token_sandbox,
+              expression: "token_sandbox"
+            }
+          ],
+          attrs: { rows: "20", cols: "100", placeholder: "Token Sandbox" },
+          domProps: { value: _vm.token_sandbox },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.token_sandbox = $event.target.value
+            }
+          }
+        })
+      : _vm._e(),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
     _c("br"),
     _vm._v(" "),
     _c(
@@ -5372,6 +5460,23 @@ var render = function() {
     ),
     _vm._v(" "),
     _vm._m(0),
+    _vm._v(" "),
+    _vm.environment == "sandbox"
+      ? _c("p", [
+          _vm._v("Para gerar seu token em sandbox, acesse o "),
+          _c(
+            "a",
+            {
+              attrs: {
+                target: "_blank",
+                href:
+                  "https://sandbox.melhorenvio.com.br/painel/gerenciar/tokens"
+              }
+            },
+            [_vm._v("link")]
+          )
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",

@@ -7,6 +7,7 @@ use Controllers\LogsController;
 use Helpers\TranslateStatusHelper;
 use Services\QuotationService;
 use Services\OrderQuotationService;
+use Services\RequestService;
 
 class Order {
     
@@ -135,6 +136,7 @@ class Order {
                 ];
                 
             } catch(Exception $e) {
+
                 (new LogsController)->add(
                     null, 
                     'Get Order', 
@@ -148,6 +150,7 @@ class Order {
         }
 
         $data = $order->matchStatus($data, $orders);
+
         $load = false;
         if(count($data) == ($filters['limit']) ?: 5) {
             $load = true;
@@ -257,11 +260,14 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        $statusApi = $this->getStatusApi($orders);                
+        $statusApi = $this->getStatusApi($orders);   
+
         foreach ($posts as $key => $post) {
 
             if (isset($post['order_id'])) {
-                foreach ($post['order_id'] as $order_id) {         
+
+                foreach ($post['order_id'] as $order_id) {  
+                    
                     if (array_key_exists($order_id, $statusApi)) {
                         if ($post['status'] != $statusApi[$order_id]['status']) {
 
@@ -472,6 +478,7 @@ class Order {
             $body,
             true
         );
+
 
         if(isset($response->errors)) {
             return null;
