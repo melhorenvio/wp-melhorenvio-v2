@@ -128,7 +128,7 @@
                         </ul>
                         <template v-if="toggleInfo == item.id">
                             <informacoes
-                                :volume="item.cotation[item.cotation.choose_method].volumes[0]"
+                                :volume="item.cotation[item.cotation.choose_method].packages[0]"
                                 :products="item.products">
                             </informacoes>
                         </template>
