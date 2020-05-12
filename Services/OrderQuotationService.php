@@ -101,12 +101,13 @@ class OrderQuotationService
      * @param int $choose_method
      * @return array $data
      */
-    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method) 
+    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null) 
     {
         $data = [
             'choose_method' => $choose_method,
             'order_id' => $order_melhor_envio_id,
             'protocol' => $protocol,
+            'purchase_id' => $purcahse_id,
             'status' => $status,
             'created' => date('Y-m-d H:i:s')
         ];

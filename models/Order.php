@@ -12,6 +12,8 @@ class Order {
     
     const URL = 'https://api.melhorenvio.com';
 
+    const ROUTE_MELHOR_ENVIO_TRACKING = '/shipment/tracking';
+
     private $id;
     private $products;
     private $total;
@@ -319,9 +321,6 @@ class Order {
         if ($id) $this->id = $id; 
 
         return (new OrderQuotationService())->getQuotation($this->id);
-
-        //TODO PAREI AQUI.
-        //return $this->setIndexCotation($cotation, $cotations[0]);
     }    
 
     /**
@@ -463,40 +462,29 @@ class Order {
             }
         }
 
-        if ($token = get_option('wpmelhorenvio_token')) {
-            $body = [
-                "orders" => $arrayOrders
-            ];
-    
-            $params = array(
-                'headers'           =>  [
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
-                ],
-                'body'  => json_encode($body),
-                'timeout'=>10
-            );
+        $body = [
+            "orders" => $arrayOrders
+        ];
 
-            $response =  json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/v2/me/shipment/tracking', $params)
-                )
-            );
+        $response = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_TRACKING,
+            'POST',
+            $body,
+            true
+        );
 
-            if(isset($response->errors)) {
-                return null;
-            }
-
-            $data = [];
-            foreach($response as $order) {
-                $data[$order->id]['status']       = $order->status;
-                $data[$order->id]['posted_at']    = $order->posted_at;
-                $data[$order->id]['delivered_at'] = $order->delivered_at;
-            }
-            return $data;
+        if(isset($response->errors)) {
+            return null;
         }
-        return null;
+
+        $data = [];
+        foreach($response as $order) {
+            $data[$order->id]['status']       = $order->status;
+            $data[$order->id]['posted_at']    = $order->posted_at;
+            $data[$order->id]['delivered_at'] = $order->delivered_at;
+        }
+
+        return $data;
     }
 
     /**public function setIndexCotation($data, $firstCotation)

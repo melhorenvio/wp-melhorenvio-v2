@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Helpers\DimensionsHelper;
+
 class PackageController
 {
     /**
@@ -148,26 +150,10 @@ class PackageController
             $package['weight'] = $package['weight'] / 1000;
         }
 
-        $package['width'] = $this->converterDimension($package['width']);
-        $package['height'] = $this->converterDimension($package['height']);
-        $package['length'] = $this->converterDimension($package['length']);
+        $package['width'] = (new DimensionsHelper())->converterDimension($package['width']);
+        $package['height'] = (new DimensionsHelper())->converterDimension($package['height']);
+        $package['length'] = (new DimensionsHelper())->converterDimension($package['length']);
 
         return $package;
     }
-
-
-    private function converterDimension($value)
-    {
-        $unit = get_option('woocommerce_dimension_unit');
-        if ($unit == 'mm') {
-            return $value / 10;
-        }
-
-        if ($unit == 'm') {
-            return $value * 10;
-        }
-
-        return $value;
-    }
-
 }

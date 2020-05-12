@@ -46,19 +46,5 @@ class HelperController
     
         return ( $weight < 0 ) ? 0 : $weight;
     }
-
-    public function converterDimension($value)
-    {
-        $unit = get_option('woocommerce_dimension_unit');
-        if ($unit == 'mm') {
-            return $value / 10;
-        }
-
-        if ($unit == 'm') {
-            return $value * 10;
-        }
-
-        return $value;
-    }
 }
 

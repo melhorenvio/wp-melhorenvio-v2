@@ -4,6 +4,7 @@ namespace Models;
 
 use Models\Agency;
 use Controllers\TokenController;
+use Services\RequestService;
 
 class Address 
 {
@@ -16,6 +17,8 @@ class Address
     const OPTION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
 
     const SESSION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
+
+    const ROUTE_MELHOR_ENVIO_ADDRESS = '/addresses';
     
     /**
      *
@@ -36,22 +39,11 @@ class Address
         } 
 
         // Get info on API Melhor Envio
-        $token = (new TokenController())->token();
-
-        $params = array(
-            'headers'           =>  array(
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ),
-            'timeout' => 10,
-            'method'  => 'GET'
-        );
-        
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/addresses', $params)
-            )
+        $response = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_ADDRESS,
+            'GET',
+            [],
+            false
         );
         
         $selectedAddress = get_option(self::OPTION_ADDRESS_SELECTED);
