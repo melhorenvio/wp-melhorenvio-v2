@@ -3,6 +3,7 @@
 namespace Models;
 
 use Controllers\TokenController;
+use Services\RequestService;
 
 class Store 
 {
@@ -15,6 +16,8 @@ class Store
     const SESSION_STORES = 'melhorenvio_stores';
 
     const SESSION_STORE_SELECTED = 'melhorenvio_store_v2';
+
+    const ROUTE_MELHOR_ENVIO_COMPANIES = '/companies';
 
     public $store = null;
 
@@ -60,22 +63,11 @@ class Store
         }
         */
         // Get data on API Melhor Envio
-        $token = (new TokenController())->token();
-
-        $params = array(
-            'headers'           =>  array(
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.$token,
-            ),
-            'timeout'=> 10,
-            'method' => 'GET'
-        );
-
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/companies', $params)
-            )
+        $response = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_COMPANIES,
+            'GET',
+            [],
+            false
         );
 
         $stories = array();

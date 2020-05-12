@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Address;
+use Services\RequestService;
 
 class Agency 
 {
@@ -19,15 +20,6 @@ class Agency
         $results = '';
 
         if (!isset($_SESSION['melhor_envio']['agencies']) || empty($_SESSION['melhor_envio']['agencies'])) {
-            $params = array(
-                'headers'           =>  array(
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer ' . $token,
-                ),
-                'timeout'=> 10,
-                'method' => 'GET'
-            );
 
             if (!isset($_GET['state']) && !isset($_GET['state']) ) {
                 $address = (new Address)->getAddressFrom();
@@ -38,10 +30,11 @@ class Agency
                 );
             }
 
-            $results =  json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state'], $params)
-                )
+            $results = (new RequestService())->request(
+                '/shipment/agencies?company=2&country=BR&state='.$address['address']['state'],
+                'GET',
+                [],
+                false
             );
 
             $_SESSION['melhor_envio']['agencies'] = $results;
@@ -88,7 +81,7 @@ class Agency
             'agencies' => $agenciesForUser,
             'allAgencies' => $agencies,
             'agencySelected' => $agencySelected
-        );
+        ); */
     }
 
     /**
