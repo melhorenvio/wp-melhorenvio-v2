@@ -10,9 +10,9 @@
                     <td>
                         <p>
                             <b>Dimensões:</b> 
-                            {{volume.height}}cm A x 
-                            {{volume.width}}cm L x 
-                            {{volume.length}}cm C - 
+                            {{volume.dimensions.height}}cm A x 
+                            {{volume.dimensions.width}}cm L x 
+                            {{volume.dimensions.length}}cm C - 
                             {{volume.weight}}Kg
                         </p>
                     </td>

@@ -3420,11 +3420,11 @@ var render = function() {
               _c("b", [_vm._v("Dimensões:")]),
               _vm._v(
                 " \n                        " +
-                  _vm._s(_vm.volume.height) +
+                  _vm._s(_vm.volume.dimensions.height) +
                   "cm A x \n                        " +
-                  _vm._s(_vm.volume.width) +
+                  _vm._s(_vm.volume.dimensions.width) +
                   "cm L x \n                        " +
-                  _vm._s(_vm.volume.length) +
+                  _vm._s(_vm.volume.dimensions.length) +
                   "cm C - \n                        " +
                   _vm._s(_vm.volume.weight) +
                   "Kg\n                    "
@@ -3764,7 +3764,7 @@ var render = function() {
                                 attrs: {
                                   volume:
                                     item.cotation[item.cotation.choose_method]
-                                      .volumes[0],
+                                      .packages[0],
                                   products: item.products
                                 }
                               })
