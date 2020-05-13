@@ -50,7 +50,6 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
-
         $result = $this->setKeyAsCodeService($quotation);
         $result['date_quotation'] = date('Y-m-d H:i:d'); 
         $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO

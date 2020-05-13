@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Models\Agency;
 
 class CartService
 {
@@ -27,16 +28,17 @@ class CartService
         $body = array(
             'from' => $from,
             'to' => $to,
+            'agency' => (new Agency())->getCodeAgencySelected(),
             'service' => $shipping_method_id,
             'products' => $products,
-            'volumes' => $this->getVolumes($quotation, $shipping_method_id),
+            'volumes' => $this->getVolumes($quotation, $shipping_method_id), 
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
                 "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
                 "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                 "collect" => false,
                 "reverse" => false, 
-                "non_commercial" => false, 
+                "non_commercial" => true, 
                 'platform' => self::PLATAFORM,
                 'reminder' => null
             )
@@ -64,7 +66,8 @@ class CartService
             $result->id, 
             $result->protocol, 
             'pending', 
-            $_GET['choosen']
+            $_GET['choosen'],
+            null
         );
     }
 
@@ -113,6 +116,11 @@ class CartService
                     ];
                 }
             }
+        }
+
+        //TODO remover volumes se for correios e tratar o erro.
+        if (in_array($method_id, [1,2,13,17])) {
+            return $volumes[0];
         }
 
         return $volumes;

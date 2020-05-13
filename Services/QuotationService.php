@@ -26,8 +26,9 @@ class QuotationService
 
         $buyer = $buyerService->getDataBuyerByOrderId($order_id);
 
-        return $this->calculateQuotationByProducts($products, $buyer->postal_code);
+        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code);
 
+        return (new OrderQuotationService())->saveQuotation($order_id, $quotation);
     }
 
     /**
@@ -37,7 +38,7 @@ class QuotationService
      * @param string $postal_code
      * @return object $quotation
      */
-    public function calculateQuotationByProducts($products, $postal_code)
+    public function calculateQuotationByProducts($products, $postal_code, $service = null)
     {   
         $sellerService = new SellerService();
 
@@ -50,8 +51,8 @@ class QuotationService
             'to' => [
                 'postal_code' => $postal_code
             ],
-            'options' => (new Option())->getOptions(),
-            'services' => Method::getCodesString(),
+            'options'  => (new Option())->getOptions(),
+            'services' => (!is_null($service)) ? $service : (new Method())->getCodesString(),
             'products' => $products
         ];
 
@@ -61,7 +62,7 @@ class QuotationService
             $body,
             true
         );
-
+        
         return $result;
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-use Controllers\PackageController;
-use Controllers\CotationController;
-use Controllers\ProductsController;
-use Controllers\TimeController;
-use Controllers\MoneyController;
-use Controllers\OptionsController;
+use Helpers\OptionsHelper;
+use Helpers\TimeHelper;
+use Helpers\MoneyHelper;
 use Models\Cart;
 use Models\Quotation;
+use Services\CartWooCommerceService;
+use Services\QuotationService;
+use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'mini_shipping_method_init' );
 
@@ -59,13 +59,14 @@ function mini_shipping_method_init() {
             public function calculate_shipping( $package = []) {
                 $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
-                $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new Cart())->getProductsOnCart();
+                $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
 
                 $result = (new Quotation(null, $products, $package, $to))->calculate($this->code);
 
                 if ($result) {
                     if (isset($result->name) && isset($result->price)) {
-                        $method = (new optionsController())->getName($result->id, $result->name, 'Correios ', null);
+                        
+                        $method = (new optionsHelper())->getName($result->id, $result->name, null, null);
 
                         $rate = [
                             'id' => 'melhorenvio_mini',

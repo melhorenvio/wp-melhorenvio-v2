@@ -8,9 +8,10 @@ use Models\Option;
 use Models\Log;
 use Models\Method;
 use Models\Address;
-use Controllers\TokenController;
-use Controllers\HelperController;
 use Helpers\DimensionsHelper;
+use Services\QengineService;
+use Services\QuotationService;
+use Services\OrdersProductsService;
 
 class Quotation 
 {  
@@ -31,8 +32,6 @@ class Quotation
     private $codeStore;
 
     public $response;
-
-    const URL = 'https://q-engine.melhorenvio.com';
 
     public function __construct($id = null, $products = array(), $package = array(), $to = null)
     {
@@ -114,38 +113,7 @@ class Quotation
      */
     public function getProducts()
     {
-        $products = [];
-
-        try {
-            $orderWc = new \WC_Order( $this->id );
-
-            $order_items = $orderWc->get_items();
-            
-            foreach ($order_items as $product) {
-                $data = $product->get_data();
-                
-                $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
-
-                $productInfo = wc_get_product($productId);
-
-                $products[] = (object) array(
-                    'id'           => $data['product_id'],
-                    'variation_id' => $data['variation_id'],
-                    'name'         => $data['name'],
-                    'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
-                    'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
-                    'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
-                    'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
-                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
-                    'quantity'     => intval($data['quantity']),
-                    'total'        => floatval($data['total'])
-                );
-            }
-
-            return $products;
-        } catch (\Exception $e) {
-            // Tratar log aqui
-        }
+        return (new OrdersProductsService())->getProductsOrder($this->id);
     }
 
     /**
@@ -187,7 +155,8 @@ class Quotation
      */
     private function prepareBody()
     {
-        $options = array(
+        var_dump('DEPRETACO QUOTATION LINE 189 - prepareBody');die;
+        /**$options = array(
             'receipt' => $this->options->ar,
             'own_hand' => $this->options->mp,
             'collect'  => false
@@ -234,6 +203,7 @@ class Quotation
 
                 $body['products'][$key] = array(
                     'id'        => $product->id,
+                    'name'      => $product->name,
                     'quantity'  => intval($product->quantity)
                 );
 
@@ -256,7 +226,7 @@ class Quotation
             $body['volumes'][] = $package;
         }
 
-        return $body;
+        return $body;*/
     }
 
     /**
@@ -267,34 +237,27 @@ class Quotation
      */
     public function calculate($service = null)
     {
-        $token = (new TokenController())->token();
-
-        if (!empty($token) && !is_null($token) && ($body = $this->prepareBody())) {
-            $params = array(
-                'headers'           =>  array(
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
-                ),
-                'body'   => json_encode($body),
-                'timeout'=> 10
-            );
+        var_dump('Deprecado use QuotationService@calculateByProducts');die;
+        /**if ($body = $this->prepareBody()) {
 
             $this->hashCotation = md5(json_encode($body));
 
-            if (!isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'])) {
+            //if (!isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'])) {
+
                 try {
-                    $response = json_decode(
-                        wp_remote_retrieve_body(
-                            wp_remote_post(self::URL . '/api/v1/calculate', $params)
-                        )
-                    );
+
+                    echo '<pre>';
+                    var_dump($this->products);die;
+
+                    //$response = (new QuotationService())->calculateQuotationByProducts();
+
+                    //var_dump($response);die;
 
                     if (empty($response)) {
                         return false;
                     }
 
-                    (new Log())->register($this->id, 'make_cotation', $body, $response);
+
 
                     $filterCotations = array();
                     foreach ($response as $item) {
@@ -330,12 +293,12 @@ class Quotation
                     return false;
                 }
             }
-        } 
+        //} 
 
         if (!is_null($service) && isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service])) {
             return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service];
         }
 
-        return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'];
+        return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results']; */
     }
 }

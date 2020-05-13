@@ -2,23 +2,13 @@
 
 namespace Controllers;
 
-use Controllers\PackageController;
-use Controllers\UsersController;
-use Controllers\ProductsController;
-use Controllers\TimeController;
-use Controllers\MoneyController;
-use Controllers\LogsController;
-use Controllers\OrdersController;
-use Controllers\Optionscontroller;
-use Models\Order;
-use Models\Log;
-use Models\Quotation;
-use Models\Method;
+use Helpers\OptionsHelper;
+use Helpers\TimeHelper;
+use Helpers\MoneyHelper;
+use Services\QuotationService;
 
 class CotationController 
 {
-    const URL = 'https://q-engine-hub.melhorenvio.com';
-
     public function __construct() 
     {
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
@@ -30,9 +20,7 @@ class CotationController
      */
     public function makeCotationOrder($order_id) 
     {
-        $q = (new Quotation($order_id));
-
-        $result = $q->calculate();
+        $result = (new QuotationService())->calculateQuotationByOrderId($order_id);
     
         global $woocommerce;
 
@@ -50,13 +38,6 @@ class CotationController
             }
         }
 
-        $result['date_cotation'] = date('Y-m-d H:i:d'); 
-        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
-        $result['free_shipping'] = $freeShipping; 
-        $result['total']         = $total; // var não definida
-
-        add_post_meta($order_id, 'melhorenvio_cotation_v2', $result);
-
         return $result;
     }
 
@@ -72,6 +53,7 @@ class CotationController
      */
     public function cotationProductPage() 
     {
+
         if (!isset($_POST['data'])) {
             echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
             exit();
@@ -109,6 +91,7 @@ class CotationController
                     "height"             => floatval($_POST['data']['produto_altura']),
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
+                    'insurance_value'    => floatval($_POST['data']['produto_preco']),
                     'notConverterWeight' => true 
                 )
             )
@@ -190,14 +173,14 @@ class CotationController
             $delivery->max = $item->meta_data['delivery_time']->max;
         }
 
-        $method = (new optionsController())->getName($item->get_id(),$name, $company, $item->get_label());
+        $method = (new optionsHelper())->getName($item->get_id(),$name, $company, $item->get_label());
 
         return [
             'id' => $item->get_id(),
             'name' => $method['method'],
-            'price' => (new MoneyController())->setLabel($item->get_cost(), $item->get_id()),
+            'price' => (new MoneyHelper())->setLabel($item->get_cost(), $item->get_id()),
             'company' => $method['company'],
-            'delivery_time' => (new TimeController)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
+            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false
         ];
     }
@@ -216,36 +199,7 @@ class CotationController
 
     public function freeShipping()
     {
-        global $woocommerce;
-
-        $totalCart = 0;
-
-        $freeShiping = false;
-
-        foreach(WC()->cart->cart_contents as $cart) {
-            $totalCart += $cart['line_subtotal'];
-        }
-
-        foreach(WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount ) {
-                $freeShiping = true;
-            }
-        }
-
-        if ($freeShiping) {
-            return array(
-                'id' => 'free_shipping',
-                'label' => 'Frete grátis',
-                'cost' => '',
-                'calc_tax' => 'per_item',
-                'meta_data' => array(
-                    'delivery_time' => '',
-                    'company' => ''
-                )
-            );
-        }
-
-        return false;
+        var_dump('deprecado use WoocommerceService@hasFreeShippingMethod');die;
     }
 }
 
