@@ -131,7 +131,7 @@ class OrderQuotationService
      */
     public function removeDataQuotation($order_id)
     {
-        delete_post_meta($order_id, self::POST_META_ORDER_DATA);
+        delete_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env);
     }
 
     /**
