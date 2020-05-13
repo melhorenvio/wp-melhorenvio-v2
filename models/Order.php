@@ -6,6 +6,7 @@ use Helpers\TranslateStatusHelper;
 use Services\QuotationService;
 use Services\OrderQuotationService;
 use Services\RequestService;
+use Services\OrderService;
 
 class Order {
     
@@ -45,7 +46,8 @@ class Order {
             
             $this->to = $data['billing'];
             
-            $this->cotation = $this->getCotation();
+            $this->cotation = (array) $this->getCotation();
+            
         } catch (Exception $e) {
             
         }
@@ -137,7 +139,8 @@ class Order {
             }
         }
 
-        $data = $order->matchStatus($data, $orders);
+        //$data = $order->matchStatus($data, $orders);
+        $data = $order->mergeStatus($data, $orders);
 
         $load = false;
         if(count($data) == ($filters['limit']) ?: 5) {
@@ -190,6 +193,21 @@ class Order {
         }
 
         return $response;
+    }
+
+
+    private function mergeStatus($posts)
+    {
+        $result = (new OrderService())->mergeStatus($posts);
+
+        foreach ($posts as $key => $post) {
+
+            $posts[$key]['order_id'] = $result[$post['id']]['order_id'];
+            $posts[$key]['protocol'] = $result[$post['id']]['protocol'];
+            $posts[$key]['status']   = $result[$post['id']]['status'];
+        }
+
+        return $posts;
     }
 
     /**
@@ -418,7 +436,6 @@ class Order {
             $body,
             true
         );
-
 
         if(isset($response->errors)) {
             return null;

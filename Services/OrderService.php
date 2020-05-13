@@ -18,6 +18,8 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
 
+    const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/search?q=';
+
     /**
      * Function to cancel order on api Melhor Envio.
      *
@@ -126,7 +128,7 @@ class OrderService
             }
 
             $orders[] = $order_id;
-            $ticket = $this->infoOrderId($order_id);
+            $ticket = $this->infoOrderCart($order_id);
             $wallet = $wallet + $ticket->price;
         }
 
@@ -237,10 +239,26 @@ class OrderService
      * @param int $order_id
      * @return array $response
      */
-    public function infoOrderId($order_id)
+    public function infoOrderCart($order_id)
     {   
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CART . '/' . $order_id,
+            'GET',
+            [],
+            false
+        );
+    }
+
+    /**
+     * Function to get information in Melhor Envio.
+     *
+     * @param string $order_id
+     * @return array $response
+     */
+    public function getInfoOrder($order_id)
+    {
+        return (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_SEARCH . $order_id,
             'GET',
             [],
             false
@@ -262,5 +280,37 @@ class OrderService
         }
 
         return $data['order_id'];
+    }
+    /**
+     * Function to merge status with stauts melhor envio.
+     *
+     * @param array $posts
+     * @return array $response
+     */
+    public function mergeStatus($posts)
+    {
+        $response = [];
+
+        foreach ($posts as $post) {
+
+            $status = 'pending';
+            $protocol = null;
+
+            $data = (new OrderQuotationService())->getData($post['id']);
+
+            $info = $this->getInfoOrder($data['order_id']);
+            if(isset(end($info)->status)) {
+                $status   =  end($info)->status;
+                $protocol = end($info)->protocol;
+            }
+
+            $response[$post['id']] = [
+                'order_id' => $data['order_id'],
+                'status' => $status,
+                'protocol' => $protocol
+            ];
+        }
+
+        return $response;
     }
 }

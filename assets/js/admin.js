@@ -265,6 +265,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -3739,6 +3740,11 @@ var render = function() {
                           ),
                           _vm._v(" "),
                           _c("li", { staticClass: "text-center" }, [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(item.status) +
+                                "\n                            "
+                            ),
                             _c(
                               "span",
                               { staticStyle: { "font-size": "14px" } },

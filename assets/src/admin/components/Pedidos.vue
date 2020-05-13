@@ -118,6 +118,7 @@
                                 <Documentos :item="item"></Documentos>
                             </li>
                             <li class="text-center">
+                            {{item.status}}
                                 <span style="font-size: 14px;">
                                     <strong>{{item.status_texto}}</strong>
                                 </span>
