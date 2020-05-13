@@ -63,6 +63,7 @@
                     <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
             </tr>
+
             <tr>
                 <td width="50%">
                     <h3>Etiquetas</h3>
@@ -91,8 +92,8 @@
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
                 <ul class="head">
-                    <li><span>ID</span></li>
-                    <li style="width="><span></span></li>
+                    <li><span></span></li>
+                    <li><span>ID</span></li>ß
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
@@ -104,10 +105,13 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
+                                <input type="checkbox"  :value="item.id" v-model="ordersSelecteds">
+                            </li>
+                            <li>
                                 <Id :item="item"></Id>
                                 <span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
                             </li>
-                            <li><span></span></li>
+
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
@@ -138,6 +142,8 @@
         </div>
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
+
+        <button v-show="show_more" class="btn-border -full-blue" @click="printMultiples(ordersSelecteds)">Imprimir selecionados</button>
 
         <transition name="fade">
             <div class="me-modal" v-show="show_modal">
@@ -212,7 +218,8 @@ export default {
             wpstatus: 'all',
             line: 0,
             toggleInfo: null,
-            error_message: null
+            error_message: null,
+            ordersSelecteds: []
         }
     },
     components: {
@@ -239,7 +246,8 @@ export default {
             'retrieveMany',
             'loadMore',
             'closeModal',
-            'getStatusWooCommerce'
+            'getStatusWooCommerce',
+            'printMultiples'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {

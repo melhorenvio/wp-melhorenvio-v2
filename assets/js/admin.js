@@ -265,6 +265,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -282,7 +288,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             wpstatus: 'all',
             line: 0,
             toggleInfo: null,
-            error_message: null
+            error_message: null,
+            ordersSelecteds: []
         };
     },
     components: {
@@ -301,7 +308,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_more: 'showMore',
         statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'closeModal', 'getStatusWooCommerce']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'closeModal', 'getStatusWooCommerce', 'printMultiples']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -3561,6 +3568,50 @@ var render = function() {
                       },
                       [
                         _c("ul", { staticClass: "body-list" }, [
+                          _c("li", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.ordersSelecteds,
+                                  expression: "ordersSelecteds"
+                                }
+                              ],
+                              attrs: { type: "checkbox" },
+                              domProps: {
+                                value: item.id,
+                                checked: Array.isArray(_vm.ordersSelecteds)
+                                  ? _vm._i(_vm.ordersSelecteds, item.id) > -1
+                                  : _vm.ordersSelecteds
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.ordersSelecteds,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = item.id,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        (_vm.ordersSelecteds = $$a.concat([
+                                          $$v
+                                        ]))
+                                    } else {
+                                      $$i > -1 &&
+                                        (_vm.ordersSelecteds = $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1)))
+                                    }
+                                  } else {
+                                    _vm.ordersSelecteds = $$c
+                                  }
+                                }
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
                           _c(
                             "li",
                             [
@@ -3591,8 +3642,6 @@ var render = function() {
                             ],
                             1
                           ),
-                          _vm._v(" "),
-                          _vm._m(3, true),
                           _vm._v(" "),
                           _c(
                             "li",
@@ -3677,6 +3726,27 @@ var render = function() {
           }
         },
         [_vm._v("Carregar mais")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.show_more,
+              expression: "show_more"
+            }
+          ],
+          staticClass: "btn-border -full-blue",
+          on: {
+            click: function($event) {
+              return _vm.printMultiples(_vm.ordersSelecteds)
+            }
+          }
+        },
+        [_vm._v("Imprimir selecionados")]
       ),
       _vm._v(" "),
       _c("transition", { attrs: { name: "fade" } }, [
@@ -3851,10 +3921,10 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("ul", { staticClass: "head" }, [
+      _c("li", [_c("span")]),
+      _vm._v(" "),
       _c("li", [_c("span", [_vm._v("ID")])]),
-      _vm._v(" "),
-      _c("li", { staticStyle: {} }, [_c("span")]),
-      _vm._v(" "),
+      _vm._v("ß\n                "),
       _c("li", [_c("span", [_vm._v("Destinatário")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Cotação")])]),
@@ -3865,12 +3935,6 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Ações")])])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", [_c("span")])
   }
 ]
 render._withStripped = true
@@ -6296,9 +6360,31 @@ var orders = {
                 return false;
             });
         },
-        loadMore: function loadMore(_ref2, status) {
+        printMultiples: function printMultiples(_ref2, ordersSelecteds) {
             var commit = _ref2.commit,
                 state = _ref2.state;
+
+            commit('toggleLoader', true);
+            var data = {
+                action: 'buy_click',
+                ids: ordersSelecteds
+            };
+            _axios2.default.get('' + ajaxurl, {
+                params: Object.assign(data, state.filters)
+            }).then(function (response) {
+                commit('toggleLoader', false);
+                window.open(response.data.url, '_blank');
+            }).catch(function (error) {
+                commit('setMsgModal', error.message);
+                commit('toggleLoader', false);
+                commit('toggleModal', true);
+                commit('toggleMore', true);
+                return false;
+            });
+        },
+        loadMore: function loadMore(_ref3, status) {
+            var commit = _ref3.commit,
+                state = _ref3.state;
 
 
             commit('toggleLoader', true);
@@ -6331,8 +6417,8 @@ var orders = {
                 return false;
             });
         },
-        insertInvoice: function insertInvoice(_ref3, data) {
-            var commit = _ref3.commit;
+        insertInvoice: function insertInvoice(_ref4, data) {
+            var commit = _ref4.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
@@ -6348,8 +6434,8 @@ var orders = {
                 return false;
             });
         },
-        addCart: function addCart(_ref4, data) {
-            var commit = _ref4.commit;
+        addCart: function addCart(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', true);
             if (!data) {
@@ -6460,8 +6546,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref5, data) {
-            var commit = _ref5.commit;
+        createTicket: function createTicket(_ref6, data) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6484,8 +6570,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref6, data) {
-            var commit = _ref6.commit;
+        printTicket: function printTicket(_ref7, data) {
+            var commit = _ref7.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6507,15 +6593,15 @@ var orders = {
                 return false;
             });
         },
-        getStatusWooCommerce: function getStatusWooCommerce(_ref7) {
-            var commit = _ref7.commit;
+        getStatusWooCommerce: function getStatusWooCommerce(_ref8) {
+            var commit = _ref8.commit;
 
             _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
                 commit('setStatusWc', response.data.statusWc);
             });
         },
-        closeModal: function closeModal(_ref8) {
-            var commit = _ref8.commit;
+        closeModal: function closeModal(_ref9) {
+            var commit = _ref9.commit;
 
             commit('toggleModal', false);
         }
