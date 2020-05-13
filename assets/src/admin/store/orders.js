@@ -189,6 +189,26 @@ const orders = {
                 return false
             })
         },
+        printMultiples: ({commit, state}, ordersSelecteds) => {
+            commit('toggleLoader', true);
+            let data = {
+                action: 'buy_click',
+                ids: ordersSelecteds
+            }
+            Axios.get(`${ajaxurl}`, {
+                params: Object.assign(data, state.filters)
+            }).then(function (response) {
+                commit('toggleLoader', false)
+                window.open(response.data.url,'_blank');
+
+            }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                commit('toggleMore', true)
+                return false
+            })
+        },
         loadMore: ({commit, state}, status) => {
 
             commit('toggleLoader', true)

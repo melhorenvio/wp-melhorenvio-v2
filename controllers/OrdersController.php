@@ -218,9 +218,7 @@ class OrdersController
             die;
         }
 
-        $ids = explode(",", $_GET['ids']);
-
-        $result = (new OrderService())->buyOnClick($ids);
+        $result = (new OrderService())->buyOnClick($_GET['ids']);
 
         if (isset($result['url'])) {
             echo json_encode([
