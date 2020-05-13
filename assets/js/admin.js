@@ -271,6 +271,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -289,7 +293,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: []
+            ordersSelecteds: [],
+            allSelected: false
         };
     },
     components: {
@@ -323,6 +328,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
                 this.validateToken();
             });
+        },
+        selectAll: function () {
+            //TODO
+            for (var key in this.$refs.orderCheck) {
+                this.$refs.orderCheck[key].checked;
+            }
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
@@ -3578,7 +3589,15 @@ var render = function() {
                                   expression: "ordersSelecteds"
                                 }
                               ],
-                              attrs: { type: "checkbox" },
+                              ref: "orderCheck",
+                              refInFor: true,
+                              attrs: {
+                                type: "checkbox",
+                                disabled: !(
+                                  item.status == "posted" ||
+                                  item.status == "released"
+                                )
+                              },
                               domProps: {
                                 value: item.id,
                                 checked: Array.isArray(_vm.ordersSelecteds)
@@ -3924,7 +3943,7 @@ var staticRenderFns = [
       _c("li", [_c("span")]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("ID")])]),
-      _vm._v("ß\n                "),
+      _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Destinatário")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Cotação")])]),

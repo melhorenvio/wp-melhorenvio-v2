@@ -92,8 +92,12 @@
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
                 <ul class="head">
-                    <li><span></span></li>
-                    <li><span>ID</span></li>ß
+                    <li>
+                        <span>
+                            <!--<input type="checkbox" @click="selectAll" />-->
+                        </span>
+                    </li>
+                    <li><span>ID</span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
@@ -105,7 +109,7 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox"  :value="item.id" v-model="ordersSelecteds">
+                                <input type="checkbox" ref="orderCheck" :disabled="!(item.status == 'posted' || item.status =='released')" :value="item.id" v-model="ordersSelecteds">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -219,7 +223,8 @@ export default {
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: []
+            ordersSelecteds: [],
+            allSelected: false,
         }
     },
     components: {
@@ -264,6 +269,12 @@ export default {
 
                 this.validateToken();
             })
+        },
+        selectAll: function() {
+            //TODO
+            for (var key in this.$refs.orderCheck) {
+                this.$refs.orderCheck[key].checked;
+            }
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
