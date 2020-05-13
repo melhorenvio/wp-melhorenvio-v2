@@ -2,8 +2,6 @@
 
 namespace Models;
 
-use Controllers\CotationController;
-use Controllers\LogsController;
 use Helpers\TranslateStatusHelper;
 use Services\QuotationService;
 use Services\OrderQuotationService;
@@ -118,7 +116,6 @@ class Order {
                 
                 $data[] = [
                     'id'             => (int) $order->id,
-                    'total'          => $order->getProductsTotal($products),
                     'products'       => (Object) $products,
                     'cotation'       => $cotation,
                     'address'        => $order->address,
@@ -136,16 +133,7 @@ class Order {
                 ];
                 
             } catch(Exception $e) {
-
-                (new LogsController)->add(
-                    null, 
-                    'Get Order', 
-                    [], 
-                    $e->getMessage(), 
-                    'CotationController', 
-                    'makeCotationOrder', 
-                    'https://api.melhorenvio.com/v2/me/shipment/calculate'
-                );        
+ 
             }
         }
 
@@ -162,55 +150,6 @@ class Order {
         ];
 
         return $response;
-    }
-
-    private function getProductsTotal($products)
-    {
-        $total = 0;
-        
-        foreach($products as $product){
-            $total += $product->total;
-        }
-
-        return $total;
-    }
-
-    // TODO refator para usar esse "getOne" na função acima.
-    public function getOne($id)
-    {
-        $order = new Order($id);
-
-        $dataMelhorEnvio = $order->getDataOrder(); 
-
-        $cotation = $order->getCotation();
-
-        $invoice = $order->getInvoice();
-
-        $non_commercial = true;
-        if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
-            $non_commercial = false;
-        }
-        
-        if (!is_null($dataMelhorEnvio['order_id'])) {
-            $orders[] = $dataMelhorEnvio['order_id'];
-        }
-
-        $data =  [
-            'id' => $order->id,
-            'total' => 'R$' . number_format($order->total, 2, ',', '.'),
-            'products' => $order->getProducts(),
-            'cotation' => $cotation ,
-            'address' => $order->address,
-            'to' => $order->to,
-            'status' => 'pending',
-            'order_id' => $dataMelhorEnvio['order_id'],
-            'protocol' => $dataMelhorEnvio['protocol'],
-            'non_commercial' => $non_commercial,
-            'invoice' => $invoice,
-            'packages' => $order->mountPackage($cotation)
-        ];
-
-        return $data;
     }
 
     private function mountPackage($cotation)
@@ -494,58 +433,4 @@ class Order {
 
         return $data;
     }
-
-    /**public function setIndexCotation($data, $firstCotation)
-    {
-        $response = [];
-
-        $diff = [];
-
-        foreach ($data as $cot) {
-            $cot_id = isset($cot->id)? $cot->id : null;
-            if (is_null($cot_id)) {
-                continue;
-            }
-            $response[$cot_id] =  $cot;
-
-            if ($firstCotation[$cot_id]->price != $cot->price) {
-
-                $diff[$cot_id] = [
-                    'first' => str_replace('.', ',', $firstCotation[$cot_id]->price),
-                    'last'  => $cot->price,
-                    'date'  => date('d/m/Y', strtotime($firstCotation['date_cotation']))
-                ];
-            }
-        }
-
-        $useMelhor = true;
-        if (is_null($data['choose_method'])) {
-
-            $useMelhor = false;
-            $method = null;
-            foreach ($response as $item) {
-                if (is_null($item->id)) {
-                    continue;
-                }
-                $method = $item->id;
-            }
-            $data['choose_method'] = $method;
-        }
-
-        if(!array_key_exists(1, $response) && $data['choose_method'] == 1) {
-            $data['choose_method'] = 2;
-        }
-
-        $response['choose_method'] = $data['choose_method'];
-        $response['date_cotation'] = $data['date_cotation'];
-        $response['melhorenvio'] = $useMelhor;
-
-        if (isset($data['free_shipping'])) {
-            $response['free_shipping'] = $data['free_shipping'];
-        }
-
-        $response['diff'] = $diff;
-
-        return $response;
-    }*/
 }   

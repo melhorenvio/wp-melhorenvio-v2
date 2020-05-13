@@ -14,11 +14,6 @@ use Services\OrderQuotationService;
 
 class OrdersController 
 {
-    public function get($id)
-    {
-        return Order::getOne($id);
-    }
-
     /**
      * @return void
      */
