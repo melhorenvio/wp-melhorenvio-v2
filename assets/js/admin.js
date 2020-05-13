@@ -2430,7 +2430,7 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
-      _vm.item.cotation != false && _vm.item.status == null
+      _vm.item.cotation != false && _vm.item.status == "pending"
         ? [
             _c("div", { staticClass: "me-form" }, [
               _c(
