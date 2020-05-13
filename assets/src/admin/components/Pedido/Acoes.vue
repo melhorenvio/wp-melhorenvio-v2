@@ -5,7 +5,7 @@
         <a v-if="item.log" :href="item.log" class="action-button -adicionar"></a>
 
         <!-- Comprar -->
-        <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status, item.errors, item.total)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
+        <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
             <svg class="ico" version="1.1" id="cart-add" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
             <g>
@@ -214,53 +214,21 @@
                     non_commercial, 
                     number, 
                     key,
-                    status,
-                    errors,
-                    total
+                    status
                 ] = args
 
-                this.item.status_texto = 'Não possui';
-                
-                if (status == 'paid') {
-                    this.item.status_texto = 'Pago';
-                    return false;
+                if (status == null && (choose_method == 1 || choose_method == 2 || choose_method == 17) ) {
+                    return true;
                 }
 
-                if (status == 'printed') {
-                    this.item.status_texto = 'Impresso';
-                    return false;
-                }
-
-                if (status == 'generated') {
-                    this.item.status_texto = 'Gerado';
-                    return false;
-                }
-
-                if (status == 'pending') {
-                    this.item.status_texto = 'Pendente';
-                    return false;
-                }
-
-                if (choose_method == 1 || choose_method == 2) {
+                if (status == null && choose_method >= 3 && non_commercial) {
                     return true
                 }
 
-                if ((choose_method == 3 || choose_method == 4) && non_commercial) {
+                if (status == null && choose_method >= 3 && !non_commercial && ((number != null && number != '') && (key != null && key != ''))) {
                     return true
                 }
 
-                if ((choose_method == 3 || choose_method == 4) && !non_commercial && (number != null && number != '') && (key != null && key != '')) {
-                    return true
-                }
-
-                if (choose_method == 17 && total <= 100) {
-                    return true
-                }
-
-                if (choose_method > 3 &&  (number != null && number != '') && (key != null && key != '')) {
-                    return true
-                }
-                
                 return false;
             },
         }

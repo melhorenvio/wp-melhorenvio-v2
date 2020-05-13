@@ -750,47 +750,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     mounted() {},
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), {
         buttonCartShow(...args) {
-            const [choose_method, non_commercial, number, key, status, errors, total] = args;
+            const [choose_method, non_commercial, number, key, status] = args;
 
-            this.item.status_texto = 'Não possui';
-
-            if (status == 'paid') {
-                this.item.status_texto = 'Pago';
-                return false;
-            }
-
-            if (status == 'printed') {
-                this.item.status_texto = 'Impresso';
-                return false;
-            }
-
-            if (status == 'generated') {
-                this.item.status_texto = 'Gerado';
-                return false;
-            }
-
-            if (status == 'pending') {
-                this.item.status_texto = 'Pendente';
-                return false;
-            }
-
-            if (choose_method == 1 || choose_method == 2) {
+            if (status == null && (choose_method == 1 || choose_method == 2 || choose_method == 17)) {
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && non_commercial) {
+            if (status == null && choose_method >= 3 && non_commercial) {
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && number != '' && key != null && key != '') {
-                return true;
-            }
-
-            if (choose_method == 17 && total <= 100) {
-                return true;
-            }
-
-            if (choose_method > 3 && number != null && number != '' && key != null && key != '') {
+            if (status == null && choose_method >= 3 && !non_commercial && number != null && number != '' && key != null && key != '') {
                 return true;
             }
 
@@ -2430,7 +2400,7 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
-      _vm.item.cotation != false && _vm.item.status == "pending"
+      _vm.item.cotation != false && _vm.item.status == null
         ? [
             _c("div", { staticClass: "me-form" }, [
               _c(
@@ -2947,9 +2917,7 @@ var render = function() {
       _vm.item.non_commercial,
       _vm.item.invoice.number,
       _vm.item.invoice.key,
-      _vm.item.status,
-      _vm.item.errors,
-      _vm.item.total
+      _vm.item.status
     )
       ? _c(
           "a",

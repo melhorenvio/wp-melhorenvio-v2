@@ -293,7 +293,7 @@ class OrderService
 
         foreach ($posts as $post) {
 
-            $status = 'pending';
+            $status = null;
             $protocol = null;
 
             $data = (new OrderQuotationService())->getData($post['id']);
