@@ -299,6 +299,7 @@ class OrderService
             $data = (new OrderQuotationService())->getData($post['id']);
 
             $info = $this->getInfoOrder($data['order_id']);
+
             if(isset(end($info)->status)) {
                 $status   =  end($info)->status;
                 $protocol = end($info)->protocol;
@@ -310,7 +311,7 @@ class OrderService
                 'protocol' => $protocol
             ];
         }
-
+        
         return $response;
     }
 }

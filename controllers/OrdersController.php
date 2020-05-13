@@ -182,6 +182,16 @@ class OrdersController
      */
     public function printTicket() 
     {
+        $createResult = (new OrderService())->createLabel($_GET['id']);
+
+        if (!isset($createResult['status'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao gerar a etiqueta'
+            ]); 
+            die;
+        }
+
         $result = (new OrderService())->printLabel($_GET['id']);
 
         echo json_encode([
