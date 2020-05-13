@@ -202,6 +202,12 @@ class OrdersController
         die; 
     }  
 
+    /**
+     * Function to make a step by step to printed any labels
+     *
+     * @param _GET $ids     
+     * @return array $response;
+     */
     public function buyOnClick()
     {
         if (!isset($_GET['ids'])) {
