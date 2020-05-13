@@ -2,12 +2,10 @@
 
 namespace Models;
 
-use Controllers\tokenController;
+use Services\RequestService;
 
 class User 
 {
-    const URL = 'https://api.melhorenvio.com';
-
     const OPTION_USER_INFO = 'melhorenvio_user_info';
 
     const SESSION_USER_INFO = 'melhorenvio_user_info';
@@ -21,43 +19,8 @@ class User
     {
         // Get info on session
         $codeStore = md5(get_option('home'));
-        /*
-        if (isset($_SESSION[$codeStore][self::SESSION_USER_INFO])) {
-            return array(
-                'success' => true,
-                'origin'  => 'session',
-                'data'    => $_SESSION[$codeStore][self::SESSION_USER_INFO]
-            );
-        }
 
-        // Get info on database wordpress
-        $optionData = get_option(self::OPTION_USER_INFO, true);
-
-        if (!is_bool($optionData)) {
-
-            $_SESSION[$codeStore][self::SESSION_USER_INFO] = $optionData;
-
-            return array(
-                'success' => true,
-                'origin'  => 'database',
-                'data'    => $optionData
-            );
-        }
-        */
-        // Get info on API Melhor Envio
-        $token = (new TokenController())->token();
-        
-        $params = array(
-            'headers'=> array(
-                'Content-Type' => 'application/json',
-                'Accept'=>'application/json',
-                'Authorization' => 'Bearer '.$token
-            )
-        );
-
-        $response = wp_remote_retrieve_body(
-            wp_remote_get(self::URL . '/v2/me', $params)
-        );
+        $response = (new RequestService())->request('', 'GET', [], false);
 
         if (is_null($response)) {
             return array(
@@ -66,7 +29,7 @@ class User
             );  
         }
 
-        $data = get_object_vars(json_decode($response));
+        $data = get_object_vars($response);
 
         $_SESSION[$codeStore][self::SESSION_USER_INFO] = $data;
 
@@ -84,20 +47,11 @@ class User
      */
     public function getBalance() 
     {
-        $token = (new TokenController())->token();
-
-        $params = array(
-            'headers' => array(
-                'Content-Type' => 'application/json',
-                'Accept'=>'application/json',
-                'Authorization' => 'Bearer '.$token
-            )
-        );
-
-        $response = json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_get(self::URL . '/v2/me/balance', $params)
-            )
+        $response = (new RequestService())->request(
+            '/balance',
+            'GET',
+            [],
+            false
         );
 
         if (isset($response->balance)) {

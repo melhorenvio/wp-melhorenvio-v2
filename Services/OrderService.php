@@ -8,6 +8,8 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_CANCEL = '/shipment/cancel';
 
+    const ROUTE_MELHOR_ENVIO_TRACKING = '/shipment/tracking';
+
     const ROUTE_MELHOR_ENVIO_CART = '/cart';
 
     const ROUTE_MELHOR_ENVIO_CHECKOUT = '/shipment/checkout';
@@ -71,6 +73,36 @@ class OrderService
             'GET',
             [],
             false
+        );
+    }
+
+
+    /**
+     * Function to get details about order in api Melhor Envio.
+     *
+     * @param int $order_id
+     * @return array $response
+     */
+    public function detail($post_id)
+    {   
+        $data = (new OrderQuotationService())->getData($post_id);
+
+        $body = [
+            'orders' => (array) $data['order_id']
+        ];
+
+        if(!$data) {
+            return [
+                'success' => false,
+                'message' => 'Ordem não encontrada no Melhor Envio'
+            ];
+        }
+        
+        return (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_TRACKING,
+            'POST',
+            $body,
+            true
         );
     }
 

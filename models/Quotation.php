@@ -241,7 +241,7 @@ class Quotation
                     'height' => (int) (new DimensionsHelper())->converterDimension($product->height),
                     'width'  => (int) (new DimensionsHelper())->converterDimension($product->width),
                     'length' => (int) (new DimensionsHelper())->converterDimension($product->length),
-                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
+                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round((new DimensionsHelper())->converterIfNecessary($product->weight),2)
                 );
 
                 $insurance_value[$key] = floatval($product->price);
