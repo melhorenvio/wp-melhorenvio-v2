@@ -52,7 +52,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = null
             state.orders.splice(order.position, 1, order.content)
         },
         addCart: (state, data) => {
@@ -96,7 +96,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'paid'
+            order.content.status = 'released'
             state.orders.splice(order.position, 1, order.content)
         },
         createTicket: (state, data) => {

@@ -14,7 +14,6 @@ class Agency
      */
     public function getAgencies() 
     {
-        $token = get_option('wpmelhorenvio_token');
         $results = '';
 
         if (!isset($_SESSION['melhor_envio']['agencies']) || empty($_SESSION['melhor_envio']['agencies'])) {
@@ -94,5 +93,27 @@ class Agency
             'success' => true,
             'id' => $id
         );
+    }
+
+    /**
+     * Return a code agency selected in configs plugin 
+     *
+     * @return int $code
+     */
+    public function getCodeAgencySelected()
+    {
+        $agencies = $this->getAgencies();
+
+        foreach ($agencies['allAgencies'] as $agency) {
+            if ($agency['selected']) {
+                return $agency['id'];
+            }
+        }
+
+        if (isset($agencies['agencies'])) {
+            return end($agencies['agencies'])[0]['id'];
+        }
+
+        return null;
     }
 }

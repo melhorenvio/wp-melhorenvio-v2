@@ -696,45 +696,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -749,47 +710,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     mounted() {},
     methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), {
         buttonCartShow(...args) {
-            const [choose_method, non_commercial, number, key, status, errors, total] = args;
+            const [choose_method, non_commercial, number, key, status] = args;
 
-            this.item.status_texto = 'Não possui';
-
-            if (status == 'paid') {
-                this.item.status_texto = 'Pago';
-                return false;
-            }
-
-            if (status == 'printed') {
-                this.item.status_texto = 'Impresso';
-                return false;
-            }
-
-            if (status == 'generated') {
-                this.item.status_texto = 'Gerado';
-                return false;
-            }
-
-            if (status == 'pending') {
-                this.item.status_texto = 'Pendente';
-                return false;
-            }
-
-            if (choose_method == 1 || choose_method == 2) {
+            if (status == null && (choose_method == 1 || choose_method == 2 || choose_method == 17)) {
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && non_commercial) {
+            if (status == null && choose_method >= 3 && non_commercial) {
                 return true;
             }
 
-            if ((choose_method == 3 || choose_method == 4) && !non_commercial && number != null && number != '' && key != null && key != '') {
-                return true;
-            }
-
-            if (choose_method == 17 && total <= 100) {
-                return true;
-            }
-
-            if (choose_method > 3 && number != null && number != '' && key != null && key != '') {
+            if (status == null && choose_method >= 3 && !non_commercial && number != null && number != '' && key != null && key != '') {
                 return true;
             }
 
@@ -2946,9 +2877,7 @@ var render = function() {
       _vm.item.non_commercial,
       _vm.item.invoice.number,
       _vm.item.invoice.key,
-      _vm.item.status,
-      _vm.item.errors,
-      _vm.item.total
+      _vm.item.status
     )
       ? _c(
           "a",
@@ -3091,62 +3020,7 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    _vm.item.status && _vm.item.status == "paid" && _vm.item.order_id
-      ? _c(
-          "a",
-          {
-            staticClass: "action-button -adicionar",
-            attrs: { "data-tip": "Gerar etiqueta" },
-            on: {
-              click: function($event) {
-                return _vm.createTicket({
-                  id: _vm.item.id,
-                  order_id: _vm.item.order_id
-                })
-              }
-            }
-          },
-          [
-            _c(
-              "svg",
-              {
-                staticClass: "ico",
-                attrs: {
-                  version: "1.1",
-                  id: "imprimir",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                  x: "0px",
-                  y: "0px",
-                  viewBox: "0 0 191.0681 184.5303",
-                  "enable-background": "new 0 0 191.0681 184.5303",
-                  "xml:space": "preserve"
-                }
-              },
-              [
-                _c("path", {
-                  attrs: {
-                    id: "imprimir-path4",
-                    d:
-                      "M60.1948,0H130.35c5.3073,0,10.1271,2.1659,13.6165,5.6554\n            c3.4895,3.4894,5.6554,8.3092,5.6554,13.6165v29.3652h21.6803c5.4433,0,10.3867,2.2215,13.9654,5.8006\n            c3.579,3.579,5.8005,8.5223,5.8005,13.9657v62.1068c0,5.4434-2.2215,10.3867-5.8005,13.9655\n            c-3.5787,3.579-8.5221,5.8005-13.9654,5.8005h-20.1121v17.763c0,4.5425-1.8533,8.6672-4.8385,11.6527\n            c-2.9854,2.9854-7.1101,4.8384-11.6529,4.8384H55.0601c-4.5428,0-8.6674-1.8533-11.6529-4.8384\n            c-2.9852-2.9855-4.8385-7.1102-4.8385-11.6527v-17.763H19.766c-5.4434,0-10.3867-2.2215-13.9655-5.8005\n            C2.2215,140.8969,0,135.9536,0,130.5102V68.4034C0,62.96,2.2215,58.0167,5.8005,54.4377c3.5788-3.5791,8.5221-5.8006,13.9655-5.8006\n            h21.1569V19.2719c0-5.3073,2.166-10.1271,5.6554-13.6165C50.0675,2.1659,54.8872,0,60.1948,0z M158.8788,72.9145\n            c4.4407,0,8.0407,3.6292,8.0407,8.1062c0,4.4767-3.6,8.1062-8.0407,8.1062c-4.4408,0-8.0408-3.6295-8.0408-8.1062\n            C150.838,76.5437,154.438,72.9145,158.8788,72.9145z M69.6444,160.0934c-2.3743,0-4.299-2.2124-4.299-4.9416\n            c0-2.7289,1.9247-4.9414,4.299-4.9414h50.7291c2.3743,0,4.299,2.2125,4.299,4.9414c0,2.7292-1.9247,4.9416-4.299,4.9416H69.6444z\n            M69.6444,141.9199c-2.3743,0-4.299-2.2124-4.299-4.9416s1.9247-4.9414,4.299-4.9414h50.7291c2.3743,0,4.299,2.2122,4.299,4.9414\n            c0,2.7292-1.9247,4.9416-4.299,4.9416H69.6444z M136.3657,150.2762v-27.8807c0-0.4507-0.1899-0.866-0.4955-1.1716\n            c-0.3055-0.3056-0.7208-0.4952-1.1715-0.4952H55.0601c-0.4507,0-0.8659,0.1896-1.1715,0.4952\n            c-0.3056,0.3056-0.4952,0.7209-0.4952,1.1716v27.8807v17.763c0,0.4504,0.1896,0.8657,0.4952,1.1713\n            c0.3056,0.3056,0.7208,0.4955,1.1715,0.4955h79.6386c0.4507,0,0.866-0.1899,1.1715-0.4955\n            c0.3056-0.3056,0.4955-0.7209,0.4955-1.1713V150.2762L136.3657,150.2762z M149.6219,63.4618H40.9229H19.766\n            c-1.351,0-2.5849,0.5581-3.4841,1.4573c-0.8991,0.8991-1.4573,2.133-1.4573,3.4843v62.1068c0,1.351,0.5582,2.5849,1.4573,3.4841\n            c0.8992,0.8991,2.1331,1.4573,3.4841,1.4573h18.8027v-13.0561c0-4.5428,1.8531-8.6673,4.8385-11.653\n            c2.9855-2.9851,7.1101-4.8384,11.6529-4.8384h79.6386c4.5428,0,8.6675,1.8533,11.6529,4.8384\n            c2.9855,2.9857,4.8385,7.1102,4.8385,11.653v13.0561h20.1121c1.351,0,2.5849-0.5582,3.484-1.4573\n            c0.8992-0.8992,1.4573-2.1331,1.4573-3.4841V68.4035c0-1.3513-0.5581-2.5852-1.4573-3.4843\n            c-0.8991-0.8992-2.133-1.4573-3.484-1.4573L149.6219,63.4618L149.6219,63.4618z M130.35,14.8246H60.1948\n            c-1.2155,0-2.3258,0.5026-3.1354,1.3122c-0.8093,0.8096-1.3121,1.9199-1.3121,3.1351v29.3652h79.05V19.2719\n            c0-1.2152-0.5026-2.3255-1.3121-3.1351C132.6759,15.3272,131.5653,14.8246,130.35,14.8246z"
-                  }
-                }),
-                _vm._v(" "),
-                _c("path", {
-                  attrs: {
-                    id: "imprimir-path6",
-                    d:
-                      "M158.8787,72.8156c2.2475,0,4.2825,0.9187,5.7555,2.4036\n            c1.4729,1.4849,2.3841,3.5362,2.3841,5.8014s-0.9112,4.3165-2.3841,5.8015c-1.473,1.4849-3.508,2.4035-5.7555,2.4035\n            s-4.2826-0.9186-5.7555-2.4035c-1.473-1.485-2.3841-3.5363-2.3841-5.8015c0-2.2652,0.9111-4.3165,2.3841-5.8014\n            C154.5961,73.7343,156.6312,72.8156,158.8787,72.8156z M164.4944,75.3581c-1.437-1.4486-3.4225-2.3448-5.6157-2.3448\n            c-2.1933,0-4.1788,0.8962-5.6158,2.3448c-1.4372,1.4489-2.3261,3.451-2.3261,5.6625c0,2.2116,0.8889,4.2137,2.3261,5.6625\n            c1.437,1.4487,3.4225,2.3449,5.6158,2.3449c2.1932,0,4.1787-0.8962,5.6157-2.3449c1.4372-1.4488,2.3262-3.4509,2.3262-5.6625\n            C166.8206,78.8091,165.9316,76.807,164.4944,75.3581z"
-                  }
-                })
-              ]
-            )
-          ]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.item.status &&
-    (_vm.item.status == "generated" || _vm.item.status == "printed")
+    _vm.item.status && _vm.item.status == "released"
       ? _c(
           "a",
           {
@@ -3253,7 +3127,7 @@ var render = function() {
     _vm.item.status &&
     _vm.item.order_id &&
     _vm.item.id &&
-    _vm.item.status != "paid"
+    _vm.item.status == "pending"
       ? _c(
           "a",
           {
@@ -6271,7 +6145,7 @@ var orders = {
                     };
                 }
             });
-            order.content.status = 'pending';
+            order.content.status = null;
             state.orders.splice(order.position, 1, order.content);
         },
         addCart: function addCart(state, data) {
@@ -6315,7 +6189,7 @@ var orders = {
                     };
                 }
             });
-            order.content.status = 'paid';
+            order.content.status = 'released';
             state.orders.splice(order.position, 1, order.content);
         },
         createTicket: function createTicket(state, data) {

@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Models\Method;
+
 class OrderService
 {
     const REASON_CANCELED_USER = 2;
@@ -17,6 +19,8 @@ class OrderService
     const ROUTE_MELHOR_ENVIO_CREATE_LABEL = '/shipment/generate';
 
     const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
+
+    const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/search?q=';
 
     /**
      * Function to cancel order on api Melhor Envio.
@@ -126,7 +130,7 @@ class OrderService
             }
 
             $orders[] = $order_id;
-            $ticket = $this->infoOrderId($order_id);
+            $ticket = $this->infoOrderCart($order_id);
             $wallet = $wallet + $ticket->price;
         }
 
@@ -159,6 +163,51 @@ class OrderService
         );
     }
 
+        /**
+     * Function to create a label on Melhor Envio.
+     *
+     * @param array $post_id
+     * @param $order_id
+     * @return array $response
+     */
+    public function payByOrderId($post_id, $order_id)
+    {
+        $wallet = 0;
+        $orders = [];
+
+        $orders[] = $order_id;
+        $ticket = $this->infoOrderCart($order_id);
+        $wallet = $wallet + $ticket->price;
+    
+
+        if ($wallet == 0) {
+            return [
+                'success' => false,
+                'message' => 'Sem pedidos para pagar'
+            ];
+        }
+
+        $body = [
+            'orders' => $orders,
+            'wallet' => $wallet
+        ];
+
+        $result = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_CHECKOUT,
+            'POST',
+            $body,
+            true
+        );
+
+        return (new OrderQuotationService())->updateDataQuotation(
+            $post_id, //post_id
+            end($result->purchase->orders)->id, //order_id
+            end($result->purchase->orders)->protocol, //protocol
+            $result->purchase->status, //status
+            end($result->purchase->orders)->service_id,//choose_method
+            $result->purchase->id //purchase_id
+        );
+    }
     /**
      * Function to create a label printble on melhor envio.
      *
@@ -237,10 +286,26 @@ class OrderService
      * @param int $order_id
      * @return array $response
      */
-    public function infoOrderId($order_id)
+    public function infoOrderCart($order_id)
     {   
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CART . '/' . $order_id,
+            'GET',
+            [],
+            false
+        );
+    }
+
+    /**
+     * Function to get information in Melhor Envio.
+     *
+     * @param string $order_id
+     * @return array $response
+     */
+    public function getInfoOrder($order_id)
+    {
+        return (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_SEARCH . $order_id,
             'GET',
             [],
             false
@@ -262,5 +327,121 @@ class OrderService
         }
 
         return $data['order_id'];
+    }
+
+    /**
+     * Function to merge status with stauts melhor envio.
+     *
+     * @param array $posts
+     * @return array $response
+     */
+    public function mergeStatus($posts)
+    {
+        $response = [];
+
+        foreach ($posts as $post) {
+
+            $status = null;
+            $protocol = null;
+
+            $data = (new OrderQuotationService())->getData($post['id']);
+
+            $info = $this->getInfoOrder($data['order_id']);
+
+            if(isset(end($info)->status)) {
+                $status   =  end($info)->status;
+                $protocol = end($info)->protocol;
+            }
+
+            $response[$post['id']] = [
+                'order_id' => $data['order_id'],
+                'status' => $status,
+                'protocol' => $protocol
+            ];
+        }
+
+        return $response;
+    }
+
+
+    public function buyOnClick($posts)
+    {
+        $orders = [];
+
+        $errors = [];
+
+        $valueTotal = 0;
+
+        foreach ($posts as $post_id) {
+
+            $data = (new OrderQuotationService())->getData($post_id);
+
+            if (empty($data) || is_null($data['order_id'])) {
+        
+                $products = (new OrdersProductsService())->getProductsOrder($post_id);
+
+                $to = (new BuyerService())->getDataBuyerByOrderId($post_id);
+
+                $choose_method = (new Method())->getMethodShipmentSelected($post_id);
+
+                $data = (new cartService())->add($post_id, $products, $to, $choose_method);
+
+                if (isset($data['message'])) {
+                    $errors[$post_id][] = $data['message'];
+                }
+            }
+
+            if ($data['status'] == 'pending') {
+
+                $data = $this->payByOrderId($post_id, $data['order_id'] );
+
+                if (isset($data['message'])) {
+                    $errors[$post_id][] = $data['message'];
+                }
+            }
+
+            if ($data['status'] == 'paid') {
+
+                $data = $this->createLabel($post_id);
+
+                if (isset($data['message'])) {
+                    $errors[$post_id][] = $data['message'];
+                }
+
+                if (isset($data['message'])) {
+                    $errors[$post_id][] = $data['message'];
+                }
+
+                $orders[$post_id] = $data['order_id'];
+            }
+
+            if ($data['status'] == 'generated') {
+
+                if (isset($data['message'])) {
+                    $errors[$post_id][] = $data['message'];
+                }
+
+                $orders[$post_id] = $data['order_id'];
+            }
+        }
+
+        if (!empty($orders)) {
+            
+            $body = [
+                'orders' => $orders
+            ];
+    
+            $result = (new RequestService())->request(
+                self::ROUTE_MELHOR_ENVIO_PRINT_LABEL,
+                'POST',
+                $body,
+                true
+            );
+        }
+
+        return [
+            'url' => $result->url,
+            'errors' => $errors
+        ];
     }
 }

@@ -5,11 +5,6 @@ namespace Controllers;
 use Models\Order;
 use Models\Log;
 use Models\Method;
-use Controllers\UsersController;
-use Controllers\PackageController;
-use Controllers\ProductsController;
-use Controllers\LogsController;
-use Controllers\TokenController;
 use Services\QuotationService;
 use Services\OrdersProductsService;
 use Services\BuyerService;
@@ -19,11 +14,6 @@ use Services\OrderQuotationService;
 
 class OrdersController 
 {
-    public function get($id)
-    {
-        return Order::getOne($id);
-    }
-
     /**
      * @return void
      */
@@ -192,6 +182,16 @@ class OrdersController
      */
     public function printTicket() 
     {
+        $createResult = (new OrderService())->createLabel($_GET['id']);
+
+        if (!isset($createResult['status'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao gerar a etiqueta'
+            ]); 
+            die;
+        }
+
         $result = (new OrderService())->printLabel($_GET['id']);
 
         echo json_encode([
@@ -201,6 +201,41 @@ class OrdersController
         ]);
         die; 
     }  
+
+    /**
+     * Function to make a step by step to printed any labels
+     *
+     * @param _GET $ids     
+     * @return array $response;
+     */
+    public function buyOnClick()
+    {
+        if (!isset($_GET['ids'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o IDs dos pedidos'
+            ]);
+            die;
+        }
+
+        $ids = explode(",", $_GET['ids']);
+
+        $result = (new OrderService())->buyOnClick($ids);
+
+        if (isset($result['url'])) {
+            echo json_encode([
+                'success' => true,
+                'errors' => $result['errors'],
+                'url' => $result['url']
+
+            ]);die;
+        }
+
+        echo json_encode([
+            'success' => false,
+            'errors' => $result['errors']
+        ]);die;
+    }
     
     /**
      * @return void

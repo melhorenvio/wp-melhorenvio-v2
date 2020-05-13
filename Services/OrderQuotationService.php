@@ -50,7 +50,6 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
-
         $result = $this->setKeyAsCodeService($quotation);
         $result['date_quotation'] = date('Y-m-d H:i:d'); 
         $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO
@@ -100,6 +99,31 @@ class OrderQuotationService
         return get_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, true);
     }
 
+        /**
+     * Function to update data quotation by order.
+     * 
+     * @param int $order_id
+     * @param string $order_melhor_envio_id
+     * @param string $protocol
+     * @param string $status
+     * @param int $choose_method
+     * @return array $data
+     */
+    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null) 
+    {
+        $data = [
+            'choose_method' => $choose_method,
+            'order_id' => $order_melhor_envio_id,
+            'protocol' => $protocol,
+            'purchase_id' => $purcahse_id,
+            'status' => $status,
+            'created' => date('Y-m-d H:i:s')
+        ];
+
+        add_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, $data);
+
+        return $data;
+    }
     /**
      * Function to update data quotation by order.
      * 
@@ -132,7 +156,7 @@ class OrderQuotationService
      */
     public function removeDataQuotation($order_id)
     {
-        delete_post_meta($order_id, self::POST_META_ORDER_DATA);
+        delete_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env);
     }
 
     /**
