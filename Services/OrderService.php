@@ -439,18 +439,9 @@ class OrderService
             );
         }
 
-        if (isset($result->url)) {
-            echo json_encode([
-                'success' => true,
-                'errors' => $errors,
-                'url' => $result->url
-
-            ]);die;
-        }
-
-        echo json_encode([
-            'success' => false,
+        return [
+            'url' => $result->url,
             'errors' => $errors
-        ]);die;
+        ];
     }
 }

@@ -216,12 +216,19 @@ class OrdersController
 
         $result = (new OrderService())->buyOnClick($ids);
 
+        if (isset($result['url'])) {
+            echo json_encode([
+                'success' => true,
+                'errors' => $result['errors'],
+                'url' => $result['url']
+
+            ]);die;
+        }
+
         echo json_encode([
-            'success' => true,
-            'message' => 'Pedidos gerados',
-            'data' => $result
-        ]);
-        die; 
+            'success' => false,
+            'errors' => $result['errors']
+        ]);die;
     }
     
     /**
