@@ -61,12 +61,12 @@ class CartService
             true
         );
 
-        return (new OrderQuotationService())->updateDataQuotation(
-            $_GET['order_id'], 
+        return (new OrderQuotationService())->addDataQuotation(
+            $order_id, 
             $result->id, 
             $result->protocol, 
             'pending', 
-            $_GET['choosen'],
+            $shipping_method_id,
             null
         );
     }

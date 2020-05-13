@@ -201,6 +201,28 @@ class OrdersController
         ]);
         die; 
     }  
+
+    public function buyOnClick()
+    {
+        if (!isset($_GET['ids'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Informar o IDs dos pedidos'
+            ]);
+            die;
+        }
+
+        $ids = explode(",", $_GET['ids']);
+
+        $result = (new OrderService())->buyOnClick($ids);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Pedidos gerados',
+            'data' => $result
+        ]);
+        die; 
+    }
     
     /**
      * @return void
