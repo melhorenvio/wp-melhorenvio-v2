@@ -11,6 +11,7 @@ use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
+use Services\ShippingService;
 
 class OrdersController 
 {
@@ -49,7 +50,7 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], Method::SERVICES_CODE_MELHOR_ENVIO)) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingService())->getCodesEnableds())) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'
@@ -74,9 +75,20 @@ class OrdersController
             ]);die;
         }
 
+        $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
+
+        if (!isset($result['order_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.'
+            ]);die;
+        }
+
+        $result = (new OrderService())->createLabel($_GET['order_id']);
+
         echo json_encode([
             'success' => true,
-            'message' => 'Pedido enviado para o carrinho de compras',
+            'message' => 'Pedido gerado com sucesso',
             'data' => $result
         ]);die;
     }

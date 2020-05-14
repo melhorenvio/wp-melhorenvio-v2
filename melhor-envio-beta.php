@@ -72,6 +72,7 @@ use Controllers\StatusController;
 use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
 use Models\Order;
+use Services\ShippingService;
 
 /**
  * Base_Plugin class
@@ -231,7 +232,7 @@ final class Base_Plugin {
         $this->includes();
         $this->init_hooks();
 
-        (new ShippingMethodsController())->updateMethodsShippingCodeSession();
+        //(new ShippingMethodsController())->updateMethodsShippingCodeSession();
 
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {
@@ -551,7 +552,7 @@ final class Base_Plugin {
                 'use_insurance'       => (new Models\UseInsurance())->get(),
                 'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
                 'metodos'             => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
-                'services_codes'      => (new ShippingMethodsController())->getCodes(),
+                'services_codes'      => (new ShippingService())->getCodesEnableds(),
                 'style_calculator'    => (new Controllers\ConfigurationController())->getStyleArray(),
                 'path_plugins'        => (new Controllers\ConfigurationController())->getPathPluginsArray(),
                 'options_calculator'  => (new Controllers\ConfigurationController())->getOptionsCalculator()

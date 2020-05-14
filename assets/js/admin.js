@@ -269,12 +269,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -330,7 +324,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             });
         },
         selectAll: function () {
-            //TODO
+            //TODO função para selecionar todas ordens para imprimir
             for (var key in this.$refs.orderCheck) {
                 this.$refs.orderCheck[key].checked;
             }
@@ -498,8 +492,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -519,6 +511,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -567,36 +570,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -2424,8 +2397,6 @@ var render = function() {
                       ]
                     : _vm._e(),
                   _vm._v(" "),
-                  _c("label", [_vm._v("Métodos de envio")]),
-                  _vm._v(" "),
                   _vm.item.cotation[_vm.item.cotation.choose_method]
                     ? [
                         _c("fieldset", { staticClass: "selectLine" }, [
@@ -2532,31 +2503,59 @@ var render = function() {
           ]
         : [
             _c("p", [
-              _vm._v(
-                "\n            " +
+              _vm._v("Compania: "),
+              _c("b", [
+                _vm._v(
                   _vm._s(
                     _vm.item.cotation[_vm.item.cotation.choose_method].company
                       .name
-                  ) +
-                  "\n            " +
+                  )
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v("Serviço: "),
+              _c("b", [
+                _vm._v(
                   _vm._s(
                     _vm.item.cotation[_vm.item.cotation.choose_method].name
-                  ) +
-                  "\n            R$" +
-                  _vm._s(
-                    _vm.item.cotation[_vm.item.cotation.choose_method].price
-                  ) +
-                  "\n        "
-              )
-            ])
+                  )
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v("Valor: "),
+              _c("b", [
+                _vm._v(
+                  "R$" +
+                    _vm._s(
+                      _vm.item.cotation[_vm.item.cotation.choose_method].price
+                    )
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm.item.tracking != null
+              ? _c("p", [
+                  _vm._v("Rastreio: "),
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: _vm.item.link_tracking, target: "_blank" }
+                    },
+                    [_vm._v(_vm._s(_vm.item.tracking))]
+                  )
+                ])
+              : _vm._e()
           ],
       _vm._v(" "),
       _vm.item.protocol && _vm.item.status != null
         ? [
             _c("p", [
-              _vm._v(
-                "\n            " + _vm._s(_vm.item.protocol) + "\n        "
-              )
+              _vm._v("\n            Protocolo: "),
+              _c("b", [_vm._v(_vm._s(_vm.item.protocol))])
             ])
           ]
         : _vm._e(),
@@ -2660,155 +2659,184 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "me-form" }, [
-    _c(
-      "div",
-      { staticClass: "formBox paddingBox" },
-      [
-        _vm.item.cotation.choose_method == 3 ||
-        _vm.item.cotation.choose_method == 4 ||
-        _vm.item.cotation.choose_method == 10
-          ? [
-              _c("fieldset", { staticClass: "checkLine" }, [
-                _c("div", { staticClass: "inputBox" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.item.non_commercial,
-                        expression: "item.non_commercial"
-                      }
-                    ],
-                    attrs: { type: "checkbox" },
-                    domProps: {
-                      checked: Array.isArray(_vm.item.non_commercial)
-                        ? _vm._i(_vm.item.non_commercial, null) > -1
-                        : _vm.item.non_commercial
-                    },
-                    on: {
-                      change: function($event) {
-                        var $$a = _vm.item.non_commercial,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = null,
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 &&
-                              _vm.$set(
-                                _vm.item,
-                                "non_commercial",
-                                $$a.concat([$$v])
-                              )
-                          } else {
-                            $$i > -1 &&
-                              _vm.$set(
-                                _vm.item,
-                                "non_commercial",
-                                $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                              )
-                          }
-                        } else {
-                          _vm.$set(_vm.item, "non_commercial", $$c)
-                        }
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("label", [_vm._v("Enviar com declaração de conteúdo    ")])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("br")
-            ]
-          : _vm._e(),
-        _vm._v(" "),
-        ((_vm.item.cotation.choose_method == 3 ||
-          _vm.item.cotation.choose_method == 4 ||
-          _vm.item.cotation.choose_method == 10) &&
-          !_vm.item.non_commercial) ||
-        (_vm.item.cotation.choose_method == 8 ||
-          _vm.item.cotation.choose_method == 9)
-          ? [
-              _c("fieldset", [
-                _c("div", [
-                  _c("label", [_vm._v("Nota fiscal")]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.item.invoice.number,
-                        expression: "item.invoice.number"
-                      }
-                    ],
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.item.invoice.number },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.item.invoice,
-                          "number",
-                          $event.target.value
-                        )
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("label", [_vm._v("Chave da nota fiscal")]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.item.invoice.key,
-                        expression: "item.invoice.key"
-                      }
-                    ],
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.item.invoice.key },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.item.invoice, "key", $event.target.value)
-                      }
-                    }
-                  }),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn-border -full-blue",
-                      on: {
-                        click: function($event) {
-                          return _vm.insertInvoice(_vm.item)
-                        }
-                      }
-                    },
-                    [_vm._v("Salvar")]
-                  )
-                ])
+  return _c(
+    "div",
+    { staticClass: "me-form" },
+    [
+      _vm.item.status == null
+        ? [
+            _c(
+              "div",
+              { staticClass: "formBox paddingBox" },
+              [
+                _vm.item.cotation.choose_method == 3 ||
+                _vm.item.cotation.choose_method == 4 ||
+                _vm.item.cotation.choose_method == 10
+                  ? [
+                      _c("fieldset", { staticClass: "checkLine" }, [
+                        _c("div", { staticClass: "inputBox" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.item.non_commercial,
+                                expression: "item.non_commercial"
+                              }
+                            ],
+                            attrs: { type: "checkbox" },
+                            domProps: {
+                              checked: Array.isArray(_vm.item.non_commercial)
+                                ? _vm._i(_vm.item.non_commercial, null) > -1
+                                : _vm.item.non_commercial
+                            },
+                            on: {
+                              change: function($event) {
+                                var $$a = _vm.item.non_commercial,
+                                  $$el = $event.target,
+                                  $$c = $$el.checked ? true : false
+                                if (Array.isArray($$a)) {
+                                  var $$v = null,
+                                    $$i = _vm._i($$a, $$v)
+                                  if ($$el.checked) {
+                                    $$i < 0 &&
+                                      _vm.$set(
+                                        _vm.item,
+                                        "non_commercial",
+                                        $$a.concat([$$v])
+                                      )
+                                  } else {
+                                    $$i > -1 &&
+                                      _vm.$set(
+                                        _vm.item,
+                                        "non_commercial",
+                                        $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1))
+                                      )
+                                  }
+                                } else {
+                                  _vm.$set(_vm.item, "non_commercial", $$c)
+                                }
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("label", [
+                            _vm._v("Enviar com declaração de conteúdo    ")
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("br")
+                    ]
+                  : _vm._e(),
+                _vm._v(" "),
+                ((_vm.item.cotation.choose_method == 3 ||
+                  _vm.item.cotation.choose_method == 4 ||
+                  _vm.item.cotation.choose_method == 10) &&
+                  !_vm.item.non_commercial) ||
+                (_vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9)
+                  ? [
+                      _c("fieldset", [
+                        _c("div", [
+                          _c("label", [_vm._v("Nota fiscal")]),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.item.invoice.number,
+                                expression: "item.invoice.number"
+                              }
+                            ],
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.item.invoice.number },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.item.invoice,
+                                  "number",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("label", [_vm._v("Chave da nota fiscal")]),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.item.invoice.key,
+                                expression: "item.invoice.key"
+                              }
+                            ],
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.item.invoice.key },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.item.invoice,
+                                  "key",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn-border -full-blue",
+                              on: {
+                                click: function($event) {
+                                  return _vm.insertInvoice(_vm.item)
+                                }
+                              }
+                            },
+                            [_vm._v("Salvar")]
+                          )
+                        ])
+                      ])
+                    ]
+                  : _vm._e()
+              ],
+              2
+            )
+          ]
+        : [
+            _c("p", [
+              _c("b", [
+                _vm.item.status == "released"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.item.status == "posted"
+                  ? _c("span", [_vm._v("Etiqueta postada")])
+                  : _vm._e()
               ])
-            ]
-          : _vm._e()
-      ],
-      2
-    )
-  ])
+            ])
+          ]
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -2917,73 +2945,25 @@ var render = function() {
               "svg",
               {
                 staticClass: "ico",
-                staticStyle: { "enable-background": "new 0 0 511.999 511.999" },
                 attrs: {
                   version: "1.1",
-                  id: "cart-add",
+                  id: "pagar",
                   xmlns: "http://www.w3.org/2000/svg",
                   "xmlns:xlink": "http://www.w3.org/1999/xlink",
                   x: "0px",
                   y: "0px",
-                  viewBox: "0 0 511.999 511.999",
+                  viewBox: "0 0 24 24",
+                  "enable-background": "new 0 0 24 24",
                   "xml:space": "preserve"
                 }
               },
               [
-                _c("g", [
-                  _c("g", [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M214.685,402.828c-24.829,0-45.029,20.2-45.029,45.029c0,24.829,20.2,45.029,45.029,45.029s45.029-20.2,45.029-45.029\n                    C259.713,423.028,239.513,402.828,214.685,402.828z M214.685,467.742c-10.966,0-19.887-8.922-19.887-19.887\n                    c0-10.966,8.922-19.887,19.887-19.887s19.887,8.922,19.887,19.887C234.572,458.822,225.65,467.742,214.685,467.742z"
-                      }
-                    })
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("g", [
-                  _c("g", [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M372.63,402.828c-24.829,0-45.029,20.2-45.029,45.029c0,24.829,20.2,45.029,45.029,45.029s45.029-20.2,45.029-45.029\n                    C417.658,423.028,397.458,402.828,372.63,402.828z M372.63,467.742c-10.966,0-19.887-8.922-19.887-19.887\n                    c0-10.966,8.922-19.887,19.887-19.887c10.966,0,19.887,8.922,19.887,19.887C392.517,458.822,383.595,467.742,372.63,467.742z"
-                      }
-                    })
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("g", [
-                  _c("g", [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M383.716,165.755H203.567c-6.943,0-12.571,5.628-12.571,12.571c0,6.943,5.629,12.571,12.571,12.571h180.149\n                    c6.943,0,12.571-5.628,12.571-12.571C396.287,171.382,390.659,165.755,383.716,165.755z"
-                      }
-                    })
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("g", [
-                  _c("g", [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M373.911,231.035H213.373c-6.943,0-12.571,5.628-12.571,12.571s5.628,12.571,12.571,12.571h160.537\n                    c6.943,0,12.571-5.628,12.571-12.571C386.481,236.664,380.853,231.035,373.911,231.035z"
-                      }
-                    })
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("g", [
-                  _c("g", [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M506.341,109.744c-4.794-5.884-11.898-9.258-19.489-9.258H95.278L87.37,62.097c-1.651-8.008-7.113-14.732-14.614-17.989\n                    l-55.177-23.95c-6.37-2.767-13.773,0.156-16.536,6.524c-2.766,6.37,0.157,13.774,6.524,16.537L62.745,67.17l60.826,295.261\n                    c2.396,11.628,12.752,20.068,24.625,20.068h301.166c6.943,0,12.571-5.628,12.571-12.571c0-6.943-5.628-12.571-12.571-12.571\n                    H148.197l-7.399-35.916H451.69c11.872,0,22.229-8.44,24.624-20.068l35.163-170.675\n                    C513.008,123.266,511.136,115.627,506.341,109.744z M451.69,296.301H135.619l-35.161-170.674l386.393,0.001L451.69,296.301z"
-                      }
-                    })
-                  ])
-                ])
+                _c("path", {
+                  attrs: {
+                    d:
+                      "M12,2c5.514,0,10,4.486,10,10s-4.486,10-10,10S2,17.514,2,12S6.486,2,12,2z M12,0C5.373,0,0,5.373,0,12s5.373,12,12,12\n            s12-5.373,12-12S18.627,0,12,0z M16,14.083c0-2.145-2.232-2.742-3.943-3.546c-1.039-0.54-0.908-1.829,0.581-1.916\n            c0.826-0.05,1.675,0.195,2.443,0.465l0.362-1.647C14.536,7.163,13.724,7.037,13,7.018V6h-1v1.067\n            c-1.945,0.267-2.984,1.487-2.984,2.85c0,2.438,2.847,2.81,3.778,3.243c1.27,0.568,1.035,1.75-0.114,2.011\n            c-0.997,0.226-2.269-0.168-3.225-0.54L9,16.275c0.894,0.462,1.965,0.708,3,0.727V18h1v-1.053C14.657,16.715,16.002,15.801,16,14.083\n            z"
+                  }
+                })
               ]
             )
           ]
@@ -3038,7 +3018,8 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    _vm.item.status && _vm.item.status == "released"
+    _vm.item.status &&
+    (_vm.item.status == "released" || _vm.item.stauts == "posted")
       ? _c(
           "a",
           {
@@ -3593,10 +3574,7 @@ var render = function() {
                               refInFor: true,
                               attrs: {
                                 type: "checkbox",
-                                disabled: !(
-                                  item.status == "posted" ||
-                                  item.status == "released"
-                                )
+                                disabled: item.status != "released"
                               },
                               domProps: {
                                 value: item.id,
@@ -3631,36 +3609,7 @@ var render = function() {
                             })
                           ]),
                           _vm._v(" "),
-                          _c(
-                            "li",
-                            [
-                              _c("Id", { attrs: { item: item } }),
-                              _vm._v(" "),
-                              _c(
-                                "span",
-                                {
-                                  staticStyle: {
-                                    "font-size": "12px",
-                                    cursor: "pointer"
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "a",
-                                    {
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.handleToggleInfo(item.id)
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Ver detalhes")]
-                                  )
-                                ]
-                              )
-                            ],
-                            1
-                          ),
+                          _c("li", [_c("Id", { attrs: { item: item } })], 1),
                           _vm._v(" "),
                           _c(
                             "li",
@@ -3679,18 +3628,6 @@ var render = function() {
                             [_c("Documentos", { attrs: { item: item } })],
                             1
                           ),
-                          _vm._v(" "),
-                          _c("li", { staticClass: "text-center" }, [
-                            _c(
-                              "span",
-                              { staticStyle: { "font-size": "14px" } },
-                              [
-                                _c("strong", [
-                                  _vm._v(_vm._s(item.status_texto))
-                                ])
-                              ]
-                            )
-                          ]),
                           _vm._v(" "),
                           _c(
                             "li",
@@ -3949,8 +3886,6 @@ var staticRenderFns = [
       _c("li", [_c("span", [_vm._v("Cotação")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Documentos")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Etiqueta")])]),
       _vm._v(" "),
       _c("li", [_c("span", [_vm._v("Ações")])])
     ])
@@ -6241,7 +6176,7 @@ var orders = {
                     };
                 }
             });
-            order.content.status = 'pending';
+            order.content.status = 'released';
             order.content.order_id = data.order_id;
             order.content.protocol = data.protocol;
             state.orders.splice(order.position, 1, order.content);
@@ -6298,7 +6233,7 @@ var orders = {
                     };
                 }
             });
-            order.content.status = 'printed';
+            order.content.status = 'released';
             state.orders.splice(order.position, 1, order.content);
         },
         setStatusWc: function setStatusWc(state, data) {

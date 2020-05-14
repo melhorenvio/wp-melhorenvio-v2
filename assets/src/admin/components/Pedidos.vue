@@ -101,7 +101,6 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
-                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -109,11 +108,11 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox" ref="orderCheck" :disabled="!(item.status == 'posted' || item.status =='released')" :value="item.id" v-model="ordersSelecteds">
+                                <input type="checkbox" ref="orderCheck" :disabled="item.status !='released'" :value="item.id" v-model="ordersSelecteds">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
-                                <span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
+                                <!--<span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>-->
                             </li>
 
                             <li>
@@ -124,11 +123,6 @@
                             </li>
                             <li>
                                 <Documentos :item="item"></Documentos>
-                            </li>
-                            <li class="text-center">
-                                <span style="font-size: 14px;">
-                                    <strong>{{item.status_texto}}</strong>
-                                </span>
                             </li>
                             <li class="-center">
                                 <Acoes :item="item"></Acoes>
@@ -271,7 +265,7 @@ export default {
             })
         },
         selectAll: function() {
-            //TODO
+            //TODO função para selecionar todas ordens para imprimir
             for (var key in this.$refs.orderCheck) {
                 this.$refs.orderCheck[key].checked;
             }

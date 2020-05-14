@@ -52,7 +52,7 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service)) ? $service : (new Method())->getCodesString(),
+            'services' => (!is_null($service)) ? $service : (new ShippingService())->getStringCodesEnables(),
             'products' => $products
         ];
 
