@@ -433,7 +433,7 @@ class OrderService
                 $orders[$post_id] = $data['order_id'];
             }
 
-            if ($data['status'] == 'generated') {
+            if ($data['status'] == 'generated' || $data['status'] == 'released') {
 
                 if (isset($data['message'])) {
                     $errors[$post_id][] = $data['message'];
