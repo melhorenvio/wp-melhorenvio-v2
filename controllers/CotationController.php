@@ -21,7 +21,7 @@ class CotationController
     public function makeCotationOrder($order_id) 
     {
         $result = (new QuotationService())->calculateQuotationByOrderId($order_id);
-    
+
         global $woocommerce;
 
         $totalCart = 0;
@@ -70,6 +70,7 @@ class CotationController
         }
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+
         if(empty($destination) || is_null($destination)) {
             echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
             exit();

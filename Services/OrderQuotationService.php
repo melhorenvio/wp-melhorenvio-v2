@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Method;
+use Services\QuotationService;
 
 class OrderQuotationService
 {
@@ -24,18 +25,20 @@ class OrderQuotationService
     /**
      * Function to get a quotation by order in postmetas by wordpress.
      *
-     * @param integer $order_id
+     * @param integer $post_id
      * @return object $quotation
      */
-    public function getQuotation($order_id)
+    public function getQuotation($post_id)
     {
-        $quotation = get_post_meta($order_id, self::POST_META_ORDER_QUOTATION, true);
+        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION, true);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
 
-            $quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
+            //TODO rever função pra ver se é desatualizado
+
+            //$quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
         
-            $quotation = $this->saveQuotation($order_id, $quotation);
+            //$quotation = $this->saveQuotation($post_id, $quotation);
         }
 
         return $quotation;
@@ -171,7 +174,7 @@ class OrderQuotationService
 
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
-        ($date_quotation > $data['date_quotation']) ? false : true;
+        return ($date < $data['date_quotation']) ? false : true;
     }
 
     public function getEnvironmentToSave()

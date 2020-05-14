@@ -3,8 +3,6 @@
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
-use Models\Cart;
-use Models\Quotation;
 use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
@@ -67,8 +65,8 @@ function jadlog_com_shipping_method_init() {
 			public function calculate_shipping( $package = []) {
 
 				global $woocommerce;
-				
-				$to = str_replace('-', '', $package['destination']['postcode']);
+
+				$to = str_replace('-', '', $package['destination']['postcode']);	
 
 				$products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
 

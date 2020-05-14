@@ -3,7 +3,7 @@
 namespace Services;
 
 use Models\Option;
-use Models\Method;
+use Services\ShippingMelhorEnvioService;
 
 class QuotationService
 {
@@ -18,15 +18,11 @@ class QuotationService
      */
     public function calculateQuotationByOrderId($order_id)
     {
-        $orderProductsService = new OrdersProductsService();
+        $products = (new OrdersProductsService())->getProductsOrder($order_id);
 
-        $products = $orderProductsService->getProductsOrder($order_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($order_id);
 
-        $buyerService = new BuyerService();
-
-        $buyer = $buyerService->getDataBuyerByOrderId($order_id);
-
-        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code);
+        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code, null);
 
         return (new OrderQuotationService())->saveQuotation($order_id, $quotation);
     }
@@ -40,10 +36,8 @@ class QuotationService
      */
     public function calculateQuotationByProducts($products, $postal_code, $service = null)
     {   
-        $sellerService = new SellerService();
-
-        $seller = $sellerService->getData();
-
+        $seller = (new SellerService())->getData();
+            
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -52,17 +46,15 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service)) ? $service : (new ShippingService())->getStringCodesEnables(),
+            'services' => (!is_null($service)) ? $service : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
             'products' => $products
         ];
 
-        $result = (new RequestService())->request(
+        return (new RequestService())->request(
             self::ROUTE_API_MELHOR_CALCULATE, 
             'POST', 
             $body,
             true
         );
-        
-        return $result;
     }
 }

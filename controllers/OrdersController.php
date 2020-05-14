@@ -11,7 +11,8 @@ use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
-use Services\ShippingService;
+use Services\ShippingMelhorEnvioService;
+use Services\ListOrderService;
 
 class OrdersController 
 {
@@ -21,7 +22,10 @@ class OrdersController
     public function getOrders() 
     {
         unset($_GET['action']);
-        $orders = Order::getAllOrders($_GET);
+        //$orders = Order::getAllOrders($_GET);
+
+        $orders = (new ListOrderService())->getList($_GET);
+
         return json_encode($orders);
     }
 
@@ -50,7 +54,7 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingService())->getCodesEnableds())) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingMelhorEnvioService())->getCodesEnableds())) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'

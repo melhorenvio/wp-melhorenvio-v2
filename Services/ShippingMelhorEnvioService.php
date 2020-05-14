@@ -2,7 +2,7 @@
 
 namespace Services;
 
-class ShippingService
+class ShippingMelhorEnvioService
 {
     public function getCodesEnableds()
     {

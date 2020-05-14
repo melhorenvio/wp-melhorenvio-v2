@@ -40,10 +40,7 @@ class CartWooCommerceService
                     'quantity'     => (isset($item_product['quantity'])) ? intval($item_product['quantity']) : 1,
                 );
             }
-
-            
         }
-
         return $products;
     }
 }

@@ -3,8 +3,6 @@
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
-use Models\Cart;
-use Models\Quotation;
 use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
@@ -61,30 +59,30 @@ function mini_shipping_method_init() {
 
                 $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
 
-                $result = (new Quotation(null, $products, $package, $to))->calculate($this->code);
+                $result = (new QuotationService())->calculateQuotationByProducts($products, $to, $this->code);
 
                 if ($result) {
                     if (isset($result->name) && isset($result->price)) {
                         
                         $method = (new optionsHelper())->getName($result->id, $result->name, null, null);
 
-                        $rate = [
-                            'id' => 'melhorenvio_mini',
-                            'label' => $method['method'] . (new timeController)->setLabel($result->delivery, $this->code, $result->custom_delivery),
-                            'cost' => (new MoneyController())->setprice($result->price, $this->code),
-                            'calc_tax' => 'per_item',
-                            'meta_data' => [
-                                'delivery_time' => $result->delivery,
-                                'company' => 'Correios',
-                                'name' => $method['method']
-                            ]
-                        ];
+						$rate = [
+							'id' => 'melhorenvio_mini',
+							'label' => $method['method'] . (new timeHelper)->setLabel($result->delivery_range, $this->code, $result->custom_delivery_range),
+							'cost' => (new MoneyHelper())->setprice($result->price, $this->code),
+							'calc_tax' => 'per_item',
+							'meta_data' => [
+								'delivery_time' => $result->delivery_range,
+								'company' => 'Correios',
+								'name' => $method['method']
+							]
+						];
 
                         $this->add_rate($rate);
                     }
                 }
 
-                $freeShiping = (new CotationController())->freeShipping();
+                $freeShiping = (new WooCommerceService())->hasFreeShippingMethod();
                 if ($freeShiping != false) {
                     $this->add_rate($freeShiping);
                 }

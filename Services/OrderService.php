@@ -345,7 +345,18 @@ class OrderService
             $protocol = null;
             $tracking = null;
 
-            $data = (new OrderQuotationService())->getData($post['id']);
+            $data = (new OrderQuotationService())->getData($post->ID);
+
+            if (empty($data)) {
+
+                $response[$post->ID] = [
+                    'order_id' => null,
+                    'status' => null,
+                    'protocol' => null,
+                    'tracking' => null
+                ];
+                continue;
+            }
 
             $info = $this->getInfoOrder($data['order_id']);
 
@@ -359,7 +370,7 @@ class OrderService
                 $tracking = $tracking;
             }
 
-            $response[$post['id']] = [
+            $response[$post->ID] = [
                 'order_id' => $data['order_id'],
                 'status' => $status,
                 'protocol' => $protocol,

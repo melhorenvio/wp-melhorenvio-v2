@@ -3,8 +3,6 @@
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
-use Models\Cart;
-use Models\Quotation;
 use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
@@ -90,7 +88,7 @@ function via_brasil_rodoviario_shipping_method_init() {
 				if ($freeShiping != false) {
 					$this->add_rate($freeShiping);
 				}
-			} 
+			}
 		}
 	}
 }

@@ -6,7 +6,7 @@ class ShippingMethodsController
 {
     public function getCodes()
     {
-        var_dump('deprecado use ShippingService@getCodesEnabled');die;
+        var_dump('deprecado use ShippingMelhorEnvioService@getCodesEnabled');die;
         /**if (!isset($_SESSION['methods_shipping_api_melhor_envio'])) {
             return $this->updateMethodsShippingCodeSession();
         }
