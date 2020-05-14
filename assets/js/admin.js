@@ -2543,7 +2543,7 @@ var render = function() {
           ]
         : [
             _c("p", [
-              _vm._v("Compania: "),
+              _vm._v("Companhia: "),
               _c("b", [
                 _vm._v(
                   _vm._s(

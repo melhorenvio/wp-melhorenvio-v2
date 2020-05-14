@@ -50,7 +50,7 @@
         </template>
 
         <template v-else>
-            <p>Compania: <b>{{ item.cotation[item.cotation.choose_method].company.name }}</b></p>
+            <p>Companhia: <b>{{ item.cotation[item.cotation.choose_method].company.name }}</b></p>
             <p>Serviço: <b>{{ item.cotation[item.cotation.choose_method].name }}</b></p>
             <p>Valor: <b>R${{ item.cotation[item.cotation.choose_method].price }}</b></p>
             <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
