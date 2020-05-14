@@ -5,6 +5,11 @@
             <small>Cliente não utilizou Melhor Envio</small>
         </template>
 
+        <template v-if="item.products">
+            <label>Produto</label>
+            <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+        </template>
+
         <template v-if="item.cotation != false && item.status == null">
             <div  class="me-form">
                 <div class="formBox">

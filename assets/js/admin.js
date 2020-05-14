@@ -424,6 +424,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -440,6 +442,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2274,15 +2281,19 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("span", { staticStyle: { "font-size": "14px" } }, [
-    _c("strong", [
-      _vm._v(_vm._s(_vm.to.first_name) + " " + _vm._s(_vm.to.last_name))
-    ]),
-    _vm._v(" "),
+    _vm._v("\n    " + _vm._s(_vm.to.name)),
     _c("br"),
     _vm._v("\n    " + _vm._s(_vm.to.email) + " "),
     _c("br"),
     _vm._v("\n    " + _vm._s(_vm.to.phone) + " "),
-    _c("br")
+    _c("br"),
+    _vm._v(
+      "\n    " + _vm._s(_vm.to.address) + ", " + _vm._s(_vm.to.number) + " "
+    ),
+    _c("br"),
+    _vm._v(
+      "\n    " + _vm._s(_vm.to.city) + "/" + _vm._s(_vm.to.state_abbr) + "\n"
+    )
   ])
 }
 var staticRenderFns = []
@@ -2365,6 +2376,18 @@ var render = function() {
             _c("br"),
             _vm._v(" "),
             _c("small", [_vm._v("Cliente não utilizou Melhor Envio")])
+          ]
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.item.products
+        ? [
+            _c("label", [_vm._v("Produto")]),
+            _vm._v(" "),
+            _vm._l(_vm.item.products, function(product) {
+              return _c("p", [
+                _vm._v(_vm._s(product.quantity) + "x " + _vm._s(product.name))
+              ])
+            })
           ]
         : _vm._e(),
       _vm._v(" "),
@@ -2753,8 +2776,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                (_vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9)
+                _vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9
                   ? [
                       _c("fieldset", [
                         _c("div", [
