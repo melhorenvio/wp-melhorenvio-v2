@@ -5,6 +5,7 @@ namespace Controllers;
 use Models\Address;
 use Models\Store;
 use Models\User;
+use Services\OrderQuotationService;
 
 class UsersController {
 
@@ -116,6 +117,15 @@ class UsersController {
         $balance = (new User())->getBalance();
         echo json_encode($balance);
         die;
+    }
+
+    public function getMe()
+    {
+        $data = (array) $this->getInfo();
+
+        $data['data']['environment'] =  ((new OrderQuotationService())->getEnvironmentToSave() == '_sandbox') ? 'Sandbox' :  'Produção';
+
+        echo json_encode($data['data']);die;
     }
 
     /**

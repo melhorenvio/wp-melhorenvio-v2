@@ -269,6 +269,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -288,7 +290,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             toggleInfo: null,
             error_message: null,
             ordersSelecteds: [],
-            allSelected: false
+            allSelected: false,
+            name: null,
+            environment: null,
+            limit: 0,
+            limitEnabled: 0
         };
     },
     components: {
@@ -329,6 +335,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 this.$refs.orderCheck[key].checked;
             }
         },
+        getMe() {
+            this.$http.get(`${ajaxurl}?action=me`).then(response => {
+                if (response.data.id) {
+                    this.name = response.data.firstname + ' ' + response.data.lastname;
+                    this.environment = response.data.environment;
+                    this.limit = response.data.limits.shipments;
+                    this.limitEnabled = response.data.limits.shipments_available;
+                }
+            });
+        },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
                 if (response.data.token) {
@@ -366,6 +382,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     },
     mounted() {
         this.getToken();
+        this.getMe();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
         }
@@ -3415,6 +3432,21 @@ var render = function() {
       _c("table", { staticClass: "table-box", attrs: { border: "0" } }, [
         _c("tr", [
           _c("td", [
+            _c("h4", [
+              _c("b", [_vm._v("Usuário:")]),
+              _vm._v(" " + _vm._s(_vm.name))
+            ]),
+            _vm._v(" "),
+            _c("h4", [
+              _c("b", [_vm._v("Ambiente:")]),
+              _vm._v(" " + _vm._s(_vm.environment))
+            ]),
+            _vm._v(" "),
+            _c("h4", [
+              _c("b", [_vm._v("Envios:")]),
+              _vm._v(" " + _vm._s(_vm.limitEnabled) + "/" + _vm._s(_vm.limit))
+            ]),
+            _vm._v(" "),
             _c("h4", [
               _c("b", [_vm._v("Saldo:")]),
               _vm._v(" " + _vm._s(_vm.getBalance))

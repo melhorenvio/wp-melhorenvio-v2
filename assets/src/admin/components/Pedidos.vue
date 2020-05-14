@@ -60,10 +60,12 @@
         <table border="0" class="table-box">
             <tr>
                 <td>
+                    <h4><b>Usuário:</b> {{name}}</h4>
+                    <h4><b>Ambiente:</b> {{environment}}</h4>
+                    <h4><b>Envios:</b> {{limitEnabled}}/{{limit}}</h4>
                     <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
             </tr>
-
             <tr>
                 <td width="50%">
                     <h3>Etiquetas</h3>
@@ -219,6 +221,10 @@ export default {
             error_message: null,
             ordersSelecteds: [],
             allSelected: false,
+            name: null,
+            environment: null,
+            limit: 0,
+            limitEnabled: 0
         }
     },
     components: {
@@ -270,6 +276,16 @@ export default {
                 this.$refs.orderCheck[key].checked;
             }
         },
+        getMe() {
+            this.$http.get(`${ajaxurl}?action=me`).then((response) => {
+                if (response.data.id) {
+                    this.name = response.data.firstname + ' ' + response.data.lastname;
+                    this.environment = response.data.environment
+                    this.limit = response.data.limits.shipments
+                    this.limitEnabled = response.data.limits.shipments_available
+                }
+            })
+        },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
                 if (response.data.token) {
@@ -307,6 +323,7 @@ export default {
     },
     mounted () {
         this.getToken();
+        this.getMe();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }

@@ -395,6 +395,7 @@ final class Base_Plugin {
             $cotacaoProd->run();
         }
 
+        add_action('wp_ajax_me', [$users, 'getMe']);
         add_action('wp_ajax_get_token', [$token, 'getToken']);
         add_action('wp_ajax_save_token', [$token, 'saveToken']);
         add_action('wp_ajax_add_order', [$order, 'sendOrder']);
