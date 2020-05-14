@@ -101,7 +101,6 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
-                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -113,7 +112,7 @@
                             </li>
                             <li>
                                 <Id :item="item"></Id>
-                                <span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
+                                <!--<span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>-->
                             </li>
 
                             <li>
@@ -124,11 +123,6 @@
                             </li>
                             <li>
                                 <Documentos :item="item"></Documentos>
-                            </li>
-                            <li class="text-center">
-                                <span style="font-size: 14px;">
-                                    <strong>{{item.status_texto}}</strong>
-                                </span>
                             </li>
                             <li class="-center">
                                 <Acoes :item="item"></Acoes>

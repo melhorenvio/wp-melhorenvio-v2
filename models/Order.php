@@ -120,6 +120,7 @@ class Order {
                     'id'             => (int) $order->id,
                     'products'       => (Object) $products,
                     'cotation'       => $cotation,
+                    'tracking'       => null,
                     'address'        => $order->address,
                     'to'             => $order->to,
                     'status'         => $dataMelhorEnvio['status'],
@@ -202,9 +203,18 @@ class Order {
 
         foreach ($posts as $key => $post) {
 
+            $linkTracking = null;
+
+            if (!is_null($result[$post['id']]['tracking'])) {
+                $linkTracking = sprintf("https://www.melhorrastreio.com.br/painel/informacao-rastreio/%s", $result[$post['id']]['tracking']);
+            }
+
             $posts[$key]['order_id'] = $result[$post['id']]['order_id'];
             $posts[$key]['protocol'] = $result[$post['id']]['protocol'];
             $posts[$key]['status']   = $result[$post['id']]['status'];
+            $posts[$key]['tracking']   = $result[$post['id']]['tracking'];
+            $posts[$key]['link_tracking']   = $linkTracking;
+
         }
 
         return $posts;

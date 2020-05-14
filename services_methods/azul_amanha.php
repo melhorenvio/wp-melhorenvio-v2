@@ -9,21 +9,21 @@ use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
 
-add_action( 'woocommerce_shipping_init', 'jadlog_com_shipping_method_init' );
+add_action( 'woocommerce_shipping_init', 'azul_amanha_shipping_method_init' );
 
-function jadlog_com_shipping_method_init() {
+function azul_amanha_shipping_method_init() {
 
-	if ( ! class_exists( 'WC_Jadlog_Com_Shipping_Method' ) ) {
+	if ( ! class_exists( 'WC_Azul_Amanha_Shipping_Method' ) ) {
 
-		class WC_Jadlog_Com_Shipping_Method extends WC_Shipping_Method {
+		class WC_Azul_Amanha_Shipping_Method extends WC_Shipping_Method {
 
-			public $code = '4';
+			public $code = '15';
 
-			const ID = 'jadlog_com';
+			const ID = 'azul_amanha';
 
-			const METHOD_TITLE = "Jadlog .Com (Melhor Envio)";
+			const METHOD_TITLE = "Azul Amanhã (Melhor Envio)";
 
-			const METHOD_DESCRIPTION = 'Serviço Jadlog .Com';
+			const METHOD_DESCRIPTION = 'Serviço Azul Cargo Amanhã';
 
 			/**
 			 * Constructor for your shipping class
@@ -81,13 +81,13 @@ function jadlog_com_shipping_method_init() {
 						$method = (new optionsHelper())->getName($result->id, $result->name, null, null);
 
 						$rate = [
-							'id' => 'melhorenvio_jadlog_com',
+							'id' => 'melhorenvio_azul_amanha',
 							'label' => $method['method'] . (new timeHelper)->setLabel($result->delivery_range, $this->code, $result->custom_delivery_range),
 							'cost' => (new MoneyHelper())->setprice($result->price, $this->code),
 							'calc_tax' => 'per_item',
 							'meta_data' => [
 								'delivery_time' => $result->delivery_range,
-								'company' => 'Jadlog',
+								'company' => 'Azul Cargo',
 								'name' => $method['method']
 							]
 						];
@@ -104,16 +104,16 @@ function jadlog_com_shipping_method_init() {
 	}
 }
 
-function add_jadlog_com_shipping_method( $methods ) {
-	$methods['jadlog_com'] = 'WC_Jadlog_Com_Shipping_Method';
+function add_azul_amanha_shipping_method( $methods ) {
+	$methods['azul_amanha'] = 'WC_Azul_Amanha_Shipping_Method';
 	return $methods;
 }
 
-add_filter( 'woocommerce_shipping_methods', 'add_jadlog_com_shipping_method' );
+add_filter( 'woocommerce_shipping_methods', 'add_azul_amanha_shipping_method' );
 
-function jadlog_com_validate_order($posted) {
+function azul_amanha_validate_order($posted) {
 
 }
 
-add_action('woocommerce_review_order_before_cart_contents', 'jadlog_com_validate_order', 10);
-add_action('woocommerce_after_checkout_validation', 'jadlog_com_validate_order', 10);
+add_action('woocommerce_review_order_before_cart_contents', 'azul_amanha_validate_order', 10);
+add_action('woocommerce_after_checkout_validation', 'azul_amanha_validate_order', 10);

@@ -18,7 +18,6 @@
                         </p>
                     </template>
                     
-                    <label>Métodos de envio</label> 
                     <template v-if="item.cotation[item.cotation.choose_method]">
                         <fieldset  class="selectLine">
                             <div class="inputBox">
@@ -46,16 +45,15 @@
         </template>
 
         <template v-else>
-            <p>
-                {{ item.cotation[item.cotation.choose_method].company.name }}
-                {{ item.cotation[item.cotation.choose_method].name }}
-                R${{ item.cotation[item.cotation.choose_method].price }}
-            </p>
+            <p>Compania: <b>{{ item.cotation[item.cotation.choose_method].company.name }}</b></p>
+            <p>Serviço: <b>{{ item.cotation[item.cotation.choose_method].name }}</b></p>
+            <p>Valor: <b>R${{ item.cotation[item.cotation.choose_method].price }}</b></p>
+            <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
         </template>
 
         <template v-if="item.protocol && item.status != null">
             <p>
-                {{ item.protocol }}
+                Protocolo: <b>{{ item.protocol }}</b>
             </p>
         </template>
 

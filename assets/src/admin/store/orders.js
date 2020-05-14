@@ -65,7 +65,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = 'released'
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             state.orders.splice(order.position, 1, order.content)
@@ -122,7 +122,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'printed'
+            order.content.status = 'released'
             state.orders.splice(order.position, 1, order.content)
         },
         setStatusWc: (state, data) => {

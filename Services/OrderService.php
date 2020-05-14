@@ -272,7 +272,7 @@ class OrderService
             $post_id,
             $data['order_id'],
             $data['protocol'],
-            'printed',
+            'released',
             $data['choose_method'],
             $data['purchase_id']
         );
@@ -343,20 +343,27 @@ class OrderService
 
             $status = null;
             $protocol = null;
+            $tracking = null;
 
             $data = (new OrderQuotationService())->getData($post['id']);
 
             $info = $this->getInfoOrder($data['order_id']);
 
+            if (isset(end($info)->tracking)) {
+                $tracking = end($info)->tracking;
+            }
+
             if(isset(end($info)->status)) {
                 $status   =  end($info)->status;
                 $protocol = end($info)->protocol;
+                $tracking = $tracking;
             }
 
             $response[$post['id']] = [
                 'order_id' => $data['order_id'],
                 'status' => $status,
-                'protocol' => $protocol
+                'protocol' => $protocol,
+                'tracking' => $tracking
             ];
         }
 

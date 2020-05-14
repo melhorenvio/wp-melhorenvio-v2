@@ -9,21 +9,21 @@ use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
 
-add_action( 'woocommerce_shipping_init', 'jadlog_com_shipping_method_init' );
+add_action( 'woocommerce_shipping_init', 'azul_ecommerce_shipping_method_init' );
 
-function jadlog_com_shipping_method_init() {
+function azul_ecommerce_shipping_method_init() {
 
-	if ( ! class_exists( 'WC_Jadlog_Com_Shipping_Method' ) ) {
+	if ( ! class_exists( 'WC_Azul_Ecommerce_Shipping_Method' ) ) {
 
-		class WC_Jadlog_Com_Shipping_Method extends WC_Shipping_Method {
+		class WC_Azul_Ecommerce_Shipping_Method extends WC_Shipping_Method {
 
-			public $code = '4';
+			public $code = '16';
 
-			const ID = 'jadlog_com';
+			const ID = 'azul_ecommerce';
 
-			const METHOD_TITLE = "Jadlog .Com (Melhor Envio)";
+			const METHOD_TITLE = "Azul Ecommerce (Melhor Envio)";
 
-			const METHOD_DESCRIPTION = 'Serviço Jadlog .Com';
+			const METHOD_DESCRIPTION = 'Serviço Azul Cargo Ecommerce';
 
 			/**
 			 * Constructor for your shipping class
@@ -81,13 +81,13 @@ function jadlog_com_shipping_method_init() {
 						$method = (new optionsHelper())->getName($result->id, $result->name, null, null);
 
 						$rate = [
-							'id' => 'melhorenvio_jadlog_com',
+							'id' => 'melhorenvio_azul_ecommerce',
 							'label' => $method['method'] . (new timeHelper)->setLabel($result->delivery_range, $this->code, $result->custom_delivery_range),
 							'cost' => (new MoneyHelper())->setprice($result->price, $this->code),
 							'calc_tax' => 'per_item',
 							'meta_data' => [
 								'delivery_time' => $result->delivery_range,
-								'company' => 'Jadlog',
+								'company' => 'Azul Cargo',
 								'name' => $method['method']
 							]
 						];
@@ -104,16 +104,16 @@ function jadlog_com_shipping_method_init() {
 	}
 }
 
-function add_jadlog_com_shipping_method( $methods ) {
-	$methods['jadlog_com'] = 'WC_Jadlog_Com_Shipping_Method';
+function add_azul_ecommerce_shipping_method( $methods ) {
+	$methods['azul_ecommerce'] = 'WC_Azul_Ecommerce_Shipping_Method';
 	return $methods;
 }
 
-add_filter( 'woocommerce_shipping_methods', 'add_jadlog_com_shipping_method' );
+add_filter( 'woocommerce_shipping_methods', 'add_azul_ecommerce_shipping_method' );
 
-function jadlog_com_validate_order($posted) {
+function azul_ecommerce_validate_order($posted) {
 
 }
 
-add_action('woocommerce_review_order_before_cart_contents', 'jadlog_com_validate_order', 10);
-add_action('woocommerce_after_checkout_validation', 'jadlog_com_validate_order', 10);
+add_action('woocommerce_review_order_before_cart_contents', 'azul_ecommerce_validate_order', 10);
+add_action('woocommerce_after_checkout_validation', 'azul_ecommerce_validate_order', 10);

@@ -74,9 +74,20 @@ class OrdersController
             ]);die;
         }
 
+        $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
+
+        if (!isset($result['order_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.'
+            ]);die;
+        }
+
+        $result = (new OrderService())->createLabel($_GET['order_id']);
+
         echo json_encode([
             'success' => true,
-            'message' => 'Pedido enviado para o carrinho de compras',
+            'message' => 'Pedido gerado com sucesso',
             'data' => $result
         ]);die;
     }
