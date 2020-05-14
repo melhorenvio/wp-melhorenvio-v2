@@ -108,7 +108,7 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox" ref="orderCheck" :disabled="!(item.status == 'posted' || item.status =='released')" :value="item.id" v-model="ordersSelecteds">
+                                <input type="checkbox" ref="orderCheck" :disabled="item.status !='released'" :value="item.id" v-model="ordersSelecteds">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -265,7 +265,7 @@ export default {
             })
         },
         selectAll: function() {
-            //TODO
+            //TODO função para selecionar todas ordens para imprimir
             for (var key in this.$refs.orderCheck) {
                 this.$refs.orderCheck[key].checked;
             }

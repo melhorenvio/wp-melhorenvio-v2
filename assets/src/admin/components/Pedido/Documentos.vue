@@ -27,7 +27,12 @@
         </template>
 
         <template v-else>
-            <p>Status da etiqueta: <b>{{item.status}}</b></p>
+            <p>
+                <b>
+                    <span v-if='item.status == "released"'>Pronta para imprimir</span>
+                    <span v-if='item.status == "posted"'>Etiqueta postada</span>
+                </b>
+            </p>
         </template>
     </div>
 </template>

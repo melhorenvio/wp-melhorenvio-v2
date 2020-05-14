@@ -11,6 +11,7 @@ use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
+use Services\ShippingService;
 
 class OrdersController 
 {
@@ -49,7 +50,7 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], Method::SERVICES_CODE_MELHOR_ENVIO)) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingService())->getCodesEnableds())) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'

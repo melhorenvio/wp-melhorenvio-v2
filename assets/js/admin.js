@@ -324,7 +324,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             });
         },
         selectAll: function () {
-            //TODO
+            //TODO função para selecionar todas ordens para imprimir
             for (var key in this.$refs.orderCheck) {
                 this.$refs.orderCheck[key].checked;
             }
@@ -511,6 +511,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2818,8 +2823,15 @@ var render = function() {
           ]
         : [
             _c("p", [
-              _vm._v("Status da etiqueta: "),
-              _c("b", [_vm._v(_vm._s(_vm.item.status))])
+              _c("b", [
+                _vm.item.status == "released"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.item.status == "posted"
+                  ? _c("span", [_vm._v("Etiqueta postada")])
+                  : _vm._e()
+              ])
             ])
           ]
     ],
@@ -3562,10 +3574,7 @@ var render = function() {
                               refInFor: true,
                               attrs: {
                                 type: "checkbox",
-                                disabled: !(
-                                  item.status == "posted" ||
-                                  item.status == "released"
-                                )
+                                disabled: item.status != "released"
                               },
                               domProps: {
                                 value: item.id,

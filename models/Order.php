@@ -206,7 +206,7 @@ class Order {
             $linkTracking = null;
 
             if (!is_null($result[$post['id']]['tracking'])) {
-                $linkTracking = sprintf("https://www.melhorrastreio.com.br/painel/informacao-rastreio/%s", $result[$post['id']]['tracking']);
+                $linkTracking = sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $result[$post['id']]['tracking']);
             }
 
             $posts[$key]['order_id'] = $result[$post['id']]['order_id'];

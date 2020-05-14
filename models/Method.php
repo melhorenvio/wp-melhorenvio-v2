@@ -4,11 +4,10 @@ namespace Models;
 
 class Method 
 {
-    const SERVICES_CODE_MELHOR_ENVIO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15,16, 17]; //TODO tentar deixar dinamico.
-
     public function getCodesString()
     {
-        return implode(",", self::SERVICES_CODE_MELHOR_ENVIO);
+        var_dump('Deprecado use ShippingService@ggetStringCodesEnables');die;
+        //return implode(",", self::SERVICES_CODE_MELHOR_ENVIO);
     }
 
     public function getMethodShipmentSelected($order_id)
