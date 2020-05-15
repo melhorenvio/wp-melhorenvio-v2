@@ -33,12 +33,7 @@ class OrderQuotationService
         $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION, true);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
-
-            //TODO rever função pra ver se é desatualizado
-
-            //$quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
-        
-            //$quotation = $this->saveQuotation($post_id, $quotation);
+            $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
         }
 
         return $quotation;
@@ -55,7 +50,7 @@ class OrderQuotationService
     {
         $result = $this->setKeyAsCodeService($quotation);
         $result['date_quotation'] = date('Y-m-d H:i:d'); 
-        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO
+        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
         $result['free_shipping'] = false; 
         $result['diff'] = false;
 
@@ -170,21 +165,23 @@ class OrderQuotationService
      */
     public function isUltrapassedQuotation($data)
     {
+
         if (!isset($data['date_quotation'])) { return true; }
 
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
-        return ($date < $data['date_quotation']) ? false : true;
+        return ($date > $data['date_quotation']);
     }
 
+    /**
+     * Function to return a prefix of environment.
+     *
+     *@return string $prefix_environment
+     */
     public function getEnvironmentToSave()
     {
         $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
-        $env = null;
-        if ($environment == 'sandbox') {
-            $env = '_sandbox';
-        }
 
-        return $env;
+        return ($environment == 'sandbox') ? '_sandbox' : null; 
     }
 }

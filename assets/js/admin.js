@@ -2776,8 +2776,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                _vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9
+                (_vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9)
                   ? [
                       _c("fieldset", [
                         _c("div", [
