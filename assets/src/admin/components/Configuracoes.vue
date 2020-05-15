@@ -65,7 +65,6 @@
     .error-message {
         width: 98%;
         padding: 10px 0 10px 2%;
-        background-color: #d6442a;
         color: #fff;
         font-weight: 600;
     }

@@ -263,33 +263,42 @@ const orders = {
                 return false
             })
         },
-        addCart: ({commit}, data) => {  
+        initLoader: ({commit}) => {
             commit('toggleLoader', true)
-            if (!data) {
-                commit('toggleLoader', false)
-                return false;
-            }
-            if (data.id && data.choosen) {
-                Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
-                    if(!response.data.success) {
-                        commit('setMsgModal', response.data.message)
-                        commit('toggleLoader', false)
-                        commit('toggleModal', true)
-                        return false
-                    }
-                    commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
-                    commit('toggleModal', true)
-                    commit('toggleLoader', false)
-                    commit('addCart',{
-                        id: data.id,
-                        order_id: response.data.data.order_id,
-                    })
-                    commit('toggleLoader', false)
-                    commit('toggleModal', true)
-                    return false
-                })
-            }
         },
+        stopLoader: ({commit}) => { 
+            commit('toggleLoader', false)
+        },
+        setMessageError: ({commit}, msg) => {
+            commit('setMsgModal', msg)
+            commit('toggleModal', true)
+        },
+        addCart: ({commit}, data) => {  
+            return new Promise ((resolve, reject) => {
+                if (!data) {
+                    commit('toggleLoader', false)
+                    resolve();
+                    return false;
+                }
+                if (data.id && data.choosen) {
+                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
+                        if(!response.data.success) {
+                            commit('toggleLoader', false)
+                            resolve();
+                            return false
+                        }
+                        commit('addCart',{
+                            id: data.id,
+                            order_id: response.data.data.order_id,
+                        })
+                        commit('toggleLoader', false)
+                        resolve(response.data);
+                        return false
+                    })
+                }
+            })
+        },
+
         refreshCotation: (context, data) => {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=update_order&id=${data.id}&order_id=${data.order_id}`).then(response => {
