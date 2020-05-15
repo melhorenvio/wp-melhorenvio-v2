@@ -163,6 +163,10 @@ const orders = {
 
     },
     actions: {
+        showErrorAlert: ({commit}, data) => {
+            commit('setMsgModal', data)
+            commit('toggleModal', true)
+        },
         retrieveMany: ({commit}, data) => {
             commit('toggleLoader', true)
             let content = {
@@ -189,16 +193,18 @@ const orders = {
                 return false
             })
         },
-        printMultiples: ({commit, state}, ordersSelecteds) => {
+        printMultiples: ({commit, state}, dataPrint) => {
             commit('toggleLoader', true);
             let data = {
                 action: 'buy_click',
-                ids: ordersSelecteds
+                ids: dataPrint.ordersSelecteds
             }
             Axios.get(`${ajaxurl}`, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
+                commit('setMsgModal', dataPrint.message)
                 commit('toggleLoader', false)
+                commit('toggleModal', true)
                 window.open(response.data.url,'_blank');
 
             }).catch(error => {

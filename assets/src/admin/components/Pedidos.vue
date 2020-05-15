@@ -96,7 +96,7 @@
                 <ul class="head">
                     <li>
                         <span>
-                            <input ref="selectAllBox" type="checkbox" @click="selectAllToPrint" />
+                            <input ref="selectAllBox" type="checkbox" @click="selectAll" />
                         </span>
                     </li>
                     <li><span>ID</span></li>
@@ -110,7 +110,8 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox" ref="orderCheck" :disabled="item.status !='released'" :value="item.id" v-model="ordersSelecteds">
+                                <!-- :disabled="item.status !='released'" -->
+                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="ordersSelecteds">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -143,8 +144,7 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
-        <button v-show="show_more" class="btn-border -full-blue" @click="printMultiples(ordersSelecteds)">Imprimir selecionados</button>
-
+        <button v-show="show_more" class="btn-border -full-blue" @click="beforePrintMultiples(ordersSelecteds)">Imprimir selecionados</button>
         <transition name="fade">
             <div class="me-modal" v-show="show_modal">
                 <div>
@@ -224,7 +224,7 @@ export default {
             name: null,
             environment: null,
             limit: 0,
-            limitEnabled: 0
+            limitEnabled: 0,
         }
     },
     components: {
@@ -249,10 +249,11 @@ export default {
     methods: {
         ...mapActions('orders', [
             'retrieveMany',
-            'loadMore',
+            'loadMore',,
             'closeModal',
             'getStatusWooCommerce',
-            'printMultiples'
+            'printMultiples',
+            'showErrorAlert'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {
@@ -270,18 +271,49 @@ export default {
                 this.validateToken();
             })
         },
-        selectAllToPrint: function() {
+        selectAll: function() {
             if (!this.$refs.selectAllBox.checked) {
                 this.ordersSelecteds = []
                 return
             }
             let selecteds = [];
             this.orders.filter(function(order) {
-                if (order.status == 'released') {
-                    selecteds.push(order.id)
-                }
+                selecteds.push(order.id)
             })
             this.ordersSelecteds = selecteds
+        },
+        beforePrintMultiples: function(data) {
+
+            let checkeds = this.$refs;
+            let selecteds = [];
+            let not = [];
+            let messagePrint = 'Etiquetas geradas';
+            
+            this.orders.filter(function (order, globNot) {
+                
+                if (data.includes(order.id) && checkeds[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                    selecteds.push(order.id);
+                }
+                
+                if (order.status == null) {
+                    checkeds[order.id][0].checked = false;
+                    not.push(order.id);
+                }
+            });
+
+
+            this.ordersSelecteds = selecteds;
+            this.notCanPrint = not;
+
+            if(not.length != 0 ) {
+                let stringNotCantPrint = not.join(','); 
+                messagePrint = 'Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.';
+            }
+
+            this.printMultiples({
+                'ordersSelecteds':selecteds,
+                'message': messagePrint
+            });
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then((response) => {

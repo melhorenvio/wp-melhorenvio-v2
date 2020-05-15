@@ -313,7 +313,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_more: 'showMore',
         statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'closeModal', 'getStatusWooCommerce', 'printMultiples']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -329,18 +329,48 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 this.validateToken();
             });
         },
-        selectAllToPrint: function () {
+        selectAll: function () {
             if (!this.$refs.selectAllBox.checked) {
                 this.ordersSelecteds = [];
                 return;
             }
             let selecteds = [];
             this.orders.filter(function (order) {
-                if (order.status == 'released') {
-                    selecteds.push(order.id);
-                }
+                selecteds.push(order.id);
             });
             this.ordersSelecteds = selecteds;
+        },
+        beforePrintMultiples: function (data) {
+
+            let checkeds = this.$refs;
+            let selecteds = [];
+            let not = [];
+            let messagePrint = 'Etiquetas geradas';
+
+            this.orders.filter(function (order, globNot) {
+
+                if (data.includes(order.id) && checkeds[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                    selecteds.push(order.id);
+                }
+
+                if (order.status == null) {
+                    checkeds[order.id][0].checked = false;
+                    not.push(order.id);
+                }
+            });
+
+            this.ordersSelecteds = selecteds;
+            this.notCanPrint = not;
+
+            if (not.length != 0) {
+                let stringNotCantPrint = not.join(',');
+                messagePrint = 'Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.';
+            }
+
+            this.printMultiples({
+                'ordersSelecteds': selecteds,
+                'message': messagePrint
+            });
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then(response => {
@@ -3613,7 +3643,7 @@ var render = function() {
                       _c("input", {
                         ref: "selectAllBox",
                         attrs: { type: "checkbox" },
-                        on: { click: _vm.selectAllToPrint }
+                        on: { click: _vm.selectAll }
                       })
                     ])
                   ]),
@@ -3652,12 +3682,9 @@ var render = function() {
                                   expression: "ordersSelecteds"
                                 }
                               ],
-                              ref: "orderCheck",
+                              ref: item.id,
                               refInFor: true,
-                              attrs: {
-                                type: "checkbox",
-                                disabled: item.status != "released"
-                              },
+                              attrs: { type: "checkbox" },
                               domProps: {
                                 value: item.id,
                                 checked: Array.isArray(_vm.ordersSelecteds)
@@ -3780,7 +3807,7 @@ var render = function() {
           staticClass: "btn-border -full-blue",
           on: {
             click: function($event) {
-              return _vm.printMultiples(_vm.ordersSelecteds)
+              return _vm.beforePrintMultiples(_vm.ordersSelecteds)
             }
           }
         },
@@ -6380,8 +6407,14 @@ var orders = {
 
     },
     actions: {
-        retrieveMany: function retrieveMany(_ref, data) {
+        showErrorAlert: function showErrorAlert(_ref, data) {
             var commit = _ref.commit;
+
+            commit('setMsgModal', data);
+            commit('toggleModal', true);
+        },
+        retrieveMany: function retrieveMany(_ref2, data) {
+            var commit = _ref2.commit;
 
             commit('toggleLoader', true);
             var content = {
@@ -6408,19 +6441,21 @@ var orders = {
                 return false;
             });
         },
-        printMultiples: function printMultiples(_ref2, ordersSelecteds) {
-            var commit = _ref2.commit,
-                state = _ref2.state;
+        printMultiples: function printMultiples(_ref3, dataPrint) {
+            var commit = _ref3.commit,
+                state = _ref3.state;
 
             commit('toggleLoader', true);
             var data = {
                 action: 'buy_click',
-                ids: ordersSelecteds
+                ids: dataPrint.ordersSelecteds
             };
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
+                commit('setMsgModal', dataPrint.message);
                 commit('toggleLoader', false);
+                commit('toggleModal', true);
                 window.open(response.data.url, '_blank');
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
@@ -6430,9 +6465,9 @@ var orders = {
                 return false;
             });
         },
-        loadMore: function loadMore(_ref3, status) {
-            var commit = _ref3.commit,
-                state = _ref3.state;
+        loadMore: function loadMore(_ref4, status) {
+            var commit = _ref4.commit,
+                state = _ref4.state;
 
 
             commit('toggleLoader', true);
@@ -6465,8 +6500,8 @@ var orders = {
                 return false;
             });
         },
-        insertInvoice: function insertInvoice(_ref4, data) {
-            var commit = _ref4.commit;
+        insertInvoice: function insertInvoice(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
@@ -6482,8 +6517,8 @@ var orders = {
                 return false;
             });
         },
-        addCart: function addCart(_ref5, data) {
-            var commit = _ref5.commit;
+        addCart: function addCart(_ref6, data) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
             if (!data) {
@@ -6594,8 +6629,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref6, data) {
-            var commit = _ref6.commit;
+        createTicket: function createTicket(_ref7, data) {
+            var commit = _ref7.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6618,8 +6653,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref7, data) {
-            var commit = _ref7.commit;
+        printTicket: function printTicket(_ref8, data) {
+            var commit = _ref8.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6641,15 +6676,15 @@ var orders = {
                 return false;
             });
         },
-        getStatusWooCommerce: function getStatusWooCommerce(_ref8) {
-            var commit = _ref8.commit;
+        getStatusWooCommerce: function getStatusWooCommerce(_ref9) {
+            var commit = _ref9.commit;
 
             _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
                 commit('setStatusWc', response.data.statusWc);
             });
         },
-        closeModal: function closeModal(_ref9) {
-            var commit = _ref9.commit;
+        closeModal: function closeModal(_ref10) {
+            var commit = _ref10.commit;
 
             commit('toggleModal', false);
         }
