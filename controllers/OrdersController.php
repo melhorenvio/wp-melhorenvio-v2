@@ -84,7 +84,8 @@ class OrdersController
         if (!isset($result['order_id'])) {
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.'
+                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
+                'result' => $result
             ]);die;
         }
 

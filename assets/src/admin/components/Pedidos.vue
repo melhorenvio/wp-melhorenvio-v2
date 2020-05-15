@@ -29,9 +29,15 @@
     .error-message {
         width: 98%;
         padding: 10px 0 10px 2%;
-        background-color: #d6442a;
-        color: #fff;
         font-weight: 600;
+    }
+
+    .me-modal {
+        z-index: 1!important;
+    }
+
+    .me-modal-2 {
+        z-index: 1!important;
     }
 </style>
 
@@ -49,7 +55,7 @@
                         <h1>Meus pedidos</h1>
                     </div>
                     <hr>
-                    <div class="col-12-12" v-show="error_message">
+                    <div class="col-12-12" v-show="true">
                         <p class="error-message">{{ error_message }}</p>
                     </div>
                     <br>
@@ -145,12 +151,18 @@
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
         <button v-show="show_more" class="btn-border -full-blue" @click="beforePrintMultiples(ordersSelecteds)">Imprimir selecionados</button>
+        
+        <button v-show="show_more" class="btn-border -full-blue" @click="beforeBuyOrders(ordersSelecteds)">Comprar selecionados</button>
+
         <transition name="fade">
-            <div class="me-modal" v-show="show_modal">
+
+            <!-- show_modal -->
+            <div class="me-modal me-modal-2" v-show="show_modal || show_modal2">
                 <div>
                     <p class="title">Atenção</p>
                     <div class="content">
                         <p class="txt">{{msg_modal}}</p>
+                        <p class="txt">{{msg_modal2}}</p>
                     </div>
                     <div class="buttons -center">
                         <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
@@ -159,6 +171,7 @@
             </div>
         </transition>
 
+        <!-- show_loader -->
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
                     <g fill="none" fill-rule="evenodd" stroke-width="2">
@@ -225,6 +238,10 @@ export default {
             environment: null,
             limit: 0,
             limitEnabled: 0,
+            totalOrders: 0,
+            totalCart: 0,
+            show_modal2: false,
+            msg_modal2: ''
         }
     },
     components: {
@@ -253,6 +270,7 @@ export default {
             'closeModal',
             'getStatusWooCommerce',
             'printMultiples',
+            'addCart',
             'showErrorAlert'
         ]),
         ...mapActions('balance', ['setBalance']),
@@ -289,7 +307,7 @@ export default {
             let not = [];
             let messagePrint = 'Etiquetas geradas';
             
-            this.orders.filter(function (order, globNot) {
+            this.orders.filter(function (order) {
                 
                 if (data.includes(order.id) && checkeds[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
                     selecteds.push(order.id);
@@ -314,6 +332,70 @@ export default {
                 'ordersSelecteds':selecteds,
                 'message': messagePrint
             });
+        },
+        beforeBuyOrders:function(data){
+
+            if (data.length == 0) {
+                this.show_modal2 = false;
+                this.msg_modal2 = '';
+                return
+            }
+
+            let checkeds = this.$refs;
+            let selecteds = [];
+            let selectedsIds = [];
+            let not = [];
+            
+            this.orders.filter(function (order) {
+                
+                if (checkeds[order.id][0].checked && order.status == null) {
+                    selectedsIds.push(order.id);
+                } 
+            });
+            
+            this.ordersSelecteds = selectedsIds;
+            this.dispatchCart().then( () => {
+                this.beforeBuyOrders(selectedsIds)
+            })
+
+        },
+        dispatchCart: function() {
+
+
+            this.show_modal2 = true;
+            this.msg_modal2 = 'Comprando etiquetas, aguarde.... Enviando #'+this.totalCart;
+            this.totalOrders = this.ordersSelecteds.length;
+
+            return new Promise( (resolve, reject) => {
+
+                let index = this.ordersSelecteds[0]
+
+                this.ordersSelecteds.shift()
+
+                let data = [];
+
+                this.orders.filter(function(order) {
+                    if (order.id == index) {
+                        data = {
+                            'id': order.id,
+                            'choosen': order.cotation.choose_method,
+                            'non_commercial': order.non_commercial
+                        };
+                    }
+                })
+
+                this.sendCart(data).then(function(response) {
+                    resolve();
+                })
+            })
+        },
+        sendCart: function(order) {
+            this.totalCart++;
+            return new Promise((resolve, reject) => {
+                this.addCart(order).then(function(response) {
+                    resolve();
+                })
+            })
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then((response) => {

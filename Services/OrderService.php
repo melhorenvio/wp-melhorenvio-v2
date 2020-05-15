@@ -199,7 +199,7 @@ class OrderService
             true
         );
 
-        return (new OrderQuotationService())->updateDataQuotation(
+        $response = (new OrderQuotationService())->updateDataQuotation(
             $post_id, //post_id
             end($result->purchase->orders)->id, //order_id
             end($result->purchase->orders)->protocol, //protocol
@@ -207,6 +207,10 @@ class OrderService
             end($result->purchase->orders)->service_id,//choose_method
             $result->purchase->id //purchase_id
         );
+
+        $response['result'] = $result;
+
+        return $response;   
     }
     /**
      * Function to create a label printble on melhor envio.

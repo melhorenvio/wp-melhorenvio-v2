@@ -4,7 +4,7 @@
         <!-- Histórico -->
         <a v-if="item.log" :href="item.log" class="action-button -adicionar"></a>
 
-        <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status)" @click="addCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
+        <a v-if="buttonCartShow(item.cotation.choose_method, item.non_commercial, item.invoice.number, item.invoice.key, item.status)" @click="beforeAddCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})" href="javascript:;" class="action-button -adicionar" data-tip="Adicionar">
             <svg class="ico" version="1.1" id="pagar" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
             <path d="M12,2c5.514,0,10,4.486,10,10s-4.486,10-10,10S2,17.514,2,12S6.486,2,12,2z M12,0C5.373,0,0,5.373,0,12s5.373,12,12,12
@@ -120,7 +120,7 @@
     export default {
         data: () => {
             return {
-    
+            
             }
         },
         props: {
@@ -133,12 +133,29 @@
         methods: {
             ...mapActions('orders', [
                 'addCart',
+                'initLoader',
+                'stopLoader',
+                'setMessageError',
                 'removeCart',
                 'cancelCart',
                 'payTicket',
                 'createTicket',
                 'printTicket'
             ]),
+            beforeAddCart: function(data) {
+                this.initLoader()
+                this.addCart(data).then( (response) => {
+                    this.stopLoader()    
+                    if (response.success)  {
+                        this.setMessageError('Etiqueta #' +data.id+ ' comprada com sucesso.')
+                        return;
+                    }
+
+                    this.setMessageError('Ocorreu um erro ao realizar a compra da etiqueta #' + data.id)
+                    
+                })
+                
+            },
             buttonCartShow(...args) {
                 const [
                     choose_method, 
