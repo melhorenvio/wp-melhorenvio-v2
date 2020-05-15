@@ -329,11 +329,18 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 this.validateToken();
             });
         },
-        selectAll: function () {
-            //TODO função para selecionar todas ordens para imprimir
-            for (var key in this.$refs.orderCheck) {
-                this.$refs.orderCheck[key].checked;
+        selectAllToPrint: function () {
+            if (!this.$refs.selectAllBox.checked) {
+                this.ordersSelecteds = [];
+                return;
             }
+            let selecteds = [];
+            this.orders.filter(function (order) {
+                if (order.status == 'released') {
+                    selecteds.push(order.id);
+                }
+            });
+            this.ordersSelecteds = selecteds;
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then(response => {
@@ -3600,7 +3607,27 @@ var render = function() {
             },
             [
               _c("div", { staticClass: "table -woocommerce" }, [
-                _vm._m(2),
+                _c("ul", { staticClass: "head" }, [
+                  _c("li", [
+                    _c("span", [
+                      _c("input", {
+                        ref: "selectAllBox",
+                        attrs: { type: "checkbox" },
+                        on: { click: _vm.selectAllToPrint }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _vm._m(5),
+                  _vm._v(" "),
+                  _vm._m(6)
+                ]),
                 _vm._v(" "),
                 _c(
                   "ul",
@@ -3931,19 +3958,31 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "head" }, [
-      _c("li", [_c("span")]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("ID")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Destinatário")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Cotação")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Documentos")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Ações")])])
-    ])
+    return _c("li", [_c("span", [_vm._v("ID")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Destinatário")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Cotação")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Documentos")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Ações")])])
   }
 ]
 render._withStripped = true

@@ -96,7 +96,7 @@
                 <ul class="head">
                     <li>
                         <span>
-                            <!--<input type="checkbox" @click="selectAll" />-->
+                            <input ref="selectAllBox" type="checkbox" @click="selectAllToPrint" />
                         </span>
                     </li>
                     <li><span>ID</span></li>
@@ -270,11 +270,18 @@ export default {
                 this.validateToken();
             })
         },
-        selectAll: function() {
-            //TODO função para selecionar todas ordens para imprimir
-            for (var key in this.$refs.orderCheck) {
-                this.$refs.orderCheck[key].checked;
+        selectAllToPrint: function() {
+            if (!this.$refs.selectAllBox.checked) {
+                this.ordersSelecteds = []
+                return
             }
+            let selecteds = [];
+            this.orders.filter(function(order) {
+                if (order.status == 'released') {
+                    selecteds.push(order.id)
+                }
+            })
+            this.ordersSelecteds = selecteds
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then((response) => {
