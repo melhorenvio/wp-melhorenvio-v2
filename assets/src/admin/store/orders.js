@@ -194,10 +194,11 @@ const orders = {
             })
         },
         printMultiples: ({commit, state}, dataPrint) => {
+
             commit('toggleLoader', true);
             let data = {
                 action: 'buy_click',
-                ids: dataPrint.ordersSelecteds
+                ids: dataPrint.orderSelecteds
             }
             Axios.get(`${ajaxurl}`, {
                 params: Object.assign(data, state.filters)
@@ -275,26 +276,29 @@ const orders = {
         },
         addCart: ({commit}, data) => {  
             return new Promise ((resolve, reject) => {
+
                 if (!data) {
                     commit('toggleLoader', false)
-                    resolve();
+                    reject();
                     return false;
                 }
                 if (data.id && data.choosen) {
-                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
-                        if(!response.data.success) {
+
+                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data)
+                        .then(response => {
                             commit('toggleLoader', false)
-                            resolve();
-                            return false
-                        }
-                        commit('addCart',{
-                            id: data.id,
-                            order_id: response.data.data.order_id,
-                        })
-                        commit('toggleLoader', false)
-                        resolve(response.data);
-                        return false
-                    })
+                            if(!response.data.success) {
+                                reject(response.data);
+                            }
+
+                            commit('addCart',{
+                                id: data.id,
+                                order_id: response.data.data.order_id,
+                            })
+                            resolve(response.data);
+                        }).catch((error) => {
+                            reject(error);
+                        });
                 }
             })
         },

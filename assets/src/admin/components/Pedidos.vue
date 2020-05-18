@@ -117,7 +117,7 @@
                         <ul class="body-list">
                             <li>
                                 <!-- :disabled="item.status !='released'" -->
-                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="ordersSelecteds">
+                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -150,10 +150,10 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
-        <button v-show="show_more" class="btn-border -full-blue" @click="beforePrintMultiples(ordersSelecteds)">Imprimir selecionados</button>
+        <button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
         
-        <button v-show="show_more" class="btn-border -full-blue" @click="beforeBuyOrders(ordersSelecteds)">Comprar selecionados</button>
-
+        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>
+ 
         <transition name="fade">
 
             <!-- show_modal -->
@@ -162,7 +162,7 @@
                     <p class="title">Atenção</p>
                     <div class="content">
                         <p class="txt">{{msg_modal}}</p>
-                        <p class="txt">{{msg_modal2}}</p>
+                        <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
                     </div>
                     <div class="buttons -center">
                         <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
@@ -232,7 +232,7 @@ export default {
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: [],
+            orderSelecteds: [],
             allSelected: false,
             name: null,
             environment: null,
@@ -241,7 +241,7 @@ export default {
             totalOrders: 0,
             totalCart: 0,
             show_modal2: false,
-            msg_modal2: ''
+            msg_modal2: []
         }
     },
     components: {
@@ -291,36 +291,44 @@ export default {
         },
         selectAll: function() {
             if (!this.$refs.selectAllBox.checked) {
-                this.ordersSelecteds = []
+                this.orderSelecteds = []
+                this.orders.filter((order) =>  {
+                    this.$refs[order.id][0].checked = false
+                })
                 return
             }
             let selecteds = [];
-            this.orders.filter(function(order) {
-                selecteds.push(order.id)
+            this.orders.filter((order) =>  {
+                selecteds.push(order)
+                this.$refs[order.id][0].checked = true
             })
-            this.ordersSelecteds = selecteds
+            this.orderSelecteds = selecteds
         },
-        beforePrintMultiples: function(data) {
-
-            let checkeds = this.$refs;
+        beforePrintMultiples: function() {
+            this.msg_modal2.length = 0;
             let selecteds = [];
             let not = [];
             let messagePrint = 'Etiquetas geradas';
             
-            this.orders.filter(function (order) {
+            this.orders.filter( (order) => {
                 
-                if (data.includes(order.id) && checkeds[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
                     selecteds.push(order.id);
                 }
                 
                 if (order.status == null) {
-                    checkeds[order.id][0].checked = false;
+                    this.$refs[order.id][0].checked = false;
                     not.push(order.id);
                 }
             });
 
+            if (selecteds.length == 0) {
+                this.msg_modal2.push('Nenhuma etiqueta disponível para imprimir')
+                this.show_modal2 = true;
+                return
+            }
 
-            this.ordersSelecteds = selecteds;
+            this.orderSelecteds = selecteds;
             this.notCanPrint = not;
 
             if(not.length != 0 ) {
@@ -328,73 +336,74 @@ export default {
                 messagePrint = 'Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.';
             }
 
+            this.msg_modal2.length = 0
             this.printMultiples({
-                'ordersSelecteds':selecteds,
+                'orderSelecteds':selecteds,
                 'message': messagePrint
             });
         },
-        beforeBuyOrders:function(data){
+        alertMessage: function(data) {
+            let stringMessage
+            data.filter( (item) => {
+                this.msg_modal2.push(item)
+            })
+            this.show_modal2 = true;
+        },
+        getSelectedOrders() {
+            const orders = []
+            this.orders.filter((order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    orders.push(order)
+                }
+            });
+            return orders
+        },
+        async beforeBuyOrders(){
+            this.show_modal2 = true;
+            const orderSelected = this.getSelectedOrders()
 
-            if (data.length == 0) {
+            if (orderSelected.length == 0) {
                 this.show_modal2 = false;
-                this.msg_modal2 = '';
+                this.msg_modal2.length = 0;
                 return
             }
-
-            let checkeds = this.$refs;
-            let selecteds = [];
-            let selectedsIds = [];
-            let not = [];
             
-            this.orders.filter(function (order) {
-                
-                if (checkeds[order.id][0].checked && order.status == null) {
-                    selectedsIds.push(order.id);
-                } 
-            });
-            
-            this.ordersSelecteds = selectedsIds;
-            this.dispatchCart().then( () => {
-                this.beforeBuyOrders(selectedsIds)
-            })
-
+            for (const idx in orderSelected) { 
+                console.log(orderSelected[idx].id)
+                await this.dispatchCart(orderSelected[idx])
+            }
         },
-        dispatchCart: function() {
+        countOrdersEnabledToBuy: function() {
+            let total = 0
+            this.orders.filter( (order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    total++
+                }
+            })
+            return total
+        },
 
+        dispatchCart: function(order) {
 
-            this.show_modal2 = true;
-            this.msg_modal2 = 'Comprando etiquetas, aguarde.... Enviando #'+this.totalCart;
-            this.totalOrders = this.ordersSelecteds.length;
+            this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...")
 
             return new Promise( (resolve, reject) => {
 
-                let index = this.ordersSelecteds[0]
+                let data = {
+                    'id': order.id,
+                    'choosen': order.cotation.choose_method,
+                    'non_commercial': order.non_commercial
+                };
 
-                this.ordersSelecteds.shift()
-
-                let data = [];
-
-                this.orders.filter(function(order) {
-                    if (order.id == index) {
-                        data = {
-                            'id': order.id,
-                            'choosen': order.cotation.choose_method,
-                            'non_commercial': order.non_commercial
-                        };
-                    }
-                })
-
-                this.sendCart(data).then(function(response) {
-                    resolve();
-                })
-            })
-        },
-        sendCart: function(order) {
-            this.totalCart++;
-            return new Promise((resolve, reject) => {
-                this.addCart(order).then(function(response) {
-                    resolve();
-                })
+                setTimeout(() => {
+                    this.addCart(data).then( (response) => {
+                        this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!")
+                        resolve(response)
+                    }).catch((error) => {
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id + ". " + error.message)
+                        resolve()
+                    });
+                }, 500)
             })
         },
         getMe() {
@@ -406,6 +415,11 @@ export default {
                     this.limitEnabled = response.data.limits.shipments_available
                 }
             })
+        },
+        close() {
+            this.show_modal2 = false
+            this.msg_modal2.length = 0
+            this.closeModal()
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {

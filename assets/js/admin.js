@@ -302,7 +302,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: [],
+            orderSelecteds: [],
             allSelected: false,
             name: null,
             environment: null,
@@ -311,7 +311,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             totalOrders: 0,
             totalCart: 0,
             show_modal2: false,
-            msg_modal2: ''
+            msg_modal2: []
         };
     },
     components: {
@@ -348,35 +348,44 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         selectAll: function () {
             if (!this.$refs.selectAllBox.checked) {
-                this.ordersSelecteds = [];
+                this.orderSelecteds = [];
+                this.orders.filter(order => {
+                    this.$refs[order.id][0].checked = false;
+                });
                 return;
             }
             let selecteds = [];
-            this.orders.filter(function (order) {
-                selecteds.push(order.id);
+            this.orders.filter(order => {
+                selecteds.push(order);
+                this.$refs[order.id][0].checked = true;
             });
-            this.ordersSelecteds = selecteds;
+            this.orderSelecteds = selecteds;
         },
-        beforePrintMultiples: function (data) {
-
-            let checkeds = this.$refs;
+        beforePrintMultiples: function () {
+            this.msg_modal2.length = 0;
             let selecteds = [];
             let not = [];
             let messagePrint = 'Etiquetas geradas';
 
-            this.orders.filter(function (order) {
+            this.orders.filter(order => {
 
-                if (data.includes(order.id) && checkeds[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
                     selecteds.push(order.id);
                 }
 
                 if (order.status == null) {
-                    checkeds[order.id][0].checked = false;
+                    this.$refs[order.id][0].checked = false;
                     not.push(order.id);
                 }
             });
 
-            this.ordersSelecteds = selecteds;
+            if (selecteds.length == 0) {
+                this.msg_modal2.push('Nenhuma etiqueta disponível para imprimir');
+                this.show_modal2 = true;
+                return;
+            }
+
+            this.orderSelecteds = selecteds;
             this.notCanPrint = not;
 
             if (not.length != 0) {
@@ -384,71 +393,74 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 messagePrint = 'Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.';
             }
 
+            this.msg_modal2.length = 0;
             this.printMultiples({
-                'ordersSelecteds': selecteds,
+                'orderSelecteds': selecteds,
                 'message': messagePrint
             });
         },
-        beforeBuyOrders: function (data) {
+        alertMessage: function (data) {
+            let stringMessage;
+            data.filter(item => {
+                this.msg_modal2.push(item);
+            });
+            this.show_modal2 = true;
+        },
+        getSelectedOrders() {
+            const orders = [];
+            this.orders.filter(order => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    orders.push(order);
+                }
+            });
+            return orders;
+        },
+        async beforeBuyOrders() {
+            this.show_modal2 = true;
+            const orderSelected = this.getSelectedOrders();
 
-            if (data.length == 0) {
+            if (orderSelected.length == 0) {
                 this.show_modal2 = false;
-                this.msg_modal2 = '';
+                this.msg_modal2.length = 0;
                 return;
             }
 
-            let checkeds = this.$refs;
-            let selecteds = [];
-            let selectedsIds = [];
-            let not = [];
-
-            this.orders.filter(function (order) {
-
-                if (checkeds[order.id][0].checked && order.status == null) {
-                    selectedsIds.push(order.id);
+            for (const idx in orderSelected) {
+                console.log(orderSelected[idx].id);
+                await this.dispatchCart(orderSelected[idx]);
+            }
+        },
+        countOrdersEnabledToBuy: function () {
+            let total = 0;
+            this.orders.filter(order => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    total++;
                 }
             });
-
-            this.ordersSelecteds = selectedsIds;
-            this.dispatchCart().then(() => {
-                this.beforeBuyOrders(selectedsIds);
-            });
+            return total;
         },
-        dispatchCart: function () {
 
-            this.show_modal2 = true;
-            this.msg_modal2 = 'Comprando etiquetas, aguarde.... Enviando #' + this.totalCart;
-            this.totalOrders = this.ordersSelecteds.length;
+        dispatchCart: function (order) {
+
+            this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...");
 
             return new Promise((resolve, reject) => {
 
-                let index = this.ordersSelecteds[0];
+                let data = {
+                    'id': order.id,
+                    'choosen': order.cotation.choose_method,
+                    'non_commercial': order.non_commercial
+                };
 
-                this.ordersSelecteds.shift();
-
-                let data = [];
-
-                this.orders.filter(function (order) {
-                    if (order.id == index) {
-                        data = {
-                            'id': order.id,
-                            'choosen': order.cotation.choose_method,
-                            'non_commercial': order.non_commercial
-                        };
-                    }
-                });
-
-                this.sendCart(data).then(function (response) {
-                    resolve();
-                });
-            });
-        },
-        sendCart: function (order) {
-            this.totalCart++;
-            return new Promise((resolve, reject) => {
-                this.addCart(order).then(function (response) {
-                    resolve();
-                });
+                setTimeout(() => {
+                    this.addCart(data).then(response => {
+                        this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!");
+                        resolve(response);
+                    }).catch(error => {
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id + ". " + error.message);
+                        resolve();
+                    });
+                }, 500);
             });
         },
         getMe() {
@@ -460,6 +472,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     this.limitEnabled = response.data.limits.shipments_available;
                 }
             });
+        },
+        close() {
+            this.show_modal2 = false;
+            this.msg_modal2.length = 0;
+            this.closeModal();
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
@@ -3768,8 +3785,8 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.ordersSelecteds,
-                                  expression: "ordersSelecteds"
+                                  value: item.checked,
+                                  expression: "item.checked"
                                 }
                               ],
                               ref: item.id,
@@ -3777,13 +3794,13 @@ var render = function() {
                               attrs: { type: "checkbox" },
                               domProps: {
                                 value: item.id,
-                                checked: Array.isArray(_vm.ordersSelecteds)
-                                  ? _vm._i(_vm.ordersSelecteds, item.id) > -1
-                                  : _vm.ordersSelecteds
+                                checked: Array.isArray(item.checked)
+                                  ? _vm._i(item.checked, item.id) > -1
+                                  : item.checked
                               },
                               on: {
                                 change: function($event) {
-                                  var $$a = _vm.ordersSelecteds,
+                                  var $$a = item.checked,
                                     $$el = $event.target,
                                     $$c = $$el.checked ? true : false
                                   if (Array.isArray($$a)) {
@@ -3791,17 +3808,23 @@ var render = function() {
                                       $$i = _vm._i($$a, $$v)
                                     if ($$el.checked) {
                                       $$i < 0 &&
-                                        (_vm.ordersSelecteds = $$a.concat([
-                                          $$v
-                                        ]))
+                                        _vm.$set(
+                                          item,
+                                          "checked",
+                                          $$a.concat([$$v])
+                                        )
                                     } else {
                                       $$i > -1 &&
-                                        (_vm.ordersSelecteds = $$a
-                                          .slice(0, $$i)
-                                          .concat($$a.slice($$i + 1)))
+                                        _vm.$set(
+                                          item,
+                                          "checked",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
                                     }
                                   } else {
-                                    _vm.ordersSelecteds = $$c
+                                    _vm.$set(item, "checked", $$c)
                                   }
                                 }
                               }
@@ -3886,20 +3909,8 @@ var render = function() {
       _c(
         "button",
         {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.show_more,
-              expression: "show_more"
-            }
-          ],
           staticClass: "btn-border -full-blue",
-          on: {
-            click: function($event) {
-              return _vm.beforePrintMultiples(_vm.ordersSelecteds)
-            }
-          }
+          on: { click: _vm.beforePrintMultiples }
         },
         [_vm._v("Imprimir selecionados")]
       ),
@@ -3907,20 +3918,8 @@ var render = function() {
       _c(
         "button",
         {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.show_more,
-              expression: "show_more"
-            }
-          ],
           staticClass: "btn-border -full-blue",
-          on: {
-            click: function($event) {
-              return _vm.beforeBuyOrders(_vm.ordersSelecteds)
-            }
-          }
+          on: { click: _vm.beforeBuyOrders }
         },
         [_vm._v("Comprar selecionados")]
       ),
@@ -3943,15 +3942,22 @@ var render = function() {
             _c("div", [
               _c("p", { staticClass: "title" }, [_vm._v("Atenção")]),
               _vm._v(" "),
-              _c("div", { staticClass: "content" }, [
-                _c("p", { staticClass: "txt" }, [
-                  _vm._v(_vm._s(_vm.msg_modal))
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "txt" }, [
-                  _vm._v(_vm._s(_vm.msg_modal2))
-                ])
-              ]),
+              _c(
+                "div",
+                { staticClass: "content" },
+                [
+                  _c("p", { staticClass: "txt" }, [
+                    _vm._v(_vm._s(_vm.msg_modal))
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.msg_modal2, function(msg) {
+                    return _c("p", { staticClass: "txt" }, [
+                      _vm._v(_vm._s(msg))
+                    ])
+                  })
+                ],
+                2
+              ),
               _vm._v(" "),
               _c("div", { staticClass: "buttons -center" }, [
                 _c(
@@ -6562,10 +6568,11 @@ var orders = {
             var commit = _ref3.commit,
                 state = _ref3.state;
 
+
             commit('toggleLoader', true);
             var data = {
                 action: 'buy_click',
-                ids: dataPrint.ordersSelecteds
+                ids: dataPrint.orderSelecteds
             };
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)
@@ -6654,25 +6661,27 @@ var orders = {
             var commit = _ref9.commit;
 
             return new Promise(function (resolve, reject) {
+
                 if (!data) {
                     commit('toggleLoader', false);
-                    resolve();
+                    reject();
                     return false;
                 }
                 if (data.id && data.choosen) {
+
                     _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
+                        commit('toggleLoader', false);
                         if (!response.data.success) {
-                            commit('toggleLoader', false);
-                            resolve();
-                            return false;
+                            reject(response.data);
                         }
+
                         commit('addCart', {
                             id: data.id,
                             order_id: response.data.data.order_id
                         });
-                        commit('toggleLoader', false);
                         resolve(response.data);
-                        return false;
+                    }).catch(function (error) {
+                        reject(error);
                     });
                 }
             });
