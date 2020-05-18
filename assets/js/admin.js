@@ -311,7 +311,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             totalOrders: 0,
             totalCart: 0,
             show_modal2: false,
-            msg_modal2: []
+            msg_modal2: [],
+            btnClose: true
         };
     },
     components: {
@@ -417,6 +418,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         async beforeBuyOrders() {
             this.show_modal2 = true;
+            this.btnClose = false;
             const orderSelected = this.getSelectedOrders();
 
             if (orderSelected.length == 0) {
@@ -426,9 +428,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             }
 
             for (const idx in orderSelected) {
-                console.log(orderSelected[idx].id);
                 await this.dispatchCart(orderSelected[idx]);
             }
+            this.btnClose = true;
         },
         countOrdersEnabledToBuy: function () {
             let total = 0;
@@ -3960,15 +3962,17 @@ var render = function() {
               ),
               _vm._v(" "),
               _c("div", { staticClass: "buttons -center" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn-border -full-blue",
-                    attrs: { type: "button" },
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("Fechar")]
-                )
+                _vm.btnClose
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn-border -full-blue",
+                        attrs: { type: "button" },
+                        on: { click: _vm.close }
+                      },
+                      [_vm._v("Fechar")]
+                    )
+                  : _vm._e()
               ])
             ])
           ]

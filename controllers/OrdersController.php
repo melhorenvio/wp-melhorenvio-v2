@@ -75,7 +75,8 @@ class OrdersController
         if (!isset($result['order_id'])) {
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.'
+                'message' => 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
+                'result' => $result
             ]);die;
         }
 
@@ -160,7 +161,7 @@ class OrdersController
 
         $result = (new OrderService())->pay($posts);
 
-        if (!isset($result['purchase_id']) || is_null($result['purchase_id'])) {
+        if (!isset($result['purchase_id'])) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao realizar o pagamento'

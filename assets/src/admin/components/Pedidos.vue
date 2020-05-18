@@ -165,7 +165,7 @@
                         <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
                     </div>
                     <div class="buttons -center">
-                        <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
+                        <button v-if="btnClose" type="button" @click="close" class="btn-border -full-blue">Fechar</button>
                     </div>
                 </div>
             </div>
@@ -241,7 +241,8 @@ export default {
             totalOrders: 0,
             totalCart: 0,
             show_modal2: false,
-            msg_modal2: []
+            msg_modal2: [],
+            btnClose: true
         }
     },
     components: {
@@ -360,6 +361,7 @@ export default {
         },
         async beforeBuyOrders(){
             this.show_modal2 = true;
+            this.btnClose = false;
             const orderSelected = this.getSelectedOrders()
 
             if (orderSelected.length == 0) {
@@ -369,9 +371,9 @@ export default {
             }
             
             for (const idx in orderSelected) { 
-                console.log(orderSelected[idx].id)
                 await this.dispatchCart(orderSelected[idx])
             }
+            this.btnClose = true;
         },
         countOrdersEnabledToBuy: function() {
             let total = 0
