@@ -165,6 +165,11 @@ class OrderQuotationService
      */
     public function isUltrapassedQuotation($data)
     {
+        foreach ($data as $item) {
+            if ($item == 'Unauthenticated.') {
+                return true;
+            }
+        }
 
         if (!isset($data['date_quotation'])) { return true; }
 

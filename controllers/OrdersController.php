@@ -54,13 +54,6 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingMelhorEnvioService())->getCodesEnableds())) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Verificar o código do serviço'
-            ]);die;
-        }
-
         $products = (new OrdersProductsService())->getProductsOrder($_GET['order_id']);
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
