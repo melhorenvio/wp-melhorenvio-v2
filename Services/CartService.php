@@ -44,15 +44,15 @@ class CartService
             )
         );
 
-        $isValid = $this->paramsValid($body);
+        //$isValid = $this->paramsValid($body); //TODO remover
 
-        if (!empty($isValid)) {
+        /**if (!empty($isValid)) {
 
             return [
                 'success' => false,
                 'errors' => $isValid
             ];
-        }
+        }*/
 
         $result = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART, 
@@ -65,7 +65,7 @@ class CartService
             return $result;
         }
 
-        return (new OrderQuotationService())->addDataQuotation(
+        return (new OrderQuotationService())->updateDataQuotation(
             $order_id, 
             $result->id, 
             $result->protocol, 
@@ -178,7 +178,7 @@ class CartService
         }
 
         if (!isset($body['volumes']) ) {
-            $errors[] = 'Informar os volumess do envio';
+            $errors[] = 'Informar os volumes do envio';
         }
 
         return $errors;

@@ -366,7 +366,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.msg_modal2.length = 0;
             let selecteds = [];
             let not = [];
-            let messagePrint = 'Etiquetas geradas';
+            let messagePrint = [];
 
             this.orders.filter(order => {
 
@@ -391,7 +391,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
             if (not.length != 0) {
                 let stringNotCantPrint = not.join(',');
-                messagePrint = 'Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.';
+                messagePrint.push('Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.');
             }
 
             this.msg_modal2.length = 0;
@@ -2926,8 +2926,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                (_vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9)
+                _vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9
                   ? [
                       _c("fieldset", [
                         _c("div", [

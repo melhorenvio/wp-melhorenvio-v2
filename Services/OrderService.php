@@ -153,6 +153,10 @@ class OrderService
             true
         );
 
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
+
         return (new OrderQuotationService())->updateDataQuotation(
             end($posts_id), //post_id
             end($result->purchase->orders)->id, //order_id
@@ -199,11 +203,8 @@ class OrderService
             true
         );
 
-        if (!$result['success']) {
-            return [
-                'success' => false,
-                'errors' => $result['errors']
-            ];
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
         }
 
         $response = (new OrderQuotationService())->updateDataQuotation(
@@ -240,6 +241,10 @@ class OrderService
             $body,
             true
         );
+
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
 
         $data = (new OrderQuotationService())->getData($post_id);
 

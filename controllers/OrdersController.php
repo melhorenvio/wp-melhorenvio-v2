@@ -65,9 +65,6 @@ class OrdersController
             $_GET['choosen']
         );
 
-        var_dump($result);die;
-
-
         if (!isset($result['order_id'])) {
 
             if (isset($result['errors'])) {
@@ -77,25 +74,21 @@ class OrdersController
                 ]);die;
             }
 
+            (new OrderQuotationService())->removeDataQuotation($_GET['order_id']);
+
             echo json_encode([
                 'success' => false,
                 'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
-                'result' => $result
             ]);die;
         }
 
-        
-
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
-
-        var_dump($result);die;
 
         if (!isset($result['order_id'])) {
 
             if (isset($result['errors'])) {
                 echo json_encode([
                     'success' => false,
-                    'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
                     'errors' => $result['errors']
                 ]);die;
             }
@@ -107,15 +100,11 @@ class OrdersController
             ]);die;
         }
 
-        var_dump($result);die;
-
         $result = (new OrderService())->createLabel($_GET['order_id']);
-
-        var_dump($result);die;
 
         echo json_encode([
             'success' => true,
-            'message' => 'Pedido gerado com sucesso',
+            'message' => (array) 'Pedido gerado com sucesso',
             'data' => $result
         ]);die;
     }

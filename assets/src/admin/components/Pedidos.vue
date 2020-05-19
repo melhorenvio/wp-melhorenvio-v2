@@ -309,7 +309,7 @@ export default {
             this.msg_modal2.length = 0;
             let selecteds = [];
             let not = [];
-            let messagePrint = 'Etiquetas geradas';
+            let messagePrint = [];
             
             this.orders.filter( (order) => {
                 
@@ -334,7 +334,7 @@ export default {
 
             if(not.length != 0 ) {
                 let stringNotCantPrint = not.join(','); 
-                messagePrint = 'Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.';
+                messagePrint.push('Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.');
             }
 
             this.msg_modal2.length = 0
