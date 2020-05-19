@@ -59,7 +59,11 @@ class CartService
             'POST', 
             $body,
             true
-        );
+        );      
+
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
 
         return (new OrderQuotationService())->addDataQuotation(
             $order_id, 

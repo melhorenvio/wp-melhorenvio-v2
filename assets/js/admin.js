@@ -459,10 +459,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                         this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!");
                         resolve(response);
                     }).catch(error => {
-                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id + ". " + error.message);
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id);
+                        error.errors.filter(item => {
+                            this.msg_modal2.push('ID:' + order.id + ': ' + item);
+                        });
                         resolve();
                     });
-                }, 500);
+                }, 100);
             });
         },
         getMe() {
@@ -862,13 +865,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         beforeAddCart: function (data) {
             this.initLoader();
             this.addCart(data).then(response => {
-                this.stopLoader();
                 if (response.success) {
                     this.setMessageError('Etiqueta #' + data.id + ' comprada com sucesso.');
+                    this.stopLoader();
                     return;
                 }
-
-                this.setMessageError('Ocorreu um erro ao realizar a compra da etiqueta #' + data.id);
+            }).catch(error => {
+                this.setMessageError(error.errors);
+                this.stopLoader();
             });
         },
         buttonCartShow(...args) {
@@ -3948,9 +3952,11 @@ var render = function() {
                 "div",
                 { staticClass: "content" },
                 [
-                  _c("p", { staticClass: "txt" }, [
-                    _vm._v(_vm._s(_vm.msg_modal))
-                  ]),
+                  _vm._l(_vm.msg_modal, function(msg) {
+                    return _c("p", { staticClass: "txt" }, [
+                      _vm._v(_vm._s(msg))
+                    ])
+                  }),
                   _vm._v(" "),
                   _vm._l(_vm.msg_modal2, function(msg) {
                     return _c("p", { staticClass: "txt" }, [
@@ -6491,6 +6497,9 @@ var orders = {
             state.show_loader = data;
         },
         toggleModal: function toggleModal(state, data) {
+            if (data == false) {
+                state.msg_modal = null;
+            }
             state.show_modal = data;
         },
         toggleMore: function toggleMore(state, data) {
@@ -6665,7 +6674,6 @@ var orders = {
             var commit = _ref9.commit;
 
             return new Promise(function (resolve, reject) {
-
                 if (!data) {
                     commit('toggleLoader', false);
                     reject();
@@ -6678,7 +6686,6 @@ var orders = {
                         if (!response.data.success) {
                             reject(response.data);
                         }
-
                         commit('addCart', {
                             id: data.id,
                             order_id: response.data.data.order_id

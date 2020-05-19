@@ -161,7 +161,7 @@
                 <div>
                     <p class="title">Atenção</p>
                     <div class="content">
-                        <p class="txt">{{msg_modal}}</p>
+                        <p v-for="msg in msg_modal" class="txt">{{msg}}</p>
                         <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
                     </div>
                     <div class="buttons -center">
@@ -402,10 +402,13 @@ export default {
                         this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!")
                         resolve(response)
                     }).catch((error) => {
-                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id + ". " + error.message)
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id)
+                        error.errors.filter( (item) => {
+                            this.msg_modal2.push('ID:' +order.id+ ': '+ item)
+                        })
                         resolve()
                     });
-                }, 500)
+                }, 100)
             })
         },
         getMe() {

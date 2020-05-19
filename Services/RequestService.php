@@ -64,8 +64,9 @@ class RequestService
                 )
             );
 
-            if (isset($response->errors)) {
-                return $this->treatmentErrors($response->errors);
+
+            if (isset($response->errors) || isset($response->error)) {
+                return $this->treatmentErrors($response);
             }
 
             return $response;
@@ -85,13 +86,26 @@ class RequestService
     {
         $response = [];
 
-        foreach ($data as $error) {
-            $response[] = end($error);
+        if (isset($data->error)) {
+            $response[] = $data->error;
+        }
+
+        if (isset($data->errors) && is_array($data->errors)) {
+            foreach ($data->errors as $error) {
+                if (is_array($error)) {
+                    foreach ($error as $err) {
+                        $response[] = $err;
+                    }
+                } else {
+                    $response[] = $error;
+                }
+            }
         }
 
         return [
             'success' => false,
-            'message' => $response  
+            'message' => null,
+            'errors' => $response  
         ];
     }
 }

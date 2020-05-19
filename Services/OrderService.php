@@ -183,7 +183,7 @@ class OrderService
         if ($wallet == 0) {
             return [
                 'success' => false,
-                'message' => 'Sem pedidos para pagar'
+                'errors' => (array) 'Sem pedidos para pagar'
             ];
         }
 
@@ -198,6 +198,13 @@ class OrderService
             $body,
             true
         );
+
+        if (!$result['success']) {
+            return [
+                'success' => false,
+                'errors' => $result['errors']
+            ];
+        }
 
         $response = (new OrderQuotationService())->updateDataQuotation(
             $post_id, //post_id
