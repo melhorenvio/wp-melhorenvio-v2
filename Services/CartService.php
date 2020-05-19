@@ -44,15 +44,15 @@ class CartService
             )
         );
 
-        //$isValid = $this->paramsValid($body); //TODO remover
+        $isValid = $this->paramsValid($body);
 
-        /**if (!empty($isValid)) {
+        if (!empty($isValid)) {
 
             return [
                 'success' => false,
                 'errors' => $isValid
             ];
-        }*/
+        }
 
         $result = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART, 
