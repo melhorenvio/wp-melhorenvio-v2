@@ -29,9 +29,15 @@
     .error-message {
         width: 98%;
         padding: 10px 0 10px 2%;
-        background-color: #d6442a;
-        color: #fff;
         font-weight: 600;
+    }
+
+    .me-modal {
+        z-index: 1!important;
+    }
+
+    .me-modal-2 {
+        z-index: 1!important;
     }
 </style>
 
@@ -49,7 +55,7 @@
                         <h1>Meus pedidos</h1>
                     </div>
                     <hr>
-                    <div class="col-12-12" v-show="error_message">
+                    <div class="col-12-12" v-show="true">
                         <p class="error-message">{{ error_message }}</p>
                     </div>
                     <br>
@@ -96,7 +102,7 @@
                 <ul class="head">
                     <li>
                         <span>
-                            <!--<input type="checkbox" @click="selectAll" />-->
+                            <input ref="selectAllBox" type="checkbox" @click="selectAll" />
                         </span>
                     </li>
                     <li><span>ID</span></li>
@@ -110,7 +116,8 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox" ref="orderCheck" :disabled="item.status !='released'" :value="item.id" v-model="ordersSelecteds">
+                                <!-- :disabled="item.status !='released'" -->
+                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -143,22 +150,28 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
-        <button v-show="show_more" class="btn-border -full-blue" @click="printMultiples(ordersSelecteds)">Imprimir selecionados</button>
-
+        <button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
+        
+        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>
+ 
         <transition name="fade">
-            <div class="me-modal" v-show="show_modal">
+
+            <!-- show_modal -->
+            <div class="me-modal me-modal-2" v-show="show_modal || show_modal2">
                 <div>
                     <p class="title">Atenção</p>
                     <div class="content">
-                        <p class="txt">{{msg_modal}}</p>
+                        <p v-for="msg in msg_modal" class="txt">{{msg}}</p>
+                        <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
                     </div>
                     <div class="buttons -center">
-                        <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
+                        <button v-if="btnClose" type="button" @click="close" class="btn-border -full-blue">Fechar</button>
                     </div>
                 </div>
             </div>
         </transition>
 
+        <!-- show_loader -->
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
                     <g fill="none" fill-rule="evenodd" stroke-width="2">
@@ -219,12 +232,17 @@ export default {
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: [],
+            orderSelecteds: [],
             allSelected: false,
             name: null,
             environment: null,
             limit: 0,
-            limitEnabled: 0
+            limitEnabled: 0,
+            totalOrders: 0,
+            totalCart: 0,
+            show_modal2: false,
+            msg_modal2: [],
+            btnClose: true
         }
     },
     components: {
@@ -249,10 +267,12 @@ export default {
     methods: {
         ...mapActions('orders', [
             'retrieveMany',
-            'loadMore',
+            'loadMore',,
             'closeModal',
             'getStatusWooCommerce',
-            'printMultiples'
+            'printMultiples',
+            'addCart',
+            'showErrorAlert'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {
@@ -271,10 +291,125 @@ export default {
             })
         },
         selectAll: function() {
-            //TODO função para selecionar todas ordens para imprimir
-            for (var key in this.$refs.orderCheck) {
-                this.$refs.orderCheck[key].checked;
+            if (!this.$refs.selectAllBox.checked) {
+                this.orderSelecteds = []
+                this.orders.filter((order) =>  {
+                    this.$refs[order.id][0].checked = false
+                })
+                return
             }
+            let selecteds = [];
+            this.orders.filter((order) =>  {
+                selecteds.push(order)
+                this.$refs[order.id][0].checked = true
+            })
+            this.orderSelecteds = selecteds
+        },
+        beforePrintMultiples: function() {
+            this.msg_modal2.length = 0;
+            let selecteds = [];
+            let not = [];
+            let messagePrint = [];
+            
+            this.orders.filter( (order) => {
+                
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                    selecteds.push(order.id);
+                }
+                
+                if (order.status == null) {
+                    this.$refs[order.id][0].checked = false;
+                    not.push(order.id);
+                }
+            });
+
+            if (selecteds.length == 0) {
+                this.msg_modal2.push('Nenhuma etiqueta disponível para imprimir')
+                this.show_modal2 = true;
+                return
+            }
+
+            this.orderSelecteds = selecteds;
+            this.notCanPrint = not;
+
+            if(not.length != 0 ) {
+                let stringNotCantPrint = not.join(','); 
+                messagePrint.push('Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.');
+            }
+
+            this.msg_modal2.length = 0
+            this.printMultiples({
+                'orderSelecteds':selecteds,
+                'message': messagePrint
+            });
+        },
+        alertMessage: function(data) {
+            let stringMessage
+            data.filter( (item) => {
+                this.msg_modal2.push(item)
+            })
+            this.show_modal2 = true;
+        },
+        getSelectedOrders() {
+            const orders = []
+            this.orders.filter((order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    orders.push(order)
+                }
+            });
+            return orders
+        },
+        async beforeBuyOrders(){
+            this.show_modal2 = true;
+            this.btnClose = false;
+            const orderSelected = this.getSelectedOrders()
+
+            if (orderSelected.length == 0) {
+                this.show_modal2 = false;
+                this.msg_modal2.length = 0;
+                return
+            }
+            
+            for (const idx in orderSelected) { 
+                await this.dispatchCart(orderSelected[idx])
+            }
+            this.btnClose = true;
+        },
+        countOrdersEnabledToBuy: function() {
+            let total = 0
+            this.orders.filter( (order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    total++
+                }
+            })
+            return total
+        },
+
+        dispatchCart: function(order) {
+
+            this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...")
+
+            return new Promise( (resolve, reject) => {
+
+                let data = {
+                    'id': order.id,
+                    'choosen': order.cotation.choose_method,
+                    'non_commercial': order.non_commercial
+                };
+
+                setTimeout(() => {
+                    this.addCart(data).then( (response) => {
+                        this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!")
+                        resolve(response)
+                    }).catch((error) => {
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id)
+                        error.errors.filter( (item) => {
+                            this.msg_modal2.push('ID:' +order.id+ ': '+ item)
+                        })
+                        resolve()
+                    });
+                }, 100)
+            })
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then((response) => {
@@ -285,6 +420,11 @@ export default {
                     this.limitEnabled = response.data.limits.shipments_available
                 }
             })
+        },
+        close() {
+            this.show_modal2 = false
+            this.msg_modal2.length = 0
+            this.closeModal()
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {

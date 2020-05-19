@@ -54,13 +54,6 @@ class OrdersController
             die;
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], (new ShippingMelhorEnvioService())->getCodesEnableds())) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Verificar o código do serviço'
-            ]);die;
-        }
-
         $products = (new OrdersProductsService())->getProductsOrder($_GET['order_id']);
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
@@ -73,18 +66,37 @@ class OrdersController
         );
 
         if (!isset($result['order_id'])) {
+
+            if (isset($result['errors'])) {
+                echo json_encode([
+                    'success' => false,
+                    'errors' => $result['errors'],
+                ]);die;
+            }
+
+            (new OrderQuotationService())->removeDataQuotation($_GET['order_id']);
+
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.'
+                'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
             ]);die;
         }
 
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
 
         if (!isset($result['order_id'])) {
+
+            if (isset($result['errors'])) {
+                echo json_encode([
+                    'success' => false,
+                    'errors' => $result['errors']
+                ]);die;
+            }
+
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.'
+                'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
+                'result' => $result
             ]);die;
         }
 
@@ -92,7 +104,7 @@ class OrdersController
 
         echo json_encode([
             'success' => true,
-            'message' => 'Pedido gerado com sucesso',
+            'message' => (array) 'Pedido gerado com sucesso',
             'data' => $result
         ]);die;
     }
@@ -159,7 +171,7 @@ class OrdersController
 
         $result = (new OrderService())->pay($posts);
 
-        if (!isset($result['purchase_id']) || is_null($result['purchase_id'])) {
+        if (!isset($result['purchase_id'])) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao realizar o pagamento'

@@ -30,15 +30,10 @@ class OrderQuotationService
      */
     public function getQuotation($post_id)
     {
-        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION, true);
+        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
-
-            //TODO rever função pra ver se é desatualizado
-
-            //$quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
-        
-            //$quotation = $this->saveQuotation($post_id, $quotation);
+            $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
         }
 
         return $quotation;
@@ -53,16 +48,16 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
-        $result = $this->setKeyAsCodeService($quotation);
-        $result['date_quotation'] = date('Y-m-d H:i:d'); 
-        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id); //TODO
-        $result['free_shipping'] = false; 
-        $result['diff'] = false;
+        $data = $this->setKeyAsCodeService($quotation);
+        $data['date_quotation'] = date('Y-m-d H:i:d'); 
+        $data['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
+        $data['free_shipping'] = false; 
+        $data['diff'] = false;
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
-        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $result, true);
+        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
 
-        return $result;
+        return $data;
     }
 
     /**
@@ -76,7 +71,7 @@ class OrderQuotationService
         $result = [];
         
         foreach ($quotation as $item) {
-            
+
             $result[$item->id] = $item;
 
             if ($item->id == self::CORREIOS_MINI_CODE) {
@@ -170,21 +165,32 @@ class OrderQuotationService
      */
     public function isUltrapassedQuotation($data)
     {
+        if (count($data) <= 4) {
+            return true;
+        }
+        
+        foreach ($data as $item) {
+            if ($item == 'Unauthenticated.' || empty($item)) {
+                return true;
+            }
+        }
+
         if (!isset($data['date_quotation'])) { return true; }
 
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
-        return ($date < $data['date_quotation']) ? false : true;
+        return ($date > $data['date_quotation']);
     }
 
+    /**
+     * Function to return a prefix of environment.
+     *
+     *@return string $prefix_environment
+     */
     public function getEnvironmentToSave()
     {
         $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
-        $env = null;
-        if ($environment == 'sandbox') {
-            $env = '_sandbox';
-        }
 
-        return $env;
+        return ($environment == 'sandbox') ? '_sandbox' : null; 
     }
 }

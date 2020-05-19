@@ -14,7 +14,7 @@ class SellerService
      */
     public function getData()
     {
-        $data = $this->getDataApiMelhorEnvio();
+        $data = $this->getDataApiMelhorEnvio();   
 
         $address = (new Address())->getAddressFrom();
 
@@ -54,7 +54,7 @@ class SellerService
      */
     private function getDataApiMelhorEnvio()
     {
-        $data = (new RequestService())->request('', 'GET', []);
+        $data = (new RequestService())->request('', 'GET', [], false);
 
         if (!isset($data->id)) {
             return [

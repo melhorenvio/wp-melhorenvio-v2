@@ -59,9 +59,13 @@ class CartService
             'POST', 
             $body,
             true
-        );
+        );      
 
-        return (new OrderQuotationService())->addDataQuotation(
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
+
+        return (new OrderQuotationService())->updateDataQuotation(
             $order_id, 
             $result->id, 
             $result->protocol, 
@@ -174,7 +178,7 @@ class CartService
         }
 
         if (!isset($body['volumes']) ) {
-            $errors[] = 'Informar os volumess do envio';
+            $errors[] = 'Informar os volumes do envio';
         }
 
         return $errors;

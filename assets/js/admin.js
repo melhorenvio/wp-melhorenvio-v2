@@ -271,6 +271,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -289,12 +302,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             line: 0,
             toggleInfo: null,
             error_message: null,
-            ordersSelecteds: [],
+            orderSelecteds: [],
             allSelected: false,
             name: null,
             environment: null,
             limit: 0,
-            limitEnabled: 0
+            limitEnabled: 0,
+            totalOrders: 0,
+            totalCart: 0,
+            show_modal2: false,
+            msg_modal2: [],
+            btnClose: true
         };
     },
     components: {
@@ -313,7 +331,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_more: 'showMore',
         statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore', 'closeModal', 'getStatusWooCommerce', 'printMultiples']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'addCart', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -330,10 +348,125 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             });
         },
         selectAll: function () {
-            //TODO função para selecionar todas ordens para imprimir
-            for (var key in this.$refs.orderCheck) {
-                this.$refs.orderCheck[key].checked;
+            if (!this.$refs.selectAllBox.checked) {
+                this.orderSelecteds = [];
+                this.orders.filter(order => {
+                    this.$refs[order.id][0].checked = false;
+                });
+                return;
             }
+            let selecteds = [];
+            this.orders.filter(order => {
+                selecteds.push(order);
+                this.$refs[order.id][0].checked = true;
+            });
+            this.orderSelecteds = selecteds;
+        },
+        beforePrintMultiples: function () {
+            this.msg_modal2.length = 0;
+            let selecteds = [];
+            let not = [];
+            let messagePrint = [];
+
+            this.orders.filter(order => {
+
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                    selecteds.push(order.id);
+                }
+
+                if (order.status == null) {
+                    this.$refs[order.id][0].checked = false;
+                    not.push(order.id);
+                }
+            });
+
+            if (selecteds.length == 0) {
+                this.msg_modal2.push('Nenhuma etiqueta disponível para imprimir');
+                this.show_modal2 = true;
+                return;
+            }
+
+            this.orderSelecteds = selecteds;
+            this.notCanPrint = not;
+
+            if (not.length != 0) {
+                let stringNotCantPrint = not.join(',');
+                messagePrint.push('Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.');
+            }
+
+            this.msg_modal2.length = 0;
+            this.printMultiples({
+                'orderSelecteds': selecteds,
+                'message': messagePrint
+            });
+        },
+        alertMessage: function (data) {
+            let stringMessage;
+            data.filter(item => {
+                this.msg_modal2.push(item);
+            });
+            this.show_modal2 = true;
+        },
+        getSelectedOrders() {
+            const orders = [];
+            this.orders.filter(order => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    orders.push(order);
+                }
+            });
+            return orders;
+        },
+        async beforeBuyOrders() {
+            this.show_modal2 = true;
+            this.btnClose = false;
+            const orderSelected = this.getSelectedOrders();
+
+            if (orderSelected.length == 0) {
+                this.show_modal2 = false;
+                this.msg_modal2.length = 0;
+                return;
+            }
+
+            for (const idx in orderSelected) {
+                await this.dispatchCart(orderSelected[idx]);
+            }
+            this.btnClose = true;
+        },
+        countOrdersEnabledToBuy: function () {
+            let total = 0;
+            this.orders.filter(order => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    total++;
+                }
+            });
+            return total;
+        },
+
+        dispatchCart: function (order) {
+
+            this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...");
+
+            return new Promise((resolve, reject) => {
+
+                let data = {
+                    'id': order.id,
+                    'choosen': order.cotation.choose_method,
+                    'non_commercial': order.non_commercial
+                };
+
+                setTimeout(() => {
+                    this.addCart(data).then(response => {
+                        this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!");
+                        resolve(response);
+                    }).catch(error => {
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id);
+                        error.errors.filter(item => {
+                            this.msg_modal2.push('ID:' + order.id + ': ' + item);
+                        });
+                        resolve();
+                    });
+                }, 100);
+            });
         },
         getMe() {
             this.$http.get(`${ajaxurl}?action=me`).then(response => {
@@ -344,6 +477,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     this.limitEnabled = response.data.limits.shipments_available;
                 }
             });
+        },
+        close() {
+            this.show_modal2 = false;
+            this.msg_modal2.length = 0;
+            this.closeModal();
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
@@ -723,7 +861,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         }
     },
     mounted() {},
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['addCart', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['addCart', 'initLoader', 'stopLoader', 'setMessageError', 'removeCart', 'cancelCart', 'payTicket', 'createTicket', 'printTicket']), {
+        beforeAddCart: function (data) {
+            this.initLoader();
+            this.addCart(data).then(response => {
+                if (response.success) {
+                    this.setMessageError('Etiqueta #' + data.id + ' comprada com sucesso.');
+                    this.stopLoader();
+                    return;
+                }
+            }).catch(error => {
+                this.setMessageError(error.errors);
+                this.stopLoader();
+            });
+        },
         buttonCartShow(...args) {
             const [choose_method, non_commercial, number, key, status] = args;
 
@@ -809,7 +960,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_v_money___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_v_money__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-//
 //
 //
 //
@@ -2972,7 +3122,7 @@ var render = function() {
             attrs: { href: "javascript:;", "data-tip": "Adicionar" },
             on: {
               click: function($event) {
-                return _vm.addCart({
+                return _vm.beforeAddCart({
                   id: _vm.item.id,
                   choosen: _vm.item.cotation.choose_method,
                   non_commercial: _vm.item.non_commercial
@@ -3434,8 +3584,8 @@ var render = function() {
                   {
                     name: "show",
                     rawName: "v-show",
-                    value: _vm.error_message,
-                    expression: "error_message"
+                    value: true,
+                    expression: "true"
                   }
                 ],
                 staticClass: "col-12-12"
@@ -3600,7 +3750,27 @@ var render = function() {
             },
             [
               _c("div", { staticClass: "table -woocommerce" }, [
-                _vm._m(2),
+                _c("ul", { staticClass: "head" }, [
+                  _c("li", [
+                    _c("span", [
+                      _c("input", {
+                        ref: "selectAllBox",
+                        attrs: { type: "checkbox" },
+                        on: { click: _vm.selectAll }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _vm._m(5),
+                  _vm._v(" "),
+                  _vm._m(6)
+                ]),
                 _vm._v(" "),
                 _c(
                   "ul",
@@ -3621,25 +3791,22 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.ordersSelecteds,
-                                  expression: "ordersSelecteds"
+                                  value: item.checked,
+                                  expression: "item.checked"
                                 }
                               ],
-                              ref: "orderCheck",
+                              ref: item.id,
                               refInFor: true,
-                              attrs: {
-                                type: "checkbox",
-                                disabled: item.status != "released"
-                              },
+                              attrs: { type: "checkbox" },
                               domProps: {
                                 value: item.id,
-                                checked: Array.isArray(_vm.ordersSelecteds)
-                                  ? _vm._i(_vm.ordersSelecteds, item.id) > -1
-                                  : _vm.ordersSelecteds
+                                checked: Array.isArray(item.checked)
+                                  ? _vm._i(item.checked, item.id) > -1
+                                  : item.checked
                               },
                               on: {
                                 change: function($event) {
-                                  var $$a = _vm.ordersSelecteds,
+                                  var $$a = item.checked,
                                     $$el = $event.target,
                                     $$c = $$el.checked ? true : false
                                   if (Array.isArray($$a)) {
@@ -3647,17 +3814,23 @@ var render = function() {
                                       $$i = _vm._i($$a, $$v)
                                     if ($$el.checked) {
                                       $$i < 0 &&
-                                        (_vm.ordersSelecteds = $$a.concat([
-                                          $$v
-                                        ]))
+                                        _vm.$set(
+                                          item,
+                                          "checked",
+                                          $$a.concat([$$v])
+                                        )
                                     } else {
                                       $$i > -1 &&
-                                        (_vm.ordersSelecteds = $$a
-                                          .slice(0, $$i)
-                                          .concat($$a.slice($$i + 1)))
+                                        _vm.$set(
+                                          item,
+                                          "checked",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
                                     }
                                   } else {
-                                    _vm.ordersSelecteds = $$c
+                                    _vm.$set(item, "checked", $$c)
                                   }
                                 }
                               }
@@ -3742,22 +3915,19 @@ var render = function() {
       _c(
         "button",
         {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.show_more,
-              expression: "show_more"
-            }
-          ],
           staticClass: "btn-border -full-blue",
-          on: {
-            click: function($event) {
-              return _vm.printMultiples(_vm.ordersSelecteds)
-            }
-          }
+          on: { click: _vm.beforePrintMultiples }
         },
         [_vm._v("Imprimir selecionados")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn-border -full-blue",
+          on: { click: _vm.beforeBuyOrders }
+        },
+        [_vm._v("Comprar selecionados")]
       ),
       _vm._v(" "),
       _c("transition", { attrs: { name: "fade" } }, [
@@ -3768,30 +3938,47 @@ var render = function() {
               {
                 name: "show",
                 rawName: "v-show",
-                value: _vm.show_modal,
-                expression: "show_modal"
+                value: _vm.show_modal || _vm.show_modal2,
+                expression: "show_modal || show_modal2"
               }
             ],
-            staticClass: "me-modal"
+            staticClass: "me-modal me-modal-2"
           },
           [
             _c("div", [
               _c("p", { staticClass: "title" }, [_vm._v("Atenção")]),
               _vm._v(" "),
-              _c("div", { staticClass: "content" }, [
-                _c("p", { staticClass: "txt" }, [_vm._v(_vm._s(_vm.msg_modal))])
-              ]),
+              _c(
+                "div",
+                { staticClass: "content" },
+                [
+                  _vm._l(_vm.msg_modal, function(msg) {
+                    return _c("p", { staticClass: "txt" }, [
+                      _vm._v(_vm._s(msg))
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _vm._l(_vm.msg_modal2, function(msg) {
+                    return _c("p", { staticClass: "txt" }, [
+                      _vm._v(_vm._s(msg))
+                    ])
+                  })
+                ],
+                2
+              ),
               _vm._v(" "),
               _c("div", { staticClass: "buttons -center" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn-border -full-blue",
-                    attrs: { type: "button" },
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("Fechar")]
-                )
+                _vm.btnClose
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn-border -full-blue",
+                        attrs: { type: "button" },
+                        on: { click: _vm.close }
+                      },
+                      [_vm._v("Fechar")]
+                    )
+                  : _vm._e()
               ])
             ])
           ]
@@ -3931,19 +4118,31 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "head" }, [
-      _c("li", [_c("span")]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("ID")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Destinatário")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Cotação")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Documentos")])]),
-      _vm._v(" "),
-      _c("li", [_c("span", [_vm._v("Ações")])])
-    ])
+    return _c("li", [_c("span", [_vm._v("ID")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Destinatário")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Cotação")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Documentos")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [_c("span", [_vm._v("Ações")])])
   }
 ]
 render._withStripped = true
@@ -6298,6 +6497,9 @@ var orders = {
             state.show_loader = data;
         },
         toggleModal: function toggleModal(state, data) {
+            if (data == false) {
+                state.msg_modal = null;
+            }
             state.show_modal = data;
         },
         toggleMore: function toggleMore(state, data) {
@@ -6341,8 +6543,14 @@ var orders = {
 
     },
     actions: {
-        retrieveMany: function retrieveMany(_ref, data) {
+        showErrorAlert: function showErrorAlert(_ref, data) {
             var commit = _ref.commit;
+
+            commit('setMsgModal', data);
+            commit('toggleModal', true);
+        },
+        retrieveMany: function retrieveMany(_ref2, data) {
+            var commit = _ref2.commit;
 
             commit('toggleLoader', true);
             var content = {
@@ -6369,19 +6577,22 @@ var orders = {
                 return false;
             });
         },
-        printMultiples: function printMultiples(_ref2, ordersSelecteds) {
-            var commit = _ref2.commit,
-                state = _ref2.state;
+        printMultiples: function printMultiples(_ref3, dataPrint) {
+            var commit = _ref3.commit,
+                state = _ref3.state;
+
 
             commit('toggleLoader', true);
             var data = {
                 action: 'buy_click',
-                ids: ordersSelecteds
+                ids: dataPrint.orderSelecteds
             };
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
+                commit('setMsgModal', dataPrint.message);
                 commit('toggleLoader', false);
+                commit('toggleModal', true);
                 window.open(response.data.url, '_blank');
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
@@ -6391,9 +6602,9 @@ var orders = {
                 return false;
             });
         },
-        loadMore: function loadMore(_ref3, status) {
-            var commit = _ref3.commit,
-                state = _ref3.state;
+        loadMore: function loadMore(_ref4, status) {
+            var commit = _ref4.commit,
+                state = _ref4.state;
 
 
             commit('toggleLoader', true);
@@ -6426,8 +6637,8 @@ var orders = {
                 return false;
             });
         },
-        insertInvoice: function insertInvoice(_ref4, data) {
-            var commit = _ref4.commit;
+        insertInvoice: function insertInvoice(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
@@ -6443,35 +6654,50 @@ var orders = {
                 return false;
             });
         },
-        addCart: function addCart(_ref5, data) {
-            var commit = _ref5.commit;
+        initLoader: function initLoader(_ref6) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
-            if (!data) {
-                commit('toggleLoader', false);
-                return false;
-            }
-            if (data.id && data.choosen) {
-                _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
-                    if (!response.data.success) {
-                        commit('setMsgModal', response.data.message);
-                        commit('toggleLoader', false);
-                        commit('toggleModal', true);
-                        return false;
-                    }
-                    commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras');
-                    commit('toggleModal', true);
-                    commit('toggleLoader', false);
-                    commit('addCart', {
-                        id: data.id,
-                        order_id: response.data.data.order_id
-                    });
-                    commit('toggleLoader', false);
-                    commit('toggleModal', true);
-                    return false;
-                });
-            }
         },
+        stopLoader: function stopLoader(_ref7) {
+            var commit = _ref7.commit;
+
+            commit('toggleLoader', false);
+        },
+        setMessageError: function setMessageError(_ref8, msg) {
+            var commit = _ref8.commit;
+
+            commit('setMsgModal', msg);
+            commit('toggleModal', true);
+        },
+        addCart: function addCart(_ref9, data) {
+            var commit = _ref9.commit;
+
+            return new Promise(function (resolve, reject) {
+                if (!data) {
+                    commit('toggleLoader', false);
+                    reject();
+                    return false;
+                }
+                if (data.id && data.choosen) {
+
+                    _axios2.default.post(ajaxurl + '?action=add_order&order_id=' + data.id + '&choosen=' + data.choosen + '&non_commercial=' + data.non_commercial, data).then(function (response) {
+                        commit('toggleLoader', false);
+                        if (!response.data.success) {
+                            reject(response.data);
+                        }
+                        commit('addCart', {
+                            id: data.id,
+                            order_id: response.data.data.order_id
+                        });
+                        resolve(response.data);
+                    }).catch(function (error) {
+                        reject(error);
+                    });
+                }
+            });
+        },
+
         refreshCotation: function refreshCotation(context, data) {
             context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=update_order&id=' + data.id + '&order_id=' + data.order_id).then(function (response) {
@@ -6555,8 +6781,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref6, data) {
-            var commit = _ref6.commit;
+        createTicket: function createTicket(_ref10, data) {
+            var commit = _ref10.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6579,8 +6805,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref7, data) {
-            var commit = _ref7.commit;
+        printTicket: function printTicket(_ref11, data) {
+            var commit = _ref11.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6602,15 +6828,15 @@ var orders = {
                 return false;
             });
         },
-        getStatusWooCommerce: function getStatusWooCommerce(_ref8) {
-            var commit = _ref8.commit;
+        getStatusWooCommerce: function getStatusWooCommerce(_ref12) {
+            var commit = _ref12.commit;
 
             _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
                 commit('setStatusWc', response.data.statusWc);
             });
         },
-        closeModal: function closeModal(_ref9) {
-            var commit = _ref9.commit;
+        closeModal: function closeModal(_ref13) {
+            var commit = _ref13.commit;
 
             commit('toggleModal', false);
         }

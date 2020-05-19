@@ -153,6 +153,10 @@ class OrderService
             true
         );
 
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
+
         return (new OrderQuotationService())->updateDataQuotation(
             end($posts_id), //post_id
             end($result->purchase->orders)->id, //order_id
@@ -183,7 +187,7 @@ class OrderService
         if ($wallet == 0) {
             return [
                 'success' => false,
-                'message' => 'Sem pedidos para pagar'
+                'errors' => (array) 'Sem pedidos para pagar'
             ];
         }
 
@@ -199,7 +203,11 @@ class OrderService
             true
         );
 
-        return (new OrderQuotationService())->updateDataQuotation(
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
+
+        $response = (new OrderQuotationService())->updateDataQuotation(
             $post_id, //post_id
             end($result->purchase->orders)->id, //order_id
             end($result->purchase->orders)->protocol, //protocol
@@ -207,6 +215,10 @@ class OrderService
             end($result->purchase->orders)->service_id,//choose_method
             $result->purchase->id //purchase_id
         );
+
+        $response['result'] = $result;
+
+        return $response;   
     }
     /**
      * Function to create a label printble on melhor envio.
@@ -229,6 +241,10 @@ class OrderService
             $body,
             true
         );
+
+        if ( array_key_exists('errors', $result) ) {
+            return $result;
+        }
 
         $data = (new OrderQuotationService())->getData($post_id);
 
