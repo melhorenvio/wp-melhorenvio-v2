@@ -145,16 +145,15 @@
             beforeAddCart: function(data) {
                 this.initLoader()
                 this.addCart(data).then( (response) => {
-                    this.stopLoader()    
                     if (response.success)  {
                         this.setMessageError('Etiqueta #' +data.id+ ' comprada com sucesso.')
+                        this.stopLoader()  
                         return;
                     }
-
-                    this.setMessageError('Ocorreu um erro ao realizar a compra da etiqueta #' + data.id)
-                    
+                }).catch( (error) => {
+                    this.setMessageError(error.errors)
+                    this.stopLoader()  
                 })
-                
             },
             buttonCartShow(...args) {
                 const [

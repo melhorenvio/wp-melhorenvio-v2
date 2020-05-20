@@ -30,7 +30,7 @@ class OrderQuotationService
      */
     public function getQuotation($post_id)
     {
-        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION, true);
+        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
             $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
@@ -48,16 +48,16 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
-        $result = $this->setKeyAsCodeService($quotation);
-        $result['date_quotation'] = date('Y-m-d H:i:d'); 
-        $result['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
-        $result['free_shipping'] = false; 
-        $result['diff'] = false;
+        $data = $this->setKeyAsCodeService($quotation);
+        $data['date_quotation'] = date('Y-m-d H:i:d'); 
+        $data['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
+        $data['free_shipping'] = false; 
+        $data['diff'] = false;
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
-        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $result, true);
+        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
 
-        return $result;
+        return $data;
     }
 
     /**
@@ -71,7 +71,7 @@ class OrderQuotationService
         $result = [];
         
         foreach ($quotation as $item) {
-            
+
             $result[$item->id] = $item;
 
             if ($item->id == self::CORREIOS_MINI_CODE) {
@@ -165,8 +165,12 @@ class OrderQuotationService
      */
     public function isUltrapassedQuotation($data)
     {
+        if (count($data) <= 4) {
+            return true;
+        }
+        
         foreach ($data as $item) {
-            if ($item == 'Unauthenticated.') {
+            if ($item == 'Unauthenticated.' || empty($item)) {
                 return true;
             }
         }

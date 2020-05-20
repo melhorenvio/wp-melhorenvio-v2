@@ -66,19 +66,36 @@ class OrdersController
         );
 
         if (!isset($result['order_id'])) {
+
+            if (isset($result['errors'])) {
+                echo json_encode([
+                    'success' => false,
+                    'errors' => $result['errors'],
+                ]);die;
+            }
+
+            (new OrderQuotationService())->removeDataQuotation($_GET['order_id']);
+
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
-                'result' => $result
+                'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
             ]);die;
         }
 
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
 
         if (!isset($result['order_id'])) {
+
+            if (isset($result['errors'])) {
+                echo json_encode([
+                    'success' => false,
+                    'errors' => $result['errors']
+                ]);die;
+            }
+
             echo json_encode([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
+                'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
                 'result' => $result
             ]);die;
         }
@@ -87,7 +104,7 @@ class OrdersController
 
         echo json_encode([
             'success' => true,
-            'message' => 'Pedido gerado com sucesso',
+            'message' => (array) 'Pedido gerado com sucesso',
             'data' => $result
         ]);die;
     }

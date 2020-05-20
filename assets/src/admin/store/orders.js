@@ -132,6 +132,9 @@ const orders = {
             state.show_loader = data;
         },
         toggleModal: (state, data) => {
+            if (data == false) {
+                state.msg_modal = null;
+            }
             state.show_modal = data;
         },
         toggleMore: (state, data) => {
@@ -276,7 +279,6 @@ const orders = {
         },
         addCart: ({commit}, data) => {  
             return new Promise ((resolve, reject) => {
-
                 if (!data) {
                     commit('toggleLoader', false)
                     reject();
@@ -290,7 +292,6 @@ const orders = {
                             if(!response.data.success) {
                                 reject(response.data);
                             }
-
                             commit('addCart',{
                                 id: data.id,
                                 order_id: response.data.data.order_id,
