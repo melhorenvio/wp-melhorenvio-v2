@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.6.2
+Version: 2.7.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -65,6 +65,16 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
 
 ## CHANGELOG
+#### [2.7.0] - 2020-05
+- Possibilidade de utilizar ambiente Sandbox do Melhor Envio
+- Novo serviço de envios Azul Cargo (Verificar disponibilidade para a sua região)
+- Melhorias no fluxo de compras de etiquetas, compras com 1 click
+- Melhorias na verificação da embalagem do pedido
+- Opção de selecionar múltiplas etiquetas para comprar ou imprimir
+- Exibição de informações do usuário na tela de pedidos (Nome, email, saldo, ambiente e limite de envios)
+- Ajuste nas respostas de erros ao comprar etiquetas
+- Exibição de link de rastreio do Melhor Rastreio nos pedidos (painel)
+
 #### [2.6.2] - 2020-01
 - Adicionado opção de visualizar todas as agencias Jadlog do estado.
 - Ajustes na lógica de cotação na pagina do produto.
