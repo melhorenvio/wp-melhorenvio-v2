@@ -313,7 +313,7 @@ export default {
             
             this.orders.filter( (order) => {
                 
-                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released' || order.status == 'paid' || order.status == 'generated' || order.status == 'printed')) {
                     selecteds.push(order.id);
                 }
                 
@@ -332,15 +332,10 @@ export default {
             this.orderSelecteds = selecteds;
             this.notCanPrint = not;
 
-            if(not.length != 0 ) {
-                let stringNotCantPrint = not.join(','); 
-                messagePrint.push('Alguns pedidos (' +stringNotCantPrint+ ') não impressos por estarem com o status de pendentes.');
-            }
-
             this.msg_modal2.length = 0
             this.printMultiples({
                 'orderSelecteds':selecteds,
-                'message': messagePrint
+                'message': messagePrint[0]
             });
         },
         alertMessage: function(data) {
@@ -403,10 +398,13 @@ export default {
                         resolve(response)
                     }).catch((error) => {
                         this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id)
+                        this.btnClose = true;
                         error.errors.filter( (item) => {
                             this.msg_modal2.push('ID:' +order.id+ ': '+ item)
                         })
+                        this.btnClose = true;
                         resolve()
+                        
                     });
                 }, 100)
             })

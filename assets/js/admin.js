@@ -370,7 +370,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
             this.orders.filter(order => {
 
-                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released')) {
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released' || order.status == 'paid' || order.status == 'generated' || order.status == 'printed')) {
                     selecteds.push(order.id);
                 }
 
@@ -389,15 +389,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.orderSelecteds = selecteds;
             this.notCanPrint = not;
 
-            if (not.length != 0) {
-                let stringNotCantPrint = not.join(',');
-                messagePrint.push('Alguns pedidos (' + stringNotCantPrint + ') não impressos por estarem com o status de pendentes.');
-            }
-
             this.msg_modal2.length = 0;
             this.printMultiples({
                 'orderSelecteds': selecteds,
-                'message': messagePrint
+                'message': messagePrint[0]
             });
         },
         alertMessage: function (data) {
@@ -460,9 +455,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                         resolve(response);
                     }).catch(error => {
                         this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id);
+                        this.btnClose = true;
                         error.errors.filter(item => {
                             this.msg_modal2.push('ID:' + order.id + ': ' + item);
                         });
+                        this.btnClose = true;
                         resolve();
                     });
                 }, 100);
@@ -866,7 +863,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             this.initLoader();
             this.addCart(data).then(response => {
                 if (response.success) {
-                    this.setMessageError('Etiqueta #' + data.id + ' comprada com sucesso.');
+                    const msgErr = [];
+                    msgErr.push('Etiqueta #' + data.id + ' comprada com sucesso.');
+                    this.setMessageError(msgErr);
                     this.stopLoader();
                     return;
                 }
@@ -6550,9 +6549,7 @@ var orders = {
             _axios2.default.get('' + ajaxurl, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
-                commit('setMsgModal', dataPrint.message);
                 commit('toggleLoader', false);
-                commit('toggleModal', true);
                 window.open(response.data.url, '_blank');
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
@@ -6772,7 +6769,7 @@ var orders = {
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
 
                 if (!response.data.success) {
-                    commit('setMsgModal', response.data.message);
+                    commit('setMsgModal', 'Etiquetas geradas!');
                     commit('toggleLoader', false);
                     commit('toggleModal', true);
                     return false;
@@ -6782,7 +6779,7 @@ var orders = {
                 commit('toggleLoader', false);
                 window.open(response.data.data.url, '_blank');
             }).catch(function (error) {
-                commit('setMsgModal', error.message);
+                commit('setMsgModal', error.message[0]);
                 commit('toggleLoader', false);
                 commit('toggleModal', true);
                 return false;

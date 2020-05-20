@@ -206,9 +206,7 @@ const orders = {
             Axios.get(`${ajaxurl}`, {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
-                commit('setMsgModal', dataPrint.message)
                 commit('toggleLoader', false)
-                commit('toggleModal', true)
                 window.open(response.data.url,'_blank');
 
             }).catch(error => {
@@ -416,7 +414,7 @@ const orders = {
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
                 if(!response.data.success) {
-                    commit('setMsgModal', response.data.message)
+                    commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false
@@ -426,7 +424,7 @@ const orders = {
                 commit('toggleLoader', false)
                 window.open(response.data.data.url,'_blank');
             }).catch(error => {
-                commit('setMsgModal', error.message)
+                commit('setMsgModal', error.message[0])
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 return false

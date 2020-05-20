@@ -146,7 +146,9 @@
                 this.initLoader()
                 this.addCart(data).then( (response) => {
                     if (response.success)  {
-                        this.setMessageError('Etiqueta #' +data.id+ ' comprada com sucesso.')
+                        const msgErr = []
+                        msgErr.push('Etiqueta #' +data.id+ ' comprada com sucesso.')
+                        this.setMessageError(msgErr)
                         this.stopLoader()  
                         return;
                     }
