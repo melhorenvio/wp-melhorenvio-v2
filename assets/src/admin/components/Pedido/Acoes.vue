@@ -17,7 +17,7 @@
         </a>
 
         <!-- Pagar -->
-        <a v-if="item.status && item.order_id && item.id && item.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Pagar">
+        <!--<a v-if="(item.status && item.order_id && item.id && item.status == 'pending') || ite.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Pagar">
             <svg class="ico" version="1.1" id="pagar" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
             <path d="M12,2c5.514,0,10,4.486,10,10s-4.486,10-10,10S2,17.514,2,12S6.486,2,12,2z M12,0C5.373,0,0,5.373,0,12s5.373,12,12,12
@@ -27,10 +27,10 @@
                 c-0.997,0.226-2.269-0.168-3.225-0.54L9,16.275c0.894,0.462,1.965,0.708,3,0.727V18h1v-1.053C14.657,16.715,16.002,15.801,16,14.083
                 z"/>
             </svg>
-        </a>
+        </a>-->
 
         <!-- Imprimir etiqueta -->
-        <a v-if="item.status && (item.status == 'released'  || item.stauts == 'posted')" @click="printTicket({id:item.id, order_id:item.order_id})" class="action-button -adicionar" data-tip="Imprimir etiqueta">
+        <a v-if="item.status && (item.status == 'released'  || item.status == 'posted' || item.status == 'paid' || item.status == 'generated' || item.status == 'printed')" @click="printTicket({id:item.id, order_id:item.order_id})" class="action-button -adicionar" data-tip="Imprimir etiqueta">
             <svg class="ico" version="1.1" id="imprimirok" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 228.2998 219.331" enable-background="new 0 0 228.2998 219.331" xml:space="preserve">
             <path id="imprimirok-path4" d="M60.1948,34.8006H130.35c5.3073,0,10.1271,2.1659,13.6165,5.6554
@@ -165,6 +165,10 @@
                 ] = args
 
                 if (status == null && (choose_method == 1 || choose_method == 2 || choose_method == 17) ) {
+                    return true;
+                }
+
+                if (status == 'pending' && (choose_method == 1 || choose_method == 2 || choose_method == 17) ) {
                     return true;
                 }
 

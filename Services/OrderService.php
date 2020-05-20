@@ -386,6 +386,15 @@ class OrderService
                 $tracking = $tracking;
             }
 
+            if (isset($data['status'])) {
+                $status = $data['status'];
+            }
+
+            if (isset($data['protocol'])) {
+                $protocol = $data['protocol'];
+            }
+            
+
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
                 'status' => $status,
