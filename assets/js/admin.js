@@ -882,6 +882,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 return true;
             }
 
+            if (status == 'pending' && (choose_method == 1 || choose_method == 2 || choose_method == 17)) {
+                return true;
+            }
+
             if (status == null && choose_method >= 3 && non_commercial) {
                 return true;
             }
@@ -2926,8 +2930,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                _vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9
+                (_vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9)
                   ? [
                       _c("fieldset", [
                         _c("div", [
@@ -3161,55 +3165,11 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.item.status &&
-    _vm.item.order_id &&
-    _vm.item.id &&
-    _vm.item.status == "pending"
-      ? _c(
-          "a",
-          {
-            staticClass: "action-button -adicionar",
-            attrs: { href: "javascript:;", "data-tip": "Pagar" },
-            on: {
-              click: function($event) {
-                return _vm.payTicket({
-                  id: _vm.item.id,
-                  order_id: _vm.item.order_id
-                })
-              }
-            }
-          },
-          [
-            _c(
-              "svg",
-              {
-                staticClass: "ico",
-                attrs: {
-                  version: "1.1",
-                  id: "pagar",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                  x: "0px",
-                  y: "0px",
-                  viewBox: "0 0 24 24",
-                  "enable-background": "new 0 0 24 24",
-                  "xml:space": "preserve"
-                }
-              },
-              [
-                _c("path", {
-                  attrs: {
-                    d:
-                      "M12,2c5.514,0,10,4.486,10,10s-4.486,10-10,10S2,17.514,2,12S6.486,2,12,2z M12,0C5.373,0,0,5.373,0,12s5.373,12,12,12\n            s12-5.373,12-12S18.627,0,12,0z M16,14.083c0-2.145-2.232-2.742-3.943-3.546c-1.039-0.54-0.908-1.829,0.581-1.916\n            c0.826-0.05,1.675,0.195,2.443,0.465l0.362-1.647C14.536,7.163,13.724,7.037,13,7.018V6h-1v1.067\n            c-1.945,0.267-2.984,1.487-2.984,2.85c0,2.438,2.847,2.81,3.778,3.243c1.27,0.568,1.035,1.75-0.114,2.011\n            c-0.997,0.226-2.269-0.168-3.225-0.54L9,16.275c0.894,0.462,1.965,0.708,3,0.727V18h1v-1.053C14.657,16.715,16.002,15.801,16,14.083\n            z"
-                  }
-                })
-              ]
-            )
-          ]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.item.status &&
-    (_vm.item.status == "released" || _vm.item.stauts == "posted")
+    (_vm.item.status == "released" ||
+      _vm.item.status == "posted" ||
+      _vm.item.status == "paid" ||
+      _vm.item.status == "generated" ||
+      _vm.item.status == "printed")
       ? _c(
           "a",
           {
