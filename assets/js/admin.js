@@ -669,6 +669,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -2552,6 +2556,10 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
+      _vm.item.status == null && _vm.item.cotation.length == 0
+        ? [_c("p", [_vm._v("Carregando cotação, aguarde...")])]
+        : _vm._e(),
+      _vm._v(" "),
       _vm.item.cotation != false && _vm.item.status == null
         ? [
             _c("div", { staticClass: "me-form" }, [
@@ -2887,8 +2895,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                _vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9
+                (_vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9)
                   ? [
                       _c("fieldset", [
                         _c("div", [

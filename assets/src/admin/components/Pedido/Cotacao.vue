@@ -5,6 +5,10 @@
             <small>Cliente não utilizou Melhor Envio</small>
         </template>
 
+        <template v-if="item.status == null && item.cotation.length == 0">
+            <p>Carregando cotação, aguarde...</p>
+        </template>
+
         <template v-if="item.cotation != false && item.status == null">
             <div  class="me-form">
                 <div class="formBox">
