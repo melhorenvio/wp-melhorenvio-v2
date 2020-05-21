@@ -368,13 +368,11 @@ final class Base_Plugin {
      */
     public function init_hooks()
     {
-        $token   = new tokenController();
         $order   = new OrdersController();
         $users   = new UsersController();
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
         $logs    = new LogsController();
-        $options = new OptionsController();
         $status  = new StatusController();
 
         add_action( 'init', array( $this, 'init_classes' ) );
@@ -396,8 +394,8 @@ final class Base_Plugin {
         }
 
         add_action('wp_ajax_me', [$users, 'getMe']);
-        add_action('wp_ajax_get_token', [$token, 'getToken']);
-        add_action('wp_ajax_save_token', [$token, 'saveToken']);
+        add_action('wp_ajax_get_token', [(new Controllers\TokenController()), 'getToken']);
+        add_action('wp_ajax_save_token', [(new Controllers\TokenController()), 'saveToken']);
         add_action('wp_ajax_add_order', [$order, 'sendOrder']);
         add_action('wp_ajax_buy_click', [$order, 'buyOnClick']);
         add_action('wp_ajax_remove_order', [$order, 'removeOrder']);

@@ -5,11 +5,6 @@
             <small>Cliente não utilizou Melhor Envio</small>
         </template>
 
-        <template v-if="item.products">
-            <label>Produto</label>
-            <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
-        </template>
-
         <template v-if="item.cotation != false && item.status == null">
             <div  class="me-form">
                 <div class="formBox">
@@ -23,7 +18,7 @@
                         </p>
                     </template>
                     
-                    <template v-if="item.cotation[item.cotation.choose_method]">
+                    <template v-if="item.cotation && item.cotation[item.cotation.choose_method]">
                         <fieldset  class="selectLine">
                             <div class="inputBox">
                                 <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
@@ -37,37 +32,17 @@
                 </div>
             </div>
 
-            <div class="errosShadow" style="display:none;">
-                <template v-if="item.errors">
-                    <div  v-for="(errors, e) in item.errors" :key="e">
-                        <div  v-for="(error, ee) in errors" :key="ee">
-                            <p v-if="item.cotation.choose_method == e" style="color:red;"> {{error.message}}</p>
-                        </div>
-                    </div>
-                </template> 
-            </div>
-
         </template>
 
-        <template v-else>
+        <template v-if="item.cotation && item.cotation[item.cotation.choose_method]">
             <p>Companhia: <b>{{ item.cotation[item.cotation.choose_method].company.name }}</b></p>
             <p>Serviço: <b>{{ item.cotation[item.cotation.choose_method].name }}</b></p>
             <p>Valor: <b>R${{ item.cotation[item.cotation.choose_method].price }}</b></p>
             <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
         </template>
 
-        <template v-if="item.protocol && item.status != null">
-            <p>
-                Protocolo: <b>{{ item.protocol }}</b>
-            </p>
-        </template>
-
         <template v-if="item.cotation.free_shipping">
             <p>*Cliente utilizou cupom de frete grátis</p>
-        </template>
-
-        <template v-if="item.cotation.diff.length != 0 && item.cotation.diff[item.cotation.choose_method] && item.cotation.diff[item.cotation.choose_method].first">
-            <p>*O valor foi atualizado, valor pago em {{item.cotation.diff[item.cotation.choose_method].date}} R${{item.cotation.diff[item.cotation.choose_method].first}}</p>
         </template>
     </div>
 </template>

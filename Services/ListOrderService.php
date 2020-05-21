@@ -40,8 +40,10 @@ class ListOrderService
 
             $post_id = $post->ID;
 
-            $quotations = (new OrderQuotationService())->getQuotation($post_id);
-
+            $quotations = ($this->needShowQuotation($statusMelhorEnvio[$post_id]['status'])) 
+                ? (new OrderQuotationService())->getQuotation($post_id)
+                : [];
+             
             $invoice = (new InvoiceService())->getInvoice($post_id);
 
             $orders[] = [
@@ -51,8 +53,8 @@ class ListOrderService
                 'to' => (new BuyerService())->getDataBuyerByOrderId($post->ID),
                 'status' => $statusMelhorEnvio[$post_id]['status'],
                 'status_texto' => (new TranslateStatusHelper())->translateNameStatus($statusMelhorEnvio[$post_id]['status']),
-                'order_id' => $statusMelhorEnvio['order_id'],
-                'protocol' => $statusMelhorEnvio['protocol'],
+                'order_id' => $statusMelhorEnvio[$post_id]['order_id'],
+                'protocol' => $statusMelhorEnvio[$post_id]['protocol'],
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false ,
                 'invoice'        => $invoice,
                 'packages'       => (new PackageService())->getPackageQuotation($quotations),
@@ -63,6 +65,17 @@ class ListOrderService
         }
 
         return $orders;
+    }
+
+    /**
+     * Function to check if need show the quotations
+     *
+     * @param array $status
+     * @return boolen;
+     */
+    private function needShowQuotation($status)
+    {
+        return (!isset($status) || is_null($status) || $status == null) ? true : false; 
     }
 
     /**

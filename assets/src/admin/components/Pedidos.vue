@@ -116,19 +116,27 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <!-- :disabled="item.status !='released'" -->
                                 <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
-                                <!--<span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>-->
                             </li>
 
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
                             <li>
+                                <template v-if="item.products">
+                                <label>Produto</label>
+                                    <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+                                </template>
                                 <Cotacao :item="item"></Cotacao>
+                                <template v-if="item.protocol && item.status != null">
+                                    <p>
+                                        Protocolo: <b>{{ item.protocol }}</b>
+                                    </p>
+                                    <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
+                                </template>
                             </li>
                             <li>
                                 <Documentos :item="item"></Documentos>
@@ -137,12 +145,6 @@
                                 <Acoes :item="item"></Acoes>
                             </li>
                         </ul>
-                        <template v-if="toggleInfo == item.id">
-                            <informacoes
-                                :volume="item.cotation[item.cotation.choose_method].packages[0]"
-                                :products="item.products">
-                            </informacoes>
-                        </template>
                     </li>
                 </ul>
             </div>

@@ -284,6 +284,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -626,31 +628,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -670,6 +647,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
+//
 //
 //
 //
@@ -2532,18 +2511,6 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
-      _vm.item.products
-        ? [
-            _c("label", [_vm._v("Produto")]),
-            _vm._v(" "),
-            _vm._l(_vm.item.products, function(product) {
-              return _c("p", [
-                _vm._v(_vm._s(product.quantity) + "x " + _vm._s(product.name))
-              ])
-            })
-          ]
-        : _vm._e(),
-      _vm._v(" "),
       _vm.item.cotation != false && _vm.item.status == null
         ? [
             _c("div", { staticClass: "me-form" }, [
@@ -2590,6 +2557,7 @@ var render = function() {
                       ]
                     : _vm._e(),
                   _vm._v(" "),
+                  _vm.item.cotation &&
                   _vm.item.cotation[_vm.item.cotation.choose_method]
                     ? [
                         _c("fieldset", { staticClass: "selectLine" }, [
@@ -2666,35 +2634,12 @@ var render = function() {
                 ],
                 2
               )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "errosShadow", staticStyle: { display: "none" } },
-              [
-                _vm.item.errors
-                  ? _vm._l(_vm.item.errors, function(errors, e) {
-                      return _c(
-                        "div",
-                        { key: e },
-                        _vm._l(errors, function(error, ee) {
-                          return _c("div", { key: ee }, [
-                            _vm.item.cotation.choose_method == e
-                              ? _c("p", { staticStyle: { color: "red" } }, [
-                                  _vm._v(" " + _vm._s(error.message))
-                                ])
-                              : _vm._e()
-                          ])
-                        }),
-                        0
-                      )
-                    })
-                  : _vm._e()
-              ],
-              2
-            )
+            ])
           ]
-        : [
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.item.cotation && _vm.item.cotation[_vm.item.cotation.choose_method]
+        ? [
             _c("p", [
               _vm._v("Companhia: "),
               _c("b", [
@@ -2742,39 +2687,11 @@ var render = function() {
                   )
                 ])
               : _vm._e()
-          ],
-      _vm._v(" "),
-      _vm.item.protocol && _vm.item.status != null
-        ? [
-            _c("p", [
-              _vm._v("\n            Protocolo: "),
-              _c("b", [_vm._v(_vm._s(_vm.item.protocol))])
-            ])
           ]
         : _vm._e(),
       _vm._v(" "),
       _vm.item.cotation.free_shipping
         ? [_c("p", [_vm._v("*Cliente utilizou cupom de frete grátis")])]
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.item.cotation.diff.length != 0 &&
-      _vm.item.cotation.diff[_vm.item.cotation.choose_method] &&
-      _vm.item.cotation.diff[_vm.item.cotation.choose_method].first
-        ? [
-            _c("p", [
-              _vm._v(
-                "*O valor foi atualizado, valor pago em " +
-                  _vm._s(
-                    _vm.item.cotation.diff[_vm.item.cotation.choose_method].date
-                  ) +
-                  " R$" +
-                  _vm._s(
-                    _vm.item.cotation.diff[_vm.item.cotation.choose_method]
-                      .first
-                  )
-              )
-            ])
-          ]
         : _vm._e()
     ],
     2
@@ -2929,8 +2846,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                (_vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9)
+                _vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9
                   ? [
                       _c("fieldset", [
                         _c("div", [
@@ -3017,6 +2934,14 @@ var render = function() {
         : [
             _c("p", [
               _c("b", [
+                _vm.item.status == "generated"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.item.status == "paid"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
                 _vm.item.status == "released"
                   ? _c("span", [_vm._v("Pronta para imprimir")])
                   : _vm._e(),
@@ -3806,8 +3731,53 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "li",
-                            [_c("Cotacao", { attrs: { item: item } })],
-                            1
+                            [
+                              item.products
+                                ? [
+                                    _c("label", [_vm._v("Produto")]),
+                                    _vm._v(" "),
+                                    _vm._l(item.products, function(product) {
+                                      return _c("p", [
+                                        _vm._v(
+                                          _vm._s(product.quantity) +
+                                            "x " +
+                                            _vm._s(product.name)
+                                        )
+                                      ])
+                                    })
+                                  ]
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("Cotacao", { attrs: { item: item } }),
+                              _vm._v(" "),
+                              item.protocol && item.status != null
+                                ? [
+                                    _c("p", [
+                                      _vm._v(
+                                        "\n                                    Protocolo: "
+                                      ),
+                                      _c("b", [_vm._v(_vm._s(item.protocol))])
+                                    ]),
+                                    _vm._v(" "),
+                                    item.tracking != null
+                                      ? _c("p", [
+                                          _vm._v("Rastreio: "),
+                                          _c(
+                                            "a",
+                                            {
+                                              attrs: {
+                                                href: item.link_tracking,
+                                                target: "_blank"
+                                              }
+                                            },
+                                            [_vm._v(_vm._s(item.tracking))]
+                                          )
+                                        ])
+                                      : _vm._e()
+                                  ]
+                                : _vm._e()
+                            ],
+                            2
                           ),
                           _vm._v(" "),
                           _c(
@@ -3822,22 +3792,8 @@ var render = function() {
                             [_c("Acoes", { attrs: { item: item } })],
                             1
                           )
-                        ]),
-                        _vm._v(" "),
-                        _vm.toggleInfo == item.id
-                          ? [
-                              _c("informacoes", {
-                                attrs: {
-                                  volume:
-                                    item.cotation[item.cotation.choose_method]
-                                      .packages[0],
-                                  products: item.products
-                                }
-                              })
-                            ]
-                          : _vm._e()
-                      ],
-                      2
+                        ])
+                      ]
                     )
                   }),
                   0
@@ -6527,6 +6483,7 @@ var orders = {
                     commit('retrieveMany', response.data.orders);
                     commit('toggleMore', response.data.load);
                     commit('toggleLoader', false);
+                    //loadLazzyQuotations()
                 }
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
@@ -6536,9 +6493,15 @@ var orders = {
                 return false;
             });
         },
-        printMultiples: function printMultiples(_ref3, dataPrint) {
+        loadLazzyQuotations: function loadLazzyQuotations(_ref3) {
             var commit = _ref3.commit,
                 state = _ref3.state;
+
+            console.log('teste');
+        },
+        printMultiples: function printMultiples(_ref4, dataPrint) {
+            var commit = _ref4.commit,
+                state = _ref4.state;
 
 
             commit('toggleLoader', true);
@@ -6559,9 +6522,9 @@ var orders = {
                 return false;
             });
         },
-        loadMore: function loadMore(_ref4, status) {
-            var commit = _ref4.commit,
-                state = _ref4.state;
+        loadMore: function loadMore(_ref5, status) {
+            var commit = _ref5.commit,
+                state = _ref5.state;
 
 
             commit('toggleLoader', true);
@@ -6594,8 +6557,8 @@ var orders = {
                 return false;
             });
         },
-        insertInvoice: function insertInvoice(_ref5, data) {
-            var commit = _ref5.commit;
+        insertInvoice: function insertInvoice(_ref6, data) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
@@ -6611,24 +6574,24 @@ var orders = {
                 return false;
             });
         },
-        initLoader: function initLoader(_ref6) {
-            var commit = _ref6.commit;
+        initLoader: function initLoader(_ref7) {
+            var commit = _ref7.commit;
 
             commit('toggleLoader', true);
         },
-        stopLoader: function stopLoader(_ref7) {
-            var commit = _ref7.commit;
+        stopLoader: function stopLoader(_ref8) {
+            var commit = _ref8.commit;
 
             commit('toggleLoader', false);
         },
-        setMessageError: function setMessageError(_ref8, msg) {
-            var commit = _ref8.commit;
+        setMessageError: function setMessageError(_ref9, msg) {
+            var commit = _ref9.commit;
 
             commit('setMsgModal', msg);
             commit('toggleModal', true);
         },
-        addCart: function addCart(_ref9, data) {
-            var commit = _ref9.commit;
+        addCart: function addCart(_ref10, data) {
+            var commit = _ref10.commit;
 
             return new Promise(function (resolve, reject) {
                 if (!data) {
@@ -6738,8 +6701,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref10, data) {
-            var commit = _ref10.commit;
+        createTicket: function createTicket(_ref11, data) {
+            var commit = _ref11.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6762,8 +6725,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref11, data) {
-            var commit = _ref11.commit;
+        printTicket: function printTicket(_ref12, data) {
+            var commit = _ref12.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6785,15 +6748,15 @@ var orders = {
                 return false;
             });
         },
-        getStatusWooCommerce: function getStatusWooCommerce(_ref12) {
-            var commit = _ref12.commit;
+        getStatusWooCommerce: function getStatusWooCommerce(_ref13) {
+            var commit = _ref13.commit;
 
             _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
                 commit('setStatusWc', response.data.statusWc);
             });
         },
-        closeModal: function closeModal(_ref13) {
-            var commit = _ref13.commit;
+        closeModal: function closeModal(_ref14) {
+            var commit = _ref14.commit;
 
             commit('toggleModal', false);
         }

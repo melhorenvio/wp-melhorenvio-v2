@@ -187,6 +187,7 @@ const orders = {
                     commit('retrieveMany', response.data.orders)
                     commit('toggleMore', response.data.load)
                     commit('toggleLoader', false) 
+                    //loadLazzyQuotations()
                 }
             }).catch(error => {
                 commit('setMsgModal', error.message)
@@ -195,6 +196,9 @@ const orders = {
                 commit('toggleMore', true)
                 return false
             })
+        },
+        loadLazzyQuotations: ({commit, state}) => {
+            console.log('teste');
         },
         printMultiples: ({commit, state}, dataPrint) => {
 

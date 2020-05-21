@@ -29,6 +29,8 @@
         <template v-else>
             <p>
                 <b>
+                    <span v-if='item.status == "generated"'>Pronta para imprimir</span>
+                    <span v-if='item.status == "paid"'>Pronta para imprimir</span>
                     <span v-if='item.status == "released"'>Pronta para imprimir</span>
                     <span v-if='item.status == "posted"'>Etiqueta postada</span>
                 </b>
