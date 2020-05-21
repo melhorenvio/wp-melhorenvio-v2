@@ -6,7 +6,7 @@
         </template>
 
         <template v-if="item.status == null && item.cotation.length == 0">
-            <p>Carregando cotação, aguarde...</p>
+            <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif" />
         </template>
 
         <template v-if="item.cotation != false && item.status == null">

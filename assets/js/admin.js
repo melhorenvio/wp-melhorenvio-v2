@@ -2557,7 +2557,14 @@ var render = function() {
         : _vm._e(),
       _vm._v(" "),
       _vm.item.status == null && _vm.item.cotation.length == 0
-        ? [_c("p", [_vm._v("Carregando cotação, aguarde...")])]
+        ? [
+            _c("img", {
+              attrs: {
+                src:
+                  "https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif"
+              }
+            })
+          ]
         : _vm._e(),
       _vm._v(" "),
       _vm.item.cotation != false && _vm.item.status == null
@@ -2895,8 +2902,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                (_vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9)
+                _vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9
                   ? [
                       _c("fieldset", [
                         _c("div", [

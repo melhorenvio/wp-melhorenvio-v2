@@ -35572,7 +35572,10 @@ exports.version = pkg.version;
 /* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+/* WEBPACK VAR INJECTION */(function(process) {// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
+// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -35622,14 +35625,6 @@ function normalizeArray(parts, allowAboveRoot) {
 
   return parts;
 }
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
 
 // path.resolve([from ...], to)
 // posix version
@@ -35746,37 +35741,120 @@ exports.relative = function(from, to) {
 exports.sep = '/';
 exports.delimiter = ':';
 
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
   }
 
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
   }
-
-  return root + dir;
+  return path.slice(0, end);
 };
 
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
 
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
   if (ext && f.substr(-1 * ext.length) === ext) {
     f = f.substr(0, f.length - ext.length);
   }
   return f;
 };
 
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
 
-exports.extname = function(path) {
-  return splitPath(path)[3];
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
 };
 
 function filter (xs, f) {
@@ -35803,7 +35881,7 @@ var substr = 'ab'.substr(-1) === 'b'
 /* 109 */
 /***/ (function(module, exports) {
 
-module.exports = {"_args":[["jeet@7.2.0","/Applications/XAMPP/xamppfiles/htdocs/wordpress/wp-content/plugins/plugin-woocommerce"]],"_from":"jeet@7.2.0","_id":"jeet@7.2.0","_inBundle":false,"_integrity":"sha512-TcUBVeb/PlBmiZRgqx/rHewXkyhnBzRANjPi99frE7FQcbXvnzH74IelKhdPlP94eBh/rI0T67B04yGaldWzTw==","_location":"/jeet","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"jeet@7.2.0","name":"jeet","escapedName":"jeet","rawSpec":"7.2.0","saveSpec":null,"fetchSpec":"7.2.0"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/jeet/-/jeet-7.2.0.tgz","_spec":"7.2.0","_where":"/Applications/XAMPP/xamppfiles/htdocs/wordpress/wp-content/plugins/plugin-woocommerce","author":{"name":"Cory Simmons","email":"cory@launchboxhq.com"},"bugs":{"url":"https://github.com/mojotech/jeet/issues"},"contributors":[{"name":"Jake Cleary","email":"shout@jakecleary.net","url":"http://jakecleary.net"},{"name":"Andreas Nedbal","email":"andy@pixelde.su","url":"http://pixelde.su"},{"name":"Sam Saccone"}],"description":"A simple Sass and Stylus grid system. Built for humans.","devDependencies":{"node-sass":"^3.8.0","stylus":"^0.54.5"},"homepage":"https://jeet.gs","keywords":["grid","stylus","scss"],"license":"MIT","main":"./index.js","name":"jeet","repository":{"type":"git","url":"git+https://github.com/mojotech/jeet.git"},"scripts":{"test:node":"node test/node-stylus/node"},"version":"7.2.0"}
+module.exports = {"name":"jeet","version":"7.2.0","description":"A simple Sass and Stylus grid system. Built for humans.","homepage":"https://jeet.gs","license":"MIT","main":"./index.js","author":"Cory Simmons <cory@launchboxhq.com>","contributors":["Jake Cleary <shout@jakecleary.net> (http://jakecleary.net)","Andreas Nedbal <andy@pixelde.su> (http://pixelde.su)","Sam Saccone"],"keywords":["grid","stylus","scss"],"devDependencies":{"node-sass":"^3.8.0","stylus":"^0.54.5"},"scripts":{"test:node":"node test/node-stylus/node"},"repository":"mojotech/jeet","bugs":"https://github.com/mojotech/jeet/issues"}
 
 /***/ }),
 /* 110 */
