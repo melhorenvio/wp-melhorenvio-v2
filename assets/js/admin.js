@@ -286,7 +286,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
 
 
 
@@ -3550,10 +3549,7 @@ var render = function() {
               _c("b", [_vm._v("Saldo:")]),
               _vm._v(" " + _vm._s(_vm.getBalance))
             ])
-          ]),
-          _vm._v(
-            "\n            " + _vm._s(_vm.ordersToGetQuotations) + "\n        "
-          )
+          ])
         ]),
         _vm._v(" "),
         _c("tr", [

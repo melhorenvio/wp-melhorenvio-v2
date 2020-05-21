@@ -71,7 +71,6 @@
                     <h4><b>Envios:</b> {{limitEnabled}}/{{limit}}</h4>
                     <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
-                {{ordersToGetQuotations}}
             </tr>
             <tr>
                 <td width="50%">
