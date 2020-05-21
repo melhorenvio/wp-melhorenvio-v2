@@ -72,6 +72,7 @@ use Controllers\StatusController;
 use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
 use Models\Order;
+use Services\OrderQuotationService;
 use Services\ShippingMelhorEnvioService;
 
 /**
@@ -616,6 +617,11 @@ final class Base_Plugin {
 
         add_action('wp_ajax_get_info_server_client_melhor_envio', function() {
             phpinfo();
+        });
+
+        add_action('wp_ajax_get_quotation', function() {
+            $data = (new OrderQuotationService())->getQuotation($_GET['id']);
+            echo json_encode($data);die;
         });
     }
 

@@ -71,6 +71,7 @@
                     <h4><b>Envios:</b> {{limitEnabled}}/{{limit}}</h4>
                     <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
+                {{ordersToGetQuotations}}
             </tr>
             <tr>
                 <td width="50%">
@@ -244,7 +245,8 @@ export default {
             totalCart: 0,
             show_modal2: false,
             msg_modal2: [],
-            btnClose: true
+            btnClose: true,
+            ordersToGetQuotations: []
         }
     },
     components: {
@@ -273,6 +275,7 @@ export default {
             'closeModal',
             'getStatusWooCommerce',
             'printMultiples',
+            'updateQuotation',
             'addCart',
             'showErrorAlert'
         ]),
@@ -421,6 +424,40 @@ export default {
                 }
             })
         },
+        getOrdersWithoutQuotations() {
+            return new Promise((resolve) => {
+                let ordersToGetQuotations = [];
+                this.orders.filter( (order) => {
+                    if (order.status == null && order.cotation.length == 0) {
+                        ordersToGetQuotations.push(order.id)
+                    }
+                })
+                resolve(ordersToGetQuotations)
+            })
+        },
+        getQuotations(){
+            if (this.ordersToGetQuotations.length == 0) {
+                return;
+            }
+            this.getQuotation(this.ordersToGetQuotations[0]).then( (response) => {
+                this.updateQuotation({
+                    'order_id': this.ordersToGetQuotations[0],
+                    'quotations': response.data
+                })
+                this.ordersToGetQuotations.shift()
+            })
+        },
+        getQuotation(order_id) {
+            if (typeof order_id == "undefined") {
+                return;
+            }
+            return new Promise( (resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=get_quotation&id=${order_id}`).then((response) => {
+                    this.getQuotations()
+                    resolve(response)
+                })
+            })
+        },
         close() {
             this.show_modal2 = false
             this.msg_modal2.length = 0
@@ -459,6 +496,12 @@ export default {
         },
         wpstatus () {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
+        },
+        orders () {
+            this.getOrdersWithoutQuotations().then( (response) => {
+                this.ordersToGetQuotations = response;
+                this.getQuotations()  
+            })
         }
     },
     mounted () {

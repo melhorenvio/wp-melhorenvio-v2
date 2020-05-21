@@ -39,10 +39,6 @@ class ListOrderService
         foreach ($posts as $post) {
 
             $post_id = $post->ID;
-
-            $quotations = ($this->needShowQuotation($statusMelhorEnvio[$post_id]['status'])) 
-                ? (new OrderQuotationService())->getQuotation($post_id)
-                : [];
              
             $invoice = (new InvoiceService())->getInvoice($post_id);
 
@@ -57,9 +53,8 @@ class ListOrderService
                 'protocol' => $statusMelhorEnvio[$post_id]['protocol'],
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false ,
                 'invoice'        => $invoice,
-                'packages'       => (new PackageService())->getPackageQuotation($quotations),
                 'products' => (new OrdersProductsService())->getProductsOrder($post_id),
-                'cotation' => $quotations,
+                'cotation' => [],
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $post_id)
             ];
         }

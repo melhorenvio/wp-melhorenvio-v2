@@ -286,6 +286,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -314,7 +315,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             totalCart: 0,
             show_modal2: false,
             msg_modal2: [],
-            btnClose: true
+            btnClose: true,
+            ordersToGetQuotations: []
         };
     },
     components: {
@@ -333,7 +335,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_more: 'showMore',
         statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'addCart', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'updateQuotation', 'addCart', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -477,6 +479,40 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
+        getOrdersWithoutQuotations() {
+            return new Promise(resolve => {
+                let ordersToGetQuotations = [];
+                this.orders.filter(order => {
+                    if (order.status == null && order.cotation.length == 0) {
+                        ordersToGetQuotations.push(order.id);
+                    }
+                });
+                resolve(ordersToGetQuotations);
+            });
+        },
+        getQuotations() {
+            if (this.ordersToGetQuotations.length == 0) {
+                return;
+            }
+            this.getQuotation(this.ordersToGetQuotations[0]).then(response => {
+                this.updateQuotation({
+                    'order_id': this.ordersToGetQuotations[0],
+                    'quotations': response.data
+                });
+                this.ordersToGetQuotations.shift();
+            });
+        },
+        getQuotation(order_id) {
+            if (typeof order_id == "undefined") {
+                return;
+            }
+            return new Promise((resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=get_quotation&id=${order_id}`).then(response => {
+                    this.getQuotations();
+                    resolve(response);
+                });
+            });
+        },
         close() {
             this.show_modal2 = false;
             this.msg_modal2.length = 0;
@@ -515,6 +551,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         wpstatus() {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
+        },
+        orders() {
+            this.getOrdersWithoutQuotations().then(response => {
+                this.ordersToGetQuotations = response;
+                this.getQuotations();
+            });
         }
     },
     mounted() {
@@ -3508,7 +3550,10 @@ var render = function() {
               _c("b", [_vm._v("Saldo:")]),
               _vm._v(" " + _vm._s(_vm.getBalance))
             ])
-          ])
+          ]),
+          _vm._v(
+            "\n            " + _vm._s(_vm.ordersToGetQuotations) + "\n        "
+          )
         ]),
         _vm._v(" "),
         _c("tr", [
@@ -6366,6 +6411,22 @@ var orders = {
             order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content);
         },
+        updateQuotation: function updateQuotation(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id == data.order_id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+
+            if (order) {
+                order.content.cotation = data.quotations;
+                state.orders.splice(order.position, 1, order.content);
+            }
+        },
         payTicket: function payTicket(state, data) {
             var order = void 0;
             state.orders.find(function (item, index) {
@@ -6483,7 +6544,6 @@ var orders = {
                     commit('retrieveMany', response.data.orders);
                     commit('toggleMore', response.data.load);
                     commit('toggleLoader', false);
-                    //loadLazzyQuotations()
                 }
             }).catch(function (error) {
                 commit('setMsgModal', error.message);
@@ -6493,15 +6553,9 @@ var orders = {
                 return false;
             });
         },
-        loadLazzyQuotations: function loadLazzyQuotations(_ref3) {
+        printMultiples: function printMultiples(_ref3, dataPrint) {
             var commit = _ref3.commit,
                 state = _ref3.state;
-
-            console.log('teste');
-        },
-        printMultiples: function printMultiples(_ref4, dataPrint) {
-            var commit = _ref4.commit,
-                state = _ref4.state;
 
 
             commit('toggleLoader', true);
@@ -6522,9 +6576,9 @@ var orders = {
                 return false;
             });
         },
-        loadMore: function loadMore(_ref5, status) {
-            var commit = _ref5.commit,
-                state = _ref5.state;
+        loadMore: function loadMore(_ref4, status) {
+            var commit = _ref4.commit,
+                state = _ref4.state;
 
 
             commit('toggleLoader', true);
@@ -6557,8 +6611,8 @@ var orders = {
                 return false;
             });
         },
-        insertInvoice: function insertInvoice(_ref6, data) {
-            var commit = _ref6.commit;
+        insertInvoice: function insertInvoice(_ref5, data) {
+            var commit = _ref5.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=insert_invoice_order&id=' + data.id + '&number=' + data.invoice.number + '&key=' + data.invoice.key).then(function (response) {
@@ -6574,24 +6628,24 @@ var orders = {
                 return false;
             });
         },
-        initLoader: function initLoader(_ref7) {
-            var commit = _ref7.commit;
+        initLoader: function initLoader(_ref6) {
+            var commit = _ref6.commit;
 
             commit('toggleLoader', true);
         },
-        stopLoader: function stopLoader(_ref8) {
-            var commit = _ref8.commit;
+        stopLoader: function stopLoader(_ref7) {
+            var commit = _ref7.commit;
 
             commit('toggleLoader', false);
         },
-        setMessageError: function setMessageError(_ref9, msg) {
-            var commit = _ref9.commit;
+        setMessageError: function setMessageError(_ref8, msg) {
+            var commit = _ref8.commit;
 
             commit('setMsgModal', msg);
             commit('toggleModal', true);
         },
-        addCart: function addCart(_ref10, data) {
-            var commit = _ref10.commit;
+        addCart: function addCart(_ref9, data) {
+            var commit = _ref9.commit;
 
             return new Promise(function (resolve, reject) {
                 if (!data) {
@@ -6656,6 +6710,9 @@ var orders = {
                 return false;
             });
         },
+        updateQuotation: function updateQuotation(context, data) {
+            context.commit('updateQuotation', data);
+        },
         cancelCart: function cancelCart(context, data) {
             context.commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=cancel_order&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6701,8 +6758,8 @@ var orders = {
                 return false;
             });
         },
-        createTicket: function createTicket(_ref11, data) {
-            var commit = _ref11.commit;
+        createTicket: function createTicket(_ref10, data) {
+            var commit = _ref10.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=create_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6725,8 +6782,8 @@ var orders = {
                 return false;
             });
         },
-        printTicket: function printTicket(_ref12, data) {
-            var commit = _ref12.commit;
+        printTicket: function printTicket(_ref11, data) {
+            var commit = _ref11.commit;
 
             commit('toggleLoader', true);
             _axios2.default.post(ajaxurl + '?action=print_ticket&id=' + data.id + '&order_id=' + data.order_id, data).then(function (response) {
@@ -6748,15 +6805,15 @@ var orders = {
                 return false;
             });
         },
-        getStatusWooCommerce: function getStatusWooCommerce(_ref13) {
-            var commit = _ref13.commit;
+        getStatusWooCommerce: function getStatusWooCommerce(_ref12) {
+            var commit = _ref12.commit;
 
             _axios2.default.get(ajaxurl + '?action=get_status_woocommerce').then(function (response) {
                 commit('setStatusWc', response.data.statusWc);
             });
         },
-        closeModal: function closeModal(_ref14) {
-            var commit = _ref14.commit;
+        closeModal: function closeModal(_ref13) {
+            var commit = _ref13.commit;
 
             commit('toggleModal', false);
         }
