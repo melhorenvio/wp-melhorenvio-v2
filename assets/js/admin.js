@@ -284,6 +284,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
 
 
 
@@ -312,7 +314,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             totalCart: 0,
             show_modal2: false,
             msg_modal2: [],
-            btnClose: true
+            btnClose: true,
+            ordersToGetQuotations: []
         };
     },
     components: {
@@ -331,7 +334,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show_more: 'showMore',
         statusWooCommerce: 'statusWooCommerce'
     }), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapGetters"])('balance', ['getBalance'])),
-    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'addCart', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('orders', ['retrieveMany', 'loadMore',, 'closeModal', 'getStatusWooCommerce', 'printMultiples', 'updateQuotation', 'addCart', 'showErrorAlert']), Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["mapActions"])('balance', ['setBalance']), {
         close() {
             this.closeModal();
         },
@@ -475,6 +478,40 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 }
             });
         },
+        getOrdersWithoutQuotations() {
+            return new Promise(resolve => {
+                let ordersToGetQuotations = [];
+                this.orders.filter(order => {
+                    if (order.status == null && order.cotation.length == 0) {
+                        ordersToGetQuotations.push(order.id);
+                    }
+                });
+                resolve(ordersToGetQuotations);
+            });
+        },
+        getQuotations() {
+            if (this.ordersToGetQuotations.length == 0) {
+                return;
+            }
+            this.getQuotation(this.ordersToGetQuotations[0]).then(response => {
+                this.updateQuotation({
+                    'order_id': this.ordersToGetQuotations[0],
+                    'quotations': response.data
+                });
+                this.ordersToGetQuotations.shift();
+            });
+        },
+        getQuotation(order_id) {
+            if (typeof order_id == "undefined") {
+                return;
+            }
+            return new Promise((resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=get_quotation&id=${order_id}`).then(response => {
+                    this.getQuotations();
+                    resolve(response);
+                });
+            });
+        },
         close() {
             this.show_modal2 = false;
             this.msg_modal2.length = 0;
@@ -513,6 +550,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         wpstatus() {
             this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
+        },
+        orders() {
+            this.getOrdersWithoutQuotations().then(response => {
+                this.ordersToGetQuotations = response;
+                this.getQuotations();
+            });
         }
     },
     mounted() {
@@ -626,31 +669,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -670,6 +688,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+//
+//
 //
 //
 //
@@ -2532,18 +2552,6 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
-      _vm.item.products
-        ? [
-            _c("label", [_vm._v("Produto")]),
-            _vm._v(" "),
-            _vm._l(_vm.item.products, function(product) {
-              return _c("p", [
-                _vm._v(_vm._s(product.quantity) + "x " + _vm._s(product.name))
-              ])
-            })
-          ]
-        : _vm._e(),
-      _vm._v(" "),
       _vm.item.cotation != false && _vm.item.status == null
         ? [
             _c("div", { staticClass: "me-form" }, [
@@ -2590,6 +2598,7 @@ var render = function() {
                       ]
                     : _vm._e(),
                   _vm._v(" "),
+                  _vm.item.cotation &&
                   _vm.item.cotation[_vm.item.cotation.choose_method]
                     ? [
                         _c("fieldset", { staticClass: "selectLine" }, [
@@ -2666,35 +2675,12 @@ var render = function() {
                 ],
                 2
               )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "errosShadow", staticStyle: { display: "none" } },
-              [
-                _vm.item.errors
-                  ? _vm._l(_vm.item.errors, function(errors, e) {
-                      return _c(
-                        "div",
-                        { key: e },
-                        _vm._l(errors, function(error, ee) {
-                          return _c("div", { key: ee }, [
-                            _vm.item.cotation.choose_method == e
-                              ? _c("p", { staticStyle: { color: "red" } }, [
-                                  _vm._v(" " + _vm._s(error.message))
-                                ])
-                              : _vm._e()
-                          ])
-                        }),
-                        0
-                      )
-                    })
-                  : _vm._e()
-              ],
-              2
-            )
+            ])
           ]
-        : [
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.item.cotation && _vm.item.cotation[_vm.item.cotation.choose_method]
+        ? [
             _c("p", [
               _vm._v("Companhia: "),
               _c("b", [
@@ -2742,39 +2728,11 @@ var render = function() {
                   )
                 ])
               : _vm._e()
-          ],
-      _vm._v(" "),
-      _vm.item.protocol && _vm.item.status != null
-        ? [
-            _c("p", [
-              _vm._v("\n            Protocolo: "),
-              _c("b", [_vm._v(_vm._s(_vm.item.protocol))])
-            ])
           ]
         : _vm._e(),
       _vm._v(" "),
       _vm.item.cotation.free_shipping
         ? [_c("p", [_vm._v("*Cliente utilizou cupom de frete grátis")])]
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.item.cotation.diff.length != 0 &&
-      _vm.item.cotation.diff[_vm.item.cotation.choose_method] &&
-      _vm.item.cotation.diff[_vm.item.cotation.choose_method].first
-        ? [
-            _c("p", [
-              _vm._v(
-                "*O valor foi atualizado, valor pago em " +
-                  _vm._s(
-                    _vm.item.cotation.diff[_vm.item.cotation.choose_method].date
-                  ) +
-                  " R$" +
-                  _vm._s(
-                    _vm.item.cotation.diff[_vm.item.cotation.choose_method]
-                      .first
-                  )
-              )
-            ])
-          ]
         : _vm._e()
     ],
     2
@@ -2929,8 +2887,8 @@ var render = function() {
                   _vm.item.cotation.choose_method == 4 ||
                   _vm.item.cotation.choose_method == 10) &&
                   !_vm.item.non_commercial) ||
-                (_vm.item.cotation.choose_method == 8 ||
-                  _vm.item.cotation.choose_method == 9)
+                _vm.item.cotation.choose_method == 8 ||
+                  _vm.item.cotation.choose_method == 9
                   ? [
                       _c("fieldset", [
                         _c("div", [
@@ -3017,6 +2975,14 @@ var render = function() {
         : [
             _c("p", [
               _c("b", [
+                _vm.item.status == "generated"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.item.status == "paid"
+                  ? _c("span", [_vm._v("Pronta para imprimir")])
+                  : _vm._e(),
+                _vm._v(" "),
                 _vm.item.status == "released"
                   ? _c("span", [_vm._v("Pronta para imprimir")])
                   : _vm._e(),
@@ -3806,8 +3772,53 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "li",
-                            [_c("Cotacao", { attrs: { item: item } })],
-                            1
+                            [
+                              item.products
+                                ? [
+                                    _c("label", [_vm._v("Produto")]),
+                                    _vm._v(" "),
+                                    _vm._l(item.products, function(product) {
+                                      return _c("p", [
+                                        _vm._v(
+                                          _vm._s(product.quantity) +
+                                            "x " +
+                                            _vm._s(product.name)
+                                        )
+                                      ])
+                                    })
+                                  ]
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("Cotacao", { attrs: { item: item } }),
+                              _vm._v(" "),
+                              item.protocol && item.status != null
+                                ? [
+                                    _c("p", [
+                                      _vm._v(
+                                        "\n                                    Protocolo: "
+                                      ),
+                                      _c("b", [_vm._v(_vm._s(item.protocol))])
+                                    ]),
+                                    _vm._v(" "),
+                                    item.tracking != null
+                                      ? _c("p", [
+                                          _vm._v("Rastreio: "),
+                                          _c(
+                                            "a",
+                                            {
+                                              attrs: {
+                                                href: item.link_tracking,
+                                                target: "_blank"
+                                              }
+                                            },
+                                            [_vm._v(_vm._s(item.tracking))]
+                                          )
+                                        ])
+                                      : _vm._e()
+                                  ]
+                                : _vm._e()
+                            ],
+                            2
                           ),
                           _vm._v(" "),
                           _c(
@@ -3822,22 +3833,8 @@ var render = function() {
                             [_c("Acoes", { attrs: { item: item } })],
                             1
                           )
-                        ]),
-                        _vm._v(" "),
-                        _vm.toggleInfo == item.id
-                          ? [
-                              _c("informacoes", {
-                                attrs: {
-                                  volume:
-                                    item.cotation[item.cotation.choose_method]
-                                      .packages[0],
-                                  products: item.products
-                                }
-                              })
-                            ]
-                          : _vm._e()
-                      ],
-                      2
+                        ])
+                      ]
                     )
                   }),
                   0
@@ -6410,6 +6407,22 @@ var orders = {
             order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content);
         },
+        updateQuotation: function updateQuotation(state, data) {
+            var order = void 0;
+            state.orders.find(function (item, index) {
+                if (item.id == data.order_id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    };
+                }
+            });
+
+            if (order) {
+                order.content.cotation = data.quotations;
+                state.orders.splice(order.position, 1, order.content);
+            }
+        },
         payTicket: function payTicket(state, data) {
             var order = void 0;
             state.orders.find(function (item, index) {
@@ -6692,6 +6705,9 @@ var orders = {
                 context.commit('toggleModal', true);
                 return false;
             });
+        },
+        updateQuotation: function updateQuotation(context, data) {
+            context.commit('updateQuotation', data);
         },
         cancelCart: function cancelCart(context, data) {
             context.commit('toggleLoader', true);

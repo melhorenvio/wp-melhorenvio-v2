@@ -86,6 +86,22 @@ const orders = {
             order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content)
         },
+        updateQuotation: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id == data.order_id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+
+            if(order) {
+                order.content.cotation = data.quotations
+                state.orders.splice(order.position, 1, order.content)
+            }
+        },
         payTicket: (state, data) => {
             let order
             state.orders.find((item, index) => {
@@ -341,6 +357,9 @@ const orders = {
                 context.commit('toggleModal', true)
                 return false
             })
+        },
+        updateQuotation: (context, data) => {
+            context.commit('updateQuotation', data)
         },
         cancelCart: (context, data) => {   
             context.commit('toggleLoader', true)      

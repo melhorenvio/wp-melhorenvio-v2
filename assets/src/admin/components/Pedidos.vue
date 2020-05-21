@@ -116,19 +116,27 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <!-- :disabled="item.status !='released'" -->
                                 <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
                             </li>
                             <li>
                                 <Id :item="item"></Id>
-                                <!--<span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>-->
                             </li>
 
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
                             <li>
+                                <template v-if="item.products">
+                                <label>Produto</label>
+                                    <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+                                </template>
                                 <Cotacao :item="item"></Cotacao>
+                                <template v-if="item.protocol && item.status != null">
+                                    <p>
+                                        Protocolo: <b>{{ item.protocol }}</b>
+                                    </p>
+                                    <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
+                                </template>
                             </li>
                             <li>
                                 <Documentos :item="item"></Documentos>
@@ -137,12 +145,6 @@
                                 <Acoes :item="item"></Acoes>
                             </li>
                         </ul>
-                        <template v-if="toggleInfo == item.id">
-                            <informacoes
-                                :volume="item.cotation[item.cotation.choose_method].packages[0]"
-                                :products="item.products">
-                            </informacoes>
-                        </template>
                     </li>
                 </ul>
             </div>
@@ -242,7 +244,8 @@ export default {
             totalCart: 0,
             show_modal2: false,
             msg_modal2: [],
-            btnClose: true
+            btnClose: true,
+            ordersToGetQuotations: []
         }
     },
     components: {
@@ -271,6 +274,7 @@ export default {
             'closeModal',
             'getStatusWooCommerce',
             'printMultiples',
+            'updateQuotation',
             'addCart',
             'showErrorAlert'
         ]),
@@ -419,6 +423,40 @@ export default {
                 }
             })
         },
+        getOrdersWithoutQuotations() {
+            return new Promise((resolve) => {
+                let ordersToGetQuotations = [];
+                this.orders.filter( (order) => {
+                    if (order.status == null && order.cotation.length == 0) {
+                        ordersToGetQuotations.push(order.id)
+                    }
+                })
+                resolve(ordersToGetQuotations)
+            })
+        },
+        getQuotations(){
+            if (this.ordersToGetQuotations.length == 0) {
+                return;
+            }
+            this.getQuotation(this.ordersToGetQuotations[0]).then( (response) => {
+                this.updateQuotation({
+                    'order_id': this.ordersToGetQuotations[0],
+                    'quotations': response.data
+                })
+                this.ordersToGetQuotations.shift()
+            })
+        },
+        getQuotation(order_id) {
+            if (typeof order_id == "undefined") {
+                return;
+            }
+            return new Promise( (resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=get_quotation&id=${order_id}`).then((response) => {
+                    this.getQuotations()
+                    resolve(response)
+                })
+            })
+        },
         close() {
             this.show_modal2 = false
             this.msg_modal2.length = 0
@@ -457,6 +495,12 @@ export default {
         },
         wpstatus () {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
+        },
+        orders () {
+            this.getOrdersWithoutQuotations().then( (response) => {
+                this.ordersToGetQuotations = response;
+                this.getQuotations()  
+            })
         }
     },
     mounted () {
