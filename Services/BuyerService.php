@@ -20,6 +20,8 @@ class BuyerService
         $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
         $phone = get_post_meta($order_id, '_billing_cellphone', true);
 
+        $document = ($cpf) ? $cpf : $cnpj; 
+
         if (empty($phone) || is_null($phone)) {
             $phone = $order->get_billing_phone();
         }
@@ -28,8 +30,7 @@ class BuyerService
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => (new FormaterHelper())->formatPhone($phone),
             "email" => $order->get_billing_email(),
-            //"document" => (!empty($cpf)) ? $cpf : null,
-            "document" => "58884939020",
+            "document" => $document,
             "company_document" => (!empty($cnpj)) ? $cnpj : null,
             "state_register" => null, // (opcional) (a menos que seja transportadora e logÃ­stica reversa)
             "address" => $order->get_shipping_address_1(),
