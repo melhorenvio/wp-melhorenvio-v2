@@ -6,15 +6,7 @@ use Services\OrderQuotationService;
 
 class Order {
 
-    const ROUTE_MELHOR_ENVIO_TRACKING = '/shipment/tracking';
-
     private $id;
-    private $products;
-    private $total;
-    private $shipping_total;
-    private $to;
-    private $cotation;
-    private $address;
 
     /**
      * @param int $id
@@ -84,15 +76,4 @@ class Order {
 
         return (new OrderQuotationService())->getQuotation($this->id);
     }    
-
-    /**
-     * @param [type] $id
-     * @param [type] $invoices
-     * @return void
-     */
-    public function updateInvoice($id, $invoices) 
-    {
-        var_dump('deprecado usar InvoiceService');die;
-    }   
-
 }   

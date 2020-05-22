@@ -197,11 +197,6 @@ class CotationController
     {
         return $this->makeCotation($to, $services, [], $package, $options, false);
     }
-
-    public function freeShipping()
-    {
-        var_dump('deprecado use WoocommerceService@hasFreeShippingMethod');die;
-    }
 }
 
 $cotationcontroller = new CotationController();

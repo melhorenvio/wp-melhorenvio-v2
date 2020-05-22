@@ -4,12 +4,6 @@ namespace Models;
 
 class Method 
 {
-    public function getCodesString()
-    {
-        var_dump('Deprecado use ShippingService@ggetStringCodesEnables');die;
-        //return implode(",", self::SERVICES_CODE_MELHOR_ENVIO);
-    }
-
     public function getMethodShipmentSelected($order_id)
     {
         global $wpdb;
