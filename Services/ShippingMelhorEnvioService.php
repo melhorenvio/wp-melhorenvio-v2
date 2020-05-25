@@ -16,14 +16,13 @@ class ShippingMelhorEnvioService
 
     public function getCodesWcShippingClass()
     {
-        $Shipping = new \WC_Shipping();
+        $shippings = WC()->shipping->get_shipping_methods();
 
-        if (is_null($shipping)) { return []; }
-        
-        $shippingMethods = $Shipping->get_shipping_methods();
+        if (is_null($shippings)) { return []; }
+
         $codes = [];
         
-        foreach ($shippingMethods as $method) {
+        foreach ($shippings as $method) {
             if (is_null($method->code)) {
                 continue;
             }
