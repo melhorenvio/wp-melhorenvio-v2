@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Models\User;
 use Models\Address;
 
 class SellerService
@@ -34,8 +33,6 @@ class SellerService
             "phone" => (isset($data->phone->phone)) ? $data->phone->phone : null,
             "email" => $data->email,
             "document" => $data->document,
-            //"company_document" => null,
-            //"state_register" => null,
             "address" => $data->address->address,
             "complement" => $data->address->complement,
             "number" => $data->address->number,
