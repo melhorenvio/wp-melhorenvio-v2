@@ -64,10 +64,10 @@ class CotationController
             exit();
         }
 
-        /**if ( strlen(trim($_POST['data']['cep_origem'])) != 9 ) {
+        if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
             echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
             exit();
-        }*/ //TODO CHECAR ISSO
+        }
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
 
