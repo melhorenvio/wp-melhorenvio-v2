@@ -1338,6 +1338,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -1740,7 +1745,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                     data: bodyFormData,
                     method: "POST"
                 }).then(response => {
-                    this.$router.push('Configuracoes');
+                    window.location.href = '/wp-admin/admin.php?page=melhor-envio#/configuracoes';
                 }).catch(err => console.log(err));
             }
         }
@@ -5108,6 +5113,20 @@ var render = function() {
               ])
             ])
           ])
+        ]),
+        _vm._v(" "),
+        _c("hr"),
+        _vm._v(" "),
+        _c("h2"),
+        _vm._v(" "),
+        _c("h3", [_vm._v("Shortcode para exibir a calculadora")]),
+        _vm._v(" "),
+        _vm._m(2),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "É necessário informar o ID do produto para o shortcode funcionar de forma adequada"
+          )
         ])
       ]),
       _vm._v(" "),
@@ -5378,6 +5397,14 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-12-12" }, [
       _c("h1", [_vm._v("Configurações gerais")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", [
+      _c("b", [_vm._v('[calculadora_melhor_envio product_id="product_id"]')])
     ])
   }
 ]

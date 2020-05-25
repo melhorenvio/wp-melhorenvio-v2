@@ -95,7 +95,7 @@ export default {
                     data: bodyFormData,
                     method: "POST",
                 }).then( response => {
-                    this.$router.push('Configuracoes') 
+                    window.location.href = '/wp-admin/admin.php?page=melhor-envio#/configuracoes';
                 }).catch(err => console.log(err));
             }
         }
