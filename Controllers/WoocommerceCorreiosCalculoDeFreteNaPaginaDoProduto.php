@@ -1,7 +1,6 @@
 <?php
 
 namespace Controllers;
-use Controllers\ConfigurationsController;
 
 class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
 

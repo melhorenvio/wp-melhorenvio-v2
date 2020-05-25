@@ -62,18 +62,14 @@ if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
 
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
-use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
-use Controllers\OptionsController;
 use Controllers\StatusController;
-use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
-use Models\Order;
 use Services\OrderQuotationService;
-use Services\ShippingMelhorEnvioService;
+use Services\ShortCodeService;
 
 /**
  * Base_Plugin class
@@ -301,7 +297,6 @@ final class Base_Plugin {
                 </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
             });
         }
-
     }
 
     /**
@@ -375,6 +370,13 @@ final class Base_Plugin {
         $cotacao = new CotationController();
         $logs    = new LogsController();
         $status  = new StatusController();
+
+        // Registrando shortcode da calculadora
+        add_shortcode('calculadora_melhor_envio', function($attr) {
+            if (isset($attr['product_id'])) {
+                (new ShortCodeService($attr['product_id']))->shortcode();
+            }
+        }); 
 
         add_action( 'init', array( $this, 'init_classes' ) );
 

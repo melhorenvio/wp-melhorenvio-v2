@@ -273,6 +273,11 @@
                     </li>
                 </ul>
             </div>
+            <hr>
+            <h2></h2>
+            <h3>Shortcode para exibir a calculadora</h3>
+            <p><b>[calculadora_melhor_envio product_id="product_id"]</b></p>
+            <p>É necessário informar o ID do produto para o shortcode funcionar de forma adequada</p>
         </div>
         <hr>
 
