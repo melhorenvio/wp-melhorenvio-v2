@@ -59,4 +59,37 @@ class QuotationService
 
         return $result;
     }
+
+    /**
+     * Function to calculate a quotation by packages.
+     *
+     * @param array $packages
+     * @param string $postal_code
+     * @return object $quotation
+     */
+    public function calculateQuotationByPackages($packages, $postal_code, $service = null)
+    {   
+        $seller = (new SellerService())->getData();
+            
+        $body = [
+            'from' => [
+                'postal_code' => $seller->postal_code,
+            ],
+            'to' => [
+                'postal_code' => $postal_code
+            ],
+            'options'  => (new Option())->getOptions(),
+            'services' => (!is_null($service)) ? $service : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
+            'packages' => $packages
+        ];
+
+        $result = (new RequestService())->request(
+            self::ROUTE_API_MELHOR_CALCULATE, 
+            'POST', 
+            $body,
+            true
+        );
+
+        return $result;
+    }
 }
