@@ -362,7 +362,131 @@ final class Base_Plugin {
         add_action('wp_ajax_nopriv_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$cotacao, 'cotationProductPage']);
         add_action('wp_ajax_update_order', [$cotacao, 'refreshCotation']);
-        add_action('wp_ajax_get_info_melhor_envio', [(new TestService($this->version)), 'run']);
+        add_action('wp_ajax_get_info_melhor_envio', function() {
+
+            if (!isset($_GET['cep'])) {
+                echo json_encode([
+                    'error' => 'Informar o cep de destino'
+                ]);
+                die;
+            }
+
+            $response['cep_destiny'] = $_GET['cep'];
+
+            $params = array(
+                'headers'=> array(
+                    'Content-Type' => 'application/json',
+                    'Accept'=>'application/json',
+                    'Authorization' => 'Bearer '.$response['token']
+                )
+            );
+
+
+            $response['package'] = [
+                'width'  => (isset($_GET['width']))  ? (float) $_GET['width']  : 17 ,
+                'height' => (isset($_GET['height'])) ? (float) $_GET['height'] : 23,
+                'length' => (isset($_GET['length'])) ? (float) $_GET['length'] : 10,
+                'weight' => (isset($_GET['weight'])) ? (float) $_GET['weight'] : 1
+            ];
+
+
+            $options['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+
+            $response['insurance_value'] = (isset($_GET['insurance_value']))  ? (float) $_GET['insurance_value']  : 20.50;
+
+            if (isset($_GET['path_test_plugin'])) {
+                $response['path_test_plugin'] = str_replace('|', '/', $_GET['path_test_plugin']);
+            }
+
+            $response['plugins_instaled'] = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+
+            $response['is_multisite'] = is_multisite();
+
+            $response['pathPlugins'] = $pathPlugins; // var nao definida
+
+            $response['path'] = plugin_dir_path( __FILE__ );
+
+            $response['pathAlternative'] = $pathPlugins;
+
+            $pathPlugins = get_option('melhor_envio_path_plugins');
+            if (!$pathPlugins) {
+                $pathPlugins = ABSPATH . 'wp-content/plugins';
+            }
+
+            foreach ( glob( $response['pathAlternative'] . $this->version . '/services/*.php' ) as $filename ) {
+                $response['servicesFile'][] = $filename;
+            }
+
+            foreach ( glob( $response['pathAlternative'] . '/2.5.0/services/*.php' ) as $filename ) {
+                $response['servicesFile'][] = $filename;
+            }
+
+            foreach ( glob( $response['pathAlternative'] . '/melhor-envio-cotacao/services/*.php' ) as $filename ) {
+                $response['servicesFile'][] = $filename;
+            }
+
+            foreach ( glob( $pathPlugins . 'services/*.php' ) as $filename ) {
+                $response['servicesFile'][] = $filename;
+            }
+
+            $response['version'] = $this->version;
+
+            $response['session'] = $_SESSION;
+
+            $response['user']   = (new UsersController())->getInfo();
+
+            $response['origem'] = (new UsersController())->getFrom();
+
+            $response['token'] = get_option('wpmelhorenvio_token');
+
+            $response['account'] = wp_remote_retrieve_body(
+                wp_remote_get('https://api.melhorenvio.com/v2/me', $params)
+            );
+
+            $response['server'] = (new LogsController())->getServerStatus();
+
+            echo json_encode($response);
+            die;
+        });
+
+        add_action('wp_ajax_check_path', function() {
+
+            $data['version'] = $this->version;
+
+            $data['home'] = get_home_path(__FILE__);
+
+            $data['plugin_dir_path'] = dirname( __FILE__ );
+
+            $pathPlugins = get_option('melhor_envio_path_plugins');
+            if (!$pathPlugins) {
+                $pathPlugins = ABSPATH . 'wp-content/plugins';
+            }
+
+            $data['path_plugins'] = $pathPlugins;
+
+            if (isset($_GET['path'])) {
+                $data['path_test'] = str_replace('%', '/', $_GET['path']);
+            }
+
+            foreach ( glob( $data['path_plugins'] . '/' . $this->version . '/services/*.php' ) as $filename ) {
+                $data['services_file']['current_version_' . $this->version][] = $filename;
+            }
+
+            foreach ( glob( $data['path_plugins'] . '/2.5.0/services/*.php' ) as $filename ) {
+                $data['services_file']['fixed-2.5.0'][] = $filename;
+            }
+
+            foreach ( glob( $data['path_plugins'] . '/melhor-envio-cotacao/services/*.php' ) as $filename ) {
+                $data['services_file']['producao'][] = $filename;
+            }
+
+            foreach ( glob( $data['path_test'] . '/services/*.php' ) as $filename ) {
+                $data['services_file']['test'][] = $filename;
+            }
+
+            echo json_encode($data);
+            die;
+        });
 
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){
