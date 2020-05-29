@@ -62,7 +62,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
 * **Marcos Brito** - *Melhor Envio* - [MarcosWillian](https://github.com/MarcosWillian)
-* **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
+* **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
 #### [2.7.0] - 2020-05
