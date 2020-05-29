@@ -21,7 +21,7 @@ class TokenService
         $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
         $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
 
-        if (!$token || !$token_environment) {
+        if (!$token) {
             return [
                 'success' => false,
                 'message' => 'Token não salvo'
@@ -31,7 +31,7 @@ class TokenService
         return [
             'token' => $token,
             'token_sandbox' => $token_sandbox,
-            'token_environment' => $token_environment
+            'token_environment' => (!$token_environment) ? 'production' : $token_environment 
         ];
     }
 
