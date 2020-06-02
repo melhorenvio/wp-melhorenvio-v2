@@ -13,6 +13,8 @@ class TestService
 
     public function run()
     {   
+        (new SessionService())->clear();
+        
         $response = [
             'version' => $this->version,
             'environment' => (new TokenService())->check(),
