@@ -489,7 +489,13 @@ final class Base_Plugin {
             die;
         });
 
-        add_action('wp_ajax_nopriv_check_environment', (new TestService($this->version))->run());
+        add_action('wp_ajax_nopriv_environment', function() {
+            (new TestService($this->version))->run();
+        });
+
+        add_action('wp_ajax_environment', function() {
+            (new TestService($this->version))->run();
+        });
 
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){
