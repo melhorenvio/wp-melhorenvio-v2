@@ -15,18 +15,8 @@ class TestService
     {   
         $response = [
             'version' => $this->version,
-            'token' => substr( get_option('wpmelhorenvio_token'), 0, 50),
-            'me' => $this->hideDataMe((new SellerService())->getData()),
-            'cep_destiny' => $this->cepDestiny($_GET),
-            'packages' => $this->packages($_GET),
-            'insurance_value' => $this->insuranceValue($_GET),
-            'plugins' => $this->getListPluginsInstaleds(),
-            'is_multisite' => is_multisite(),
-            'path' => plugin_dir_path( __FILE__ ),
-            'ABSPATH' => ABSPATH,
-            'path_custom_melhorenvio' => get_option('melhor_envio_path_plugins'),
-            'shipping_services' => $this->getShippingServices(),
-            'quotation' => (new QuotationService())->calculateQuotationByPackages($this->packages($_GET), $this->cepDestiny($_GET))
+            'environment' => (new TokenService())->check(),
+            'user' => $this->hideDataMe((new SellerService())->getData())
         ];
 
        echo json_encode($response);die;

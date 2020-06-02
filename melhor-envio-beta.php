@@ -73,6 +73,7 @@ use Services\OrderQuotationService;
 use Services\SessionService;
 use Services\ShortCodeService;
 use Services\TestService;
+use Services\TokenService;
 
 /**
  * Base_Plugin class
@@ -487,6 +488,8 @@ final class Base_Plugin {
             echo json_encode($data);
             die;
         });
+
+        add_action('wp_ajax_check_environment', (new TestService($this->version))->run());
 
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){

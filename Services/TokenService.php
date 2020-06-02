@@ -63,4 +63,16 @@ class TokenService
             'message' => 'Token salvo com sucesso'
         ];
     }
+
+    public function check()
+    {
+        $dataToken = $this->get();
+
+        return [
+            'environment' => $dataToken['token_environment'],
+            'production' => substr($dataToken['token'], 0, 30) . '...',
+            'sandbox' => substr($dataToken['token_sandbox'], 0, 30) . '...'
+        ];
+
+    }
 }
