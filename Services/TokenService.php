@@ -21,7 +21,7 @@ class TokenService
         $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
         $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
 		
-		if (is_null($token_environment) || empty($token_environment)) {
+		if (is_null($token_environment) || empty($token_environment) || $token_environment == "false") {
 			$token_environment = 'production';
 		}
 			
