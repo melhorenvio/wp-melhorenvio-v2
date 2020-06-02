@@ -23,15 +23,15 @@ class CartService
     {
         $from = (new SellerService())->getData();
 
-        //$quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
+        $quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
 
         $body = array(
             'from' => $from,
             'to' => $to,
             'agency' => (new Agency())->getCodeAgencySelected(),
             'service' => $shipping_method_id,
-            //'products' => $products,
-            //'volumes' => $this->getVolumes($quotation, $shipping_method_id), 
+            'products' => $products,
+            'volumes' => $this->getVolumes($quotation, $shipping_method_id), 
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
                 "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
@@ -93,6 +93,41 @@ class CartService
             'DELETE', 
             []
         );
+    }
+
+    /**
+     * Mount array with volumes by products.
+     *
+     * @param array $quotation
+     * @param int $method_id
+     * @return array $volumes
+     */
+    private function getVolumes($quotation, $method_id)
+    {
+        $volumes = [];
+
+        foreach ($quotation as $item) {
+    
+            if ($item->id == $method_id) {
+
+                foreach ($item->packages as $package) {
+
+                    $volumes[] = [
+                        'height' => $package->dimensions->height,
+                        'width'  => $package->dimensions->width,
+                        'length' => $package->dimensions->length,
+                        'weight' => $package->weight,
+                    ];
+                }
+            }
+        }
+
+        //TODO remover volumes se for correios e tratar o erro.
+        if (in_array($method_id, [1,2,13,17])) {
+            return $volumes[0];
+        }
+
+        return $volumes;
     }
 
     /**

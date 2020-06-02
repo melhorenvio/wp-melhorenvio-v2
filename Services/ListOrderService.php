@@ -63,17 +63,6 @@ class ListOrderService
     }
 
     /**
-     * Function to check if need show the quotations
-     *
-     * @param array $status
-     * @return boolen;
-     */
-    private function needShowQuotation($status)
-    {
-        return (!isset($status) || is_null($status) || $status == null) ? true : false; 
-    }
-
-    /**
      * Function to get posts
      *
      * @param int limit
