@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\DimensionsHelper;
+
 class TestService
 {
     protected $version;
@@ -14,12 +16,35 @@ class TestService
     public function run()
     {   
         (new SessionService())->clear();
-        
+
         $response = [
             'version' => $this->version,
+            'php' => phpversion(),
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData())
         ];
+
+        if (isset($_GET['postalcode'])) {
+
+            $product = $this->getProductToTest();
+
+            $quotation = (new QuotationService())->calculateQuotationByProducts(
+                $product, 
+                $_GET['postalcode'], 
+                null
+            );
+
+            $response['product'] = $product;
+
+            foreach ($quotation as  $item) {
+                $response['quotation'][$item->id] = [
+                    "Serviço" => $item->name,
+                    "Valor" => $item->price,
+                    'Erro' => $item->error
+                ];
+            }
+
+        }
 
        echo json_encode($response);die;
     }
@@ -102,6 +127,27 @@ class TestService
         return [
             'postal_code' => $data->postal_code,
             'email' => $data->email
+        ];
+    }
+
+    private function getProductToTest()
+    {
+        $args = [];
+
+        $products = wc_get_products( $args );
+        
+        $_product = $products[rand(0, (count($products) - 1 ))];
+
+        return [
+            "id"              => $_product->get_id(),
+            "name"            => $_product->get_name(),
+            "quantity"        => 1,
+            "unitary_value"   => round($_product->get_price(), 2),
+            "insurance_value" => round($_product->get_price(), 2),
+            "weight"          => (new DimensionsHelper())->converterIfNecessary($_product->weight),
+            "width"           => (new DimensionsHelper())->converterDimension($_product->width),
+            "height"          => (new DimensionsHelper())->converterDimension($_product->height),
+            "length"          => (new DimensionsHelper())->converterDimension($_product->length)
         ];
     }
 }
