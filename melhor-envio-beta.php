@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.7.0
+Version: 2.7.1
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -73,6 +73,7 @@ use Services\OrderQuotationService;
 use Services\SessionService;
 use Services\ShortCodeService;
 use Services\TestService;
+use Services\TokenService;
 
 /**
  * Base_Plugin class
@@ -86,7 +87,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.7.0';
+    public $version = '2.7.1';
 
     /**
      * Holds various class instances
@@ -486,6 +487,14 @@ final class Base_Plugin {
 
             echo json_encode($data);
             die;
+        });
+
+        add_action('wp_ajax_nopriv_environment', function() {
+            (new TestService($this->version))->run();
+        });
+
+        add_action('wp_ajax_environment', function() {
+            (new TestService($this->version))->run();
         });
 
         // Todas as configurações

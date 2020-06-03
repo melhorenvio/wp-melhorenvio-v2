@@ -23,7 +23,7 @@ class ShippingMelhorEnvioService
         $codes = [];
         
         foreach ($shippings as $method) {
-            if (is_null($method->code)) {
+            if (!isset($method->code) || is_null($method->code)) {
                 continue;
             }
             $codes[] = $method->code;

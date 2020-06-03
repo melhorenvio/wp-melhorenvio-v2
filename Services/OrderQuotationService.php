@@ -48,9 +48,11 @@ class OrderQuotationService
      */
     public function saveQuotation($order_id, $quotation)
     {
+        $choose = (new Method($order_id))->getMethodShipmentSelected($order_id);
+
         $data = $this->setKeyAsCodeService($quotation);
         $data['date_quotation'] = date('Y-m-d H:i:d'); 
-        $data['choose_method'] = (new Method($order_id))->getMethodShipmentSelected($order_id);
+        $data['choose_method'] = (!is_null($choose)) ? $choose : '2'; 
         $data['free_shipping'] = false; 
         $data['diff'] = false;
 

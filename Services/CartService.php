@@ -44,7 +44,7 @@ class CartService
             )
         );
 
-        $isValid = $this->paramsValid($body);
+        $isValid = $this->paramsValid($body, $order_id);
 
         if (!empty($isValid)) {
 
@@ -153,32 +153,32 @@ class CartService
      * @param array $body
      * @return void
      */
-    private function paramsValid($body)
+    private function paramsValid($body, $order_id)
     {
         $errors = [];
 
         if (!array_key_exists("from", $body)) {
-            $errors[] = 'Informar origem do envio';
+            $errors[] = sprintf("Informar origem do envio do pedido %s", $order_id);
         }
 
         if (!array_key_exists("to", $body)) {
-            $errors[] = 'Informar destino do envio';
+            $errors[] = sprintf("Informar destino do envio do pedido %s", $order_id);
         }
 
         if (!array_key_exists("service", $body)) {
-            $errors[] = 'Informar o serviço do envio';
+            $errors[] = sprintf("Informar o serviço do envio do pedido %s", $order_id);
         }
 
         if (!array_key_exists("products", $body)) {
-            $errors[] = 'Informar o produtos do envio';
+            $errors[] = sprintf("Informar o produtos do envio do pedido %s", $order_id);
         }
 
         if (isset($body['service']) && $body['service'] >= 3 && !array_key_exists("agency", $body)) {
-            $errors[] = 'Informar a agência do envio';
+            $errors[] = sprintf("Informar a agência do envio do pedido %s", $order_id);
         }
 
         if (!isset($body['volumes']) ) {
-            $errors[] = 'Informar os volumes do envio';
+            $errors[] = sprintf("Informar os volumes do envio do pedido %s", $order_id);
         }
 
         return $errors;

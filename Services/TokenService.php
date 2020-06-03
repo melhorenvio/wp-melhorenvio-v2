@@ -20,18 +20,15 @@ class TokenService
         $token = get_option(self::OPTION_TOKEN); 
         $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
         $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
-
-        if (!$token) {
-            return [
-                'success' => false,
-                'message' => 'Token não salvo'
-            ];
-        }
-
+		
+		if (is_null($token_environment) || empty($token_environment) || $token_environment == "false") {
+			$token_environment = 'production';
+		}
+			
         return [
             'token' => $token,
             'token_sandbox' => $token_sandbox,
-            'token_environment' => (!$token_environment) ? 'production' : $token_environment 
+            'token_environment' => $token_environment,
         ];
     }
 
@@ -65,5 +62,17 @@ class TokenService
             'success' => true,
             'message' => 'Token salvo com sucesso'
         ];
+    }
+
+    public function check()
+    {
+        $dataToken = $this->get();
+
+        return [
+            'environment' => $dataToken['token_environment'],
+            'production' => substr($dataToken['token'], 0, 30) . '...',
+            'sandbox' => substr($dataToken['token_sandbox'], 0, 30) . '...'
+        ];
+
     }
 }
