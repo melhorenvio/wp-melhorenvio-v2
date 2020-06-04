@@ -163,7 +163,8 @@ class OrderService
             end($result->purchase->orders)->protocol, //protocol
             $result->purchase->status, //status
             end($result->purchase->orders)->service_id,//choose_method
-            $result->purchase->id //purchase_id
+            $result->purchase->id, //purchase_id,
+            end($result->purchase->orders)->self_tracking
         );
     }
 
@@ -213,7 +214,8 @@ class OrderService
             end($result->purchase->orders)->protocol, //protocol
             $result->purchase->status, //status
             end($result->purchase->orders)->service_id,//choose_method
-            $result->purchase->id //purchase_id
+            $result->purchase->id, //purchase_id
+            end($result->purchase->orders)->self_tracking
         );
 
         $response['result'] = $result;
@@ -254,7 +256,8 @@ class OrderService
             $data['protocol'],
             'generated',
             $data['choose_method'],
-            $data['purchase_id']
+            $data['purchase_id'],
+            $data['tracking']
         );
 
         return $data;
@@ -290,7 +293,8 @@ class OrderService
             $data['protocol'],
             'released',
             $data['choose_method'],
-            $data['purchase_id']
+            $data['purchase_id'],
+            $data['tracking']
         );
 
         return $result;
@@ -401,6 +405,8 @@ class OrderService
                 'protocol' => $protocol,
                 'tracking' => $tracking
             ];
+
+            (new TrackingService())->addTrackingOrder($post->ID, $tracking);
         }
 
         return $response;

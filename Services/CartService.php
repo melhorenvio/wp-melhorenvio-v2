@@ -71,7 +71,8 @@ class CartService
             $result->protocol, 
             'pending', 
             $shipping_method_id,
-            null
+            null,
+            $result->self_tracking
         );
     }
 

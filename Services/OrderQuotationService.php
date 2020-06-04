@@ -109,7 +109,7 @@ class OrderQuotationService
      * @param int $choose_method
      * @return array $data
      */
-    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null) 
+    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
     {
         $data = [
             'choose_method' => $choose_method,
@@ -134,7 +134,7 @@ class OrderQuotationService
      * @param int $choose_method
      * @return array $data
      */
-    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null) 
+    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
     {
         $data = [
             'choose_method' => $choose_method,
@@ -142,6 +142,7 @@ class OrderQuotationService
             'protocol' => $protocol,
             'purchase_id' => $purcahse_id,
             'status' => $status,
+            'tracking' => $tracking,
             'created' => date('Y-m-d H:i:s')
         ];
 

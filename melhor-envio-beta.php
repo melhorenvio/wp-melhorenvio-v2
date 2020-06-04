@@ -74,6 +74,7 @@ use Services\SessionService;
 use Services\ShortCodeService;
 use Services\TestService;
 use Services\TokenService;
+use Services\TrackingService;
 
 /**
  * Base_Plugin class
@@ -322,7 +323,6 @@ final class Base_Plugin {
         $users   = new UsersController();
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
-        $logs    = new LogsController();
         $status  = new StatusController();
 
         // Registrando shortcode da calculadora
@@ -331,6 +331,39 @@ final class Base_Plugin {
                 (new ShortCodeService($attr['product_id']))->shortcode();
             }
         }); 
+
+        /**
+         * Adds a new column to the "My Orders" table in the account.
+         *
+         * @param string[] $columns the columns in the orders table
+         * @return string[] updated columns
+         */
+        function sv_wc_add_my_account_orders_column( $columns ) {
+            $new_columns = array();
+            foreach ( $columns as $key => $name ) {
+                $new_columns[ $key ] = $name;
+                if ( 'order-status' === $key ) {
+                    $new_columns['tracking'] = __( 'Rastreio', 'textdomain' );
+                }
+            }
+            return $new_columns;
+        }
+        add_filter( 'woocommerce_my_account_my_orders_columns', 'sv_wc_add_my_account_orders_column' );
+
+        /**
+         * Adds data to the custom "ship to" column in "My Account > Orders".
+         *
+         * @param \WC_Order $order the order object for the row
+         */
+        function sv_wc_my_orders_ship_to_column( $order ) {
+            $data = (new TrackingService())->getTrackingOrder($order->id);
+            if( empty($data) || is_null($data['tracking'])) {
+                echo 'Aguardando postagem';
+            } else {
+                echo '<a target="_blank" href="https://melhorrastreio.com.br/rastreio/'. $data .'">' . $data . '</a>';
+            }
+        }
+        add_action( 'woocommerce_my_account_my_orders_column_tracking', 'sv_wc_my_orders_ship_to_column' );
 
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
