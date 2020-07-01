@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\DimensionsHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
@@ -86,10 +87,10 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
-                    "weight"             => floatval($_POST['data']['produto_peso']),
-                    "width"              => floatval($_POST['data']['produto_largura']),
-                    "length"             => floatval($_POST['data']['produto_comprimento']),
-                    "height"             => floatval($_POST['data']['produto_altura']),
+                    "weight"             => (new DimensionsHelper())->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
+                    "width"              => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_largura'])),
+                    "length"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_comprimento'])),
+                    "height"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_altura'])),
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
                     'insurance_value'    => floatval($_POST['data']['produto_preco']),
@@ -97,7 +98,7 @@ class CotationController
                 )
             )
         );
-
+        
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         if(count($shipping_methods) == 0) {

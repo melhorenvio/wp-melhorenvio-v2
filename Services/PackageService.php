@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\DimensionsHelper;
+
 class PackageService
 {
     /**
@@ -26,19 +28,19 @@ class PackageService
             if (isset($item->packages)) {
                 foreach($item->packages as $key => $package) {
                     $response[$item->id] = (object) [
-                        'largura' => $package->dimensions->width,
-                        'altura' => $package->dimensions->height,
-                        'comprimento' => $package->dimensions->length,
-                        'peso' => $package->weight
+                        'largura' => (new DimensionsHelper())->converterDimension($package->dimensions->width),
+                        'altura' => (new DimensionsHelper())->converterDimension($package->dimensions->height),
+                        'comprimento' => (new DimensionsHelper())->converterDimension($package->dimensions->length),
+                        'peso' => (new DimensionsHelper())->converterIfNecessary($package->weight)
                     ];
                 }
             } elseif (isset($item->volumes)) {
                 foreach($item->volumes as $key => $volume) {
                     $response[$item->id] = (object) [
-                        'largura' => $volume->width,
-                        'altura' => $volume->height,
-                        'comprimento' => $volume->length,
-                        'peso' => $volume->weight
+                        'largura' => (new DimensionsHelper())->converterDimension($volume->width),
+                        'altura' => (new DimensionsHelper())->converterDimension($volume->height),
+                        'comprimento' => (new DimensionsHelper())->converterDimension($volume->length),
+                        'peso' => (new DimensionsHelper())->converterIfNecessary($volume->weight)
                     ];
                 }
             } else {
