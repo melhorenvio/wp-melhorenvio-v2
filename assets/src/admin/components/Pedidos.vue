@@ -29,9 +29,15 @@
     .error-message {
         width: 98%;
         padding: 10px 0 10px 2%;
-        background-color: #d6442a;
-        color: #fff;
         font-weight: 600;
+    }
+
+    .me-modal {
+        z-index: 1!important;
+    }
+
+    .me-modal-2 {
+        z-index: 1!important;
     }
 </style>
 
@@ -49,7 +55,7 @@
                         <h1>Meus pedidos</h1>
                     </div>
                     <hr>
-                    <div class="col-12-12" v-show="error_message">
+                    <div class="col-12-12" v-show="true">
                         <p class="error-message">{{ error_message }}</p>
                     </div>
                     <br>
@@ -60,6 +66,9 @@
         <table border="0" class="table-box">
             <tr>
                 <td>
+                    <h4><b>Usuário:</b> {{name}}</h4>
+                    <h4><b>Ambiente:</b> {{environment}}</h4>
+                    <h4><b>Envios:</b> {{limitEnabled}}/{{limit}}</h4>
                     <h4><b>Saldo:</b> {{getBalance}}</h4>
                 </td>
             </tr>
@@ -91,12 +100,15 @@
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
                 <ul class="head">
+                    <li>
+                        <span>
+                            <input ref="selectAllBox" type="checkbox" @click="selectAll" />
+                        </span>
+                    </li>
                     <li><span>ID</span></li>
-                    <li style="width="><span></span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
-                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -104,34 +116,35 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <Id :item="item"></Id>
-                                <span style="font-size:12px; cursor:pointer"><a @click="handleToggleInfo(item.id)">Ver detalhes</a></span>
+                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
                             </li>
-                            <li><span></span></li>
+                            <li>
+                                <Id :item="item"></Id>
+                            </li>
+
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
                             <li>
+                                <template v-if="item.products">
+                                <label>Produto</label>
+                                    <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+                                </template>
                                 <Cotacao :item="item"></Cotacao>
+                                <template v-if="item.protocol && item.status != null">
+                                    <p>
+                                        Protocolo: <b>{{ item.protocol }}</b>
+                                    </p>
+                                    <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
+                                </template>
                             </li>
                             <li>
                                 <Documentos :item="item"></Documentos>
-                            </li>
-                            <li class="text-center">
-                                <span style="font-size: 14px;">
-                                    <strong>{{item.status_texto}}</strong>
-                                </span>
                             </li>
                             <li class="-center">
                                 <Acoes :item="item"></Acoes>
                             </li>
                         </ul>
-                        <template v-if="toggleInfo == item.id">
-                            <informacoes
-                                :volume="item.cotation[item.cotation.choose_method].volumes[0]"
-                                :products="item.products">
-                            </informacoes>
-                        </template>
                     </li>
                 </ul>
             </div>
@@ -139,20 +152,28 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
+        <button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
+        
+        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>
+ 
         <transition name="fade">
-            <div class="me-modal" v-show="show_modal">
+
+            <!-- show_modal -->
+            <div class="me-modal me-modal-2" v-show="show_modal || show_modal2">
                 <div>
                     <p class="title">Atenção</p>
                     <div class="content">
-                        <p class="txt">{{msg_modal}}</p>
+                        <p v-for="msg in msg_modal" class="txt">{{msg}}</p>
+                        <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
                     </div>
                     <div class="buttons -center">
-                        <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
+                        <button v-if="btnClose" type="button" @click="close" class="btn-border -full-blue">Fechar</button>
                     </div>
                 </div>
             </div>
         </transition>
 
+        <!-- show_loader -->
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
                     <g fill="none" fill-rule="evenodd" stroke-width="2">
@@ -212,7 +233,19 @@ export default {
             wpstatus: 'all',
             line: 0,
             toggleInfo: null,
-            error_message: null
+            error_message: null,
+            orderSelecteds: [],
+            allSelected: false,
+            name: null,
+            environment: null,
+            limit: 0,
+            limitEnabled: 0,
+            totalOrders: 0,
+            totalCart: 0,
+            show_modal2: false,
+            msg_modal2: [],
+            btnClose: true,
+            ordersToGetQuotations: []
         }
     },
     components: {
@@ -237,9 +270,13 @@ export default {
     methods: {
         ...mapActions('orders', [
             'retrieveMany',
-            'loadMore',
+            'loadMore',,
             'closeModal',
-            'getStatusWooCommerce'
+            'getStatusWooCommerce',
+            'printMultiples',
+            'updateQuotation',
+            'addCart',
+            'showErrorAlert'
         ]),
         ...mapActions('balance', ['setBalance']),
         close() {
@@ -256,6 +293,174 @@ export default {
 
                 this.validateToken();
             })
+        },
+        selectAll: function() {
+            if (!this.$refs.selectAllBox.checked) {
+                this.orderSelecteds = []
+                this.orders.filter((order) =>  {
+                    this.$refs[order.id][0].checked = false
+                })
+                return
+            }
+            let selecteds = [];
+            this.orders.filter((order) =>  {
+                selecteds.push(order)
+                this.$refs[order.id][0].checked = true
+            })
+            this.orderSelecteds = selecteds
+        },
+        beforePrintMultiples: function() {
+            this.msg_modal2.length = 0;
+            let selecteds = [];
+            let not = [];
+            let messagePrint = [];
+            
+            this.orders.filter( (order) => {
+                
+                if (this.$refs[order.id][0].checked && (order.status == 'posted' || order.status == 'released' || order.status == 'paid' || order.status == 'generated' || order.status == 'printed')) {
+                    selecteds.push(order.id);
+                }
+                
+                if (order.status == null) {
+                    this.$refs[order.id][0].checked = false;
+                    not.push(order.id);
+                }
+            });
+
+            if (selecteds.length == 0) {
+                this.msg_modal2.push('Nenhuma etiqueta disponível para imprimir')
+                this.show_modal2 = true;
+                return
+            }
+
+            this.orderSelecteds = selecteds;
+            this.notCanPrint = not;
+
+            this.msg_modal2.length = 0
+            this.printMultiples({
+                'orderSelecteds':selecteds,
+                'message': messagePrint[0]
+            });
+        },
+        alertMessage: function(data) {
+            let stringMessage
+            data.filter( (item) => {
+                this.msg_modal2.push(item)
+            })
+            this.show_modal2 = true;
+        },
+        getSelectedOrders() {
+            const orders = []
+            this.orders.filter((order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    orders.push(order)
+                }
+            });
+            return orders
+        },
+        async beforeBuyOrders(){
+            this.show_modal2 = true;
+            this.btnClose = false;
+            const orderSelected = this.getSelectedOrders()
+
+            if (orderSelected.length == 0) {
+                this.show_modal2 = false;
+                this.msg_modal2.length = 0;
+                return
+            }
+            
+            for (const idx in orderSelected) { 
+                await this.dispatchCart(orderSelected[idx])
+            }
+            this.btnClose = true;
+        },
+        countOrdersEnabledToBuy: function() {
+            let total = 0
+            this.orders.filter( (order) => {
+                if (this.$refs[order.id][0].checked && order.status == null) {
+                    total++
+                }
+            })
+            return total
+        },
+
+        dispatchCart: function(order) {
+
+            this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...")
+
+            return new Promise( (resolve, reject) => {
+
+                let data = {
+                    'id': order.id,
+                    'choosen': order.cotation.choose_method,
+                    'non_commercial': order.non_commercial
+                };
+
+                setTimeout(() => {
+                    this.addCart(data).then( (response) => {
+                        this.msg_modal2.push("Pedido ID" + order.id + " enviado com sucesso!")
+                        resolve(response)
+                    }).catch((error) => {
+                        this.msg_modal2.push("OPS!, ocorreu um erro ao enviar o pedido ID" + order.id)
+                        this.btnClose = true;
+                        error.errors.filter( (item) => {
+                            this.msg_modal2.push('ID:' +order.id+ ': '+ item)
+                        })
+                        this.btnClose = true;
+                        resolve()
+                        
+                    });
+                }, 100)
+            })
+        },
+        getMe() {
+            this.$http.get(`${ajaxurl}?action=me`).then((response) => {
+                if (response.data.id) {
+                    this.name = response.data.firstname + ' ' + response.data.lastname;
+                    this.environment = response.data.environment
+                    this.limit = response.data.limits.shipments
+                    this.limitEnabled = response.data.limits.shipments_available
+                }
+            })
+        },
+        getOrdersWithoutQuotations() {
+            return new Promise((resolve) => {
+                let ordersToGetQuotations = [];
+                this.orders.filter( (order) => {
+                    if (order.status == null && order.cotation.length == 0) {
+                        ordersToGetQuotations.push(order.id)
+                    }
+                })
+                resolve(ordersToGetQuotations)
+            })
+        },
+        getQuotations(){
+            if (this.ordersToGetQuotations.length == 0) {
+                return;
+            }
+            this.getQuotation(this.ordersToGetQuotations[0]).then( (response) => {
+                this.updateQuotation({
+                    'order_id': this.ordersToGetQuotations[0],
+                    'quotations': response.data
+                })
+                this.ordersToGetQuotations.shift()
+            })
+        },
+        getQuotation(order_id) {
+            if (typeof order_id == "undefined") {
+                return;
+            }
+            return new Promise( (resolve, reject) => {
+                this.$http.get(`${ajaxurl}?action=get_quotation&id=${order_id}`).then((response) => {
+                    this.getQuotations()
+                    resolve(response)
+                })
+            })
+        },
+        close() {
+            this.show_modal2 = false
+            this.msg_modal2.length = 0
+            this.closeModal()
         },
         validateToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
@@ -290,10 +495,17 @@ export default {
         },
         wpstatus () {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
+        },
+        orders () {
+            this.getOrdersWithoutQuotations().then( (response) => {
+                this.ordersToGetQuotations = response;
+                this.getQuotations()  
+            })
         }
     },
     mounted () {
         this.getToken();
+        this.getMe();
         if (Object.keys(this.orders).length === 0) {
             this.retrieveMany({status:this.status, wpstatus:this.wpstatus})
         }

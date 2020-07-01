@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.6.2
+Version: 2.7.1
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -62,15 +62,18 @@ if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
 
 use Controllers\OrdersController;
 use Controllers\ConfigurationController;
-use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
-use Controllers\OptionsController;
 use Controllers\StatusController;
-use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
+use Services\ConfigurationsService;
+use Services\OrderQuotationService;
+use Services\SessionService;
+use Services\ShortCodeService;
+use Services\TestService;
+use Services\TrackingService;
 
 /**
  * Base_Plugin class
@@ -84,7 +87,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.6.2';
+    public $version = '2.7.1';
 
     /**
      * Holds various class instances
@@ -109,55 +112,7 @@ final class Base_Plugin {
 
         add_action( 'plugins_loaded', array( $this, 'init_plugin' ), 9, false );
 
-        function melhor_envio_load_plugin_textdomain() {
-            load_plugin_textdomain( 'melhor-envio', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
-        }
-
-        add_action( 'plugins_loaded', 'melhor_envio_load_plugin_textdomain' );
-
-        self::clearCotationSession();
-    }
-
-    public function clearCotationSession()
-    {
-        $codeStore = md5(get_option('home'));
-
-        $dateNow = date("Y-m-d h:i:s");
-
-        if(isset($_SESSION[$codeStore]['cotations'])) {
-
-            foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
-
-                if( !isset($cotation['created'])) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-
-                if(date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($cotation['created']))) < $dateNow) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-            }
-        }
-    }
-
-    public function loadMelhorEnvio()
-    {
-        if (isset($_GET) && $_GET['page_id'] == get_option( 'woocommerce_cart_page_id' )) {
-            return true;
-        }
-
-        if (is_admin()) {
-            return true;
-        }
-
-        if(isset($_POST['woocommerce-shipping-calculator-nonce'])) {
-            return true;
-        }
-
-        if (isset($_POST['shipping_method'])) {
-            return true;
-        }
-
-        return false;
+        (new SessionService())->clear();
     }
 
     /**
@@ -230,8 +185,6 @@ final class Base_Plugin {
         $this->includes();
         $this->init_hooks();
 
-        (new ShippingMethodsController())->updateMethodsShippingCodeSession();
-
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if(!$pathPlugins) {
             $pathPlugins = ABSPATH . 'wp-content/plugins';
@@ -279,7 +232,7 @@ final class Base_Plugin {
                 include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
 
                 // Create the methods shippings
-                foreach ( glob( plugin_dir_path( __FILE__ ) . 'services/*.php' ) as $filename ) {
+                foreach ( glob( plugin_dir_path( __FILE__ ) . 'services_methods/*.php' ) as $filename ) {
                     include_once $filename;
                 }
 
@@ -298,7 +251,6 @@ final class Base_Plugin {
                 </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
             });
         }
-
     }
 
     /**
@@ -366,36 +318,71 @@ final class Base_Plugin {
      */
     public function init_hooks()
     {
-        $token   = new tokenController();
         $order   = new OrdersController();
         $users   = new UsersController();
         $conf    = new ConfigurationController();
         $cotacao = new CotationController();
-        $logs    = new LogsController();
-        $options = new OptionsController();
         $status  = new StatusController();
 
+        // Registrando shortcode da calculadora
+        add_shortcode('calculadora_melhor_envio', function($attr) {
+            if (isset($attr['product_id'])) {
+                (new ShortCodeService($attr['product_id']))->shortcode();
+            }
+        }); 
+
+        /**
+         * Adds a new column to the "My Orders" table in the account.
+         *
+         * @param string[] $columns the columns in the orders table
+         * @return string[] updated columns
+         */
+        function sv_wc_add_my_account_orders_column( $columns ) {
+            $new_columns = array();
+            foreach ( $columns as $key => $name ) {
+                $new_columns[ $key ] = $name;
+                if ( 'order-status' === $key ) {
+                    $new_columns['tracking'] = __( 'Rastreio', 'textdomain' );
+                }
+            }
+            return $new_columns;
+        }
+        add_filter( 'woocommerce_my_account_my_orders_columns', 'sv_wc_add_my_account_orders_column' );
+
+        /**
+         * Adds data to the custom "ship to" column in "My Account > Orders".
+         *
+         * @param \WC_Order $order the order object for the row
+         */
+        function sv_wc_my_orders_ship_to_column( $order ) {
+            $data = (new TrackingService())->getTrackingOrder($order->id);
+            if( empty($data) || is_null($data['tracking'])) {
+                echo 'Aguardando postagem';
+            } else {
+                echo '<a target="_blank" href="https://melhorrastreio.com.br/rastreio/'. $data .'">' . $data . '</a>';
+            }
+        }
+        add_action( 'woocommerce_my_account_my_orders_column_tracking', 'sv_wc_my_orders_ship_to_column' );
+
+        $hideCalculator = (new CalculatorShow)->get();
+        if ($hideCalculator) {
+            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
+            $cotacaoProd->run();
+        }
+
         add_action( 'init', array( $this, 'init_classes' ) );
-
-        // Localize our plugin
         add_action( 'init', array( $this, 'localization_setup' ) );
-
         add_action('wp_ajax_get_orders', function() {
             $order = new OrdersController();
             echo $order->getOrders();
             die;
         });
 
-        $hideCalculator = (new CalculatorShow)->get();
-
-        if ($hideCalculator) {
-            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
-            $cotacaoProd->run();
-        }
-
-        add_action('wp_ajax_get_token', [$token, 'getToken']);
-        add_action('wp_ajax_save_token', [$token, 'saveToken']);
+        add_action('wp_ajax_me', [$users, 'getMe']);
+        add_action('wp_ajax_get_token', [(new Controllers\TokenController()), 'getToken']);
+        add_action('wp_ajax_save_token', [(new Controllers\TokenController()), 'saveToken']);
         add_action('wp_ajax_add_order', [$order, 'sendOrder']);
+        add_action('wp_ajax_buy_click', [$order, 'buyOnClick']);
         add_action('wp_ajax_remove_order', [$order, 'removeOrder']);
         add_action('wp_ajax_cancel_order', [$order, 'cancelOrder']);
         add_action('wp_ajax_pay_ticket', [$order, 'payTicket']);
@@ -534,28 +521,17 @@ final class Base_Plugin {
             die;
         });
 
+        add_action('wp_ajax_nopriv_environment', function() {
+            (new TestService($this->version))->run();
+        });
+
+        add_action('wp_ajax_environment', function() {
+            (new TestService($this->version))->run();
+        });
+
         // Todas as configurações
         add_action('wp_ajax_get_configuracoes', function(){
-            $responseAgencies = (new Models\Agency())->getAgencies();
-
-            $data = [
-                'addresses'           => (new Models\Address())->getAddressesShopping()['addresses'],
-                'stores'              => (new Models\Store())->getStories()['stores'],
-                'agencies'            => $responseAgencies['agencies'],
-                'allAgencies'         => $responseAgencies['allAgencies'],
-                'agencySelected'      => $responseAgencies['agencySelected'],
-                'calculator'          => (new Models\CalculatorShow())->get(),
-                'all_agencies_jadlog' => (new Models\JadlogAgenciesShow())->get(),
-                'use_insurance'       => (new Models\UseInsurance())->get(),
-                'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
-                'metodos'             => (new Controllers\ConfigurationController())->getMethodsEnablesArray(),
-                'services_codes'      => (new ShippingMethodsController())->getCodes(),
-                'style_calculator'    => (new Controllers\ConfigurationController())->getStyleArray(),
-                'path_plugins'        => (new Controllers\ConfigurationController())->getPathPluginsArray(),
-                'options_calculator'  => (new Controllers\ConfigurationController())->getOptionsCalculator()
-            ];
-
-            echo json_encode($data);
+            echo json_encode((new ConfigurationsService())->getConfigurations());
             die;
         });
 
@@ -564,44 +540,18 @@ final class Base_Plugin {
             echo json_encode((new Controllers\ConfigurationController())->saveAll($_POST));
             die;
         });
-
-        // Logs
-        add_action('wp_ajax_get_logs_melhorenvio_list', [$logs, 'indexResponse']);
-        add_action('wp_ajax_detail_log_melhorenvio', [$logs, 'detailResponse']);
-
         add_action('wp_ajax_get_metodos', [$conf, 'getMethodsEnables']);
 
-        // Status WooCommerce
         add_action('wp_ajax_get_status_woocommerce', [$status, 'getStatus']);
 
         add_action('wp_ajax_delete_melhor_envio_session', function(){
-
-            $codeStore = md5(get_option('home'));
-
-            delete_option('melhorenvio_user_info');
-
-            unset($_SESSION[$codeStore]['cotations']);
-            unset($_SESSION[$codeStore]['melhorenvio_token']);
-
-            unset($_SESSION[$codeStore]['melhorenvio_user_info']);
-
-            unset($_SESSION[$codeStore]['melhorenvio_address_selected_v2']);
-            unset($_SESSION[$codeStore]['melhorenvio_address']);
-
-            unset($_SESSION[$codeStore]['melhorenvio_stores']);
-            unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
-
-            unset($_SESSION[$codeStore]['melhorenvio_options']);
-            echo json_encode($_SESSION);
-            die;
+            echo json_encode((new SessionService())->delete());die;
         });
 
         add_action('wp_ajax_get_melhor_envio_session', function(){
             echo json_encode($_SESSION);
             die;
         });
-
-        add_action('wp_ajax_get_logs_order', [$logs, 'getLogsOrder']);
 
         add_action('wp_ajax_verify_token', function() {
             if (!get_option('wpmelhorenvio_token')) {
@@ -614,6 +564,11 @@ final class Base_Plugin {
 
         add_action('wp_ajax_get_info_server_client_melhor_envio', function() {
             phpinfo();
+        });
+
+        add_action('wp_ajax_get_quotation', function() {
+            $data = (new OrderQuotationService())->getQuotation($_GET['id']);
+            echo json_encode($data);die;
         });
     }
 

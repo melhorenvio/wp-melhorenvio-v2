@@ -1,8 +1,10 @@
 <template>
     <span style="font-size: 14px;">
-        <strong>{{to.first_name}} {{to.last_name}}</strong> <br>
+        {{to.name}}<br>
         {{to.email}} <br>
         {{to.phone}} <br>
+        {{to.address}}, {{to.number}} <br>
+        {{to.city}}/{{to.state_abbr}}
     </span>
 </template>
 <script>
