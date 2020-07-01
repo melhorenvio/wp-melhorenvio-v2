@@ -1,26 +1,26 @@
 === Melhor Envio V2 ===
-Version: 2.5.15
+Version: 2.7.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 5.0
-Requires PHP: 5.0
+Tested up to: 5.6
+Requires PHP: 5.6
 
 
 # Plugin Melhor Envio
 
-Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online. 
-A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras. 
+Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
+A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
 Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
-Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema. 
+Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema.
 
 ### Funcionalidades do Plugin WooCommerce
 
 Com a instalação do plugin do Woocomerce você pode ampliar ainda mais a automação dos fretes de sua loja virtual. Confira os principais benefícios e vantagens personalizadas disponíveis:
 - Cotação dos envios com as funcionalidades do Melhor Envio direto na tela do produto.
-- Conexão da Loja WooCommerce com a conta do Melhor envio para buscar automaticamente informações como endereços, lojas e documentos (CNPJ, Inscrição estadual) e saldo em carteira.
+- Conexão da Loja WooCommerce com a conta do Melhor Envio para buscar automaticamente informações como endereços, lojas e documentos (CNPJ, Inscrição estadual) e saldo em carteira.
 - Buscar todos pedidos da Loja WooCommerce do vendedor, com filtros de status da compra e por status da etiqueta de envio.
 - Cotar a compra de etiqueta usando os dados da loja e do cliente no painel.
 - Enviar etiquetas de postagem para o carrinho de compras do Melhor Envio.
@@ -39,11 +39,17 @@ Agora que sua conta Melhor Envio está vinculada com nosso plugin, basta selecio
 
 Pronto! o plugin do Melhor Envio está funcionando.
 
+Caso ainda tenha duvidas ou deseja um guia com mais detalhe da integração, segue o link para o artigo com o passo a passo para ajudar na integração: <a target="_blank" href=“https://central.melhorenvio.com.br/pt-BR/articles/1919691-manual-de-integracao-plataforma-wordpress-woocommerce“>Link do artigo</a>.
+
 ### Pré-requisitos
 
 - PHP v.5.6
 - Wordpress 4.0+
 - WooCommerce 4.0+
+
+### Compatibilidade
+
+Caso seja utilizado algum outro plugin que altere o Woocommerce não é garantida a sua compatibilidade, como plugins que adicionam ao Woocommerce funcionalidades de marketplace.
 
 ## Contribuindo com o Projeto
 
@@ -55,16 +61,43 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ## Autores
 
 * **Vinicius Tessmann** - *Melhor Envio* - [viniciustessmann](https://github.com/viniciustessmann)
-* **Marcos Brito** - *Melhor Envio*
-* **Samuel Desconsi** - *Melhor Envio* - [underzzoo](https://github.com/underzzoo)
+* **Marcos Brito** - *Melhor Envio* - [MarcosWillian](https://github.com/MarcosWillian)
+* **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
-#### [2.5.15] - 2019-07
+#### [2.7.2] - 2020-05-01
+- Possibilidade de utilizar ambiente Sandbox do Melhor Envio
+- Novo serviço de envios Azul Cargo (Verificar disponibilidade para a sua região)
+- Melhorias no fluxo de compras de etiquetas, compras com 1 click
+- Melhorias na verificação da embalagem do pedido
+- Opção de selecionar múltiplas etiquetas para comprar ou imprimir
+- Exibição de informações do usuário na tela de pedidos (Nome, email, saldo, ambiente e limite de envios)
+- Ajuste nas respostas de erros ao comprar etiquetas
+- Exibição de link de rastreio do Melhor Rastreio nos pedidos (painel)
+
+#### [2.6.2] - 2020-01
+- Adicionado opção de visualizar todas as agencias Jadlog do estado.
+- Ajustes na lógica de cotação na pagina do produto.
+#### [2.6.1] - 2019-10
+- Adicionado validação da data de expiração do Token.
+- Ajuste da validação do peso minimo do produto para o serviço PAC Mini.
+#### [2.6.0] - 2019-09
+- Adição do método de pagamento PAC Mini.
+- Ajuste na cotação de produtos quando há restrição de região.
+#### [2.5.17] - 2019-08
+- Remoção do cache do título da loja.
+- Remoção do cache das informações do titular da conta ME.
+- Ajustes na lógica de validação da cotação.
+#### [2.5.16] - 2019-08
+- Ajustes do erro 500 na listagem das lojas.
+#### [2.5.15] - 2019-08
 - Adição campo de situação na listagem de pedidos
 - Adição de label para campos de taxas e valores extras (máscara de valores) para os métodos de envios
 - Adição de aviso de plugin sem token do Melhor Envio
 - Ajuste para não exibir pedidos apagados
 - Ajuste para exibir o valor da etiqueta após ser enviada para o carrinho de compras
+- Ajuste na quantidade de produto na cotação da tela do produto
+- Ajustes valor de pedido com várias etiquetas
 #### [2.5.14] - 2019-07-04
 - Solução do problema do loading infinito após salvar as configurações
 - Ajustes na cotaçaõ de frete na tela do produto

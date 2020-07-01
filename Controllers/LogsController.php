@@ -26,7 +26,7 @@ class LogsController
             </tr>';
         }  
 
-        echo '<h1>Logs Melhor envio</h1>';
+        echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>ID</td><td>Mensagem</td><td>Data</td><td>Link</td></tr>';
         echo $rows;
         echo '</table>';
@@ -145,14 +145,12 @@ class LogsController
             </tr>';
         }  
 
-        echo '<h1>Logs Melhor envio</h1>';
+        echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>CEP</td><td>Data</td><td>Link</td></tr>';
         echo $rows;
         echo '</table>';
         die;
     }
-<<<<<<< HEAD
-=======
 
     public function getLogsOrder()
     {
@@ -161,5 +159,25 @@ class LogsController
         echo json_encode($response);
         die;
     }
->>>>>>> master
+
+    public function getServerStatus()
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://location.melhorenvio.com.br/96055710"); 
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+        curl_exec($curl); 
+
+        $return = [];
+        $error  = curl_error($curl);
+        
+        if (!empty($error)) $return['error'] = $error;
+
+        $info = curl_getinfo($curl);
+        curl_close($curl); 
+        $return['info'] = $info;
+
+        return $return;
+    }
 }

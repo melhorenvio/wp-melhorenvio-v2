@@ -12,13 +12,16 @@
         }
     ],
     "require": {
+
     },
     "autoload": {
         "psr-4": {
-            "Controllers\\": "controllers/",
-            "Models\\": "models/",
+            "Controllers\\": "Controllers/",
+            "Models\\": "Models/",
             "Interfaces\\": "core/interfaces/",
-            "Bases\\": "core/bases/"
+            "Services\\": "Services/",
+            "Bases\\": "core/bases/",
+            "Helpers\\": "Helpers/"
         }
     }
 }

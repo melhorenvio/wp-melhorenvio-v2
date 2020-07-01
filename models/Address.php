@@ -102,6 +102,9 @@ class Address
 
         $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
 
+        // Clear agencies list in session to load with new address
+        unset($_SESSION['melhor_envio']['agencies']);
+
         if  (!$addressDefault) {
             add_option(self::OPTION_ADDRESS_SELECTED, $id);
             return array(

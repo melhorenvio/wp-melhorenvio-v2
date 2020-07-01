@@ -16,37 +16,58 @@ class Agency
     public function getAgencies() 
     {
         $token = get_option('wpmelhorenvio_token');
+        $results = '';
 
-        $params = array(
-            'headers'           =>  array(
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ),
-            'timeout'=> 10,
-            'method' => 'GET'
-        );
-
-        if (!isset($_GET['state']) && !isset($_GET['state']) ) {
-            $address = (new Address)->getAddressFrom();
-        } else {
-            $address['address'] = array(
-                'city'  => $_GET['city'],
-                'state' => $_GET['state']
+        if (!isset($_SESSION['melhor_envio']['agencies']) || empty($_SESSION['melhor_envio']['agencies'])) {
+            $params = array(
+                'headers'           =>  array(
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ),
+                'timeout'=> 10,
+                'method' => 'GET'
             );
+
+            if (!isset($_GET['state']) && !isset($_GET['state']) ) {
+                $address = (new Address)->getAddressFrom();
+            } else {
+                $address['address'] = array(
+                    'city'  => $_GET['city'],
+                    'state' => $_GET['state']
+                );
+            }
+
+            $results =  json_decode(
+                wp_remote_retrieve_body(
+                    wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state'], $params)
+                )
+            );
+
+            $_SESSION['melhor_envio']['agencies'] = $results;
+        } else {
+            $results = $_SESSION['melhor_envio']['agencies'];
         }
 
-        $response =  json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_request(self::URL . '/v2/me/shipment/agencies?company=2&country=BR&state='.$address['address']['state']. '&city='.$address['address']['city'], $params)
-            )
-        );
-
-        $agencies = array();
+        $agencies = [];
+        $agenciesForUser = [];
 
         $agencySelected = get_option(self::AGENCY_SELECTED);
 
-        foreach( $response as $agency) {
+        foreach ($results as $agency) {
+            if ($address['address']['state'] === $agency->address->city->state->state_abbr && $address['address']['city'] === $agency->address->city->city) {
+                $agenciesForUser[] = array(
+                    'id'           => $agency->id,
+                    'name'         => $agency->name,
+                    'company_name' => $agency->company_name,
+                    'selected'     => ($agency->id == intval($agencySelected)) ? true : false,
+                    'address'      => array(
+                        'address'  => $agency->address->address,
+                        'city'     => $agency->address->city->city,
+                        'state'    => $agency->address->city->state->state_abbr
+                    )
+                );
+            }
 
             $agencies[] = array(
                 'id'           => $agency->id,
@@ -64,7 +85,9 @@ class Agency
         return array(
             'success'  => true,
             'origin'   => 'api',
-            'agencies' => $agencies
+            'agencies' => $agenciesForUser,
+            'allAgencies' => $agencies,
+            'agencySelected' => $agencySelected
         );
     }
 

@@ -5,6 +5,7 @@ namespace Controllers;
 use Models\Address;
 use Models\Store;
 use Models\User;
+use Services\OrderQuotationService;
 
 class UsersController {
 
@@ -29,11 +30,7 @@ class UsersController {
     public function getFrom()
     {
         $info = $this->getInfo();
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> master
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
 
             $company = (new Store)->getStore();
@@ -45,20 +42,6 @@ class UsersController {
             if (is_null($address['address'])) {
                 return false;
             }
-
-<<<<<<< HEAD
-            $company = (new Store)->getStore();
-=======
-            $email = null;
-
-            if (isset($company['email'])) {
-                $email = $company['email'];
-            }
-
-            if (isset($info->data['email'])) {
-                $email = $info->data['email'];
-            }
->>>>>>> master
 
             $email = null;
 
@@ -134,6 +117,15 @@ class UsersController {
         $balance = (new User())->getBalance();
         echo json_encode($balance);
         die;
+    }
+
+    public function getMe()
+    {
+        $data = (array) $this->getInfo();
+
+        $data['data']['environment'] =  ((new OrderQuotationService())->getEnvironmentToSave() == '_sandbox') ? 'Sandbox' :  'Produção';
+
+        echo json_encode($data['data']);die;
     }
 
     /**

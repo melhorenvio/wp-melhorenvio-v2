@@ -5,9 +5,22 @@
         <br>
         <textarea rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
         <br>
+        <p><input
+            type="checkbox"
+            v-model="environment"
+            true-value="sandbox"
+            false-value="production"
+            >
+
+        Utilizar ambiente Sandbox </p>
+
+        <textarea v-if="environment == 'sandbox'" rows="20" cols="100" v-model="token_sandbox" placeholder="Token Sandbox"></textarea>
+        <br>
         <br>
         <button @click="saveToken()" class="btn-border -full-green">Salvar</button>
+
         <p>Para gerar seu token, acesse o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a></p>
+        <p v-if="environment == 'sandbox'">Para gerar seu token em sandbox, acesse o <a target="_blank" href="https://sandbox.melhorenvio.com.br/painel/gerenciar/tokens">link</a></p>
             
         <div class="me-modal" v-show="show_loader">
             <svg style="float:left; margin-top:10%; margin-left:50%;" class="ico" width="88" height="88" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc">
@@ -57,27 +70,46 @@ export default {
     data () {
         return {
             token: '',
-            show_loader: true
+            token_sandbox: '',
+            environment: 'production',
+            show_loader: true,
         }
     },
     methods: {
+        canSave() {
+            if (this.token == '' && this.environment == 'production') {
+                alert('Por favor, informe o token de produção do Melhor Envio.');
+                return false;
+            }
+
+            if (this.token_sandbox == '' && this.environment == 'sandbox') {
+                alert('Por favor, informe o token de sandbox do Melhor Envio');
+                return false;
+            }
+
+            return true;
+        },
         getToken () {
-            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => { 
                 this.token = response.data.token;
+                this.token_sandbox = response.data.token_sandbox;
+                this.environment = response.data.environment;
                 this.show_loader = false;
             })
         },
         saveToken () {
             let bodyFormData = new FormData();
-            bodyFormData.set('token', this.token);
-            let data = {token: this.token};
-            if (this.token && this.token.length > 0) {
+            bodyFormData.append('token', this.token);
+            bodyFormData.append('token_sandbox', this.token_sandbox);
+            bodyFormData.append('environment', this.environment);
+            if (this.canSave()) {
                 axios({
                     url: `${ajaxurl}?action=save_token`,
                     data: bodyFormData,
                     method: "POST",
                 }).then( response => {
-                    this.$router.push('Configuracoes') 
+                    alert('Token atualizado!');
+                    window.location.href = '/wp-admin/admin.php?page=melhor-envio#/configuracoes';
                 }).catch(err => console.log(err));
             }
         }

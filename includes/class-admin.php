@@ -18,7 +18,7 @@ class Admin {
     public function admin_menu() {
         global $submenu;
 
-        $capability = 'manage_options';
+        $capability = 'manage_woocommerce';
         $slug       = 'melhor-envio';
 
         $hook = add_menu_page( __( 'Melhor Envio', 'textdomain' ), __( 'Melhor Envio', 'textdomain' ), $capability, $slug, [ $this, 'plugin_page' ], 'dashicons-thumbs-up' );

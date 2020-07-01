@@ -36,6 +36,38 @@
         width: 5.5%;
         text-align: center;
     }
+    .store-box {
+        display: inline-flex !important;
+        min-height: 100px;
+        max-width: 25% !important;
+    }
+    .store-box h3 {
+        display: inline-flex;
+        padding: 0 0 0 8px;
+        margin: 0 0 15px;
+        text-align: left;
+        font-size: 1.1em;
+        max-width: 85%;
+        font-weight: 300;
+    }
+    .box-buttons {
+        min-height: 40px;
+    }
+    .wpme_address .wpme_address-top {
+        min-height: 45px !important;
+    }
+    .wpme_address-top .title-methods {
+        text-align: left;
+        font-size: 1.1em;
+        font-weight: 300;
+        margin: 0;
+    }
+    .error-message {
+        width: 98%;
+        padding: 10px 0 10px 2%;
+        color: #fff;
+        font-weight: 600;
+    }
 </style>
 
 <template>
@@ -43,12 +75,25 @@
         <div class="boxBanner">
             <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
-        <h1>Configurações gerais</h1>
 
+        <template>
+            <div>
+                <div class="grid">
+                    <div class="col-12-12">
+                        <h1>Configurações gerais</h1>
+                    </div>
+                    <hr>
+                    <div class="col-12-12" v-show="error_message">
+                        <p class="error-message">{{ error_message }}</p>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </template>
 
         <div class="wpme_config">
             <h2>Endereço</h2>
-            <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações</p>
+            <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
@@ -74,31 +119,46 @@
 
         <div class="wpme_config">
             <h2>Jadlog</h2>
-            <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos</p>
+            <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
-                        <select name="agencies" id="agencies" v-model="agency">
-                            <option value="">Selecione...</option>
-                            <option v-for="option in agencies" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
-                        </select>
+                        <div class="wpme_address-top" style="border-bottom: none;">
+                            <input type="checkbox" class="show-all-agencies" id="show-all-agencies" v-model="show_all_agencies_jadlog" @change="changeJadlogOptions()">
+                            <label for="show-all-agencies" >Desejo visualizar todas as agencias do meu estado</label>
+                        </div>
+                        <br>
+
+                        <template v-if="!show_all_agencies_jadlog">
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="option in agencies" :value="option.id" :key="option.id" :selected="option.selected"><strong>{{option.name}}</strong>  </option>
+                            </select>
+                        </template>
+
+                        <template v-else>
+                            <select name="agencies" id="agencies" v-model="agency">
+                                <option value="" >Selecione...</option>
+                                <option v-for="optionAll in allAgencies" :value="optionAll.id" :key="optionAll.id" :selected="optionAll.selected"><strong>{{optionAll.name}}</strong>  </option>
+                            </select>
+                        </template>
+                        
                     </li>
                 </ul>
             </div>
         </div>
         <hr>
-
         <template v-if="stores.length > 0">
             <div class="wpme_config">
                 <h2>Loja</h2>
                 <p>Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada.</p>
                 <div class="wpme_flex">
                     <ul class="wpme_address">
-                        <li  v-for="option in stores" v-bind:value="option.id" :key="option.id">
+                        <li  v-for="option in stores" v-bind:value="option.id" :key="option.id" class="store-box">
                             <label :for="option.id">
                                 <div class="wpme_address-top">
                                     <input type="radio" :id="option.id" :value="option.id" v-model="store" >
-                                    <h2>{{option.name}}</h2>
+                                    <h3>{{option.name}}</h3>
                                 </div>
                                 <div class="wpme_address-body">
                                     <ul>
@@ -119,14 +179,14 @@
             <h2>Personalizar métodos de envio</h2>
             <div class="wpme_flex">
                 <ul class="wpme_address">
-                    <li v-for="option in methods_shipments" v-bind:value="option.id" :key="option.id">
+                    <li v-for="option in filteredsShipments" v-bind:value="option.id" :key="option.id">
                         <label :for="option.id">
-                            <div class="wpme_address-top">
-                                <h2>{{option.name}}</h2>
+                            <div class="wpme_address-top ">
+                                <h3 class="title-methods">{{option.name}}</h3>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
-                                    <li><b>Nome:</b> {{option.name}}</li>
+                                    <!--<li><b>Nome:</b> {{option.name}}</li>-->
                                     <li><b>Tempo extra:</b> {{ showTimeWithDay(option.time) }} </li>
                                     <li><b>Taxa extra:</b> R$ {{ formatNumber(option.tax) }} </li>
                                     <li><b>Percentual extra:</b> {{ formatPercent(option.perc) }}% </li>
@@ -136,17 +196,17 @@
                             </div>
 
                             <transition name="fade">
-                                <div class="me-modal" v-show="codeshiping[option.code]['status']">
+                                <div class="me-modal" v-show="codeshiping[option.code] && codeshiping[option.code]['status']">
                                     <div>
-                                        <p class="title">{{option.name}}</p>
+                                        <p class="title">{{option.name}} </p>
                                         <div class="content">
                                             <ul>
                                                 <li>
                                                     <label>Nome de exibição</label><br>
-                                                    <input v-model="option.name" type="text" class="input" /><br><br>
+                                                    <input v-model="option.name" v-on:keyup="requiredInput(option.name)" type="text" class="input" maxlength="100" /><br><br>
                                                     <label><b>Tempo extra</b> <br>Será adicionado ao tempo de previsão de entrega</label><br>
                                                     <div class="group-input">
-                                                        <input v-model="option.time" type="number" />
+                                                        <money v-model="option.time" v-bind="percent"></money>
                                                         <p> Dias </p>
                                                     </div>
                                                     <label><b>Taxa extra</b> <br>Será adicionado um valor extra para o cliente sobre o valor da cotação. </label><br>
@@ -162,9 +222,10 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <div class="buttons -center">
-                                            <button @click="closeShowModalEditMethod()" type="button"  class="btn-border -full-blue">Fechar</button>
+                                        <div class="buttons -center box-buttons" >
+                                            <button v-show="canUpdate" @click="closeShowModalEditMethod()" type="button" class="btn-border -full-blue">Fechar</button>
                                         </div>
+
                                     </div>
                                 </div>
                             </transition>
@@ -174,9 +235,10 @@
             </div>
         </div>
         <hr>
-        
+
         <div class="wpme_config">
             <h2>Opções para cotação</h2>
+            <p>As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
@@ -190,20 +252,20 @@
                 </ul>
             </div>
         </div>
-        <hr> 
+        <hr>
 
         <div class="wpme_config">
             <h2>Calculadora</h2>
-            <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto</p>
+            <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto.</p>
             <div class="wpme_flex">
                 <ul class="wpme_address">
                     <li>
                         <label for="41352">
                             <div class="wpme_address-top" style="border-bottom: none;">
                                 <input type="checkbox" value="exibir"  v-model="show_calculator">
-                                <label for="two">exibir a calculdora na tela do produto</label>
+                                <label for="two">exibir a calculadora na tela do produto</label>
                             </div><br>
-                    
+
                             <select v-show="show_calculator" name="agencies" id="agencies" v-model="where_calculator">
                                 <option v-for="option in where_calculator_collect" :value="option.id" :key="option.id"><strong>{{option.name}}</strong>  </option>
                             </select>
@@ -211,6 +273,11 @@
                     </li>
                 </ul>
             </div>
+            <hr>
+            <h2></h2>
+            <h3>Shortcode para exibir a calculadora</h3>
+            <p><b>[calculadora_melhor_envio product_id="product_id"]</b></p>
+            <p>É necessário informar o ID do produto para o shortcode funcionar de forma adequada</p>
         </div>
         <hr>
 
@@ -295,31 +362,22 @@ export default {
     components: { Money },
     data () {
         return {
+            error_message: null,
+            canUpdate: true,
             address: null,
             store: null,
             agency: null,
             show_modal: false,
             custom_calculator: false,
             show_calculator: false,
+            show_all_agencies_jadlog: false,
             options_calculator: {
                 'ar': false,
                 'mp': true
             },
             path_plugins: '',
             show_path: false,
-            codeshiping: [
-                {'id':1, 'status':false},
-                {'id':2, 'status':false},
-                {'id':3, 'status':false},
-                {'id':4, 'status':false},
-                {'id':5, 'status':false},
-                {'id':6, 'status':false},
-                {'id':7, 'status':false},
-                {'id':8, 'status':false},
-                {'id':9, 'status':false},
-                {'id':10, 'status':false},
-                {'id':11, 'status':false}
-            ],
+            codeshiping: [],
             money: {
                 decimal: ',',
                 thousands: '.',
@@ -385,16 +443,27 @@ export default {
         ...mapGetters('configuration', {
             addresses: 'getAddress',
             stores: 'getStores',
+            agencySelected_: 'getAgencySelected',
             agencies: 'getAgencies',
+            allAgencies: 'getAllAgencies',
             style_calculator: 'getStyleCalculator',
             methods_shipments: 'getMethodsShipments',
             show_load: 'showLoad',
             path_plugins_: 'getPathPlugins',
             where_calculator_: 'getWhereCalculator',
             show_calculator_: 'getShowCalculator',
+            show_all_agencies_jadlog_: 'getShowAllJadlogAgencies',
             options_calculator_: 'getOptionsCalculator',
-            configs: 'getConfigs'
-        })
+            configs: 'getConfigs',
+            services_codes: 'getServicesCodes',
+        }),
+        filteredsShipments() {
+            let filter = this.services_codes;
+            let filtereds = this.methods_shipments.filter(function(shipment){
+                return filter.includes(shipment.code)
+            });
+            return filtereds;
+        }
     },
     methods: {
         ...mapActions('configuration', [
@@ -403,40 +472,54 @@ export default {
             'setAgencies',
             'saveAll'
         ]),
+        requiredInput(element) {
+            if (element.length == 0 || element.length > 100) {
+                this.canUpdate = false
+            } else {
+                this.canUpdate = true
+            }
+        },
         showModalEditMethod(code) {
-            this.codeshiping[code]['status'] = true;
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                var status = false;
+                if (service == code) {
+                    status = true;
+                }
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': status
+                };
+            }
+        },
+        getServicesCodesstatus(){
+            this.codeshiping = [];
+            for (var i=0; i<this.services_codes.length; i++) {
+                var service = this.services_codes[i];
+                this.codeshiping[service] = {
+                    'id': service,
+                    'status': false
+                };
+            }
         },
         closeShowModalEditMethod() {
-            this.codeshiping = [
-                {'id':1, 'status':false},
-                {'id':2, 'status':false},
-                {'id':3, 'status':false},
-                {'id':4, 'status':false},
-                {'id':5, 'status':false},
-                {'id':6, 'status':false},
-                {'id':7, 'status':false},
-                {'id':8, 'status':false},
-                {'id':9, 'status':false},
-                {'id':10, 'status':false},
-                {'id':11, 'status':false}
-            ];
+            this.getServicesCodesstatus();
         },
         updateConfig () {
-
             this.setLoader(true);
-
             var data = new Array();
- 
-            data['address']            = this.address;
-            data['store']              = this.store;
-            data['agency']             = this.agency;
-            data['show_calculator']    = this.show_calculator;
-            data['methods_shipments']  = this.methods_shipments;
-            data['where_calculator']   = this.where_calculator;
-            data['path_plugins']       = this.path_plugins;
-            data['options_calculator'] = this.options_calculator;
+
+            data['address']                  = this.address;
+            data['store']                    = this.store;
+            data['agency']                   = this.agency;
+            data['show_calculator']          = this.show_calculator;
+            data['show_all_agencies_jadlog'] = this.show_all_agencies_jadlog;
+            data['methods_shipments']        = this.methods_shipments;
+            data['where_calculator']         = this.where_calculator;
+            data['path_plugins']             = this.path_plugins;
+            data['options_calculator']       = this.options_calculator;
             var respSave = this.saveAll(data);
-            console.log(respSave);
 
             respSave.then((resolve) => {
                 this.setLoader(false);
@@ -489,10 +572,41 @@ export default {
         getToken() {
             this.$http.get(`${ajaxurl}?action=verify_token`).then( (response) => {
                 if (!response.data.exists_token) {
-                    this.$router.push('Token') 
+                    this.$router.push('Token')
+                }
+
+                this.validateToken();
+            })
+        },
+        validateToken() {
+            this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+                if (response.data.token) {
+                    var token = response.data.token;
+
+                    // JWT Token Decode
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var tokenDecoded = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    var tokenFinal  = JSON.parse(tokenDecoded);
+                    var dateExp     = new Date(parseInt(tokenFinal.exp) * 1000);
+                    var currentTime = new Date();
+
+                    if (dateExp < currentTime) {
+                        this.error_message = 'Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente';
+                    } else {
+                        this.error_message = '';
+                    }
+                } else {
+                    this.$router.push('Token');
                 }
             })
-        }
+        },
+        changeJadlogOptions() {
+            this.agency = ''; 
+        },
     },
     watch : {
         addresses () {
@@ -524,8 +638,17 @@ export default {
             }
             this.setLoader(false);
         },
+        agencySelected_(e) {
+            this.agency = e;
+        },
+        services_codes() {
+            this.getServicesCodesstatus();
+        },
         show_calculator_(e) {
             this.show_calculator = e;
+        },
+        show_all_agencies_jadlog_(e) {
+            this.show_all_agencies_jadlog = e;
         },
         path_plugins_(e) {
             this.path_plugins = e;
@@ -538,7 +661,6 @@ export default {
         }
     },
     mounted () {
-
         this.getToken();
         this.setLoader(true);
         var promiseConfigs = this.getConfigs();

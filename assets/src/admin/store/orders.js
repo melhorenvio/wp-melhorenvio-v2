@@ -52,7 +52,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = null
             state.orders.splice(order.position, 1, order.content)
         },
         addCart: (state, data) => {
@@ -65,7 +65,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = 'released'
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             state.orders.splice(order.position, 1, order.content)
@@ -86,6 +86,22 @@ const orders = {
             order.content.order_id = null;
             state.orders.splice(order.position, 1, order.content)
         },
+        updateQuotation: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id == data.order_id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+
+            if(order) {
+                order.content.cotation = data.quotations
+                state.orders.splice(order.position, 1, order.content)
+            }
+        },
         payTicket: (state, data) => {
             let order
             state.orders.find((item, index) => {
@@ -96,7 +112,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'paid'
+            order.content.status = 'released'
             state.orders.splice(order.position, 1, order.content)
         },
         createTicket: (state, data) => {
@@ -122,7 +138,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'printed'
+            order.content.status = 'released'
             state.orders.splice(order.position, 1, order.content)
         },
         setStatusWc: (state, data) => {
@@ -132,6 +148,9 @@ const orders = {
             state.show_loader = data;
         },
         toggleModal: (state, data) => {
+            if (data == false) {
+                state.msg_modal = null;
+            }
             state.show_modal = data;
         },
         toggleMore: (state, data) => {
@@ -163,6 +182,10 @@ const orders = {
 
     },
     actions: {
+        showErrorAlert: ({commit}, data) => {
+            commit('setMsgModal', data)
+            commit('toggleModal', true)
+        },
         retrieveMany: ({commit}, data) => {
             commit('toggleLoader', true)
             let content = {
@@ -182,7 +205,27 @@ const orders = {
                     commit('toggleLoader', false) 
                 }
             }).catch(error => {
+                commit('setMsgModal', error.message)
+                commit('toggleLoader', false)
+                commit('toggleModal', true)
+                commit('toggleMore', true)
+                return false
+            })
+        },
+        printMultiples: ({commit, state}, dataPrint) => {
 
+            commit('toggleLoader', true);
+            let data = {
+                action: 'buy_click',
+                ids: dataPrint.orderSelecteds
+            }
+            Axios.get(`${ajaxurl}`, {
+                params: Object.assign(data, state.filters)
+            }).then(function (response) {
+                commit('toggleLoader', false)
+                window.open(response.data.url,'_blank');
+
+            }).catch(error => {
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -238,33 +281,43 @@ const orders = {
                 return false
             })
         },
-        addCart: ({commit}, data) => {  
+        initLoader: ({commit}) => {
             commit('toggleLoader', true)
-            if (!data) {
-                commit('toggleLoader', false)
-                return false;
-            }
-            if (data.id && data.choosen) {
-                Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data).then(response => {
-                    if(!response.data.success) {
-                        commit('setMsgModal', response.data.message)
-                        commit('toggleLoader', false)
-                        commit('toggleModal', true)
-                        return false
-                    }
-                    commit('setMsgModal', 'Item #' + data.id + ' enviado para o carrinho de compras')
-                    commit('toggleModal', true)
-                    commit('toggleLoader', false)
-                    commit('addCart',{
-                        id: data.id,
-                        order_id: response.data.data.order_id,
-                    })
-                    commit('toggleLoader', false)
-                    commit('toggleModal', true)
-                    return false
-                })
-            }
         },
+        stopLoader: ({commit}) => { 
+            commit('toggleLoader', false)
+        },
+        setMessageError: ({commit}, msg) => {
+            commit('setMsgModal', msg)
+            commit('toggleModal', true)
+        },
+        addCart: ({commit}, data) => {  
+            return new Promise ((resolve, reject) => {
+                if (!data) {
+                    commit('toggleLoader', false)
+                    reject();
+                    return false;
+                }
+                if (data.id && data.choosen) {
+
+                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data)
+                        .then(response => {
+                            commit('toggleLoader', false)
+                            if(!response.data.success) {
+                                reject(response.data);
+                            }
+                            commit('addCart',{
+                                id: data.id,
+                                order_id: response.data.data.order_id,
+                            })
+                            resolve(response.data);
+                        }).catch((error) => {
+                            reject(error);
+                        });
+                }
+            })
+        },
+
         refreshCotation: (context, data) => {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=update_order&id=${data.id}&order_id=${data.order_id}`).then(response => {
@@ -304,6 +357,9 @@ const orders = {
                 context.commit('toggleModal', true)
                 return false
             })
+        },
+        updateQuotation: (context, data) => {
+            context.commit('updateQuotation', data)
         },
         cancelCart: (context, data) => {   
             context.commit('toggleLoader', true)      
@@ -377,7 +433,7 @@ const orders = {
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
                 if(!response.data.success) {
-                    commit('setMsgModal', response.data.message)
+                    commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false
@@ -387,7 +443,7 @@ const orders = {
                 commit('toggleLoader', false)
                 window.open(response.data.data.url,'_blank');
             }).catch(error => {
-                commit('setMsgModal', error.message)
+                commit('setMsgModal', error.message[0])
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 return false

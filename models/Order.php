@@ -12,10 +12,10 @@ class Order {
     private $id;
     private $products;
     private $total;
-    private $total_shipping;
+    private $shipping_total;
     private $to;
     private $cotation;
-    private $status;
+    //private $status;
     private $address;
 
     /**
@@ -36,9 +36,9 @@ class Order {
             
             $this->products = $this->getProducts();
             
-            $this->total = $orderWc->total;
+            $this->total = 0; //$orderWc->total;
             
-            $this->shipping_total = $orderWc->shipping_total;
+            $this->shipping_total = 0; //$orderWc->shipping_total;
             
             $this->to = $data['billing'];
             
@@ -57,10 +57,17 @@ class Order {
     {
         $args = [
             'numberposts' => ($filters['limit']) ?: 5,
-            'offset' => ($filters['skip']) ?: 0,
-            'post_status' => ($filters['wpstatus'] == 'all') ? array_keys( wc_get_order_statuses() ) : 'publish',
-            'post_type' => 'shop_order',
+            'offset'      => ($filters['skip']) ?: 0,
+            'post_type'   => 'shop_order',
         ];
+
+        if(isset($filters['wpstatus']) && $filters['wpstatus'] != 'all'){
+            $args['post_status'] = $filters['wpstatus'];
+        } else if(isset($filters['wpstatus']) && $filters['wpstatus'] == 'all') {
+            $args['post_status'] = array_keys( wc_get_order_statuses() );
+        } else {
+            $args['post_status'] = 'publish';
+        }
 
         if (isset($filters['status']) && $filters['status'] != 'all') {
             $args['meta_query'] = [
@@ -75,10 +82,7 @@ class Order {
         $posts =  get_posts($args);    
 
         if (empty($posts)) {
-            return [
-                'orders' => [],
-                'load' => false
-            ];
+            return ['orders' => [], 'load' => false];
         }
 
         $data = [];
@@ -87,12 +91,16 @@ class Order {
 
             try {
                 $order = new Order($post->ID);
-
+                
                 $dataMelhorEnvio = $order->getDataOrder(); 
 
                 $cotation = $order->getCotation();
-                
+
                 $invoice = $order->getInvoice();
+
+                $products = $order->getProducts();
+
+                $statusTranslate = $order->translateNameStatus($dataMelhorEnvio['status']);
 
                 $non_commercial = true;
                 if (!is_null($invoice['number']) && !is_null($invoice['key']) ) {
@@ -102,25 +110,28 @@ class Order {
                 if (!is_null($dataMelhorEnvio['order_id'])) {
                     $orders[] = $dataMelhorEnvio['order_id'];
                 }
-
-                $data[] =  [
-                    'id' => (int) $order->id,
-                    'total' => 'R$' . number_format($order->total, 2, ',', '.'),
-                    'products' => $order->getProducts(),
-                    'cotation' => $cotation ,
-                    'address' => $order->address,
-                    'to' => $order->to,
-                    'status' => $dataMelhorEnvio['status'],
-                    'order_id' => $dataMelhorEnvio['order_id'],
-                    'protocol' => $dataMelhorEnvio['protocol'],
+                
+               
+                
+                $data[] = [
+                    'id'             => (int) $order->id,
+                    'total'          => $order->getProductsTotal($products),
+                    'products'       => (Object) $products,
+                    'cotation'       => $cotation,
+                    'address'        => $order->address,
+                    'to'             => $order->to,
+                    'status'         => $dataMelhorEnvio['status'],
+                    'status_texto'   => $statusTranslate,
+                    'order_id'       => $dataMelhorEnvio['order_id'],
+                    'protocol'       => $dataMelhorEnvio['protocol'],
                     'non_commercial' => $non_commercial,
-                    'invoice' => $invoice,
-                    'packages' => $order->mountPackage($cotation),
-                    'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $order->id),
-                    'log'  => admin_url() . sprintf('admin.php?page=melhor-envio#/log/%s', $order->id),
-                    'errors' => get_post_meta($order->id, 'melhorenvio_errors', true)
+                    'invoice'        => $invoice,
+                    'packages'       => $order->mountPackage($cotation),
+                    'link'           => admin_url() . sprintf('post.php?post=%d&action=edit', $order->id),
+                    'log'            => admin_url() . sprintf('admin.php?page=melhor-envio#/log/%s', $order->id),
+                    'errors'         => get_post_meta($order->id, 'melhorenvio_errors', true)
                 ];
-
+                
             } catch(Exception $e) {
                 (new LogsController)->add(
                     null, 
@@ -135,7 +146,6 @@ class Order {
         }
 
         $data = $order->matchStatus($data, $orders);
-        //print_r($data); die();
         $load = false;
         if(count($data) == ($filters['limit']) ?: 5) {
             $load = true;
@@ -147,6 +157,17 @@ class Order {
         ];
 
         return $response;
+    }
+
+    private function getProductsTotal($products)
+    {
+        $total = 0;
+        
+        foreach($products as $product){
+            $total += $product->total;
+        }
+
+        return $total;
     }
 
     // TODO refator para usar esse "getOne" na função acima.
@@ -196,26 +217,35 @@ class Order {
         }
         foreach($cotation as $item){
 
-            if(is_null($item->id) || !isset($item->id)) {
+            if(!isset($item->id) || is_null($item->id)) {
                 continue;
             }
 
-            foreach($item->packages as $key => $package) {
-                $response[$item->id] = (object) [
-                    'largura' => $package->dimensions->width,
-                    'altura' => $package->dimensions->height,
-                    'comprimento' => $package->dimensions->length,
-                    'peso' => $package->weight
-                ];
+            if (isset($item->packages)) {
+                foreach($item->packages as $key => $package) {
+                    $response[$item->id] = (object) [
+                        'largura' => $package->dimensions->width,
+                        'altura' => $package->dimensions->height,
+                        'comprimento' => $package->dimensions->length,
+                        'peso' => $package->weight
+                    ];
+                }
+            } elseif (isset($item->volumes)) {
+                foreach($item->volumes as $key => $volume) {
+                    $response[$item->id] = (object) [
+                        'largura' => $volume->width,
+                        'altura' => $volume->height,
+                        'comprimento' => $volume->length,
+                        'peso' => $volume->weight
+                    ];
+                }
+            } else {
+                continue;
             }
+
         }
 
         return $response;
-    }
-
-    public function getTo()
-    {
-        
     }
 
     /**
@@ -225,49 +255,31 @@ class Order {
      */
     private function matchStatus($posts, $orders) 
     {
-        $statusApi = $this->getStatusApi($orders);   
+        $statusApi = $this->getStatusApi($orders);                
         foreach ($posts as $key => $post) {
 
-            foreach ($post['order_id'] as $order_id) {                
+            if (isset($post['order_id'])) {
+                foreach ($post['order_id'] as $order_id) {         
+                    if (array_key_exists($order_id, $statusApi)) {
+                        if ($post['status'] != $statusApi[$order_id]['status']) {
 
-                if (array_key_exists($order_id, $statusApi)) {
-                    if ($post['status'] != $statusApi[$order_id]['status']) {
+                            $st = $statusApi[$order_id]['status'];
+                            if ($st == 'released') {
+                                $st = 'paid';
+                            }
 
-                        $st = $statusApi[$order_id]['status'];
-                        if ($st == 'released') {
-                            $st = 'paid';
+                            if ($st == 'canceled') {
+                                $st = null;
+                            }
+                            $posts[$key]['status'] = $st;                                               
                         }
+                        
+                    } else {
+                        $posts[$key]['status'] = null;  
+                    }                                       
+                }  
+            } 
 
-                        if ($st == 'canceled') {
-                            $st = null;
-                        }
-                        $posts[$key]['status'] = $st;                                               
-                    }
-                    
-                    continue;
-                } 
-
-                $posts[$key]['status']       = null;                             
-            }
-
-            // Texto status
-            $st_text = '';
-            if ($statusApi[$order_id]['status'] == 'pending') {
-                $st_text = 'Pendente';
-            } elseif ($statusApi[$order_id]['status'] == 'released') {
-                $st_text = 'Liberada';
-            } elseif ($statusApi[$order_id]['status'] == 'posted') {
-                $st_text = 'Postou';
-            } elseif ($statusApi[$order_id]['status'] == 'delivered') {
-                $st_text = 'Entregue';
-            } elseif ($statusApi[$order_id]['status'] == 'canceled') {
-                $st_text = 'Cancelado';
-            } elseif ($statusApi[$order_id]['status'] == 'undelivered') {
-                $st_text = 'Não entregue';
-            } else {
-                $st_text = 'Não informado';
-            }
-            $posts[$key]['status_texto'] = $st_text; 
         }
         return $posts;
     }
@@ -314,6 +326,12 @@ class Order {
 
             $cotation = (new CotationController())->makeCotationOrder($this->id);
             return $this->setIndexCotation($cotation, $cotations[0]);
+        }
+
+        foreach ($cotation[17]->volumes as $volume) {
+            if ($volume->weight == 0) {
+                $volume->weight = 0.01;
+            }
         }
 
         return $this->setIndexCotation($cotation, $cotations[0]);
@@ -367,8 +385,9 @@ class Order {
     private function getDataOrder($id = null) 
     {
         if ($id) $this->id = $id; 
-
-        if(empty(get_post_meta($this->id, 'melhorenvio_status_v2'))) {
+        
+        $getPost = get_post_meta($this->id, 'melhorenvio_status_v2');
+        if(empty($getPost) || count($getPost) == 0) {
             return [
                 'status' => null,
                 'order_id' => null,
@@ -376,10 +395,10 @@ class Order {
             ];
         }
 
-        $data = end(get_post_meta($this->id, 'melhorenvio_status_v2'));
+        $data = end($getPost);
 
         $status = null;
-        if ($data == false) {
+        if (!$data) {
             $status = $this->getOldstatus($this->id);
         }
 
@@ -402,6 +421,32 @@ class Order {
         }
 
         return $data;
+    }
+
+    private function translateNameStatus($status = null)
+    {
+        $statusTranslate = '';
+        if ($status == 'pending') {
+            $statusTranslate = 'Pendente';
+        } elseif ($status == 'released') {
+            $statusTranslate = 'Liberado';
+        } elseif ($status == 'posted') {
+            $statusTranslate = 'Postado';
+        } elseif ($status == 'delivered') {
+            $statusTranslate = 'Entregue';
+        } elseif ($status == 'canceled') {
+            $statusTranslate = 'Cancelado';
+        } elseif ($status == 'undelivered') {
+            $statusTranslate = 'Não entregue';
+        } elseif ($status == 'generated') {
+            $statusTranslate = 'Gerada';
+        } elseif ($status == 'paid') {
+            $statusTranslate = 'Paga';
+        } else {
+            $statusTranslate = 'Não possui';
+        }
+
+        return $statusTranslate;
     }
 
     /**
@@ -429,17 +474,18 @@ class Order {
      */
     private function getInvoice($id = null) 
     {
+        $return = '';
         if ($id) $this->id = $id; 
-        $data = end(get_post_meta($this->id, 'melhorenvio_invoice_v2'));
-        $default = [
-            'number' => null,
-            'key' => null
-        ];
+        $default = ['number' => null, 'key' => null ];
 
-        if (empty($data) || !$data) {
-            return $default;
+        $getPost = get_post_meta($this->id, 'melhorenvio_invoice_v2');
+        if(count($getPost) > 0) {
+            $return = end($getPost);
+        } else {
+            $return = $default;
         }
-        return $data;
+        
+        return $return;
     }
 
     /**
@@ -498,15 +544,16 @@ class Order {
         $diff = [];
 
         foreach ($data as $cot) {
-            if (is_null($cot->id)) {
+            $cot_id = isset($cot->id)? $cot->id : null;
+            if (is_null($cot_id)) {
                 continue;
             }
-            $response[$cot->id] =  $cot;
+            $response[$cot_id] =  $cot;
 
-            if ($firstCotation[$cot->id]->price != $cot->price) {
+            if ($firstCotation[$cot_id]->price != $cot->price) {
 
-                $diff[$cot->id] = [
-                    'first' => str_replace('.', ',', $firstCotation[$cot->id]->price),
+                $diff[$cot_id] = [
+                    'first' => str_replace('.', ',', $firstCotation[$cot_id]->price),
                     'last'  => $cot->price,
                     'date'  => date('d/m/Y', strtotime($firstCotation['date_cotation']))
                 ];

@@ -26,8 +26,9 @@ class Store
         // Get data on session
         $codeStore = md5(get_option('home'));
 
-        $idStoreSelected = $this->getSelectedStoreId();
-
+        //$idStoreSelected = $this->getSelectedStoreId();
+        
+        // Get stores in session
         if (isset($_SESSION[$codeStore][self::SESSION_STORES])) {
 
             return array(
@@ -36,10 +37,9 @@ class Store
                 'stores'  => $_SESSION[$codeStore][self::SESSION_STORES]
             );
         }
-
         // Get data on database wordpress
         // $stores = get_option(self::OPTION_STORES, true);
-
+        /*
         if (!is_bool($stores)) {
 
             foreach ($stores as $key => $store) {
@@ -58,7 +58,7 @@ class Store
                 'stores'  => $stores 
             );
         }
-        
+        */
         // Get data on API Melhor Envio
         $token = (new TokenController())->token();
 
@@ -80,8 +80,6 @@ class Store
 
         $stories = array();
 
-        $storeSelected = $this->getSelectedStoreId();
-
         if(!isset($response->data)) {
             return array(
                 'success' => false,
@@ -89,8 +87,9 @@ class Store
             );
         }
 
-        foreach($response->data as $store) {
+        $storeSelected = $this->getSelectedStoreId();
 
+        foreach($response->data as $store) {
             $stories[] = array(
                 'id'             => $store->id,
                 'name'           => $store->name,
@@ -111,7 +110,7 @@ class Store
         return array(
             'success' => true,
             'origin'  => 'api',
-            'stores'  => $stories
+            'stores'  =>  $stories
         );
     }
 

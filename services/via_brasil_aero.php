@@ -25,7 +25,7 @@ function via_brasil_aero_shipping_method_init() {
 			public function __construct($instance_id = 0) {
 				$this->id                 = "via_brasil_aero"; 
 				$this->instance_id = absint( $instance_id );
-				$this->method_title       = "Via Brasil Aero (Melhor envio)"; 
+				$this->method_title       = "Via Brasil Aero (Melhor Envio)";
 				$this->method_description = 'Serviço Via Brasil Aero';
 				$this->enabled            = "yes"; 
 				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Via Brasil Aero';

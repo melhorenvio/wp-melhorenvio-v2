@@ -1,20 +1,17 @@
 <?php
 
-namespace Controllers;
+namespace Helpers;
 
 use Controllers\ConfigurationController;
-use Controllers\OptionsController;
 
-class TimeController 
+class TimeHelper 
 {
     /**
-     * @param [type] $data
+     * @param array $data
      * @return void
      */
     public function setlabel($data, $id, $custom = null) 
     {
-<<<<<<< HEAD
-=======
         if (!is_null($custom) && $data->min != $custom->min && $data->max != $custom->min ) {
             
             if ($data->max == 1) {
@@ -33,7 +30,6 @@ class TimeController
         }
 
 
->>>>>>> master
         if (is_null($data)) {
             return '*';
         }

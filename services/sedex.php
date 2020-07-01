@@ -26,10 +26,10 @@ function sedex_shipping_method_init() {
 			public function __construct($instance_id = 0) {
 				$this->id                 = "sedex"; 
 				$this->instance_id = absint( $instance_id );
-				$this->method_title       = "Correios Sedex (Melhor envio)"; 
-				$this->method_description = 'Serviço Sedex';
+				$this->method_title       = "Correios SEDEX (Melhor Envio)";
+				$this->method_description = 'Serviço SEDEX';
 				$this->enabled            = "yes"; 
-				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Sedex';
+				$this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio SEDEX';
 				$this->supports = array(
 					'shipping-zones',
 					'instance-settings',

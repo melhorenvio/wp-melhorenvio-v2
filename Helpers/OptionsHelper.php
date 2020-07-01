@@ -1,10 +1,10 @@
 <?php
 
-namespace Controllers;
+namespace Helpers;
 
 use Models\Option;
 
-class OptionsController 
+class OptionsHelper 
 {
     /**
      * @return void

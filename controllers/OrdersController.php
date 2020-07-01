@@ -42,8 +42,6 @@ class OrdersController
             die;
         }
 
-<<<<<<< HEAD
-=======
         if (!isset($_GET['choosen'])) {
             echo json_encode([
                 'success' => false,
@@ -52,20 +50,17 @@ class OrdersController
             die;
         }
 
->>>>>>> master
         $token = (new tokenController())->token();
 
         $products = (new ProductsController())->getProductsOrder($_GET['order_id']);
 
         $packages = (new PackageController())->getPackageOrderAfterCotation($_GET['order_id']);
-
+        
         if (empty($packages)) {
             echo json_encode([
                 'success' => false,
                 'message' => 'O pacote está vazio'
             ]);die;
-<<<<<<< HEAD
-=======
         }
 
         foreach ($packages[$_GET['choosen']][0] as $key => $attribute) {
@@ -75,10 +70,9 @@ class OrdersController
                     'message' => printf('Por favor, informar o valor para %s', $key)
                 ]);die;
             }
->>>>>>> master
         }
 
-        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1,2,3,4,5,6,7,8,9,10,11])) {
+        if (!isset($_GET['choosen']) || !in_array($_GET['choosen'], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17])) {
             echo json_encode([
                 'success' => false,
                 'message' => 'Verificar o código do serviço'
@@ -128,7 +122,7 @@ class OrdersController
         $orders_id = [];
         $protocols = [];
 
-        foreach ($packages[$_GET['choosen']] as $package) {
+        foreach ($packages[$_GET['choosen']] as $indexPackage => $package) {
 
             $insurance_value = 0;
             foreach ($products as $key => $item) {
@@ -136,102 +130,53 @@ class OrdersController
                 $insurance_value = $insurance_value + ($item['quantity'] * $item['unitary_value'] );
             }
             
-            unset($package['insurnace_value']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurnace_value']);
+
+            foreach ($products as $index => $product) {
+
+                unset($products[$index]['weight']);
+                unset($products[$index]['width']);
+                unset($products[$index]['height']);
+                unset($products[$index]['length']);
+
+                foreach ($package['products'] as $index2 => $packageProduct) {
+                    if ($product['id'] == $packageProduct->id) {
+                        $products[$index]['quantity'] = $packageProduct->quantity;
+                    }
+                }   
+            }
+
+            unset($packages[$_GET['choosen']][$indexPackage]['products']);
+            unset($packages[$_GET['choosen']][$indexPackage]['insurance']);
+            unset($packages[$_GET['choosen']][$indexPackage]['quantity']);
 
             $reminder = null;
             if (count($packages[$_GET['choosen']]) > 1) {
-                $reminder = sprintf('Volume %s/%s - %s itens', $package['volume'], count($packages[$_GET['choosen']]), $package['quantity']);
-            }
-<<<<<<< HEAD
+                $reminder = sprintf('Volume %s/%s - ', $package['volume'], count($packages[$_GET['choosen']]));
 
-            $body = [
-                'from' => $from,
-                'to' => $to,
-                'service' => $_GET['choosen'],
-                'products' => $products,
-                'package' => $package,
-                'options' => [
-                    "insurance_value" => round($insurance_value, 2), 
-                    "receipt" => false,
-                    "own_hand" => false,
-                    "collect" => false,
-                    "reverse" => false, 
-                    "non_commercial" => false, 
-                    'platform' => 'WooCommerce V2',
-                    'reminder' => $reminder
-                ]
-            ];
-
-            // Caso use jadlog é necessário informar o ID da agência Jadlog E opção de não comercial
-            if ($_GET['choosen'] == 3 || $_GET['choosen'] == 4 ) {
-                $body['agency'] = get_option('melhorenvio_agency_jadlog_v2'); 
-            }
-
-            // Caso use transpotadoras, é necessários nota fiscal e chave de nota fiscal.
-            if ($_GET['choosen'] >= 3) {
-
-                $invoices = get_post_meta($_GET['order_id'], 'melhorenvio_invoice_v2', true);
-                if (!empty($invoices) && $_GET['non_commercial'] != 'true') {
-                    $body['options']['invoice'] = $invoices;
-                }       
-
-                if ($_GET['non_commercial'] == 'true') {
-                    $body['options']['non_commercial'] = true;
+                foreach ($products as $product) {
+                    $reminder = $reminder . sprintf('%sx %s; ', $product['quantity'], $product['name']);
                 }
+
+                $size = strlen($reminder);
+                $reminder = substr($reminder,0, $size-2);
             }
 
-            $params = array(
-                'headers'           =>  [
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
-                ],
-                'body'   =>  json_encode($body),
-                'timeout'=> 10
-            );
+            unset($packages[$_GET['choosen']][$indexPackage]['volume']);
+            unset($package['volume']);
 
-            $response = json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_post(self::URL . '/v2/me/cart', $params)
-                )
-            );
-
-            (new LogsController)->addResponse($response, $body, $_GET['order_id']);
-
-            if(isset($response->errors)) {
-                $logs = (new LogsController)->add(
-                    $_GET['order_id'], 
-                    'Error ', 
-                    $body, 
-                    $response, 
-                    'OrdersController', 
-                    'sendOrder', 
-                    self::URL . '/v2/me/cart'
-                );
+            if($packages[$_GET['choosen']][$indexPackage]['weight'] == 0) {
+                $packages[$_GET['choosen']][$indexPackage]['weight'] = 0.01;
             }
-
-            if (!isset($response->id)) {
-                $er = $this->normalizeErrors($response, $_GET['order_id'], 'sendOrder');
-                if ($er != false) {
-                    $errors[] = $er;
-                    continue;
-                }
-            }
-
-            $success[] = $response;
-
-            $orders_id[] = $response->id;
-
-=======
 
             $body = array(
                 'from' => $from,
                 'to' => $to,
                 'service' => $_GET['choosen'],
                 'products' => $products,
-                'package' => $package,
+                'package' => $packages[$_GET['choosen']][$indexPackage],
                 'options' => array(
-                    "insurance_value" => round($insurance_value, 2), 
+                    "insurance_value" => round($package['insurance'], 2), 
                     "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
                     "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                     "collect" => false,
@@ -324,8 +269,15 @@ class OrdersController
 
             $orders_id[] = $response->id;
 
->>>>>>> master
             $protocols[] = $response->protocol;   
+        }
+
+        // get error message from ME Api
+        if (!empty($response->error)) {
+            echo json_encode([
+                'success' => false,
+                'message' => $response->error
+            ]); die;
         }
 
         if (empty($success) || empty($orders_id) || empty($protocols)) {
@@ -338,10 +290,6 @@ class OrdersController
         $data['choose_method'] = $_GET['choosen'];
         $data['status'] = 'pending';
         $data['created'] = date('Y-m-d H:i:s');
-<<<<<<< HEAD
-
-=======
->>>>>>> master
         $data['order_id'] = $orders_id;
         $data['protocol'] = $protocols;
 
@@ -356,11 +304,7 @@ class OrdersController
 
         echo json_encode([
             'success' => false,
-<<<<<<< HEAD
-            'message' => end($errors)
-=======
             'message' => $errors
->>>>>>> master
         ]);die;
     }
 

@@ -1,5 +1,9 @@
 ### Changelog
 
+## [2.4.7] - 2019-08-26
+## Fixed
+- Adicionado novo serviço: Correios Mini
+
 ## [2.4.6] - 2019-05-14
 ## Fixed
 - Ajuste no css dos input na tela do produto
@@ -118,7 +122,7 @@
 
 ## [2.2.4] - 2018-12-07
 ### fixed
-- Remoção frase "Feito com amor por Melhor envio" da cotação da página do produto
+- Remoção frase "Feito com amor por Melhor Envio" da cotação da página do produto
 - Ajustes na listagem de pedidos, alguns pedidos quebraram a aplicação
 
 ## [2.2.2] - 2018-12-07

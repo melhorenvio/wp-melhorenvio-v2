@@ -1,10 +1,10 @@
 <?php
 
-namespace Controllers;
+namespace Helpers;
 
 use Controllers\ConfigurationController;
 
-class MoneyController 
+class MoneyHelper 
 {
     /**
      * @param [type] $data
