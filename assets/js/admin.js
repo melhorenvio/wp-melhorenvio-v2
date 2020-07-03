@@ -1726,19 +1726,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         };
     },
     methods: {
-        canSave() {
-            if (this.token == '' && this.environment == 'production') {
-                alert('Por favor, informe o token de produção do Melhor Envio.');
-                return false;
-            }
-
-            if (this.token_sandbox == '' && this.environment == 'sandbox') {
-                alert('Por favor, informe o token de sandbox do Melhor Envio');
-                return false;
-            }
-
-            return true;
-        },
         getToken() {
             this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
                 this.token = response.data.token;
@@ -1752,13 +1739,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             bodyFormData.append('token', this.token);
             bodyFormData.append('token_sandbox', this.token_sandbox);
             bodyFormData.append('environment', this.environment);
-            if (this.canSave()) {
+            if (this.token && this.token.length > 0) {
                 __WEBPACK_IMPORTED_MODULE_0_axios___default()({
                     url: `${ajaxurl}?action=save_token`,
                     data: bodyFormData,
                     method: "POST"
                 }).then(response => {
-                    alert('Token atualizado!');
                     window.location.href = '/wp-admin/admin.php?page=melhor-envio#/configuracoes';
                 }).catch(err => console.log(err));
             }
