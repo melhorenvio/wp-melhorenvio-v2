@@ -3,11 +3,6 @@
 
 	$(function() {
 
-		
-		/**
-		 *	Roda quando clica para calcular o Frete
-		 */
-		// $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .calculo-de-frete div').on('click', function(e, l) {
 		$(document).on('keyup', '.iptCep', function(e) {
 
 			resetarTabela();
@@ -24,11 +19,6 @@
 				var peso = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_peso').val();
 				var preco = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_preco').val();
 				var id_produto = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #id_produto').val();
-				
-				// if (cep.length != 8) {
-				// 	alert('Por favor, verifique se o CEP informado é válido.');
-				// 	return false;
-				// } 
 
 				var errors = [];
 
@@ -56,10 +46,6 @@
 					errors.map( item => {
 						row += `<tr><td colspan="3">${item}</td></tr>`;
 					});
-
-					if (row == '') {
-						
-					}
 
 					$('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').append(row);
 					esconderLoader();
@@ -122,7 +108,7 @@
 					},
 					success:function(result) {
 						let response = JSON.parse(result);
-						if (!response.success || response.erro) {
+						if (!response.success || response.error) {
 							inpCEP.removeAttr('disabled');
 							alert(response.message);
 							esconderLoader();
@@ -185,9 +171,6 @@
 })( jQuery );
 
 function validateNumber(event) {
-
-	console.log(event);
-
     var key = window.event ? event.keyCode : event.which;
     if (event.keyCode === 8 || event.keyCode === 46) {
         return true;
