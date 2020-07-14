@@ -19,7 +19,11 @@ wp-content/plugins/hello.php
 /sitemap.xml.gz
 
 assets/css/*
-assets/js/*
+assets/js/admin.js
+assets/js/frontend.js
+assets/js/style.js
+assets/js/vendor.js
+
 
 vendor/
 node_modules/
