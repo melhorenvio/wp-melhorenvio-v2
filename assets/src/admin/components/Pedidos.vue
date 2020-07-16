@@ -102,7 +102,7 @@
                 <ul class="head">
                     <li>
                         <span>
-                            <input ref="selectAllBox" type="checkbox" @click="selectAll" />
+                            <!--<input ref="selectAllBox" type="checkbox" @click="selectAll" />-->
                         </span>
                     </li>
                     <li><span>ID</span></li>
@@ -116,7 +116,7 @@
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
                             <li>
-                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
+                                <!--<input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">-->
                             </li>
                             <li>
                                 <Id :item="item"></Id>
@@ -128,7 +128,13 @@
                             <li>
                                 <template v-if="item.products">
                                 <label>Produto</label>
-                                    <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+                                        <p v-for="product in item.products">
+                                            {{product.quantity}}x 
+                                            <a target='_blank' v-bind:href="'/wp-admin/post.php?post='+ product.id +'&action=edit'">
+                                                {{product.name}}
+                                            </a>
+                                        </p>
+                                    
                                 </template>
                                 <Cotacao :item="item"></Cotacao>
                                 <template v-if="item.protocol && item.status != null">
@@ -152,9 +158,9 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
-        <button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
+        <!--<button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
         
-        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>
+        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>-->
  
         <transition name="fade">
 
