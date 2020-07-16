@@ -26,29 +26,26 @@
                                         <b>Valor:</b> R${{prod.total}}
                                     </p>
                                 </template>
-
-                                        <template v-if="item.cotation != false && item.status == null">
-            <div  class="me-form">
-                <div class="formBox">
-                    <template v-if="item.cotation && item.cotation[item.cotation.choose_method]">
-                            <fieldset  class="selectLine">
-                                <div class="inputBox">
-                                    <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
-                                        <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
-                                            {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
-                                        </option>
-                                    </select>
-                                </div>
-                            </fieldset>
-                        </template>
-                        </div>
-                    </div>
-
-                </template>
+                                <template v-if="item.cotation != false && item.status == null">
+                                    <div  class="me-form">
+                                        <div class="formBox">
+                                            <template v-if="item.cotation && item.cotation[item.cotation.choose_method]">
+                                                <fieldset  class="selectLine">
+                                                    <div class="inputBox">
+                                                        <select v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')" v-model="item.cotation.choose_method">
+                                                            <option v-if="option.id && option.price" v-for="option in item.cotation" v-bind:value="option.id" :key="option.id">
+                                                                {{ option.company.name }} {{ option.name }} (R${{ option.price }}) 
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </fieldset>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
                             </li>
                         </ul>
                     </td>
-    
                 </tr>
             </table>
         </ul>

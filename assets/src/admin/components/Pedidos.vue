@@ -43,11 +43,9 @@
 
 <template>
     <div class="app-pedidos">
-
         <div class="boxBanner">
             <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
-
         <template>
             <div>
                 <div class="grid">
@@ -121,20 +119,18 @@
                             <li>
                                 <Id :item="item"></Id>
                             </li>
-
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
                             <li>
                                 <template v-if="item.products">
-                                <label>Produto</label>
-                                        <p v-for="product in item.products">
-                                            {{product.quantity}}x 
-                                            <a target='_blank' v-bind:href="'/wp-admin/post.php?post='+ product.id +'&action=edit'">
-                                                {{product.name}}
-                                            </a>
-                                        </p>
-                                    
+                                    <label>Produto</label>
+                                    <p v-for="product in item.products">
+                                        {{product.quantity}}x 
+                                        <a target='_blank' v-bind:href="'/wp-admin/post.php?post='+ product.id +'&action=edit'">
+                                            {{product.name}}
+                                        </a>
+                                    </p>
                                 </template>
                                 <Cotacao :item="item"></Cotacao>
                                 <template v-if="item.protocol && item.status != null">
