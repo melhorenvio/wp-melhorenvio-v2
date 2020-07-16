@@ -78,7 +78,7 @@ class OrderQuotationService
 
             if ($item->id == self::CORREIOS_MINI_CODE) {
 
-                if (!is_array($item->packages) || !isset($item->packages)) {
+                if (!isset($item->packages)) {
                     return [];
                 }
 
