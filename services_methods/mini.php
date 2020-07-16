@@ -6,8 +6,14 @@ use Controllers\ProductsController;
 use Controllers\TimeController;
 use Controllers\MoneyController;
 use Controllers\OptionsController;
+use Helpers\MoneyHelper;
+use Helpers\OptionsHelper;
+use Helpers\TimeHelper;
 use Models\Cart;
 use Models\Quotation;
+use Services\CartWooCommerceService;
+use Services\QuotationService;
+use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'mini_shipping_method_init' );
 
@@ -57,36 +63,41 @@ function mini_shipping_method_init() {
              * @return void
              */
             public function calculate_shipping( $package = []) {
-                $to = preg_replace('/\D/', '', $package['destination']['postcode']);
+                
+                global $woocommerce;
 
-                $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new Cart())->getProductsOnCart();
+				$to = str_replace('-', '', $package['destination']['postcode']);
 
-                $result = (new Quotation(null, $products, $package, $to))->calculate($this->code);
+				$products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
+
+				$result = (new QuotationService())->calculateQuotationByProducts($products, $to, $this->code);
+
 
                 if ($result) {
-                    if (isset($result->name) && isset($result->price)) {
-                        $method = (new optionsController())->getName($result->id, $result->name, 'Correios ', null);
 
-                        $rate = [
-                            'id' => 'melhorenvio_mini',
-                            'label' => $method['method'] . (new timeController)->setLabel($result->delivery, $this->code, $result->custom_delivery),
-                            'cost' => (new MoneyController())->setprice($result->price, $this->code),
-                            'calc_tax' => 'per_item',
-                            'meta_data' => [
-                                'delivery_time' => $result->delivery,
-                                'company' => 'Correios',
-                                'name' => $method['method']
-                            ]
-                        ];
+					if (isset($result->name) && isset($result->price)) {
 
-                        $this->add_rate($rate);
-                    }
-                }
+						$method = (new OptionsHelper())->getName($result->id, $result->name, null, null);
 
-                $freeShiping = (new CotationController())->freeShipping();
-                if ($freeShiping != false) {
-                    $this->add_rate($freeShiping);
-                }
+						$rate = [
+							'id' => 'melhorenvio_mini',
+							'label' => $method['method'] . (new TimeHelper)->setLabel($result->delivery_range, $this->code, $result->custom_delivery_range),
+							'cost' => (new MoneyHelper())->setprice($result->price, $this->code),
+							'calc_tax' => 'per_item',
+							'meta_data' => [
+								'delivery_time' => $result->delivery_range,
+								'company' => 'Correios',
+								'name' => $method['method']
+							]
+						];
+						$this->add_rate($rate);
+					}
+				} 
+
+                $freeShiping = (new WooCommerceService())->hasFreeShippingMethod();
+				if ($freeShiping != false) {
+					$this->add_rate($freeShiping);
+				}
             }
         }
     }
