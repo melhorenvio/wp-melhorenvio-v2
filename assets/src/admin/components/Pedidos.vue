@@ -107,6 +107,7 @@
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
                     <li><span>Documentos</span></li>
+                    <li><span>Etiqueta</span></li>
                     <li><span>Ações</span></li>
                 </ul>
 
@@ -116,6 +117,7 @@
                             <li>
                                 <!--<input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">-->
                             </li>
+                            <li><span></span></li>
                             <li>
                                 <Id :item="item"></Id>
                             </li>
@@ -147,6 +149,12 @@
                                 <Acoes :item="item"></Acoes>
                             </li>
                         </ul>
+                        <template v-if="toggleInfo == item.id">
+                            <informacoes
+                                :volume="item.cotation[item.cotation.choose_method].volumes[0]"
+                                :products="item.products">
+                            </informacoes>
+                        </template>
                     </li>
                 </ul>
             </div>

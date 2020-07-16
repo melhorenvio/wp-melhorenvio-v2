@@ -105,7 +105,7 @@
 				},
 				success:function(result) {
 					let response = JSON.parse(result);
-					if (!response.success || response.erro) {
+					if (!response.success || response.error) {
 						inpCEP.removeAttr('disabled');
 						alert(response.message);
 						esconderLoader();
@@ -161,9 +161,6 @@
 })( jQuery );
 
 function validateNumber(event) {
-
-	console.log(event);
-
     var key = window.event ? event.keyCode : event.which;
     if (event.keyCode === 8 || event.keyCode === 46) {
         return true;

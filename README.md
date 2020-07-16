@@ -69,7 +69,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 - Correções de bugs
 - Desativação de azul cargo em zonas não autorizadas
 
-#### [2.7.0] - 2020-05
+#### [2.7.2] - 2020-05
 - Possibilidade de utilizar ambiente Sandbox do Melhor Envio
 - Novo serviço de envios Azul Cargo (Verificar disponibilidade para a sua região)
 - Melhorias no fluxo de compras de etiquetas, compras com 1 click
