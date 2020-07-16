@@ -103,7 +103,6 @@ function azul_amanha_shipping_method_init() {
 }
 
 function add_azul_amanha_shipping_method( $methods ) {
-	$methods['azul_amanha'] = 'WC_Azul_Amanha_Shipping_Method';
 	return $methods;
 }
 

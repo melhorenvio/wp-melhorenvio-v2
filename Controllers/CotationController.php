@@ -76,7 +76,9 @@ class CotationController
             echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
             exit();
         }      
- 
+
+        $dimensionHelper = new DimensionsHelper();
+
         $package = array( 
             'ship_via'     => '',
             'destination'  => array(
@@ -87,10 +89,10 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
-                    "weight"             => (new DimensionsHelper())->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
-                    "width"              => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_largura'])),
-                    "length"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_comprimento'])),
-                    "height"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_altura'])),
+                    "weight"             => $dimensionHelper->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
+                    "width"              => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_largura'])),
+                    "length"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_comprimento'])),
+                    "height"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_altura'])),
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
                     'insurance_value'    => floatval($_POST['data']['produto_preco']),
@@ -98,7 +100,7 @@ class CotationController
                 )
             )
         );
-        
+
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         if(count($shipping_methods) == 0) {

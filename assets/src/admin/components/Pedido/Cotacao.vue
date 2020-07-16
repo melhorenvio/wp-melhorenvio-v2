@@ -12,13 +12,13 @@
         <template v-if="item.cotation != false && item.status == null">
             <div  class="me-form">
                 <div class="formBox">
-                    <template v-if="item.packages && item.packages[item.cotation.choose_method] && item.cotation &&  item.cotation[item.cotation.choose_method]">
+                    <template v-if="item.cotation[item.cotation.choose_method]">
                         <label>Pacote</label>
-                        <p>
-                            {{ item.packages[item.cotation.choose_method].altura }}cm A x 
-                            {{ item.packages[item.cotation.choose_method].largura }}cm L x 
-                            {{ item.packages[item.cotation.choose_method].comprimento }}cm C - 
-                            {{ item.packages[item.cotation.choose_method].peso }}Kg
+                        <p v-for="pack in item.cotation[item.cotation.choose_method].packages">
+                            {{ pack.dimensions.height }}cm A x 
+                            {{ pack.dimensions.width }}cm L x 
+                            {{ pack.dimensions.length }}cm C - 
+                            {{ pack.weight }}Kg
                         </p>
                     </template>
                     

@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Controllers\ConfigurationController;
 use Helpers\DimensionsHelper;
 
 class TestService
@@ -23,8 +22,7 @@ class TestService
             'php' => phpversion(),
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData()),
-            'metrics' => $this->getMetrics(),
-            'methos_used' => (new ConfigurationController())->getMethodsEnablesArray()
+            'metrics' => $this->getMetrics()
         ];
 
         if (isset($_GET['postalcode'])) {
@@ -50,19 +48,6 @@ class TestService
         }
 
        echo json_encode($response);die;
-    }
-
-    /**
-     * Get units used in woocommerce.
-     *
-     * @return array
-     */
-    private function getMetrics()
-    {
-        return [
-            'weigt' => strtolower( get_option( 'woocommerce_weight_unit' ) ),
-            'unit' => get_option('woocommerce_dimension_unit')
-        ];
     }
 
     /**
@@ -164,6 +149,19 @@ class TestService
             "width"           => (new DimensionsHelper())->converterDimension($_product->width),
             "height"          => (new DimensionsHelper())->converterDimension($_product->height),
             "length"          => (new DimensionsHelper())->converterDimension($_product->length)
+        ];
+    }
+
+    /**
+     * Get metrics useds in woocommerce.
+     *
+     * @return array $metrics
+     */
+    private function getMetrics()
+    {
+        return [
+            'weight_unit' => get_option( 'woocommerce_weight_unit' ),
+            'dimension_unit' => get_option('woocommerce_dimension_unit')
         ];
     }
 }

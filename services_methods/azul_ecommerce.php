@@ -103,7 +103,6 @@ function azul_ecommerce_shipping_method_init() {
 }
 
 function add_azul_ecommerce_shipping_method( $methods ) {
-	$methods['azul_ecommerce'] = 'WC_Azul_Ecommerce_Shipping_Method';
 	return $methods;
 }
 

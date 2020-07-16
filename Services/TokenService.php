@@ -21,7 +21,7 @@ class TokenService
         $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
         $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
 		
-		if (is_null($token_environment) || empty($token_environment) || $token_environment == "false") {
+		if (is_null($token_environment) || empty($token_environment) || $token_environment == "false" || $token_environment == "undefined") {
 			$token_environment = 'production';
 		}
 			
@@ -42,21 +42,13 @@ class TokenService
      */
     public function save($token, $token_sandbox, $token_environment)
     {
-        $tokenSaved = $this->get();
+        delete_option(self::OPTION_TOKEN);
+        delete_option(self::OPTION_TOKEN_SANDBOX);
+        delete_option(self::OPTION_TOKEN_ENVIRONMENT);
 
-        if (isset($tokenSaved->success) && !$tokenSaved->success) {
-            if (add_option(self::OPTION_TOKEN, $token)) {
-
-                return [
-                    'success' => true,
-                    'message' => 'Token salvo com sucesso'
-                ];
-            }
-        }
-
-        update_option(self::OPTION_TOKEN, $token, true);
-        update_option(self::OPTION_TOKEN_SANDBOX, $token_sandbox, true);
-        update_option(self::OPTION_TOKEN_ENVIRONMENT, $token_environment, true);
+        add_option(self::OPTION_TOKEN, $token, true);
+        add_option(self::OPTION_TOKEN_SANDBOX, $token_sandbox, true);
+        add_option(self::OPTION_TOKEN_ENVIRONMENT, $token_environment, true);
 
         return [
             'success' => true,

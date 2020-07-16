@@ -18,12 +18,8 @@ wp-content/plugins/hello.php
 /sitemap.xml
 /sitemap.xml.gz
 
-assets/css/*
+assets/css/admin.css.map
 assets/js/admin.js
-assets/js/frontend.js
-assets/js/style.js
-assets/js/vendor.js
-
 
 vendor/
 node_modules/
