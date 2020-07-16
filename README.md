@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.7.0
+Version: 2.7.6
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -65,6 +65,10 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
+#### [2.7.6] - 2020-07
+- Correções de bugs
+- Desativação de azul cargo em zonas não autorizadas
+
 #### [2.7.0] - 2020-05
 - Possibilidade de utilizar ambiente Sandbox do Melhor Envio
 - Novo serviço de envios Azul Cargo (Verificar disponibilidade para a sua região)
