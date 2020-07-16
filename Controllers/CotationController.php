@@ -77,6 +77,11 @@ class CotationController
             exit();
         }      
 
+        if (!isset($destination->cep) || !isset($destination->uf)) {
+            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
+            exit();
+        }
+
         $dimensionHelper = new DimensionsHelper();
 
         $package = array( 
@@ -170,13 +175,6 @@ class CotationController
             $company = $item->meta_data['company'];
         }
 
-        $delivery = null;
-        if (isset($item->meta_data['delivery_time']->min)) {
-
-            $delivery->min = $item->meta_data['delivery_time']->min;
-            $delivery->max = $item->meta_data['delivery_time']->max;
-        }
-
         $method = (new optionsHelper())->getName($item->get_id(),$name, $company, $item->get_label());
 
         return [
@@ -184,7 +182,7 @@ class CotationController
             'name' => $method['method'],
             'price' => (new MoneyHelper())->setLabel($item->get_cost(), $item->get_id()),
             'company' => $method['company'],
-            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
+            'delivery_time' =>  (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false
         ];
     }
