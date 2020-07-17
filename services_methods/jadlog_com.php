@@ -58,8 +58,8 @@ function jadlog_com_shipping_method_init() {
 			 * @param mixed $package
 			 * @return void
 			 */
-			public function calculate_shipping( $package = []) {
-
+			public function calculate_shipping( $package = []) 
+			{
 				$rate = (new CalculateShippingMethodService())->calculate_shipping(
 					$package, 
 					$this->code,
@@ -67,15 +67,8 @@ function jadlog_com_shipping_method_init() {
 					'Jadlog'
 				);
 
-				if (!$rate) {
-					return null;
-				}
-
-				$this->add_rate($rate);
-					
-				$freeShiping = (new WooCommerceService())->hasFreeShippingMethod();
-				if ($freeShiping != false) {
-					$this->add_rate($freeShiping);
+				if ($rate) {
+					$this->add_rate($rate);
 				}
 			}
 		}

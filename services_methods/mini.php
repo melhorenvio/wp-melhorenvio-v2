@@ -59,15 +59,8 @@ function mini_shipping_method_init() {
                     'Correios'
                 );
 
-				if (!$rate) {
-					return null;
-				}
-
-				$this->add_rate($rate);
-					
-				$freeShiping = (new WooCommerceService())->hasFreeShippingMethod();
-				if ($freeShiping != false) {
-					$this->add_rate($freeShiping);
+                if ($rate) {
+					$this->add_rate($rate);
 				}
             }
         }

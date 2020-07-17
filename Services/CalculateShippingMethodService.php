@@ -8,7 +8,6 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
-
     public function calculate_shipping( $package = [], $code, $id, $company)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
