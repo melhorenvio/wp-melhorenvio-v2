@@ -13,10 +13,8 @@ class DimensionsHelper
         $weight  = (float) $weight;
         $to_unit = strtolower( 'kg' );
     
-        
         $from_unit = strtolower( get_option( 'woocommerce_weight_unit' ) );
         
-        // Unify all units to kg first.
         if ( $from_unit !== $to_unit ) {
             switch ( $from_unit ) {
                 case 'g':
