@@ -65,6 +65,9 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
+#### [2.7.8] - 2020-07-17
+- Correção no calculo de frete de produto com pesos em gramas.
+
 #### [2.7.7] - 2020-07
 - Ajustes Correios Mini
 
