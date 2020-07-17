@@ -12,11 +12,8 @@ class DimensionsHelper
     {
         $weight  = (float) $weight;
         $to_unit = strtolower( 'kg' );
-    
-        
         $from_unit = strtolower( get_option( 'woocommerce_weight_unit' ) );
         
-        // Unify all units to kg first.
         if ( $from_unit !== $to_unit ) {
             switch ( $from_unit ) {
                 case 'g':
@@ -43,22 +40,22 @@ class DimensionsHelper
                 break;
             }
         }
-    
-        return ( $weight < 0 ) ? 0 : $weight;
+
+        return number_format((( $weight < 0 ) ? 0 : $weight), 2, '.', '');
     }
 
     public function converterDimension($value)
     {
         $unit = get_option('woocommerce_dimension_unit');
         if ($unit == 'mm') {
-            return $value / 10;
+            return number_format(($value / 10), 2, '.', '');
         }
 
         if ($unit == 'm') {
-            return $value * 10;
+            return number_format(($value * 10), 2, '.', '');
         }
 
-        return $value;
+        return number_format($value, 2, '.', '');
     }
 }
 
