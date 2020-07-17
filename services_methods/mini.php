@@ -1,16 +1,8 @@
 <?php
 
-use Controllers\PackageController;
-use Controllers\CotationController;
-use Controllers\ProductsController;
-use Controllers\TimeController;
-use Controllers\MoneyController;
-use Controllers\OptionsController;
 use Helpers\MoneyHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
-use Models\Cart;
-use Models\Quotation;
 use Services\CartWooCommerceService;
 use Services\QuotationService;
 use Services\WooCommerceService;
@@ -71,7 +63,6 @@ function mini_shipping_method_init() {
 				$products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
 
 				$result = (new QuotationService())->calculateQuotationByProducts($products, $to, $this->code);
-
 
                 if ($result) {
 
