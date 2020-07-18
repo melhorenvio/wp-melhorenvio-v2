@@ -76,7 +76,7 @@ class OrderQuotationService
 
             $result[$item->id] = $item;
 
-            if ($item->id == self::CORREIOS_MINI_CODE) {
+            if (isset($item->packages)) {
                 foreach ($item->packages as $key => $package) {
                     if ($package->weight == 0) {
                         $result[$item->id]['packages'][$key]->weight = 0.01;

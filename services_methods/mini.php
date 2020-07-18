@@ -1,13 +1,7 @@
 <?php
 
-use Controllers\PackageController;
-use Controllers\CotationController;
-use Controllers\ProductsController;
-use Controllers\TimeController;
-use Controllers\MoneyController;
-use Controllers\OptionsController;
-use Models\Cart;
-use Models\Quotation;
+use Services\CalculateShippingMethodService;
+use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'mini_shipping_method_init' );
 
@@ -56,37 +50,18 @@ function mini_shipping_method_init() {
              * @param mixed $package
              * @return void
              */
-            public function calculate_shipping( $package = []) {
-                $to = preg_replace('/\D/', '', $package['destination']['postcode']);
+            public function calculate_shipping( $package = []) 
+            {
+                $rate = (new CalculateShippingMethodService())->calculate_shipping(
+                    $package, 
+                    $this->code,
+                    'melhorenvio_mini',
+                    'Correios'
+                );
 
-                $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new Cart())->getProductsOnCart();
-
-                $result = (new Quotation(null, $products, $package, $to))->calculate($this->code);
-
-                if ($result) {
-                    if (isset($result->name) && isset($result->price)) {
-                        $method = (new optionsController())->getName($result->id, $result->name, 'Correios ', null);
-
-                        $rate = [
-                            'id' => 'melhorenvio_mini',
-                            'label' => $method['method'] . (new timeController)->setLabel($result->delivery, $this->code, $result->custom_delivery),
-                            'cost' => (new MoneyController())->setprice($result->price, $this->code),
-                            'calc_tax' => 'per_item',
-                            'meta_data' => [
-                                'delivery_time' => $result->delivery,
-                                'company' => 'Correios',
-                                'name' => $method['method']
-                            ]
-                        ];
-
-                        $this->add_rate($rate);
-                    }
-                }
-
-                $freeShiping = (new CotationController())->freeShipping();
-                if ($freeShiping != false) {
-                    $this->add_rate($freeShiping);
-                }
+                if ($rate) {
+					$this->add_rate($rate);
+				}
             }
         }
     }

@@ -43,11 +43,9 @@
 
 <template>
     <div class="app-pedidos">
-
         <div class="boxBanner">
             <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
         </div>
-
         <template>
             <div>
                 <div class="grid">
@@ -100,11 +98,6 @@
         <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
             <div class="table -woocommerce">
                 <ul class="head">
-                    <li>
-                        <span>
-                            <input ref="selectAllBox" type="checkbox" @click="selectAll" />
-                        </span>
-                    </li>
                     <li><span>ID</span></li>
                     <li><span>Destinatário</span></li>
                     <li><span>Cotação</span></li>
@@ -116,21 +109,22 @@
                 <ul class="body">
                     <li  v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
                         <ul class="body-list">
-                            <li>
-                                <input type="checkbox" :ref="item.id" :value="item.id" v-model="item.checked">
-                            </li>
                             <li><span></span></li>
                             <li>
                                 <Id :item="item"></Id>
                             </li>
-
                             <li>
                                 <Destino :to="item.to"></Destino>
                             </li>
                             <li>
                                 <template v-if="item.products">
-                                <label>Produto</label>
-                                    <p v-for="product in item.products">{{product.quantity}}x {{product.name}}</p>
+                                    <label>Produto</label>
+                                    <p v-for="product in item.products">
+                                        {{product.quantity}}x 
+                                        <a target='_blank' v-bind:href="'/wp-admin/post.php?post='+ product.id +'&action=edit'">
+                                            {{product.name}}
+                                        </a>
+                                    </p>
                                 </template>
                                 <Cotacao :item="item"></Cotacao>
                                 <template v-if="item.protocol && item.status != null">
@@ -160,10 +154,6 @@
         <div v-else><p>Nenhum registro encontrado</p></div>
         <button v-show="show_more" class="btn-border -full-green" @click="loadMore({status:status, wpstatus:wpstatus})">Carregar mais</button>
 
-        <button class="btn-border -full-blue" @click="beforePrintMultiples">Imprimir selecionados</button>
-        
-        <button class="btn-border -full-blue" @click="beforeBuyOrders">Comprar selecionados</button>
- 
         <transition name="fade">
 
             <!-- show_modal -->
