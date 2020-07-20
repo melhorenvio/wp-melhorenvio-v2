@@ -143,7 +143,7 @@ class Quotation
 
             return $products;
         } catch (\Exception $e) {
-            // Tratar log aqui
+            // TODO: Tratar log aqui
         }
     }
 
