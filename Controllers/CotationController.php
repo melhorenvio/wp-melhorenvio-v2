@@ -54,21 +54,7 @@ class CotationController
      */
     public function cotationProductPage() 
     {
-
-        if (!isset($_POST['data'])) {
-            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
-            exit();
-        }
-
-        if (!isset($_POST['data']['cep_origem'])) {
-            echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
-            exit();
-        }
-
-        if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
-            echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
-            exit();
-        }
+        $this->isValidRequest($_POST['data']);
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
 
@@ -131,6 +117,55 @@ class CotationController
 
         echo json_encode(['success' => true, 'data' => $rates]);
         exit();
+    }
+
+    /**
+     * Check is has all data to make quotation.
+     *
+     * @param Array $request
+     * @return void|json
+     */
+    private function isValidRequest($request)
+    {
+        if (!isset($request)) {
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+            exit();
+        }
+
+        if (!isset($request['cep_origem'])) {
+            echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
+            exit();
+        }
+
+        if ( strlen(trim($request['cep_origem'])) < 8 ) {
+            echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
+            exit();
+        }
+
+        if (!isset($request['produto_peso'])) {
+            echo json_encode(['success' => false, 'message' => 'Informar o peso do produto']);
+            exit();
+        }
+
+        if (!isset($request['produto_largura'])) {
+            echo json_encode(['success' => false, 'message' => 'Informar  largura do produto']);
+            exit();
+        }
+
+        if (!isset($request['produto_comprimento'])) {
+            echo json_encode(['success' => false, 'message' => 'Informar o comprimento do produto']);
+            exit();
+        }
+
+        if (!isset($request['produto_altura'])) {
+            echo json_encode(['success' => false, 'message' => 'Informar a altura do produto']);
+            exit();
+        }
+
+        if (!isset($request['produto_preco'])) {
+            echo json_encode(['success' => false, 'message' => 'Informar o preço do produto']);
+            exit();
+        }
     }
 
     /**
