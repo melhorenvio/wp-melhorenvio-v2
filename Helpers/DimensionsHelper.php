@@ -5,8 +5,10 @@ namespace Helpers;
 class DimensionsHelper 
 {
     /**
+     *  Function to convert the weight of the product to kg if necessary.
+     * 
      * @param string $weight
-     * @return void
+     * @return float
      */
     public function convertWeightUnit($weight) 
     {
