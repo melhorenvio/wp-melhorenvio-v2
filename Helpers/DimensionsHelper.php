@@ -21,11 +21,11 @@ class DimensionsHelper
     {
         $unit = get_option('woocommerce_dimension_unit');
         if ($unit == 'mm') {
-            return number_format(($value / 10), 2, '.', '');
+            $value = $value / 10;
         }
 
         if ($unit == 'm') {
-            return number_format(($value * 10), 2, '.', '');
+            $value = $value * 10;
         }
 
         return number_format($value, 2, '.', '');
