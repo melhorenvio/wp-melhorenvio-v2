@@ -23,7 +23,8 @@ class OrdersController
     {
         unset($_GET['action']);
         $orders = (new ListOrderService())->getList($_GET);
-        return json_encode($orders);
+        echo json_encode($orders);
+        die();
     }
 
     /**
