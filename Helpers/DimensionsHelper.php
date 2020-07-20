@@ -17,6 +17,12 @@ class DimensionsHelper
         return floatval(number_format(wc_get_weight( $weight, $to_unit, $from_unit ), 2, '.', ''));
     }
 
+    /**
+     * Function that receives the value of the product measurement (width, height or length), and verifies the measurement used in the woocommerce configuration and if the unit is different from cm, converts it to cm, a standard used in API Melhor Envio.
+     *
+     * @param srting $value
+     * @return float
+     */
     public function converterDimension($value)
     {
         $unit = get_option('woocommerce_dimension_unit');
