@@ -5,7 +5,7 @@ namespace Helpers;
 class DimensionsHelper 
 {
     /**
-     * @param [type] $weight
+     * @param string $weight
      * @return void
      */
     public function convertWeightUnit($weight) 
@@ -13,35 +13,8 @@ class DimensionsHelper
         $weight  = (float) $weight;
         $to_unit = strtolower( 'kg' );
         $from_unit = strtolower( get_option( 'woocommerce_weight_unit' ) );
-        
-        if ( $from_unit !== $to_unit ) {
-            switch ( $from_unit ) {
-                case 'g':
-                $weight *= 0.001;
-                break;
-                case 'lbs':
-                $weight *= 0.453592;
-                break;
-                case 'oz':
-                $weight *= 0.0283495;
-                break;
-            }
-    
-          // Output desired unit.
-            switch ( $to_unit ) {
-                case 'g':
-                $weight *= 1000;
-                break;
-                case 'lbs':
-                $weight *= 2.20462;
-                break;
-                case 'oz':
-                $weight *= 35.274;
-                break;
-            }
-        }
 
-        return number_format((( $weight < 0 ) ? 0 : $weight), 2, '.', '');
+        return floatval(number_format(wc_get_weight( $weight, $to_unit, $from_unit ), 2, '.', ''));
     }
 
     public function converterDimension($value)
