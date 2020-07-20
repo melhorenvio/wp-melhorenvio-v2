@@ -6,12 +6,15 @@ class ShippingMethodsController
 {
     public function getCodes()
     {
+        if (!isset($_SESSION['methods_shipping_api_melhor_envio']['methods'])) {
+            return [];
+        }
         return $_SESSION['methods_shipping_api_melhor_envio']['methods'];       
     }
 
     public function getMethodsShippingCodesViaApi()
     {
-        $response = wp_remote_request('https://www.melhorenvio.com.br/api/v2/me/shipment/services');
+        $response = wp_remote_request('https://api.melhorenvio.com/v2/me/shipment/services');
 
         if (wp_remote_retrieve_response_code($response) != 200) {
             return [];
