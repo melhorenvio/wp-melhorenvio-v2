@@ -184,7 +184,7 @@ class Quotation
      *
      * @return array
      */
-    private function prepareBody()
+    private function createQuotationBody()
     {
         $options = array(
             'receipt' => $this->options->ar,
@@ -270,7 +270,7 @@ class Quotation
     {
         $token = (new TokenController())->token();
 
-        if (!empty($token) && !is_null($token) && ($body = $this->prepareBody())) {
+        if (!empty($token) && !is_null($token) && ($body = $this->createQuotationBody())) {
             $params = array(
                 'headers'           =>  array(
                     'Content-Type'  => 'application/json',
