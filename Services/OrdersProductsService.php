@@ -31,7 +31,7 @@ class OrdersProductsService
                 "quantity"        => $item_product->get_quantity(),
                 "unitary_value"   => round($_product->get_price(), 2),
                 "insurance_value" => round($_product->get_price(), 2),
-                "weight"          => (new DimensionsHelper())->converterIfNecessary($_product->weight),
+                "weight"          => (new DimensionsHelper())->convertWeightUnit($_product->weight),
                 "width"           => (new DimensionsHelper())->converterDimension($_product->width),
                 "height"          => (new DimensionsHelper())->converterDimension($_product->height),
                 "length"          => (new DimensionsHelper())->converterDimension($_product->length)

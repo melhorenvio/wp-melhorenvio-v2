@@ -80,7 +80,7 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
-                    "weight"             => $dimensionHelper->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
+                    "weight"             => $dimensionHelper->convertWeightUnit(floatval($_POST['data']['produto_peso'])),
                     "width"              => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_largura'])),
                     "length"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_comprimento'])),
                     "height"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_altura'])),

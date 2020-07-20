@@ -31,7 +31,7 @@ class PackageService
                         'largura' => (new DimensionsHelper())->converterDimension($package->dimensions->width),
                         'altura' => (new DimensionsHelper())->converterDimension($package->dimensions->height),
                         'comprimento' => (new DimensionsHelper())->converterDimension($package->dimensions->length),
-                        'peso' => (new DimensionsHelper())->converterIfNecessary($package->weight)
+                        'peso' => (new DimensionsHelper())->convertWeightUnit($package->weight)
                     ];
                 }
             } elseif (isset($item->volumes)) {
@@ -40,7 +40,7 @@ class PackageService
                         'largura' => (new DimensionsHelper())->converterDimension($volume->width),
                         'altura' => (new DimensionsHelper())->converterDimension($volume->height),
                         'comprimento' => (new DimensionsHelper())->converterDimension($volume->length),
-                        'peso' => (new DimensionsHelper())->converterIfNecessary($volume->weight)
+                        'peso' => (new DimensionsHelper())->convertWeightUnit($volume->weight)
                     ];
                 }
             } else {

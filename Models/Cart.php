@@ -38,7 +38,7 @@ class Cart
                     'height'       => $dimensionHelper->converterDimension($productInfo->get_height()),
                     'width'        => $dimensionHelper->converterDimension($productInfo->get_width()),
                     'length'       => $dimensionHelper->converterDimension($productInfo->get_length()),
-                    'weight'       => $dimensionHelper->converterIfNecessary($productInfo->get_weight()),
+                    'weight'       => $dimensionHelper->convertWeightUnit($productInfo->get_weight()),
                     'quantity'     => (isset($item_product['quantity'])) ? intval($item_product['quantity']) : 1,
                 );
             }

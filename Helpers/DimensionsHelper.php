@@ -8,7 +8,7 @@ class DimensionsHelper
      * @param [type] $weight
      * @return void
      */
-    public function converterIfNecessary($weight) 
+    public function convertWeightUnit($weight) 
     {
         $weight  = (float) $weight;
         $to_unit = strtolower( 'kg' );
