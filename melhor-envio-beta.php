@@ -357,11 +357,6 @@ final class Base_Plugin {
 
         //Adicionando serviço de Rotas
         (new RouterService())->handler(); 
-
-        add_action('wp_ajax_get_quotation', function() {
-            $data = (new OrderQuotationService())->getQuotation($_GET['id']);
-            echo json_encode($data);die;
-        });
     }
 
     /**

@@ -28,6 +28,18 @@ class OrdersController
     }
 
     /**
+     * Function to search for an order quote.
+     *
+     * @param GET $id
+     * @return array
+     */
+    public function getQuotationOrderByOrderId()
+    {
+        $data = (new OrderQuotationService())->getQuotation($_GET['id']);
+        echo json_encode($data);die;
+    }
+
+    /**
      * Function to add order in cart Melhor Envio.
      * 
      * @param GET order_id
