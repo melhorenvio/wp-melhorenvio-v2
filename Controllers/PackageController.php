@@ -150,9 +150,9 @@ class PackageController
             $package['weight'] = $package['weight'] / 1000;
         }
 
-        $package['width'] = (new DimensionsHelper())->converterDimension($package['width']);
-        $package['height'] = (new DimensionsHelper())->converterDimension($package['height']);
-        $package['length'] = (new DimensionsHelper())->converterDimension($package['length']);
+        $package['width'] = (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package['width']);
+        $package['height'] = (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package['height']);
+        $package['length'] = (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package['length']);
 
         return $package;
     }

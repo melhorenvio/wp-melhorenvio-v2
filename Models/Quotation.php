@@ -239,9 +239,9 @@ class Quotation
                 $helper = new DimensionsHelper();
 
                 $body['products'][$key]['volumes'][] = array(
-                    'height' => (int) $helper->converterDimension($product->height),
-                    'width'  => (int) $helper->converterDimension($product->width),
-                    'length' => (int) $helper->converterDimension($product->length),
+                    'height' => (int) $helper->ConverterUnitDimensionToCentimeter($product->height),
+                    'width'  => (int) $helper->ConverterUnitDimensionToCentimeter($product->width),
+                    'length' => (int) $helper->ConverterUnitDimensionToCentimeter($product->length),
                     'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->convertWeightUnit($product->weight),2)
                 );
 

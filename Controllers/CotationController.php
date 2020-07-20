@@ -81,9 +81,9 @@ class CotationController
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
                     "weight"             => $dimensionHelper->convertWeightUnit(floatval($_POST['data']['produto_peso'])),
-                    "width"              => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_largura'])),
-                    "length"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_comprimento'])),
-                    "height"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_altura'])),
+                    "width"              => $dimensionHelper->ConverterUnitDimensionToCentimeter(floatval($_POST['data']['produto_largura'])),
+                    "length"             => $dimensionHelper->ConverterUnitDimensionToCentimeter(floatval($_POST['data']['produto_comprimento'])),
+                    "height"             => $dimensionHelper->ConverterUnitDimensionToCentimeter(floatval($_POST['data']['produto_altura'])),
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
                     'insurance_value'    => floatval($_POST['data']['produto_preco']),

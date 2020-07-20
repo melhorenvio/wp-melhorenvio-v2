@@ -146,9 +146,9 @@ class TestService
             "unitary_value"   => round($_product->get_price(), 2),
             "insurance_value" => round($_product->get_price(), 2),
             "weight"          => (new DimensionsHelper())->convertWeightUnit($_product->weight),
-            "width"           => (new DimensionsHelper())->converterDimension($_product->width),
-            "height"          => (new DimensionsHelper())->converterDimension($_product->height),
-            "length"          => (new DimensionsHelper())->converterDimension($_product->length)
+            "width"           => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($_product->width),
+            "height"          => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($_product->height),
+            "length"          => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($_product->length)
         ];
     }
 

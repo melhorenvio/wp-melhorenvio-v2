@@ -35,9 +35,9 @@ class Cart
                     'variation_id' => $item_product['variation_id'],
                     'name'         => $data['name'],
                     'price'        => $productInfo->get_price(),
-                    'height'       => $dimensionHelper->converterDimension($productInfo->get_height()),
-                    'width'        => $dimensionHelper->converterDimension($productInfo->get_width()),
-                    'length'       => $dimensionHelper->converterDimension($productInfo->get_length()),
+                    'height'       => $dimensionHelper->ConverterUnitDimensionToCentimeter($productInfo->get_height()),
+                    'width'        => $dimensionHelper->ConverterUnitDimensionToCentimeter($productInfo->get_width()),
+                    'length'       => $dimensionHelper->ConverterUnitDimensionToCentimeter($productInfo->get_length()),
                     'weight'       => $dimensionHelper->convertWeightUnit($productInfo->get_weight()),
                     'quantity'     => (isset($item_product['quantity'])) ? intval($item_product['quantity']) : 1,
                 );
