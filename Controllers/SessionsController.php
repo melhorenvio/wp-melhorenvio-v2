@@ -2,13 +2,29 @@
 
 namespace Controllers;
 
-use Models\Address;
-use Models\Store;
-use Models\User;
+use Services\SessionService;
 
-class SessionsController {
+class SessionsController 
+{
+    /**
+     * Function to get information from the plugin session
+     *
+     * @return array
+     */
+    public function getSession()
+    {
+        echo json_encode($_SESSION);
+        die;
+    }
 
-    const URL = 'https://api.melhorenvio.com';
-
-
+    /**
+     * Function to delete the plugin session
+     *
+     * @return void
+     */
+    public function deleteSession()
+    {
+        echo json_encode((new SessionService())->delete());
+        die;
+    }
 }

@@ -92,5 +92,20 @@ class TokenController
         ]);
         die();
     }
+
+    /**
+     * Function to check exists token instancead
+     *
+     * @return json
+     */
+    public function verifyToken()
+    {
+        if (!get_option('wpmelhorenvio_token')) {
+            echo json_encode(['exists_token' => false]);
+            die;
+        }
+        echo json_encode(['exists_token' => true]);
+        die;
+    }
 }
 

@@ -59,18 +59,12 @@ if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
     return false;
 }
 
-use Controllers\ConfigurationController;
-use Controllers\UsersController;
-use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
-use Controllers\LogsController;
-use Controllers\StatusController;
 use Models\CalculatorShow;
 use Services\OrderQuotationService;
 use Services\RouterService;
 use Services\SessionService;
 use Services\ShortCodeService;
-use Services\TestService;
 use Services\TrackingService;
 
 /**
@@ -267,11 +261,6 @@ final class Base_Plugin {
         update_option( 'baseplugin_version', BASEPLUGIN_VERSION );
     }
 
-    public function deactivate()
-    {
-
-    }
-
     /**
      * Include the required files
      *
@@ -316,8 +305,6 @@ final class Base_Plugin {
      */
     public function init_hooks()
     {
-        $status  = new StatusController();
-
         // Registrando shortcode da calculadora
         add_shortcode('calculadora_melhor_envio', function($attr) {
             if (isset($attr['product_id'])) {
@@ -369,76 +356,7 @@ final class Base_Plugin {
         add_action( 'init', array( $this, 'localization_setup' ) );
 
         //Adicionando serviço de Rotas
-        (new RouterService())->handler();
-
-        add_action('wp_ajax_check_path', function() {
-
-            $data['version'] = $this->version;
-
-            $data['home'] = get_home_path(__FILE__);
-
-            $data['plugin_dir_path'] = dirname( __FILE__ );
-
-            $pathPlugins = get_option('melhor_envio_path_plugins');
-            if (!$pathPlugins) {
-                $pathPlugins = ABSPATH . 'wp-content/plugins';
-            }
-
-            $data['path_plugins'] = $pathPlugins;
-
-            if (isset($_GET['path'])) {
-                $data['path_test'] = str_replace('%', '/', $_GET['path']);
-            }
-
-            foreach ( glob( $data['path_plugins'] . '/' . $this->version . '/services/*.php' ) as $filename ) {
-                $data['services_file']['current_version_' . $this->version][] = $filename;
-            }
-
-            foreach ( glob( $data['path_plugins'] . '/2.5.0/services/*.php' ) as $filename ) {
-                $data['services_file']['fixed-2.5.0'][] = $filename;
-            }
-
-            foreach ( glob( $data['path_plugins'] . '/melhor-envio-cotacao/services/*.php' ) as $filename ) {
-                $data['services_file']['producao'][] = $filename;
-            }
-
-            foreach ( glob( $data['path_test'] . '/services/*.php' ) as $filename ) {
-                $data['services_file']['test'][] = $filename;
-            }
-
-            echo json_encode($data);
-            die;
-        });
-
-       
-
-
-
-
-        
-       
-
-        add_action('wp_ajax_delete_melhor_envio_session', function(){
-            echo json_encode((new SessionService())->delete());die;
-        });
-
-        add_action('wp_ajax_get_melhor_envio_session', function(){
-            echo json_encode($_SESSION);
-            die;
-        });
-
-        add_action('wp_ajax_verify_token', function() {
-            if (!get_option('wpmelhorenvio_token')) {
-                echo json_encode(['exists_token' => false]);
-                die;
-            }
-            echo json_encode(['exists_token' => true]);
-            die;
-        });
-
-        add_action('wp_ajax_get_info_server_client_melhor_envio', function() {
-            phpinfo();
-        });
+        (new RouterService())->handler(); 
 
         add_action('wp_ajax_get_quotation', function() {
             $data = (new OrderQuotationService())->getQuotation($_GET['id']);

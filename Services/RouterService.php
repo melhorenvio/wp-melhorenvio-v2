@@ -5,10 +5,14 @@ namespace Services;
 use Controllers\ConfigurationController;
 use Controllers\CotationController;
 use Controllers\OrdersController;
+use Controllers\SessionsController;
 use Controllers\StatusController;
 use Controllers\TokenController;
 use Controllers\UsersController;
 
+/**
+ * Class responsible for managing the routes of the plugin
+ */
 class RouterService
 {
     public function handler()
@@ -20,6 +24,7 @@ class RouterService
         $this->loadRoutesStatus();
         $this->loadRoutesTokens();
         $this->loadRoutesTest();
+        $this->loadRoutesSession();
     }
 
     /**
@@ -110,6 +115,7 @@ class RouterService
 
         add_action('wp_ajax_get_token', [$tokensController, 'getToken']);
         add_action('wp_ajax_save_token', [$tokensController, 'saveToken']);
+        add_action('wp_ajax_verify_token', [$tokensController, 'verifyToken']);
     }
 
     /**
@@ -126,5 +132,18 @@ class RouterService
         add_action('wp_ajax_environment', function() {
             (new TestService('2.7.8'))->run();
         });
+    }
+
+    /**
+     * function to start session routes
+     *
+     * @return void
+     */
+    private function loadRoutesSession()
+    {
+        $sessionsController = new SessionsController();
+
+        add_action('wp_ajax_delete_melhor_envio_session', [$sessionsController, 'deleteSession']);
+        add_action('wp_ajax_get_melhor_envio_session', [$sessionsController, 'getSession']);
     }
 }
