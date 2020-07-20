@@ -38,6 +38,11 @@ class ShippingMethodsController
         }, $services);
     }
 
+    /**
+     * Function to update available "Melhor ENvio" services in the session
+     *
+     * @return array
+     */
     public function updateMethodsShippingCodeSession()
     {
         if (!isset($_SESSION['methods_shipping_api_melhor_envio'])) {
@@ -62,7 +67,5 @@ class ShippingMethodsController
                 'updated_at' => date('Y-m-d')
             ];
         }
-
     }
 }
-
