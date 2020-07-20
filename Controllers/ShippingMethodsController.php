@@ -2,48 +2,47 @@
 
 namespace Controllers;
 
+use Services\ShippingMelhorEnvioService;
+
 class ShippingMethodsController 
 {
+    /**
+     * function to search for the shipping services available in session.
+     *
+     * @return array
+     */
     public function getCodes()
     {
         if (!isset($_SESSION['methods_shipping_api_melhor_envio']['methods'])) {
             return [];
         }
+
         return $_SESSION['methods_shipping_api_melhor_envio']['methods'];       
     }
 
-    public function getMethodsShippingCodesViaApi()
+    /**
+     * function to search for the shipping services ID available in the Melhor Envio api
+     *
+     * @return array
+     */
+    public function getMethodsShippingCodesMelhorEnvio()
     {
-        $response = wp_remote_request('https://api.melhorenvio.com/v2/me/shipment/services');
-
-        if (wp_remote_retrieve_response_code($response) != 200) {
-            return [];
-        }
-
-        $services =  json_decode(
-            wp_remote_retrieve_body(
-                $response
-            )
-        );
+        $services = (new ShippingMelhorEnvioService())->getServicesApiMelhorEnvio();
 
         if (empty($services)) {
             return [];
         }
 
-        $servicesIds = [];
-
-        foreach ($services as $service) {
-            $servicesIds[] = (string) $service->id;
-        }
-
-        return $servicesIds;
+        return array_map(function ($service) {
+            return (string) $service->id;
+        }, $services);
     }
 
     public function updateMethodsShippingCodeSession()
     {
         if (!isset($_SESSION['methods_shipping_api_melhor_envio'])) {
 
-            $methods = $this->getMethodsShippingCodesViaApi();
+            $methods = $this->getMethodsShippingCodesMelhorEnvio();
 
             if (empty($methods)) {
                 return false;
@@ -59,7 +58,7 @@ class ShippingMethodsController
 
         if (date($_SESSION['methods_shipping_api_melhor_envio']['updated_at'] >= $yesterday)) {
             return $_SESSION['methods_shipping_api_melhor_envio'] = [
-                'methods'    => $this->getMethodsShippingCodesViaApi(),
+                'methods'    => $this->getMethodsShippingCodesMelhorEnvio(),
                 'updated_at' => date('Y-m-d')
             ];
         }
