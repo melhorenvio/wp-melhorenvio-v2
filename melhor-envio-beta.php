@@ -355,7 +355,6 @@ final class Base_Plugin {
         add_action( 'init', array( $this, 'init_classes' ) );
         add_action( 'init', array( $this, 'localization_setup' ) );
 
-        //Adicionando serviço de Rotas
         (new RouterService())->handler(); 
     }
 
