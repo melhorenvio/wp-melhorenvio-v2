@@ -23,7 +23,20 @@ class OrdersController
     {
         unset($_GET['action']);
         $orders = (new ListOrderService())->getList($_GET);
-        return json_encode($orders);
+        echo json_encode($orders);
+        die();
+    }
+
+    /**
+     * Function to search for an order quote.
+     *
+     * @param int $id
+     * @return array
+     */
+    public function getOrderQuotationByOrderId($id)
+    {
+        $data = (new OrderQuotationService())->getQuotation($id);
+        echo json_encode($data);die;
     }
 
     /**
