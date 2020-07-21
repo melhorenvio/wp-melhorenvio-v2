@@ -107,7 +107,7 @@
 						return false;
 					},
 					success:function(result) {
-						let response = JSON.parse(result);
+						let response = result;
 						if (!response.success || response.error) {
 							inpCEP.removeAttr('disabled');
 							alert(response.message);
