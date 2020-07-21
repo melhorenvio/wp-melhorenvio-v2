@@ -49,7 +49,9 @@ class RouterService
     {
         $ordersController = new OrdersController();
         
-        add_action('wp_ajax_get_quotation', [$ordersController, 'getQuotationOrderByOrderId']);
+        add_action('wp_ajax_get_quotation', function() use ($ordersController) {
+            $ordersController->getOrderQuotationByOrderId($_GET['id']);
+        });
         add_action('wp_ajax_get_orders', [$ordersController, 'getOrders']);
         add_action('wp_ajax_add_order', [$ordersController, 'sendOrder']);
         add_action('wp_ajax_buy_click', [$ordersController, 'buyOnClick']);

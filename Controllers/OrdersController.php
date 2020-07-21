@@ -33,9 +33,9 @@ class OrdersController
      * @param GET $id
      * @return array
      */
-    public function getQuotationOrderByOrderId()
+    public function getOrderQuotationByOrderId($id)
     {
-        $data = (new OrderQuotationService())->getQuotation($_GET['id']);
+        $data = (new OrderQuotationService())->getQuotation($id);
         echo json_encode($data);die;
     }
 
