@@ -32,8 +32,6 @@ class TrackingService
     /**
      * Adds a new column to the "My Orders" table in the account.
      *
-     * @param string[] $columns the columns in the orders table
-     * @return string[] updated columns
      */
     public function createTrackingColumnOrdersClient()
     {
@@ -52,21 +50,14 @@ class TrackingService
     }
 
      /**
-     * Adds data to the custom "ship to" column in "My Account > Orders".
+     * Adds data to the custom "tracking to" column in "My Account > Orders".
      *
-     * @param \WC_Order $order the order object for the row
      */
     private function addTrackingToOrderClients()
     {
         add_action( 'woocommerce_my_account_my_orders_column_tracking', function($order){
-
             $data = (new TrackingService())->getTrackingOrder($order->id);
-
-            if(empty($data)) {
-                echo 'Aguardando postagem';
-            } else {
-                echo '<a target="_blank" href="https://melhorrastreio.com.br/rastreio/'. $data .'">' . $data . '</a>';
-            }
+            echo  (!empty($data)) ? sprintf("<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data) : 'Aguardando postagem';
         } );
     }
 }
