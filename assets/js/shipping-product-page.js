@@ -106,8 +106,7 @@
 						resetarTabela();
 						return false;
 					},
-					success:function(result) {
-						let response = result;
+					success:function(response) {
 						if (!response.success || response.error) {
 							inpCEP.removeAttr('disabled');
 							alert(response.message);
