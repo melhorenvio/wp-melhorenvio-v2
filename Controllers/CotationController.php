@@ -76,7 +76,14 @@ class CotationController
             echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
             exit();
         }      
- 
+
+        if (!isset($destination->cep) || !isset($destination->uf)) {
+            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
+            exit();
+        }
+
+        $dimensionHelper = new DimensionsHelper();
+
         $package = array( 
             'ship_via'     => '',
             'destination'  => array(
@@ -87,10 +94,10 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
-                    "weight"             => (new DimensionsHelper())->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
-                    "width"              => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_largura'])),
-                    "length"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_comprimento'])),
-                    "height"             => (new DimensionsHelper())->converterDimension(floatval($_POST['data']['produto_altura'])),
+                    "weight"             => $dimensionHelper->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
+                    "width"              => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_largura'])),
+                    "length"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_comprimento'])),
+                    "height"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_altura'])),
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
                     'insurance_value'    => floatval($_POST['data']['produto_preco']),
@@ -98,7 +105,7 @@ class CotationController
                 )
             )
         );
-        
+
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         if(count($shipping_methods) == 0) {
@@ -168,13 +175,6 @@ class CotationController
             $company = $item->meta_data['company'];
         }
 
-        $delivery = null;
-        if (isset($item->meta_data['delivery_time']->min)) {
-
-            $delivery->min = $item->meta_data['delivery_time']->min;
-            $delivery->max = $item->meta_data['delivery_time']->max;
-        }
-
         $method = (new optionsHelper())->getName($item->get_id(),$name, $company, $item->get_label());
 
         return [
@@ -182,7 +182,7 @@ class CotationController
             'name' => $method['method'],
             'price' => (new MoneyHelper())->setLabel($item->get_cost(), $item->get_id()),
             'company' => $method['company'],
-            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
+            'delivery_time' =>  (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false
         ];
     }

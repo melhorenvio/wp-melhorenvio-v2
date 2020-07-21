@@ -188,18 +188,10 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                 
                 <div style="width:100%">
                     <div class="row">
-                        <!-- <div class="col-25">
-                            <label for="fname">CEP</label>
-                        </div> -->
                         <div class="col-75">
+                            <p>Simulação de frete</p>
                             <input type="text" maxlength="9" class="iptCep" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
                         </div>
-                    <!-- </div>
-                    
-                    <div class="row"> -->
-                        <!-- <div class="col-25">
-                            <input type="submit" value="Calcular">
-                        </div> -->
                     </div>
 
                     <div id="calcular-frete-loader" style="display:none;">

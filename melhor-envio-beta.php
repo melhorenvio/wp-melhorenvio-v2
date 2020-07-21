@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.7.2
+Version: 2.7.8
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -67,7 +67,6 @@ use Controllers\CotationController;
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Controllers\LogsController;
 use Controllers\StatusController;
-use Controllers\ShippingMethodsController;
 use Models\CalculatorShow;
 use Services\ConfigurationsService;
 use Services\OrderQuotationService;
@@ -88,7 +87,7 @@ final class Base_Plugin {
      *
      * @var string
      */
-    public $version = '2.7.2';
+    public $version = '2.7.8';
 
     /**
      * Holds various class instances
@@ -357,7 +356,8 @@ final class Base_Plugin {
          */
         function sv_wc_my_orders_ship_to_column( $order ) {
             $data = (new TrackingService())->getTrackingOrder($order->id);
-            if( empty($data) || is_null($data['tracking'])) {
+
+            if(empty($data)) {
                 echo 'Aguardando postagem';
             } else {
                 echo '<a target="_blank" href="https://melhorrastreio.com.br/rastreio/'. $data .'">' . $data . '</a>';

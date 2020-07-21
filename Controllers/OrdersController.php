@@ -22,10 +22,7 @@ class OrdersController
     public function getOrders() 
     {
         unset($_GET['action']);
-        //$orders = Order::getAllOrders($_GET);
-
         $orders = (new ListOrderService())->getList($_GET);
-
         return json_encode($orders);
     }
 
