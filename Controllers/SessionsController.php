@@ -13,8 +13,7 @@ class SessionsController
      */
     public function getSession()
     {
-        echo json_encode($_SESSION);
-        die;
+        return wp_send_json($_SESSION, 200);
     }
 
     /**
@@ -24,7 +23,6 @@ class SessionsController
      */
     public function deleteSession()
     {
-        echo json_encode((new SessionService())->delete());
-        die;
+        return wp_send_json((new SessionService())->delete(), 200);
     }
 }

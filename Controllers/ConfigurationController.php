@@ -18,8 +18,7 @@ class ConfigurationController
      */
     public function getConfigurations()
     {
-        echo json_encode((new ConfigurationsService())->getConfigurations());
-        die();
+        return wp_send_json((new ConfigurationsService())->getConfigurations(), 200);
     }
 
     /**
@@ -42,8 +41,7 @@ class ConfigurationController
      */
     public function getAddressShopping() 
     {
-        echo json_encode((new Address())->getAddressesShopping());
-        die;
+        return wp_send_json((new Address())->getAddressesShopping(), 200);
     }
 
     /**
@@ -52,15 +50,13 @@ class ConfigurationController
     public function setAgencyJadlog() 
     {
         if (!isset($_GET['id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'É necessário infomar o ID da agência'
-            ]);
-            die;
+            ], 412);
         }
 
-        echo json_encode((new Agency())->setAgency($_GET['id']));
-        die;
+        return wp_send_json((new Agency())->setAgency($_GET['id']), 200);
     }
 
     /**
@@ -68,8 +64,7 @@ class ConfigurationController
      */
     public function getAgencyJadlog() 
     {
-        echo json_encode((new Agency())->getAgencies());
-        die;
+        return wp_send_json((new Agency())->getAgencies(), 200);
     }
 
     /**
@@ -77,8 +72,7 @@ class ConfigurationController
      */
     public function getStories() 
     {
-        echo json_encode((new Store())->getStories());
-        die;
+       return wp_send_json((new Store())->getStories(), 200);
     }
 
     /**
@@ -87,15 +81,13 @@ class ConfigurationController
     public function setStore() 
     {
         if (!isset($_GET['id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'É necessário infomar o ID da loja'
-            ]);
-            die;
+            ], 412);
         }
 
-        echo json_encode((new Store())->setStore($_GET['id']));
-        die;
+        return wp_send_json((new Store())->setStore($_GET['id']), 200);
     }
 
     /**
@@ -103,8 +95,7 @@ class ConfigurationController
      */
     public function get_calculator_show() 
     {
-        echo json_encode((new CalculatorShow())->get());
-        die;
+        return wp_send_json((new CalculatorShow())->get(), 200);
     }
 
     /**
@@ -113,15 +104,13 @@ class ConfigurationController
     public function set_calculator_show() 
     {
         if (!isset($_GET['data'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'É necessário infomar o parametro data ("true" ou "false")'
-            ]);
-            die;
+            ], 412);
         }
 
-        echo json_encode((new CalculatorShow())->set($_GET['data']));
-        die;
+        return wp_send_json((new CalculatorShow())->set($_GET['data']), 200);
     }
 
     /**
@@ -154,7 +143,7 @@ class ConfigurationController
             }
         }
 
-        echo json_encode($methods);die;
+        return wp_send_json($methods, 200);
     }
 
     /**
@@ -222,7 +211,7 @@ class ConfigurationController
             ]
         ];
 
-        echo json_encode($style);die;
+        return wp_send_json($style, 200);
     }
 
     public function getStyleArray()
@@ -291,10 +280,9 @@ class ConfigurationController
             $path = ABSPATH . 'wp-content/plugins';
         }
 
-        echo json_encode([
+        return wp_send_json([
             'path' => $path
-        ]); 
-        die;
+        ], 200); 
     }
 
     public function getPathPluginsArray()
@@ -376,14 +364,14 @@ class ConfigurationController
         $option = get_option('melhor_envio_option_where_show_calculator');
 
         if (!$option) {
-            echo json_encode([
+            return wp_send_json([
                 'option' => 'woocommerce_before_add_to_cart_button'
-            ]);die;
+            ], 200);
         }
     
-        echo json_encode([
+        return wp_send_json([
             'option' => $option
-        ]);die;
+        ], 200);
     }
 
     public function getWhereCalculatorValue()
