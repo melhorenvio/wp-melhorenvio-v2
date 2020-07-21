@@ -30,7 +30,7 @@ class OrdersController
     /**
      * Function to search for an order quote.
      *
-     * @param GET $id
+     * @param int $id
      * @return array
      */
     public function getOrderQuotationByOrderId($id)
