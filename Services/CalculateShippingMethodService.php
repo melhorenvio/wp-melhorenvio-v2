@@ -8,6 +8,8 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
+    const SERVICES_CORREIOS = ['1', '2', '17'];
+
     public function calculate_shipping( $package = [], $code, $id, $company)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
@@ -21,6 +23,10 @@ class CalculateShippingMethodService
             if (isset($result->name) && isset($result->price)) {
 
                 $method = (new OptionsHelper())->getName($result->id, $result->name, null, null);
+
+                if ($this->isCorreiosAndHasVolumes($code, $result)) {
+                    return false;
+                }
 
                 return [
                     'id' => $id,
@@ -37,5 +43,21 @@ class CalculateShippingMethodService
         }
 
         return false;
+    }
+
+    /**
+     * Check if it is "Correios" and if it has more than one volume
+     *
+     * @param string $code
+     * @param object $quotation
+     * @return boolean
+     */
+    public function isCorreiosAndHasVolumes($code, $quotation)
+    {
+        if (!isset($quotation->packages)) {
+            return false;
+        }
+
+        return ( in_array($code, self::SERVICES_CORREIOS) && count($quotation->packages) >= 2 ) ? true : false;
     }
 }
