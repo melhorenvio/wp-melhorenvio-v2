@@ -14,7 +14,6 @@ class ShortCodeService{
     public function shortcode()
     {   
         $this->add_calculo_de_frete();
-        $this->enqueue_css_js_frontend();
     }
 
     /**
@@ -93,9 +92,5 @@ class ShortCodeService{
                 }
             </script>
         ';
-    }
-
-    private function enqueue_css_js_frontend() {
-        wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
     }
 }
