@@ -55,7 +55,11 @@ class CotationController
     {
         $this->isValidRequest($_POST['data']);
 
-        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+        $cep_origem = str_replace("-", "", $_POST['data']['cep_origem']);
+
+        $cep_origem = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
+
+        $destination = $this->getAddressByCep($cep_origem);
 
         if(empty($destination) || is_null($destination)) {
             return wp_send_json([
