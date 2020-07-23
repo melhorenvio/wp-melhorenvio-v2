@@ -7,9 +7,21 @@ use Models\Store;
 use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\Method;
+use Services\ConfigurationsService;
 
 class ConfigurationController 
 {
+    /**
+     * Function to get configurations
+     *
+     * @return array
+     */
+    public function getConfigurations()
+    {
+        echo json_encode((new ConfigurationsService())->getConfigurations());
+        die();
+    }
+
     /**
      * @param [type] $tokenUser
      * @return void
@@ -418,8 +430,10 @@ class ConfigurationController
      * @param Array $data
      * @return json
      */
-    public function saveAll($data)
+    public function saveAll()
     {   
+        $data = $_POST;
+        
         $response = [];
 
         if (isset($data['address'])) {

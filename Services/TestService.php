@@ -22,7 +22,8 @@ class TestService
             'php' => phpversion(),
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData()),
-            'metrics' => $this->getMetrics()
+            'metrics' => $this->getMetrics(),
+            'path' => dirname( __FILE__ )
         ];
 
         if (isset($_GET['postalcode'])) {
