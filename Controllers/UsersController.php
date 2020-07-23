@@ -115,8 +115,7 @@ class UsersController {
     public function getBalance()
     {
         $balance = (new User())->getBalance();
-        echo json_encode($balance);
-        die;
+        return wp_send_json($balance, 200);
     }
 
     public function getMe()
@@ -125,7 +124,7 @@ class UsersController {
 
         $data['data']['environment'] =  ((new OrderQuotationService())->getEnvironmentToSave() == '_sandbox') ? 'Sandbox' :  'Produção';
 
-        echo json_encode($data['data']);die;
+        return wp_send_json($data['data'], 200);
     }
 
     /**

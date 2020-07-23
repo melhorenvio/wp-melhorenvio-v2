@@ -23,8 +23,7 @@ class OrdersController
     {
         unset($_GET['action']);
         $orders = (new ListOrderService())->getList($_GET);
-        echo json_encode($orders);
-        die();
+        return wp_send_json($orders, 200);
     }
 
     /**
@@ -36,7 +35,7 @@ class OrdersController
     public function getOrderQuotationByOrderId($id)
     {
         $data = (new OrderQuotationService())->getQuotation($id);
-        echo json_encode($data);die;
+        return wp_send_json($data, 200);
     }
 
     /**
@@ -49,19 +48,17 @@ class OrdersController
     public function sendOrder() 
     {
         if (!isset($_GET['order_id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
-            ]);
-            die;
+            ], 412);
         }
 
         if (!isset($_GET['choosen'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do serviço selecionado'
-            ]);
-            die;
+            ], 412);
         }
 
         $products = (new OrdersProductsService())->getProductsOrder($_GET['order_id']);
@@ -78,18 +75,18 @@ class OrdersController
         if (!isset($result['order_id'])) {
 
             if (isset($result['errors'])) {
-                echo json_encode([
+                return wp_send_json([
                     'success' => false,
                     'errors' => $result['errors'],
-                ]);die;
+                ], 400);
             }
 
             (new OrderQuotationService())->removeDataQuotation($_GET['order_id']);
 
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
-            ]);die;
+            ], 400);
         }
 
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
@@ -97,26 +94,26 @@ class OrdersController
         if (!isset($result['order_id'])) {
 
             if (isset($result['errors'])) {
-                echo json_encode([
+                return wp_send_json([
                     'success' => false,
                     'errors' => $result['errors']
-                ]);die;
+                ], 400);
             }
 
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
                 'result' => $result
-            ]);die;
+            ], 400);
         }
 
         $result = (new OrderService())->createLabel($_GET['order_id']);
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => (array) 'Pedido gerado com sucesso',
             'data' => $result
-        ]);die;
+        ], 200);
     }
 
     /**
@@ -128,20 +125,18 @@ class OrdersController
     public function removeOrder() 
     {
         if (!isset($_GET['order_id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
-            ]);
-            die;
+            ], 400);
         }
 
         $result = (new CartService())->remove($_GET['id']);
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => 'Pedido removido do carrinho de compras'
-        ]);
-        die;
+        ], 200);
     }
 
     /**
@@ -153,20 +148,18 @@ class OrdersController
     public function cancelOrder() 
     {
         if (!isset($_GET['id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
-            ]);
-            die;
+            ], 400);
         }
 
         $result = (new OrderService())->cancel($_GET['id']);
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => 'Pedido cancelado'
-        ]);
-        die;
+        ], 200);
     }
 
     /**
@@ -182,19 +175,17 @@ class OrdersController
         $result = (new OrderService())->pay($posts);
 
         if (!isset($result['purchase_id'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao realizar o pagamento'
-            ]);
-            die; 
+            ], 400);
         }
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => 'Pedido pago',
             'data' => $result
-        ]);
-        die; 
+        ], 200);
     }
 
     /**
@@ -207,12 +198,11 @@ class OrdersController
     {
         $result = (new OrderService())->createLabel($_GET['id']);
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => 'Pedido gerado',
             'data' => $result
-        ]);
-        die; 
+        ], 200);
     }
 
     /**
@@ -223,21 +213,19 @@ class OrdersController
         $createResult = (new OrderService())->createLabel($_GET['id']);
 
         if (!isset($createResult['status'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao gerar a etiqueta'
-            ]); 
-            die;
+            ], 400); 
         }
 
         $result = (new OrderService())->printLabel($_GET['id']);
 
-        echo json_encode([
+        return wp_send_json([
             'success' => true,
             'message' => 'Pedido impresso',
             'data' => $result
-        ]);
-        die; 
+        ], 200);
     }  
 
     /**
@@ -249,28 +237,26 @@ class OrdersController
     public function buyOnClick()
     {
         if (!isset($_GET['ids'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o IDs dos pedidos'
-            ]);
-            die;
+            ], 400);
         }
 
         $result = (new OrderService())->buyOnClick($_GET['ids']);
 
         if (isset($result['url'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => true,
                 'errors' => $result['errors'],
                 'url' => $result['url']
-
-            ]);die;
+            ], 200);
         }
 
-        echo json_encode([
+        return wp_send_json([
             'success' => false,
             'errors' => $result['errors']
-        ]);die;
+        ], 400);
     }
     
     /**
@@ -284,8 +270,7 @@ class OrdersController
             return json_encode([
                 'success' => false,
                 'message' => 'Campos ID, number, key são obrigatorios'
-            ]);
-            die;
+            ], 400);
         }
 
         $result = Order::updateInvoice(
@@ -297,6 +282,5 @@ class OrdersController
         );
 
         return json_encode($result);
-        die;
     }
 }
