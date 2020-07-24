@@ -28,18 +28,18 @@ class PackageService
             if (isset($item->packages)) {
                 foreach($item->packages as $key => $package) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package->dimensions->width),
-                        'altura' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package->dimensions->height),
-                        'comprimento' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($package->dimensions->length),
+                        'largura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($package->dimensions->width),
+                        'altura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($package->dimensions->height),
+                        'comprimento' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($package->dimensions->length),
                         'peso' => (new DimensionsHelper())->convertWeightUnit($package->weight)
                     ];
                 }
             } elseif (isset($item->volumes)) {
                 foreach($item->volumes as $key => $volume) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($volume->width),
-                        'altura' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($volume->height),
-                        'comprimento' => (new DimensionsHelper())->ConverterUnitDimensionToCentimeter($volume->length),
+                        'largura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->width),
+                        'altura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->height),
+                        'comprimento' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->length),
                         'peso' => (new DimensionsHelper())->convertWeightUnit($volume->weight)
                     ];
                 }

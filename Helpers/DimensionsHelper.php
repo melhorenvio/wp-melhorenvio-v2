@@ -25,7 +25,7 @@ class DimensionsHelper
      * @param srting $value
      * @return float
      */
-    public function ConverterUnitDimensionToCentimeter($value)
+    public function convertUnitDimensionToCentimeter($value)
     {
         $unit = get_option('woocommerce_dimension_unit');
         if ($unit == 'mm') {
