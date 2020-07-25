@@ -39,6 +39,8 @@ class CotationController
             }
         }
 
+        unset($_SESSION['quotation']);
+
         return $result;
     }
 
@@ -71,7 +73,7 @@ class CotationController
         if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
             return wp_send_json([
                 'success' => false,
-                 'message' => 'Campo CEP precisa ter 8 digitos'
+                'message' => 'Campo CEP precisa ter 8 digitos'
             ], 412);
         }
 
