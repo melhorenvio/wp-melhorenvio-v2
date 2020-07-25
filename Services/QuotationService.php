@@ -149,10 +149,20 @@ class QuotationService
 
         if ($this->isUltrapassedQuotation($hash)) {
             return false;
+        }   
+
+
+        $quotation = array_filter($_SESSION['quotation'][$hash], function($item) use ($service) {
+            return $item->id == $service;
+        });
+
+        if (is_array($quotation)) {
+            if (isset($quotation[key($quotation)])) {
+                return $quotation[key($quotation)];
+            }
         }
 
-        return $_SESSION['quotation'][$hash][$service];
-
+        return false; 
     }
 
     /**
