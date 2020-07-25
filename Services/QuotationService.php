@@ -41,7 +41,6 @@ class QuotationService
      */
     public function calculateQuotationByProducts($products, $postal_code, $service = null)
     {   
-
         $seller = (new SellerService())->getData();
             
         $body = [
@@ -84,7 +83,6 @@ class QuotationService
      */
     public function calculateQuotationByPackages($packages, $postal_code, $service = null)
     {   
-
         $seller = (new SellerService())->getData();
             
         $body = [
@@ -114,8 +112,6 @@ class QuotationService
             $this->storeQuotationSession($hash, $quotation);
         }
 
-
-
         return $quotation;
     }
 
@@ -128,7 +124,6 @@ class QuotationService
      */
     private function storeQuotationSession($hash, $quotation)
     {
-
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
     }
@@ -184,7 +179,6 @@ class QuotationService
      */
     private function isUltrapassedQuotation($hash)
     {   
-            
         $created = $_SESSION['quotation'][$hash]['created'];
 
         $dateLimit = date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." -30 minutes"));
@@ -197,6 +191,5 @@ class QuotationService
         }
 
         return false;
-
     }
 }
