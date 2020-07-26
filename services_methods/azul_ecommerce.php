@@ -61,6 +61,11 @@ function azul_ecommerce_shipping_method_init() {
 			 */
 			public function calculate_shipping( $package = []) 
 			{
+				// Check for shipping classes.
+				if ( ! $this->has_only_selected_shipping_class( $package ) ) {
+					return;
+				}
+
 				$rate = (new CalculateShippingMethodService())->calculate_shipping(
 					$package, 
 					$this->code,
@@ -105,6 +110,35 @@ function azul_ecommerce_shipping_method_init() {
 				}
 
 				return $options;
+			}
+
+			/**
+			 * Check if package uses only the selected shipping class.
+			 *
+			 * @param  array $package Cart package.
+			 * @return bool
+			 */
+			protected function has_only_selected_shipping_class( $package ) {
+				
+				$only_selected = true;
+
+				if ( -1 === $this->shipping_class_id ) {
+					return $only_selected;
+				}
+
+				foreach ( $package['contents'] as $item_id => $values ) {
+					$product = $values['data'];
+					$qty     = $values['quantity'];
+
+					if ( $qty > 0 && $product->needs_shipping() ) {
+						if ( $this->shipping_class_id !== $product->get_shipping_class_id() ) {
+							$only_selected = false;
+							break;
+						}
+					}
+				}
+
+				return $only_selected;
 			}
 		}
 	}
