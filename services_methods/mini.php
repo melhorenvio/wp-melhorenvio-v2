@@ -121,7 +121,12 @@ function mini_shipping_method_init() {
 
 				foreach ( $package['contents'] as $item_id => $values ) {
 					$product = $values['data'];
-					$qty     = $values['quantity'];
+                    $qty     = $values['quantity'];
+                    
+                    if ($product->get_shipping_class_id() == 0 ) {
+						$only_selected = true;
+						break;
+					}
 
 					if ( $qty > 0 && $product->needs_shipping() ) {
 						if ( $this->shipping_class_id !== $product->get_shipping_class_id() ) {

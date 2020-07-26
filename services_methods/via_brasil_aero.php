@@ -121,6 +121,11 @@ function via_brasil_aero_shipping_method_init() {
 					$product = $values['data'];
 					$qty     = $values['quantity'];
 
+					if ($product->get_shipping_class_id() == 0 ) {
+						$only_selected = true;
+						break;
+					}
+
 					if ( $qty > 0 && $product->needs_shipping() ) {
 						if ( $this->shipping_class_id !== $product->get_shipping_class_id() ) {
 							$only_selected = false;

@@ -8,7 +8,7 @@ use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
 use Services\QuotationService;
 
-class CotationController 
+class QuotationController 
 {
     public function __construct() 
     {
@@ -223,4 +223,4 @@ class CotationController
     }
 }
 
-$cotationcontroller = new CotationController();
+$quotationController = new QuotationController();

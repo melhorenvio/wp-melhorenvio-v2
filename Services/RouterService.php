@@ -3,7 +3,7 @@
 namespace Services;
 
 use Controllers\ConfigurationController;
-use Controllers\CotationController;
+use Controllers\QuotationController;
 use Controllers\OrdersController;
 use Controllers\SessionsController;
 use Controllers\StatusController;
@@ -70,7 +70,7 @@ class RouterService
      */
     private function loadRoutesQuotations()
     {
-        $quotationsController = new CotationController();
+        $quotationsController = new QuotationController();
 
         add_action('wp_ajax_nopriv_cotation_product_page', [$quotationsController, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$quotationsController, 'cotationProductPage']);
