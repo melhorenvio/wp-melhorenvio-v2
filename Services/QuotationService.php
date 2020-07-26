@@ -3,16 +3,15 @@
 namespace Services;
 
 use Models\Option;
-use Services\ShippingMelhorEnvioService;
 
+/**
+ * Quotation service class
+ */
 class QuotationService
 {
-
-    public function __construct()
-    {
-        session_start();    
-    }
-
+    /**
+     * Melhor Envio api route to make the quote
+     */
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
     /**
@@ -70,7 +69,6 @@ class QuotationService
             $this->storeQuotationSession($hash, $quotation);
         }
 
-
         return $quotation;
     }
 
@@ -124,6 +122,7 @@ class QuotationService
      */
     private function storeQuotationSession($hash, $quotation)
     {
+        session_start();
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
     }
@@ -137,6 +136,7 @@ class QuotationService
      */
     private function getQuotationIfExistsSession($hash, $service)
     {
+        session_start();
     
         if (!isset($_SESSION['quotation'][$hash][$service])) {
             return false;
@@ -146,18 +146,11 @@ class QuotationService
             return false;
         }   
 
-
-        $quotation = array_filter($_SESSION['quotation'][$hash], function($item) use ($service) {
-            return $item->id == $service;
-        });
-
-        if (is_array($quotation)) {
-            if (isset($quotation[key($quotation)])) {
-                return $quotation[key($quotation)];
+        return end(array_filter($_SESSION['quotation'][$hash], function($item) use ($service) {
+            if ($item->id == $service) {
+                return $item;
             }
-        }
-
-        return false; 
+        })); 
     }
 
     /**
