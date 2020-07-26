@@ -29,6 +29,7 @@ function mini_shipping_method_init() {
                     'instance-settings',
 					'instance-settings-modal',
                 );
+                $this->service = (new CalculateShippingMethodService());
                 $this->init_form_fields();
 				$this->shipping_class_id  = (int) $this->get_option( 'shipping_class_id', '-1');
             }
@@ -53,12 +54,11 @@ function mini_shipping_method_init() {
              */
             public function calculate_shipping( $package = []) 
             {
-				// Check for shipping classes.
-				if ( ! $this->has_only_selected_shipping_class( $package ) ) {
+				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
 					return;
-                }
+				}
                 
-                $rate = (new CalculateShippingMethodService())->calculate_shipping(
+                $rate = $this->service->calculate_shipping(
                     $package, 
                     $this->code,
                     'melhorenvio_mini',
@@ -81,63 +81,10 @@ function mini_shipping_method_init() {
 						'desc_tip'    => true,
 						'default'     => '',
 						'class'       => 'wc-enhanced-select',
-						'options'     => $this->get_shipping_classes_options(),
+						'options'     => $this->service->getShippingClassesOptions(),
 					),
 				);
             }
-            
-			/**
-			 * Get shipping classes options.
-			 *
-			 * @return array
-			 */
-			protected function get_shipping_classes_options() {
-				$shipping_classes = WC()->shipping->get_shipping_classes();
-				$options          = array(
-					'-1' => 'Qualquer classe de entrega',
-					'0'  => 'Sem classe de entrega',
-				);
-
-				if ( ! empty( $shipping_classes ) ) {
-					$options += wp_list_pluck( $shipping_classes, 'name', 'term_id' );
-				}
-
-				return $options;
-            }
-            
-            /**
-			 * Check if package uses only the selected shipping class.
-			 *
-			 * @param  array $package Cart package.
-			 * @return bool
-			 */
-			protected function has_only_selected_shipping_class( $package ) {
-				
-				$only_selected = true;
-
-				if ( -1 === $this->shipping_class_id ) {
-					return $only_selected;
-				}
-
-				foreach ( $package['contents'] as $item_id => $values ) {
-					$product = $values['data'];
-                    $qty     = $values['quantity'];
-                    
-                    if ($product->get_shipping_class_id() == 0 ) {
-						$only_selected = true;
-						break;
-					}
-
-					if ( $qty > 0 && $product->needs_shipping() ) {
-						if ( $this->shipping_class_id !== $product->get_shipping_class_id() ) {
-							$only_selected = false;
-							break;
-						}
-					}
-				}
-
-				return $only_selected;
-			}
         }
     }
 }

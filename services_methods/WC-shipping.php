@@ -87,7 +87,7 @@ abstract class MelhorEnvioAbstract extends \WC_Shipping_Method {
 	 *
 	 * @return array
 	 */
-	protected function get_shipping_classes_options() {
+	protected function getShippingClassesOptions() {
 		$shipping_classes = WC()->shipping->get_shipping_classes();
 		$options          = array(
 			'-1' => __( 'Any Shipping Class', 'woocommerce-correios' ),
@@ -139,7 +139,7 @@ abstract class MelhorEnvioAbstract extends \WC_Shipping_Method {
 				'desc_tip'    => true,
 				'default'     => '',
 				'class'       => 'wc-enhanced-select',
-				'options'     => $this->get_shipping_classes_options(),
+				'options'     => $this->getShippingClassesOptions(),
 			),
 			'show_delivery_time' => array(
 				'title'       => __( 'Delivery Time', 'woocommerce-correios' ),
@@ -439,7 +439,7 @@ abstract class MelhorEnvioAbstract extends \WC_Shipping_Method {
 	 * @param  array $package Cart package.
 	 * @return bool
 	 */
-	protected function has_only_selected_shipping_class( $package ) {
+	protected function hasOnlySelectedShippingClass( $package ) {
 		$only_selected = true;
 
 		if ( -1 === $this->shipping_class_id ) {
@@ -473,7 +473,7 @@ abstract class MelhorEnvioAbstract extends \WC_Shipping_Method {
 		}
 
 		// Check for shipping classes.
-		if ( ! $this->has_only_selected_shipping_class( $package ) ) {
+		if ( ! $this->hasOnlySelectedShippingClass( $package ) ) {
 			return;
 		}
 

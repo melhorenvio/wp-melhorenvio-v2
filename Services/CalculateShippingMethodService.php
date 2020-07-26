@@ -8,6 +8,15 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
+    /**
+     * function to calculate shipping each shipping method.
+     *
+     * @param array $package
+     * @param string $code
+     * @param string $id
+     * @param string $company
+     * @return array
+     */
     public function calculate_shipping( $package = [], $code, $id, $company)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
@@ -37,5 +46,59 @@ class CalculateShippingMethodService
         }
 
         return false;
+    }
+
+    /**
+     * Check if package uses only the selected shipping class.
+     *
+     * @param  array $package Cart package.
+     * @param int $shipping_class_id
+     * @return bool
+     */
+    public function hasOnlySelectedShippingClass( $package, $shipping_class_id ) 
+    {    
+        $only_selected = true;
+
+        if ( -1 === $shipping_class_id ) {
+            return $only_selected;
+        }
+
+        foreach ( $package['contents'] as $values ) {
+            $product = $values['data'];
+            $qty     = $values['quantity'];
+
+            if ($product->get_shipping_class_id() == 0 ) {
+                $only_selected = true;
+                break;
+            }
+
+            if ( $qty > 0 && $product->needs_shipping() ) {
+                if ( $shipping_class_id !== $product->get_shipping_class_id() ) {
+                    $only_selected = false;
+                    break;
+                }
+            }
+        }
+
+        return $only_selected;
+    }
+
+    /**
+     * Get shipping classes options.
+     *
+     * @return array
+     */
+    public function getShippingClassesOptions() {
+        $shipping_classes = WC()->shipping->get_shipping_classes();
+        $options          = array(
+            '-1' => 'Qualquer classe de entrega',
+            '0'  => 'Sem classe de entrega',
+        );
+
+        if ( ! empty( $shipping_classes ) ) {
+            $options += wp_list_pluck( $shipping_classes, 'name', 'term_id' );
+        }
+
+        return $options;
     }
 }
