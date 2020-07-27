@@ -88,7 +88,7 @@ class OrderQuotationService
         $data['date_quotation'] = date('Y-m-d H:i:d'); 
         $data['choose_method'] = (!is_null($choose)) ? $choose : '2'; 
         $data['free_shipping'] = false; 
-        $data['diff'] = (!is_null($choose)) ? true : false; 
+        $data['diff'] = !is_null($choose); 
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
         add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
