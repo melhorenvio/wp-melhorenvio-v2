@@ -9,6 +9,16 @@ use Helpers\TimeHelper;
 class CalculateShippingMethodService
 {
     /**
+     * Constant for delivery class of any class
+     */
+    protected const ANY_DELIVERY = -1;
+
+    /**
+     * Constant for no delivery class
+     */
+    protected const WITHOUT_DELIVERY = 0;
+
+    /**
      * function to calculate shipping each shipping method.
      *
      * @param array $package
@@ -59,7 +69,7 @@ class CalculateShippingMethodService
     {    
         $onlySelected = true;
 
-        if(-1 === $shippingClassId){
+        if(self::ANY_DELIVERY === $shippingClassId){
             return $onlySelected;
         }
 
@@ -88,17 +98,21 @@ class CalculateShippingMethodService
      *
      * @return array
      */
-    public function getShippingClassesOptions() {
-        $shipping_classes = WC()->shipping->get_shipping_classes();
-        $options          = array(
-            '-1' => 'Qualquer classe de entrega',
-            '0'  => 'Sem classe de entrega',
+    public function getShippingClassesOptions() 
+    {
+        $options = array(
+            self::ANY_DELIVERY => 'Qualquer classe de entrega',
+            self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
         );
 
-        if ( ! empty( $shipping_classes ) ) {
-            $options += wp_list_pluck( $shipping_classes, 'name', 'term_id' );
+        $shippingClasses = WC()->shipping->get_shipping_classes();
+
+        if(empty($shippingClasses)) {
+            return $options;
         }
 
+        $options += wp_list_pluck( $shippingClasses, 'name', 'term_id' );
+        
         return $options;
     }
 }
