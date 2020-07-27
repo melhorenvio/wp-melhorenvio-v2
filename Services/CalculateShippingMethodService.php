@@ -52,35 +52,35 @@ class CalculateShippingMethodService
      * Check if package uses only the selected shipping class.
      *
      * @param  array $package Cart package.
-     * @param int $shipping_class_id
+     * @param int $shippingClassId
      * @return bool
      */
-    public function hasOnlySelectedShippingClass( $package, $shipping_class_id ) 
+    public function hasOnlySelectedShippingClass( $package, $shippingClassId ) 
     {    
-        $only_selected = true;
+        $onlySelected = true;
 
-        if ( -1 === $shipping_class_id ) {
-            return $only_selected;
+        if(-1 === $shippingClassId){
+            return $onlySelected;
         }
 
         foreach ( $package['contents'] as $values ) {
             $product = $values['data'];
             $qty     = $values['quantity'];
 
-            if ($product->get_shipping_class_id() == 0 ) {
-                $only_selected = true;
+            if($product->get_shipping_class_id() == 0 ){
+                $onlySelected = true;
                 break;
             }
 
-            if ( $qty > 0 && $product->needs_shipping() ) {
-                if ( $shipping_class_id !== $product->get_shipping_class_id() ) {
-                    $only_selected = false;
+            if($qty > 0 && $product->needs_shipping()){
+                if ( $shippingClassId !== $product->get_shipping_class_id() ) {
+                    $onlySelected = false;
                     break;
                 }
             }
         }
 
-        return $only_selected;
+        return $onlySelected;
     }
 
     /**
