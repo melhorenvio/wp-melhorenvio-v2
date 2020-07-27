@@ -53,7 +53,7 @@ class QuotationService
             'products' => $products
         ];
 
-        $quotation = $this->getQuotationIfExistsSession($body, $service);
+        $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
 
@@ -92,7 +92,7 @@ class QuotationService
             'packages' => $packages
         ];
 
-        $quotation = $this->getQuotationIfExistsSession($body, $service);
+        $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
 
@@ -131,7 +131,7 @@ class QuotationService
      * @param int $service
      * @return bool|array
      */
-    private function getQuotationIfExistsSession($bodyQuotation, $service)
+    private function getSessionCachedQuotation($bodyQuotation, $service)
     {
         session_start();
 
