@@ -118,9 +118,8 @@ class QuotationController
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         $product_shipping_class_id = wc_get_product($_POST['data']['id_produto'])->get_shipping_class_id();
 
-        foreach($shipping_methods as $key => $method) {
-
-            if ($product_shipping_class_id) {
+        if ($product_shipping_class_id) {
+            foreach($shipping_methods as $key => $method) {
                 if ($product_shipping_class_id != $method->instance_settings['shipping_class_id']) {
                     unset($shipping_methods[$key]);
                 }
