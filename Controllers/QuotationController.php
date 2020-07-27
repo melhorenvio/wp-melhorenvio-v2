@@ -142,7 +142,7 @@ class QuotationController
                 $free++;
             }
 
-            if (empty($rate) || (key($rate) == 'free_shipping') && $free > 1 ) {
+            if(empty($rate) || (key($rate) == 'free_shipping') && $free > 1 ){
                 continue;
             }
 
