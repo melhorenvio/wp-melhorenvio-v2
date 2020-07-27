@@ -138,6 +138,7 @@ class QuotationService
         $hash = md5(json_encode($bodyQuotation));
     
         if (!isset($_SESSION['quotation'][$hash][$service])) {
+            unset($_SSESION['quotation'][$hash]);
             return false;
         }
 
@@ -161,6 +162,10 @@ class QuotationService
     private function isSessionCachedQuotationExpired($bodyQuotation)
     {   
         $hash = md5(json_encode($bodyQuotation));
+
+        if (!isset($_SESSION['quotation'][$hash]['created'])) {
+            return true;
+        }
 
         $created = $_SESSION['quotation'][$hash]['created'];
 
