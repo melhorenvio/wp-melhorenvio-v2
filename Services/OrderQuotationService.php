@@ -31,9 +31,43 @@ class OrderQuotationService
     public function getQuotation($post_id)
     {
         $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
-
+        
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
             $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
+        }
+
+        $quotation = $this->checkHasCorreiosWithVolumes($quotation);
+
+        return $quotation;
+    }
+
+    /**
+     * Function to check the quote object and check if there are any Correios methods that contain volumes and remove that method.
+     *
+     * @param object $quotation
+     * @return object
+     */
+    private function checkHasCorreiosWithVolumes($quotation)
+    {
+        $calculateShipping = (new CalculateShippingMethodService());
+
+        $shippingSelected = $quotation['choose_method'];
+        $removeShipping = null;
+
+        foreach ($quotation as $key => $item) {
+
+            if (!is_int($key)) {
+                continue;
+            }
+
+            if ($calculateShipping->isCorreiosAndHasVolumes($key, $item)) {
+                $removeShipping = $key;
+                unset($quotation[$key]);
+            }
+        }
+
+        if ($shippingSelected == $removeShipping) {
+            $quotation['choose_method'] = $quotation[array_key_first ( $quotation )]->id;
         }
 
         return $quotation;
@@ -54,7 +88,7 @@ class OrderQuotationService
         $data['date_quotation'] = date('Y-m-d H:i:d'); 
         $data['choose_method'] = (!is_null($choose)) ? $choose : '2'; 
         $data['free_shipping'] = false; 
-        $data['diff'] = false;
+        $data['diff'] = (!is_null($choose)) ? true : false; 
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
         add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
