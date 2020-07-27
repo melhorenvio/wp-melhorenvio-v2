@@ -52,7 +52,7 @@ class OrderQuotationService
         $calculateShipping = new CalculateShippingMethodService();
 
         $shippingSelected = $quotation['choose_method'];
-        $removeShipping = null;
+        $shippingsRemoved = [];
 
         foreach ($quotation as $key => $item) {
 
@@ -61,16 +61,28 @@ class OrderQuotationService
             }
 
             if ($calculateShipping->isCorreiosAndHasVolumes($key, $item)) {
-                $removeShipping = $key;
+                $shippingsRemoved[] = $key;
                 unset($quotation[$key]);
             }
         }
 
-        if ($shippingSelected == $removeShipping) {
+        if ($this->haveSelectedShippingInRemovedsShipping($shippingsRemoved, $shippingSelected)) {
             $quotation['choose_method'] = $quotation[array_key_first ( $quotation )]->id;
         }
 
         return $quotation;
+    }
+
+    /**
+     * Function to check if the shipping method selected by the customer has been removed
+     *
+     * @param array $shippingsRemoved
+     * @param int $shippingSelected
+     * @return boolean
+     */
+    private function haveSelectedShippingInRemovedsShipping(array $shippingsRemoved, int $shippingSelected): bool
+    {
+        return (!empty($shippingsRemoved) && in_array($shippingSelected, $shippingsRemoved));
     }
 
     /**
