@@ -114,19 +114,19 @@ class QuotationController
             )
         );
 
-        $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
-        $shipping_methods = $shipping_zone->get_shipping_methods( true );
-        $product_shipping_class_id = wc_get_product($_POST['data']['id_produto'])->get_shipping_class_id();
+        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package( $package );
+        $shippingMethods = $shippingZone->get_shipping_methods( true );
+        $productShippingClassId = wc_get_product($_POST['data']['id_produto'])->get_shipping_class_id();
 
-        if ($product_shipping_class_id) {
-            foreach($shipping_methods as $key => $method) {
-                if ($product_shipping_class_id != $method->instance_settings['shipping_class_id']) {
-                    unset($shipping_methods[$key]);
+        if ($productShippingClassId) {
+            foreach($shippingMethods as $key => $method) {
+                if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
+                    unset($shippingMethods[$key]);
                 }
             }
         }
     
-        if(count($shipping_methods) == 0) {
+        if(count($shippingMethods) == 0) {
             return wp_send_json([
                 'success' => false, 
                 'message' => 'Não é feito envios para o CEP informado'
@@ -135,9 +135,9 @@ class QuotationController
 
         $rates = array();        
         $free = 0;
-        foreach($shipping_methods as $shipping_method) 
+        foreach($shippingMethods as $shippingMethod) 
         {
-            $rate = $shipping_method->get_rates_for_package( $package );
+            $rate = $shippingMethod->get_rates_for_package( $package );
             if (key($rate) == 'free_shipping') {
                 $free++;
             }
