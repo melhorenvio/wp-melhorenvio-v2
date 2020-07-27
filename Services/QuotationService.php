@@ -53,9 +53,7 @@ class QuotationService
             'products' => $products
         ];
 
-        $hash = $this->makeHashQuotation($body);
-
-        $quotation = $this->getQuotationIfExistsSession($hash, $service);
+        $quotation = $this->getQuotationIfExistsSession($body, $service);
 
         if (!$quotation) {
 
@@ -94,9 +92,7 @@ class QuotationService
             'packages' => $packages
         ];
 
-        $hash = $this->makeHashQuotation($body);
-
-        $quotation = $this->getQuotationIfExistsSession($hash, $service);
+        $quotation = $this->getQuotationIfExistsSession($body, $service);
 
         if (!$quotation) {
 
@@ -116,13 +112,14 @@ class QuotationService
     /**
      * Function to save response quotation on session.
      *
-     * @param string $hash
+     * @param array $bodyQuotation
      * @param array $quotation
      * @return void
      */
-    private function storeQuotationSession($hash, $quotation)
+    private function storeQuotationSession($bodyQuotation, $quotation)
     {
         session_start();
+        $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
     }
@@ -130,19 +127,21 @@ class QuotationService
     /**
      * Function to search for the quotation of a shipping service in the session, if it does not find false returns
      *
-     * @param string $hash
+     * @param array $bodyQuotation
      * @param int $service
      * @return bool|array
      */
-    private function getQuotationIfExistsSession($hash, $service)
+    private function getQuotationIfExistsSession($bodyQuotation, $service)
     {
         session_start();
+
+        $hash = md5(json_encode($bodyQuotation));
     
         if (!isset($_SESSION['quotation'][$hash][$service])) {
             return false;
         }
 
-        if ($this->isUltrapassedQuotation($hash)) {
+        if ($this->isUltrapassedQuotation($bodyQuotation)) {
             return false;
         }   
 
@@ -154,24 +153,15 @@ class QuotationService
     }
 
     /**
-     * Function to create a hash based on quote parameters
-     *
-     * @param array $bodyQuotation
-     * @return string
-     */
-    private function makeHashQuotation($bodyQuotation)
-    {
-        return md5(json_encode($bodyQuotation));
-    }
-
-    /**
      * Function to see if the session quote should expire due to the time
      *
-     * @param string $hash
+     * @param array $bodyQuotation
      * @return boolean
      */
-    private function isUltrapassedQuotation($hash)
+    private function isUltrapassedQuotation($bodyQuotation)
     {   
+        $hash = md5(json_encode($bodyQuotation));
+
         $created = $_SESSION['quotation'][$hash]['created'];
 
         $dateLimit = date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." -30 minutes"));
