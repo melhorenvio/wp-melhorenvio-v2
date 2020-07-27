@@ -141,7 +141,7 @@ class QuotationService
             return false;
         }
 
-        if ($this->isUltrapassedQuotation($bodyQuotation)) {
+        if ($this->isSessionCachedQuotationExpired($bodyQuotation)) {
             return false;
         }   
 
@@ -158,7 +158,7 @@ class QuotationService
      * @param array $bodyQuotation
      * @return boolean
      */
-    private function isUltrapassedQuotation($bodyQuotation)
+    private function isSessionCachedQuotationExpired($bodyQuotation)
     {   
         $hash = md5(json_encode($bodyQuotation));
 
