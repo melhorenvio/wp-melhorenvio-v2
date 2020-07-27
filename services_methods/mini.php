@@ -6,7 +6,7 @@ use Services\WooCommerceService;
 add_action( 'woocommerce_shipping_init', 'mini_shipping_method_init' );
 
 function mini_shipping_method_init() {
-    if ( ! class_exists( 'WC_Mini_Shipping_Method' ) ) {
+    if(!class_exists('WC_Mini_Shipping_Method')){
 
         class WC_Mini_Shipping_Method extends WC_Shipping_Method {
 
@@ -52,9 +52,9 @@ function mini_shipping_method_init() {
              * @param mixed $package
              * @return void
              */
-            public function calculate_shipping( $package = []) 
+            public function calculate_shipping($package = []) 
             {
-				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
 					return;
 				}
                 
@@ -65,7 +65,7 @@ function mini_shipping_method_init() {
                     'Correios'
                 );
 
-                if ($rate) {
+                if($rate){
 					$this->add_rate($rate);
 				}
             }

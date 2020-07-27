@@ -7,7 +7,7 @@ add_action( 'woocommerce_shipping_init', 'azul_amanha_shipping_method_init' );
 
 function azul_amanha_shipping_method_init() {
 
-	if ( ! class_exists( 'WC_Azul_Amanha_Shipping_Method' ) ) {
+	if(!class_exists('WC_Azul_Amanha_Shipping_Method')){
 
 		class WC_Azul_Amanha_Shipping_Method extends WC_Shipping_Method {
 
@@ -62,7 +62,7 @@ function azul_amanha_shipping_method_init() {
 			 */
 			public function calculate_shipping( $package = []) 
 			{
-				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
 					return;
 				}
 
@@ -73,7 +73,7 @@ function azul_amanha_shipping_method_init() {
 					'Azul Cargo'
 				);
 
-				if ($rate) {
+				if ($rate){
 					$this->add_rate($rate);
 				}
 			}

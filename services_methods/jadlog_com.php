@@ -7,7 +7,7 @@ add_action( 'woocommerce_shipping_init', 'jadlog_com_shipping_method_init' );
 
 function jadlog_com_shipping_method_init() {
 
-	if ( ! class_exists( 'WC_Jadlog_Com_Shipping_Method' ) ) {
+	if(!class_exists('WC_Jadlog_Com_Shipping_Method')){
 
 		class WC_Jadlog_Com_Shipping_Method extends WC_Shipping_Method {
 
@@ -60,9 +60,9 @@ function jadlog_com_shipping_method_init() {
 			 * @param mixed $package
 			 * @return void
 			 */
-			public function calculate_shipping( $package = []) 
+			public function calculate_shipping($package = []) 
 			{
-				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
 					return;
 				}
 
@@ -73,7 +73,7 @@ function jadlog_com_shipping_method_init() {
 					'Jadlog'
 				);
 
-				if ($rate) {
+				if($rate){
 					$this->add_rate($rate);
 				}
 			}

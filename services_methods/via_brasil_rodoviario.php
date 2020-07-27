@@ -5,7 +5,7 @@ use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'via_brasil_rodoviario_shipping_method_init' );
 function via_brasil_rodoviario_shipping_method_init() {
-	if ( ! class_exists( 'WC_via_brasil_rodoviario_Shipping_Method' ) ) {
+	if(!class_exists( 'WC_via_brasil_rodoviario_Shipping_Method')){
 
 		class WC_Via_Brasil_Rodoviario_Shipping_Method extends WC_Shipping_Method {
 
@@ -51,9 +51,9 @@ function via_brasil_rodoviario_shipping_method_init() {
 			 * @param mixed $package
 			 * @return void
 			 */
-			public function calculate_shipping( $package = []) 
+			public function calculate_shipping($package = []) 
 			{
-				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
 					return;
 				}
 
@@ -64,7 +64,7 @@ function via_brasil_rodoviario_shipping_method_init() {
 					'Via Brasil'
 				);
 
-				if ($rate) {
+				if($rate){
 					$this->add_rate($rate);
 				}
 			}

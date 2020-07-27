@@ -5,7 +5,7 @@ use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'latam_shipping_method_init' );
 function latam_shipping_method_init() {
-	if ( ! class_exists( 'WC_Latam_Shipping_Method' ) ) {
+	if(!class_exists('WC_Latam_Shipping_Method')){
 
 		class WC_Latam_Shipping_Method extends WC_Shipping_Method {
 
@@ -53,7 +53,7 @@ function latam_shipping_method_init() {
 			 */
 			public function calculate_shipping( $package = []) 
 			{
-				if ( !$this->service->hasOnlySelectedShippingClass( $package, $this->shipping_class_id ) ) {
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id )){
 					return;
 				}
 				
@@ -64,7 +64,7 @@ function latam_shipping_method_init() {
 					'Latam'
 				);
 
-				if ($rate) {
+				if($rate){
 					$this->add_rate($rate);
 				}
 			}
