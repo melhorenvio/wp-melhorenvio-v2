@@ -14,12 +14,11 @@ class TokenController
         $codeStore = md5(get_option('home'));
 
         if (isset($_SESSION[$codeStore]['melhorenvio_token'])) {
-            echo json_encode([
+            return wp_send_json([
                 'token' => $_SESSION[$codeStore]['melhorenvio_token'],
                 'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
                 'token_environment' => $_SESSION[$codeStore]['melhorenvio_token_environment']
-            ]);
-            die();
+            ], 200);
         }
 
         if (
@@ -28,22 +27,20 @@ class TokenController
             isset($_SESSION[$codeStore]['melhorenvio_token_environment']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_environment'])
         ) {
             
-            echo json_encode([
+            return wp_send_json([
                 'token' => $_SESSION[$codeStore]['melhorenvio_token'],
                 'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
                 'environment' => $_SESSION[$codeStore]['melhorenvio_token_environment']
-            ]);
-            die();
+            ], 200);
         }
 
         $_SESSION[$codeStore]['melhorenvio_token'] = (new token())->getToken();
 
-        echo json_encode([
+        return wp_send_json([
             'token' => $_SESSION[$codeStore]['melhorenvio_token']['token'],
             'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token']['token_sandbox'],
             'environment' => $_SESSION[$codeStore]['melhorenvio_token']['token_environment']
-        ]);
-        die();
+        ], 200);
     }
 
     public function token()
@@ -75,10 +72,10 @@ class TokenController
         unset($_SESSION[$codeStore]);
         
         if (!isset($_POST['token'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o Token'
-            ]);
+            ], 400);
         }
 
         $result = (new Token())->saveToken($_POST['token'], $_POST['token_sandbox'], $_POST['environment']);
@@ -87,10 +84,9 @@ class TokenController
         $_SESSION[$codeStore]['melhorenvio_token']['token_sandbox'] = $_POST['token_sandbox'];
         $_SESSION[$codeStore]['melhorenvio_token']['environment']   = $_POST['environment'];
 
-        echo json_encode([
+        return wp_send_json([
             'success' => $result
-        ]);
-        die();
+        ], 200);
     }
 
     /**
@@ -101,11 +97,10 @@ class TokenController
     public function verifyToken()
     {
         if (!get_option('wpmelhorenvio_token')) {
-            echo json_encode(['exists_token' => false]);
+            return wp_send_json(['exists_token' => false]);
             die;
         }
-        echo json_encode(['exists_token' => true]);
-        die;
+        return wp_send_json(['exists_token' => true], 200);
     }
 }
 

@@ -94,17 +94,8 @@ class PackageController
         return $total;
     }
 
-    private function getInsuranceBox($total, $quantity, $value)
-    {
-        $unitValue = $value / $total;
-        return $unitValue * $quantity;
-    }
-
     private function getWeighteBox($total, $quantity, $value)
     {
-        // $unit = $value / $total;
-        // return $unit * $quantity;
-
         return $value;
     }
 
@@ -121,8 +112,7 @@ class PackageController
         $order  = wc_get_order( $order_id );
 
         foreach( $order->get_items() as $item_id => $item_product ){
-
-            $product_id = $item_product->get_product_id();
+            
             $_product = $item_product->get_product();
 
             $weight = $weight + $_product->weight * $item_product->get_quantity();

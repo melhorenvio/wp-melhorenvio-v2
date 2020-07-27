@@ -10,8 +10,7 @@ class StatusController
     public function getStatus() 
     {
         $status = wc_get_order_statuses();
-        echo json_encode(['statusWc' => $status]);
-        die;
+        return wp_send_json(['statusWc' => $status], 200);
     }
 
 }

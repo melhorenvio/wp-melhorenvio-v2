@@ -45,8 +45,7 @@ class CotationController
     public function refreshCotation()
     {
         $results = $this->makeCotationOrder($_GET['id']);
-        echo json_encode($results);
-        die;
+        return wp_send_json($results, 200);
     }
 
     /**
@@ -56,30 +55,40 @@ class CotationController
     {
 
         if (!isset($_POST['data'])) {
-            echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
-            exit();
+            return wp_send_json([
+                'success' => false, 
+                'message' => 'Dados incompletos'
+            ], 412);
         }
 
         if (!isset($_POST['data']['cep_origem'])) {
-            echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
-            exit();
+            return wp_send_json([
+                'success' => false, 
+                'message' => 'Campo CEP é necessário'
+            ], 412);
         }
 
         if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
-            echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
-            exit();
+            return wp_send_json([
+                'success' => false,
+                 'message' => 'Campo CEP precisa ter 8 digitos'
+            ], 412);
         }
 
         $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
 
         if(empty($destination) || is_null($destination)) {
-            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
-            exit();
+            return wp_send_json([
+                'success' => false, 
+                'message' => 'CEP inválido ou não encontrado'
+            ], 404);
         }      
 
         if (!isset($destination->cep) || !isset($destination->uf)) {
-            echo json_encode(['success' => false, 'message' => 'CEP inválido ou não encontrado']);
-            exit();
+            return wp_send_json([
+                'success' => false, 
+                'message' => 'CEP inválido ou não encontrado'
+            ], 404);
         }
 
         $dimensionHelper = new DimensionsHelper();
@@ -109,8 +118,10 @@ class CotationController
         $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package( $package );
         $shipping_methods = $shipping_zone->get_shipping_methods( true );
         if(count($shipping_methods) == 0) {
-            echo json_encode(['success' => false, 'message' => 'Não é feito envios para o CEP informado']);
-            exit();
+            return wp_send_json([
+                'success' => false, 
+                'message' => 'Não é feito envios para o CEP informado'
+            ], 401);
         }
 
         $rates = array();        
@@ -129,8 +140,10 @@ class CotationController
             $rates[] = $this->mapObject($rate[key($rate)]);
         }   
 
-        echo json_encode(['success' => true, 'data' => $rates]);
-        exit();
+        return wp_send_json([
+            'success' => true, 
+            'data' => $rates
+        ], 200);
     }
 
     /**

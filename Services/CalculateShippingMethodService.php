@@ -48,8 +48,8 @@ class CalculateShippingMethodService
     /**
      * Check if it is "Correios" and if it has more than one volume
      *
-     * @param string $code
-     * @param object $quotation
+     * @param int $code
+     * @param stdClass $quotation
      * @return boolean
      */
     public function isCorreiosAndHasVolumes($code, $quotation)
