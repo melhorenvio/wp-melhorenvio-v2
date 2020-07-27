@@ -64,7 +64,7 @@ class QuotationService
                 true
             );
 
-            $this->storeQuotationSession($hash, $quotation);
+            $this->storeQuotationSession($body, $quotation);
         }
 
         return $quotation;
