@@ -49,7 +49,7 @@ class OrderQuotationService
      */
     private function checkHasCorreiosWithVolumes($quotation)
     {
-        $calculateShipping = (new CalculateShippingMethodService());
+        $calculateShipping = new CalculateShippingMethodService();
 
         $shippingSelected = $quotation['choose_method'];
         $removeShipping = null;
