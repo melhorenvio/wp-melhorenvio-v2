@@ -16,9 +16,9 @@ class CalculateShippingMethodService
 
         $result = (new QuotationService())->calculateQuotationByProducts($products, $to, $code);
 
-        if ($result) {
+        if($result){
 
-            if (isset($result->price)) {
+            if(isset($result->price) && isset($result->name)){
 
                 $method = (new OptionsHelper())->getName($result->id, $result->name, null, null);
 
