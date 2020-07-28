@@ -4,6 +4,7 @@ namespace Services;
 
 use Controllers\ConfigurationController;
 use Controllers\CotationController;
+use Controllers\LocationsController;
 use Controllers\OrdersController;
 use Controllers\SessionsController;
 use Controllers\StatusController;
@@ -25,6 +26,7 @@ class RouterService
         $this->loadRoutesTokens();
         $this->loadRoutesTest();
         $this->loadRoutesSession();
+        $this->loadRoutesLocations();
     }
 
     /**
@@ -148,5 +150,35 @@ class RouterService
 
         add_action('wp_ajax_delete_melhor_envio_session', [$sessionsController, 'deleteSession']);
         add_action('wp_ajax_get_melhor_envio_session', [$sessionsController, 'getSession']);
+    }
+
+    /**
+     * function to start locations routes
+     *
+     * @return void
+     */
+    private function loadRoutesLocations()
+    {
+        $locationsController = new LocationsController();
+
+        add_action('wp_ajax_get_address', function()  use ($locationsController) {
+            if (!isset($_GET['postal_code'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "postal_code"'
+                ], 400);
+            }   
+            return $locationsController->getAddressByPostalCode($_GET['postal_code']);
+        });
+
+        add_action('wp_ajax_nopriv_get_address', function()  use ($locationsController) {
+            if (!isset($_GET['postal_code'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "postal_code"'
+                ], 400);
+            }   
+            return $locationsController->getAddressByPostalCode($_GET['postal_code']);
+        });
     }
 }
