@@ -53,13 +53,13 @@ class CotationController
      */
     public function cotationProductPage() 
     {
-        $this->isValidRequest($_POST['data']);
-
         $cep_origem = str_replace("-", "", $_POST['data']['cep_origem']);
 
-        $cep_origem = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
+        $_POST['data']['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
 
-        $destination = $this->getAddressByCep($cep_origem);
+        $this->isValidRequest($_POST['data']);
+
+        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
 
         if(empty($destination) || is_null($destination)) {
             return wp_send_json([
@@ -110,6 +110,7 @@ class CotationController
 
         $rates = array();        
         $free = 0;
+
         foreach($shipping_methods as $shipping_method) 
         {
             $rate = $shipping_method->get_rates_for_package( $package );
@@ -138,22 +139,22 @@ class CotationController
      */
     private function isValidRequest($request)
     {
-        if (!isset($request)) {
+        if(!isset($request)){
             echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
             exit();
         }
 
-        if (!isset($request['cep_origem'])) {
+        if(!isset($request['cep_origem'])){
             echo json_encode(['success' => false, 'message' => 'Campo CEP é necessário']);
             exit();
         }
 
-        if ( strlen(trim($request['cep_origem'])) < 8 ) {
+        if(strlen(trim($request['cep_origem'])) != 8){
             echo json_encode(['success' => false, 'message' => 'Campo CEP precisa ter 8 digitos']);
             exit();
         }
 
-        if (!isset($request['produto_peso'])) {
+        if(!isset($request['produto_peso'])){
             echo json_encode(['success' => false, 'message' => 'Informar o peso do produto']);
             exit();
         }
