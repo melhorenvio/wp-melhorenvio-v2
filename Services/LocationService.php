@@ -31,6 +31,7 @@ class LocationService
         if(empty($postalCode)) return null;
 
         $address = $this->getAddressByPostalCodeLocationMelhorEnvio($postalCode);
+
         if (!$address) {
             $address = $this->getAddressByPostalCodeLocationViaCep($postalCode);
         }
@@ -50,20 +51,23 @@ class LocationService
      */
     public function getAddressByPostalCodeLocationMelhorEnvio($postalCode)
     {
+        $postalCode = str_pad($postalCode, 8, '0', STR_PAD_LEFT);
+
         $url = self::URL . $postalCode;
         $curl = curl_init(); 
         curl_setopt($curl, CURLOPT_URL, $url); 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
         $result = curl_exec($curl); 
-        $error  = curl_error($curl);
         curl_close($curl); 
 
-        if(!empty($error)){
+        $result = json_decode($result);
+
+        if(isset($result->message)){
             return false;
         }
 
-        return json_decode($result);
+        return $result;
     }   
 
     /**
@@ -74,6 +78,8 @@ class LocationService
      */
     public function getAddressByPostalCodeLocationViaCep($postalCode)
     {
+        $postalCode = str_pad($postalCode, 8, '0', STR_PAD_LEFT);
+
         $url = self::URL_VIA_CEP . $postalCode . '/json';
         $curl = curl_init(); 
         curl_setopt($curl, CURLOPT_URL, $url); 
