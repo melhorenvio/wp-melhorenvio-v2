@@ -33,10 +33,8 @@ class CalculateShippingMethodService
             $code
         );
 
-        if($result){
-
-            if(isset($result->price) && isset($result->name)){
-
+        if ($result) {
+            if (isset($result->price) && isset($result->name)) {
                 $method = (new OptionsHelper())->getName(
                     $result->id,
                     $result->name,
