@@ -55,7 +55,11 @@ class LocationService
 
         $url = self::URL . $postalCode;
 
-        $result = $this->requestCurl($url);
+        $result = json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_get($url)
+            )
+        );
 
         if (isset($result->message)) {
             return false;
@@ -76,30 +80,16 @@ class LocationService
 
         $url = self::URL_VIA_CEP . $postalCode . '/json';
 
-        $result = $this->requestCurl($url);
+        $result = json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_get($url)
+            )
+        );
 
         if (!$result) {
             return false;
         }
 
         return $result;
-    }
-
-    /**
-     * Function to execute a curl request
-     *
-     * @param string $url
-     * @return json
-     */
-    private function requestCurl($url)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        $result = curl_exec($curl);
-        curl_close($curl);
-
-        return json_decode($result);
     }
 }
