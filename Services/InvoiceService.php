@@ -7,20 +7,20 @@ class InvoiceService
     const POST_META_INVOICE = 'melhorenvio_invoice_v2';
 
     /**
-     * @param int $post_id
+     * @param int $postId
      * @return array $invoice
      */
-    public function getInvoice($post_id) 
+    public function getInvoice($postId)
     {
-        $invoice = get_post_meta($post_id, self::POST_META_INVOICE);
+        $invoice = get_post_meta($postId, self::POST_META_INVOICE);
 
-        if(count($invoice) > 0) {
+        if (count($invoice) > 0) {
             return end($invoice);
-        } 
-        
+        }
+
         return [
-            'number' => null, 
-            'key' => null 
+            'number' => null,
+            'key' => null
         ];
     }
 }

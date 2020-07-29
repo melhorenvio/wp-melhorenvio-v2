@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Services;
 
@@ -9,16 +9,15 @@ class OrdersProductsService
     /**
      * Get products by order
      *
-     * @param int $order_id
+     * @param int $orderId
      * @return array $products
      */
-    public function getProductsOrder($order_id)
+    public function getProductsOrder($orderId)
     {
-        $order  = wc_get_order( $order_id );
+        $order  = wc_get_order($orderId);
         $products = [];
 
-        foreach( $order->get_items() as  $item_product ){
-
+        foreach ($order->get_items() as $item_product) {
             $_product = $item_product->get_product();
 
             if (is_bool($_product)) {

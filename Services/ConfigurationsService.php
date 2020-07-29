@@ -25,7 +25,9 @@ class ConfigurationsService
             'calculator'          => (new CalculatorShow())->get(),
             'all_agencies_jadlog' => (new JadlogAgenciesShow())->get(),
             'use_insurance'       => (new UseInsurance())->get(),
-            'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
+            'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
+                ? 'woocommerce_before_add_to_cart_button'
+                : get_option('melhor_envio_option_where_show_calculator'),
             'metodos'             => (new ConfigurationController())->getMethodsEnablesArray(),
             'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
             'style_calculator'    => (new ConfigurationController())->getStyleArray(),

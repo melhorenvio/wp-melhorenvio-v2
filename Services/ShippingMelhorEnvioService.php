@@ -45,7 +45,7 @@ class ShippingMelhorEnvioService
      */
     public function getStringCodesEnables()
     {
-        return implode(",",$this->getCodesEnableds());
+        return implode(",", $this->getCodesEnableds());
     }
 
     /**
@@ -57,10 +57,12 @@ class ShippingMelhorEnvioService
     {
         $shippings = WC()->shipping->get_shipping_methods();
 
-        if (is_null($shippings)) { return []; }
+        if (is_null($shippings)) {
+            return [];
+        }
 
         $codes = [];
-        
+
         foreach ($shippings as $method) {
             if (!isset($method->code) || is_null($method->code)) {
                 continue;
