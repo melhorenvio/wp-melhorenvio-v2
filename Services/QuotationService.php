@@ -3,7 +3,6 @@
 namespace Services;
 
 use Models\Option;
-use Services\ShippingMelhorEnvioService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -55,20 +54,24 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service))
-                ? $service
-                : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
             'products' => $products
         ];
 
-        $result = (new RequestService())->request(
-            self::ROUTE_API_MELHOR_CALCULATE,
-            'POST',
-            $body,
-            true
-        );
+        $quotation = $this->_getSessionCachedQuotation($body, $service);
 
-        return $result;
+        if (!$quotation) {
+
+            $quotation = (new RequestService())->request(
+                self::ROUTE_API_MELHOR_CALCULATE,
+                'POST',
+                $body,
+                true
+            );
+
+            $this->storeQuotationSession($body, $quotation);
+        }
+
+        return $quotation;
     }
 
     /**
@@ -93,19 +96,101 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service))
-                ? $service
-                : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
             'packages' => $packages
         ];
 
-        $result = (new RequestService())->request(
-            self::ROUTE_API_MELHOR_CALCULATE,
-            'POST',
-            $body,
-            true
+        $quotation = $this->_getSessionCachedQuotation($body, $service);
+
+        if (!$quotation) {
+
+            $quotation = (new RequestService())->request(
+                self::ROUTE_API_MELHOR_CALCULATE,
+                'POST',
+                $body,
+                true
+            );
+
+            $this->storeQuotationSession($quotation, $quotation);
+        }
+
+        return $quotation;
+    }
+
+    /**
+     * Function to save response quotation on session.
+     *
+     * @param array $bodyQuotation
+     * @param array $quotation
+     * @return void
+     */
+    private function storeQuotationSession($bodyQuotation, $quotation)
+    {
+        session_start();
+        $hash = md5(json_encode($bodyQuotation));
+        $_SESSION['quotation'][$hash] = $quotation;
+        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
+    }
+
+    /**
+     * Function to search for the quotation of a shipping service in the session, if it does not find false returns
+     *
+     * @param array $bodyQuotation
+     * @param int $service
+     * @return bool|array
+     */
+    private function _getSessionCachedQuotation($bodyQuotation, $service)
+    {
+        session_start();
+
+        $hash = md5(json_encode($bodyQuotation));
+
+        if (!isset($_SESSION['quotation'][$hash][$service])) {
+            unset($_SSESION['quotation'][$hash]);
+            return false;
+        }
+
+        if ($this->_isSessionCachedQuotationExpired($bodyQuotation)) {
+            return false;
+        }
+
+        return end(array_filter(
+            $_SESSION['quotation'][$hash],
+            function ($item) use ($service) {
+                if ($item->id == $service) {
+                    return $item;
+                }
+            }
+        ));
+    }
+
+    /**
+     * Function to see if the session quote should expire due to the time
+     *
+     * @param array $bodyQuotation
+     * @return boolean
+     */
+    private function _isSessionCachedQuotationExpired($bodyQuotation)
+    {
+        $hash = md5(json_encode($bodyQuotation));
+
+        if (!isset($_SESSION['quotation'][$hash]['created'])) {
+            return true;
+        }
+
+        $created = $_SESSION['quotation'][$hash]['created'];
+
+        $dateLimit = date(
+            "Y-m-d h:i:s",
+            strtotime(date("Y-m-d h:i:s") . " -30 minutes")
         );
 
-        return $result;
+        if ($dateLimit > $created) {
+
+            unset($_SESSION['quotation'][$hash]);
+
+            return true;
+        }
+
+        return false;
     }
 }
