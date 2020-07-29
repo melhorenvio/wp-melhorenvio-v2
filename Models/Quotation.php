@@ -9,7 +9,7 @@ use Models\Log;
 use Models\Method;
 use Models\Address;
 use Controllers\TokenController;
-use Controllers\HelperController;
+use Helpers\DimensionsHelper;
 
 class Quotation 
 {  
@@ -115,36 +115,33 @@ class Quotation
     {
         $products = [];
 
-        try {
-            $orderWc = new \WC_Order( $this->id );
+        $orderWc = new \WC_Order( $this->id );
 
-            $order_items = $orderWc->get_items();
+        $order_items = $orderWc->get_items();
+        
+        foreach ($order_items as $product) {
             
-            foreach ($order_items as $product) {
-                $data = $product->get_data();
-                
-                $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
+            $data = $product->get_data();
+            
+            $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
 
-                $productInfo = wc_get_product($productId);
+            $productInfo = wc_get_product($productId);
 
-                $products[] = (object) array(
-                    'id'           => $data['product_id'],
-                    'variation_id' => $data['variation_id'],
-                    'name'         => $data['name'],
-                    'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
-                    'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
-                    'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
-                    'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
-                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
-                    'quantity'     => intval($data['quantity']),
-                    'total'        => floatval($data['total'])
-                );
-            }
-
-            return $products;
-        } catch (\Exception $e) {
-            // Tratar log aqui
+            $products[] = (object) array(
+                'id'           => $data['product_id'],
+                'variation_id' => $data['variation_id'],
+                'name'         => $data['name'],
+                'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
+                'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
+                'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
+                'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
+                'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
+                'quantity'     => intval($data['quantity']),
+                'total'        => floatval($data['total'])
+            );
         }
+
+        return $products;
     }
 
     /**
@@ -184,7 +181,7 @@ class Quotation
      *
      * @return array
      */
-    private function prepareBody()
+    private function createQuotationBody()
     {
         $options = array(
             'receipt' => $this->options->ar,
@@ -236,13 +233,13 @@ class Quotation
                     'quantity'  => intval($product->quantity)
                 );
 
-                $helper = new HelperController();
+                $helper = new DimensionsHelper();
 
                 $body['products'][$key]['volumes'][] = array(
-                    'height' => (int) $helper->converterDimension($product->height),
-                    'width'  => (int) $helper->converterDimension($product->width),
-                    'length' => (int) $helper->converterDimension($product->length),
-                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
+                    'height' => (int) $helper->convertUnitDimensionToCentimeter($product->height),
+                    'width'  => (int) $helper->convertUnitDimensionToCentimeter($product->width),
+                    'length' => (int) $helper->convertUnitDimensionToCentimeter($product->length),
+                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->convertWeightUnit($product->weight),2)
                 );
 
                 $insurance_value[$key] = floatval($product->price);
@@ -270,7 +267,7 @@ class Quotation
     {
         $token = (new TokenController())->token();
 
-        if (!empty($token) && !is_null($token) && ($body = $this->prepareBody())) {
+        if (!empty($token) && !is_null($token) && ($body = $this->createQuotationBody())) {
             $params = array(
                 'headers'           =>  array(
                     'Content-Type'  => 'application/json',

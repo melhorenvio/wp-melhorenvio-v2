@@ -27,7 +27,7 @@ class PackageController
             $length += $_product->length;
         }
 
-        return $this->converterIfNecessary([
+        return $this->convertWeightUnit([
             "weight" => $weight,
             "width" => $width,
             "height" => $height,
@@ -121,7 +121,7 @@ class PackageController
             $length += $_product->length;
         }
 
-        return $this->converterIfNecessary([
+        return $this->convertWeightUnit([
             "weight" => $weight,
             "width"  => $width,
             "height" => $height,
@@ -133,16 +133,16 @@ class PackageController
      * @param [type] $package
      * @return void
      */
-    private function converterIfNecessary($package)
+    private function convertWeightUnit($package)
     {
         $weight_unit = get_option('woocommerce_weight_unit');
         if ($weight_unit == 'g') {
             $package['weight'] = $package['weight'] / 1000;
         }
 
-        $package['width'] = (new DimensionsHelper())->converterDimension($package['width']);
-        $package['height'] = (new DimensionsHelper())->converterDimension($package['height']);
-        $package['length'] = (new DimensionsHelper())->converterDimension($package['length']);
+        $package['width'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['width']);
+        $package['height'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['height']);
+        $package['length'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['length']);
 
         return $package;
     }

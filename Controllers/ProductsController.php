@@ -2,7 +2,6 @@
 
 namespace Controllers;
 
-use Controllers\HelperController;
 
 class ProductsController 
 {

@@ -25,7 +25,7 @@ class Cart
 
             $productInfo = wc_get_product( $productId );
 
-            if(!$productInfo || empty($productInfo)) {
+            if (empty($productInfo)) {
                 continue;
             } else {
                 $data = $productInfo->get_data();
@@ -35,10 +35,10 @@ class Cart
                     'variation_id' => $item_product['variation_id'],
                     'name'         => $data['name'],
                     'price'        => $productInfo->get_price(),
-                    'height'       => $dimensionHelper->converterDimension($productInfo->get_height()),
-                    'width'        => $dimensionHelper->converterDimension($productInfo->get_width()),
-                    'length'       => $dimensionHelper->converterDimension($productInfo->get_length()),
-                    'weight'       => $dimensionHelper->converterIfNecessary($productInfo->get_weight()),
+                    'height'       => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_height()),
+                    'width'        => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_width()),
+                    'length'       => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_length()),
+                    'weight'       => $dimensionHelper->convertWeightUnit($productInfo->get_weight()),
                     'quantity'     => (isset($item_product['quantity'])) ? intval($item_product['quantity']) : 1,
                 );
             }

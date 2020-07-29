@@ -22,7 +22,7 @@ class CartWooCommerceService
 
             $productInfo = wc_get_product( $productId );
 
-            if(!$productInfo || empty($productInfo)) {
+            if(empty($productInfo)) {
                 continue;
             } else {
                 $data = $productInfo->get_data();
