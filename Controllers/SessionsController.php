@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Services\SessionService;
 
-class SessionsController 
+class SessionsController
 {
     /**
      * Function to get information from the plugin session

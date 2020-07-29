@@ -59,7 +59,7 @@ class OrderQuotationService
                 continue;
             }
 
-            if ($calculateShipping->isCorreiosAndHasVolumes($key, $item)) {
+            if ($calculateShipping->isCorreios($key) && $calculateShipping->hasMultipleVolumes($item)) {
                 $shippingsRemoved[] = $key;
                 unset($quotation[$key]);
             }

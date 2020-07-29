@@ -4,13 +4,13 @@ namespace Controllers;
 
 use Models\Token;
 
-class TokenController 
+class TokenController
 {
     /**
      * @return void
      */
-    public function getToken() {
-
+    public function getToken()
+    {
         $codeStore = md5(get_option('home'));
 
         if (isset($_SESSION[$codeStore]['melhorenvio_token'])) {
@@ -26,7 +26,7 @@ class TokenController
             isset($_SESSION[$codeStore]['melhorenvio_token_sandbox']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_sandbox']) &&
             isset($_SESSION[$codeStore]['melhorenvio_token_environment']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_environment'])
         ) {
-            
+
             return wp_send_json([
                 'token' => $_SESSION[$codeStore]['melhorenvio_token'],
                 'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
@@ -52,7 +52,7 @@ class TokenController
         }
 
         $token = (new token())->getToken();
-        
+
         if (!$token) {
             return false;
         }
@@ -65,12 +65,12 @@ class TokenController
     /**
      * @return void
      */
-    public function saveToken() 
+    public function saveToken()
     {
         $codeStore = md5(get_option('home'));
 
         unset($_SESSION[$codeStore]);
-        
+
         if (!isset($_POST['token'])) {
             return wp_send_json([
                 'success' => false,
@@ -103,4 +103,3 @@ class TokenController
         return wp_send_json(['exists_token' => true], 200);
     }
 }
-

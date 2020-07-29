@@ -24,25 +24,19 @@ class CotationController
     }
 
     /**
-     * @param [type] $order_id
+     * Function to make a quotation by order woocommerce
+     *
+     * @param int $orderId
      * @return void
      */
-    public function makeCotationOrder($order_id)
+    public function makeCotationOrder($orderId)
     {
-        $result = (new QuotationService())->calculateQuotationByOrderId($order_id);
+        $result = (new QuotationService())->calculateQuotationByOrderId($orderId);
 
         $totalCart = 0;
-        $freeShipping = false;
 
         foreach (WC()->cart->cart_contents as $cart) {
             $totalCart += $cart['line_subtotal'];
-        }
-
-        // Utilizado frete grátis?
-        foreach (WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount) {
-                $freeShipping = true;
-            }
         }
 
         unset($_SESSION['quotation']);
@@ -58,7 +52,10 @@ class CotationController
     public function refreshCotation()
     {
         $results = $this->makeCotationOrder($_GET['id']);
-        return wp_send_json($results, 200);
+        return wp_send_json(
+            $results,
+            200
+        );
     }
 
     /**
@@ -230,7 +227,9 @@ class CotationController
      */
     private function getAddressByCep($cep)
     {
-        if (empty($cep)) return null;
+        if (empty($cep)) {
+            return null;
+        }
 
         $url = "https://location.melhorenvio.com.br/" . str_replace('-', '', trim($cep));
 
@@ -242,14 +241,16 @@ class CotationController
         $error  = curl_error($curl);
         curl_close($curl);
 
-        if (!empty($error)) return null;
+        if (!empty($error)) {
+            return null;
+        }
 
         $response = json_decode($result);
         return $response;
     }
 
     /**
-     * @param [type] $item
+     * @param mixte $item
      * @return void
      */
     private function mapObject($item)

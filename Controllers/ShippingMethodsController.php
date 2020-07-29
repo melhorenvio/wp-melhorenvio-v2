@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Services\ShippingMelhorEnvioService;
 
-class ShippingMethodsController 
+class ShippingMethodsController
 {
     /**
      * function to search for the shipping services available in session.
@@ -17,7 +17,7 @@ class ShippingMethodsController
             return [];
         }
 
-        return $_SESSION['methods_shipping_api_melhor_envio']['methods'];       
+        return $_SESSION['methods_shipping_api_melhor_envio']['methods'];
     }
 
     /**
@@ -46,7 +46,6 @@ class ShippingMethodsController
     public function updateMethodsShippingCodeSession()
     {
         if (!isset($_SESSION['methods_shipping_api_melhor_envio'])) {
-
             $methods = $this->getMethodsShippingCodesMelhorEnvio();
 
             if (empty($methods)) {
