@@ -60,7 +60,6 @@ class QuotationService
         $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
-
             $quotation = (new RequestService())->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
                 'POST',
