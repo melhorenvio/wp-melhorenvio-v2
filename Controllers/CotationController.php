@@ -254,7 +254,7 @@ class CotationController
     /**
      * Function to define the object in the standard expected by woocommerce   
      *
-     * @param mixte $item
+     * @param mixed $item
      * @return void
      */
     private function mapObject($item)
