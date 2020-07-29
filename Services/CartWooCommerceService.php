@@ -6,6 +6,7 @@ class CartWooCommerceService
 {
     /**
      * Function to get alls products on cart woocommerce
+     *
      * @return Array
      */
     public function getProducts()

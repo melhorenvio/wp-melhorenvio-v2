@@ -7,6 +7,8 @@ class InvoiceService
     const POST_META_INVOICE = 'melhorenvio_invoice_v2';
 
     /**
+     * Function to search invoice for an order
+     *
      * @param int $postId
      * @return array $invoice
      */

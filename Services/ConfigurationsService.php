@@ -12,6 +12,11 @@ use Models\UseInsurance;
 
 class ConfigurationsService
 {
+    /**
+     * Function to search all user settings
+     *
+     * @return array
+     */
     public function getConfigurations()
     {
         $responseAgencies = (new Agency())->getAgencies();
@@ -30,7 +35,6 @@ class ConfigurationsService
                 : get_option('melhor_envio_option_where_show_calculator'),
             'metodos'             => (new ConfigurationController())->getMethodsEnablesArray(),
             'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
-            'style_calculator'    => (new ConfigurationController())->getStyleArray(),
             'path_plugins'        => (new ConfigurationController())->getPathPluginsArray(),
             'options_calculator'  => (new ConfigurationController())->getOptionsCalculator()
         ];

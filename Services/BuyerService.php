@@ -7,18 +7,18 @@ use Helpers\FormaterHelper;
 class BuyerService
 {
     /**
-     * Get data of buyer by order_id
+     * Get data of buyer by order id
      *
-     * @param integer $order_id
+     * @param integer $orderId
      * @return object $data
      */
-    public function getDataBuyerByOrderId($order_id)
+    public function getDataBuyerByOrderId($orderId)
     {
-        $order = new \WC_Order($order_id);
+        $order = new \WC_Order($orderId);
 
-        $cpf  = get_post_meta($order_id, '_billing_cpf', true);
-        $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
-        $phone = get_post_meta($order_id, '_billing_cellphone', true);
+        $cpf  = get_post_meta($orderId, '_billing_cpf', true);
+        $cnpj = get_post_meta($orderId, '_billing_cnpj', true);
+        $phone = get_post_meta($orderId, '_billing_cellphone', true);
 
         $document = ($cpf) ? $cpf : $cnpj;
 
@@ -43,7 +43,9 @@ class BuyerService
             "city" => (isset($dataShipping->city)) ? $dataShipping->city : $dataBilling->city,
             "state_abbr" => (isset($dataShipping->state_abbr)) ? $dataShipping->state_abbr : $dataBilling->state_abbr,
             "country_id" => 'BR',
-            "postal_code" => (isset($dataShipping->postal_code)) ? $dataShipping->postal_code : $dataBilling->postal_code,
+            "postal_code" => (isset($dataShipping->postal_code))
+                ? $dataShipping->postal_code
+                : $dataBilling->postal_code,
         ];
     }
 
@@ -55,13 +57,13 @@ class BuyerService
      */
     public function getBillingAddress($order)
     {
-        $order_id = $order->get_id();
+        $orderId = $order->get_id();
 
         return (object) [
             "address" => $order->get_billing_address_1(),
             "complement" => $order->get_billing_address_2(),
-            "number" => get_post_meta($order_id, '_billing_number', true),
-            "district" => get_post_meta($order_id, '_billing_neighborhood', true),
+            "number" => get_post_meta($orderId, '_billing_number', true),
+            "district" => get_post_meta($orderId, '_billing_neighborhood', true),
             "city" => $order->get_billing_city(),
             "state_abbr" => $order->get_billing_state(),
             "country_id" => 'BR',
@@ -77,13 +79,13 @@ class BuyerService
      */
     public function getShippingAddress($order)
     {
-        $order_id = $order->get_id();
+        $orderId = $order->get_id();
 
         return (object) [
             "address" => $order->get_shipping_address_1(),
             "complement" => $order->get_shipping_address_2(),
-            "number" => get_post_meta($order_id, '_shipping_number', true),
-            "district" => get_post_meta($order_id, '_shipping_neighborhood', true),
+            "number" => get_post_meta($orderId, '_shipping_number', true),
+            "district" => get_post_meta($orderId, '_shipping_neighborhood', true),
             "city" => $order->get_shipping_city(),
             "state_abbr" => $order->get_shipping_state(),
             "country_id" => 'BR',
