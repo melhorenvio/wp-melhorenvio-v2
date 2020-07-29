@@ -46,7 +46,7 @@ class SellerService
     /**
      * Get data user on API Melhor Envio
      *
-     * @return array $data
+     * @return object $data
      */
     private function getDataApiMelhorEnvio()
     {
