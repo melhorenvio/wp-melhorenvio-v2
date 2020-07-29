@@ -65,13 +65,15 @@ class CotationController
      */
     public function cotationProductPage()
     {
-        $cep_origem = str_replace("-", "", $_POST['data']['cep_origem']);
+        $data = $_POST['data'];
 
-        $_POST['data']['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
+        $cep_origem = str_replace("-", "", $data['cep_origem']);
 
-        $this->isValidRequest($_POST['data']);
+        $data['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
 
-        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+        $this->isValidRequest($data);
+
+        $destination = $this->getAddressByCep($data['cep_origem']);
 
         if (empty($destination) || is_null($destination)) {
             return wp_send_json([
@@ -98,25 +100,25 @@ class CotationController
             ),
             'cotationProduct' => array(
                 (object) array(
-                    'id' => $_POST['data']['id_produto'],
+                    'id' => $data['id_produto'],
                     "weight" => $dimensionHelper->convertWeightUnit(
-                        floatval($_POST['data']['produto_peso'])
+                        floatval($data['produto_peso'])
                     ),
                     "width" => $dimensionHelper->convertUnitDimensionToCentimeter(
-                        floatval($_POST['data']['produto_largura'])
+                        floatval($data['produto_largura'])
                     ),
                     "length" => $dimensionHelper->convertUnitDimensionToCentimeter(
-                        floatval($_POST['data']['produto_comprimento'])
+                        floatval($data['produto_comprimento'])
                     ),
                     "height" => $dimensionHelper->convertUnitDimensionToCentimeter(
-                        floatval($_POST['data']['produto_altura'])
+                        floatval($data['produto_altura'])
                     ),
-                    'quantity' => intval($_POST['data']['quantity']),
+                    'quantity' => intval($data['quantity']),
                     'price' => floatval(
-                        $_POST['data']['produto_preco']
+                        $data['produto_preco']
                     ),
                     'insurance_value'    => floatval(
-                        $_POST['data']['produto_preco']
+                        $data['produto_preco']
                     ),
                     'notConverterWeight' => true
                 )
