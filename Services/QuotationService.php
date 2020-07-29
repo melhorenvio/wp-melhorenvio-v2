@@ -57,7 +57,7 @@ class QuotationService
             'products' => $products
         ];
 
-        $quotation = $this->_getSessionCachedQuotation($body, $service);
+        $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
 
@@ -99,7 +99,7 @@ class QuotationService
             'packages' => $packages
         ];
 
-        $quotation = $this->_getSessionCachedQuotation($body, $service);
+        $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
 
@@ -139,7 +139,7 @@ class QuotationService
      * @param int $service
      * @return bool|array
      */
-    private function _getSessionCachedQuotation($bodyQuotation, $service)
+    private function getSessionCachedQuotation($bodyQuotation, $service)
     {
         session_start();
 
@@ -150,7 +150,7 @@ class QuotationService
             return false;
         }
 
-        if ($this->_isSessionCachedQuotationExpired($bodyQuotation)) {
+        if ($this->isSessionCachedQuotationExpired($bodyQuotation)) {
             return false;
         }
 
@@ -170,7 +170,7 @@ class QuotationService
      * @param array $bodyQuotation payload to make quotation on Melhor Envio api
      * @return boolean
      */
-    private function _isSessionCachedQuotationExpired($bodyQuotation)
+    private function isSessionCachedQuotationExpired($bodyQuotation)
     {
         $hash = md5(json_encode($bodyQuotation));
 
