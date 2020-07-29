@@ -61,7 +61,7 @@ function pac_shipping_method_init() {
 
 				if ($rate) {
 					$this->add_rate($rate);
-				}
+				}	
 			}
 		}
 	}

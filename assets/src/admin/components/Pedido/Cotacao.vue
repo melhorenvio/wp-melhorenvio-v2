@@ -43,6 +43,7 @@
             <p>Serviço: <b>{{ item.cotation[item.cotation.choose_method].name }}</b></p>
             <p>Valor: <b>R${{ item.cotation[item.cotation.choose_method].price }}</b></p>
             <p v-if="item.tracking != null">Rastreio: <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a></p>
+            <p v-if="item.cotation.diff">*cliente não selecionou um método de envio do Melhor Envio.</p>
         </template>
 
         <template v-if="item.cotation.free_shipping">
