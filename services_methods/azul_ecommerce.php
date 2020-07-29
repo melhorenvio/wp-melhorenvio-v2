@@ -1,7 +1,6 @@
 <?php
 
 use Services\CalculateShippingMethodService;
-use Services\WooCommerceService;
 
 add_action('woocommerce_shipping_init', 'azul_ecommerce_shipping_method_init');
 

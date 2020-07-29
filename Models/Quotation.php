@@ -115,36 +115,33 @@ class Quotation
     {
         $products = [];
 
-        try {
-            $orderWc = new \WC_Order( $this->id );
+        $orderWc = new \WC_Order( $this->id );
 
-            $order_items = $orderWc->get_items();
+        $order_items = $orderWc->get_items();
+        
+        foreach ($order_items as $product) {
             
-            foreach ($order_items as $product) {
-                $data = $product->get_data();
-                
-                $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
+            $data = $product->get_data();
+            
+            $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
 
-                $productInfo = wc_get_product($productId);
+            $productInfo = wc_get_product($productId);
 
-                $products[] = (object) array(
-                    'id'           => $data['product_id'],
-                    'variation_id' => $data['variation_id'],
-                    'name'         => $data['name'],
-                    'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
-                    'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
-                    'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
-                    'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
-                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
-                    'quantity'     => intval($data['quantity']),
-                    'total'        => floatval($data['total'])
-                );
-            }
-
-            return $products;
-        } catch (\Exception $e) {
-            // TODO: Tratar log aqui
+            $products[] = (object) array(
+                'id'           => $data['product_id'],
+                'variation_id' => $data['variation_id'],
+                'name'         => $data['name'],
+                'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
+                'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
+                'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
+                'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
+                'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
+                'quantity'     => intval($data['quantity']),
+                'total'        => floatval($data['total'])
+            );
         }
+
+        return $products;
     }
 
     /**
