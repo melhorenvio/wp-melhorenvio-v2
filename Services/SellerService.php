@@ -13,7 +13,7 @@ class SellerService
      */
     public function getData()
     {
-        $data = $this->_getDataApiMelhorEnvio();
+        $data = $this->getDataApiMelhorEnvio();
 
         $address = (new Address())->getAddressFrom();
 
@@ -48,7 +48,7 @@ class SellerService
      *
      * @return array $data
      */
-    private function _getDataApiMelhorEnvio()
+    private function getDataApiMelhorEnvio()
     {
         $data = (new RequestService())->request('', 'GET', [], false);
 

@@ -15,7 +15,7 @@ class RequestService
     protected $headers;
 
     protected $url;
-    
+
     public function __construct()
     {
         $tokenData = (new TokenService())->get();
@@ -31,7 +31,7 @@ class RequestService
         $this->headers = array(
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
-            'Authorization' => 'Bearer '.$this->token,
+            'Authorization' => 'Bearer ' . $this->token,
         );
     }
 
@@ -55,7 +55,7 @@ class RequestService
                 'headers' => $this->headers,
                 'method'  => $type_request,
                 'body'    => $body,
-                'timeout '=> self::TIMEOUT
+                'timeout ' => self::TIMEOUT
             );
 
             $response = json_decode(
@@ -69,9 +69,7 @@ class RequestService
             }
 
             return $response;
-
         } catch (\Exception $excption) {
-
         }
     }
 
@@ -104,7 +102,7 @@ class RequestService
         return [
             'success' => false,
             'message' => null,
-            'errors' => $response  
+            'errors' => $response
         ];
     }
 }
