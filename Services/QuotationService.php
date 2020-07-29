@@ -180,13 +180,9 @@ class QuotationService
 
         $created = $_SESSION['quotation'][$hash]['created'];
 
-        $dateLimit = date(
-            "Y-m-d h:i:s",
-            strtotime(date("Y-m-d h:i:s") . " -30 minutes")
-        );
+        $dateLimit = date('Y-m-d H:i:s', strtotime('-15 minutes'));
 
         if ($dateLimit > $created) {
-
             unset($_SESSION['quotation'][$hash]);
 
             return true;
