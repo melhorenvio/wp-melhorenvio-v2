@@ -10,15 +10,15 @@ class SessionService
 
         $dateNow = date("Y-m-d h:i:s");
 
-        if(isset($_SESSION[$codeStore]['cotations'])) {
+        if (isset($_SESSION[$codeStore]['cotations'])) {
 
             foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
 
-                if( !isset($cotation['created'])) {
+                if (!isset($cotation['created'])) {
                     unset($_SESSION[$codeStore]['cotations'][$key]);
                 }
 
-                if(date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($cotation['created']))) < $dateNow) {
+                if (date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($cotation['created']))) < $dateNow) {
                     unset($_SESSION[$codeStore]['cotations'][$key]);
                 }
             }
@@ -43,7 +43,7 @@ class SessionService
         unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
 
         unset($_SESSION[$codeStore]['melhorenvio_options']);
-        
+
         return $_SESSION;
     }
 }
