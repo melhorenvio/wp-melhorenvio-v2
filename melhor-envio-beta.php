@@ -46,12 +46,12 @@ Domain Path: /languages
  */
 
 // don't call the file directly
-if ( !defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
 
-if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
-    add_action( 'admin_notices', function(){
+if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
+    add_action('admin_notices', function () {
         echo sprintf('<div class="error">
             <p>%s</p>
         </div>', 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin');
@@ -61,7 +61,6 @@ if ( !file_exists(plugin_dir_path( __FILE__ ) . '/vendor/autoload.php')) {
 
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Models\CalculatorShow;
-use Services\OrderQuotationService;
 use Services\RouterService;
 use Services\SessionService;
 use Services\ShortCodeService;
@@ -72,7 +71,8 @@ use Services\TrackingService;
  *
  * @class Base_Plugin The class that holds the entire Base_Plugin plugin
  */
-final class Base_Plugin {
+final class Base_Plugin
+{
 
     /**
      * Plugin version
@@ -98,11 +98,11 @@ final class Base_Plugin {
     {
         $this->define_constants();
 
-        register_activation_hook( __FILE__, array( $this, 'activate' ) );
+        register_activation_hook(__FILE__, array($this, 'activate'));
 
-        register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
-        add_action( 'plugins_loaded', array( $this, 'init_plugin' ), 9, false );
+        add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
 
         (new SessionService())->clear();
     }
@@ -117,7 +117,7 @@ final class Base_Plugin {
     {
         static $instance = false;
 
-        if ( ! $instance ) {
+        if (!$instance) {
             $instance = new Base_Plugin();
         }
 
@@ -133,8 +133,8 @@ final class Base_Plugin {
      */
     public function __get($prop)
     {
-        if ( array_key_exists( $prop, $this->container ) ) {
-            return $this->container[ $prop ];
+        if (array_key_exists($prop, $this->container)) {
+            return $this->container[$prop];
         }
 
         return $this->{$prop};
@@ -149,7 +149,7 @@ final class Base_Plugin {
      */
     public function __isset($prop)
     {
-        return isset( $this->{$prop} ) || isset( $this->container[ $prop ] );
+        return isset($this->{$prop}) || isset($this->container[$prop]);
     }
 
     /**
@@ -159,12 +159,12 @@ final class Base_Plugin {
      */
     public function define_constants()
     {
-        define( 'BASEPLUGIN_VERSION', $this->version );
-        define( 'BASEPLUGIN_FILE', __FILE__ );
-        define( 'BASEPLUGIN_PATH', dirname( BASEPLUGIN_FILE ) );
-        define( 'BASEPLUGIN_INCLUDES', BASEPLUGIN_PATH . '/includes' );
-        define( 'BASEPLUGIN_URL', plugins_url( '', BASEPLUGIN_FILE ) );
-        define( 'BASEPLUGIN_ASSETS', BASEPLUGIN_URL . '/assets' );
+        define('BASEPLUGIN_VERSION', $this->version);
+        define('BASEPLUGIN_FILE', __FILE__);
+        define('BASEPLUGIN_PATH', dirname(BASEPLUGIN_FILE));
+        define('BASEPLUGIN_INCLUDES', BASEPLUGIN_PATH . '/includes');
+        define('BASEPLUGIN_URL', plugins_url('', BASEPLUGIN_FILE));
+        define('BASEPLUGIN_ASSETS', BASEPLUGIN_URL . '/assets');
     }
 
     /**
@@ -178,7 +178,7 @@ final class Base_Plugin {
         $this->init_hooks();
 
         $pathPlugins = get_option('melhor_envio_path_plugins');
-        if(!$pathPlugins) {
+        if (!$pathPlugins) {
             $pathPlugins = ABSPATH . 'wp-content/plugins';
         }
 
@@ -194,7 +194,7 @@ final class Base_Plugin {
 
         $errors = [];
 
-        $pluginsActiveds = apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+        $pluginsActiveds = apply_filters('network_admin_active_plugins', get_option('active_plugins'));
 
         if (!class_exists('WooCommerce')) {
             $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
@@ -206,7 +206,7 @@ final class Base_Plugin {
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                add_action( 'admin_notices', function() use ($err) {
+                add_action('admin_notices', function () use ($err) {
                     echo sprintf('<div class="error">
                         <p>%s</p>
                     </div>', $err);
@@ -224,12 +224,11 @@ final class Base_Plugin {
                 include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
 
                 // Create the methods shippings
-                foreach ( glob( plugin_dir_path( __FILE__ ) . 'services_methods/*.php' ) as $filename ) {
+                foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
                     include_once $filename;
                 }
-
             } catch (Exception $e) {
-                add_action( 'admin_notices', function() {
+                add_action('admin_notices', function () {
                     echo sprintf('<div class="error">
                         <p>%s (%s)</p>
                     </div>', 'Erro ao incluir as classes do WooCommerce', $e->getMessage());
@@ -237,7 +236,7 @@ final class Base_Plugin {
                 return false;
             }
         } else {
-            add_action( 'admin_notices', function() {
+            add_action('admin_notices', function () {
                 echo sprintf('<div class="error">
                     <p>%s</p>
                 </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
@@ -252,13 +251,13 @@ final class Base_Plugin {
      */
     public function activate()
     {
-        $installed = get_option( 'baseplugin_installed' );
+        $installed = get_option('baseplugin_installed');
 
-        if ( ! $installed ) {
-            update_option( 'baseplugin_installed', time() );
+        if (!$installed) {
+            update_option('baseplugin_installed', time());
         }
 
-        update_option( 'baseplugin_version', BASEPLUGIN_VERSION );
+        update_option('baseplugin_version', BASEPLUGIN_VERSION);
     }
 
     /**
@@ -272,24 +271,23 @@ final class Base_Plugin {
 
             require_once BASEPLUGIN_INCLUDES . '/class-assets.php';
 
-            if ( $this->is_request( 'admin' ) ) {
+            if ($this->is_request('admin')) {
                 require_once BASEPLUGIN_INCLUDES . '/class-admin.php';
             }
 
-            if ( $this->is_request( 'frontend' ) ) {
+            if ($this->is_request('frontend')) {
                 require_once BASEPLUGIN_INCLUDES . '/class-frontend.php';
             }
 
-            if ( $this->is_request( 'ajax' ) ) {
+            if ($this->is_request('ajax')) {
                 // require_once BASEPLUGIN_INCLUDES . '/class-ajax.php';
             }
 
-            if ( $this->is_request( 'rest' ) ) {
+            if ($this->is_request('rest')) {
                 require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
             }
-
         } catch (\Exception $e) {
-            add_action( 'admin_notices', function() {
+            add_action('admin_notices', function () {
                 echo sprintf('<div class="error">
                     <p>%s</p>
                 </div>', $e->getMessage());
@@ -306,25 +304,25 @@ final class Base_Plugin {
     public function init_hooks()
     {
         // Registrando shortcode da calculadora
-        add_shortcode('calculadora_melhor_envio', function($attr) {
+        add_shortcode('calculadora_melhor_envio', function ($attr) {
             if (isset($attr['product_id'])) {
                 (new ShortCodeService($attr['product_id']))->shortcode();
             }
-        }); 
+        });
 
         (new TrackingService())->createTrackingColumnOrdersClient();
-        
-       
+
+
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
             $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
             $cotacaoProd->run();
         }
 
-        add_action( 'init', array( $this, 'init_classes' ) );
-        add_action( 'init', array( $this, 'localization_setup' ) );
+        add_action('init', array($this, 'init_classes'));
+        add_action('init', array($this, 'localization_setup'));
 
-        (new RouterService())->handler(); 
+        (new RouterService())->handler();
     }
 
     /**
@@ -332,29 +330,29 @@ final class Base_Plugin {
      *
      * @return void
      */
-    public function init_classes() {
+    public function init_classes()
+    {
 
         try {
-            if ( $this->is_request( 'admin' ) ) {
+            if ($this->is_request('admin')) {
                 $this->container['admin'] = new App\Admin();
             }
 
-            if ( $this->is_request( 'frontend' ) ) {
+            if ($this->is_request('frontend')) {
                 $this->container['frontend'] = new App\Frontend();
             }
 
-            if ( $this->is_request( 'ajax' ) ) {
+            if ($this->is_request('ajax')) {
                 // $this->container['ajax'] =  new App\Ajax();
             }
 
-            if ( $this->is_request( 'rest' ) ) {
+            if ($this->is_request('rest')) {
                 $this->container['rest'] = new App\REST_API();
             }
 
             $this->container['assets'] = new App\Assets();
-
         } catch (\Exception $e) {
-            add_action( 'admin_notices', function() use ($e) {
+            add_action('admin_notices', function () use ($e) {
                 echo sprintf('<div class="error">
                     <p>%s</p>
                 </div>', $e->getMessage());
@@ -371,7 +369,7 @@ final class Base_Plugin {
      */
     public function localization_setup()
     {
-        load_plugin_textdomain( 'baseplugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        load_plugin_textdomain('baseplugin', false, dirname(plugin_basename(__FILE__)) . '/languages/');
     }
 
     /**
@@ -383,24 +381,23 @@ final class Base_Plugin {
      */
     private function is_request($type)
     {
-        switch ( $type ) {
-            case 'admin' :
+        switch ($type) {
+            case 'admin':
                 return is_admin();
 
-            case 'ajax' :
-                return defined( 'DOING_AJAX' );
+            case 'ajax':
+                return defined('DOING_AJAX');
 
-            case 'rest' :
-                return defined( 'REST_REQUEST' );
+            case 'rest':
+                return defined('REST_REQUEST');
 
-            case 'cron' :
-                return defined( 'DOING_CRON' );
+            case 'cron':
+                return defined('DOING_CRON');
 
-            case 'frontend' :
-                return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
+            case 'frontend':
+                return (!is_admin() || defined('DOING_AJAX')) && !defined('DOING_CRON');
         }
     }
-
 } // Base_Plugin
 
 $baseplugin = Base_Plugin::init();
