@@ -166,67 +166,59 @@ class CotationController
     private function isValidRequest($request)
     {
         if (!isset($request)) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Dados incompletos'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['cep_origem'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Campo CEP é necessário'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (strlen(trim($request['cep_origem'])) != 8) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Campo CEP precisa ter 8 digitos'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['produto_peso'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o peso do produto'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['produto_largura'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar  largura do produto'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['produto_comprimento'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o comprimento do produto'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['produto_altura'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar a altura do produto'
-            ]);
-            exit();
+            ], 400);
         }
 
         if (!isset($request['produto_preco'])) {
-            echo json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o preço do produto'
-            ]);
-            exit();
+            ], 400);
         }
     }
 
