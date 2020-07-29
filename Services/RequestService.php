@@ -76,7 +76,7 @@ class RequestService
     /**
      * treatment errors to user
      *
-     * @param array $data
+     * @param object $data
      * @return array $errors
      */
     private function treatmentErrors($data)
