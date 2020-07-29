@@ -13,7 +13,9 @@ use Services\ListOrderService;
 class OrdersController
 {
     /**
-     * @return void
+     * Function to search for orders in the order panel
+     *
+     * @return json
      */
     public function getOrders()
     {
@@ -69,7 +71,6 @@ class OrdersController
         );
 
         if (!isset($result['order_id'])) {
-
             if (isset($result['errors'])) {
                 return wp_send_json([
                     'success' => false,
@@ -88,7 +89,6 @@ class OrdersController
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
 
         if (!isset($result['order_id'])) {
-
             if (isset($result['errors'])) {
                 return wp_send_json([
                     'success' => false,
@@ -114,7 +114,7 @@ class OrdersController
 
     /**
      * Function to remove order on cart Melhor Envio.
-     * 
+     *
      * @param GET $order_id
      * @return json $response
      */
@@ -127,7 +127,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new CartService())->remove($_GET['id']);
+        (new CartService())->remove($_GET['id']);
 
         return wp_send_json([
             'success' => true,
@@ -137,7 +137,7 @@ class OrdersController
 
     /**
      * Function to cancel orderm on api Melhor Envio.
-     * 
+     *
      * @param GET $post_id
      * @return array $response
      */
@@ -150,7 +150,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['id']);
+        (new OrderService())->cancel($_GET['id']);
 
         return wp_send_json([
             'success' => true,
@@ -160,7 +160,7 @@ class OrdersController
 
     /**
      * Function to pay a order Melhor Envio.
-     * 
+     *
      * @param GET $order_id
      * @return array $response
      */
@@ -186,7 +186,7 @@ class OrdersController
 
     /**
      * Function to create a label on Melhor Envio.
-     * 
+     *
      * @param GET $post_id
      * @return array $response
      */
@@ -202,7 +202,10 @@ class OrdersController
     }
 
     /**
-     * @return void
+     * Function to print a label on Melhor Envio.
+     *
+     * @param GET $post_id
+     * @return array $response
      */
     public function printTicket()
     {
@@ -227,7 +230,7 @@ class OrdersController
     /**
      * Function to make a step by step to printed any labels
      *
-     * @param _GET $ids     
+     * @param GET $ids
      * @return array $response;
      */
     public function buyOnClick()
@@ -256,7 +259,12 @@ class OrdersController
     }
 
     /**
-     * @return void
+     * Funton to insert invoice in order
+     *
+     * @param GET number
+     * @param GET key
+     *
+     * @return json
      */
     public function insertInvoiceOrder()
     {

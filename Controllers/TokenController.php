@@ -7,7 +7,9 @@ use Models\Token;
 class TokenController
 {
     /**
-     * @return void
+     * Function to return data of user token.
+     *
+     * @return json
      */
     public function getToken()
     {
@@ -26,7 +28,6 @@ class TokenController
             isset($_SESSION[$codeStore]['melhorenvio_token_sandbox']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_sandbox']) &&
             isset($_SESSION[$codeStore]['melhorenvio_token_environment']) && !is_null($_SESSION[$codeStore]['melhorenvio_token_environment'])
         ) {
-
             return wp_send_json([
                 'token' => $_SESSION[$codeStore]['melhorenvio_token'],
                 'token_sandbox' => $_SESSION[$codeStore]['melhorenvio_token_sandbox'],
@@ -63,7 +64,13 @@ class TokenController
     }
 
     /**
-     * @return void
+     * Function to sake data of token
+     *
+     * @param POST token
+     * @param POST $token_sandbox
+     * @param POST $token_environment
+     *
+     * @return json
      */
     public function saveToken()
     {

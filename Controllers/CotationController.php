@@ -60,7 +60,7 @@ class CotationController
 
     /**
      * Function to perform the quotation on the product calculator
-     * 
+     *
      * @return json
      */
     public function cotationProductPage()
@@ -250,6 +250,8 @@ class CotationController
     }
 
     /**
+     * Function to define the object in the standard expected by woocommerce   
+     *
      * @param mixte $item
      * @return void
      */

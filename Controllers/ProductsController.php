@@ -5,6 +5,8 @@ namespace Controllers;
 class ProductsController
 {
     /**
+     * Function to get insurance value by order. 
+     *
      * @param int $orderId
      * @return float
      */

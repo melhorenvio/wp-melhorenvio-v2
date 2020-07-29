@@ -13,6 +13,8 @@ class UsersController
     const URL = 'https://api.melhorenvio.com';
 
     /**
+     * Function to get info by user. 
+     *
      * @return object
      */
     public function getInfo()
@@ -26,7 +28,9 @@ class UsersController
     }
 
     /**
-     * @return object
+     * Function to fetch data about the origin of the label 
+     *
+     * @return null|object
      */
     public function getFrom()
     {
@@ -78,6 +82,8 @@ class UsersController
     }
 
     /**
+     * Function to fetch data about destination of the order label
+     *
      * @param int $orderId
      * @return object
      */
@@ -113,7 +119,9 @@ class UsersController
     }
 
     /**
-     * @return void
+     * Function to fetch user balance 
+     *
+     * @return json
      */
     public function getBalance()
     {
@@ -121,6 +129,11 @@ class UsersController
         return wp_send_json($balance, 200);
     }
 
+    /**
+     * Function to get info by user. 
+     *
+     * @return object
+     */
     public function getMe()
     {
         $data = (array) $this->getInfo();

@@ -39,7 +39,7 @@ class ShippingMethodsController
     }
 
     /**
-     * Function to update available "Melhor ENvio" services in the session
+     * Function to update available "Melhor Envio" services in the session
      *
      * @return array
      */

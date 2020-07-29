@@ -10,12 +10,15 @@ use Models\JadlogAgenciesShow;
 use Models\Method;
 use Services\ConfigurationsService;
 
+/**
+ * Class responsible for the configuration controller
+ */
 class ConfigurationController
 {
     /**
-     * Function to get configurations
+     * Function to get configurations of user
      *
-     * @return array
+     * @return json
      */
     public function getConfigurations()
     {
@@ -26,8 +29,10 @@ class ConfigurationController
     }
 
     /**
+     * Function to save token Melhor Envio and retur the token.
+     *
      * @param string $tokenUser
-     * @return void
+     * @return mixed
      */
     public function saveToken($tokenUser)
     {
@@ -41,6 +46,8 @@ class ConfigurationController
     }
 
     /**
+     * Function to search the user's saved address
+     *
      * @return json
      */
     public function getAddressShopping()
@@ -72,6 +79,8 @@ class ConfigurationController
     }
 
     /**
+     * User selected function to return jadlog agency
+     *
      * @return json
      */
     public function getAgencyJadlog()
@@ -83,6 +92,8 @@ class ConfigurationController
     }
 
     /**
+     * Function to search user stores
+     *
      * @return json
      */
     public function getStories()
@@ -94,6 +105,8 @@ class ConfigurationController
     }
 
     /**
+     * Function to set user stores.
+     *
      * @return json
      */
     public function setStore()
@@ -112,35 +125,8 @@ class ConfigurationController
     }
 
     /**
-     * @return json
-     */
-    public function get_calculator_show()
-    {
-        return wp_send_json(
-            (new CalculatorShow())->get(),
-            200
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function set_calculator_show()
-    {
-        if (!isset($_GET['data'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'É necessário infomar o parametro data ("true" ou "false")'
-            ], 412);
-        }
-
-        return wp_send_json(
-            (new CalculatorShow())->set($_GET['data']),
-            200
-        );
-    }
-
-    /**
+     * Function to return woocommerce shipping methods with name, fee and extra time settings
+     *
      * @return json
      */
     public function getMethodsEnables()
@@ -214,78 +200,6 @@ class ConfigurationController
         }
 
         return $methods;
-    }
-
-    public function getStyle()
-    {
-        $style = [
-            'calculo_de_frete' => [
-                'style' => (get_option('calculo_de_frete')) ? get_option('calculo_de_frete') : '',
-                'name'  => 'Div cálculo de frete',
-                'id' => 'calculo_de_frete'
-            ],
-            'input_calculo_frete' => [
-                'style' => (get_option('input_calculo_frete')) ? get_option('input_calculo_frete') : '',
-                'name'  => 'Input cálculo de frete',
-                'id'    => 'input_calculo_frete',
-            ],
-            'botao_calculo_frete' => [
-                'style' => (get_option('botao_calculo_frete')) ? get_option('botao_calculo_frete') : '',
-                'name'  => 'Botão cálculo de frete',
-                'id' => 'botao_calculo_frete',
-            ],
-            'botao_imagem_calculo_frete' => [
-                'style' => (get_option('botao_imagem_calculo_frete')) ? get_option('botao_imagem_calculo_frete') : '',
-                'name'  => 'Imagem cálculo de frete',
-                'id' => 'botao_imagem_calculo_frete',
-            ],
-            'botao_texto_calculo_frete' => [
-                'style' => (get_option('botao_texto_calculo_frete')) ? get_option('botao_texto_calculo_frete') : '',
-                'name'  => 'Texto do botão do cálculo de frete',
-                'id' => 'botao_texto_calculo_frete',
-            ]
-        ];
-
-        return wp_send_json($style, 200);
-    }
-
-    public function getStyleArray()
-    {
-        $style = [
-            'calculo_de_frete' => [
-                'style' => (get_option('calculo_de_frete')) ? get_option('calculo_de_frete') : '',
-                'name'  => 'Div cálculo de frete',
-                'id' => 'calculo_de_frete'
-            ],
-            'input_calculo_frete' => [
-                'style' => (get_option('input_calculo_frete')) ? get_option('input_calculo_frete') : '',
-                'name'  => 'Input cálculo de frete',
-                'id'    => 'input_calculo_frete',
-            ],
-            'botao_calculo_frete' => [
-                'style' => (get_option('botao_calculo_frete')) ? get_option('botao_calculo_frete') : '',
-                'name'  => 'Botão cálculo de frete',
-                'id' => 'botao_calculo_frete',
-            ],
-            'botao_imagem_calculo_frete' => [
-                'style' => (get_option('botao_imagem_calculo_frete')) ? get_option('botao_imagem_calculo_frete') : '',
-                'name'  => 'Imagem cálculo de frete',
-                'id' => 'botao_imagem_calculo_frete',
-            ],
-            'botao_texto_calculo_frete' => [
-                'style' => (get_option('botao_texto_calculo_frete')) ? get_option('botao_texto_calculo_frete') : '',
-                'name'  => 'Texto do botão do cálculo de frete',
-                'id' => 'botao_texto_calculo_frete',
-            ]
-        ];
-
-        return $style;
-    }
-
-    public function saveStyle()
-    {
-        delete_option($_GET['id']);
-        add_option($_GET['id'], $_GET['style']);
     }
 
     public function savePathPlugins()

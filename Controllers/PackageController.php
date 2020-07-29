@@ -7,8 +7,10 @@ use Helpers\DimensionsHelper;
 class PackageController
 {
     /**
+     * Function to assemble the standard package for woocommerce
+     *
      * @param array $package
-     * @return void
+     * @return array
      */
     public function getPackage($package)
     {
@@ -35,6 +37,8 @@ class PackageController
     }
 
     /**
+     * Function to store the quote in wordpress after completing the purchase 
+     *
      * @param int $orderId
      * @return void
      */
@@ -75,20 +79,9 @@ class PackageController
         return $packages;
     }
 
-    private function countTotalvolumes($data)
-    {
-        $total = 0;
-        foreach ($data as $item) {
-            if (isset($item->products)) {
-                foreach ($item->products as $prod) {
-                    $total = $total + $prod->quantity;
-                }
-            }
-        }
-        return $total;
-    }
-
     /**
+     * Function to fetch an order package
+     *
      * @param int $orderId
      * @return array
      */
@@ -118,6 +111,8 @@ class PackageController
     }
 
     /**
+     * Function to convert the measurements of a package to the Melhor Envio standard
+     *
      * @param array $package
      * @return array
      */

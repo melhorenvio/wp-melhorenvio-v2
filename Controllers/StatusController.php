@@ -5,7 +5,9 @@ namespace Controllers;
 class StatusController
 {
     /**
-     * @return void
+     * Function to list woocommerce order status
+     *
+     * @return json
      */
     public function getStatus()
     {
