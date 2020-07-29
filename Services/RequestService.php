@@ -39,38 +39,35 @@ class RequestService
      * Function to make a request to API Melhor Envio.
      *
      * @param string $route
-     * @param string $type_request
+     * @param string $typeRequest
      * @param array $body
-     * @return array $response
+     * @return object $response
      */
-    public function request($route, $type_request, $body, $useJson = true)
+    public function request($route, $typeRequest, $body, $useJson = true)
     {
-        try {
 
-            if ($useJson) {
-                $body = json_encode($body);
-            }
-
-            $params = array(
-                'headers' => $this->headers,
-                'method'  => $type_request,
-                'body'    => $body,
-                'timeout ' => self::TIMEOUT
-            );
-
-            $response = json_decode(
-                wp_remote_retrieve_body(
-                    wp_remote_post($this->url . '/v2/me' . $route, $params)
-                )
-            );
-
-            if (isset($response->errors) || isset($response->error)) {
-                return $this->treatmentErrors($response);
-            }
-
-            return $response;
-        } catch (\Exception $excption) {
+        if ($useJson) {
+            $body = json_encode($body);
         }
+
+        $params = array(
+            'headers' => $this->headers,
+            'method'  => $typeRequest,
+            'body'    => $body,
+            'timeout ' => self::TIMEOUT
+        );
+
+        $response = json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_post($this->url . '/v2/me' . $route, $params)
+            )
+        );
+
+        if (isset($response->errors) || isset($response->error)) {
+            return $this->treatmentErrors($response);
+        }
+
+        return $response;
     }
 
     /**
@@ -93,9 +90,11 @@ class RequestService
                     foreach ($error as $err) {
                         $response[] = $err;
                     }
-                } else {
-                    $response[] = $error;
+
+                    return $response;
                 }
+
+                $response[] = $error;
             }
         }
 
