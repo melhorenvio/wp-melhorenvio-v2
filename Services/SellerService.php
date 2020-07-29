@@ -9,15 +9,15 @@ class SellerService
     /**
      * Get data user on API Melhor Envio
      *
-     * @return array $dataSeller
+     * @return object $dataSeller
      */
     public function getData()
     {
-        $data = $this->getDataApiMelhorEnvio();   
+        $data = $this->getDataApiMelhorEnvio();
 
         $address = (new Address())->getAddressFrom();
 
-        if(isset($address['address']['id'])) {
+        if (isset($address['address']['id'])) {
 
             $data->address->address = $address['address']['address'];
             $data->address->complement = $address['address']['complement'];
@@ -41,7 +41,7 @@ class SellerService
             "state_abbr" => $data->address->city->state->state_abbr,
             "country_id" => 'BR',
             "postal_code" => $data->address->postal_code
-        ]; 
+        ];
     }
 
     /**

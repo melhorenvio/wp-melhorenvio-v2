@@ -5,9 +5,11 @@ namespace Services;
 use Models\Option;
 use Services\ShippingMelhorEnvioService;
 
+/**
+ * Class responsible for the quotation service with the Melhor Envio api.
+ */
 class QuotationService
 {
-
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
     /**
@@ -22,7 +24,11 @@ class QuotationService
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($order_id);
 
-        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code, null);
+        $quotation = $this->calculateQuotationByProducts(
+            $products,
+            $buyer->postal_code,
+            null
+        );
 
         return (new OrderQuotationService())->saveQuotation($order_id, $quotation);
     }
@@ -34,10 +40,13 @@ class QuotationService
      * @param string $postal_code
      * @return object $quotation
      */
-    public function calculateQuotationByProducts($products, $postal_code, $service = null)
-    {   
+    public function calculateQuotationByProducts(
+        $products,
+        $postal_code,
+        $service = null
+    ) {
         $seller = (new SellerService())->getData();
-            
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -46,13 +55,15 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service)) ? $service : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
+            'services' => (!is_null($service))
+                ? $service
+                : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
             'products' => $products
         ];
 
         $result = (new RequestService())->request(
-            self::ROUTE_API_MELHOR_CALCULATE, 
-            'POST', 
+            self::ROUTE_API_MELHOR_CALCULATE,
+            'POST',
             $body,
             true
         );
@@ -67,10 +78,13 @@ class QuotationService
      * @param string $postal_code
      * @return object $quotation
      */
-    public function calculateQuotationByPackages($packages, $postal_code, $service = null)
-    {   
+    public function calculateQuotationByPackages(
+        $packages,
+        $postal_code,
+        $service = null
+    ) {
         $seller = (new SellerService())->getData();
-            
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -79,13 +93,15 @@ class QuotationService
                 'postal_code' => $postal_code
             ],
             'options'  => (new Option())->getOptions(),
-            'services' => (!is_null($service)) ? $service : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
+            'services' => (!is_null($service))
+                ? $service
+                : (new ShippingMelhorEnvioService())->getStringCodesEnables(),
             'packages' => $packages
         ];
 
         $result = (new RequestService())->request(
-            self::ROUTE_API_MELHOR_CALCULATE, 
-            'POST', 
+            self::ROUTE_API_MELHOR_CALCULATE,
+            'POST',
             $body,
             true
         );
