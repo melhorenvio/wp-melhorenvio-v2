@@ -75,7 +75,7 @@ class CotationController
 
         $destination = $this->getAddressByCep($data['cep_origem']);
 
-        if (empty($destination) || is_null($destination)) {
+        if (empty($destination)) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'CEP inválido ou não encontrado'
