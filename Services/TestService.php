@@ -53,7 +53,7 @@ class TestService
     /**
      * Function to get cep destiny
      *
-     * @param GET $data
+     * @param array data
      * @return string $cep
      */
     private function cepDestiny($data)
@@ -64,7 +64,7 @@ class TestService
     /**
      * Function to get packages
      *
-     * @param GET $data
+     * @param array data
      * @return array $packages
      */
     private function packages($data)
@@ -80,7 +80,7 @@ class TestService
     /**
      * Function to get insurance vale
      *
-     * @param GET $data
+     * @param array data
      * @return float $insurance_value
      */
     private function insuranceValue($data)

@@ -39,8 +39,8 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      * 
-     * @param GET order_id
-     * @param GET choosen
+     * @param int order_id
+     * @param int choosen
      * @return json $results
      */
     public function sendOrder()
@@ -115,7 +115,7 @@ class OrdersController
     /**
      * Function to remove order on cart Melhor Envio.
      *
-     * @param GET $order_id
+     * @param int order_id
      * @return json $response
      */
     public function removeOrder()
@@ -138,7 +138,7 @@ class OrdersController
     /**
      * Function to cancel orderm on api Melhor Envio.
      *
-     * @param GET $post_id
+     * @param int post_id
      * @return array $response
      */
     public function cancelOrder()
@@ -161,7 +161,7 @@ class OrdersController
     /**
      * Function to pay a order Melhor Envio.
      *
-     * @param GET $order_id
+     * @param int order_id
      * @return array $response
      */
     public function payTicket()
@@ -187,7 +187,7 @@ class OrdersController
     /**
      * Function to create a label on Melhor Envio.
      *
-     * @param GET $post_id
+     * @param int post_id
      * @return array $response
      */
     public function createTicket()
@@ -204,7 +204,7 @@ class OrdersController
     /**
      * Function to print a label on Melhor Envio.
      *
-     * @param GET $post_id
+     * @param int post_id
      * @return array $response
      */
     public function printTicket()
@@ -230,7 +230,7 @@ class OrdersController
     /**
      * Function to make a step by step to printed any labels
      *
-     * @param GET $ids
+     * @param array ids
      * @return array $response;
      */
     public function buyOnClick()
@@ -261,8 +261,8 @@ class OrdersController
     /**
      * Funton to insert invoice in order
      *
-     * @param GET number
-     * @param GET key
+     * @param numeric number
+     * @param numeric key
      *
      * @return json
      */
