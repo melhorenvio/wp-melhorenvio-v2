@@ -67,7 +67,7 @@ class CotationController
     {
         $data = $_POST['data'];
 
-        $cep_origem = str_replace("-", "", $data['cep_origem']);
+        $cep_origem = preg_replace('/\D/', '', $data['cep_origem']);
 
         $data['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
 
