@@ -355,10 +355,7 @@ class ConfigurationController
 
         return [
             'success' => true,
-            'options' => [
-                'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-                'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
-            ]
+            'options' => $this->getOptionsCalculator()
         ];
     }
 
