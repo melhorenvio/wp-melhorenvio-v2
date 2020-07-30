@@ -13,7 +13,7 @@ class DimensionsHelper
     public static function convertWeightUnit($weight)
     {
         $weight  = (float) $weight;
-        $toUnit = strtolower('kg');
+        $toUnit = 'kg';
         $fromUnit = strtolower(get_option('woocommerce_weight_unit'));
 
         return floatval(number_format(wc_get_weight($weight, $toUnit, $fromUnit), 2, '.', ''));
