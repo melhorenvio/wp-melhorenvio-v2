@@ -89,8 +89,6 @@ class CotationController
             ], 404);
         }
 
-        $dimensionHelper = new DimensionsHelper();
-
         $package = array(
             'ship_via'     => '',
             'destination'  => array(
@@ -101,16 +99,16 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
-                    "weight" => $dimensionHelper->convertWeightUnit(
+                    "weight" => DimensionsHelper::convertWeightUnit(
                         floatval($data['produto_peso'])
                     ),
-                    "width" => $dimensionHelper->convertUnitDimensionToCentimeter(
+                    "width" => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_largura'])
                     ),
-                    "length" => $dimensionHelper->convertUnitDimensionToCentimeter(
+                    "length" => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_comprimento'])
                     ),
-                    "height" => $dimensionHelper->convertUnitDimensionToCentimeter(
+                    "height" => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_altura'])
                     ),
                     'quantity' => intval($data['quantity']),

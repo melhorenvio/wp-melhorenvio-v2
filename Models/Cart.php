@@ -4,12 +4,14 @@ namespace Models;
 
 use Helpers\DimensionsHelper;
 
-class Cart 
+class Cart
 {
     /**
-     * @return Array
+     * Function to get products inserted in the shopping cart.
+     *
+     * @return array
      */
-    public function getProductsOnCart() 
+    public function getProductsOnCart()
     {
         global $woocommerce;
 
@@ -17,33 +19,30 @@ class Cart
 
         $products = array();
 
-        $dimenstionHelpder = new DimensionsHelper();
+        foreach ($items as $itemProduct) {
+            $productId = ($itemProduct['variation_id'] != 0)
+                ? $itemProduct['variation_id']
+                : $itemProduct['product_id'];
 
-        foreach( $items as $item_product ){
-
-            $productId = ($item_product['variation_id'] != 0) ? $item_product['variation_id'] : $item_product['product_id'];
-
-            $productInfo = wc_get_product( $productId );
+            $productInfo = wc_get_product($productId);
 
             if (empty($productInfo)) {
                 continue;
-            } else {
-                $data = $productInfo->get_data();
-
-                $products[] = (object) array(
-                    'id'           => $item_product['product_id'],
-                    'variation_id' => $item_product['variation_id'],
-                    'name'         => $data['name'],
-                    'price'        => $productInfo->get_price(),
-                    'height'       => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_height()),
-                    'width'        => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_width()),
-                    'length'       => $dimensionHelper->convertUnitDimensionToCentimeter($productInfo->get_length()),
-                    'weight'       => $dimensionHelper->convertWeightUnit($productInfo->get_weight()),
-                    'quantity'     => (isset($item_product['quantity'])) ? intval($item_product['quantity']) : 1,
-                );
             }
 
-            
+            $data = $productInfo->get_data();
+
+            $products[] = (object) array(
+                'id'           => $itemProduct['product_id'],
+                'variation_id' => $itemProduct['variation_id'],
+                'name'         => $data['name'],
+                'price'        => $productInfo->get_price(),
+                'height'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_height()),
+                'width'        => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_width()),
+                'length'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_length()),
+                'weight'       => DimensionsHelper::convertWeightUnit($productInfo->get_weight()),
+                'quantity'     => (isset($itemProduct['quantity'])) ? intval($itemProduct['quantity']) : 1,
+            );
         }
 
         return (object) $products;
