@@ -22,7 +22,7 @@ class BuyerService
 
         $document = ($cpf) ? $cpf : $cnpj;
 
-        if (empty($phone) || is_null($phone)) {
+        if (empty($phone)) {
             $phone = $order->get_billing_phone();
         }
 
