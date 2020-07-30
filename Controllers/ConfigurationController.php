@@ -96,10 +96,10 @@ class ConfigurationController
      *
      * @return json
      */
-    public function getStories()
+    public function getStores()
     {
         return wp_send_json(
-            (new Store())->getStories(),
+            (new Store())->getStores(),
             200
         );
     }

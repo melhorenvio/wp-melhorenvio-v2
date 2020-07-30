@@ -23,7 +23,7 @@ class ConfigurationsService
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
-            'stores'              => (new Store())->getStories()['stores'],
+            'stores'              => (new Store())->getStores()['stores'],
             'agencies'            => $responseAgencies['agencies'],
             'allAgencies'         => $responseAgencies['allAgencies'],
             'agencySelected'      => $responseAgencies['agencySelected'],
