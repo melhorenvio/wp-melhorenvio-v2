@@ -14,12 +14,12 @@ use Services\OrderQuotationService;
 use Services\ShippingMelhorEnvioService;
 use Services\ListOrderService;
 
-class OrdersController 
+class OrdersController
 {
     /**
      * @return void
      */
-    public function getOrders() 
+    public function getOrders()
     {
         unset($_GET['action']);
         $orders = (new ListOrderService())->getList($_GET);
@@ -41,11 +41,11 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      * 
-     * @param GET order_id
-     * @param GET choosen
+     * @param int order_id
+     * @param int choosen
      * @return json $results
      */
-    public function sendOrder() 
+    public function sendOrder()
     {
         if (!isset($_GET['order_id'])) {
             return wp_send_json([
@@ -66,9 +66,9 @@ class OrdersController
         $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
 
         $result = (new CartService())->add(
-            $_GET['order_id'], 
-            $products, 
-            $buyer, 
+            $_GET['order_id'],
+            $products,
+            $buyer,
             $_GET['choosen']
         );
 
@@ -119,10 +119,10 @@ class OrdersController
     /**
      * Function to remove order on cart Melhor Envio.
      * 
-     * @param GET $order_id
+     * @param int order_id
      * @return json $response
      */
-    public function removeOrder() 
+    public function removeOrder()
     {
         if (!isset($_GET['order_id'])) {
             return wp_send_json([
@@ -142,10 +142,10 @@ class OrdersController
     /**
      * Function to cancel orderm on api Melhor Envio.
      * 
-     * @param GET $post_id
+     * @param int post_id
      * @return array $response
      */
-    public function cancelOrder() 
+    public function cancelOrder()
     {
         if (!isset($_GET['id'])) {
             return wp_send_json([
@@ -165,10 +165,10 @@ class OrdersController
     /**
      * Function to pay a order Melhor Envio.
      * 
-     * @param GET $order_id
+     * @param int order_id
      * @return array $response
      */
-    public function payTicket() 
+    public function payTicket()
     {
         $posts = explode(',', $_GET['id']);
 
@@ -191,10 +191,10 @@ class OrdersController
     /**
      * Function to create a label on Melhor Envio.
      * 
-     * @param GET $post_id
+     * @param int post_id
      * @return array $response
      */
-    public function createTicket() 
+    public function createTicket()
     {
         $result = (new OrderService())->createLabel($_GET['id']);
 
@@ -208,7 +208,7 @@ class OrdersController
     /**
      * @return void
      */
-    public function printTicket() 
+    public function printTicket()
     {
         $createResult = (new OrderService())->createLabel($_GET['id']);
 
@@ -216,7 +216,7 @@ class OrdersController
             return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao gerar a etiqueta'
-            ], 400); 
+            ], 400);
         }
 
         $result = (new OrderService())->printLabel($_GET['id']);
@@ -226,7 +226,7 @@ class OrdersController
             'message' => 'Pedido impresso',
             'data' => $result
         ], 200);
-    }  
+    }
 
     /**
      * Function to make a step by step to printed any labels
@@ -258,15 +258,15 @@ class OrdersController
             'errors' => $result['errors']
         ], 400);
     }
-    
+
     /**
      * @return void
      */
-    public function insertInvoiceOrder() 
+    public function insertInvoiceOrder()
     {
         unset($_GET['action']);
 
-        if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key']) ) {
+        if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key'])) {
             return json_encode([
                 'success' => false,
                 'message' => 'Campos ID, number, key são obrigatorios'
@@ -274,7 +274,7 @@ class OrdersController
         }
 
         $result = Order::updateInvoice(
-            $_GET['id'], 
+            $_GET['id'],
             [
                 'number' => $_GET['number'],
                 'key' => $_GET['key']
