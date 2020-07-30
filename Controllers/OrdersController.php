@@ -2,24 +2,20 @@
 
 namespace Controllers;
 
-use Models\Order;
-use Models\Log;
-use Models\Method;
-use Services\QuotationService;
 use Services\OrdersProductsService;
 use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
-use Services\ShippingMelhorEnvioService;
 use Services\ListOrderService;
+use Services\OrderInvoicesService;
 
-class OrdersController 
+class OrdersController
 {
     /**
      * @return void
      */
-    public function getOrders() 
+    public function getOrders()
     {
         unset($_GET['action']);
         $orders = (new ListOrderService())->getList($_GET);
@@ -45,7 +41,7 @@ class OrdersController
      * @param GET choosen
      * @return json $results
      */
-    public function sendOrder() 
+    public function sendOrder()
     {
         if (!isset($_GET['order_id'])) {
             return wp_send_json([
@@ -66,9 +62,9 @@ class OrdersController
         $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
 
         $result = (new CartService())->add(
-            $_GET['order_id'], 
-            $products, 
-            $buyer, 
+            $_GET['order_id'],
+            $products,
+            $buyer,
             $_GET['choosen']
         );
 
@@ -122,7 +118,7 @@ class OrdersController
      * @param GET $order_id
      * @return json $response
      */
-    public function removeOrder() 
+    public function removeOrder()
     {
         if (!isset($_GET['order_id'])) {
             return wp_send_json([
@@ -145,7 +141,7 @@ class OrdersController
      * @param GET $post_id
      * @return array $response
      */
-    public function cancelOrder() 
+    public function cancelOrder()
     {
         if (!isset($_GET['id'])) {
             return wp_send_json([
@@ -168,7 +164,7 @@ class OrdersController
      * @param GET $order_id
      * @return array $response
      */
-    public function payTicket() 
+    public function payTicket()
     {
         $posts = explode(',', $_GET['id']);
 
@@ -194,7 +190,7 @@ class OrdersController
      * @param GET $post_id
      * @return array $response
      */
-    public function createTicket() 
+    public function createTicket()
     {
         $result = (new OrderService())->createLabel($_GET['id']);
 
@@ -208,7 +204,7 @@ class OrdersController
     /**
      * @return void
      */
-    public function printTicket() 
+    public function printTicket()
     {
         $createResult = (new OrderService())->createLabel($_GET['id']);
 
@@ -216,7 +212,7 @@ class OrdersController
             return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao gerar a etiqueta'
-            ], 400); 
+            ], 400);
         }
 
         $result = (new OrderService())->printLabel($_GET['id']);
@@ -226,7 +222,7 @@ class OrdersController
             'message' => 'Pedido impresso',
             'data' => $result
         ], 200);
-    }  
+    }
 
     /**
      * Function to make a step by step to printed any labels
@@ -258,29 +254,35 @@ class OrdersController
             'errors' => $result['errors']
         ], 400);
     }
-    
+
     /**
      * @return void
      */
-    public function insertInvoiceOrder() 
+    public function insertInvoiceOrder()
     {
         unset($_GET['action']);
 
-        if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key']) ) {
+        if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key'])) {
             return json_encode([
                 'success' => false,
                 'message' => 'Campos ID, number, key são obrigatorios'
             ], 400);
         }
 
-        $result = Order::updateInvoice(
-            $_GET['id'], 
-            [
-                'number' => $_GET['number'],
-                'key' => $_GET['key']
-            ]
+        $result = (new OrderInvoicesService())->insertInvoiceOrder(
+            $_GET['id'],
+            $_GET['key'],
+            $_GET['number']
         );
 
-        return json_encode($result);
+        if (!$result) {
+            return wp_send_json([
+                'message' => 'Ocorreu um erro ao atualizar os documentos'
+            ], 400);
+        }
+
+        return wp_send_json([
+            'message' => (array) sprintf("Documentos do pedido %d atualizados", $_GET['id'])
+        ], 200);
     }
 }

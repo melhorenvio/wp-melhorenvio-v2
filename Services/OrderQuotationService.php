@@ -31,8 +31,8 @@ class OrderQuotationService
     public function getQuotation($post_id)
     {
         $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
-        
-        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
+
+        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
             $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
         }
 
@@ -60,14 +60,14 @@ class OrderQuotationService
                 continue;
             }
 
-            if ($calculateShipping->isCorreiosAndHasVolumes($key, $item)) {
+            if ($calculateShipping->isCorreios($key) && $calculateShipping->hasMultipleVolumes($item)) {
                 $shippingsRemoved[] = $key;
                 unset($quotation[$key]);
             }
         }
 
         if ($this->haveSelectedShippingInRemovedsShipping($shippingsRemoved, $shippingSelected)) {
-            $quotation['choose_method'] = $quotation[array_key_first ( $quotation )]->id;
+            $quotation['choose_method'] = $quotation[array_key_first($quotation)]->id;
         }
 
         return $quotation;
@@ -97,10 +97,10 @@ class OrderQuotationService
         $choose = (new Method($order_id))->getMethodShipmentSelected($order_id);
 
         $data = $this->setKeyAsCodeService($quotation);
-        $data['date_quotation'] = date('Y-m-d H:i:d'); 
-        $data['choose_method'] = (!is_null($choose)) ? $choose : '2'; 
-        $data['free_shipping'] = false; 
-        $data['diff'] = !is_null($choose); 
+        $data['date_quotation'] = date('Y-m-d H:i:d');
+        $data['choose_method'] = (!is_null($choose)) ? $choose : '2';
+        $data['free_shipping'] = false;
+        $data['diff'] = !is_null($choose);
 
         delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
         add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
@@ -117,7 +117,7 @@ class OrderQuotationService
     private function setKeyAsCodeService($quotation)
     {
         $result = [];
-        
+
         foreach ($quotation as $item) {
 
             $result[$item->id] = $item;
@@ -141,11 +141,11 @@ class OrderQuotationService
      * @return array $data
      */
     public function getData($order_id)
-    {   
+    {
         return get_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, true);
     }
 
-        /**
+    /**
      * Function to update data quotation by order.
      * 
      * @param int $order_id
@@ -155,7 +155,7 @@ class OrderQuotationService
      * @param int $choose_method
      * @return array $data
      */
-    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
+    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null)
     {
         $data = [
             'choose_method' => $choose_method,
@@ -180,7 +180,7 @@ class OrderQuotationService
      * @param int $choose_method
      * @return array $data
      */
-    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
+    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null)
     {
         $data = [
             'choose_method' => $choose_method,
@@ -217,14 +217,16 @@ class OrderQuotationService
         if (count($data) <= 4) {
             return true;
         }
-        
+
         foreach ($data as $item) {
             if ($item == 'Unauthenticated.' || empty($item)) {
                 return true;
             }
         }
 
-        if (!isset($data['date_quotation'])) { return true; }
+        if (!isset($data['date_quotation'])) {
+            return true;
+        }
 
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
@@ -240,6 +242,6 @@ class OrderQuotationService
     {
         $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
 
-        return ($environment == 'sandbox') ? '_sandbox' : null; 
+        return ($environment == 'sandbox') ? '_sandbox' : null;
     }
 }

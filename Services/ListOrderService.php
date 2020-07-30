@@ -17,7 +17,7 @@ class ListOrderService
 
         if (empty($posts)) {
             return [
-                'orders' => [], 
+                'orders' => [],
                 'load' => false
             ];
         }
@@ -31,7 +31,7 @@ class ListOrderService
     }
 
     private function setData($posts)
-    {   
+    {
         $orders = [];
 
         $statusMelhorEnvio = (new OrderService())->mergeStatus($posts);
@@ -39,8 +39,10 @@ class ListOrderService
         foreach ($posts as $post) {
 
             $post_id = $post->ID;
-             
-            $invoice = (new InvoiceService())->getInvoice($post_id);
+
+            $invoiceService = new OrderInvoicesService();
+
+            $invoice = $invoiceService->getInvoiceOrder($post_id);
 
             $orders[] = [
                 'id' => $post_id,
@@ -51,8 +53,8 @@ class ListOrderService
                 'status_texto' => (new TranslateStatusHelper())->translateNameStatus($statusMelhorEnvio[$post_id]['status']),
                 'order_id' => $statusMelhorEnvio[$post_id]['order_id'],
                 'protocol' => $statusMelhorEnvio[$post_id]['protocol'],
-                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false ,
-                'invoice'        => $invoice,
+                'non_commercial' => $invoiceService->isNonCommercial($post_id),
+                'invoice' => $invoice,
                 'products' => (new OrdersProductsService())->getProductsOrder($post_id),
                 'cotation' => [],
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $post_id)
@@ -79,10 +81,10 @@ class ListOrderService
             'post_type'   => 'shop_order',
         ];
 
-        if(isset($wpstatus) && $wpstatus != 'all'){
+        if (isset($wpstatus) && $wpstatus != 'all') {
             $args['post_status'] = $wpstatus;
-        } else if(isset($wpstatus) && $wpstatus == 'all') {
-            $args['post_status'] = array_keys( wc_get_order_statuses() );
+        } else if (isset($wpstatus) && $wpstatus == 'all') {
+            $args['post_status'] = array_keys(wc_get_order_statuses());
         } else {
             $args['post_status'] = 'publish';
         }
@@ -97,6 +99,6 @@ class ListOrderService
             ];
         }
 
-        return  get_posts($args);  
+        return  get_posts($args);
     }
 }
