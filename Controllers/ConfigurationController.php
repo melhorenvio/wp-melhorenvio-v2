@@ -324,6 +324,12 @@ class ConfigurationController
         ], 200);
     }
 
+    /**
+     * Function to obtain which hook the calculator will 
+     * be displayed on the product screen
+     *
+     * @return string
+     */
     public function getWhereCalculatorValue()
     {
         $option = get_option('melhor_envio_option_where_show_calculator');
@@ -333,6 +339,12 @@ class ConfigurationController
         return $option;
     }
 
+    /**
+     * Function to save receipt and own hands options
+     *
+     * @param array $options
+     * @return array
+     */
     public function setOptionsCalculator($options)
     {
         delete_option('melhorenvio_ar');
@@ -344,22 +356,23 @@ class ConfigurationController
         return [
             'success' => true,
             'options' => [
-                'ar' => (get_option('melhorenvio_ar', true) == 'true') ? true : false,
-                'mp' => (get_option('melhorenvio_mp', true) == 'true') ? true : false
+                'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
+                'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
             ]
         ];
     }
 
+    /**
+     * Function for obtaining acknowledgment options and own hands
+     *
+     * @return array
+     */
     public function getOptionsCalculator()
     {
-        $ar = get_option('melhorenvio_ar');
-        $mp = get_option('melhorenvio_mp');
-
         return [
-            'ar' => ($ar == 'true') ? true : false,
-            'mp' => ($mp == 'true') ? true : false,
+            'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
+            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
         ];
-        die;
     }
 
     /**
