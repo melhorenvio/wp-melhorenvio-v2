@@ -94,16 +94,16 @@ class CotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
-                    "weight" => DimensionsHelper::convertWeightUnit(
+                    'weight' => DimensionsHelper::convertWeightUnit(
                         floatval($data['produto_peso'])
                     ),
-                    "width" => DimensionsHelper::convertUnitDimensionToCentimeter(
+                    'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_largura'])
                     ),
-                    "length" => DimensionsHelper::convertUnitDimensionToCentimeter(
+                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_comprimento'])
                     ),
-                    "height" => DimensionsHelper::convertUnitDimensionToCentimeter(
+                    'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_altura'])
                     ),
                     'quantity' => intval($data['quantity']),
@@ -165,7 +165,7 @@ class CotationController
             $company = $item->meta_data['company'];
         }
 
-        $method = (new optionsHelper())->getName(
+        $method = (new OptionsHelper())->getName(
             $item->get_id(),
             $name,
             $company,
