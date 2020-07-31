@@ -6,6 +6,7 @@ use Helpers\DimensionsHelper;
 
 class PackageController
 {
+    const GRAMS = 'g';
     /**
      * Function to assemble the standard package for woocommerce
      *
@@ -119,7 +120,7 @@ class PackageController
     private function convertWeightUnit($package)
     {
         $weightUnit = get_option('woocommerce_weight_unit');
-        if ($weightUnit == 'g') {
+        if ($weightUnit == self::GRAMS) {
             $package['weight'] = $package['weight'] / 1000;
         }
 
