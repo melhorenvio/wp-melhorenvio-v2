@@ -96,7 +96,7 @@ class LocationService
      */
     private function formatPostalCode($postalCode)
     {
-        $postalCode = str_replace("-", "", $postalCode);
+        $postalCode = preg_replace('/[^0-9]/', '', $postalCode);
 
         $postalCode = floatval($postalCode);
 
