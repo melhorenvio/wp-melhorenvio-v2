@@ -27,25 +27,25 @@ class PackageService
             if (isset($item->packages)) {
                 foreach ($item->packages as $key => $package) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter(
+                        'largura' => DimensionsHelper::convertUnitDimensionToCentimeter(
                             $package->dimensions->width
                         ),
-                        'altura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter(
+                        'altura' => DimensionsHelper::convertUnitDimensionToCentimeter(
                             $package->dimensions->height
                         ),
-                        'comprimento' => (new DimensionsHelper())->convertUnitDimensionToCentimeter(
+                        'comprimento' => DimensionsHelper::convertUnitDimensionToCentimeter(
                             $package->dimensions->length
                         ),
-                        'peso' => (new DimensionsHelper())->convertWeightUnit($package->weight)
+                        'peso' => DimensionsHelper::convertWeightUnit($package->weight)
                     ];
                 }
             } elseif (isset($item->volumes)) {
                 foreach ($item->volumes as $key => $volume) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->width),
-                        'altura' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->height),
-                        'comprimento' => (new DimensionsHelper())->convertUnitDimensionToCentimeter($volume->length),
-                        'peso' => (new DimensionsHelper())->convertWeightUnit($volume->weight)
+                        'largura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->width),
+                        'altura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->height),
+                        'comprimento' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->length),
+                        'peso' => DimensionsHelper::convertWeightUnit($volume->weight)
                     ];
                 }
             }
