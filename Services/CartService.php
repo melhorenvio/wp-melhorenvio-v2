@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Services;
 
@@ -25,20 +25,23 @@ class CartService
 
         $quotation = (new QuotationService())->calculateQuotationByOrderId($order_id);
 
+        $orderInvoiceService = new OrderInvoicesService();
+
         $body = array(
             'from' => $from,
             'to' => $to,
             'agency' => (new Agency())->getCodeAgencySelected(),
             'service' => $shipping_method_id,
             'products' => $products,
-            'volumes' => $this->getVolumes($quotation, $shipping_method_id), 
+            'volumes' => $this->getVolumes($quotation, $shipping_method_id),
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
                 "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
                 "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                 "collect" => false,
-                "reverse" => false, 
-                "non_commercial" => true, 
+                "reverse" => false,
+                "non_commercial" => $orderInvoiceService->isNonCommercial($order_id),
+                "invoice" => $orderInvoiceService->getInvoiceOrder($order_id),
                 'platform' => self::PLATAFORM,
                 'reminder' => null
             )
@@ -55,21 +58,21 @@ class CartService
         }
 
         $result = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_ADD_CART, 
-            'POST', 
+            self::ROUTE_MELHOR_ENVIO_ADD_CART,
+            'POST',
             $body,
             true
-        );      
+        );
 
-        if ( array_key_exists('errors', $result) ) {
+        if (array_key_exists('errors', $result)) {
             return $result;
         }
 
         return (new OrderQuotationService())->updateDataQuotation(
-            $order_id, 
-            $result->id, 
-            $result->protocol, 
-            'pending', 
+            $order_id,
+            $result->id,
+            $result->protocol,
+            'pending',
             $shipping_method_id,
             null,
             $result->self_tracking
@@ -90,8 +93,8 @@ class CartService
         (new OrderQuotationService())->removeDataQuotation($order_id);
 
         return (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'], 
-            'DELETE', 
+            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'],
+            'DELETE',
             []
         );
     }
@@ -108,7 +111,7 @@ class CartService
         $volumes = [];
 
         foreach ($quotation as $item) {
-    
+
             if ($item->id == $method_id) {
 
                 foreach ($item->packages as $package) {
@@ -124,7 +127,7 @@ class CartService
         }
 
         //TODO remover volumes se for correios e tratar o erro.
-        if (in_array($method_id, [1,2,13,17])) {
+        if (in_array($method_id, [1, 2, 13, 17])) {
             return $volumes[0];
         }
 
@@ -178,10 +181,10 @@ class CartService
             $errors[] = sprintf("Informar a agência do envio do pedido %s", $order_id);
         }
 
-        if (!isset($body['volumes']) ) {
+        if (!isset($body['volumes'])) {
             $errors[] = sprintf("Informar os volumes do envio do pedido %s", $order_id);
         }
 
         return $errors;
-    }   
+    }
 }
