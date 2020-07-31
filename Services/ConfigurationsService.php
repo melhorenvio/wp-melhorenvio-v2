@@ -7,7 +7,6 @@ use Models\Address;
 use Models\Agency;
 use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
-use Models\Store;
 use Models\UseInsurance;
 
 class ConfigurationsService
@@ -18,7 +17,7 @@ class ConfigurationsService
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
-            'stores'              => (new Store())->getStories()['stores'],
+            'stores'              => (new StoreService())->getStories(),
             'agencies'            => $responseAgencies['agencies'],
             'allAgencies'         => $responseAgencies['allAgencies'],
             'agencySelected'      => $responseAgencies['agencySelected'],
