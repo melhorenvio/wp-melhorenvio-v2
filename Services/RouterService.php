@@ -3,9 +3,9 @@
 namespace Services;
 
 use Controllers\ConfigurationController;
-use Controllers\CotationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
+use Controllers\QuotationController;
 use Controllers\SessionsController;
 use Controllers\StatusController;
 use Controllers\TokenController;

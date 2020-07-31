@@ -34,9 +34,7 @@ class CalculateShippingMethodService
         );
 
         if ($result) {
-
             if (isset($result->name) && isset($result->price)) {
-
                 $method = (new OptionsHelper())->getName(
                     $result->id,
                     $result->name,
@@ -93,5 +91,54 @@ class CalculateShippingMethodService
     public function isCorreios($code)
     {
         return in_array($code, self::SERVICES_CORREIOS);
+    }
+
+    /**
+     * Get shipping classes options.
+     *
+     * @return array
+     */
+    public function getShippingClassesOptions()
+    {
+        $shipping_classes = WC()->shipping->get_shipping_classes();
+        $options = array(
+            '-1' => __('Any Shipping Class', 'woocommerce-correios'),
+            '0'  => __('No Shipping Class', 'woocommerce-correios'),
+        );
+
+        if (!empty($shipping_classes)) {
+            $options += wp_list_pluck($shipping_classes, 'name', 'term_id');
+        }
+
+        return $options;
+    }
+
+    /**
+     * Check if package uses only the selected shipping class.
+     *
+     * @param  array $package Cart package.
+     * @return bool
+     */
+    public function hasOnlySelectedShippingClass($package)
+    {
+        $only_selected = true;
+
+        if (-1 === $this->shipping_class_id) {
+            return $only_selected;
+        }
+
+        foreach ($package['contents'] as $item_id => $values) {
+            $product = $values['data'];
+            $qty     = $values['quantity'];
+
+            if ($qty > 0 && $product->needs_shipping()) {
+                if ($this->shipping_class_id !== $product->get_shipping_class_id()) {
+                    $only_selected = false;
+                    break;
+                }
+            }
+        }
+
+        return $only_selected;
     }
 }
