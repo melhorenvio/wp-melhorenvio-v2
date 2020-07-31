@@ -66,9 +66,9 @@ class TokenController
     /**
      * Function to sake data of token
      *
-     * @param POST token
-     * @param POST $token_sandbox
-     * @param POST $token_environment
+     * @param string $token
+     * @param string $token_sandbox
+     * @param string $token_environment
      *
      * @return json
      */

@@ -230,7 +230,7 @@ class OrdersController
     /**
      * Function to make a step by step to printed any labels
      *
-     * @param array ids
+     * @param array $ids
      * @return array $response;
      */
     public function buyOnClick()
