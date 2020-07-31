@@ -72,10 +72,18 @@ class ConfigurationController
             ], 412);
         }
 
-        return wp_send_json(
-            (new Agency())->setAgency($_GET['id']),
-            200
-        );
+
+        if (!(new Agency())->setAgency($_GET['id'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao atualizar a agência selecionada'
+            ], 400);
+        }
+
+        return wp_send_json([
+            'success' => true,
+            'message' => 'Agência selecionada atualizada com successo.'
+        ], 200);
     }
 
     /**
