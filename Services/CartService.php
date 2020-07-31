@@ -50,7 +50,6 @@ class CartService
         $isValid = $this->paramsValid($body, $order_id);
 
         if (!empty($isValid)) {
-
             return [
                 'success' => false,
                 'errors' => $isValid

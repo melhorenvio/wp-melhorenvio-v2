@@ -3,7 +3,6 @@
 namespace Services;
 
 use Models\Address;
-use Models\Store;
 
 class SellerService
 {
@@ -18,7 +17,7 @@ class SellerService
 
         $user = $this->getDataApiMelhorEnvio();
 
-        $store = $this->getStoreSelected();
+        $store = (new StoreService())->getStoreSelected();
 
         if (isset($address['address']['id'])) {
             $user->address->address = (isset($address['address']['address'])) ? $address['address']['address'] : null;
@@ -65,31 +64,5 @@ class SellerService
         }
 
         return $data;
-    }
-
-    /**
-     * Function to get store selected by seller.
-     *
-     * @return bool|object
-     */
-    public function getStoreSelected()
-    {
-        $stores = (new Store())->getStories();
-
-        if (!isset($stores['stores'])) {
-            return false;
-        }
-
-        $store = array_map(function ($store) {
-            if ($store['selected']) {
-                return $store;
-            }
-        }, $stores['stores']);
-
-        if (!isset($store[0]['document'])) {
-            return false;
-        }
-
-        return (object) $store[0];
     }
 }
