@@ -9,7 +9,7 @@ class BuyerService
     /**
      * Get data of buyer by order id
      *
-     * @param integer $orderId
+     * @param int $orderId
      * @return object $data
      */
     public function getDataBuyerByOrderId($orderId)
