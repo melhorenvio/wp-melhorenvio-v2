@@ -6,6 +6,7 @@ use Helpers\DimensionsHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
+use Services\LocationService;
 use Services\QuotationService;
 
 /**
@@ -73,7 +74,7 @@ class CotationController
 
         $this->isValidRequest($data);
 
-        $destination = $this->getAddressByCep($data['cep_origem']);
+        $destination = (new LocationService())->getAddressByPostalCode($_POST['data']['cep_origem']);
 
         if (empty($destination)) {
             return wp_send_json([
@@ -155,104 +156,7 @@ class CotationController
     }
 
     /**
-     * Check is has all data to make quotation.
-     *
-     * @param Array $request
-     * @return void|json
-     */
-    private function isValidRequest($request)
-    {
-        if (!isset($request)) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Dados incompletos'
-            ], 400);
-        }
-
-        if (!isset($request['cep_origem'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Campo CEP é necessário'
-            ], 400);
-        }
-
-        if (strlen(trim($request['cep_origem'])) != 8) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Campo CEP precisa ter 8 digitos'
-            ], 400);
-        }
-
-        if (!isset($request['produto_peso'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Informar o peso do produto'
-            ], 400);
-        }
-
-        if (!isset($request['produto_largura'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Informar  largura do produto'
-            ], 400);
-        }
-
-        if (!isset($request['produto_comprimento'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Informar o comprimento do produto'
-            ], 400);
-        }
-
-        if (!isset($request['produto_altura'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Informar a altura do produto'
-            ], 400);
-        }
-
-        if (!isset($request['produto_preco'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Informar o preço do produto'
-            ], 400);
-        }
-    }
-
-    /**
-     * Get address information from zip code
-     *
-     * @param string $cep
-     * @return Json
-     */
-    private function getAddressByCep($cep)
-    {
-        if (empty($cep)) {
-            return null;
-        }
-
-        $url = "https://location.melhorenvio.com.br/" . str_replace('-', '', trim($cep));
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        $result = curl_exec($curl);
-        $error  = curl_error($curl);
-        curl_close($curl);
-
-        if (!empty($error)) {
-            return null;
-        }
-
-        $response = json_decode($result);
-        return $response;
-    }
-
-    /**
-     * Function to define the object in the standard expected by woocommerce   
-     *
-     * @param mixed $item
+     * @param [type] $item
      * @return void
      */
     private function mapObject($item)
