@@ -6,18 +6,16 @@ class WooCommerceService
 {
     public function hasFreeShippingMethod()
     {
-        global $woocommerce;
-
         $totalCart = 0;
 
         $freeShiping = false;
 
-        foreach(WC()->cart->cart_contents as $cart) {
+        foreach (WC()->cart->cart_contents as $cart) {
             $totalCart += $cart['line_subtotal'];
         }
 
-        foreach(WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount ) {
+        foreach (WC()->cart->get_coupons() as $cp) {
+            if ($cp->get_free_shipping() && $totalCart >= $cp->amount) {
                 $freeShiping = true;
             }
         }

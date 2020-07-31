@@ -5,30 +5,31 @@ namespace Services;
 use Models\Option;
 
 /**
- * Quotation service class
+ * Class responsible for the quotation service with the Melhor Envio api.
  */
 class QuotationService
 {
-    /**
-     * Melhor Envio api route to make the quote
-     */
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
     /**
      * Function to calculate a quotation by order_id.
      *
-     * @param int $order_id
+     * @param int $orderId
      * @return object $quotation
      */
-    public function calculateQuotationByOrderId($order_id)
+    public function calculateQuotationByOrderId($orderId)
     {
-        $products = (new OrdersProductsService())->getProductsOrder($order_id);
+        $products = (new OrdersProductsService())->getProductsOrder($orderId);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($order_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
 
-        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code, null);
+        $quotation = $this->calculateQuotationByProducts(
+            $products,
+            $buyer->postal_code,
+            null
+        );
 
-        return (new OrderQuotationService())->saveQuotation($order_id, $quotation);
+        return (new OrderQuotationService())->saveQuotation($orderId, $quotation);
     }
 
     /**
@@ -38,16 +39,19 @@ class QuotationService
      * @param string $postal_code
      * @return object $quotation
      */
-    public function calculateQuotationByProducts($products, $postal_code, $service = null)
-    {   
+    public function calculateQuotationByProducts(
+        $products,
+        $postalCode,
+        $service = null
+    ) {
         $seller = (new SellerService())->getData();
-            
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
             ],
             'to' => [
-                'postal_code' => $postal_code
+                'postal_code' => $postalCode
             ],
             'options'  => (new Option())->getOptions(),
             'products' => $products
@@ -56,10 +60,9 @@ class QuotationService
         $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
-
             $quotation = (new RequestService())->request(
-                self::ROUTE_API_MELHOR_CALCULATE, 
-                'POST', 
+                self::ROUTE_API_MELHOR_CALCULATE,
+                'POST',
                 $body,
                 true
             );
@@ -77,16 +80,19 @@ class QuotationService
      * @param string $postal_code
      * @return object $quotation
      */
-    public function calculateQuotationByPackages($packages, $postal_code, $service = null)
-    {   
+    public function calculateQuotationByPackages(
+        $packages,
+        $postalCode,
+        $service = null
+    ) {
         $seller = (new SellerService())->getData();
-            
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
             ],
             'to' => [
-                'postal_code' => $postal_code
+                'postal_code' => $postalCode
             ],
             'options'  => (new Option())->getOptions(),
             'packages' => $packages
@@ -95,15 +101,14 @@ class QuotationService
         $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
-
             $quotation = (new RequestService())->request(
-                self::ROUTE_API_MELHOR_CALCULATE, 
-                'POST', 
+                self::ROUTE_API_MELHOR_CALCULATE,
+                'POST',
                 $body,
                 true
             );
 
-            $this->storeQuotationSession($hash, $quotation);
+            $this->storeQuotationSession($quotation, $quotation);
         }
 
         return $quotation;
@@ -136,7 +141,7 @@ class QuotationService
         session_start();
 
         $hash = md5(json_encode($bodyQuotation));
-    
+
         if (!isset($_SESSION['quotation'][$hash][$service])) {
             unset($_SSESION['quotation'][$hash]);
             return false;
@@ -144,13 +149,16 @@ class QuotationService
 
         if ($this->isSessionCachedQuotationExpired($bodyQuotation)) {
             return false;
-        }   
+        }
 
-        return end(array_filter($_SESSION['quotation'][$hash], function($item) use ($service) {
-            if ($item->id == $service) {
-                return $item;
+        return end(array_filter(
+            $_SESSION['quotation'][$hash],
+            function ($item) use ($service) {
+                if ($item->id == $service) {
+                    return $item;
+                }
             }
-        })); 
+        ));
     }
 
     /**
@@ -160,7 +168,7 @@ class QuotationService
      * @return boolean
      */
     private function isSessionCachedQuotationExpired($bodyQuotation)
-    {   
+    {
         $hash = md5(json_encode($bodyQuotation));
 
         if (!isset($_SESSION['quotation'][$hash]['created'])) {
@@ -169,12 +177,13 @@ class QuotationService
 
         $created = $_SESSION['quotation'][$hash]['created'];
 
-        $dateLimit = date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." -30 minutes"));
+        $dateLimit = date(
+            "Y-m-d h:i:s",
+            strtotime(date("Y-m-d h:i:s") . " -30 minutes")
+        );
 
         if ($dateLimit > $created) {
-
             unset($_SESSION['quotation'][$hash]);
-
             return true;
         }
 

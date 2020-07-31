@@ -6,18 +6,24 @@ use Helpers\TranslateStatusHelper;
 
 class ListOrderService
 {
+    /**
+     * Function to return the list of orders
+     *
+     * @param array $args
+     * @return void
+     */
     public function getList($args)
     {
-        $limit = $_GET['limit'];
-        $skip = $_GET['skip'];
-        $status = $_GET['status'];
-        $wpstatus = $_GET['wpstatus'];
+        $limit = $args['limit'];
+        $skip = $args['skip'];
+        $status = $args['status'];
+        $wpstatus = $args['wpstatus'];
 
         $posts = $this->getPosts($limit, $skip, $status, $wpstatus);
 
         if (empty($posts)) {
             return [
-                'orders' => [], 
+                'orders' => [],
                 'load' => false
             ];
         }
@@ -30,32 +36,41 @@ class ListOrderService
         ];
     }
 
+    /**
+     * Function to return the list of orders with the data of the Melhor Envio
+     *
+     * @param array $posts
+     * @return array
+     */
     private function setData($posts)
-    {   
+    {
         $orders = [];
 
         $statusMelhorEnvio = (new OrderService())->mergeStatus($posts);
 
         foreach ($posts as $post) {
+            $postId = $post->ID;
 
-            $post_id = $post->ID;
-             
-            $invoice = (new InvoiceService())->getInvoice($post_id);
+            $invoice = (new InvoiceService())->getInvoice($postId);
 
             $orders[] = [
-                'id' => $post_id,
-                'tracking' => $statusMelhorEnvio[$post_id]['tracking'],
-                'link_tracking' => (!is_null($statusMelhorEnvio[$post_id]['tracking'])) ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$post_id]['tracking']) : null,
+                'id' => $postId,
+                'tracking' => $statusMelhorEnvio[$postId]['tracking'],
+                'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
+                    ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
+                    : null,
                 'to' => (new BuyerService())->getDataBuyerByOrderId($post->ID),
-                'status' => $statusMelhorEnvio[$post_id]['status'],
-                'status_texto' => (new TranslateStatusHelper())->translateNameStatus($statusMelhorEnvio[$post_id]['status']),
-                'order_id' => $statusMelhorEnvio[$post_id]['order_id'],
-                'protocol' => $statusMelhorEnvio[$post_id]['protocol'],
-                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false ,
+                'status' => $statusMelhorEnvio[$postId]['status'],
+                'status_texto' => (new TranslateStatusHelper())->translateNameStatus(
+                    $statusMelhorEnvio[$postId]['status']
+                ),
+                'order_id' => $statusMelhorEnvio[$postId]['order_id'],
+                'protocol' => $statusMelhorEnvio[$postId]['protocol'],
+                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
-                'products' => (new OrdersProductsService())->getProductsOrder($post_id),
+                'products' => (new OrdersProductsService())->getProductsOrder($postId),
                 'cotation' => [],
-                'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $post_id)
+                'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
 
@@ -79,10 +94,10 @@ class ListOrderService
             'post_type'   => 'shop_order',
         ];
 
-        if(isset($wpstatus) && $wpstatus != 'all'){
+        if (isset($wpstatus) && $wpstatus != 'all') {
             $args['post_status'] = $wpstatus;
-        } else if(isset($wpstatus) && $wpstatus == 'all') {
-            $args['post_status'] = array_keys( wc_get_order_statuses() );
+        } else if (isset($wpstatus) && $wpstatus == 'all') {
+            $args['post_status'] = array_keys(wc_get_order_statuses());
         } else {
             $args['post_status'] = 'publish';
         }
@@ -97,6 +112,6 @@ class ListOrderService
             ];
         }
 
-        return  get_posts($args);  
+        return  get_posts($args);
     }
 }

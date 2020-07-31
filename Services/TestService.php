@@ -14,7 +14,7 @@ class TestService
     }
 
     public function run()
-    {   
+    {
         (new SessionService())->clear();
 
         $response = [
@@ -23,7 +23,7 @@ class TestService
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData()),
             'metrics' => $this->getMetrics(),
-            'path' => dirname( __FILE__ )
+            'path' => dirname(__FILE__)
         ];
 
         if (isset($_GET['postalcode'])) {
@@ -31,30 +31,29 @@ class TestService
             $product = $this->getProductToTest();
 
             $quotation = (new QuotationService())->calculateQuotationByProducts(
-                $product, 
-                $_GET['postalcode'], 
+                $product,
+                $_GET['postalcode'],
                 null
             );
 
             $response['product'] = $product;
 
-            foreach ($quotation as  $item) {
+            foreach ($quotation as $item) {
                 $response['quotation'][$item->id] = [
                     "Serviço" => $item->name,
                     "Valor" => $item->price,
                     'Erro' => $item->error
                 ];
             }
-
         }
 
-       echo json_encode($response);die;
+        return wp_send_json($response, 200);
     }
 
     /**
      * Function to get cep destiny
      *
-     * @param GET $data
+     * @param array data
      * @return string $cep
      */
     private function cepDestiny($data)
@@ -65,13 +64,13 @@ class TestService
     /**
      * Function to get packages
      *
-     * @param GET $data
+     * @param array data
      * @return array $packages
      */
     private function packages($data)
     {
         return [
-            'width'  => (isset($data['width']))  ? (float) $data['width']  : 17 ,
+            'width'  => (isset($data['width']))  ? (float) $data['width']  : 17,
             'height' => (isset($data['height'])) ? (float) $data['height'] : 23,
             'length' => (isset($data['length'])) ? (float) $data['length'] : 10,
             'weight' => (isset($data['weight'])) ? (float) $data['weight'] : 1
@@ -81,12 +80,12 @@ class TestService
     /**
      * Function to get insurance vale
      *
-     * @param GET $data
+     * @param array data
      * @return float $insurance_value
      */
     private function insuranceValue($data)
     {
-       return (isset($data['insurance_value']))  ? (float) $data['insurance_value']  : 20.50;
+        return (isset($data['insurance_value']))  ? (float) $data['insurance_value']  : 20.50;
     }
 
     /**
@@ -96,7 +95,7 @@ class TestService
      */
     private function getListPluginsInstaleds()
     {
-        return apply_filters( 'network_admin_active_plugins', get_option( 'active_plugins' ));
+        return apply_filters('network_admin_active_plugins', get_option('active_plugins'));
     }
 
     /**
@@ -107,11 +106,11 @@ class TestService
     private function getShippingServices()
     {
         $services = [];
-        foreach ( glob( ABSPATH . '/wp-content/plugins/melhor-envio-cotacao/services_methods/*.php' ) as $filename ) {
+        foreach (glob(ABSPATH . '/wp-content/plugins/melhor-envio-cotacao/services_methods/*.php') as $filename) {
             $services[] = $filename;
         }
 
-        foreach ( glob( ABSPATH . '/wp-content/plugins/plugin-woocommerce/services_methods/*.php' ) as $filename ) {
+        foreach (glob(ABSPATH . '/wp-content/plugins/plugin-woocommerce/services_methods/*.php') as $filename) {
             $services[] = $filename;
         }
 
@@ -136,9 +135,9 @@ class TestService
     {
         $args = [];
 
-        $products = wc_get_products( $args );
-        
-        $_product = $products[rand(0, (count($products) - 1 ))];
+        $products = wc_get_products($args);
+
+        $_product = $products[rand(0, (count($products) - 1))];
 
         return [
             "id"              => $_product->get_id(),
@@ -146,10 +145,10 @@ class TestService
             "quantity"        => 1,
             "unitary_value"   => round($_product->get_price(), 2),
             "insurance_value" => round($_product->get_price(), 2),
-            "weight"          => (new DimensionsHelper())->converterIfNecessary($_product->weight),
-            "width"           => (new DimensionsHelper())->converterDimension($_product->width),
-            "height"          => (new DimensionsHelper())->converterDimension($_product->height),
-            "length"          => (new DimensionsHelper())->converterDimension($_product->length)
+            "weight"          => (new DimensionsHelper())->convertWeightUnit($_product->weight),
+            "width"           => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->width),
+            "height"          => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->height),
+            "length"          => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->length)
         ];
     }
 
@@ -161,7 +160,7 @@ class TestService
     private function getMetrics()
     {
         return [
-            'weight_unit' => get_option( 'woocommerce_weight_unit' ),
+            'weight_unit' => get_option('woocommerce_weight_unit'),
             'dimension_unit' => get_option('woocommerce_dimension_unit')
         ];
     }
