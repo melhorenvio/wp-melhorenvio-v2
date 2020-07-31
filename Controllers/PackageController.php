@@ -7,7 +7,7 @@ use Helpers\DimensionsHelper;
 class PackageController
 {
     /**
-     * @param [type] $package
+     * @param array $package
      * @return void
      */
     public function getPackage($package)
@@ -36,7 +36,7 @@ class PackageController
     }
 
     /**
-     * @param [type] $order_id
+     * @param int $order_id
      * @return void
      */
     public function getPackageOrderAfterCotation($order_id)
@@ -67,7 +67,7 @@ class PackageController
                             'length' => (isset($package->length)) ? $package->length : null,
                             'weight' => $this->getWeighteBox($total, $quantity, $weight),
                             'quantity' => $quantity,
-                            'insurance_value' => (isset($package->price) ? $package->price : 1.0 ),
+                            'insurance_value' => (isset($package->price) ? $package->price : 1.0),
                             'insurance' => $package->insurance,
                             'products' => isset($package->products) ? $package->products : []
                         ];
@@ -86,7 +86,7 @@ class PackageController
         $total = 0;
         foreach ($data as $item) {
             if (isset($item->products)) {
-                foreach($item->products as $prod) {
+                foreach ($item->products as $prod) {
                     $total = $total + $prod->quantity;
                 }
             }
@@ -100,7 +100,7 @@ class PackageController
     }
 
     /**
-     * @param [type] $order_id
+     * @param int $order_id
      * @return void
      */
     public function getPackageOrder($order_id)
@@ -109,10 +109,10 @@ class PackageController
         $width  = 0;
         $height = 0;
         $length = 0;
-        $order  = wc_get_order( $order_id );
+        $order  = wc_get_order($order_id);
 
-        foreach( $order->get_items() as $item_id => $item_product ){
-            
+        foreach ($order->get_items() as $item_id => $item_product) {
+
             $_product = $item_product->get_product();
 
             $weight = $weight + $_product->weight * $item_product->get_quantity();
@@ -130,7 +130,7 @@ class PackageController
     }
 
     /**
-     * @param [type] $package
+     * @param array $package
      * @return void
      */
     private function converterIfNecessary($package)

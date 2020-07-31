@@ -11,8 +11,8 @@ use Models\Address;
 use Controllers\TokenController;
 use Controllers\HelperController;
 
-class Quotation 
-{  
+class Quotation
+{
     private $id;
 
     private $from;
@@ -43,10 +43,9 @@ class Quotation
             $this->products = $this->getProducts();
             $this->to = $this->getTo();
             $this->insurance_value = $this->getInsuranceValue();
-            
         }
 
-        if (!empty($products) || !empty($package) ) {
+        if (!empty($products) || !empty($package)) {
             $this->products = $products;
         }
 
@@ -94,7 +93,7 @@ class Quotation
     public function getTo()
     {
         try {
-            $orderWc = new \WC_Order( $this->id );
+            $orderWc = new \WC_Order($this->id);
 
             $to = $orderWc->get_data();
 
@@ -105,7 +104,7 @@ class Quotation
             // tratar log
         }
     }
-    
+
     /**
      * Return an array with the products by quotation
      *
@@ -116,13 +115,13 @@ class Quotation
         $products = [];
 
         try {
-            $orderWc = new \WC_Order( $this->id );
+            $orderWc = new \WC_Order($this->id);
 
             $order_items = $orderWc->get_items();
-            
+
             foreach ($order_items as $product) {
                 $data = $product->get_data();
-                
+
                 $productId = ($data['variation_id'] != 0) ? $data['variation_id'] : $data['product_id'];
 
                 $productInfo = wc_get_product($productId);
@@ -133,9 +132,9 @@ class Quotation
                     'name'         => $data['name'],
                     'price'        => (!empty($productInfo) ? $productInfo->get_price() : ''),
                     'height'       => (!empty($productInfo) ? $productInfo->get_height() : ''),
-                    'width'        => (!empty($productInfo) ? $productInfo->get_width(): ''),
-                    'length'       => (!empty($productInfo) ? $productInfo->get_length(): ''),
-                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight(): ''),
+                    'width'        => (!empty($productInfo) ? $productInfo->get_width() : ''),
+                    'length'       => (!empty($productInfo) ? $productInfo->get_length() : ''),
+                    'weight'       => (!empty($productInfo) ? $productInfo->get_weight() : ''),
                     'quantity'     => intval($data['quantity']),
                     'total'        => floatval($data['total'])
                 );
@@ -155,7 +154,7 @@ class Quotation
     public function getInsuranceValue()
     {
         try {
-            $orderWc = new \WC_Order( $this->id );
+            $orderWc = new \WC_Order($this->id);
 
             $data = $orderWc->get_data();
 
@@ -216,7 +215,7 @@ class Quotation
                 'postal_code' => preg_replace('/\D/', '', $to),
             ),
             'settings' => array(
-                'show' => array( 
+                'show' => array(
                     'price' => true,
                     'discount' => true,
                     'delivery' => true
@@ -242,7 +241,7 @@ class Quotation
                     'height' => (int) $helper->converterDimension($product->height),
                     'width'  => (int) $helper->converterDimension($product->width),
                     'length' => (int) $helper->converterDimension($product->length),
-                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight,2) : round($helper->converterIfNecessary($product->weight),2)
+                    'weight' => (float) (isset($product->notConverterWeight)) ? round($product->weight, 2) : round($helper->converterIfNecessary($product->weight), 2)
                 );
 
                 $insurance_value[$key] = floatval($product->price);
@@ -263,7 +262,7 @@ class Quotation
     /**
      * Function to make a quotation on API Melhor Envio
      *
-     * @param null $service
+     * @param int $service
      * @return array|boolean
      */
     public function calculate($service = null)
@@ -275,10 +274,10 @@ class Quotation
                 'headers'           =>  array(
                     'Content-Type'  => 'application/json',
                     'Accept'        => 'application/json',
-                    'Authorization' => 'Bearer '.$token,
+                    'Authorization' => 'Bearer ' . $token,
                 ),
                 'body'   => json_encode($body),
-                'timeout'=> 10
+                'timeout' => 10
             );
 
             $this->hashCotation = md5(json_encode($body));
@@ -302,7 +301,10 @@ class Quotation
 
                         if (isset($item->error)) {
                             (new Log())->register(
-                                $this->id, 'error_cotation', $body, [
+                                $this->id,
+                                'error_cotation',
+                                $body,
+                                [
                                     'service' => $item->id,
                                     'error' => $item->error
                                 ]
@@ -326,12 +328,11 @@ class Quotation
                     }
 
                     return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'];
-
                 } catch (\Exception $e) {
                     return false;
                 }
             }
-        } 
+        }
 
         if (!is_null($service) && isset($_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service])) {
             return $_SESSION[$this->codeStore]['cotations'][$this->hashCotation]['results'][$service];
