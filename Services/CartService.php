@@ -80,10 +80,7 @@ class CartService
         $data = (new OrderQuotationService())->getData($orderId);
 
         if (!isset($data['order_id'])) {
-            return [
-                'success' => false,
-                'errors' => 'Pedido não encontrado.'
-            ];
+            return false;
         }
 
         (new OrderQuotationService())->removeDataQuotation($orderId);

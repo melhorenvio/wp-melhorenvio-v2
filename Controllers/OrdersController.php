@@ -127,7 +127,12 @@ class OrdersController
             ], 400);
         }
 
-        (new CartService())->remove($_GET['id']);
+        if (!(new CartService())->remove($_GET['id'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao remove o pedid do carrinho'
+            ], 400);
+        }
 
         return wp_send_json([
             'success' => true,
