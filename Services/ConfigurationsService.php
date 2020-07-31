@@ -19,7 +19,7 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $responseAgencies = (new Agency())->getAgencies();
+        $responseAgencies = (new Agency())->get();
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],

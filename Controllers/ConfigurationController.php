@@ -94,7 +94,7 @@ class ConfigurationController
     public function getAgencyJadlog()
     {
         return wp_send_json(
-            (new Agency())->getAgencies(),
+            (new Agency())->get(),
             200
         );
     }

@@ -12,7 +12,7 @@ class Agency
     /**
      * @return void
      */
-    public function getAgencies()
+    public function get()
     {
         $results = '';
 
@@ -102,7 +102,7 @@ class Agency
      */
     public function getCodeAgencySelected()
     {
-        $agencies = $this->getAgencies();
+        $agencies = $this->get();
 
         foreach ($agencies['allAgencies'] as $agency) {
             if ($agency['selected']) {
