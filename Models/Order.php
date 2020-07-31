@@ -15,7 +15,6 @@ class Order
     public function __construct($id = null)
     {
         try {
-            $post = get_post($id);
 
             $orderWc = new \WC_Order($id);
 
@@ -27,9 +26,9 @@ class Order
 
             $this->products = $this->getProducts();
 
-            $this->total = 0; //$orderWc->total;
+            $this->total = 0;
 
-            $this->shipping_total = 0; //$orderWc->shipping_total;
+            $this->shipping_total = 0;
 
             $this->to = $data['billing'];
 

@@ -40,7 +40,7 @@ class OrdersController
      * Function to add order in cart Melhor Envio.
      * 
      * @param int $order_id
-     * @param int choosen
+     * @param int $choosen
      * @return json $results
      */
     public function sendOrder()
