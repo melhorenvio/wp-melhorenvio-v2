@@ -37,7 +37,7 @@ class ConfigurationController
     public function saveToken($tokenUser)
     {
         $token = get_option('melhorenvio_token');
-        if (!$token or empty($token)) {
+        if (!$token) {
             add_option('melhorenvio_token', $tokenUser);
         }
 
