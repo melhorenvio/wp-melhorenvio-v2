@@ -150,6 +150,56 @@ class CotationController
     }
 
     /**
+     * Function to validate request in screen product
+     *
+     * @param array $data
+     * @return json
+     */
+    private function isValidRequest($data)
+    {
+        if (!isset($data['cep_origem'])) {
+            return wp_send_json([
+                'success' => false, 'message' => 'Infomar CEP de origem'
+            ], 400);
+        }
+
+        if (!isset($data['produto_altura'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar a altura do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_largura'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar a largura do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_comprimento'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o comprimento do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_peso'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o peso do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_preco'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o preço do produto'
+            ], 400);
+        }
+    }
+
+    /**
      * @param [type] $item
      * @return void
      */
