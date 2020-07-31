@@ -67,8 +67,8 @@ class ListOrderService
     /**
      * Function to get posts
      *
-     * @param int limit
-     * @param int skip
+     * @param int $limit
+     * @param int $skip
      * @param string $status
      * @param string $wpstatus
      * @return array posts
