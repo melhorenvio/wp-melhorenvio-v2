@@ -6,7 +6,7 @@ add_action( 'woocommerce_shipping_init', 'azul_amanha_shipping_method_init' );
 
 function azul_amanha_shipping_method_init() {
 
-	if ( ! class_exists( 'WC_Azul_Amanha_Shipping_Method' ) ) {
+	if(!class_exists('WC_Azul_Amanha_Shipping_Method')){
 
 		class WC_Azul_Amanha_Shipping_Method extends WC_Shipping_Method {
 
@@ -34,8 +34,11 @@ function azul_amanha_shipping_method_init() {
 				$this->supports = array(
 					'shipping-zones',
 					'instance-settings',
+					'instance-settings-modal',
 				);
+				$this->service = (new CalculateShippingMethodService());
 				$this->init_form_fields();
+				$this->shipping_class_id  = (int) $this->get_option( 'shipping_class_id', '-1');
 			}
 			
 			/**
@@ -45,7 +48,6 @@ function azul_amanha_shipping_method_init() {
 			 * @return void
 			 */
 			function init() {
-				$this->init_form_fields(); 
 				$this->init_settings(); 
 				add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
 			}
@@ -59,16 +61,36 @@ function azul_amanha_shipping_method_init() {
 			 */
 			public function calculate_shipping( $package = []) 
 			{
-				$rate = (new CalculateShippingMethodService())->calculate_shipping(
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
+					return;
+				}
+
+				$rate = $methodService->calculate_shipping(
 					$package, 
 					$this->code,
 					'melhorenvio_azul_amanha',
 					'Azul Cargo'
 				);
 
-				if ($rate) {
+				if ($rate){
 					$this->add_rate($rate);
 				}
+			}
+
+			/**
+			 * Admin options fields.
+			 */
+			function init_form_fields() {
+				$this->instance_form_fields = array(
+					'shipping_class_id'  => array(
+						'title'       => 'Classe de entrega',
+						'type'        => 'select',
+						'desc_tip'    => true,
+						'default'     => '',
+						'class'       => 'wc-enhanced-select',
+						'options'     => $this->service->getShippingClassesOptions(),
+					),
+				);
 			}
 		}
 	}

@@ -72,7 +72,7 @@ class RouterService
      */
     private function loadRoutesQuotations()
     {
-        $quotationsController = new CotationController();
+        $quotationsController = new QuotationController();
 
         add_action('wp_ajax_nopriv_cotation_product_page', [$quotationsController, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$quotationsController, 'cotationProductPage']);

@@ -5,7 +5,7 @@ use Services\CalculateShippingMethodService;
 add_action( 'woocommerce_shipping_init', 'sedex_shipping_method_init' );
 
 function sedex_shipping_method_init() {
-	if ( ! class_exists( 'WC_Sedex_Shipping_Method' ) ) {
+	if(!class_exists('WC_Sedex_Shipping_Method')){
 
 		class WC_Sedex_Shipping_Method extends WC_Shipping_Method {
 
@@ -19,6 +19,7 @@ function sedex_shipping_method_init() {
 			public function __construct($instance_id = 0) {
 				$this->id                 = "sedex"; 
 				$this->instance_id = absint( $instance_id );
+				$this->shipping_class_id = (int) $this->get_option( 'shipping_class_id', '-1' );
 				$this->method_title       = "Correios SEDEX (Melhor Envio)";
 				$this->method_description = 'Serviço SEDEX';
 				$this->enabled            = "yes"; 
@@ -26,8 +27,11 @@ function sedex_shipping_method_init() {
 				$this->supports = array(
 					'shipping-zones',
 					'instance-settings',
+					'instance-settings-modal',
 				);
+				$this->service = (new CalculateShippingMethodService());
 				$this->init_form_fields();
+				$this->shipping_class_id  = (int) $this->get_option( 'shipping_class_id', '-1' );
 			}
 			
 			/**
@@ -37,10 +41,24 @@ function sedex_shipping_method_init() {
 			 * @return void
 			 */
 			function init() {
-
-				$this->init_form_fields(); 
 				$this->init_settings(); 
 				add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
+			}
+
+			/**
+			 * Admin options fields.
+			 */
+			function init_form_fields() {
+				$this->instance_form_fields = array(
+					'shipping_class_id'  => array(
+						'title'       => 'Classe de entrega',
+						'type'        => 'select',
+						'desc_tip'    => true,
+						'default'     => '',
+						'class'       => 'wc-enhanced-select',
+						'options'     => $this->service->getShippingClassesOptions(),
+					),
+				);
 			}
 
 			/**
@@ -50,16 +68,20 @@ function sedex_shipping_method_init() {
 			 * @param mixed $package
 			 * @return void
 			 */
-			public function calculate_shipping( $package = []) 
+			public function calculate_shipping($package = []) 
 			{
-				$rate = (new CalculateShippingMethodService())->calculate_shipping(
+				if(!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)){
+					return;
+				}
+
+				$rate = $this->service->calculate_shipping(
 					$package, 
 					$this->code,
 					'melhorenvio_sedex',
 					'Correios'
 				);
 
-				if ($rate) {
+				if($rate){
 					$this->add_rate($rate);
 				}
 			}
