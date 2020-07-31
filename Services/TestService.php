@@ -145,10 +145,10 @@ class TestService
             "quantity"        => 1,
             "unitary_value"   => round($_product->get_price(), 2),
             "insurance_value" => round($_product->get_price(), 2),
-            "weight"          => (new DimensionsHelper())->convertWeightUnit($_product->weight),
-            "width"           => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->width),
-            "height"          => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->height),
-            "length"          => (new DimensionsHelper())->convertUnitDimensionToCentimeter($_product->length)
+            "weight"          => DimensionsHelper::convertWeightUnit($_product->weight),
+            "width"           => DimensionsHelper::convertUnitDimensionToCentimeter($_product->width),
+            "height"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->height),
+            "length"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->length)
         ];
     }
 

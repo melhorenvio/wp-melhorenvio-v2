@@ -124,9 +124,9 @@ class PackageController
             $package['weight'] = $package['weight'] / 1000;
         }
 
-        $package['width'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['width']);
-        $package['height'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['height']);
-        $package['length'] = (new DimensionsHelper())->convertUnitDimensionToCentimeter($package['length']);
+        $package['width'] = DimensionsHelper::convertUnitDimensionToCentimeter($package['width']);
+        $package['height'] = DimensionsHelper::convertUnitDimensionToCentimeter($package['height']);
+        $package['length'] = DimensionsHelper::convertUnitDimensionToCentimeter($package['length']);
 
         return $package;
     }
