@@ -4,9 +4,9 @@ namespace Services;
 
 class RequestService
 {
-    const URL = 'https://api.melhorenvio.com';
+    const URL = 'https://api.melhorenvio.com/v2/me';
 
-    const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api';
+    const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api/v2/me';
 
     const TIMEOUT = 10;
 
@@ -59,7 +59,7 @@ class RequestService
 
         $response = json_decode(
             wp_remote_retrieve_body(
-                wp_remote_post($this->url . '/v2/me' . $route, $params)
+                wp_remote_post($this->url . $route, $params)
             )
         );
 
