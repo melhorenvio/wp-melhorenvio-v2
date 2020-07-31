@@ -34,12 +34,6 @@ class CotationController
     {
         $result = (new QuotationService())->calculateQuotationByOrderId($orderId);
 
-        $totalCart = 0;
-
-        foreach (WC()->cart->cart_contents as $cart) {
-            $totalCart += $cart['line_subtotal'];
-        }
-
         unset($_SESSION['quotation']);
 
         return $result;
