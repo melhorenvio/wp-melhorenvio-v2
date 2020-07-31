@@ -3,7 +3,8 @@
 namespace Services;
 
 use Controllers\ConfigurationController;
-use Controllers\QuotationController;
+use Controllers\CotationController;
+use Controllers\LocationsController;
 use Controllers\OrdersController;
 use Controllers\SessionsController;
 use Controllers\StatusController;
@@ -25,6 +26,7 @@ class RouterService
         $this->loadRoutesTokens();
         $this->loadRoutesTest();
         $this->loadRoutesSession();
+        $this->loadRoutesLocation();
     }
 
     /**
@@ -40,7 +42,7 @@ class RouterService
         add_action('wp_ajax_get_balance', [$usersController, 'getBalance']);
     }
 
-   /**
+    /**
      * function to start users routes
      *
      * @return void
@@ -48,8 +50,8 @@ class RouterService
     private function loadRoutesOrders()
     {
         $ordersController = new OrdersController();
-        
-        add_action('wp_ajax_get_quotation', function() use ($ordersController) {
+
+        add_action('wp_ajax_get_quotation', function () use ($ordersController) {
             $ordersController->getOrderQuotationByOrderId($_GET['id']);
         });
         add_action('wp_ajax_get_orders', [$ordersController, 'getOrders']);
@@ -87,11 +89,10 @@ class RouterService
         $configurationsController = new ConfigurationController();
 
         add_action('wp_ajax_get_agency_jadlog', [$configurationsController, 'getAgencyJadlog']);
-        add_action('wp_ajax_get_all_agencies_jadlog', [$configurationsController, 'getAgencyJadlog']);        
+        add_action('wp_ajax_get_all_agencies_jadlog', [$configurationsController, 'getAgencyJadlog']);
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
         add_action('wp_ajax_get_metodos', [$configurationsController, 'getMethodsEnables']);
         add_action('wp_ajax_save_configuracoes', [$configurationsController, 'saveAll']);
-            
     }
 
     /**
@@ -104,9 +105,8 @@ class RouterService
         $statusController = new StatusController();
 
         add_action('wp_ajax_get_status_woocommerce', [$statusController, 'getStatus']);
-
     }
-    
+
     /**
      * function to start tokens routes
      *
@@ -128,11 +128,11 @@ class RouterService
      */
     private function loadRoutesTest()
     {
-        add_action('wp_ajax_nopriv_environment', function() {
+        add_action('wp_ajax_nopriv_environment', function () {
             (new TestService('2.7.8'))->run();
         });
 
-        add_action('wp_ajax_environment', function() {
+        add_action('wp_ajax_environment', function () {
             (new TestService('2.7.8'))->run();
         });
     }
@@ -148,5 +148,27 @@ class RouterService
 
         add_action('wp_ajax_delete_melhor_envio_session', [$sessionsController, 'deleteSession']);
         add_action('wp_ajax_get_melhor_envio_session', [$sessionsController, 'getSession']);
+    }
+
+    /**
+     * function to start location routes
+     *
+     * @return void
+     */
+    private function loadRoutesLocation()
+    {
+        $locationController = new LocationsController();
+
+        foreach (['wp_ajax_get_address', 'wp_ajax_nopriv_get_address'] as $action) {
+            add_action($action, function () use ($locationController) {
+                if (!isset($_GET['postal_code'])) {
+                    return wp_send_json([
+                        'error' => true,
+                        'message' => 'Informar o campo "postal_code"'
+                    ], 400);
+                }
+                return $locationController->getAddressByPostalCode($_GET['postal_code']);
+            });
+        }
     }
 }

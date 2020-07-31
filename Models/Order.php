@@ -4,7 +4,8 @@ namespace Models;
 
 use Services\OrderQuotationService;
 
-class Order {
+class Order
+{
 
     private $id;
 
@@ -14,41 +15,37 @@ class Order {
     public function __construct($id = null)
     {
         try {
-            $post = get_post($id);
 
-            $orderWc = new \WC_Order( $id );
-            
+            $orderWc = new \WC_Order($id);
+
             $data = $orderWc->get_data();
 
             $this->id = $id;
-            
-            $this->address = $data['shipping'];
-            
-            $this->products = $this->getProducts();
-            
-            $this->total = 0; //$orderWc->total;
-            
-            $this->shipping_total = 0; //$orderWc->shipping_total;
-            
-            $this->to = $data['billing'];
-            
-            $this->cotation = (array) $this->getCotation();
-            
-        } catch (\Exception $e) {
-            
-        }
 
+            $this->address = $data['shipping'];
+
+            $this->products = $this->getProducts();
+
+            $this->total = 0;
+
+            $this->shipping_total = 0;
+
+            $this->to = $data['billing'];
+
+            $this->cotation = (array) $this->getCotation();
+        } catch (\Exception $e) {
+        }
     }
 
     /**
      * Retrieve all products in Order.
      *
-     * @param [Int] $id
+     * @param int $id
      * @return object
      */
-    protected function getProducts() 
+    protected function getProducts()
     {
-        $orderWc = new \WC_Order( $this->id );
+        $orderWc = new \WC_Order($this->id);
         $order_items = $orderWc->get_items();
         $products = [];
         foreach ($order_items as $product) {
@@ -67,13 +64,13 @@ class Order {
     /**
      * Retrieve cotation.
      *
-     * @param [Int] $id
+     * @param int $id
      * @return object
      */
-    public function getCotation($id = null) 
+    public function getCotation($id = null)
     {
-        if ($id) $this->id = $id; 
+        if ($id) $this->id = $id;
 
         return (new OrderQuotationService())->getQuotation($this->id);
-    }    
-}   
+    }
+}

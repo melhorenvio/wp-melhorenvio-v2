@@ -21,13 +21,13 @@ class SellerService
         $address = (new Address())->getAddressFrom();
 
         if (isset($address['address']['id'])) {
-            $data->address->address = $address['address']['address'];
-            $data->address->complement = $address['address']['complement'];
-            $data->address->number = $address['address']['number'];
-            $data->address->district = $address['address']['district'];
-            $data->address->city->city = $address['address']['city'];
-            $data->address->city->state->state_abbr = $address['address']['state'];
-            $data->address->postal_code = $address['address']['postal_code'];
+            $data->address->address = (isset($address['address']['address'])) ? $address['address']['address'] : null;
+            $data->address->complement = (isset($address['address']['complement'])) ? $address['address']['complement'] : null;
+            $data->address->number = (isset($address['address']['number'])) ? $address['address']['number'] : null;
+            $data->address->district = (isset($address['address']['district'])) ? $address['address']['district'] : null;
+            $data->address->city->city = (isset($address['address']['city'])) ? $address['address']['city'] : null;
+            $data->address->city->state->state_abbr = (isset($address['address']['state'])) ? $address['address']['state'] : null;
+            $data->address->postal_code = (isset($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
         }
 
         return (object) [

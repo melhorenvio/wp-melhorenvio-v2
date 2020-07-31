@@ -6,6 +6,7 @@ use Helpers\DimensionsHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
+use Services\LocationService;
 use Services\QuotationService;
 
 class QuotationController 
@@ -39,6 +40,8 @@ class QuotationController
             }
         }
 
+        unset($_SESSION['quotation']);
+
         return $result;
     }
 
@@ -70,11 +73,11 @@ class QuotationController
         if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
             return wp_send_json([
                 'success' => false,
-                 'message' => 'Campo CEP precisa ter 8 digitos'
+                'message' => 'Campo CEP precisa ter 8 digitos'
             ], 412);
         }
 
-        $destination = $this->getAddressByCep($_POST['data']['cep_origem']);
+        $destination = (new LocationService())->getAddressByPostalCode($_POST['data']['cep_origem']);
 
         if(empty($destination) || is_null($destination)) {
             return wp_send_json([
@@ -153,32 +156,6 @@ class QuotationController
             'success' => true, 
             'data' => $rates
         ], 200);
-    }
-
-    /**
-     * Get address information from zip code
-     *
-     * @param [string] $cep
-     * @return Json
-     */
-    private function getAddressByCep($cep)
-    {
-        if(empty($cep)) return null;
-
-        $url = "https://location.melhorenvio.com.br/". str_replace('-', '', trim($cep));
-        
-        $curl = curl_init(); 
-        curl_setopt($curl, CURLOPT_URL, $url); 
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
-        $result = curl_exec($curl); 
-        $error  = curl_error($curl);
-        curl_close($curl); 
-
-        if(!empty($error)) return null;
-
-        $response = json_decode($result);       
-        return $response;
     }
 
     /**

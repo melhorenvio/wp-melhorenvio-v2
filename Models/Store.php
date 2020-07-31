@@ -5,7 +5,7 @@ namespace Models;
 use Controllers\TokenController;
 use Services\RequestService;
 
-class Store 
+class Store
 {
     const URL = 'https://api.melhorenvio.com';
 
@@ -24,14 +24,10 @@ class Store
     /**
      * @return void
      */
-    public function getStories() 
-    {   
-        // Get data on session
+    public function getStories()
+    {
         $codeStore = md5(get_option('home'));
 
-        //$idStoreSelected = $this->getSelectedStoreId();
-        
-        // Get stores in session
         if (isset($_SESSION[$codeStore][self::SESSION_STORES])) {
 
             return array(
@@ -40,29 +36,7 @@ class Store
                 'stores'  => $_SESSION[$codeStore][self::SESSION_STORES]
             );
         }
-        // Get data on database wordpress
-        // $stores = get_option(self::OPTION_STORES, true);
-        /*
-        if (!is_bool($stores)) {
 
-            foreach ($stores as $key => $store) {
-                if ($store['id'] == $idStoreSelected) {
-                    $stores[$key]['selected'] = true;
-                } else {
-                    $stores[$key]['selected'] = false;
-                }
-            }
-
-            $_SESSION[$codeStore][self::SESSION_STORES] = $stores;
-
-            return array(
-                'success' => true,
-                'origin'  => 'database',
-                'stores'  => $stores 
-            );
-        }
-        */
-        // Get data on API Melhor Envio
         $response = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_COMPANIES,
             'GET',
@@ -72,7 +46,7 @@ class Store
 
         $stories = array();
 
-        if(!isset($response->data)) {
+        if (!isset($response->data)) {
             return array(
                 'success' => false,
                 'stores'  => null
@@ -81,7 +55,7 @@ class Store
 
         $storeSelected = $this->getSelectedStoreId();
 
-        foreach($response->data as $store) {
+        foreach ($response->data as $store) {
             $stories[] = array(
                 'id'             => $store->id,
                 'name'           => $store->name,
@@ -97,8 +71,6 @@ class Store
 
         $_SESSION[$codeStore][self::OPTION_STORES] = $stories;
 
-        // add_option(self::OPTION_STORES, $stories, true);
-
         return array(
             'success' => true,
             'origin'  => 'api',
@@ -107,18 +79,18 @@ class Store
     }
 
     /**
-     * @param [type] $id
+     * @param int $id
      * @return void
      */
-    public function setStore($id) 
+    public function setStore($id)
     {
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[$codeStore][self::SESSION_STORE_SELECTED] = $id;        
+        $_SESSION[$codeStore][self::SESSION_STORE_SELECTED] = $id;
 
         $addressDefault = get_option(self::OPTION_STORE_SELECTED);
 
-        if  (!$addressDefault) {
+        if (!$addressDefault) {
 
             add_option(self::OPTION_STORE_SELECTED, $id);
             return array(
@@ -142,13 +114,11 @@ class Store
      */
     public function getSelectedStoreId()
     {
-        // Find ID on session
         $codeStore = md5(get_option('home'));
         if (isset($_SESSION[$codeStore][self::SESSION_STORE_SELECTED]) && $_SESSION[$codeStore][self::SESSION_STORE_SELECTED]) {
             return $_SESSION[$codeStore][self::SESSION_STORE_SELECTED];
         }
 
-        // Find ID on database wordpress
         $idSelected = get_option(self::OPTION_STORE_SELECTED, true);
         if (!is_bool($idSelected)) {
             return $idSelected;
@@ -160,7 +130,7 @@ class Store
     /**
      * @return Object Store
      */
-    public function getStore() 
+    public function getStore()
     {
         $stores = $this->getStories();
 
@@ -181,23 +151,5 @@ class Store
         }
 
         return null;
-    }
-
-    /**
-     * Reset data of stores
-     *
-     * @return void
-     */
-    public function resetData()
-    {
-        $codeStore = md5(get_option('home'));
-
-        // unset($_SESSION[$codeStore][self::SESSION_STORES]);
-
-        // unset($_SESSION[$codeStore][self::SESSION_STORE_SELECTED]);
-
-        // delete_option(self::OPTION_STORES);
-
-        // delete_option(self::OPTION_STORE_SELECTED);
     }
 }

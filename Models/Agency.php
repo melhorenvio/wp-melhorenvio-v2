@@ -5,20 +5,20 @@ namespace Models;
 use Models\Address;
 use Services\RequestService;
 
-class Agency 
+class Agency
 {
     const AGENCY_SELECTED = 'melhorenvio_agency_jadlog_v2';
 
     /**
      * @return void
      */
-    public function getAgencies() 
+    public function getAgencies()
     {
         $results = '';
 
         if (!isset($_SESSION['melhor_envio']['agencies']) || empty($_SESSION['melhor_envio']['agencies'])) {
 
-            if (!isset($_GET['state']) && !isset($_GET['state']) ) {
+            if (!isset($_GET['state']) && !isset($_GET['state'])) {
                 $address = (new Address)->getAddressFrom();
             } else {
                 $address['address'] = array(
@@ -28,7 +28,7 @@ class Agency
             }
 
             $results = (new RequestService())->request(
-                '/shipment/agencies?company=2&country=BR&state='.$address['address']['state'],
+                '/shipment/agencies?company=2&country=BR&state=' . $address['address']['state'],
                 'GET',
                 [],
                 false
@@ -78,14 +78,14 @@ class Agency
             'agencies' => $agenciesForUser,
             'allAgencies' => $agencies,
             'agencySelected' => $agencySelected
-        ); 
+        );
     }
 
     /**
-     * @param [type] $id
+     * @param int $id
      * @return void
      */
-    public function setAgency($id) 
+    public function setAgency($id)
     {
         delete_option(self::AGENCY_SELECTED);
         add_option(self::AGENCY_SELECTED, $id);

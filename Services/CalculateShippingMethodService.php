@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Services;
 
@@ -8,42 +8,53 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
-    /**
-     * Constant for delivery class of any class
-     */
-    protected const ANY_DELIVERY = -1;
+    const SERVICES_CORREIOS = ['1', '2', '17'];
 
     /**
-     * Constant for no delivery class
-     */
-    protected const WITHOUT_DELIVERY = 0;
-
-    /**
-     * function to calculate shipping each shipping method.
+     * Function to carry out the freight quote in the Melhor Envio api.
      *
      * @param array $package
-     * @param string $code
-     * @param string $id
+     * @param int $contde
+     * @param int $id
      * @param string $company
-     * @return array
+     * @return void
      */
-    public function calculate_shipping( $package = [], $code, $id, $company)
+    public function calculate_shipping($package = [], $code, $id, $company)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
-        $products = (isset($package['cotationProduct'])) ? $package['cotationProduct'] : (new CartWooCommerceService())->getProducts();
+        $products = (isset($package['cotationProduct']))
+            ? $package['cotationProduct']
+            : (new CartWooCommerceService())->getProducts();
 
-        $result = (new QuotationService())->calculateQuotationByProducts($products, $to, $code);
+        $result = (new QuotationService())->calculateQuotationByProducts(
+            $products,
+            $to,
+            $code
+        );
 
         if ($result) {
 
             if (isset($result->name) && isset($result->price)) {
 
-                $method = (new OptionsHelper())->getName($result->id, $result->name, null, null);
+                $method = (new OptionsHelper())->getName(
+                    $result->id,
+                    $result->name,
+                    null,
+                    null
+                );
+
+                if ($this->isCorreios($code) && $this->hasMultipleVolumes($result)) {
+                    return false;
+                }
 
                 return [
                     'id' => $id,
-                    'label' => $method['method'] . (new TimeHelper)->setLabel($result->delivery_range, $code, $result->custom_delivery_range),
+                    'label' => $method['method'] . (new TimeHelper)->setLabel(
+                        $result->delivery_range,
+                        $code,
+                        $result->custom_delivery_range
+                    ),
                     'cost' => (new MoneyHelper())->setprice($result->price, $code),
                     'calc_tax' => 'per_item',
                     'meta_data' => [
@@ -59,60 +70,28 @@ class CalculateShippingMethodService
     }
 
     /**
-     * Check if package uses only the selected shipping class.
+     * Check if it has more than one volume
      *
-     * @param  array $package Cart package.
-     * @param int $shippingClassId
-     * @return bool
+     * @param stdClass $quotation
+     * @return boolean
      */
-    public function hasOnlySelectedShippingClass( $package, $shippingClassId ) 
-    {    
-        $onlySelected = true;
-
-        if(self::ANY_DELIVERY === $shippingClassId){
-            return $onlySelected;
+    public function hasMultipleVolumes($quotation)
+    {
+        if (!isset($quotation->packages)) {
+            return false;
         }
 
-        foreach ( $package['contents'] as $values ) {
-            $product = $values['data'];
-            $qty     = $values['quantity'];
-
-            if($product->get_shipping_class_id() == 0 ){
-                $onlySelected = true;
-                break;
-            }
-
-            if($qty > 0 && $product->needs_shipping()){
-                if ( $shippingClassId !== $product->get_shipping_class_id() ) {
-                    $onlySelected = false;
-                    break;
-                }
-            }
-        }
-
-        return $onlySelected;
+        return (count($quotation->packages) >= 2) ? true : false;
     }
 
     /**
-     * Get shipping classes options.
+     * Check if it is "Correios"
      *
-     * @return array
+     * @param int $code
+     * @return boolean
      */
-    public function getShippingClassesOptions() 
+    public function isCorreios($code)
     {
-        $options = array(
-            self::ANY_DELIVERY => 'Qualquer classe de entrega',
-            self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
-        );
-
-        $shippingClasses = WC()->shipping->get_shipping_classes();
-
-        if(empty($shippingClasses)) {
-            return $options;
-        }
-
-        $options += wp_list_pluck( $shippingClasses, 'name', 'term_id' );
-        
-        return $options;
+        return in_array($code, self::SERVICES_CORREIOS);
     }
 }

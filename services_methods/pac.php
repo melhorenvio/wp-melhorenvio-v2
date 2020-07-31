@@ -1,7 +1,6 @@
 <?php 
 
 use Services\CalculateShippingMethodService;
-use Services\WooCommerceService;
 
 add_action( 'woocommerce_shipping_init', 'pac_shipping_method_init' );
 function pac_shipping_method_init() {
@@ -68,7 +67,7 @@ function pac_shipping_method_init() {
 
 				if($rate){
 					$this->add_rate($rate);
-				}
+				}	
 			}
 
 			/**
