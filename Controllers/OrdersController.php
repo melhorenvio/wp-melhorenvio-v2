@@ -70,10 +70,6 @@ class OrdersController
             $_GET['choosen']
         );
 
-        echo '<pre>';
-        var_dump($result);
-        die;
-
         if (!isset($result['order_id'])) {
             if (isset($result['errors'])) {
                 return wp_send_json([
