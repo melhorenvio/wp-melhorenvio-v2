@@ -271,7 +271,7 @@ class OrdersController
         unset($_GET['action']);
 
         if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key'])) {
-            return json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Campos ID, number, key são obrigatorios'
             ], 400);
