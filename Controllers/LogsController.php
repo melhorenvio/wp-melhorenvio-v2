@@ -4,27 +4,27 @@ namespace Controllers;
 
 use Models\Log;
 
-class LogsController 
-{   
+class LogsController
+{
     /**
      * @return void
      */
-    public function index() 
+    public function index()
     {
         global $wpdb;
         $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_key = "logs_melhorenvio" order by meta_id desc limit 1000', $wpdb->prefix);
         $results = $wpdb->get_results($sql);
         $rows = '';
-        foreach($results as $item) {
+        foreach ($results as $item) {
             $data = unserialize($item->meta_value);
-            $link = '/wp-admin/admin-ajax.php?action=detail_log_melhorenvio&meta_id='.$item->meta_id;
+            $link = '/wp-admin/admin-ajax.php?action=detail_log_melhorenvio&meta_id=' . $item->meta_id;
             $rows .= '<tr>
-                <td>'. $item->post_id .'</td>
+                <td>' . $item->post_id . '</td>
                 <td>' . $data['message'] . '</td>
                 <td>' . $data['date'] . '</td>
                 <td><a target="_blank" href="' . $link . '">ver</a></td>
             </tr>';
-        }  
+        }
 
         echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>ID</td><td>Mensagem</td><td>Data</td><td>Link</td></tr>';
@@ -88,16 +88,16 @@ class LogsController
     }
 
     /**
-     * @param [type] $order_id
-     * @param [type] $msg
+     * @param int $order_id
+     * @param string $msg
      * @param array $payload
      * @param array $response
-     * @param [type] $class
-     * @param [type] $action
-     * @param [type] $endpoint
+     * @param string $class
+     * @param string $action
+     * @param string $endpoint
      * @return void
      */
-    public function add($order_id, $msg, $payload = [], $response = [], $class = null, $action = null, $endpoint = null) 
+    public function add($order_id, $msg, $payload = [], $response = [], $class = null, $action = null, $endpoint = null)
     {
         $log = [
             'order_id' => $order_id,
@@ -113,9 +113,9 @@ class LogsController
         add_post_meta($order_id, 'logs_melhorenvio', $log);
     }
 
-    public function addResponse($response, $body, $to) 
+    public function addResponse($response, $body, $to)
     {
-    
+
         $log = [
             'date' => date('Y-m-d h:i:s'),
             'payload' => $body,
@@ -128,22 +128,22 @@ class LogsController
     /**
      * @return void
      */
-    public function indexResponse() 
+    public function indexResponse()
     {
         global $wpdb;
         $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_key = "logs_melhorenvio_response" order by meta_id desc limit 1000', $wpdb->prefix);
         $results = $wpdb->get_results($sql);
         $rows = '';
-        foreach($results as $item) {
+        foreach ($results as $item) {
 
             $data = unserialize($item->meta_value);
-            $link = '/wp-admin/admin-ajax.php?action=detail_log_melhorenvio&meta_id='.$item->meta_id;
+            $link = '/wp-admin/admin-ajax.php?action=detail_log_melhorenvio&meta_id=' . $item->meta_id;
             $rows .= '<tr>
                 <td>' . $item->post_id . '</td>
                 <td>' . $data['date'] . '</td>
                 <td><a target="_blank" href="' . $link . '">ver</a></td>
             </tr>';
-        }  
+        }
 
         echo '<h1>Logs Melhor Envio</h1>';
         echo '<table border="1"><tr><td>CEP</td><td>Data</td><td>Link</td></tr>';
@@ -163,19 +163,19 @@ class LogsController
     public function getServerStatus()
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "https://location.melhorenvio.com.br/96055710"); 
+        curl_setopt($curl, CURLOPT_URL, "https://location.melhorenvio.com.br/96055710");
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
-        curl_exec($curl); 
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_exec($curl);
 
         $return = [];
         $error  = curl_error($curl);
-        
+
         if (!empty($error)) $return['error'] = $error;
 
         $info = curl_getinfo($curl);
-        curl_close($curl); 
+        curl_close($curl);
         $return['info'] = $info;
 
         return $return;

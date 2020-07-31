@@ -3,21 +3,19 @@
 namespace Controllers;
 
 use Models\Order;
-use Models\Log;
-use Models\Method;
-use Services\QuotationService;
 use Services\OrdersProductsService;
 use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
-use Services\ShippingMelhorEnvioService;
 use Services\ListOrderService;
 
 class OrdersController
 {
     /**
-     * @return void
+     * Function to search for orders in the order panel
+     *
+     * @return json
      */
     public function getOrders()
     {
@@ -41,7 +39,7 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      * 
-     * @param int order_id
+     * @param int $order_id
      * @param int choosen
      * @return json $results
      */
@@ -73,7 +71,6 @@ class OrdersController
         );
 
         if (!isset($result['order_id'])) {
-
             if (isset($result['errors'])) {
                 return wp_send_json([
                     'success' => false,
@@ -92,7 +89,6 @@ class OrdersController
         $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
 
         if (!isset($result['order_id'])) {
-
             if (isset($result['errors'])) {
                 return wp_send_json([
                     'success' => false,
@@ -118,8 +114,8 @@ class OrdersController
 
     /**
      * Function to remove order on cart Melhor Envio.
-     * 
-     * @param int order_id
+     *
+     * @param int $order_id
      * @return json $response
      */
     public function removeOrder()
@@ -131,7 +127,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new CartService())->remove($_GET['id']);
+        (new CartService())->remove($_GET['id']);
 
         return wp_send_json([
             'success' => true,
@@ -141,8 +137,8 @@ class OrdersController
 
     /**
      * Function to cancel orderm on api Melhor Envio.
-     * 
-     * @param int post_id
+     *
+     * @param int $post_id
      * @return array $response
      */
     public function cancelOrder()
@@ -154,7 +150,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['id']);
+        (new OrderService())->cancel($_GET['id']);
 
         return wp_send_json([
             'success' => true,
@@ -164,8 +160,8 @@ class OrdersController
 
     /**
      * Function to pay a order Melhor Envio.
-     * 
-     * @param int order_id
+     *
+     * @param int $order_id
      * @return array $response
      */
     public function payTicket()
@@ -190,8 +186,8 @@ class OrdersController
 
     /**
      * Function to create a label on Melhor Envio.
-     * 
-     * @param int post_id
+     *
+     * @param int $post_id
      * @return array $response
      */
     public function createTicket()
@@ -206,7 +202,10 @@ class OrdersController
     }
 
     /**
-     * @return void
+     * Function to print a label on Melhor Envio.
+     *
+     * @param int $post_id
+     * @return array $response
      */
     public function printTicket()
     {
@@ -231,7 +230,7 @@ class OrdersController
     /**
      * Function to make a step by step to printed any labels
      *
-     * @param _GET $ids     
+     * @param array $ids
      * @return array $response;
      */
     public function buyOnClick()
@@ -260,7 +259,12 @@ class OrdersController
     }
 
     /**
-     * @return void
+     * Funton to insert invoice in order
+     *
+     * @param numeric $number
+     * @param numeric $key
+     *
+     * @return json
      */
     public function insertInvoiceOrder()
     {

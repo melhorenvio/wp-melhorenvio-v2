@@ -5,7 +5,7 @@ namespace Models;
 use Controllers\TokenController;
 use Services\RequestService;
 
-class Store 
+class Store
 {
     const URL = 'https://api.melhorenvio.com';
 
@@ -24,13 +24,13 @@ class Store
     /**
      * @return void
      */
-    public function getStories() 
-    {   
+    public function getStories()
+    {
         // Get data on session
         $codeStore = md5(get_option('home'));
 
         //$idStoreSelected = $this->getSelectedStoreId();
-        
+
         // Get stores in session
         if (isset($_SESSION[$codeStore][self::SESSION_STORES])) {
 
@@ -72,7 +72,7 @@ class Store
 
         $stories = array();
 
-        if(!isset($response->data)) {
+        if (!isset($response->data)) {
             return array(
                 'success' => false,
                 'stores'  => null
@@ -81,7 +81,7 @@ class Store
 
         $storeSelected = $this->getSelectedStoreId();
 
-        foreach($response->data as $store) {
+        foreach ($response->data as $store) {
             $stories[] = array(
                 'id'             => $store->id,
                 'name'           => $store->name,
@@ -107,18 +107,18 @@ class Store
     }
 
     /**
-     * @param [type] $id
+     * @param int $id
      * @return void
      */
-    public function setStore($id) 
+    public function setStore($id)
     {
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[$codeStore][self::SESSION_STORE_SELECTED] = $id;        
+        $_SESSION[$codeStore][self::SESSION_STORE_SELECTED] = $id;
 
         $addressDefault = get_option(self::OPTION_STORE_SELECTED);
 
-        if  (!$addressDefault) {
+        if (!$addressDefault) {
 
             add_option(self::OPTION_STORE_SELECTED, $id);
             return array(
@@ -160,7 +160,7 @@ class Store
     /**
      * @return Object Store
      */
-    public function getStore() 
+    public function getStore()
     {
         $stores = $this->getStories();
 

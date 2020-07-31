@@ -7,7 +7,8 @@ use Models\Store;
 use Models\User;
 use Services\OrderQuotationService;
 
-class UsersController {
+class UsersController
+{
 
     const URL = 'https://api.melhorenvio.com';
 
@@ -68,18 +69,18 @@ class UsersController {
                 "state_abbr" => $address['state'],
                 "country_id" => 'BR',
                 "postal_code" => $address['postal_code']
-            ];   
+            ];
         }
 
         return false;
     }
 
     /**
-     * @param [type] $order_id
+     * @param int $order_id
      * @return void
      */
     public function getTo($order_id)
-    {    
+    {
         $order = new \WC_Order($order_id);
 
         $cpf  = get_post_meta($order_id, '_billing_cpf', true);
@@ -100,12 +101,12 @@ class UsersController {
             "state_register" => null, // (opcional) (a menos que seja transportadora e logística reversa)
             "address" => $order->get_shipping_address_1(),
             "complement" => $order->get_shipping_address_2(),
-            "number" => get_post_meta($order_id, '_shipping_number',true),
-            "district" =>get_post_meta($order_id, '_shipping_neighborhood',true),
+            "number" => get_post_meta($order_id, '_shipping_number', true),
+            "district" => get_post_meta($order_id, '_shipping_neighborhood', true),
             "city" => $order->get_shipping_city(),
             "state_abbr" => $order->get_shipping_state(),
             "country_id" => 'BR',
-            "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),  
+            "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),
         ];
     }
 
@@ -128,8 +129,8 @@ class UsersController {
     }
 
     /**
-     * @param [type] $val
-     * @param [type] $mask
+     * @param numeric $val
+     * @param numeric $mask
      * @return void
      */
     private function mask($val, $mask)
@@ -137,15 +138,13 @@ class UsersController {
         $maskared = '';
         $k = 0;
 
-        for($i = 0; $i<=strlen($mask)-1; $i++) {
-            if($mask[$i] == '#') {
-                if(isset($val[$k]))
+        for ($i = 0; $i <= strlen($mask) - 1; $i++) {
+            if ($mask[$i] == '#') {
+                if (isset($val[$k]))
                     $maskared .= $val[$k++];
-                }
-                else
-                {
-                if(isset($mask[$i]))
-                $maskared .= $mask[$i];
+            } else {
+                if (isset($mask[$i]))
+                    $maskared .= $mask[$i];
             }
         }
 
