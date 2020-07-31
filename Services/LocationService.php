@@ -25,8 +25,7 @@ class LocationService
      */
     public function getAddressByPostalCode($postalCode)
     {
-        $postalCode = str_replace("-", "", $postalCode);
-        $postalCode = floatval($postalCode);
+        $postalCode = $this->formatPostalCode($postalCode);
 
         if (empty($postalCode)) return null;
 
@@ -51,8 +50,6 @@ class LocationService
      */
     public function getAddressByPostalCodeLocationMelhorEnvio($postalCode)
     {
-        $postalCode = str_pad($postalCode, 8, '0', STR_PAD_LEFT);
-
         $url = self::URL . $postalCode;
 
         $result = json_decode(
@@ -76,8 +73,6 @@ class LocationService
      */
     public function getAddressByPostalCodeLocationViaCep($postalCode)
     {
-        $postalCode = str_pad($postalCode, 8, '0', STR_PAD_LEFT);
-
         $url = self::URL_VIA_CEP . $postalCode . '/json';
 
         $result = json_decode(
@@ -91,5 +86,20 @@ class LocationService
         }
 
         return $result;
+    }
+
+    /**
+     * Function to format postal code
+     *
+     * @param string $postalCode
+     * @return float
+     */
+    private function formatPostalCode($postalCode)
+    {
+        $postalCode = str_replace("-", "", $postalCode);
+
+        $postalCode = floatval($postalCode);
+
+        return str_pad($postalCode, 8, '0', STR_PAD_LEFT);
     }
 }
