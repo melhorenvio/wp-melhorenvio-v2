@@ -97,7 +97,7 @@ class PackageController
         foreach ($order->get_items() as $itemProduct) {
             $product = $itemProduct->get_product();
 
-            $weight = $weight + $product->weight * $itemProduct->get_quantity();
+            $weight += $product->weight * $itemProduct->get_quantity();
             $width  += $product->width;
             $height += $product->height;
             $length += $product->length;
