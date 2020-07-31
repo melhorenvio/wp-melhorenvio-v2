@@ -15,9 +15,9 @@ class ProductsController
         $order  = wc_get_order($orderId);
         $total = 0;
 
-        foreach ($order->get_items() as $itemProduct) {
-            $product = $itemProduct->get_product();
-            $total = $total + ($product->get_price() * $itemProduct->get_quantity());
+        foreach ($order->get_items() as $item) {
+            $product = $item->get_product();
+            $total = $total + ($product->get_price() * $item->get_quantity());
         }
 
         return round($total, 2);

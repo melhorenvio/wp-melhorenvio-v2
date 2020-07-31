@@ -94,10 +94,10 @@ class PackageController
         $length = 0;
         $order  = wc_get_order($orderId);
 
-        foreach ($order->get_items() as $itemProduct) {
-            $product = $itemProduct->get_product();
+        foreach ($order->get_items() as $item) {
+            $product = $item->get_product();
 
-            $weight += $product->weight * $itemProduct->get_quantity();
+            $weight += $product->weight * $item->get_quantity();
             $width  += $product->width;
             $height += $product->height;
             $length += $product->length;
