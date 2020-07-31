@@ -75,6 +75,12 @@ class CartService
         );
     }
 
+    /**
+     * Function to remove order in cart by Melhor Envio.
+     *
+     * @param int $orderId
+     * @return bool
+     */
     public function remove($orderId)
     {
         $data = (new OrderQuotationService())->getData($orderId);
@@ -85,11 +91,19 @@ class CartService
 
         (new OrderQuotationService())->removeDataQuotation($orderId);
 
-        return (new RequestService())->request(
+        (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'],
             'DELETE',
             []
         );
+
+        $orderInCart = (new OrderService())->info($orderId);
+
+        if (!$orderInCart['success']) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

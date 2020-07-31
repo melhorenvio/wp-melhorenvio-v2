@@ -70,6 +70,10 @@ class OrdersController
             $_GET['choosen']
         );
 
+        echo '<pre>';
+        var_dump($result);
+        die;
+
         if (!isset($result['order_id'])) {
             if (isset($result['errors'])) {
                 return wp_send_json([
@@ -127,10 +131,10 @@ class OrdersController
             ], 400);
         }
 
-        if (!(new CartService())->remove($_GET['id'])) {
+        if (!(new CartService())->remove($_GET['order_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao remove o pedid do carrinho'
+                'message' => 'Ocorreu um erro ao remove o pedido do carrinho'
             ], 400);
         }
 
