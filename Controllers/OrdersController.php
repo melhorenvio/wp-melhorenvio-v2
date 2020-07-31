@@ -261,8 +261,8 @@ class OrdersController
     /**
      * Funton to insert invoice in order
      *
-     * @param numeric $number
-     * @param numeric $key
+     * @param int $number
+     * @param int $key
      *
      * @return json
      */

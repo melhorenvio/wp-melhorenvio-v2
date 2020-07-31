@@ -129,8 +129,8 @@ class UsersController
     }
 
     /**
-     * @param numeric $val
-     * @param numeric $mask
+     * @param int $val
+     * @param int $mask
      * @return void
      */
     private function mask($val, $mask)
