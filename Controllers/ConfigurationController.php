@@ -158,12 +158,8 @@ class ConfigurationController
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true")
-                        ? true
-                        : false,
+                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true"),
                     'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true")
-                        ? true
-                        : false
                 ];
             }
         }
