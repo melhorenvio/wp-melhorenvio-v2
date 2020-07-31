@@ -44,12 +44,12 @@ class CartService
             )
         );
 
-        $isValid = $this->paramsValid($body, $orderId);
+        $errors = $this->checkParamsBody($body, $orderId);
 
-        if (!empty($isValid)) {
+        if (!empty($errors)) {
             return [
                 'success' => false,
-                'errors' => $isValid
+                'errors' => $errors
             ];
         }
 
@@ -149,7 +149,7 @@ class CartService
      * @param array $body
      * @return void
      */
-    private function paramsValid($body, $orderId)
+    private function checkParamsBody($body, $orderId)
     {
         $errors = [];
 
