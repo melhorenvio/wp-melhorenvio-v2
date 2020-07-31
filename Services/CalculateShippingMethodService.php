@@ -8,6 +8,17 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
+    /**
+     * Constant for delivery class of any class
+     */
+    protected const ANY_DELIVERY = -1;
+
+    /**
+     * Constant for no delivery class
+     */
+
+    protected const WITHOUT_DELIVERY = 0;
+
     const SERVICES_CORREIOS = ['1', '2', '17'];
 
     /**
@@ -102,8 +113,8 @@ class CalculateShippingMethodService
     {
         $shipping_classes = WC()->shipping->get_shipping_classes();
         $options = array(
-            '-1' => __('Any Shipping Class', 'woocommerce-correios'),
-            '0'  => __('No Shipping Class', 'woocommerce-correios'),
+            self::ANY_DELIVERY => 'Qualquer classe de entrega',
+            self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
         );
 
         if (!empty($shipping_classes)) {
@@ -117,22 +128,28 @@ class CalculateShippingMethodService
      * Check if package uses only the selected shipping class.
      *
      * @param  array $package Cart package.
+     * @param int $shipping_class_id
      * @return bool
      */
-    public function hasOnlySelectedShippingClass($package)
+    public function hasOnlySelectedShippingClass($package, $shipping_class_id)
     {
         $only_selected = true;
 
-        if (-1 === $this->shipping_class_id) {
+        if (-1 === $shipping_class_id) {
             return $only_selected;
         }
 
-        foreach ($package['contents'] as $item_id => $values) {
+        foreach ($package['contents'] as $values) {
             $product = $values['data'];
             $qty     = $values['quantity'];
 
+            if ($product->get_shipping_class_id() == 0) {
+                $only_selected = true;
+                break;
+            }
+
             if ($qty > 0 && $product->needs_shipping()) {
-                if ($this->shipping_class_id !== $product->get_shipping_class_id()) {
+                if ($shipping_class_id !== $product->get_shipping_class_id()) {
                     $only_selected = false;
                     break;
                 }
