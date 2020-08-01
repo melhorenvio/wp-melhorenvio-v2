@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use Controllers\TokenController;
 use Services\RequestService;
 
 class Store
@@ -24,7 +23,7 @@ class Store
     /**
      * @return void
      */
-    public function getStories()
+    public function getStores()
     {
         $codeStore = md5(get_option('home'));
 
