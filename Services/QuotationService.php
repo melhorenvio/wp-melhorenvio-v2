@@ -5,30 +5,31 @@ namespace Services;
 use Models\Option;
 
 /**
- * Quotation service class
+ * Class responsible for the quotation service with the Melhor Envio api.
  */
 class QuotationService
 {
-    /**
-     * Melhor Envio api route to make the quote
-     */
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
     /**
      * Function to calculate a quotation by order_id.
      *
-     * @param int $order_id id of post wordpress
+     * @param int $orderId
      * @return object $quotation
      */
-    public function calculateQuotationByOrderId($order_id)
+    public function calculateQuotationByOrderId($orderId)
     {
-        $products = (new OrdersProductsService())->getProductsOrder($order_id);
+        $products = (new OrdersProductsService())->getProductsOrder($orderId);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($order_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
 
-        $quotation = $this->calculateQuotationByProducts($products, $buyer->postal_code, null);
+        $quotation = $this->calculateQuotationByProducts(
+            $products,
+            $buyer->postal_code,
+            null
+        );
 
-        return (new OrderQuotationService())->saveQuotation($order_id, $quotation);
+        return (new OrderQuotationService())->saveQuotation($orderId, $quotation);
     }
 
     /**
@@ -41,7 +42,7 @@ class QuotationService
      */
     public function calculateQuotationByProducts(
         $products,
-        $postal_code,
+        $postalCode,
         $service = null
     ) {
         $seller = (new SellerService())->getData();
@@ -51,7 +52,7 @@ class QuotationService
                 'postal_code' => $seller->postal_code,
             ],
             'to' => [
-                'postal_code' => $postal_code
+                'postal_code' => $postalCode
             ],
             'options'  => (new Option())->getOptions(),
             'products' => $products
@@ -60,7 +61,6 @@ class QuotationService
         $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
-
             $quotation = (new RequestService())->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
                 'POST',
@@ -83,7 +83,7 @@ class QuotationService
      */
     public function calculateQuotationByPackages(
         $packages,
-        $postal_code,
+        $postalCode,
         $service = null
     ) {
         $seller = (new SellerService())->getData();
@@ -93,7 +93,7 @@ class QuotationService
                 'postal_code' => $seller->postal_code,
             ],
             'to' => [
-                'postal_code' => $postal_code
+                'postal_code' => $postalCode
             ],
             'options'  => (new Option())->getOptions(),
             'packages' => $packages
@@ -102,7 +102,6 @@ class QuotationService
         $quotation = $this->getSessionCachedQuotation($body, $service);
 
         if (!$quotation) {
-
             $quotation = (new RequestService())->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
                 'POST',
@@ -110,7 +109,7 @@ class QuotationService
                 true
             );
 
-            $this->storeQuotationSession($body, $quotation);
+            $this->storeQuotationSession($quotation, $quotation);
         }
 
         return $quotation;
@@ -184,7 +183,6 @@ class QuotationService
 
         if ($dateLimit > $created) {
             unset($_SESSION['quotation'][$hash]);
-
             return true;
         }
 

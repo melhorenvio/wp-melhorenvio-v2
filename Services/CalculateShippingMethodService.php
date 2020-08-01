@@ -14,7 +14,7 @@ class CalculateShippingMethodService
      * Function to carry out the freight quote in the Melhor Envio api.
      *
      * @param array $package
-     * @param int $contde
+     * @param int $code
      * @param int $id
      * @param string $company
      * @return void
@@ -34,9 +34,7 @@ class CalculateShippingMethodService
         );
 
         if ($result) {
-
-            if (isset($result->name) && isset($result->price)) {
-
+            if (isset($result->price) && isset($result->name)) {
                 $method = (new OptionsHelper())->getName(
                     $result->id,
                     $result->name,

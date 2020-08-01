@@ -2,22 +2,22 @@
 
 namespace Controllers;
 
-use Controllers\HelperController;
-
 class ProductsController
 {
     /**
-     * @param int $order_id
-     * @return void
+     * Function to get insurance value by order. 
+     *
+     * @param int $orderId
+     * @return float
      */
-    public function getInsuranceValue($order_id)
+    public function getInsuranceValue($orderId)
     {
-        $order  = wc_get_order($order_id);
+        $order  = wc_get_order($orderId);
         $total = 0;
 
-        foreach ($order->get_items() as $item_id => $item_product) {
-            $_product = $item_product->get_product();
-            $total = $total + ($_product->get_price() * $item_product->get_quantity());
+        foreach ($order->get_items() as $item) {
+            $product = $item->get_product();
+            $total = $total + ($product->get_price() * $item->get_quantity());
         }
 
         return round($total, 2);
