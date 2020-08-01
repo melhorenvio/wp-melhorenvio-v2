@@ -10,12 +10,12 @@ class LocationService
     /**
      * Melhor Envio location api URL
      */
-    protected const URL = "https://location.melhorenvio.com.br/";
+    const URL = "https://location.melhorenvio.com.br/";
 
     /**
      * Via CEP location api URL
      */
-    protected const URL_VIA_CEP = "https://viacep.com.br/ws/";
+    const URL_VIA_CEP = "https://viacep.com.br/ws/";
 
     /**
      * Function to search for address in zip code api
