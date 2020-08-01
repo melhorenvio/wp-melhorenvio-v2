@@ -79,7 +79,7 @@ class OrderQuotationService
      * @param int $shippingSelected
      * @return boolean
      */
-    private function haveSelectedShippingInRemovedsShipping(array $shippingsRemoved, int $shippingSelected): bool
+    private function haveSelectedShippingInRemovedsShipping($shippingsRemoved, $shippingSelected)
     {
         return (!empty($shippingsRemoved) && in_array($shippingSelected, $shippingsRemoved));
     }
