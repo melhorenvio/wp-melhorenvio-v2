@@ -124,7 +124,9 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
-        session_start();
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
@@ -140,7 +142,9 @@ class QuotationService
      */
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
-        session_start();
+        if (!isset($_SESSION)) {
+            session_start();
+        }
 
         $hash = md5(json_encode($bodyQuotation));
 
@@ -179,7 +183,7 @@ class QuotationService
 
         $created = $_SESSION['quotation'][$hash]['created'];
 
-        $dateLimit = date('Y-m-d H:i:s', strtotime('-15 minutes'));
+        $dateLimit = date('Y-m-d h:i:s', strtotime('-15 minutes'));
 
         if ($dateLimit > $created) {
             unset($_SESSION['quotation'][$hash]);
