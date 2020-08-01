@@ -38,9 +38,9 @@ class OrdersController
 
     /**
      * Function to add order in cart Melhor Envio.
-     * 
+     *
      * @param int $order_id
-     * @param int choosen
+     * @param int $choosen
      * @return json $results
      */
     public function sendOrder()
@@ -273,8 +273,8 @@ class OrdersController
     /**
      * Funton to insert invoice in order
      *
-     * @param numeric number
-     * @param numeric key
+     * @param int $number
+     * @param int $key
      *
      * @return json
      */

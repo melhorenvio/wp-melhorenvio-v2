@@ -259,7 +259,7 @@ class Quotation
     /**
      * Function to make a quotation on API Melhor Envio
      *
-     * @param null $service
+     * @param int $service
      * @return array|boolean
      */
     public function calculate($service = null)
