@@ -150,14 +150,19 @@ class QuotationService
             return false;
         }
 
-        return end(array_filter(
+        $quotations = array_filter(
             $_SESSION['quotation'][$hash],
             function ($item) use ($service) {
-                if ($item->id == $service) {
+                if (isset($item->id) && $item->id == $service) {
                     return $item;
                 }
             }
-        ));
+        );
+        if (!is_array($quotations)) {
+            return false;
+        }
+
+        return end($quotations);
     }
 
     /**

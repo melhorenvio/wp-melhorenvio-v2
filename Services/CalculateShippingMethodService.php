@@ -106,13 +106,20 @@ class CalculateShippingMethodService
      */
     public function extractOnlyQuotationByService($quotations, $service)
     {
-        return end(array_filter(
+
+        $quotationByService = array_filter(
             $quotations,
             function ($item) use ($service) {
                 if ($item->id == $service) {
                     return $item;
                 }
             }
-        ));
+        );
+
+        if (!is_array($quotationByService)) {
+            return false;
+        }
+
+        return end($quotationByService);
     }
 }
