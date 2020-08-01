@@ -109,7 +109,7 @@ class QuotationService
                 true
             );
 
-            $this->storeQuotationSession($quotation, $quotation);
+            $this->storeQuotationSession($body, $quotation);
         }
 
         return $quotation;
@@ -124,9 +124,6 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d h:i:s');
@@ -142,14 +139,10 @@ class QuotationService
      */
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-
         $hash = md5(json_encode($bodyQuotation));
 
         if (!isset($_SESSION['quotation'][$hash][$service])) {
-            unset($_SSESION['quotation'][$hash]);
+            unset($_SESSION['quotation'][$hash]);
             return false;
         }
 

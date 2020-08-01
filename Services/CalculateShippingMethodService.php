@@ -33,6 +33,10 @@ class CalculateShippingMethodService
             $code
         );
 
+        if (is_array($result)) {
+            $result = $this->extractOnlyQuotationByService($result, $code);
+        }
+
         if ($result) {
             if (isset($result->price) && isset($result->name)) {
                 $method = (new OptionsHelper())->getName(
@@ -91,5 +95,24 @@ class CalculateShippingMethodService
     public function isCorreios($code)
     {
         return in_array($code, self::SERVICES_CORREIOS);
+    }
+
+    /**
+     * Function to extract the quotation by the shipping method
+     *
+     * @param array $quotations
+     * @param int $service
+     * @return object
+     */
+    public function extractOnlyQuotationByService($quotations, $service)
+    {
+        return end(array_filter(
+            $quotations,
+            function ($item) use ($service) {
+                if ($item->id == $service) {
+                    return $item;
+                }
+            }
+        ));
     }
 }
