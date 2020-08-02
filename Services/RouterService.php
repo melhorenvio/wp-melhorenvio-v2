@@ -55,6 +55,7 @@ class RouterService
             $ordersController->getOrderQuotationByOrderId($_GET['id']);
         });
         add_action('wp_ajax_get_orders', [$ordersController, 'getOrders']);
+        add_action('wp_ajax_add_cart', [$ordersController, 'addCart']);
         add_action('wp_ajax_add_order', [$ordersController, 'sendOrder']);
         add_action('wp_ajax_buy_click', [$ordersController, 'buyOnClick']);
         add_action('wp_ajax_remove_order', [$ordersController, 'removeOrder']);

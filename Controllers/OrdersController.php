@@ -37,6 +37,38 @@ class OrdersController
     }
 
     /**
+     * Function to add the order to the shopping cart
+     *
+     * @param int $orderId
+     * @param int $service
+     * @param bool $nonCommercial
+     * @return json
+     */
+    public function addCart()
+    {
+        $orderId = $_GET['order_id'];
+
+        $service = $_GET['service'];
+
+        $products = (new OrdersProductsService())->getProductsOrder($orderId);
+
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
+
+        $result = (new CartService())->add(
+            $orderId,
+            $products,
+            $buyer,
+            $service
+        );
+
+        if (isset($result['success']) && !$result['success']) {
+            return wp_send_json($result, 400);
+        }
+
+        return wp_send_json($result, 200);
+    }
+
+    /**
      * Function to add order in cart Melhor Envio.
      *
      * @param int $order_id

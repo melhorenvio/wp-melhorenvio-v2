@@ -60,10 +60,6 @@ class CartService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
-            return $result;
-        }
-
         return (new OrderQuotationService())->updateDataQuotation(
             $orderId,
             $result->id,
@@ -163,6 +159,12 @@ class CartService
     private function checkParamsBody($body, $orderId)
     {
         $errors = [];
+
+        $shippingService = new CalculateShippingMethodService();
+
+        if ($shippingService->isJadlog($body['service']) && is_null($body['agency'])) {
+            $errors[] = sprintf("Informar a agência Jadlog de envio no painel de configurações do plugin");
+        }
 
         if (!array_key_exists("from", $body)) {
             $errors[] = sprintf("Informar origem do envio do pedido %s", $orderId);
