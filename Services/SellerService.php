@@ -9,7 +9,7 @@ class SellerService
     /**
      * Get data user on API Melhor Envio
      *
-     * @return array $dataSeller
+     * @return object $dataSeller
      */
     public function getData()
     {

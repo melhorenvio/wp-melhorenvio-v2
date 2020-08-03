@@ -11,23 +11,29 @@ use Models\UseInsurance;
 
 class ConfigurationsService
 {
+    /**
+     * Function to search all user settings
+     *
+     * @return array
+     */
     public function getConfigurations()
     {
-        $responseAgencies = (new Agency())->getAgencies();
+        $responseAgencies = (new Agency())->get();
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
-            'stores'              => (new StoreService())->getStories(),
+            'stores'              => (new StoreService())->getStores(),
             'agencies'            => $responseAgencies['agencies'],
             'allAgencies'         => $responseAgencies['allAgencies'],
             'agencySelected'      => $responseAgencies['agencySelected'],
             'calculator'          => (new CalculatorShow())->get(),
             'all_agencies_jadlog' => (new JadlogAgenciesShow())->get(),
             'use_insurance'       => (new UseInsurance())->get(),
-            'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator')) ? 'woocommerce_before_add_to_cart_button' : get_option('melhor_envio_option_where_show_calculator'),
+            'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
+                ? 'woocommerce_before_add_to_cart_button'
+                : get_option('melhor_envio_option_where_show_calculator'),
             'metodos'             => (new ConfigurationController())->getMethodsEnablesArray(),
             'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
-            'style_calculator'    => (new ConfigurationController())->getStyleArray(),
             'path_plugins'        => (new ConfigurationController())->getPathPluginsArray(),
             'options_calculator'  => (new ConfigurationController())->getOptionsCalculator()
         ];

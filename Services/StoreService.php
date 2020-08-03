@@ -25,7 +25,7 @@ class StoreService
      */
     public function getStoreSelected()
     {
-        $stores = $this->getStories();
+        $stores = $this->getStores();
 
         if (!isset($stores)) {
             return false;
@@ -49,7 +49,7 @@ class StoreService
      *
      * @return bool|array
      */
-    public function getStories()
+    public function getStores()
     {
         session_start();
 

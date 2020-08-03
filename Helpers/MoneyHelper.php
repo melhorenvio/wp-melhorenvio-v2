@@ -4,13 +4,13 @@ namespace Helpers;
 
 use Controllers\ConfigurationController;
 
-class MoneyHelper 
+class MoneyHelper
 {
     /**
-     * @param [type] $data
+     * @param array $data
      * @return void
      */
-    public function setlabel($value, $id) 
+    public function setlabel($value, $id)
     {
         $extra = 0;
         $perc  = 0;
@@ -30,9 +30,9 @@ class MoneyHelper
         return 'R$' . number_format($value, 2, ',', '.');
     }
 
-    public function setPrice($value, $id) 
+    public function setPrice($value, $id)
     {
-        
+
         $extra = 0;
         $perc  = 0;
         $result = (new ConfigurationController())->getOptionsShipments();
@@ -45,8 +45,7 @@ class MoneyHelper
             $perc = $result[$id]['perc'];
             $perc = ($value / 100) * $perc;
         }
-    
-        return floatval($value) + floatval($extra)  + floatval($perc) ;
+
+        return floatval($value) + floatval($extra)  + floatval($perc);
     }
 }
-
