@@ -20,19 +20,19 @@ class SellerService
 
         $address = (new Address())->getAddressFrom();
 
-        if (isset($address['address']['id'])) {
-            $data->address->address = (isset($address['address']['address'])) ? $address['address']['address'] : null;
-            $data->address->complement = (isset($address['address']['complement'])) ? $address['address']['complement'] : null;
-            $data->address->number = (isset($address['address']['number'])) ? $address['address']['number'] : null;
-            $data->address->district = (isset($address['address']['district'])) ? $address['address']['district'] : null;
-            $data->address->city->city = (isset($address['address']['city'])) ? $address['address']['city'] : null;
-            $data->address->city->state->state_abbr = (isset($address['address']['state'])) ? $address['address']['state'] : null;
-            $data->address->postal_code = (isset($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
+        if (!empty($address['address']['id'])) {
+            $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
+            $data->address->complement = (!empty($address['address']['complement'])) ? $address['address']['complement'] : null;
+            $data->address->number = (!empty($address['address']['number'])) ? $address['address']['number'] : null;
+            $data->address->district = (!empty($address['address']['district'])) ? $address['address']['district'] : null;
+            $data->address->city->city = (!empty($address['address']['city'])) ? $address['address']['city'] : null;
+            $data->address->city->state->state_abbr = (!empty($address['address']['state'])) ? $address['address']['state'] : null;
+            $data->address->postal_code = (!empty($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
         }
 
         return (object) [
             "name" => sprintf("%s %s", $data->firstname, $data->lastname),
-            "phone" => (isset($data->phone->phone)) ? $data->phone->phone : null,
+            "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => $data->email,
             "document" => $data->document,
             "address" => $data->address->address,

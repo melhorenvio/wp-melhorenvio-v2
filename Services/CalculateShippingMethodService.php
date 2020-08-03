@@ -11,13 +11,13 @@ class CalculateShippingMethodService
     /**
      * Constant for delivery class of any class
      */
-    protected const ANY_DELIVERY = -1;
+    const ANY_DELIVERY = -1;
 
     /**
      * Constant for no delivery class
      */
 
-    protected const WITHOUT_DELIVERY = 0;
+    const WITHOUT_DELIVERY = 0;
 
     const SERVICES_CORREIOS = ['1', '2', '17'];
 
@@ -111,14 +111,14 @@ class CalculateShippingMethodService
      */
     public function getShippingClassesOptions()
     {
-        $shipping_classes = WC()->shipping->get_shipping_classes();
+        $shippingClasses = WC()->shipping->get_shipping_classes();
         $options = array(
             self::ANY_DELIVERY => 'Qualquer classe de entrega',
             self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
         );
 
-        if (!empty($shipping_classes)) {
-            $options += wp_list_pluck($shipping_classes, 'name', 'term_id');
+        if (!empty($shippingClasses)) {
+            $options += wp_list_pluck($shippingClasses, 'name', 'term_id');
         }
 
         return $options;
@@ -131,31 +131,31 @@ class CalculateShippingMethodService
      * @param int $shipping_class_id
      * @return bool
      */
-    public function hasOnlySelectedShippingClass($package, $shipping_class_id)
+    public function hasOnlySelectedShippingClass($package, $shippingClassId)
     {
-        $only_selected = true;
+        $onlySelected = true;
 
-        if (-1 === $shipping_class_id) {
-            return $only_selected;
+        if (self::ANY_DELIVERY === $shippingClassId) {
+            return $onlySelected;
         }
 
         foreach ($package['contents'] as $values) {
             $product = $values['data'];
             $qty     = $values['quantity'];
 
-            if ($product->get_shipping_class_id() == 0) {
-                $only_selected = true;
+            if ($product->get_shipping_class_id() == self::WITHOUT_DELIVERY) {
+                $onlySelected = true;
                 break;
             }
 
             if ($qty > 0 && $product->needs_shipping()) {
-                if ($shipping_class_id !== $product->get_shipping_class_id()) {
-                    $only_selected = false;
+                if ($shippingClassId !== $product->get_shipping_class_id()) {
+                    $onlySelected = false;
                     break;
                 }
             }
         }
 
-        return $only_selected;
+        return $onlySelected;
     }
 }

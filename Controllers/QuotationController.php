@@ -9,9 +9,9 @@ use Helpers\MoneyHelper;
 use Services\LocationService;
 use Services\QuotationService;
 
-class QuotationController 
+class QuotationController
 {
-    public function __construct() 
+    public function __construct()
     {
         add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
     }
@@ -20,7 +20,7 @@ class QuotationController
      * @param [type] $order_id
      * @return void
      */
-    public function makeCotationOrder($order_id) 
+    public function makeCotationOrder($order_id)
     {
         $result = (new QuotationService())->calculateQuotationByOrderId($order_id);
 
@@ -29,13 +29,13 @@ class QuotationController
         $totalCart = 0;
         $freeShipping = false;
 
-        foreach(WC()->cart->cart_contents as $cart) {
+        foreach (WC()->cart->cart_contents as $cart) {
             $totalCart += $cart['line_subtotal'];
         }
 
         // Utilizado frete grátis?
-        foreach(WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount ) {
+        foreach (WC()->cart->get_coupons() as $cp) {
+            if ($cp->get_free_shipping() && $totalCart >= $cp->amount) {
                 $freeShipping = true;
             }
         }
@@ -54,23 +54,23 @@ class QuotationController
     /**
      * @return void
      */
-    public function cotationProductPage() 
+    public function cotationProductPage()
     {
         if (!isset($_POST['data'])) {
             return wp_send_json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Dados incompletos'
             ], 412);
         }
 
         if (!isset($_POST['data']['cep_origem'])) {
             return wp_send_json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Campo CEP é necessário'
             ], 412);
         }
 
-        if ( strlen(trim($_POST['data']['cep_origem'])) < 8 ) {
+        if (strlen(trim($_POST['data']['cep_origem'])) < 8) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Campo CEP precisa ter 8 digitos'
@@ -79,29 +79,29 @@ class QuotationController
 
         $destination = (new LocationService())->getAddressByPostalCode($_POST['data']['cep_origem']);
 
-        if(empty($destination) || is_null($destination)) {
+        if (empty($destination) || is_null($destination)) {
             return wp_send_json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'CEP inválido ou não encontrado'
             ], 404);
-        }      
+        }
 
         if (!isset($destination->cep) || !isset($destination->uf)) {
             return wp_send_json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'CEP inválido ou não encontrado'
             ], 404);
         }
 
         $dimensionHelper = new DimensionsHelper();
 
-        $package = array( 
+        $package = array(
             'ship_via'     => '',
             'destination'  => array(
-                    'country'  => 'BR',
-                    'state'    => $destination->uf,
-                    'postcode' => $destination->cep, 
-                ),
+                'country'  => 'BR',
+                'state'    => $destination->uf,
+                'postcode' => $destination->cep,
+            ),
             'cotationProduct' => array(
                 (object) array(
                     'id'                 => $_POST['data']['id_produto'],
@@ -112,13 +112,13 @@ class QuotationController
                     'quantity'           => intval($_POST['data']['quantity']),
                     'price'              => floatval($_POST['data']['produto_preco']),
                     'insurance_value'    => floatval($_POST['data']['produto_preco']),
-                    'notConverterWeight' => true 
+                    'notConverterWeight' => true
                 )
             )
         );
 
-        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package( $package );
-        $shippingMethods = $shippingZone->get_shipping_methods( true );
+        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
+        $shippingMethods = $shippingZone->get_shipping_methods(true);
         $productShippingClassId = wc_get_product($_POST['data']['id_produto'])->get_shipping_class_id();
 
         if ($productShippingClassId) {
@@ -128,32 +128,31 @@ class QuotationController
                 }
             }
         }
-    
-        if(count($shippingMethods) == 0) {
+
+        if (count($shippingMethods) == 0) {
             return wp_send_json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Não é feito envios para o CEP informado'
             ], 401);
         }
 
-        $rates = array();        
+        $rates = array();
         $free = 0;
-        foreach($shippingMethods as $shippingMethod) 
-        {
-            $rate = $shippingMethod->get_rates_for_package( $package );
+        foreach ($shippingMethods as $shippingMethod) {
+            $rate = $shippingMethod->get_rates_for_package($package);
             if (key($rate) == 'free_shipping') {
                 $free++;
             }
 
-            if(empty($rate) || (key($rate) == 'free_shipping') && $free > 1 ){
+            if (empty($rate) || (key($rate) == 'free_shipping') && $free > 1) {
                 continue;
             }
 
             $rates[] = $this->mapObject($rate[key($rate)]);
-        }   
+        }
 
         return wp_send_json([
-            'success' => true, 
+            'success' => true,
             'data' => $rates
         ], 200);
     }
@@ -162,7 +161,7 @@ class QuotationController
      * @param [type] $item
      * @return void
      */
-    private function mapObject($item) 
+    private function mapObject($item)
     {
         $name = null;
         if (isset($item->meta_data['name'])) {
@@ -174,14 +173,14 @@ class QuotationController
             $company = $item->meta_data['company'];
         }
 
-        $method = (new optionsHelper())->getName($item->get_id(),$name, $company, $item->get_label());
+        $method = (new optionsHelper())->getName($item->get_id(), $name, $company, $item->get_label());
 
         return [
             'id' => $item->get_id(),
             'name' => $method['method'],
             'price' => (new MoneyHelper())->setLabel($item->get_cost(), $item->get_id()),
             'company' => $method['company'],
-            'delivery_time' =>  (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
+            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false
         ];
     }
@@ -193,7 +192,7 @@ class QuotationController
      * @param array $options
      * @return void
      */
-    public function makeCotationPackage($package, $services, $to, $options = []) 
+    public function makeCotationPackage($package, $services, $to, $options = [])
     {
         return $this->makeCotation($to, $services, [], $package, $options, false);
     }
