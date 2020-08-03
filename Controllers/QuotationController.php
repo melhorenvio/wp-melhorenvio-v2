@@ -6,80 +6,72 @@ use Helpers\DimensionsHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
+use Services\CalculateShippingMethodService;
 use Services\LocationService;
 use Services\QuotationService;
 
+/**
+ * Class responsible for the quotation controller
+ */
 class QuotationController
 {
+    /**
+     * Construct of CotationController
+     */
     public function __construct()
     {
-        add_action('woocommerce_checkout_order_processed', array($this, 'makeCotationOrder'));
+        add_action('woocommerce_checkout_order_processed', array(
+            $this, 'makeCotationOrder'
+        ));
     }
 
     /**
-     * @param [type] $order_id
+     * Function to make a quotation by order woocommerce
+     *
+     * @param int $orderId
      * @return void
      */
-    public function makeCotationOrder($order_id)
+    public function makeCotationOrder($orderId)
     {
-        $result = (new QuotationService())->calculateQuotationByOrderId($order_id);
-
-        global $woocommerce;
-
-        $totalCart = 0;
-        $freeShipping = false;
-
-        foreach (WC()->cart->cart_contents as $cart) {
-            $totalCart += $cart['line_subtotal'];
-        }
-
-        // Utilizado frete grátis?
-        foreach (WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount) {
-                $freeShipping = true;
-            }
-        }
+        $result = (new QuotationService())->calculateQuotationByOrderId($orderId);
 
         unset($_SESSION['quotation']);
 
         return $result;
     }
 
+    /**
+     * Function to refresh quotation
+     *
+     * @return json
+     */
     public function refreshCotation()
     {
         $results = $this->makeCotationOrder($_GET['id']);
-        return wp_send_json($results, 200);
+        return wp_send_json(
+            $results,
+            200
+        );
     }
 
     /**
-     * @return void
+     * Function to perform the quotation on the product calculator
+     *
+     * @return json
      */
     public function cotationProductPage()
     {
-        if (!isset($_POST['data'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Dados incompletos'
-            ], 412);
-        }
+        $data = $_POST['data'];
 
-        if (!isset($_POST['data']['cep_origem'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Campo CEP é necessário'
-            ], 412);
-        }
+        $cep_origem = preg_replace('/\D/', '', $data['cep_origem']);
 
-        if (strlen(trim($_POST['data']['cep_origem'])) < 8) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Campo CEP precisa ter 8 digitos'
-            ], 412);
-        }
+        $data['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
 
-        $destination = (new LocationService())->getAddressByPostalCode($_POST['data']['cep_origem']);
+        $this->isValidRequest($data);
 
-        if (empty($destination) || is_null($destination)) {
+        $destination = (new LocationService())->getAddressByPostalCode($data['cep_origem']);
+
+        if (empty($destination)) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'CEP inválido ou não encontrado'
@@ -93,8 +85,6 @@ class QuotationController
             ], 404);
         }
 
-        $dimensionHelper = new DimensionsHelper();
-
         $package = array(
             'ship_via'     => '',
             'destination'  => array(
@@ -104,14 +94,26 @@ class QuotationController
             ),
             'cotationProduct' => array(
                 (object) array(
-                    'id'                 => $_POST['data']['id_produto'],
-                    "weight"             => $dimensionHelper->converterIfNecessary(floatval($_POST['data']['produto_peso'])),
-                    "width"              => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_largura'])),
-                    "length"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_comprimento'])),
-                    "height"             => $dimensionHelper->converterDimension(floatval($_POST['data']['produto_altura'])),
-                    'quantity'           => intval($_POST['data']['quantity']),
-                    'price'              => floatval($_POST['data']['produto_preco']),
-                    'insurance_value'    => floatval($_POST['data']['produto_preco']),
+                    'id' => $data['id_produto'],
+                    'weight' => DimensionsHelper::convertWeightUnit(
+                        floatval($data['produto_peso'])
+                    ),
+                    'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                        floatval($data['produto_largura'])
+                    ),
+                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                        floatval($data['produto_comprimento'])
+                    ),
+                    'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                        floatval($data['produto_altura'])
+                    ),
+                    'quantity' => intval($data['quantity']),
+                    'price' => floatval(
+                        $data['produto_preco']
+                    ),
+                    'insurance_value'    => floatval(
+                        $data['produto_preco']
+                    ),
                     'notConverterWeight' => true
                 )
             )
@@ -119,10 +121,15 @@ class QuotationController
 
         $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
         $shippingMethods = $shippingZone->get_shipping_methods(true);
-        $productShippingClassId = wc_get_product($_POST['data']['id_produto'])->get_shipping_class_id();
+        $productShippingClassId = wc_get_product($data['id_produto'])->get_shipping_class_id();
+
 
         if ($productShippingClassId) {
             foreach ($shippingMethods as $key => $method) {
+                if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
+                    continue;
+                }
+
                 if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
                     unset($shippingMethods[$key]);
                 }
@@ -158,6 +165,56 @@ class QuotationController
     }
 
     /**
+     * Function to validate request in screen product
+     *
+     * @param array $data
+     * @return json
+     */
+    private function isValidRequest($data)
+    {
+        if (!isset($data['cep_origem'])) {
+            return wp_send_json([
+                'success' => false, 'message' => 'Infomar CEP de origem'
+            ], 400);
+        }
+
+        if (!isset($data['produto_altura'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar a altura do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_largura'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar a largura do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_comprimento'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o comprimento do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_peso'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o peso do produto'
+            ], 400);
+        }
+
+        if (!isset($data['produto_preco'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Infomar o preço do produto'
+            ], 400);
+        }
+    }
+
+    /**
      * @param [type] $item
      * @return void
      */
@@ -173,12 +230,20 @@ class QuotationController
             $company = $item->meta_data['company'];
         }
 
-        $method = (new optionsHelper())->getName($item->get_id(), $name, $company, $item->get_label());
+        $method = (new OptionsHelper())->getName(
+            $item->get_id(),
+            $name,
+            $company,
+            $item->get_label()
+        );
 
         return [
             'id' => $item->get_id(),
             'name' => $method['method'],
-            'price' => (new MoneyHelper())->setLabel($item->get_cost(), $item->get_id()),
+            'price' => (new MoneyHelper())->setLabel(
+                $item->get_cost(),
+                $item->get_id()
+            ),
             'company' => $method['company'],
             'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false

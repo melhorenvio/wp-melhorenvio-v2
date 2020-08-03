@@ -102,7 +102,7 @@ function azul_amanha_shipping_method_init()
                         'desc_tip'    => true,
                         'default'     => '',
                         'class'       => 'wc-enhanced-select',
-                        //'options'     => $this->service->getShippingClassesOptions(),
+                        'options'     => $this->service->getShippingClassesOptions(),
                     ),
                 );
             }

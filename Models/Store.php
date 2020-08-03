@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use Controllers\TokenController;
 use Services\RequestService;
 
 class Store
@@ -24,7 +23,7 @@ class Store
     /**
      * @return void
      */
-    public function getStories()
+    public function getStores()
     {
         $codeStore = md5(get_option('home'));
 
@@ -44,7 +43,7 @@ class Store
             false
         );
 
-        $stories = array();
+        $stores = array();
 
         if (!isset($response->data)) {
             return array(
@@ -56,7 +55,7 @@ class Store
         $storeSelected = $this->getSelectedStoreId();
 
         foreach ($response->data as $store) {
-            $stories[] = array(
+            $stores[] = array(
                 'id'             => $store->id,
                 'name'           => $store->name,
                 'company_name'   => $store->company_name,
@@ -69,12 +68,12 @@ class Store
             );
         }
 
-        $_SESSION[$codeStore][self::OPTION_STORES] = $stories;
+        $_SESSION[$codeStore][self::OPTION_STORES] = $stores;
 
         return array(
             'success' => true,
             'origin'  => 'api',
-            'stores'  =>  $stories
+            'stores'  =>  $stores
         );
     }
 
@@ -132,7 +131,7 @@ class Store
      */
     public function getStore()
     {
-        $stores = $this->getStories();
+        $stores = $this->getStores();
 
         if (is_null($stores['stores']) || !isset($stores['stores'])) {
             return null;

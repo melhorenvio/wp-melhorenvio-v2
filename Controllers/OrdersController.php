@@ -38,7 +38,7 @@ class OrdersController
 
     /**
      * Function to add order in cart Melhor Envio.
-     * 
+     *
      * @param int $order_id
      * @param int $choosen
      * @return json $results
@@ -127,7 +127,12 @@ class OrdersController
             ], 400);
         }
 
-        (new CartService())->remove($_GET['id']);
+        if (!(new CartService())->remove($_GET['order_id'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao remove o pedido do carrinho'
+            ], 400);
+        }
 
         return wp_send_json([
             'success' => true,
@@ -143,14 +148,21 @@ class OrdersController
      */
     public function cancelOrder()
     {
-        if (!isset($_GET['id'])) {
+        if (!isset($_GET['order_id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
             ], 400);
         }
 
-        (new OrderService())->cancel($_GET['id']);
+        $result = (new OrderService())->cancel($_GET['order_id']);
+
+        if (!$result['success']) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao cancelar o pedido'
+            ], 400);
+        }
 
         return wp_send_json([
             'success' => true,
@@ -271,7 +283,7 @@ class OrdersController
         unset($_GET['action']);
 
         if (!isset($_GET['id']) || !isset($_GET['number']) || !isset($_GET['key'])) {
-            return json_encode([
+            return wp_send_json([
                 'success' => false,
                 'message' => 'Campos ID, number, key são obrigatorios'
             ], 400);

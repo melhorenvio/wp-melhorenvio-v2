@@ -9,24 +9,24 @@ class TrackingService
     /**
      * Save tracking order
      *
-     * @param int $order_id
+     * @param int $orderId
      * @param string $tracking
      * @return void
      */
-    public function addTrackingOrder($order_id, $tracking)
+    public function addTrackingOrder($orderId, $tracking)
     {
-        add_post_meta($order_id, self::TRACKING_MELHOR_ENVIO, $tracking, true);
+        add_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, $tracking, true);
     }
 
     /**
      * Function to get tracking order
      *
-     * @param int $order_id
+     * @param int $orderId
      * @return string $tracking
      */
-    public function getTrackingOrder($order_id)
+    public function getTrackingOrder($orderId)
     {
-        return get_post_meta($order_id, self::TRACKING_MELHOR_ENVIO, true);
+        return get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
     }
 
     /**
@@ -35,29 +35,29 @@ class TrackingService
      */
     public function createTrackingColumnOrdersClient()
     {
-        add_filter( 'woocommerce_my_account_my_orders_columns', function ($columns) {
-            $new_columns = array();
-            foreach ( $columns as $key => $name ) {
-                $new_columns[ $key ] = $name;
-                if ( 'order-status' === $key ) {
-                    $new_columns['tracking'] = __( 'Rastreio', 'textdomain' );
+        add_filter('woocommerce_my_account_my_orders_columns', function ($columns) {
+            $newColumns = [];
+            foreach ($columns as $key => $name) {
+                $newColumns[$key] = $name;
+                if ('order-status' === $key) {
+                    $newColumns['tracking'] = __('Rastreio', 'textdomain');
                 }
             }
-            return $new_columns;
-        } );
+            return $newColumns;
+        });
 
         $this->addTrackingToOrderClients();
     }
 
-     /**
+    /**
      * Adds data to the custom "tracking to" column in "My Account > Orders".
      *
      */
     private function addTrackingToOrderClients()
     {
-        add_action( 'woocommerce_my_account_my_orders_column_tracking', function($order){
+        add_action('woocommerce_my_account_my_orders_column_tracking', function ($order) {
             $data = (new TrackingService())->getTrackingOrder($order->id);
-            echo  (!empty($data)) ? sprintf("<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data) : 'Aguardando postagem';
-        } );
+            echo (!empty($data)) ? sprintf("<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data) : 'Aguardando postagem';
+        });
     }
 }
