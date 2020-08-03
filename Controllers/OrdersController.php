@@ -159,7 +159,7 @@ class OrdersController
             ], 400);
         }
 
-        if (!(new CartService())->remove($_GET['order_id'])) {
+        if (!(new CartService())->remove($_GET['id'], $_GET['order_id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao remove o pedido do carrinho'
@@ -180,14 +180,14 @@ class OrdersController
      */
     public function cancelOrder()
     {
-        if (!isset($_GET['order_id'])) {
+        if (!isset($_GET['id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['order_id']);
+        $result = (new OrderService())->cancel($_GET['id']);
 
         if (!$result['success']) {
             return wp_send_json([

@@ -386,9 +386,6 @@ const orders = {
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
 
-                context.commit('setMsgModal', 'Item #' + data.id + ' removido do carrinho')
-                context.commit('toggleModal', true)
-
             }).catch(error => {
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)

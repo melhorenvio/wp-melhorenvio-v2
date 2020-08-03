@@ -5,7 +5,41 @@
     <a
       v-if="buttonCart(item)"
       @click="sendCartSimple({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
-    >Cart</a>
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 512 512"
+        width="25"
+        height="25"
+      >
+        <linearGradient
+          id="a"
+          gradientUnits="userSpaceOnUse"
+          x1="174.667"
+          x2="174.667"
+          y1="30"
+          y2="438.078"
+        >
+          <stop offset="0" stop-color="#00efd1" />
+          <stop offset="1" stop-color="#00acea" />
+        </linearGradient>
+        <linearGradient id="b" x1="372.786" x2="372.786" xlink:href="#a" y1="30" y2="438.078" />
+        <linearGradient id="c" x1="256" x2="256" xlink:href="#a" y1="30" y2="438.078" />
+        <path
+          d="m174.667 380.772a46.5 46.5 0 1 0 46.5 46.5 46.549 46.549 0 0 0 -46.5-46.5zm0 72.992a26.5 26.5 0 1 1 26.5-26.5 26.526 26.526 0 0 1 -26.5 26.5z"
+          fill="url(#a)"
+        />
+        <path
+          d="m372.786 380.772a46.5 46.5 0 1 0 46.5 46.5 46.549 46.549 0 0 0 -46.5-46.5zm0 72.992a26.5 26.5 0 1 1 26.5-26.5 26.526 26.526 0 0 1 -26.5 26.5z"
+          fill="url(#b)"
+        />
+        <path
+          d="m470.433 103.407-340.081-5.136-9.329-28.271a46.542 46.542 0 0 0 -44.164-32h-35.14a10 10 0 1 0 0 20h35.14a26.578 26.578 0 0 1 25.179 18.289l11.781 35.611 54.359 164.28-4.9 11.865a46.293 46.293 0 0 0 42.984 63.955h203.019a10 10 0 0 0 0-20h-203.019a26.312 26.312 0 0 1 -24.49-36.384l3.844-9.272 219.733-22.5a57 57 0 0 0 49.58-43.376l25.078-104.738a10 10 0 0 0 -9.574-12.323zm-34.955 112.415a36.988 36.988 0 0 1 -32.169 28.144l-217.365 22.274-48.936-147.866 320.641 4.843z"
+          fill="url(#c)"
+        />
+      </svg>
+    </a>
 
     <a
       v-if="buttonBuy(item)"
@@ -37,20 +71,6 @@
       </svg>
     </a>
 
-    <!-- Pagar -->
-    <!--<a v-if="(item.status && item.order_id && item.id && item.status == 'pending') || ite.status == 'pending'" @click="payTicket({id:item.id, order_id:item.order_id})" href="javascript:;" class="action-button -adicionar" data-tip="Pagar">
-            <svg class="ico" version="1.1" id="pagar" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-            <path d="M12,2c5.514,0,10,4.486,10,10s-4.486,10-10,10S2,17.514,2,12S6.486,2,12,2z M12,0C5.373,0,0,5.373,0,12s5.373,12,12,12
-                s12-5.373,12-12S18.627,0,12,0z M16,14.083c0-2.145-2.232-2.742-3.943-3.546c-1.039-0.54-0.908-1.829,0.581-1.916
-                c0.826-0.05,1.675,0.195,2.443,0.465l0.362-1.647C14.536,7.163,13.724,7.037,13,7.018V6h-1v1.067
-                c-1.945,0.267-2.984,1.487-2.984,2.85c0,2.438,2.847,2.81,3.778,3.243c1.27,0.568,1.035,1.75-0.114,2.011
-                c-0.997,0.226-2.269-0.168-3.225-0.54L9,16.275c0.894,0.462,1.965,0.708,3,0.727V18h1v-1.053C14.657,16.715,16.002,15.801,16,14.083
-                z"/>
-            </svg>
-    </a>-->
-
-    <!-- Imprimir etiqueta -->
     <a
       v-if="item.status && (item.status == 'released'  || item.status == 'posted' || item.status == 'paid' || item.status == 'generated' || item.status == 'printed')"
       @click="printTicket({id:item.id, order_id:item.order_id})"
@@ -174,6 +194,11 @@
         </g>
       </svg>
     </a>
+
+    <a
+      v-if="buttonCancel(item)"
+      @click="cancelOrderSimple({id: item.id, order_id: item.order_id})"
+    >Cancelar</a>
   </div>
 </template>
 
@@ -205,6 +230,10 @@ export default {
     sendCartSimple: function(data) {
       this.initLoader();
       this.addCartSimple(data);
+    },
+    cancelOrderSimple: function(data) {
+      this.initLoader();
+      this.cancelCart(data);
     },
     beforeAddCart: function(data) {
       this.initLoader();
@@ -248,6 +277,16 @@ export default {
     },
     buttonBuy(item) {
       if (!(item.status == "posted" || item.status == "released")) {
+        return true;
+      }
+      return false;
+    },
+    buttonCancel(item) {
+      if (
+        item.status == "posted" ||
+        item.status == "generated" ||
+        item.status == "released"
+      ) {
         return true;
       }
       return false;
