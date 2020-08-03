@@ -129,11 +129,11 @@ class RouterService
     private function loadRoutesTest()
     {
         add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.7.8'))->run();
+            (new TestService('2.7.10'))->run();
         });
 
         add_action('wp_ajax_environment', function () {
-            (new TestService('2.7.8'))->run();
+            (new TestService('2.7.10'))->run();
         });
     }
 
