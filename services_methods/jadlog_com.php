@@ -1,7 +1,6 @@
 <?php
 
 use Services\CalculateShippingMethodService;
-use Services\WooCommerceService;
 
 add_action('woocommerce_shipping_init', 'jadlog_com_shipping_method_init');
 
@@ -12,14 +11,15 @@ function jadlog_com_shipping_method_init()
 
         class WC_Jadlog_Com_Shipping_Method extends WC_Shipping_Method
         {
+            const CODE = '4';
 
-            public $code = '4';
-
-            const ID = 'jadlog_com';
+            const ID = 'melhorenvio_jadlog_com';
 
             const METHOD_TITLE = "Jadlog .Com (Melhor Envio)";
 
             const METHOD_DESCRIPTION = 'Serviço Jadlog .Com';
+
+            const COMPANY = 'Jadlog';
 
             /**
              * Constructor for your shipping class
@@ -29,20 +29,25 @@ function jadlog_com_shipping_method_init()
              */
             public function __construct($instance_id = 0)
             {
-                $this->id                 = self::ID;
-                $this->instance_id        = absint($instance_id);
-                $this->method_title       = self::METHOD_TITLE;
+                $this->id = self::ID;
+                $this->instance_id = absint($instance_id);
+                $this->method_title = self::METHOD_TITLE;
                 $this->method_description = self::METHOD_DESCRIPTION;
-                $this->enabled            = "yes";
-                $this->title              = isset($this->settings['title']) ? $this->settings['title'] : self::METHOD_TITLE;
+                $this->enabled = "yes";
+                $this->title = !empty($this->settings['title'])
+                    ? $this->settings['title']
+                    : self::METHOD_TITLE;
                 $this->supports = array(
                     'shipping-zones',
                     'instance-settings',
                     'instance-settings-modal',
                 );
-                $this->service = (new CalculateShippingMethodService());
+                $this->service = new CalculateShippingMethodService();
                 $this->init_form_fields();
-                $this->shipping_class_id  = (int) $this->get_option('shipping_class_id', '-1');
+                $this->shipping_class_id  = (int) $this->get_option(
+                    'shipping_class_id',
+                    CalculateShippingMethodService::ANY_DELIVERY
+                );
             }
 
             /**
@@ -54,7 +59,10 @@ function jadlog_com_shipping_method_init()
             function init()
             {
                 $this->init_settings();
-                add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
+                add_action(
+                    'woocommerce_update_options_shipping_' . $this->id,
+                    array($this, 'process_admin_options')
+                );
             }
 
             /**
@@ -72,9 +80,9 @@ function jadlog_com_shipping_method_init()
 
                 $rate = $this->service->calculate_shipping(
                     $package,
-                    $this->code,
-                    'melhorenvio_jadlog_com',
-                    'Jadlog'
+                    self::CODE,
+                    self::ID,
+                    self::COMPANY
                 );
 
                 if ($rate) {

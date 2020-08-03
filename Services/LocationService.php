@@ -35,7 +35,7 @@ class LocationService
             $address = $this->getAddressByPostalCodeLocationViaCep($postalCode);
         }
 
-        if ($address->erro) {
+        if (isset($address->erro)) {
             return null;
         }
 

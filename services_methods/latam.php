@@ -1,7 +1,6 @@
 <?php
 
 use Services\CalculateShippingMethodService;
-use Services\WooCommerceService;
 
 add_action('woocommerce_shipping_init', 'latam_shipping_method_init');
 function latam_shipping_method_init()
@@ -10,8 +9,16 @@ function latam_shipping_method_init()
 
         class WC_Latam_Shipping_Method extends WC_Shipping_Method
         {
+            const CODE = '10';
 
-            public $code = '10';
+            const METHOD_TITLE = "Latam (Melhor Envio)";
+
+            const ID = 'melhorenvio_latam';
+
+            const METHOD_DESCRIPTION = 'Serviço Latam Cargo Próximo dia';
+
+            const COMPANY = 'Latam Cargo';
+
             /**
              * Constructor for your shipping class
              *
@@ -20,20 +27,25 @@ function latam_shipping_method_init()
              */
             public function __construct($instance_id = 0)
             {
-                $this->id                 = "latam";
+                $this->id = self::ID;
                 $this->instance_id = absint($instance_id);
-                $this->method_title       = "LATAM Cargo Próximo Dia (Melhor Envio)";
-                $this->method_description = 'Serviço LATAM Cargo Próximo Dia';
-                $this->enabled            = "yes";
-                $this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio LATAM Cargo Próximo Dia';
+                $this->method_title = self::METHOD_TITLE;
+                $this->method_description = self::METHOD_DESCRIPTION;
+                $this->enabled = "yes";
+                $this->title = !empty($this->settings['title'])
+                    ? $this->settings['title']
+                    : self::METHOD_TITLE;
                 $this->supports = array(
                     'shipping-zones',
                     'instance-settings',
                     'instance-settings-modal',
                 );
-                $this->service = (new CalculateShippingMethodService());
+                $this->service = new CalculateShippingMethodService();
                 $this->init_form_fields();
-                $this->shipping_class_id  = (int) $this->get_option('shipping_class_id', '-1');
+                $this->shipping_class_id  = (int) $this->get_option(
+                    'shipping_class_id',
+                    CalculateShippingMethodService::ANY_DELIVERY
+                );
             }
 
             /**
@@ -45,7 +57,10 @@ function latam_shipping_method_init()
             function init()
             {
                 $this->init_settings();
-                add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
+                add_action(
+                    'woocommerce_update_options_shipping_' . $this->id,
+                    array($this, 'process_admin_options')
+                );
             }
 
             /**
@@ -63,9 +78,9 @@ function latam_shipping_method_init()
 
                 $rate = $this->service->calculate_shipping(
                     $package,
-                    $this->code,
-                    'melhorenvio_latam',
-                    'Latam'
+                    self::CODE,
+                    self::ID,
+                    self::COMPANY
                 );
 
                 if ($rate) {
