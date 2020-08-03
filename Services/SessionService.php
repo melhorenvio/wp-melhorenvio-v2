@@ -8,21 +8,32 @@ class SessionService
     {
         $codeStore = md5(get_option('home'));
 
-        $dateNow = date("Y-m-d h:i:s");
-
-        if(isset($_SESSION[$codeStore]['cotations'])) {
+        if (isset($_SESSION[$codeStore]['cotations'])) {
 
             foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
 
-                if( !isset($cotation['created'])) {
+                if (!isset($cotation['created'])) {
                     unset($_SESSION[$codeStore]['cotations'][$key]);
                 }
 
-                if(date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($cotation['created']))) < $dateNow) {
+                if ($this->isExpiredQuotationCached($cotation)) {
                     unset($_SESSION[$codeStore]['cotations'][$key]);
                 }
             }
         }
+    }
+
+    /**
+     * Function to check if the quote has expired in the session
+     *
+     * @param array $quotation
+     * @return boolean
+     */
+    public function isExpiredQuotationCached($quotation)
+    {
+        $dateNow = date("Y-m-d h:i:s");
+
+        return (date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($quotation['created']))) < $dateNow);
     }
 
     public function delete()
@@ -43,7 +54,7 @@ class SessionService
         unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
 
         unset($_SESSION[$codeStore]['melhorenvio_options']);
-        
+
         return $_SESSION;
     }
 }

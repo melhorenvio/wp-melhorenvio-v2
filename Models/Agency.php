@@ -12,7 +12,7 @@ class Agency
     /**
      * @return void
      */
-    public function getAgencies()
+    public function get()
     {
         $results = '';
 
@@ -82,17 +82,17 @@ class Agency
     }
 
     /**
-     * @param int $id
-     * @return void
+     * @param string $id
+     * @return bool
      */
     public function setAgency($id)
     {
         delete_option(self::AGENCY_SELECTED);
-        add_option(self::AGENCY_SELECTED, $id);
-        return array(
-            'success' => true,
-            'id' => $id
-        );
+        if (!add_option(self::AGENCY_SELECTED, $id)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -102,7 +102,7 @@ class Agency
      */
     public function getCodeAgencySelected()
     {
-        $agencies = $this->getAgencies();
+        $agencies = $this->get();
 
         foreach ($agencies['allAgencies'] as $agency) {
             if ($agency['selected']) {

@@ -4,12 +4,12 @@ namespace Controllers;
 
 use Services\SessionService;
 
-class SessionsController 
+class SessionsController
 {
     /**
      * Function to get information from the plugin session
      *
-     * @return array
+     * @return json
      */
     public function getSession()
     {
@@ -19,7 +19,7 @@ class SessionsController
     /**
      * Function to delete the plugin session
      *
-     * @return void
+     * @return json
      */
     public function deleteSession()
     {
