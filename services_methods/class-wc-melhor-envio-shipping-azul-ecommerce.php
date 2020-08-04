@@ -1,0 +1,26 @@
+<?php
+
+class WC_Melhor_Envio_Shipping_Azul_Ecommerce extends WC_Melhor_Envio_Shipping
+{
+
+    const ID = 'melhorenvio_azul_ecommerce';
+
+    const TITLE = 'Azul Ecommerce';
+
+    const METHOD_TITLE = "Azul Ecommerce (Melhor Envio)";
+
+    protected $code = 16;
+
+    /**
+     * Initialize Azul Ecommerce.
+     *
+     * @param int $instance_id Shipping zone instance.
+     */
+    public function __construct($instance_id = 0)
+    {
+        $this->id = self::ID;
+        $this->method_title = self::METHOD_TITLE;
+        $this->title = self::TITLE;
+        parent::__construct($instance_id);
+    }
+}

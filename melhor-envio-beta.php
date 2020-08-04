@@ -216,17 +216,10 @@ final class Base_Plugin
         }
 
         if (empty($errorsPath)) {
-
             try {
-
                 @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
                 include_once $pathPlugins . '/woocommerce/woocommerce.php';
                 include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
-
-                // Create the methods shippings
-                foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
-                    include_once $filename;
-                }
             } catch (Exception $e) {
                 add_action('admin_notices', function () {
                     echo sprintf('<div class="error">
@@ -268,7 +261,6 @@ final class Base_Plugin
     public function includes()
     {
         try {
-
             require_once BASEPLUGIN_INCLUDES . '/class-assets.php';
 
             if ($this->is_request('admin')) {
@@ -277,10 +269,6 @@ final class Base_Plugin
 
             if ($this->is_request('frontend')) {
                 require_once BASEPLUGIN_INCLUDES . '/class-frontend.php';
-            }
-
-            if ($this->is_request('ajax')) {
-                // require_once BASEPLUGIN_INCLUDES . '/class-ajax.php';
             }
 
             if ($this->is_request('rest')) {
@@ -312,7 +300,6 @@ final class Base_Plugin
 
         (new TrackingService())->createTrackingColumnOrdersClient();
 
-
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
             $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
@@ -323,6 +310,23 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
+
+        require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
+        foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
+            require_once $filename;
+        }
+
+        add_filter('woocommerce_shipping_methods', function ($methods) {
+            $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
+            $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
+            $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
+            $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
+            $methods['melhorenvio_via_brasil_aero']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Aero';
+            $methods['melhorenvio_via_brasil_rodoviario']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario';
+            $methods['melhorenvio_latam']  = 'WC_Melhor_Envio_Shipping_Latam';
+            $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+            return $methods;
+        });
     }
 
     /**
