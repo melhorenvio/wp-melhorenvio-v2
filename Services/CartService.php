@@ -25,6 +25,8 @@ class CartService
 
         $quotation = (new QuotationService())->calculateQuotationByOrderId($orderId);
 
+        $orderInvoiceService = new OrderInvoicesService();
+
         $body = array(
             'from' => $from,
             'to' => $to,
@@ -38,7 +40,8 @@ class CartService
                 "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                 "collect" => false,
                 "reverse" => false,
-                "non_commercial" => true,
+                "non_commercial" => $orderInvoiceService->isNonCommercial($order_id),
+                "invoice" => $orderInvoiceService->getInvoiceOrder($order_id),
                 'platform' => self::PLATAFORM,
                 'reminder' => null
             )

@@ -2,13 +2,13 @@
 
 namespace Controllers;
 
-use Models\Order;
 use Services\OrdersProductsService;
 use Services\BuyerService;
 use Services\CartService;
 use Services\OrderService;
 use Services\OrderQuotationService;
 use Services\ListOrderService;
+use Services\OrderInvoicesService;
 
 class OrdersController
 {
@@ -289,14 +289,20 @@ class OrdersController
             ], 400);
         }
 
-        $result = Order::updateInvoice(
+        $result = (new OrderInvoicesService())->insertInvoiceOrder(
             $_GET['id'],
-            [
-                'number' => $_GET['number'],
-                'key' => $_GET['key']
-            ]
+            $_GET['key'],
+            $_GET['number']
         );
 
-        return json_encode($result);
+        if (!$result) {
+            return wp_send_json([
+                'message' => 'Ocorreu um erro ao atualizar os documentos'
+            ], 400);
+        }
+
+        return wp_send_json([
+            'message' => (array) sprintf("Documentos do pedido %d atualizados", $_GET['id'])
+        ], 200);
     }
 }

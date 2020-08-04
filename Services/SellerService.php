@@ -16,8 +16,6 @@ class SellerService
      */
     public function getData()
     {
-        $data = $this->getDataApiMelhorEnvio();
-
         $address = (new Address())->getAddressFrom();
 
         if (!empty($address['address']['id'])) {
@@ -42,7 +40,7 @@ class SellerService
             "city" => $data->address->city->city,
             "state_abbr" => $data->address->city->state->state_abbr,
             "country_id" => 'BR',
-            "postal_code" => $data->address->postal_code
+            "postal_code" => $user->address->postal_code
         ];
     }
 
