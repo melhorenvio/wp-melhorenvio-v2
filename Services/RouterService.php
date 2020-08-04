@@ -3,9 +3,9 @@
 namespace Services;
 
 use Controllers\ConfigurationController;
-use Controllers\CotationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
+use Controllers\QuotationController;
 use Controllers\SessionsController;
 use Controllers\StatusController;
 use Controllers\TokenController;
@@ -72,7 +72,7 @@ class RouterService
      */
     private function loadRoutesQuotations()
     {
-        $quotationsController = new CotationController();
+        $quotationsController = new QuotationController();
 
         add_action('wp_ajax_nopriv_cotation_product_page', [$quotationsController, 'cotationProductPage']);
         add_action('wp_ajax_cotation_product_page', [$quotationsController, 'cotationProductPage']);
@@ -129,11 +129,11 @@ class RouterService
     private function loadRoutesTest()
     {
         add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.7.8'))->run();
+            (new TestService('2.7.10'))->run();
         });
 
         add_action('wp_ajax_environment', function () {
-            (new TestService('2.7.8'))->run();
+            (new TestService('2.7.10'))->run();
         });
     }
 

@@ -8,6 +8,17 @@ use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
 {
+    /**
+     * Constant for delivery class of any class
+     */
+    const ANY_DELIVERY = -1;
+
+    /**
+     * Constant for no delivery class
+     */
+
+    const WITHOUT_DELIVERY = 0;
+
     const SERVICES_CORREIOS = ['1', '2', '17'];
 
     /**
@@ -106,7 +117,6 @@ class CalculateShippingMethodService
      */
     public function extractOnlyQuotationByService($quotations, $service)
     {
-
         $quotationByService = array_filter(
             $quotations,
             function ($item) use ($service) {
@@ -121,5 +131,60 @@ class CalculateShippingMethodService
         }
 
         return end($quotationByService);
+    }
+
+    /**
+     * Get shipping classes options.
+     *
+     * @return array
+     */
+    public function getShippingClassesOptions()
+    {
+        $shippingClasses = WC()->shipping->get_shipping_classes();
+        $options = array(
+            self::ANY_DELIVERY => 'Qualquer classe de entrega',
+            self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
+        );
+
+        if (!empty($shippingClasses)) {
+            $options += wp_list_pluck($shippingClasses, 'name', 'term_id');
+        }
+
+        return $options;
+    }
+
+    /**
+     * Check if package uses only the selected shipping class.
+     *
+     * @param  array $package Cart package.
+     * @param int $shipping_class_id
+     * @return bool
+     */
+    public function hasOnlySelectedShippingClass($package, $shippingClassId)
+    {
+        $onlySelected = true;
+
+        if (self::ANY_DELIVERY === $shippingClassId) {
+            return $onlySelected;
+        }
+
+        foreach ($package['contents'] as $values) {
+            $product = $values['data'];
+            $qty     = $values['quantity'];
+
+            if ($product->get_shipping_class_id() == self::WITHOUT_DELIVERY) {
+                $onlySelected = true;
+                break;
+            }
+
+            if ($qty > 0 && $product->needs_shipping()) {
+                if ($shippingClassId !== $product->get_shipping_class_id()) {
+                    $onlySelected = false;
+                    break;
+                }
+            }
+        }
+
+        return $onlySelected;
     }
 }

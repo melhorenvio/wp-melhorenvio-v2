@@ -10,8 +10,16 @@ function mini_shipping_method_init()
 
         class WC_Mini_Shipping_Method extends WC_Shipping_Method
         {
+            const CODE = '17';
 
-            public $code = '17';
+            const METHOD_TITLE = "Correios Mini (Melhor Envio)";
+
+            const ID = 'melhorenvio_mini';
+
+            const METHOD_DESCRIPTION = 'Serviço Correios Mini';
+
+            const COMPANY = 'Correios';
+
             /**
              * Constructor for your shipping class
              *
@@ -20,17 +28,25 @@ function mini_shipping_method_init()
              */
             public function __construct($instance_id = 0)
             {
-                $this->id                 = "mini";
+                $this->id = self::ID;
                 $this->instance_id = absint($instance_id);
-                $this->method_title       = "Correios Mini (Melhor Envio)";
-                $this->method_description = 'Serviço Mini';
-                $this->enabled            = "yes";
-                $this->title              = isset($this->settings['title']) ? $this->settings['title'] : 'Melhor Envio Mini';
+                $this->method_title = self::METHOD_TITLE;
+                $this->method_description = self::METHOD_DESCRIPTION;
+                $this->enabled = "yes";
+                $this->title = !empty($this->settings['title'])
+                    ? $this->settings['title']
+                    : self::METHOD_TITLE;
                 $this->supports = array(
                     'shipping-zones',
                     'instance-settings',
+                    'instance-settings-modal',
                 );
+                $this->service = new CalculateShippingMethodService();
                 $this->init_form_fields();
+                $this->shipping_class_id  = (int) $this->get_option(
+                    'shipping_class_id',
+                    CalculateShippingMethodService::ANY_DELIVERY
+                );
             }
 
             /**
@@ -41,9 +57,11 @@ function mini_shipping_method_init()
              */
             function init()
             {
-                $this->init_form_fields();
                 $this->init_settings();
-                add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
+                add_action(
+                    'woocommerce_update_options_shipping_' . $this->id,
+                    array($this, 'process_admin_options')
+                );
             }
 
             /**
@@ -55,16 +73,37 @@ function mini_shipping_method_init()
              */
             public function calculate_shipping($package = [])
             {
-                $rate = (new CalculateShippingMethodService())->calculate_shipping(
+                if (!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)) {
+                    return;
+                }
+
+                $rate = $this->service->calculate_shipping(
                     $package,
-                    $this->code,
-                    'melhorenvio_mini',
-                    'Correios'
+                    self::CODE,
+                    self::ID,
+                    self::COMPANY
                 );
 
                 if ($rate) {
                     $this->add_rate($rate);
                 }
+            }
+
+            /**
+             * Admin options fields.
+             */
+            function init_form_fields()
+            {
+                $this->instance_form_fields = array(
+                    'shipping_class_id'  => array(
+                        'title'       => 'Classe de entrega',
+                        'type'        => 'select',
+                        'desc_tip'    => true,
+                        'default'     => '',
+                        'class'       => 'wc-enhanced-select',
+                        'options'     => $this->service->getShippingClassesOptions(),
+                    ),
+                );
             }
         }
     }

@@ -6,13 +6,14 @@ use Helpers\DimensionsHelper;
 use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
+use Services\CalculateShippingMethodService;
 use Services\LocationService;
 use Services\QuotationService;
 
 /**
  * Class responsible for the quotation controller
  */
-class CotationController
+class QuotationController
 {
     /**
      * Construct of CotationController
@@ -68,7 +69,7 @@ class CotationController
 
         $this->isValidRequest($data);
 
-        $destination = (new LocationService())->getAddressByPostalCode($_POST['data']['cep_origem']);
+        $destination = (new LocationService())->getAddressByPostalCode($data['cep_origem']);
 
         if (empty($destination)) {
             return wp_send_json([
@@ -118,9 +119,24 @@ class CotationController
             )
         );
 
-        $shipping_zone = \WC_Shipping_Zones::get_zone_matching_package($package);
-        $shipping_methods = $shipping_zone->get_shipping_methods(true);
-        if (count($shipping_methods) == 0) {
+        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
+        $shippingMethods = $shippingZone->get_shipping_methods(true);
+        $productShippingClassId = wc_get_product($data['id_produto'])->get_shipping_class_id();
+
+
+        if ($productShippingClassId) {
+            foreach ($shippingMethods as $key => $method) {
+                if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
+                    continue;
+                }
+
+                if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
+                    unset($shippingMethods[$key]);
+                }
+            }
+        }
+
+        if (count($shippingMethods) == 0) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Não é feito envios para o CEP informado'
@@ -129,9 +145,8 @@ class CotationController
 
         $rates = array();
         $free = 0;
-
-        foreach ($shipping_methods as $shipping_method) {
-            $rate = $shipping_method->get_rates_for_package($package);
+        foreach ($shippingMethods as $shippingMethod) {
+            $rate = $shippingMethod->get_rates_for_package($package);
             if (key($rate) == 'free_shipping') {
                 $free++;
             }
@@ -230,13 +245,22 @@ class CotationController
                 $item->get_id()
             ),
             'company' => $method['company'],
-            'delivery_time' => (new TimeHelper)->setLabel(
-                $item->meta_data['delivery_time'],
-                $item->get_id()
-            ),
+            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
             'added_extra' => false
         ];
     }
+
+    /**
+     * @param [type] $package
+     * @param [type] $services
+     * @param [type] $to
+     * @param array $options
+     * @return void
+     */
+    public function makeCotationPackage($package, $services, $to, $options = [])
+    {
+        return $this->makeCotation($to, $services, [], $package, $options, false);
+    }
 }
 
-$cotationcontroller = new CotationController();
+$quotationController = new QuotationController();
