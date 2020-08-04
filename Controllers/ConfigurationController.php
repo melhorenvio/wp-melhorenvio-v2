@@ -9,6 +9,7 @@ use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\Method;
 use Services\ConfigurationsService;
+use Services\StoreService;
 
 /**
  * Class responsible for the configuration controller
@@ -393,7 +394,7 @@ class ConfigurationController
         }
 
         if (isset($data['store'])) {
-            $response['store'] = (new Store())->setStore($data['store']);
+            $response['store'] = (new StoreService())->setStore($data['store']);
         }
 
         if (isset($data['agency'])) {
