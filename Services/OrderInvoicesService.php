@@ -70,6 +70,6 @@ class OrderInvoicesService
     {
         $invoice = get_post_meta($postId, self::POST_META_INVOICE, true);
 
-        return (!isset($invoice['key']) || !isset($invoice['number'])) ? true : false;
+        return (!isset($invoice['key']) || !isset($invoice['number']));
     }
 }
