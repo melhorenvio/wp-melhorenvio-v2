@@ -28,6 +28,7 @@ function via_brasil_aero_shipping_method_init()
             public function __construct($instance_id = 0)
             {
                 $this->id = self::ID;
+                $this->code = self::CODE;
                 $this->instance_id = absint($instance_id);
                 $this->method_title = self::METHOD_TITLE;
                 $this->method_description = self::METHOD_DESCRIPTION;

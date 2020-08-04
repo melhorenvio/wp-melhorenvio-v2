@@ -2,13 +2,14 @@
 
 namespace Models;
 
-class Method 
+class Method
 {
     public function getMethodShipmentSelected($order_id)
     {
         global $wpdb;
 
-        $sql = sprintf('
+        $sql = sprintf(
+            '
             select 
                 meta_value as method 
             from 
@@ -21,35 +22,37 @@ class Method
                     from 
                         %swoocommerce_order_items where order_id = %d and 
                         order_item_type = "shipping"
-                    ) ', 
-            $wpdb->prefix, $wpdb->prefix, $order_id
+                    ) ',
+            $wpdb->prefix,
+            $wpdb->prefix,
+            $order_id
         );
 
         $result = $wpdb->get_results($sql);
 
         $result = end($result);
-        
+
         return $this->getCodeMelhorEnvioShippingMethod($result->method);
     }
 
     /**
      * @return void
      */
-    public function getCodeMelhorEnvioShippingMethod($method_id) 
+    public function getCodeMelhorEnvioShippingMethod($method_id)
     {
-        $method_id =  str_replace('melhorenvio_', '', $method_id);
         $shipping_methods = \WC()->shipping->get_shipping_methods();
 
         foreach ($shipping_methods as $method) {
-            
-            if($method_id == $method->id) {
+
+            if ($method_id == $method->id) {
+
                 if (isset($method->code)) {
-					return $method->code;
-				}
-				return null;
+                    return $method->code;
+                }
+                return null;
             }
         }
-        
+
         return null;
     }
 
@@ -59,8 +62,8 @@ class Method
         $enableds = [];
         $sql = sprintf('select * from %swoocommerce_shipping_zone_methods where is_enabled = 1', $wpdb->prefix);
         $results = $wpdb->get_results($sql);
-        
-        foreach ($results as $item){
+
+        foreach ($results as $item) {
             $enableds[] = $item->method_id;
         }
 
