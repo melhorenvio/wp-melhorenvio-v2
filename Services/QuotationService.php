@@ -124,6 +124,8 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
+        session_start();
+
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
@@ -140,6 +142,7 @@ class QuotationService
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
         $hash = md5(json_encode($bodyQuotation));
+
         if (!isset($_SESSION['quotation'][$hash][$service])) {
             unset($_SESSION['quotation'][$hash]);
             return false;

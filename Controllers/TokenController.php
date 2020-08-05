@@ -76,7 +76,7 @@ class TokenController
     {
         $codeStore = md5(get_option('home'));
 
-        unset($_SESSION[$codeStore]);
+        //unset($_SESSION[$codeStore]);
 
         if (!isset($_POST['token'])) {
             return wp_send_json([
