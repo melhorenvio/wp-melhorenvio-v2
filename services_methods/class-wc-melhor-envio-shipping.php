@@ -41,10 +41,6 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
         );
         $this->service = new CalculateShippingMethodService();
         $this->init_form_fields();
-        $this->shipping_class_id  = (int) $this->get_option(
-            'shipping_class_id',
-            CalculateShippingMethodService::ANY_DELIVERY
-        );
         add_action(
             'woocommerce_update_options_shipping_' . $this->id,
             array($this, 'process_admin_options')

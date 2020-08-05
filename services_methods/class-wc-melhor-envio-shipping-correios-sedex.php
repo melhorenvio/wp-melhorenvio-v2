@@ -1,5 +1,7 @@
 <?php
 
+use Services\CalculateShippingMethodService;
+
 class WC_Melhor_Envio_Shipping_Correios_Sedex extends WC_Melhor_Envio_Shipping
 {
 

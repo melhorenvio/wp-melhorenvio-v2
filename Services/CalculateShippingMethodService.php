@@ -157,7 +157,7 @@ class CalculateShippingMethodService
      * Check if package uses only the selected shipping class.
      *
      * @param  array $package Cart package.
-     * @param int $shipping_class_id
+     * @param int $shippingClassId
      * @return bool
      */
     public function hasOnlySelectedShippingClass($package, $shippingClassId)
