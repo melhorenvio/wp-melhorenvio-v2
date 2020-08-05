@@ -28,9 +28,12 @@ class CalculateShippingMethodService
      * @param int $code
      * @param int $id
      * @param string $company
+     * @param string $title
+     * @param float $taxExtra
+     * @param int $timeExtra
      * @return void
      */
-    public function calculate_shipping($package = [], $code, $id, $company)
+    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
@@ -50,33 +53,36 @@ class CalculateShippingMethodService
 
         if ($result) {
             if (isset($result->price) && isset($result->name)) {
-                $method = (new OptionsHelper())->getName(
-                    $result->id,
-                    $result->name,
-                    null,
-                    null
-                );
-
                 if ($this->isCorreios($code) && $this->hasMultipleVolumes($result)) {
                     return false;
                 }
 
-                return [
+                $rate = [
                     'id' => $id,
-                    'label' => $method['method'] . (new TimeHelper)->setLabel(
+                    'label' => $title . TimeHelper::label(
                         $result->delivery_range,
-                        $code,
-                        $result->custom_delivery_range
+                        $timeExtra
                     ),
-                    'cost' => (new MoneyHelper())->setprice($result->price, $code),
+                    'cost' => MoneyHelper::cost(
+                        $result->price,
+                        $taxExtra
+                    ),
                     'calc_tax' => 'per_item',
                     'meta_data' => [
-                        'delivery_time' => $result->delivery_range,
-                        'company' => $company,
-                        'name' => $method['method']
+                        'delivery_time' => TimeHelper::label(
+                            $result->delivery_range,
+                            $timeExtra
+                        ),
+                        'price' => MoneyHelper::price(
+                            $result->price,
+                            $taxExtra
+                        ),
+                        'company' => $company
                     ]
                 ];
             }
+
+            return $rate;
         }
 
         return false;

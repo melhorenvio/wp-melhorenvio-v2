@@ -9,6 +9,8 @@ use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\Method;
 use Services\ConfigurationsService;
+use Services\MethodShippingService;
+use Services\OptionsMethodShippingService;
 use Services\StoreService;
 
 /**
@@ -142,7 +144,7 @@ class ConfigurationController
     {
         $methods = [];
 
-        $options = $this->getOptionsShipments();
+        $options = (new OptionsMethodShippingService())->getOptionsShipments();
 
         $enableds = (new Method())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
 
@@ -166,45 +168,6 @@ class ConfigurationController
         }
 
         return wp_send_json($methods, 200);
-    }
-
-    /**
-     * @return array
-     */
-    public function getMethodsEnablesArray()
-    {
-        $methods = [];
-
-        $options = $this->getOptionsShipments();
-
-        $enableds =  (new Method())->getArrayShippingMethodsEnabledByZoneMelhorEnvio();
-
-        $shipping_methods = \WC()->shipping->get_shipping_methods();
-
-        foreach ($shipping_methods as $method) {
-            if (!isset($method->code) || is_null($method->code)) {
-                continue;
-            }
-
-            if (in_array($method->id, $enableds)) {
-                $methods[] = [
-                    'code' => $method->code,
-                    'title' => str_replace(' (Melhor Envio)', '', $method->method_title),
-                    'name' => (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "") ? $options[$method->code]['name'] : str_replace(' (Melhor Envio)', '', $method->method_title),
-                    'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
-                    'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
-                    'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true")
-                        ? true
-                        : false,
-                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true")
-                        ? true
-                        : false
-                ];
-            }
-        }
-
-        return $methods;
     }
 
     public function savePathPlugins()
@@ -259,48 +222,6 @@ class ConfigurationController
 
         return get_option('melhor_envio_option_method_shipment_' . $id);
     }
-
-    public function getOptionsShipments()
-    {
-        $codeStore = md5(get_option('home'));
-
-        global $wpdb;
-        $sql = "select * from " . $wpdb->prefix . "options where option_name like '%melhor_envio_option_method_shipment_%'";
-        $results = $wpdb->get_results($sql);
-
-
-        if (empty($results)) {
-            return false;
-        }
-
-        $options = [];
-        foreach ($results as $item) {
-
-            if (empty($item->option_value)) {
-                continue;
-            }
-
-            $data = unserialize($item->option_value);
-
-            if (isset($data['id'])) {
-
-                $options[$data['id']] = [
-                    'name'       => $data['name'],
-                    'tax'        => $data['tax'],
-                    'time'       => $data['time'],
-                    'perc'       => $data['perc'],
-                    'mp'         => $data['mp'],
-                    'ar'         => $data['ar'],
-                    'code_modal' => 'code_shiping_' . $data['id']
-                ];
-            }
-        }
-
-        $_SESSION[$codeStore]['melhorenvio_options'] = $options;
-
-        return $options;
-    }
-
 
     public function setWhereCalculator($option)
     {

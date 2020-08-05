@@ -10,7 +10,9 @@ class WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario extends WC_Melhor_Envio_Shi
 
     const METHOD_TITLE = "Via Brasil Rodoviário (Melhor Envio)";
 
-    protected $code = 9;
+    public $code = 9;
+
+    public $company = 'Via Brasil';
 
     /**
      * Initialize Via Brasil Rodoviário.
@@ -21,7 +23,7 @@ class WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario extends WC_Melhor_Envio_Shi
     {
         $this->id = self::ID;
         $this->method_title = self::METHOD_TITLE;
-        $this->title = self::TITLE;
+        //$this->title = self::TITLE;
         $this->shipping_class_id  = (int) $this->get_option(
             'shipping_class_id',
             CalculateShippingMethodService::ANY_DELIVERY

@@ -11,7 +11,9 @@ class WC_Melhor_Envio_Shipping_Jadlog_Package extends WC_Melhor_Envio_Shipping
 
     const METHOD_TITLE = "Jadlog Package (Melhor Envio)";
 
-    protected $code = 3;
+    public $code = 3;
+
+    public $company = 'Jadlog';
 
     /**
      * Initialize Jadlog Package.
@@ -22,7 +24,7 @@ class WC_Melhor_Envio_Shipping_Jadlog_Package extends WC_Melhor_Envio_Shipping
     {
         $this->id = self::ID;
         $this->method_title = self::METHOD_TITLE;
-        $this->title = self::TITLE;
+        //$this->title = self::TITLE;
         $this->shipping_class_id  = (int) $this->get_option(
             'shipping_class_id',
             CalculateShippingMethodService::ANY_DELIVERY

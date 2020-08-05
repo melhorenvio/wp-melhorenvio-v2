@@ -140,7 +140,6 @@ class QuotationService
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
         $hash = md5(json_encode($bodyQuotation));
-
         if (!isset($_SESSION['quotation'][$hash][$service])) {
             unset($_SESSION['quotation'][$hash]);
             return false;

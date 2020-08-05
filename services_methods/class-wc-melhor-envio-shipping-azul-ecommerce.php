@@ -9,7 +9,9 @@ class WC_Melhor_Envio_Shipping_Azul_Ecommerce extends WC_Melhor_Envio_Shipping
 
     const METHOD_TITLE = "Azul Ecommerce (Melhor Envio)";
 
-    protected $code = 16;
+    public $code = 16;
+
+    public $company = 'Azul Cargo Express';
 
     /**
      * Initialize Azul Ecommerce.
@@ -20,7 +22,7 @@ class WC_Melhor_Envio_Shipping_Azul_Ecommerce extends WC_Melhor_Envio_Shipping
     {
         $this->id = self::ID;
         $this->method_title = self::METHOD_TITLE;
-        $this->title = self::TITLE;
+        //$this->title = self::TITLE;
         $this->shipping_class_id  = (int) $this->get_option(
             'shipping_class_id',
             CalculateShippingMethodService::ANY_DELIVERY

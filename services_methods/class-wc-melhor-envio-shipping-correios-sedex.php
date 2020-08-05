@@ -11,7 +11,9 @@ class WC_Melhor_Envio_Shipping_Correios_Sedex extends WC_Melhor_Envio_Shipping
 
     const METHOD_TITLE = "Correios Sedex (Melhor Envio)";
 
-    protected $code = 2;
+    public $code = 2;
+
+    public $company = 'Correios';
 
     /**
      * Initialize Correios Sedex.
@@ -22,7 +24,11 @@ class WC_Melhor_Envio_Shipping_Correios_Sedex extends WC_Melhor_Envio_Shipping
     {
         $this->id = self::ID;
         $this->method_title = self::METHOD_TITLE;
-        $this->title = self::TITLE;
+        $this->shipping_class_id  = (int) $this->get_option(
+            'shipping_class_id',
+            CalculateShippingMethodService::ANY_DELIVERY
+        );
+        parent::__construct($instance_id);
         parent::__construct($instance_id);
     }
 }

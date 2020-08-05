@@ -155,7 +155,14 @@ class QuotationController
                 continue;
             }
 
-            $rates[] = $this->mapObject($rate[key($rate)]);
+            $rate = end($rate);
+
+            $rates[] = [
+                'id' => $shippingMethod->id,
+                'name' => $shippingMethod->title,
+                'price' => $rate->meta_data['price'],
+                'delivery_time' => $rate->meta_data['delivery_time'],
+            ];
         }
 
         return wp_send_json([
@@ -212,42 +219,6 @@ class QuotationController
                 'message' => 'Infomar o preço do produto'
             ], 400);
         }
-    }
-
-    /**
-     * @param [type] $item
-     * @return void
-     */
-    private function mapObject($item)
-    {
-        $name = null;
-        if (isset($item->meta_data['name'])) {
-            $name = $item->meta_data['name'];
-        }
-
-        $company = null;
-        if (isset($item->meta_data['company'])) {
-            $company = $item->meta_data['company'];
-        }
-
-        $method = (new OptionsHelper())->getName(
-            $item->get_id(),
-            $name,
-            $company,
-            $item->get_label()
-        );
-
-        return [
-            'id' => $item->get_id(),
-            'name' => $method['method'],
-            'price' => (new MoneyHelper())->setLabel(
-                $item->get_cost(),
-                $item->get_id()
-            ),
-            'company' => $method['company'],
-            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
-            'added_extra' => false
-        ];
     }
 
     /**

@@ -11,7 +11,9 @@ class WC_Melhor_Envio_Shipping_Correios_Mini extends WC_Melhor_Envio_Shipping
 
     const METHOD_TITLE = "Correios Mini (Melhor Envio)";
 
-    protected $code = 17;
+    public $code = 17;
+
+    public $company = 'Correios';
 
     /**
      * Initialize Correios Mini.
@@ -22,7 +24,6 @@ class WC_Melhor_Envio_Shipping_Correios_Mini extends WC_Melhor_Envio_Shipping
     {
         $this->id = self::ID;
         $this->method_title = self::METHOD_TITLE;
-        $this->title = self::TITLE;
         $this->shipping_class_id  = (int) $this->get_option(
             'shipping_class_id',
             CalculateShippingMethodService::ANY_DELIVERY

@@ -15,15 +15,14 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
      *
      * @var string
      */
-    protected $code = '';
+    public $code = '';
 
     /**
      * Company name.
      *
      * @var string
      */
-    protected $company = '';
-
+    public $company = '';
 
     /**
      * Initialize the Melhor Envio shipping method.
@@ -33,14 +32,20 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
     public function __construct($instance_id = 0)
     {
         $this->instance_id = absint($instance_id);
+        $this->service = new CalculateShippingMethodService();
+        $this->init_form_fields();
         $this->method_description = sprintf("Metódo de envio %s do Melhor Envio", $this->method_title);
+        $this->title = $this->get_option('title');
+        $this->ar = $this->get_option('ar');
+        $this->mp = $this->get_option('mp');
+        $this->additional_time = $this->get_option('additional_time');
+        $this->additional_tax = $this->get_option('additional_tax');
         $this->supports = array(
             'shipping-zones',
             'instance-settings',
             'instance-settings-modal',
         );
-        $this->service = new CalculateShippingMethodService();
-        $this->init_form_fields();
+
         add_action(
             'woocommerce_update_options_shipping_' . $this->id,
             array($this, 'process_admin_options')
@@ -61,6 +66,39 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
                 'class'       => 'wc-enhanced-select',
                 'options'     => $this->service->getShippingClassesOptions(),
             ),
+            'title'              => array(
+                'title'       => 'Título',
+                'type'        => 'text',
+                'default'     => $this->method_title,
+            ),
+            'additional_tax'    => array(
+                'title'       => 'Taxa adicional',
+                'type'        => 'text',
+                'description' => 'Valor adicional sobre o valor do frete cobrado ao cliente final',
+                'desc_tip'    => true,
+                'default'     => '0',
+                'placeholder' => '0',
+            ),
+            'additional_time'    => array(
+                'title'       => 'Dias extras',
+                'type'        => 'text',
+                'description' => 'Adicional de dias no prazo final do frete',
+                'desc_tip'    => true,
+                'default'     => '0',
+                'placeholder' => '0',
+            ),
+            'ar'     => array(
+                'title'       => 'Aviso de recebimento',
+                'type'        => 'checkbox',
+                'label'       => 'Ativar aviso de recebimento',
+                'default'     => 'no',
+            ),
+            'mp'          => array(
+                'title'       => 'Mãos próprias',
+                'type'        => 'checkbox',
+                'label'       => 'Ativar mãos próprias',
+                'default'     => 'no',
+            ),
         );
     }
 
@@ -73,15 +111,19 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
      */
     public function calculate_shipping($package = [])
     {
+
         if (!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)) {
             return;
         }
 
-        $rate = $this->service->calculate_shipping(
+        $rate = $this->service->calculateShipping(
             $package,
             $this->code,
             $this->instance_id,
-            $this->company
+            $this->company,
+            $this->title,
+            $this->additional_tax,
+            $this->additional_time
         );
 
         if ($rate) {
