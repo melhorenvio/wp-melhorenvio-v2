@@ -143,7 +143,9 @@ class QuotationService
     {
         $hash = md5(json_encode($bodyQuotation));
 
-        if (!isset($_SESSION['quotation'][$hash][$service])) {
+        session_start();
+
+        if (!isset($_SESSION['quotation'][$hash])) {
             unset($_SESSION['quotation'][$hash]);
             return false;
         }
@@ -160,6 +162,7 @@ class QuotationService
                 }
             }
         );
+
         if (!is_array($quotations)) {
             return false;
         }
