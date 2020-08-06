@@ -40,6 +40,7 @@ class ShortCodeService
             </style>
             <div id="melhor-envio-shortcode" class="containerCalculator">
                 <form>
+                    <input type="hidden" id="calculo_frete_produto_id" value="' . $this->product->id . ' " />
                     <input type="hidden" id="calculo_frete_produto_largura" value="' . $this->product->width . ' " />
                     <input type="hidden" id="calculo_frete_produto_altura" value="' . $this->product->height . '" />
                     <input type="hidden" id="calculo_frete_produto_comprimento" value="' . $this->product->length . '" />

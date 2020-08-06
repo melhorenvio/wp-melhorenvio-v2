@@ -120,18 +120,23 @@ class QuotationController
         );
 
         $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
+
         $shippingMethods = $shippingZone->get_shipping_methods(true);
-        $productShippingClassId = wc_get_product($data['id_produto'])->get_shipping_class_id();
 
+        $product = wc_get_product($data['id_produto']);
 
-        if ($productShippingClassId) {
-            foreach ($shippingMethods as $key => $method) {
-                if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
-                    continue;
-                }
+        if ($product) {
+            $productShippingClassId = $product->get_shipping_class_id();
 
-                if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
-                    unset($shippingMethods[$key]);
+            if ($productShippingClassId) {
+                foreach ($shippingMethods as $key => $method) {
+                    if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
+                        continue;
+                    }
+
+                    if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
+                        unset($shippingMethods[$key]);
+                    }
                 }
             }
         }
