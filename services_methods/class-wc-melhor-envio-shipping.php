@@ -36,8 +36,6 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
         $this->init_form_fields();
         $this->method_description = sprintf("Metódo de envio %s do Melhor Envio", $this->method_title);
         $this->title = $this->get_option('title');
-        $this->ar = $this->get_option('ar');
-        $this->mp = $this->get_option('mp');
         $this->additional_time = $this->get_option('additional_time');
         $this->additional_tax = $this->get_option('additional_tax');
         $this->supports = array(
@@ -86,19 +84,7 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
                 'desc_tip'    => true,
                 'default'     => '0',
                 'placeholder' => '0',
-            ),
-            'ar'     => array(
-                'title'       => 'Aviso de recebimento',
-                'type'        => 'checkbox',
-                'label'       => 'Ativar aviso de recebimento',
-                'default'     => 'no',
-            ),
-            'mp'          => array(
-                'title'       => 'Mãos próprias',
-                'type'        => 'checkbox',
-                'label'       => 'Ativar mãos próprias',
-                'default'     => 'no',
-            ),
+            )
         );
     }
 
