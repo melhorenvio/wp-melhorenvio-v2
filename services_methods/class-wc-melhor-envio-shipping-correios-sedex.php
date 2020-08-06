@@ -2,7 +2,6 @@
 
 class WC_Melhor_Envio_Shipping_Correios_Sedex extends WC_Melhor_Envio_Shipping
 {
-
     const ID = 'melhorenvio_correios_sedex';
 
     const TITLE = 'Correios Sedex';

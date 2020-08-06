@@ -2,7 +2,6 @@
 
 class WC_Melhor_Envio_Shipping_Azul_Ecommerce extends WC_Melhor_Envio_Shipping
 {
-
     const ID = 'melhorenvio_azul_ecommerce';
 
     const TITLE = 'Azul Ecommerce';

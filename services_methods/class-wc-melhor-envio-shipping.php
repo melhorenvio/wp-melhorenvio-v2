@@ -9,7 +9,6 @@ use Services\CalculateShippingMethodService;
  */
 abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
 {
-
     /**
      * Service code.
      *

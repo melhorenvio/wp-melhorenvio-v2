@@ -2,7 +2,6 @@
 
 class WC_Melhor_Envio_Shipping_Via_Brasil_Aero extends WC_Melhor_Envio_Shipping
 {
-
     const ID = 'melhorenvio_via_brasil_aero';
 
     const TITLE = 'Via Brasil Aero';

@@ -2,7 +2,6 @@
 
 class WC_Melhor_Envio_Shipping_Latam extends WC_Melhor_Envio_Shipping
 {
-
     const ID = 'melhorenvio_latam';
 
     const TITLE = 'Latam';

@@ -2,7 +2,6 @@
 
 class WC_Melhor_Envio_Shipping_Jadlog_Package extends WC_Melhor_Envio_Shipping
 {
-
     const ID = 'melhorenvio_jadlog_package';
 
     const TITLE = 'Jadlog Package';
