@@ -165,12 +165,12 @@ class CalculateShippingMethodService
      * @param int $shippingClassId
      * @return bool
      */
-    public function hasOnlySelectedShippingClass($package, $shippingClassId)
+    public function needShowShippginMethod($package, $shippingClassId)
     {
-        $onlySelected = true;
+        $show = true;
 
         if (self::ANY_DELIVERY === $shippingClassId) {
-            return $onlySelected;
+            return $show;
         }
 
         foreach ($package['contents'] as $values) {
@@ -178,18 +178,18 @@ class CalculateShippingMethodService
             $qty     = $values['quantity'];
 
             if ($product->get_shipping_class_id() == self::WITHOUT_DELIVERY) {
-                $onlySelected = true;
+                $show = true;
                 break;
             }
 
             if ($qty > 0 && $product->needs_shipping()) {
                 if ($shippingClassId !== $product->get_shipping_class_id()) {
-                    $onlySelected = false;
+                    $show = false;
                     break;
                 }
             }
         }
 
-        return $onlySelected;
+        return $show;
     }
 }

@@ -34,6 +34,10 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
         $this->instance_id = absint($instance_id);
         $this->service = new CalculateShippingMethodService();
         $this->init_form_fields();
+        $this->shipping_class_id  = (int) $this->get_option(
+            'shipping_class_id',
+            CalculateShippingMethodService::ANY_DELIVERY
+        );
         $this->method_description = sprintf("Metódo de envio %s do Melhor Envio", $this->method_title);
         $this->title = $this->get_option('title');
         $this->additional_time = $this->get_option('additional_time');
@@ -97,8 +101,7 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
      */
     public function calculate_shipping($package = [])
     {
-
-        if (!$this->service->hasOnlySelectedShippingClass($package, $this->shipping_class_id)) {
+        if (!$this->service->needShowShippginMethod($package, $this->shipping_class_id)) {
             return;
         }
 

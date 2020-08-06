@@ -130,6 +130,11 @@ class QuotationController
 
             if ($productShippingClassId) {
                 foreach ($shippingMethods as $key => $method) {
+
+                    if (empty($method->instance_settings['shipping_class_id'])) {
+                        continue;
+                    }
+
                     if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
                         continue;
                     }
