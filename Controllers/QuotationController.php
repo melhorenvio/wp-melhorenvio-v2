@@ -85,6 +85,8 @@ class QuotationController
             ], 404);
         }
 
+        $product = wc_get_product($data['id_produto']);
+
         $package = array(
             'ship_via'     => '',
             'destination'  => array(
@@ -95,6 +97,7 @@ class QuotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
+                    'shipping_class_id' => $product->get_shipping_class_id(),
                     'weight' => DimensionsHelper::convertWeightUnit(
                         floatval($data['produto_peso'])
                     ),
@@ -123,9 +126,8 @@ class QuotationController
 
         $shippingMethods = $shippingZone->get_shipping_methods(true);
 
-        $product = wc_get_product($data['id_produto']);
-
         if ($product) {
+
             $productShippingClassId = $product->get_shipping_class_id();
 
             if ($productShippingClassId) {

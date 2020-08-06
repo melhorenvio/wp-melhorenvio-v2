@@ -167,26 +167,20 @@ class CalculateShippingMethodService
      */
     public function needShowShippginMethod($package, $shippingClassId)
     {
-        $show = true;
+        $show = false;
 
-        if (self::ANY_DELIVERY === $shippingClassId) {
+        if (!empty($package['cotationProduct'])) {
+            foreach ($package['cotationProduct'] as $content) {
+                $show = ($content->shipping_class_id == $shippingClassId);
+            }
             return $show;
         }
 
         foreach ($package['contents'] as $values) {
             $product = $values['data'];
             $qty     = $values['quantity'];
-
-            if ($product->get_shipping_class_id() == self::WITHOUT_DELIVERY) {
-                $show = true;
-                break;
-            }
-
             if ($qty > 0 && $product->needs_shipping()) {
-                if ($shippingClassId !== $product->get_shipping_class_id()) {
-                    $show = false;
-                    break;
-                }
+                $show = ($product->get_shipping_class_id() == $shippingClassId);
             }
         }
 
