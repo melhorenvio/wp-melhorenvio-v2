@@ -169,8 +169,14 @@ class CalculateShippingMethodService
         $show = false;
 
         if (!empty($package['cotationProduct'])) {
-            foreach ($package['cotationProduct'] as $content) {
-                $show = ($content->shipping_class_id == $shippingClassId);
+            foreach ($package['cotationProduct'] as $product) {
+
+                if ($this->isProductWithouShippingClass($product->shipping_class_id, $shippingClassId)) {
+                    $show = true;
+                    break;
+                }
+
+                $show = ($product->shipping_class_id == $shippingClassId);
             }
             return $show;
         }
@@ -179,10 +185,31 @@ class CalculateShippingMethodService
             $product = $values['data'];
             $qty     = $values['quantity'];
             if ($qty > 0 && $product->needs_shipping()) {
+                if ($this->isProductWithouShippingClass($product->get_shipping_class_id(), $shippingClassId)) {
+                    $show = true;
+                    break;
+                }
                 $show = ($product->get_shipping_class_id() == $shippingClassId);
             }
         }
 
         return $show;
+    }
+
+    /**
+     * Function to check if product not has shipping class.
+     *
+     * @param int $productShippingClassId
+     * @param int $shippingClassId
+     * @return boolean
+     */
+    private function isProductWithouShippingClass($productShippingClassId, $shippingClassId)
+    {
+        $shippingsMehodsWithoutClass = [
+            self::ANY_DELIVERY, 
+            self::WITHOUT_DELIVERY
+        ];
+
+        return (in_array($productShippingClassId, $shippingsMehodsWithoutClass) && in_array($shippingClassId, $shippingsMehodsWithoutClass));
     }
 }
