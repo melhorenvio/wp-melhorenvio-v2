@@ -147,7 +147,6 @@ class CalculateShippingMethodService
     {
         $shippingClasses = WC()->shipping->get_shipping_classes();
         $options = array(
-            self::ANY_DELIVERY => 'Qualquer classe de entrega',
             self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
         );
 
