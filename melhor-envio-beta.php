@@ -291,12 +291,6 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        // Registrando shortcode da calculadora
-        add_shortcode('calculadora_melhor_envio', function ($attr) {
-            if (isset($attr['product_id'])) {
-                (new ShortCodeService($attr['product_id']))->shortcode();
-            }
-        });
 
         (new TrackingService())->createTrackingColumnOrdersClient();
 
@@ -353,6 +347,17 @@ final class Base_Plugin
             if ($this->is_request('rest')) {
                 $this->container['rest'] = new App\REST_API();
             }
+
+            // Registrando shortcode da calculadora
+            add_shortcode('calculadora_melhor_envio', function ($attr) {
+
+                if (isset($attr['product_id'])) {
+
+                    $product = wc_get_product($attr['product_id']);
+
+                    (new ShortCodeService($product))->shortcode();
+                }
+            });
 
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {

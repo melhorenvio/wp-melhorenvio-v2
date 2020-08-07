@@ -17,6 +17,7 @@
             var comprimento = $('#calculo_frete_produto_comprimento').val();
             var peso = $('#calculo_frete_produto_peso').val();
             var preco = $('#calculo_frete_produto_preco').val();
+            var shipping_class_id = $('#calculo_frete_produto_shipping_class_id').val();
             var url = $('#calculo_frete_url').val();
 
             var errors = [];
@@ -79,6 +80,7 @@
                         'produto_comprimento': comprimento,
                         'produto_peso': peso,
                         'produto_preco': preco,
+                        'shipping_class_id': shipping_class_id,
                         'quantity': qty
                     }
                 },

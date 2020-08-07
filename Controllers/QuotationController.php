@@ -87,6 +87,16 @@ class QuotationController
 
         $product = wc_get_product($data['id_produto']);
 
+        $shipping_class_id = 0;
+
+        if ($product) {
+            $shipping_class_id = $product->get_shipping_class_id();
+        }
+
+        if (!empty($data['shipping_class_id'])) {
+            $shipping_class_id = $data['shipping_class_id'];
+        }
+
         $package = array(
             'ship_via'     => '',
             'destination'  => array(
@@ -97,7 +107,7 @@ class QuotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
-                    'shipping_class_id' => ($product) ? $product->get_shipping_class_id() : 0,
+                    'shipping_class_id' => $shipping_class_id,
                     'weight' => DimensionsHelper::convertWeightUnit(
                         floatval($data['produto_peso'])
                     ),
