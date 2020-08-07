@@ -348,14 +348,15 @@ final class Base_Plugin
                 $this->container['rest'] = new App\REST_API();
             }
 
-            // Registrando shortcode da calculadora
             add_shortcode('calculadora_melhor_envio', function ($attr) {
 
                 if (isset($attr['product_id'])) {
 
                     $product = wc_get_product($attr['product_id']);
 
-                    (new ShortCodeService($product))->shortcode();
+                    if ($product) {
+                        (new ShortCodeService($product))->shortcode();
+                    }
                 }
             });
 
