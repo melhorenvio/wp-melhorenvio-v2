@@ -97,7 +97,7 @@ class QuotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
-                    'shipping_class_id' => $product->get_shipping_class_id(),
+                    'shipping_class_id' => ($product) ? $product->get_shipping_class_id() : 0,
                     'weight' => DimensionsHelper::convertWeightUnit(
                         floatval($data['produto_peso'])
                     ),
