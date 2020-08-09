@@ -108,9 +108,7 @@ class QuotationController
                 (object) array(
                     'id' => $data['id_produto'],
                     'shipping_class_id' => $shipping_class_id,
-                    'weight' => DimensionsHelper::convertWeightUnit(
-                        floatval($data['produto_peso'])
-                    ),
+                    'weight' => floatval($data['produto_peso']),
                     'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_largura'])
                     ),
