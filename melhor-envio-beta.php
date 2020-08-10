@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.7.10
+Version: 2.8.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -61,8 +61,10 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Models\CalculatorShow;
+use Models\Method;
 use Services\RouterService;
 use Services\SessionService;
+use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
 use Services\TrackingService;
 
@@ -79,7 +81,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = '2.7.10';
+    public $version = '2.8.0';
 
     /**
      * Holds various class instances
@@ -320,6 +322,21 @@ final class Base_Plugin
             $methods['melhorenvio_latam']  = 'WC_Melhor_Envio_Shipping_Latam';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
             return $methods;
+        });
+
+
+        add_action('woocommerce_init', function () {
+            $methods = (new ShippingMelhorEnvioService())
+                ->getMethodsActivedsMelhorEnvio();
+
+            if (count($methods) == 0) {
+                add_action('admin_notices', function () {
+                    echo sprintf('<div class="error">
+                        <h2>Atenção usuário do Plugin Melhor Envio</h2>
+                        <p>%s</p>
+                    </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
+                });
+            }
         });
     }
 

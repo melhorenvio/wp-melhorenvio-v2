@@ -65,7 +65,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
-### [2.7.10] - 2020-08
+### [2.8.0] - 2020-08
 - Validação de cotação de correios com volumes.
 - Classes de entregas
 - Problemas de lentidão
