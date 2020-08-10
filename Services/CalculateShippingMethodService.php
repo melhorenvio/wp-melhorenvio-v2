@@ -206,7 +206,7 @@ class CalculateShippingMethodService
     private function isProductWithouShippingClass($productShippingClassId, $shippingClassId)
     {
         $shippingsMehodsWithoutClass = [
-            self::ANY_DELIVERY, 
+            self::ANY_DELIVERY,
             self::WITHOUT_DELIVERY
         ];
 

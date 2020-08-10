@@ -124,7 +124,9 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
-        session_start();
+        if (!isset($_SESSION)) {
+            session_start();
+        }
 
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
