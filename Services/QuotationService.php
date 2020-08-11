@@ -145,6 +145,7 @@ class QuotationService
     {
         uasort($quotation, function ($a, $b) {
             if ($a == $b) return 0;
+            if (!isset($a->price) || !isset($b->price)) return 0;
             return ($a->price < $b->price) ? -1 : 1;
         });
         return $quotation;
@@ -162,7 +163,9 @@ class QuotationService
     {
         $hash = md5(json_encode($bodyQuotation));
 
-        session_start();
+        if (!isset($_SESSION)) {
+            session_start();
+        }
 
         if (!isset($_SESSION['quotation'][$hash])) {
             unset($_SESSION['quotation'][$hash]);

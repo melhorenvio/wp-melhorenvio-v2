@@ -110,20 +110,20 @@ class QuotationController
                     'shipping_class_id' => $shipping_class_id,
                     'weight' => floatval($data['produto_peso']),
                     'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_largura'])
+                        floatval($product->get_width())
                     ),
                     'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_comprimento'])
+                        floatval($product->get_length())
                     ),
                     'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_altura'])
+                        floatval($product->get_height())
                     ),
                     'quantity' => intval($data['quantity']),
                     'price' => floatval(
-                        $data['produto_preco']
+                        $product->get_price()
                     ),
                     'insurance_value'    => floatval(
-                        $data['produto_preco']
+                        $product->get_price()
                     ),
                     'notConverterWeight' => true
                 )
@@ -175,8 +175,8 @@ class QuotationController
             $rates[] = [
                 'id' => $shippingMethod->id,
                 'name' => $shippingMethod->title,
-                'price' => $rate->meta_data['price'],
-                'delivery_time' => $rate->meta_data['delivery_time'],
+                'price' => (!empty($rate->meta_data['price'])) ? $rate->meta_data['price'] : null,
+                'delivery_time' => (!empty($rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
             ];
         }
 
