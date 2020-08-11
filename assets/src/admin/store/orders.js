@@ -97,7 +97,7 @@ const orders = {
                 }
             })
 
-            if(order) {
+            if (order) {
                 order.content.cotation = data.quotations
                 state.orders.splice(order.position, 1, order.content)
             }
@@ -171,7 +171,7 @@ const orders = {
             })
             state.orders.splice(order.position, 1, order.content)
         }
-    },  
+    },
     getters: {
         getOrders: state => state.orders,
         toggleLoader: state => state.show_loader,
@@ -182,11 +182,11 @@ const orders = {
 
     },
     actions: {
-        showErrorAlert: ({commit}, data) => {
+        showErrorAlert: ({ commit }, data) => {
             commit('setMsgModal', data)
             commit('toggleModal', true)
         },
-        retrieveMany: ({commit}, data) => {
+        retrieveMany: ({ commit }, data) => {
             commit('toggleLoader', true)
             let content = {
                 action: 'get_orders',
@@ -202,7 +202,7 @@ const orders = {
                 if (response && response.status === 200) {
                     commit('retrieveMany', response.data.orders)
                     commit('toggleMore', response.data.load)
-                    commit('toggleLoader', false) 
+                    commit('toggleLoader', false)
                 }
             }).catch(error => {
                 commit('setMsgModal', error.message)
@@ -212,7 +212,7 @@ const orders = {
                 return false
             })
         },
-        printMultiples: ({commit, state}, dataPrint) => {
+        printMultiples: ({ commit, state }, dataPrint) => {
 
             commit('toggleLoader', true);
             let data = {
@@ -223,7 +223,7 @@ const orders = {
                 params: Object.assign(data, state.filters)
             }).then(function (response) {
                 commit('toggleLoader', false)
-                window.open(response.data.url,'_blank');
+                window.open(response.data.url, '_blank');
 
             }).catch(error => {
                 commit('setMsgModal', error.message)
@@ -233,7 +233,7 @@ const orders = {
                 return false
             })
         },
-        loadMore: ({commit, state}, status) => {
+        loadMore: ({ commit, state }, status) => {
 
             commit('toggleLoader', true)
             let data = {
@@ -266,11 +266,13 @@ const orders = {
                 return false
             })
         },
-        insertInvoice: ({commit}, data) => {
+        insertInvoice: ({ commit }, data) => {
             commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}`).then(response => {
+
+                console.log(response.data);
                 commit('updateInvoice', data);
-                commit('setMsgModal', 'Documentos atualizados')
+                commit('setMsgModal', response.data.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 return true
@@ -281,18 +283,18 @@ const orders = {
                 return false
             })
         },
-        initLoader: ({commit}) => {
+        initLoader: ({ commit }) => {
             commit('toggleLoader', true)
         },
-        stopLoader: ({commit}) => { 
+        stopLoader: ({ commit }) => {
             commit('toggleLoader', false)
         },
-        setMessageError: ({commit}, msg) => {
+        setMessageError: ({ commit }, msg) => {
             commit('setMsgModal', msg)
             commit('toggleModal', true)
         },
-        addCart: ({commit}, data) => {  
-            return new Promise ((resolve, reject) => {
+        addCart: ({ commit }, data) => {
+            return new Promise((resolve, reject) => {
                 if (!data) {
                     commit('toggleLoader', false)
                     reject();
@@ -303,10 +305,10 @@ const orders = {
                     Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
-                            if(!response.data.success) {
+                            if (!response.data.success) {
                                 reject(response.data);
                             }
-                            commit('addCart',{
+                            commit('addCart', {
                                 id: data.id,
                                 order_id: response.data.data.order_id,
                             })
@@ -333,11 +335,11 @@ const orders = {
             })
 
         },
-        removeCart: (context, data) => {    
-            context.commit('toggleLoader', true) 
+        removeCart: (context, data) => {
+            context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
-                if(!response.data.success) {
+                if (!response.data.success) {
                     context.commit('setMsgModal', response.data.message)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
@@ -345,7 +347,7 @@ const orders = {
                 }
 
                 context.commit('removeCart', data.id)
-                context.dispatch('balance/setBalance', null, {root: true})
+                context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
 
                 context.commit('setMsgModal', 'Item #' + data.id + ' removido do carrinho')
@@ -361,11 +363,11 @@ const orders = {
         updateQuotation: (context, data) => {
             context.commit('updateQuotation', data)
         },
-        cancelCart: (context, data) => {   
-            context.commit('toggleLoader', true)      
+        cancelCart: (context, data) => {
+            context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
-                if(!response.data.success) {
+                if (!response.data.success) {
                     context.commit('setMsgModal', response.data.message)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
@@ -375,8 +377,8 @@ const orders = {
                 context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado')
                 context.commit('toggleModal', true)
                 context.commit('cancelCart', data.id)
-                context.dispatch('balance/setBalance', null, {root: true})
-                context.commit('toggleLoader', false) 
+                context.dispatch('balance/setBalance', null, { root: true })
+                context.commit('toggleLoader', false)
             }).catch(error => {
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
@@ -384,21 +386,21 @@ const orders = {
                 return false
             })
         },
-        payTicket: (context, data) => {    
-            context.commit('toggleLoader', true)     
+        payTicket: (context, data) => {
+            context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
-                if(!response.data.success) {
+                if (!response.data.success) {
                     context.commit('setMsgModal', response.data.data)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
                     return false
                 }
                 context.commit('payTicket', data.id)
-                context.dispatch('balance/setBalance', null, {root: true})
+                context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso')
                 context.commit('toggleModal', true)
-                context.commit('toggleLoader', false) 
+                context.commit('toggleLoader', false)
             }).catch(error => {
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
@@ -406,11 +408,11 @@ const orders = {
                 return false
             })
         },
-        createTicket: ({commit}, data) => {   
-            commit('toggleLoader', true)     
+        createTicket: ({ commit }, data) => {
+            commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
-                if(!response.data.success) {
+                if (!response.data.success) {
                     commit('setMsgModal', response.data.message)
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
@@ -428,11 +430,11 @@ const orders = {
                 return false
             })
         },
-        printTicket: ({commit}, data) => {  
-            commit('toggleLoader', true)      
+        printTicket: ({ commit }, data) => {
+            commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
-                if(!response.data.success) {
+                if (!response.data.success) {
                     commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
@@ -441,7 +443,7 @@ const orders = {
 
                 commit('printTicket', data.id)
                 commit('toggleLoader', false)
-                window.open(response.data.data.url,'_blank');
+                window.open(response.data.data.url, '_blank');
             }).catch(error => {
                 commit('setMsgModal', error.message[0])
                 commit('toggleLoader', false)
@@ -449,12 +451,12 @@ const orders = {
                 return false
             })
         },
-        getStatusWooCommerce: ({commit}) => {
+        getStatusWooCommerce: ({ commit }) => {
             Axios.get(`${ajaxurl}?action=get_status_woocommerce`).then(response => {
                 commit('setStatusWc', response.data.statusWc)
             });
         },
-        closeModal: ({commit}) => {
+        closeModal: ({ commit }) => {
             commit('toggleModal', false)
         }
     }

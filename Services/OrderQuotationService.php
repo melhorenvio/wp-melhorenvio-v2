@@ -25,39 +25,84 @@ class OrderQuotationService
     /**
      * Function to get a quotation by order in postmetas by wordpress.
      *
-     * @param integer $post_id
+     * @param integer $postId
      * @return object $quotation
      */
-    public function getQuotation($post_id)
+    public function getQuotation($postId)
     {
-        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
+        $quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
 
-        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {  
-            $quotation = (new QuotationService())->calculateQuotationByOrderId($post_id);
+        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
+            $quotation = (new QuotationService())->calculateQuotationByOrderId($postId);
+        }
+
+        $quotation = $this->checkHasCorreiosWithVolumes($quotation);
+
+        return $quotation;
+    }
+
+    /**
+     * Function to check the quote object and check if there are any 
+     * Correios methods that contain volumes and remove that method.
+     *
+     * @param object $quotation
+     * @return object
+     */
+    private function checkHasCorreiosWithVolumes($quotation)
+    {
+        $calculateShipping = new CalculateShippingMethodService();
+        $shippingSelected = $quotation['choose_method'];
+        $shippingsRemoved = [];
+
+        foreach ($quotation as $key => $item) {
+            if (!is_int($key)) {
+                continue;
+            }
+
+            if ($calculateShipping->isCorreios($key) && $calculateShipping->hasMultipleVolumes($item)) {
+                $shippingsRemoved[] = $key;
+                unset($quotation[$key]);
+            }
+        }
+
+        if ($this->haveSelectedShippingInRemovedsShipping($shippingsRemoved, $shippingSelected)) {
+            $quotation['choose_method'] = $quotation[array_key_first($quotation)]->id;
         }
 
         return $quotation;
     }
 
     /**
+     * Function to check if the shipping method selected by the customer has been removed
+     *
+     * @param array $shippingsRemoved
+     * @param int $shippingSelected
+     * @return boolean
+     */
+    private function haveSelectedShippingInRemovedsShipping($shippingsRemoved, $shippingSelected)
+    {
+        return (!empty($shippingsRemoved) && in_array($shippingSelected, $shippingsRemoved));
+    }
+
+    /**
      * Save quotation in postmeta wordpress.
      *
-     * @param int $order_id
+     * @param int $orderId
      * @param object $quotation
      * @return array $quotation
      */
-    public function saveQuotation($order_id, $quotation)
+    public function saveQuotation($orderId, $quotation)
     {
-        $choose = (new Method($order_id))->getMethodShipmentSelected($order_id);
+        $choose = (new Method($orderId))->getMethodShipmentSelected($orderId);
 
         $data = $this->setKeyAsCodeService($quotation);
-        $data['date_quotation'] = date('Y-m-d H:i:d'); 
-        $data['choose_method'] = (!is_null($choose)) ? $choose : '2'; 
-        $data['free_shipping'] = false; 
-        $data['diff'] = false;
+        $data['date_quotation'] = date('Y-m-d H:i:d');
+        $data['choose_method'] = (!is_null($choose)) ? $choose : 2;
+        $data['free_shipping'] = false;
+        $data['diff'] = is_null($choose);
 
-        delete_post_meta($order_id, self::POST_META_ORDER_QUOTATION);
-        add_post_meta($order_id, self::POST_META_ORDER_QUOTATION, $data, true);
+        delete_post_meta($orderId, self::POST_META_ORDER_QUOTATION);
+        add_post_meta($orderId, self::POST_META_ORDER_QUOTATION, $data, true);
 
         return $data;
     }
@@ -71,15 +116,13 @@ class OrderQuotationService
     private function setKeyAsCodeService($quotation)
     {
         $result = [];
-        
+
         foreach ($quotation as $item) {
-
             $result[$item->id] = $item;
-
             if (isset($item->packages)) {
                 foreach ($item->packages as $key => $package) {
                     if ($package->weight == 0) {
-                        $result[$item->id]['packages'][$key]->weight = 0.01;
+                        $result[$item->id]->packages[$key]->weigh = 0.01;
                     }
                 }
             }
@@ -89,75 +132,91 @@ class OrderQuotationService
     }
 
     /**
-     * Get postmeta data by order (Status, order_id, protocol).
+     * Get postmeta data by order (Status, orderId, protocol).
      *
-     * @param int $order_id
+     * @param int $orderId
      * @return array $data
      */
-    public function getData($order_id)
-    {   
-        return get_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, true);
+    public function getData($orderId)
+    {
+        return get_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env, true);
     }
 
-        /**
+    /**
      * Function to update data quotation by order.
      * 
-     * @param int $order_id
-     * @param string $order_melhor_envio_id
+     * @param int $orderId
+     * @param string $orderMelhorEnvioId
      * @param string $protocol
      * @param string $status
-     * @param int $choose_method
+     * @param int $chooseMethod
      * @return array $data
      */
-    public function addDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
-    {
+    public function addDataQuotation(
+        $orderId,
+        $orderMelhorEnvioId,
+        $protocol,
+        $status,
+        $chooseMethod,
+        $purcahseId = null,
+        $tracking = null
+    ) {
         $data = [
-            'choose_method' => $choose_method,
-            'order_id' => $order_melhor_envio_id,
+            'choose_method' => $chooseMethod,
+            'order_id' => $orderMelhorEnvioId,
             'protocol' => $protocol,
-            'purchase_id' => $purcahse_id,
+            'purchase_id' => $purcahseId,
             'status' => $status,
             'created' => date('Y-m-d H:i:s')
         ];
 
-        add_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, $data);
+        add_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env, $data);
 
         return $data;
     }
     /**
      * Function to update data quotation by order.
      * 
-     * @param int $order_id
+     * @param int $orderId
      * @param string $order_melhor_envio_id
      * @param string $protocol
      * @param string $status
      * @param int $choose_method
      * @return array $data
      */
-    public function updateDataQuotation($order_id, $order_melhor_envio_id, $protocol, $status, $choose_method, $purcahse_id = null, $tracking = null) 
-    {
+    public function updateDataQuotation(
+        $orderId,
+        $orderMelhorEnvioId,
+        $protocol,
+        $status,
+        $chooseMethod,
+        $purcahseId = null,
+        $tracking = null
+    ) {
         $data = [
-            'choose_method' => $choose_method,
-            'order_id' => $order_melhor_envio_id,
+            'choose_method' => $chooseMethod,
+            'order_id' => $orderMelhorEnvioId,
             'protocol' => $protocol,
-            'purchase_id' => $purcahse_id,
+            'purchase_id' => $purcahseId,
             'status' => $status,
             'tracking' => $tracking,
             'created' => date('Y-m-d H:i:s')
         ];
 
-        delete_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env);
-        add_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env, $data, true);
+        delete_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env);
+        add_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env, $data, true);
 
         return $data;
     }
 
     /** 
-     * @param int $order_id
+     * Function to delete the saved quote from an order
+     *
+     * @param int $orderId
      */
-    public function removeDataQuotation($order_id)
+    public function removeDataQuotation($orderId)
     {
-        delete_post_meta($order_id, self::POST_META_ORDER_DATA . $this->env);
+        delete_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env);
     }
 
     /**
@@ -171,14 +230,16 @@ class OrderQuotationService
         if (count($data) <= 4) {
             return true;
         }
-        
+
         foreach ($data as $item) {
             if ($item == 'Unauthenticated.' || empty($item)) {
                 return true;
             }
         }
 
-        if (!isset($data['date_quotation'])) { return true; }
+        if (!isset($data['date_quotation'])) {
+            return true;
+        }
 
         $date = date('Y-m-d H:i:s', strtotime("-3 day"));
 
@@ -194,6 +255,6 @@ class OrderQuotationService
     {
         $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
 
-        return ($environment == 'sandbox') ? '_sandbox' : null; 
+        return ($environment == 'sandbox') ? '_sandbox' : null;
     }
 }

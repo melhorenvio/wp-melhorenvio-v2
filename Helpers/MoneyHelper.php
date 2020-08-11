@@ -2,51 +2,31 @@
 
 namespace Helpers;
 
-use Controllers\ConfigurationController;
+use Services\OptionsMethodShippingService;
 
-class MoneyHelper 
+class MoneyHelper
 {
     /**
-     * @param [type] $data
-     * @return void
+     * Function to define the customized price
+     *
+     * @param string $value
+     * @param string $extra
+     * @return string
      */
-    public function setlabel($value, $id) 
+    public static function price($value, $extra)
     {
-        $extra = 0;
-        $perc  = 0;
-        $result = (new ConfigurationController())->getOptionsShipments();
-
-        if (isset($result[$id]['tax'])) {
-            $extra = $result[$id]['tax'];
-        }
-
-        if (isset($result[$id]['perc'])) {
-            $perc = $result[$id]['perc'];
-            $perc = ($value / 100) * $perc;
-        }
-
-        $value =  floatval($value) + floatval($extra)  + floatval($perc);
-
-        return 'R$' . number_format($value, 2, ',', '.');
+        return 'R$' . number_format((floatval($value) + floatval($extra)), 2, ',', '.');
     }
 
-    public function setPrice($value, $id) 
+    /**
+     * Function to define the price
+     *
+     * @param string $value
+     * @param string $extra
+     * @return float
+     */
+    public static function cost($value, $extra)
     {
-        
-        $extra = 0;
-        $perc  = 0;
-        $result = (new ConfigurationController())->getOptionsShipments();
-
-        if (isset($result[$id]['tax'])) {
-            $extra = $result[$id]['tax'];
-        }
-
-        if (isset($result[$id]['perc'])) {
-            $perc = $result[$id]['perc'];
-            $perc = ($value / 100) * $perc;
-        }
-    
-        return floatval($value) + floatval($extra)  + floatval($perc) ;
+        return floatval($value) + floatval($extra);
     }
 }
-
