@@ -175,8 +175,8 @@ class QuotationController
             $rates[] = [
                 'id' => $shippingMethod->id,
                 'name' => $shippingMethod->title,
-                'price' => (isset($rate->meta_data['price'])) ? $rate->meta_data['price'] : null,
-                'delivery_time' => (isset($rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
+                'price' => ($rate->meta_data['price']) ? $rate->meta_data['price'] : null,
+                'delivery_time' => ($rate->meta_data['delivery_time']) ? $rate->meta_data['delivery_time'] : null,
             ];
         }
 
