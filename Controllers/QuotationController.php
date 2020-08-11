@@ -110,20 +110,20 @@ class QuotationController
                     'shipping_class_id' => $shipping_class_id,
                     'weight' => floatval($data['produto_peso']),
                     'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($product->get_width())
+                        floatval($data['produto_largura'])
                     ),
                     'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($product->get_length())
+                        floatval($data['produto_comprimento'])
                     ),
                     'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($product->get_height())
+                        floatval($data['produto_altura'])
                     ),
                     'quantity' => intval($data['quantity']),
                     'price' => floatval(
-                        $product->get_price()
+                        $data['produto_preco']
                     ),
                     'insurance_value'    => floatval(
-                        $product->get_price()
+                        $data['produto_preco']
                     ),
                     'notConverterWeight' => true
                 )

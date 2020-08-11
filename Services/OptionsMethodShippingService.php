@@ -38,13 +38,14 @@ class OptionsMethodShippingService
             }
 
             if (in_array($method->id, $enableds)) {
-                $methods[] = end(array_filter($options, function ($option) use ($method) {
+                $data = array_filter($options, function ($option) use ($method) {
                     if ($option['id'] == $method->code) {
                         $option['tax'] = (!empty($option['tax'])) ? floatval($option['tax'])  : 0;
                         $option['time'] = (!empty($option['time'])) ? floatval($option['time'])  : 0;
                         return $option;
                     }
-                }));
+                });
+                $methods[] = end($data);
             }
         }
 

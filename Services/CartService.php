@@ -40,8 +40,8 @@ class CartService
                 "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
                 "collect" => false,
                 "reverse" => false,
-                "non_commercial" => $orderInvoiceService->isNonCommercial($order_id),
-                "invoice" => $orderInvoiceService->getInvoiceOrder($order_id),
+                "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
+                "invoice" => $orderInvoiceService->getInvoiceOrder($orderId),
                 'platform' => self::PLATAFORM,
                 'reminder' => null
             )

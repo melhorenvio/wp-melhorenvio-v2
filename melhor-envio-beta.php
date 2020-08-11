@@ -186,10 +186,6 @@ final class Base_Plugin
 
         $errorsPath = [];
 
-        if (!file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
-            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
-        }
-
         if (!is_dir($pathPlugins . '/woocommerce')) {
             $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
         }
