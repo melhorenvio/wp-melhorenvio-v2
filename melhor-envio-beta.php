@@ -338,6 +338,20 @@ final class Base_Plugin
                 });
             }
         });
+
+        add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
+
+        function orderingQuotationsByPrice($rates, $package)
+        {
+            if (empty($rates)) return;
+            if (!is_array($rates)) return;
+
+            uasort($rates, function ($a, $b) {
+                if ($a == $b) return 0;
+                return ($a->cost < $b->cost) ? -1 : 1;
+            });
+            return $rates;
+        }
     }
 
     /**

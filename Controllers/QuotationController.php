@@ -185,10 +185,28 @@ class QuotationController
             ];
         }
 
+        $rates = $this->orderingRatesByPrice($rates);
+
         return wp_send_json([
             'success' => true,
             'data' => $rates
         ], 200);
+    }
+
+    /**
+     * Function to sort the rates by price
+     *
+     * @param array $quotation
+     * @return array
+     */
+    public function orderingRatesByPrice($rates)
+    {
+        uasort($rates, function ($a, $b) {
+            if ($a == $b) return 0;
+            return ($a['price'] < $b['price']) ? -1 : 1;
+        });
+
+        return array_values($rates);
     }
 
     /**
