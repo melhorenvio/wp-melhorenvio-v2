@@ -121,6 +121,9 @@ class CartService
         $volumes = [];
 
         foreach ($quotation as $item) {
+            if (!isset($item->id)) {
+                continue;
+            }
             if ($item->id == $methodId) {
                 foreach ($item->packages as $package) {
                     $volumes[] = [
