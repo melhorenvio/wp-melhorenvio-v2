@@ -10,7 +10,7 @@ class FormaterHelper
      * @param string $phone
      * @return string $phone
      */
-    public function formatPhone($phone)
+    public static function formatPhone($phone)
     {
         return str_replace(['(', ')', '-', ' '], [''], $phone);
     }
@@ -21,7 +21,7 @@ class FormaterHelper
      * @param string $document
      * @return string $document
      */
-    public function formatDocuemnt($document)
+    public static function formatDocument($document)
     {
         return str_replace(['-', '.', '/', ' '], [''], $document);
     }

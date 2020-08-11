@@ -7,12 +7,15 @@ use Models\Store;
 use Models\User;
 use Services\OrderQuotationService;
 
-class UsersController {
+class UsersController
+{
 
     const URL = 'https://api.melhorenvio.com';
 
     /**
-     * @return void
+     * Function to get info by user. 
+     *
+     * @return object
      */
     public function getInfo()
     {
@@ -25,7 +28,9 @@ class UsersController {
     }
 
     /**
-     * @return void
+     * Function to fetch data about the origin of the label 
+     *
+     * @return null|object
      */
     public function getFrom()
     {
@@ -54,7 +59,9 @@ class UsersController {
             }
 
             return (object) [
-                "name" => (isset($company['name'])) ? $company['name']  : $info->data['firstname'] . ' ' . $info->data['lastname'],
+                "name" => (isset($company['name']))
+                    ? $company['name']
+                    : $info->data['firstname'] . ' ' . $info->data['lastname'],
                 "phone" => (isset($info->data['phone']->phone)) ? $info->data['phone']->phone : null,
                 "email" => $email,
                 "document" => $info->data['document'],
@@ -68,26 +75,28 @@ class UsersController {
                 "state_abbr" => $address['state'],
                 "country_id" => 'BR',
                 "postal_code" => $address['postal_code']
-            ];   
+            ];
         }
 
         return false;
     }
 
     /**
-     * @param [type] $order_id
-     * @return void
+     * Function to fetch data about destination of the order label
+     *
+     * @param int $orderId
+     * @return object
      */
-    public function getTo($order_id)
-    {    
-        $order = new \WC_Order($order_id);
+    public function getTo($orderId)
+    {
+        $order = new \WC_Order($orderId);
 
-        $cpf  = get_post_meta($order_id, '_billing_cpf', true);
-        $cnpj = get_post_meta($order_id, '_billing_cnpj', true);
+        $cpf  = get_post_meta($orderId, '_billing_cpf', true);
+        $cnpj = get_post_meta($orderId, '_billing_cnpj', true);
 
-        $phone = get_post_meta($order_id, '_billing_cellphone', true);
+        $phone = get_post_meta($orderId, '_billing_cellphone', true);
 
-        if (empty($phone) || is_null($phone)) {
+        if (empty($phone)) {
             $phone = $order->get_billing_phone();
         }
 
@@ -100,56 +109,39 @@ class UsersController {
             "state_register" => null, // (opcional) (a menos que seja transportadora e logística reversa)
             "address" => $order->get_shipping_address_1(),
             "complement" => $order->get_shipping_address_2(),
-            "number" => get_post_meta($order_id, '_shipping_number',true),
-            "district" =>get_post_meta($order_id, '_shipping_neighborhood',true),
+            "number" => get_post_meta($orderId, '_shipping_number', true),
+            "district" => get_post_meta($orderId, '_shipping_neighborhood', true),
             "city" => $order->get_shipping_city(),
             "state_abbr" => $order->get_shipping_state(),
             "country_id" => 'BR',
-            "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),  
+            "postal_code" => str_replace('-', '', $order->get_shipping_postcode()),
         ];
     }
 
     /**
-     * @return void
+     * Function to fetch user balance 
+     *
+     * @return json
      */
     public function getBalance()
     {
         $balance = (new User())->getBalance();
-        echo json_encode($balance);
-        die;
+        return wp_send_json($balance, 200);
     }
 
+    /**
+     * Function to get info by user. 
+     *
+     * @return object
+     */
     public function getMe()
     {
         $data = (array) $this->getInfo();
 
-        $data['data']['environment'] =  ((new OrderQuotationService())->getEnvironmentToSave() == '_sandbox') ? 'Sandbox' :  'Produção';
+        $data['data']['environment'] =  ((new OrderQuotationService())->getEnvironmentToSave() == '_sandbox')
+            ? 'Sandbox'
+            :  'Produção';
 
-        echo json_encode($data['data']);die;
-    }
-
-    /**
-     * @param [type] $val
-     * @param [type] $mask
-     * @return void
-     */
-    private function mask($val, $mask)
-    {
-        $maskared = '';
-        $k = 0;
-
-        for($i = 0; $i<=strlen($mask)-1; $i++) {
-            if($mask[$i] == '#') {
-                if(isset($val[$k]))
-                    $maskared .= $val[$k++];
-                }
-                else
-                {
-                if(isset($mask[$i]))
-                $maskared .= $mask[$i];
-            }
-        }
-
-        return $maskared;
+        return wp_send_json($data['data'], 200);
     }
 }

@@ -17,18 +17,18 @@ class TokenService
      */
     public function get()
     {
-        $token = get_option(self::OPTION_TOKEN); 
-        $token_sandbox = get_option(self::OPTION_TOKEN_SANDBOX); 
-        $token_environment = get_option(self::OPTION_TOKEN_ENVIRONMENT); 
-		
-		if (is_null($token_environment) || empty($token_environment) || $token_environment == "false") {
-			$token_environment = 'production';
-		}
-			
+        $token = get_option(self::OPTION_TOKEN);
+        $tokenSandbox = get_option(self::OPTION_TOKEN_SANDBOX);
+        $tokenEnvironment = get_option(self::OPTION_TOKEN_ENVIRONMENT);
+
+        if (is_null($tokenEnvironment) || empty($tokenEnvironment) || $tokenEnvironment == "false" || $tokenEnvironment == "undefined") {
+            $tokenEnvironment = 'production';
+        }
+
         return [
             'token' => $token,
-            'token_sandbox' => $token_sandbox,
-            'token_environment' => $token_environment,
+            'token_sandbox' => $tokenSandbox,
+            'token_environment' => $tokenEnvironment,
         ];
     }
 
@@ -36,27 +36,19 @@ class TokenService
      * Service to save token Melhor Envio.
      *
      * @param string $token
-     * @param string $token_sandbox
-     * @param string $token_environment
+     * @param string $tokenSandbox
+     * @param string $tokenEnvironment
      * @return array $response
      */
-    public function save($token, $token_sandbox, $token_environment)
+    public function save($token, $tokenSandbox, $tokenEnvironment)
     {
-        $tokenSaved = $this->get();
+        delete_option(self::OPTION_TOKEN);
+        delete_option(self::OPTION_TOKEN_SANDBOX);
+        delete_option(self::OPTION_TOKEN_ENVIRONMENT);
 
-        if (isset($tokenSaved->success) && !$tokenSaved->success) {
-            if (add_option(self::OPTION_TOKEN, $token)) {
-
-                return [
-                    'success' => true,
-                    'message' => 'Token salvo com sucesso'
-                ];
-            }
-        }
-
-        update_option(self::OPTION_TOKEN, $token, true);
-        update_option(self::OPTION_TOKEN_SANDBOX, $token_sandbox, true);
-        update_option(self::OPTION_TOKEN_ENVIRONMENT, $token_environment, true);
+        add_option(self::OPTION_TOKEN, $token, true);
+        add_option(self::OPTION_TOKEN_SANDBOX, $tokenSandbox, true);
+        add_option(self::OPTION_TOKEN_ENVIRONMENT, $tokenEnvironment, true);
 
         return [
             'success' => true,
@@ -73,6 +65,5 @@ class TokenService
             'production' => substr($dataToken['token'], 0, 30) . '...',
             'sandbox' => substr($dataToken['token_sandbox'], 0, 30) . '...'
         ];
-
     }
 }

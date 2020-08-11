@@ -19,33 +19,37 @@ class PackageService
         if (empty($quotation) || is_null($quotation)) {
             return $response;
         }
-        foreach($quotation as $item){
-
-            if(!isset($item->id) || is_null($item->id)) {
+        foreach ($quotation as $item) {
+            if (!isset($item->id) || is_null($item->id)) {
                 continue;
             }
 
             if (isset($item->packages)) {
-                foreach($item->packages as $key => $package) {
+                foreach ($item->packages as $key => $package) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->converterDimension($package->dimensions->width),
-                        'altura' => (new DimensionsHelper())->converterDimension($package->dimensions->height),
-                        'comprimento' => (new DimensionsHelper())->converterDimension($package->dimensions->length),
-                        'peso' => (new DimensionsHelper())->converterIfNecessary($package->weight)
+                        'largura' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                            $package->dimensions->width
+                        ),
+                        'altura' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                            $package->dimensions->height
+                        ),
+                        'comprimento' => DimensionsHelper::convertUnitDimensionToCentimeter(
+                            $package->dimensions->length
+                        ),
+                        'peso' => DimensionsHelper::convertWeightUnit($package->weight)
                     ];
                 }
             } elseif (isset($item->volumes)) {
-                foreach($item->volumes as $key => $volume) {
+                foreach ($item->volumes as $key => $volume) {
                     $response[$item->id] = (object) [
-                        'largura' => (new DimensionsHelper())->converterDimension($volume->width),
-                        'altura' => (new DimensionsHelper())->converterDimension($volume->height),
-                        'comprimento' => (new DimensionsHelper())->converterDimension($volume->length),
-                        'peso' => (new DimensionsHelper())->converterIfNecessary($volume->weight)
+                        'largura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->width),
+                        'altura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->height),
+                        'comprimento' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->length),
+                        'peso' => DimensionsHelper::convertWeightUnit($volume->weight)
                     ];
                 }
-            } else {
-                continue;
             }
+            continue;
         }
         return $response;
     }

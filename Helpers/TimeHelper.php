@@ -2,63 +2,40 @@
 
 namespace Helpers;
 
-use Controllers\ConfigurationController;
+use Services\OptionsMethodShippingService;
 
-class TimeHelper 
+class TimeHelper
 {
     /**
+     * Function to define custom delivery time
+     * 
      * @param array $data
-     * @return void
+     * @param object $extra
+     *
+     * @return string
      */
-    public function setlabel($data, $id, $custom = null) 
+    public static function label($data, $extra)
     {
-        if (!is_null($custom) && $data->min != $custom->min && $data->max != $custom->min ) {
-            
-            if ($data->max == 1) {
-                return ' (1 dia útil)';
-            }
-            
-            if ($data->min == $data->max) {
-                return ' (' . $data->max . ' dias úteis)';
-            }
-    
-            if ( $data->min < $data->max ) {
-                return ' ( ' . $data->min . ' a ' . $data->max . ' dias úteis)';
-            }
-    
-            return $data->max . ' dias úteis';
+
+        $min = intval($data->min) + intval($extra);
+        $max = intval($data->max) + intval($extra);
+
+        if (empty($data)) {
+            return ' (*)';
         }
 
-
-        if (is_null($data)) {
-            return '*';
+        if ($max == 1) {
+            return " (1 dia útil)";
         }
 
-        $timeExtra = 0;
-        $extra = (new ConfigurationController())->getOptionsShipments();
-
-        if (isset($extra[$id]['time'])) {
-            $timeExtra = $extra[$id]['time'];
-        }
-    
-        if ($timeExtra != 0) {
-            $data->max = $data->max + $timeExtra;
-            $data->min = $data->min + $timeExtra;
+        if ($min == $max) {
+            return sprintf(" (%s dias úteis)", $max);
         }
 
-        if ($data->max == 1) {
-            return ' (1 dia útil)';
-        }
-        
-        if ($data->min == $data->max) {
-            return ' (' . $data->max . ' dias úteis)';
+        if ($min < $max) {
+            return sprintf(" (%s a %s dias úteis)", $min, $max);
         }
 
-        if ( $data->min < $data->max ) {
-            return ' ( ' . $data->min . ' a ' . $data->max . ' dias úteis)';
-        }
-
-        return $data->max . ' dias úteis';
+        return sprintf(" (%s dias úteis)", $max);
     }
 }
-

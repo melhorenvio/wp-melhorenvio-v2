@@ -3,12 +3,12 @@
 namespace Models;
 
 
-class UseInsurance 
+class UseInsurance
 {
     /**
      * @return bool
      */
-    public function get() 
+    public function get()
     {
         $show = get_option('melhorenvio_use_insurancce');
 
@@ -24,16 +24,16 @@ class UseInsurance
     }
 
     /**
-     * @param String $value
+     * @param string $value
      * @return bool
      */
-    public function set($value) 
+    public function set($value)
     {
         if ($value == 'true') {
             delete_option('melhorenvio_use_insurancce');
             return true;
         } else {
-            add_option('melhorenvio_use_insurancce' , 1);
+            add_option('melhorenvio_use_insurancce', 1);
             return false;
         }
     }

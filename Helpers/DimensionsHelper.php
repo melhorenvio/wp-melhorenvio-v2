@@ -2,63 +2,44 @@
 
 namespace Helpers;
 
-class DimensionsHelper 
+class DimensionsHelper
 {
     /**
-     * @param [type] $weight
-     * @return void
+     *  Function to convert the weight of the product to kg if necessary.
+     *
+     * @param string $weight
+     * @return float
      */
-    public function converterIfNecessary($weight) 
+    public static function convertWeightUnit($weight)
     {
         $weight  = (float) $weight;
-        $to_unit = strtolower( 'kg' );
-    
-        
-        $from_unit = strtolower( get_option( 'woocommerce_weight_unit' ) );
-        
-        // Unify all units to kg first.
-        if ( $from_unit !== $to_unit ) {
-            switch ( $from_unit ) {
-                case 'g':
-                $weight *= 0.001;
-                break;
-                case 'lbs':
-                $weight *= 0.453592;
-                break;
-                case 'oz':
-                $weight *= 0.0283495;
-                break;
-            }
-    
-          // Output desired unit.
-            switch ( $to_unit ) {
-                case 'g':
-                $weight *= 1000;
-                break;
-                case 'lbs':
-                $weight *= 2.20462;
-                break;
-                case 'oz':
-                $weight *= 35.274;
-                break;
-            }
-        }
-    
-        return ( $weight < 0 ) ? 0 : $weight;
+        $toUnit = 'kg';
+        $fromUnit = strtolower(get_option('woocommerce_weight_unit'));
+
+        return floatval(number_format(wc_get_weight($weight, $toUnit, $fromUnit), 2, '.', ''));
     }
 
-    public function converterDimension($value)
+    /**
+     * Function that receives the value of the product measurement (width, height or length), 
+     * and verifies the measurement used in the woocommerce configuration and if the unit is different from cm,
+     * converts it to cm, a standard used in API Melhor Envio.
+     *
+     * @param srting $value
+     * @return float
+     */
+    public static function convertUnitDimensionToCentimeter($value)
     {
+        $value = floatval($value);
+
         $unit = get_option('woocommerce_dimension_unit');
         if ($unit == 'mm') {
-            return $value / 10;
+            $value = $value / 10;
         }
 
         if ($unit == 'm') {
-            return $value * 10;
+            $value = $value * 10;
         }
 
-        return $value;
+        return number_format($value, 2, '.', '');
     }
 }
-
