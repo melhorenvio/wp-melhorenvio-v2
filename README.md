@@ -65,12 +65,14 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
-### [2.7.10] - 2020-08
+### [2.8.0] - 2020-08
 - Validação de cotação de correios com volumes.
 - Classes de entregas
 - Problemas de lentidão
 - Correção na atualização de documentos do envio (nota fiscal)
 - Solução do problema de "CEP inválido" na tela do produto
+- Ordenação de frete pelo menor preço
+- Ajuste na exibição de frete grátis.
 
 #### [2.7.8] - 2020-07-17
 - Correção no calculo de frete de produto com pesos em gramas.

@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\DimensionsHelper;
+
 class CartWooCommerceService
 {
     /**
@@ -35,10 +37,10 @@ class CartWooCommerceService
                 'name'         => $data['name'],
                 'price'        => $productInfo->get_price(),
                 'insurance_value' => $productInfo->get_price(),
-                'height'       => $productInfo->get_height(),
-                'width'        => $productInfo->get_width(),
-                'length'       => $productInfo->get_length(),
-                'weight'       => $productInfo->get_weight(),
+                'height'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_height()),
+                'width'        => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_width()),
+                'length'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_length()),
+                'weight'       => DimensionsHelper::convertWeightUnit($productInfo->get_weight()),
                 'quantity'     => (isset($itemProduct['quantity']))
                     ? intval($itemProduct['quantity'])
                     : 1,

@@ -15,9 +15,9 @@ class ShortCodeService
      *
      * @param int $productId
      */
-    public function __construct($productId)
+    public function __construct($product)
     {
-        $this->product = wc_get_product($productId);
+        $this->product = $product;
     }
 
     public function shortcode()
@@ -40,11 +40,13 @@ class ShortCodeService
             </style>
             <div id="melhor-envio-shortcode" class="containerCalculator">
                 <form>
+                    <input type="hidden" id="calculo_frete_produto_id" value="' . $this->product->id . ' " />
                     <input type="hidden" id="calculo_frete_produto_largura" value="' . $this->product->width . ' " />
                     <input type="hidden" id="calculo_frete_produto_altura" value="' . $this->product->height . '" />
                     <input type="hidden" id="calculo_frete_produto_comprimento" value="' . $this->product->length . '" />
                     <input type="hidden" id="calculo_frete_produto_peso" value="' . $this->product->weight . '" />
                     <input type="hidden" id="calculo_frete_produto_preco" value="' . $this->product->price . '" /> 
+                    <input type="hidden" id="calculo_frete_produto_shipping_class_id" value="' . $this->product->get_shipping_class_id() . '" /> 
                     <input type="hidden" id="calculo_frete_url" value="' . admin_url('admin-ajax.php') . '" /> 
                     <div>
                         <table class="border-none">

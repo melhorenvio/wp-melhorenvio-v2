@@ -124,9 +124,30 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
+        $quotation = $this->orderingQuotationByPrice($quotation);
+
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+    }
+
+    /**
+     * Function to sort the quote by price
+     *
+     * @param array $quotation
+     * @return array
+     */
+    public function orderingQuotationByPrice($quotation)
+    {
+        uasort($quotation, function ($a, $b) {
+            if ($a == $b) return 0;
+            return ($a->price < $b->price) ? -1 : 1;
+        });
+        return $quotation;
     }
 
     /**
@@ -141,7 +162,9 @@ class QuotationService
     {
         $hash = md5(json_encode($bodyQuotation));
 
-        if (!isset($_SESSION['quotation'][$hash][$service])) {
+        session_start();
+
+        if (!isset($_SESSION['quotation'][$hash])) {
             unset($_SESSION['quotation'][$hash]);
             return false;
         }
@@ -158,6 +181,7 @@ class QuotationService
                 }
             }
         );
+
         if (!is_array($quotations)) {
             return false;
         }

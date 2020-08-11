@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use Services\OptionsMethodShippingService;
+
 class Method
 {
     public function getMethodShipmentSelected($order_id)
@@ -68,5 +70,9 @@ class Method
         }
 
         return $enableds;
+    }
+
+    public function getShippingMethodsMelhorEnvioActiveds()
+    {
     }
 }

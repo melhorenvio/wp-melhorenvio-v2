@@ -3,7 +3,6 @@
 namespace Services;
 
 use Helpers\MoneyHelper;
-use Helpers\OptionsHelper;
 use Helpers\TimeHelper;
 
 class CalculateShippingMethodService
@@ -28,9 +27,12 @@ class CalculateShippingMethodService
      * @param int $code
      * @param int $id
      * @param string $company
+     * @param string $title
+     * @param float $taxExtra
+     * @param int $timeExtra
      * @return void
      */
-    public function calculate_shipping($package = [], $code, $id, $company)
+    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
@@ -50,33 +52,36 @@ class CalculateShippingMethodService
 
         if ($result) {
             if (isset($result->price) && isset($result->name)) {
-                $method = (new OptionsHelper())->getName(
-                    $result->id,
-                    $result->name,
-                    null,
-                    null
-                );
-
                 if ($this->isCorreios($code) && $this->hasMultipleVolumes($result)) {
                     return false;
                 }
 
-                return [
+                $rate = [
                     'id' => $id,
-                    'label' => $method['method'] . (new TimeHelper)->setLabel(
+                    'label' => $title . TimeHelper::label(
                         $result->delivery_range,
-                        $code,
-                        $result->custom_delivery_range
+                        $timeExtra
                     ),
-                    'cost' => (new MoneyHelper())->setprice($result->price, $code),
+                    'cost' => MoneyHelper::cost(
+                        $result->price,
+                        $taxExtra
+                    ),
                     'calc_tax' => 'per_item',
                     'meta_data' => [
-                        'delivery_time' => $result->delivery_range,
-                        'company' => $company,
-                        'name' => $method['method']
+                        'delivery_time' => TimeHelper::label(
+                            $result->delivery_range,
+                            $timeExtra
+                        ),
+                        'price' => MoneyHelper::price(
+                            $result->price,
+                            $taxExtra
+                        ),
+                        'company' => $company
                     ]
                 ];
             }
+
+            return $rate;
         }
 
         return false;
@@ -142,7 +147,6 @@ class CalculateShippingMethodService
     {
         $shippingClasses = WC()->shipping->get_shipping_classes();
         $options = array(
-            self::ANY_DELIVERY => 'Qualquer classe de entrega',
             self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
         );
 
@@ -157,34 +161,55 @@ class CalculateShippingMethodService
      * Check if package uses only the selected shipping class.
      *
      * @param  array $package Cart package.
-     * @param int $shipping_class_id
+     * @param int $shippingClassId
      * @return bool
      */
-    public function hasOnlySelectedShippingClass($package, $shippingClassId)
+    public function needShowShippginMethod($package, $shippingClassId)
     {
-        $onlySelected = true;
+        $show = false;
 
-        if (self::ANY_DELIVERY === $shippingClassId) {
-            return $onlySelected;
+        if (!empty($package['cotationProduct'])) {
+            foreach ($package['cotationProduct'] as $product) {
+
+                if ($this->isProductWithouShippingClass($product->shipping_class_id, $shippingClassId)) {
+                    $show = true;
+                    break;
+                }
+
+                $show = ($product->shipping_class_id == $shippingClassId);
+            }
+            return $show;
         }
 
         foreach ($package['contents'] as $values) {
             $product = $values['data'];
             $qty     = $values['quantity'];
-
-            if ($product->get_shipping_class_id() == self::WITHOUT_DELIVERY) {
-                $onlySelected = true;
-                break;
-            }
-
             if ($qty > 0 && $product->needs_shipping()) {
-                if ($shippingClassId !== $product->get_shipping_class_id()) {
-                    $onlySelected = false;
+                if ($this->isProductWithouShippingClass($product->get_shipping_class_id(), $shippingClassId)) {
+                    $show = true;
                     break;
                 }
+                $show = ($product->get_shipping_class_id() == $shippingClassId);
             }
         }
 
-        return $onlySelected;
+        return $show;
+    }
+
+    /**
+     * Function to check if product not has shipping class.
+     *
+     * @param int $productShippingClassId
+     * @param int $shippingClassId
+     * @return boolean
+     */
+    private function isProductWithouShippingClass($productShippingClassId, $shippingClassId)
+    {
+        $shippingsMehodsWithoutClass = [
+            self::ANY_DELIVERY,
+            self::WITHOUT_DELIVERY
+        ];
+
+        return (in_array($productShippingClassId, $shippingsMehodsWithoutClass) && in_array($shippingClassId, $shippingsMehodsWithoutClass));
     }
 }

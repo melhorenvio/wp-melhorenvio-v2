@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.7.10
+Version: 2.8.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -61,8 +61,10 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
 use Models\CalculatorShow;
+use Models\Method;
 use Services\RouterService;
 use Services\SessionService;
+use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
 use Services\TrackingService;
 
@@ -79,7 +81,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = '2.7.10';
+    public $version = '2.8.0';
 
     /**
      * Holds various class instances
@@ -216,17 +218,10 @@ final class Base_Plugin
         }
 
         if (empty($errorsPath)) {
-
             try {
-
                 @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
                 include_once $pathPlugins . '/woocommerce/woocommerce.php';
                 include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
-
-                // Create the methods shippings
-                foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
-                    include_once $filename;
-                }
             } catch (Exception $e) {
                 add_action('admin_notices', function () {
                     echo sprintf('<div class="error">
@@ -268,7 +263,6 @@ final class Base_Plugin
     public function includes()
     {
         try {
-
             require_once BASEPLUGIN_INCLUDES . '/class-assets.php';
 
             if ($this->is_request('admin')) {
@@ -277,10 +271,6 @@ final class Base_Plugin
 
             if ($this->is_request('frontend')) {
                 require_once BASEPLUGIN_INCLUDES . '/class-frontend.php';
-            }
-
-            if ($this->is_request('ajax')) {
-                // require_once BASEPLUGIN_INCLUDES . '/class-ajax.php';
             }
 
             if ($this->is_request('rest')) {
@@ -303,15 +293,8 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        // Registrando shortcode da calculadora
-        add_shortcode('calculadora_melhor_envio', function ($attr) {
-            if (isset($attr['product_id'])) {
-                (new ShortCodeService($attr['product_id']))->shortcode();
-            }
-        });
 
         (new TrackingService())->createTrackingColumnOrdersClient();
-
 
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
@@ -323,6 +306,52 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
+
+        require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
+        foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
+            require_once $filename;
+        }
+
+        add_filter('woocommerce_shipping_methods', function ($methods) {
+            $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
+            $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
+            $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
+            $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
+            $methods['melhorenvio_via_brasil_aero']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Aero';
+            $methods['melhorenvio_via_brasil_rodoviario']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario';
+            $methods['melhorenvio_latam']  = 'WC_Melhor_Envio_Shipping_Latam';
+            $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+            return $methods;
+        });
+
+
+        add_action('woocommerce_init', function () {
+            $methods = (new ShippingMelhorEnvioService())
+                ->getMethodsActivedsMelhorEnvio();
+
+            if (count($methods) == 0) {
+                add_action('admin_notices', function () {
+                    echo sprintf('<div class="error">
+                        <h2>Atenção usuário do Plugin Melhor Envio</h2>
+                        <p>%s</p>
+                    </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
+                });
+            }
+        });
+
+        add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
+
+        function orderingQuotationsByPrice($rates, $package)
+        {
+            if (empty($rates)) return;
+            if (!is_array($rates)) return;
+
+            uasort($rates, function ($a, $b) {
+                if ($a == $b) return 0;
+                return ($a->cost < $b->cost) ? -1 : 1;
+            });
+            return $rates;
+        }
     }
 
     /**
@@ -349,6 +378,18 @@ final class Base_Plugin
             if ($this->is_request('rest')) {
                 $this->container['rest'] = new App\REST_API();
             }
+
+            add_shortcode('calculadora_melhor_envio', function ($attr) {
+
+                if (isset($attr['product_id'])) {
+
+                    $product = wc_get_product($attr['product_id']);
+
+                    if ($product) {
+                        (new ShortCodeService($product))->shortcode();
+                    }
+                }
+            });
 
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {

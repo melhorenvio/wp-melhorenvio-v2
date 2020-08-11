@@ -85,6 +85,18 @@ class QuotationController
             ], 404);
         }
 
+        $product = wc_get_product($data['id_produto']);
+
+        $shipping_class_id = 0;
+
+        if ($product) {
+            $shipping_class_id = $product->get_shipping_class_id();
+        }
+
+        if (!empty($data['shipping_class_id'])) {
+            $shipping_class_id = $data['shipping_class_id'];
+        }
+
         $package = array(
             'ship_via'     => '',
             'destination'  => array(
@@ -95,9 +107,8 @@ class QuotationController
             'cotationProduct' => array(
                 (object) array(
                     'id' => $data['id_produto'],
-                    'weight' => DimensionsHelper::convertWeightUnit(
-                        floatval($data['produto_peso'])
-                    ),
+                    'shipping_class_id' => $shipping_class_id,
+                    'weight' => floatval($data['produto_peso']),
                     'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
                         floatval($data['produto_largura'])
                     ),
@@ -120,18 +131,25 @@ class QuotationController
         );
 
         $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
+
         $shippingMethods = $shippingZone->get_shipping_methods(true);
-        $productShippingClassId = wc_get_product($data['id_produto'])->get_shipping_class_id();
 
+        if ($product) {
+            $productShippingClassId = $product->get_shipping_class_id();
 
-        if ($productShippingClassId) {
-            foreach ($shippingMethods as $key => $method) {
-                if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
-                    continue;
-                }
+            if ($productShippingClassId) {
+                foreach ($shippingMethods as $key => $method) {
+                    if (empty($method->instance_settings['shipping_class_id'])) {
+                        continue;
+                    }
 
-                if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
-                    unset($shippingMethods[$key]);
+                    if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
+                        continue;
+                    }
+
+                    if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
+                        unset($shippingMethods[$key]);
+                    }
                 }
             }
         }
@@ -144,24 +162,46 @@ class QuotationController
         }
 
         $rates = array();
-        $free = 0;
+
         foreach ($shippingMethods as $shippingMethod) {
             $rate = $shippingMethod->get_rates_for_package($package);
-            if (key($rate) == 'free_shipping') {
-                $free++;
-            }
 
-            if (empty($rate) || (key($rate) == 'free_shipping') && $free > 1) {
+            if (empty($rate)) {
                 continue;
             }
 
-            $rates[] = $this->mapObject($rate[key($rate)]);
+            $rate = end($rate);
+
+            $rates[] = [
+                'id' => $shippingMethod->id,
+                'name' => $shippingMethod->title,
+                'price' => $rate->meta_data['price'],
+                'delivery_time' => $rate->meta_data['delivery_time'],
+            ];
         }
+
+        $rates = $this->orderingRatesByPrice($rates);
 
         return wp_send_json([
             'success' => true,
             'data' => $rates
         ], 200);
+    }
+
+    /**
+     * Function to sort the rates by price
+     *
+     * @param array $quotation
+     * @return array
+     */
+    public function orderingRatesByPrice($rates)
+    {
+        uasort($rates, function ($a, $b) {
+            if ($a == $b) return 0;
+            return ($a['price'] < $b['price']) ? -1 : 1;
+        });
+
+        return array_values($rates);
     }
 
     /**
@@ -212,42 +252,6 @@ class QuotationController
                 'message' => 'Infomar o preço do produto'
             ], 400);
         }
-    }
-
-    /**
-     * @param [type] $item
-     * @return void
-     */
-    private function mapObject($item)
-    {
-        $name = null;
-        if (isset($item->meta_data['name'])) {
-            $name = $item->meta_data['name'];
-        }
-
-        $company = null;
-        if (isset($item->meta_data['company'])) {
-            $company = $item->meta_data['company'];
-        }
-
-        $method = (new OptionsHelper())->getName(
-            $item->get_id(),
-            $name,
-            $company,
-            $item->get_label()
-        );
-
-        return [
-            'id' => $item->get_id(),
-            'name' => $method['method'],
-            'price' => (new MoneyHelper())->setLabel(
-                $item->get_cost(),
-                $item->get_id()
-            ),
-            'company' => $method['company'],
-            'delivery_time' => (new TimeHelper)->setLabel($item->meta_data['delivery_time'], $item->get_id()),
-            'added_extra' => false
-        ];
     }
 
     /**
