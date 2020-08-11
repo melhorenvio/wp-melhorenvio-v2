@@ -135,12 +135,10 @@ class QuotationController
         $shippingMethods = $shippingZone->get_shipping_methods(true);
 
         if ($product) {
-
             $productShippingClassId = $product->get_shipping_class_id();
 
             if ($productShippingClassId) {
                 foreach ($shippingMethods as $key => $method) {
-
                     if (empty($method->instance_settings['shipping_class_id'])) {
                         continue;
                     }
@@ -164,14 +162,11 @@ class QuotationController
         }
 
         $rates = array();
-        $free = 0;
+
         foreach ($shippingMethods as $shippingMethod) {
             $rate = $shippingMethod->get_rates_for_package($package);
-            if (key($rate) == 'free_shipping') {
-                $free++;
-            }
 
-            if (empty($rate) || (key($rate) == 'free_shipping') && $free > 1) {
+            if (empty($rate)) {
                 continue;
             }
 
