@@ -143,6 +143,10 @@ class QuotationService
      */
     public function orderingQuotationByPrice($quotation)
     {
+        if (is_null($quotation)) {
+            return $quotation;
+        }
+
         uasort($quotation, function ($a, $b) {
             if ($a == $b) return 0;
             if (!isset($a->price) || !isset($b->price)) return 0;
