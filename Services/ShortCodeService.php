@@ -2,25 +2,34 @@
 
 namespace Services;
 
-class ShortCodeService{
+/**
+ * Class responsible for the shortcode service
+ */
+class ShortCodeService
+{
 
     public $product;
 
-    public function __construct($product_id)
+    /**
+     * Constructor
+     *
+     * @param int $productId
+     */
+    public function __construct($product)
     {
-        $this->product = wc_get_product( $product_id );
+        $this->product = $product;
     }
 
     public function shortcode()
-    {   
-        $this->add_calculo_de_frete();
-        $this->enqueue_css_js_frontend();
+    {
+        $this->addCalculoDeFrete();
     }
 
     /**
-    * Adiciona o HTML do cálculo de frete na página do produto
-    */
-    public function add_calculo_de_frete() {
+     * Adiciona o HTML do cálculo de frete na página do produto
+     */
+    public function addCalculoDeFrete()
+    {
 
         $this->inline_js();
         echo '
@@ -31,12 +40,14 @@ class ShortCodeService{
             </style>
             <div id="melhor-envio-shortcode" class="containerCalculator">
                 <form>
-                    <input type="hidden" id="calculo_frete_produto_largura" value="' . $this->product->width .' " />
+                    <input type="hidden" id="calculo_frete_produto_id" value="' . $this->product->id . ' " />
+                    <input type="hidden" id="calculo_frete_produto_largura" value="' . $this->product->width . ' " />
                     <input type="hidden" id="calculo_frete_produto_altura" value="' . $this->product->height . '" />
                     <input type="hidden" id="calculo_frete_produto_comprimento" value="' . $this->product->length . '" />
                     <input type="hidden" id="calculo_frete_produto_peso" value="' . $this->product->weight . '" />
                     <input type="hidden" id="calculo_frete_produto_preco" value="' . $this->product->price . '" /> 
-                    <input type="hidden" id="calculo_frete_url" value="' . admin_url( 'admin-ajax.php' ) . '" /> 
+                    <input type="hidden" id="calculo_frete_produto_shipping_class_id" value="' . $this->product->get_shipping_class_id() . '" /> 
+                    <input type="hidden" id="calculo_frete_url" value="' . admin_url('admin-ajax.php') . '" /> 
                     <div>
                         <table class="border-none">
                             <tr>
@@ -72,7 +83,8 @@ class ShortCodeService{
             </div>';
     }
 
-    private function inline_js() {
+    private function inline_js()
+    {
         echo '
             <script>
                 /**
@@ -93,9 +105,5 @@ class ShortCodeService{
                 }
             </script>
         ';
-    }
-
-    private function enqueue_css_js_frontend() {
-        wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
     }
 }

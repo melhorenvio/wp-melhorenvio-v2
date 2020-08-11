@@ -2,13 +2,27 @@
 
 namespace Controllers;
 
-use Models\Address;
-use Models\Store;
-use Models\User;
+use Services\SessionService;
 
-class SessionsController {
+class SessionsController
+{
+    /**
+     * Function to get information from the plugin session
+     *
+     * @return json
+     */
+    public function getSession()
+    {
+        return wp_send_json($_SESSION, 200);
+    }
 
-    const URL = 'https://api.melhorenvio.com';
-
-
+    /**
+     * Function to delete the plugin session
+     *
+     * @return json
+     */
+    public function deleteSession()
+    {
+        return wp_send_json((new SessionService())->delete(), 200);
+    }
 }
