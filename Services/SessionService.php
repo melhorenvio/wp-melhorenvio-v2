@@ -42,18 +42,7 @@ class SessionService
 
         delete_option('melhorenvio_user_info');
 
-        unset($_SESSION[$codeStore]['quotations']);
-        unset($_SESSION[$codeStore]['melhorenvio_token']);
-
-        unset($_SESSION[$codeStore]['melhorenvio_user_info']);
-
-        unset($_SESSION[$codeStore]['melhorenvio_address_selected_v2']);
-        unset($_SESSION[$codeStore]['melhorenvio_address']);
-
-        unset($_SESSION[$codeStore]['melhorenvio_stores']);
-        unset($_SESSION[$codeStore]['melhorenvio_store_v2']);
-
-        unset($_SESSION[$codeStore]['melhorenvio_options']);
+        unset($_SESSION[$codeStore]);
 
         return $_SESSION;
     }
