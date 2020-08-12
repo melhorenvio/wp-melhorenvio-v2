@@ -63,10 +63,6 @@ class CartService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
-            return $result;
-        }
-
         return (new OrderQuotationService())->updateDataQuotation(
             $orderId,
             $result->id,
@@ -81,21 +77,18 @@ class CartService
     /**
      * Function to remove order in cart by Melhor Envio.
      *
-     * @param int $orderId
+     * @param int $postId
+     * @param string $orderId
      * @return bool
      */
-    public function remove($orderId)
+    public function remove($postId, $orderId)
     {
-        $data = (new OrderQuotationService())->getData($orderId);
+        $data = (new OrderQuotationService())->getData($postId);
 
-        if (!isset($data['order_id'])) {
-            return false;
-        }
-
-        (new OrderQuotationService())->removeDataQuotation($orderId);
+        (new OrderQuotationService())->removeDataQuotation($postId);
 
         (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'],
+            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $orderId,
             'DELETE',
             []
         );
@@ -169,6 +162,12 @@ class CartService
     private function checkParamsBody($body, $orderId)
     {
         $errors = [];
+
+        $shippingService = new CalculateShippingMethodService();
+
+        if ($shippingService->isJadlog($body['service']) && is_null($body['agency'])) {
+            $errors[] = sprintf("Informar a agência Jadlog de envio no painel de configurações do plugin");
+        }
 
         if (!array_key_exists("from", $body)) {
             $errors[] = sprintf("Informar origem do envio do pedido %s", $orderId);
