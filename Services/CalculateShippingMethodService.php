@@ -20,6 +20,8 @@ class CalculateShippingMethodService
 
     const SERVICES_CORREIOS = ['1', '2', '17'];
 
+    const SERVICES_JADLOG = ['3', '4'];
+
     /**
      * Function to carry out the freight quote in the Melhor Envio api.
      *
@@ -111,6 +113,17 @@ class CalculateShippingMethodService
     public function isCorreios($code)
     {
         return in_array($code, self::SERVICES_CORREIOS);
+    }
+
+    /**
+     * Check if it is "Jadlog"
+     *
+     * @param int $code
+     * @return boolean
+     */
+    public function isJadlog($code)
+    {
+        return in_array($code, self::SERVICES_JADLOG);
     }
 
     /**

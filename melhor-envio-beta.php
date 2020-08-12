@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.8.0
+Version: 2.8.1
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -81,7 +81,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = '2.8.0';
+    public $version = '2.8.1';
 
     /**
      * Holds various class instances
@@ -185,10 +185,6 @@ final class Base_Plugin
         }
 
         $errorsPath = [];
-
-        if (!file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
-            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
-        }
 
         if (!is_dir($pathPlugins . '/woocommerce')) {
             $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
