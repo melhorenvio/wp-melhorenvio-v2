@@ -21,14 +21,20 @@ class Option
         return $options;
     }
 
+    /**
+     * Function for receiving quote options (AR and MP)
+     *
+     * @return void
+     */
     public function getOptions()
     {
         $ar = get_option('melhorenvio_ar');
         $mp = get_option('melhorenvio_mp');
 
+
         return (object) array( 
-            'ar' => ($ar == 'true') ? true : false,
-            'mp' => ($mp == 'true') ? true : false,
+            'ar' => filter_var($ar, FILTER_VALIDATE_BOOLEAN),
+            'mp' => filter_var($mp, FILTER_VALIDATE_BOOLEAN)
         );
     }
 

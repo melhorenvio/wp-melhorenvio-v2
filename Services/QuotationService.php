@@ -47,6 +47,8 @@ class QuotationService
     ) {
         $seller = (new SellerService())->getData();
 
+        $options = (new Option())->getOptions();
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -54,7 +56,10 @@ class QuotationService
             'to' => [
                 'postal_code' => $postalCode
             ],
-            'options'  => (new Option())->getOptions(),
+            'options' => [
+                'own_hand' => $options->mp,
+                'receipt' => $options->ar
+            ],
             'products' => $products
         ];
 
@@ -88,6 +93,8 @@ class QuotationService
     ) {
         $seller = (new SellerService())->getData();
 
+        $options = (new Option())->getOptions();
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -95,7 +102,10 @@ class QuotationService
             'to' => [
                 'postal_code' => $postalCode
             ],
-            'options'  => (new Option())->getOptions(),
+            'options' => [
+                'own_hand' => $options->mp,
+                'receipt' => $options->ar
+            ],
             'packages' => $packages
         ];
 
