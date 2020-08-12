@@ -175,11 +175,10 @@ class QuotationController
             $rates[] = [
                 'id' => $shippingMethod->id,
                 'name' => $shippingMethod->title,
-                'price' => ($rate->meta_data['price']) ? $rate->meta_data['price'] : null,
-                'delivery_time' => ($rate->meta_data['delivery_time']) ? $rate->meta_data['delivery_time'] : null,
+                'price' => (!empty( (string) $rate->meta_data['price'])) ? $rate->meta_data['price'] : null,
+                'delivery_time' => (!empty( (string) $rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
             ];
         }
-
         $rates = $this->orderingRatesByPrice($rates);
 
         return wp_send_json([
