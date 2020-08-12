@@ -167,6 +167,10 @@ class CartService
     {
         $errors = [];
 
+        if ((new CalculateShippingMethodService())->isJadlog($body['service']) && empty($body['agency'])) {
+            $errors[] = sprintf("Informar a agência Jadlog do envio %s", $orderId);
+        }
+
         if (!array_key_exists("from", $body)) {
             $errors[] = sprintf("Informar origem do envio do pedido %s", $orderId);
         }
