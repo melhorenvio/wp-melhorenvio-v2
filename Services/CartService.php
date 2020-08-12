@@ -83,8 +83,6 @@ class CartService
      */
     public function remove($postId, $orderId)
     {
-        $data = (new OrderQuotationService())->getData($postId);
-
         (new OrderQuotationService())->removeDataQuotation($postId);
 
         (new RequestService())->request(
