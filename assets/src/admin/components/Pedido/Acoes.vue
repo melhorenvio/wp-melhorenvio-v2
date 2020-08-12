@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <a v-if="item.log" :href="item.log" class="action-button -adicionar"></a>
+  <div class="container">
+    <a v-if="item.log" :href="item.log" class="action-button -adicionar container__link"></a>
 
-    <a
+    <a class="container__link"
       v-if="buttonCart(item)"
       @click="sendCartSimple({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
     >
@@ -45,7 +45,7 @@
       v-if="buttonBuy(item)"
       @click="beforeAddCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
       href="javascript:;"
-      class="action-button -adicionar"
+      class="action-button -adicionar container__link"
       data-tip="Comprar"
     >
       <svg
@@ -74,7 +74,7 @@
     <a
       v-if="item.status && (item.status == 'released'  || item.status == 'posted' || item.status == 'paid' || item.status == 'generated' || item.status == 'printed')"
       @click="printTicket({id:item.id, order_id:item.order_id})"
-      class="action-button -adicionar"
+      class="action-button -adicionar container__link"
       data-tip="Imprimir etiqueta"
     >
       <svg
@@ -167,7 +167,7 @@
       v-if="item.status && item.order_id && item.id && item.status == 'pending'"
       @click="removeCart({id:item.id, order_id:item.order_id})"
       href="javascript:;"
-      class="action-button -excluir"
+      class="action-button -excluir container__link"
       data-tip="Remover do Carrinho de compras"
     >
       <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
