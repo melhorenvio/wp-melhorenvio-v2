@@ -361,10 +361,6 @@ class OrderService
         $response = [];
 
         foreach ($posts as $post) {
-            $status = null;
-            $protocol = null;
-            $tracking = null;
-
             $data = (new OrderQuotationService())->getData($post->ID);
 
             if (empty($data)) {
@@ -377,34 +373,21 @@ class OrderService
                 continue;
             }
 
-            $info = $this->getInfoOrder($data['order_id']);
-
-            if (isset(end($info)->tracking)) {
-                $tracking = end($info)->tracking;
-            }
-
-            if (isset(end($info)->status)) {
-                $status   =  end($info)->status;
-                $protocol = end($info)->protocol;
-                $tracking = $tracking;
-            }
-
-            if (isset($data['status'])) {
-                $status = $data['status'];
-            }
-
-            if (isset($data['protocol'])) {
-                $protocol = $data['protocol'];
-            }
+            $info = end($this->getInfoOrder($data['order_id']));
 
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
-                'status' => $status,
-                'protocol' => $protocol,
-                'tracking' => $tracking
+                'status' => $info->status,
+                'protocol' => $info->protocol,
+                'tracking' => $info->tracking
             ];
 
-            (new TrackingService())->addTrackingOrder($post->ID, $tracking);
+            if (!is_null($info->tracking)) {
+                (new TrackingService())->addTrackingOrder(
+                    $post->ID,
+                    $info->tracking
+                );
+            }
         }
 
         return $response;
