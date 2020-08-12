@@ -172,6 +172,8 @@ class QuotationController
 
             $rate = end($rate);
 
+            //WARNING: Não remover o casting de string no !empty. 
+
             $rates[] = [
                 'id' => $shippingMethod->id,
                 'name' => $shippingMethod->title,
