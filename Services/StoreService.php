@@ -41,7 +41,20 @@ class StoreService
             return false;
         }
 
-        return $store[0];
+
+        $storeSelected = $store[0];
+
+
+        $storeAddresses = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $storeSelected->id . '/addresses',
+            'GET',
+            [],
+            false
+        );
+
+        $storeSelected->address = end($storeAddresses->data);
+    
+        return $storeSelected;
     }
 
     /**

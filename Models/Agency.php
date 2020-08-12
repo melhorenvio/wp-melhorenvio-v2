@@ -104,6 +104,11 @@ class Agency
     {
         $agencies = $this->get();
 
+        if (!empty($agencies['agencySelected'])) {
+            return $agencies['agencySelected'];
+        }
+        
+
         foreach ($agencies['allAgencies'] as $agency) {
             if ($agency['selected']) {
                 return $agency['id'];

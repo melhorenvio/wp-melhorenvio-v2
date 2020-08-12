@@ -161,10 +161,8 @@ class CartService
     {
         $errors = [];
 
-        $shippingService = new CalculateShippingMethodService();
-
-        if ($shippingService->isJadlog($body['service']) && is_null($body['agency'])) {
-            $errors[] = sprintf("Informar a agência Jadlog de envio no painel de configurações do plugin");
+        if ((new CalculateShippingMethodService())->isJadlog($body['service']) && empty($body['agency'])) {
+            $errors[] = sprintf("Informar a agência Jadlog do envio %s", $orderId);
         }
 
         if (!array_key_exists("from", $body)) {

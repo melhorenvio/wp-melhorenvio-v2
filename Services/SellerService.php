@@ -20,6 +20,8 @@ class SellerService
 
         $address = (new Address())->getAddressFrom();
 
+        $store = (new StoreService())->getStoreSelected();
+
         if (!empty($address['address']['id'])) {
             $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
             $data->address->complement = (!empty($address['address']['complement'])) ? $address['address']['complement'] : null;
@@ -31,19 +33,21 @@ class SellerService
         }
 
         return (object) [
-            "name" => sprintf("%s %s", $data->firstname, $data->lastname),
+            "name" => (isset($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
-            "email" => $data->email,
-            "document" => $data->document,
-            "address" => $data->address->address,
-            "complement" => $data->address->complement,
-            "number" => $data->address->number,
-            "district" => $data->address->district,
-            "city" => $data->address->city->city,
-            "state_abbr" => $data->address->city->state->state_abbr,
+            "email" => (!empty($store->email)) ? $store->email :  $data->email,
+            "document" => (!empty($store->document)) ? null : $data->document,
+            'company_document' => (!empty($store->document)) ? $store->document : null,
+            "address" => (!empty($store->address->address)) ? $store->address->address : $data->address->address,
+            "complement" =>  (!empty($store->address->complement)) ? $store->address->complement : $data->address->complement,
+            "number" =>  (!empty($store->address->number)) ? $store->address->number : $data->address->number,
+            "district" => (!empty($store->address->district)) ? $store->address->district : $data->address->district,
+            "city" => (!empty($store->address->city->city)) ? $store->address->city->city : $data->address->city->city,
+            "state_abbr" => (!empty($store->address->city->state->abbr)) ? $store->address->city->state->abbr : $data->address->city->state->abbr,
             "country_id" => 'BR',
-            "postal_code" => $data->address->postal_code
+            "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
+
     }
 
     /**
