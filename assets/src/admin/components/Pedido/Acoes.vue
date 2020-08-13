@@ -1,9 +1,10 @@
 <template>
   <div class="container">
-    <a v-if="item.log" :href="item.log" class="action-button -adicionar container__link"></a>
+    <a v-if="item.log" :href="item.log" class="action-button container__link"></a>
 
-    <a class="container__link"
+    <a class="action-button container__link"
       v-if="buttonCart(item)"
+      data-tip="Adicionar o pedido no carrinho de compras"
       @click="sendCartSimple({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
     >
       <svg
@@ -215,7 +216,7 @@ export default {
       "addCartSimple",
       "initLoader",
       "stopLoader",
-      "setMessageError",
+      "setMessageModal",
       "removeCart",
       "cancelCart",
       "payTicket",
@@ -224,7 +225,17 @@ export default {
     ]),
     sendCartSimple: function(data) {
       this.initLoader();
-      this.addCartSimple(data);
+      this.addCartSimple(data).then(response => {
+        const msg = [];
+            msg.push(`Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`);
+            this.setMessageModal(msg);
+            this.stopLoader();
+            return;
+        
+      }).catch(error => {
+        this.setMessageModal(error.response.data.errors);
+        this.stopLoader();
+      })
     },
     cancelOrderSimple: function(data) {
       this.initLoader();
@@ -237,13 +248,13 @@ export default {
           if (response.success) {
             const msgErr = [];
             msgErr.push("Etiqueta #" + data.id + " comprada com sucesso.");
-            this.setMessageError(msgErr);
+            this.setMessageModal(msgErr);
             this.stopLoader();
             return;
           }
         })
         .catch(error => {
-          this.setMessageError(error.errors);
+          this.setMessageModal(error.errors);
           this.stopLoader();
         });
     },

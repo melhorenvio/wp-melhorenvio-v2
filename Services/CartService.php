@@ -181,10 +181,6 @@ class CartService
             $errors[] = sprintf("Informar o produtos do envio do pedido %s", $orderId);
         }
 
-        if (isset($body['service']) && $body['service'] >= 3 && !array_key_exists("agency", $body)) {
-            $errors[] = sprintf("Informar a agência do envio do pedido %s", $orderId);
-        }
-
         if (!isset($body['volumes'])) {
             $errors[] = sprintf("Informar os volumes do envio do pedido %s", $orderId);
         }
