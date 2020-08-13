@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Agency;
+use Models\Option;
 
 class CartService
 {
@@ -27,6 +28,8 @@ class CartService
 
         $orderInvoiceService = new OrderInvoicesService();
 
+        $options = (new Option())->getOptions();
+
         $body = array(
             'from' => $from,
             'to' => $to,
@@ -36,8 +39,8 @@ class CartService
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
-                "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
-                "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
+                "receipt" => $options->ar,
+                "own_hand" => $options->mp,
                 "collect" => false,
                 "reverse" => false,
                 "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
