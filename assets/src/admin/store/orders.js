@@ -303,7 +303,7 @@ const orders = {
         stopLoader: ({ commit }) => {
             commit('toggleLoader', false)
         },
-        setMessageError: ({ commit }, msg) => {
+        setMessageModal: ({ commit }, msg) => {
             commit('setMsgModal', msg)
             commit('toggleModal', true)
         },
@@ -317,16 +317,12 @@ const orders = {
                     Axios.post(`${ajaxurl}?action=add_cart&order_id=${data.id}&service=${data.choosen}&non_commercial=${data.non_commercial}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
-                            if (!response.data.order_id) {
-                                reject(response.data);
-                            }
                             commit('addCartSimple', {
                                 id: data.id,
                                 order_id: response.data.order_id,
                             })
                             resolve(response.data);
                         }).catch((error) => {
-                            commit('toggleLoader', false)
                             reject(error);
                         });
                 }
