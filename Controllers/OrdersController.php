@@ -77,40 +77,44 @@ class OrdersController
      */
     public function sendOrder()
     {
-        if (!isset($_GET['order_id'])) {
+        if (empty($_GET['order_id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
             ], 412);
         }
 
-        if (!isset($_GET['choosen'])) {
+        if (empty($_GET['choosen'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do serviço selecionado'
             ], 412);
         }
 
-        $products = (new OrdersProductsService())->getProductsOrder($_GET['order_id']);
+        $orderId = $_GET['order_id'];
+        $choosen = $_GET['choosen'];
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($_GET['order_id']);
+        $products = (new OrdersProductsService())->getProductsOrder($orderId);
 
-        $result = (new CartService())->add(
-            $_GET['order_id'],
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
+
+        $cartResult = (new CartService())->add(
+            $orderId,
             $products,
             $buyer,
-            $_GET['choosen']
+            $choosen
         );
 
-        if (!isset($result['order_id'])) {
-            if (isset($result['errors'])) {
+        if (empty($cartResult['order_id'])) {
+
+            (new OrderQuotationService())->removeDataQuotation($orderId);
+
+            if (isset($cartResult['errors'])) {
                 return wp_send_json([
                     'success' => false,
-                    'errors' => $result['errors'],
+                    'errors' => $cartResult['errors'],
                 ], 400);
-            }
-
-            (new OrderQuotationService())->removeDataQuotation($_GET['order_id']);
+            }            
 
             return wp_send_json([
                 'success' => false,
@@ -118,29 +122,34 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->payByOrderId($_GET['order_id'], $result['order_id']);
+        $paymentResult = (new OrderService())->payByOrderId($orderId, $cartResult['order_id']);
 
-        if (!isset($result['order_id'])) {
-            if (isset($result['errors'])) {
+        if (empty($paymentResult['order_id'])) {
+
+            (new OrderQuotationService())->removeDataQuotation($orderId);
+
+            (new CartService())->remove($orderId, $cartResult['order_id']);
+
+            if (isset($paymentResult['errors'])) {
                 return wp_send_json([
                     'success' => false,
-                    'errors' => $result['errors']
+                    'errors' =>  $paymentResult['errors']
                 ], 400);
             }
 
             return wp_send_json([
                 'success' => false,
                 'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
-                'result' => $result
+                'result' => $paymentResult
             ], 400);
         }
 
-        $result = (new OrderService())->createLabel($_GET['order_id']);
+        $labelResult = (new OrderService())->createLabel($_GET['order_id']);
 
         return wp_send_json([
             'success' => true,
             'message' => (array) 'Pedido gerado com sucesso',
-            'data' => $result
+            'data' => $labelResult
         ], 200);
     }
 
