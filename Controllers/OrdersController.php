@@ -105,7 +105,7 @@ class OrdersController
             $choosen
         );
 
-        if (!isset($cartResult['order_id'])) {
+        if (empty($cartResult['order_id'])) {
 
             (new OrderQuotationService())->removeDataQuotation($orderId);
 
@@ -124,7 +124,7 @@ class OrdersController
 
         $paymentResult = (new OrderService())->payByOrderId($orderId, $cartResult['order_id']);
 
-        if (!isset($paymentResult['order_id'])) {
+        if (empty($paymentResult['order_id'])) {
 
             (new OrderQuotationService())->removeDataQuotation($orderId);
 
