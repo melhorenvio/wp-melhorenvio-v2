@@ -33,7 +33,7 @@ class SellerService
         }
 
         return (object) [
-            "name" => (isset($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
+            "name" => (!empty($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => (!empty($store->email)) ? $store->email :  $data->email,
             "document" => (!empty($store->document)) ? null : $data->document,
@@ -43,7 +43,7 @@ class SellerService
             "number" =>  (!empty($store->address->number)) ? $store->address->number : $data->address->number,
             "district" => (!empty($store->address->district)) ? $store->address->district : $data->address->district,
             "city" => (!empty($store->address->city->city)) ? $store->address->city->city : $data->address->city->city,
-            "state_abbr" => (!empty($store->address->city->state->abbr)) ? $store->address->city->state->abbr : $data->address->city->state->abbr,
+            "state_abbr" => (!empty($store->address->city->state->state_abbr)) ? $store->address->city->state->state_abbr : $data->address->city->state->state_abbr,
             "country_id" => 'BR',
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
