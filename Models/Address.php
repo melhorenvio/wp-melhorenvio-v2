@@ -50,7 +50,7 @@ class Address
                 'city'        => $address->city->city,
                 'state'       => $address->city->state->state_abbr,
                 'country'     => $address->city->state->country->id,
-                'selected'    => ($selectedAddress == $address->id) ? true : false 
+                'selected'    => ($selectedAddress == $address->id)
             );
         }
 
