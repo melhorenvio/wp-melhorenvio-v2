@@ -55,7 +55,9 @@ class StoreService
      */
     public function getStores()
     {
-        session_start();
+        if (empty($_SESSION)) {
+            session_start();
+        }
 
         $codeStore = md5(get_option('home'));
 
