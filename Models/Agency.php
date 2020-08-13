@@ -4,6 +4,7 @@ namespace Models;
 
 use Models\Address;
 use Services\RequestService;
+use Services\SellerService;
 
 class Agency
 {
@@ -14,38 +15,27 @@ class Agency
      */
     public function get()
     {
-        $results = '';
 
-        if (!isset($_SESSION['melhor_envio']['agencies']) || empty($_SESSION['melhor_envio']['agencies'])) {
+        $seller = (new SellerService())->getData();
 
-            if (!isset($_GET['state']) && !isset($_GET['state'])) {
-                $address = (new Address)->getAddressFrom();
-            } else {
-                $address['address'] = array(
-                    'city'  => $_GET['city'],
-                    'state' => $_GET['state']
-                );
-            }
+        $state = (!empty($_GET['state'])) ? $_GET['state'] : $seller->state_abbr;
 
-            $results = (new RequestService())->request(
-                '/shipment/agencies?company=2&country=BR&state=' . $address['address']['state'],
-                'GET',
-                [],
-                false
-            );
-
-            $_SESSION['melhor_envio']['agencies'] = $results;
-        } else {
-            $results = $_SESSION['melhor_envio']['agencies'];
-        }
+        $results = (new RequestService())->request(
+            '/shipment/agencies?company=2&country=BR&state=' . $state,
+            'GET',
+            [],
+            false
+        );
 
         $agencies = [];
+
         $agenciesForUser = [];
 
         $agencySelected = get_option(self::AGENCY_SELECTED);
 
         foreach ($results as $agency) {
-            if ($address['address']['state'] === $agency->address->city->state->state_abbr && $address['address']['city'] === $agency->address->city->city) {
+
+            if ($state === $agency->address->city->state->state_abbr) {
                 $agenciesForUser[] = array(
                     'id'           => $agency->id,
                     'name'         => $agency->name,
