@@ -254,7 +254,7 @@ export default {
           }
         })
         .catch(error => {
-          this.setMessageModal(error.errors);
+          this.setMessageModal(error.response.data.errors);
           this.stopLoader();
         });
     },
