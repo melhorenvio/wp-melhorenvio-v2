@@ -42,8 +42,8 @@ class SessionService
 
         delete_option('melhorenvio_user_info');
 
-        unset($_SESSION[$codeStore]);
-
-        return $_SESSION;
+        if (!empty($_SESSION[$codeStore])) {
+            unset($_SESSION[$codeStore]);
+        }
     }
 }

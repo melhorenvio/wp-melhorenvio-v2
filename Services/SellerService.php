@@ -43,7 +43,7 @@ class SellerService
             "number" =>  (!empty($store->address->number)) ? $store->address->number : $data->address->number,
             "district" => (!empty($store->address->district)) ? $store->address->district : $data->address->district,
             "city" => (!empty($store->address->city->city)) ? $store->address->city->city : $data->address->city->city,
-            "state_abbr" => (!empty($store->address->city->state->abbr)) ? $store->address->city->state->abbr : $data->address->city->state->abbr,
+            "state_abbr" => (!empty($store->address->city->state->state_abbr)) ? $store->address->city->state->state_abbr : $data->address->city->state->state_abbr,
             "country_id" => 'BR',
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
