@@ -31,20 +31,11 @@ class StoreService
             return false;
         }
 
-        $storesSelected = array_map(function ($store) {
-            if (isset($store->selected)) {
-                return $store;
-            }
-        }, $stores); 
+        $storesSelected = array_filter($stores, function($store) {
+            return !empty($store->selected);
+        });
 
-        $storeSelected = null;
-        if (is_array($storesSelected)) {
-            foreach ($storesSelected as $index => $store) {
-                if (!empty($store)) {
-                    $storeSelected = $store;
-                }
-            }
-        }
+        $storeSelected = end($storesSelected);
 
         if (empty($storeSelected->name)) {
             return false;
