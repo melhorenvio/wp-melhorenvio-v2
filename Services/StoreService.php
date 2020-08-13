@@ -41,18 +41,9 @@ class StoreService
             return false;
         }
 
-
         $storeSelected = $store[0];
 
-
-        $storeAddresses = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $storeSelected->id . '/addresses',
-            'GET',
-            [],
-            false
-        );
-
-        $storeSelected->address = end($storeAddresses->data);
+        $storeSelected->address = $this->getAddressStore($storeSelected);
     
         return $storeSelected;
     }
@@ -94,12 +85,38 @@ class StoreService
             if ($store->id == $storeSelected) {
                 $store->selected = true;
             }
+
+            $store->address = $this->getAddressStore($store);
+
             return $store;
         }, $stores);
 
         $_SESSION[$codeStore][self::OPTION_STORES] = $stores;
 
         return $stores;
+    }
+
+    /**
+     * Function to get the address of a store
+     *
+     * @param object $store
+     * @return object
+     */
+    public function getAddressStore($store)
+    {
+        $addresses = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $store->id . '/addresses',
+            'GET',
+            [],
+            false
+        );
+
+        if (empty($addresses->data)) {
+            return [];
+        }
+
+        
+        return end($addresses->data);
     }
 
     /**
