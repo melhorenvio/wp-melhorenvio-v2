@@ -27,21 +27,19 @@ class StoreService
     {
         $stores = $this->getStores();
 
-        if (!isset($stores)) {
+        if (empty($stores)) {
             return false;
         }
 
-        $store = array_map(function ($store) {
-            if (isset($store->selected)) {
-                return $store;
-            }
-        }, $stores);
+        $storesSelected = array_filter($stores, function($store) {
+            return !empty($store->selected);
+        });
 
-        if (!isset($store[0]->document)) {
+        $storeSelected = end($storesSelected);
+
+        if (empty($storeSelected->name)) {
             return false;
         }
-
-        $storeSelected = $store[0];
 
         $storeSelected->address = $this->getAddressStore($storeSelected);
     

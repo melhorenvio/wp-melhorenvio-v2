@@ -33,7 +33,7 @@ class SellerService
         }
 
         return (object) [
-            "name" => (isset($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
+            "name" => (!empty($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => (!empty($store->email)) ? $store->email :  $data->email,
             "document" => (!empty($store->document)) ? null : $data->document,
