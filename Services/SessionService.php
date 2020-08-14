@@ -83,7 +83,7 @@ class SessionService
         delete_option('melhorenvio_user_info');
 
         if (!empty($_SESSION)) {
-            unset($_SESSION);
+            session_unset();
         }
     }
 }
