@@ -55,7 +55,7 @@ class SellerService
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
 
-        $this->storeDatSession($data);
+        $this->storeUserDataSession($data);
 
         return $data;
     }
@@ -85,7 +85,7 @@ class SellerService
      * @param object $data
      * @return void
      */
-    private function storeDatSession($data)
+    private function storeUserDataSession($data)
     {
         if (empty($_SESSION)) {
             session_start();
