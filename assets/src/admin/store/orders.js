@@ -40,6 +40,7 @@ const orders = {
             })
             delete order.content.status
             delete order.content.order_id
+            delete order.content.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         cancelCart: (state, data) => {

@@ -376,6 +376,17 @@ class OrderService
 
             $info = end($this->getInfoOrder($data['order_id']));
 
+            if (!is_object($info) && $info[0] == 'Not Found') {
+                $response[$post->ID] = [
+                    'order_id' => null,
+                    'status' => null,
+                    'protocol' => null,
+                    'tracking' => null,
+                    'service_id' => null
+                ];
+                continue;
+            }
+
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
                 'status' => $info->status,
@@ -391,7 +402,7 @@ class OrderService
                 );
             }
         }
-
+        
         return $response;
     }
 
