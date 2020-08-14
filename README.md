@@ -71,6 +71,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 - Correções de pequenos problemas em versões antigas do PHP.
 - Ordenação de cotação pelo preço.
 - Ajuste nos dados do remetente na etiqueta, exibindo dados e endereço da loja selecionada.
+- Solução do problema de lentidão da calculadora do produto.
 
 ### [2.8.0] - 2020-08
 - Validação de cotação de correios com volumes.
