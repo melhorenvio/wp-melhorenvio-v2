@@ -9,6 +9,7 @@ use Models\Address;
  */
 class SellerService
 {
+    const USER_SESSION = 'user_seller_melhor_envio';
     /**
      * Get data user on API Melhor Envio
      *
@@ -16,6 +17,12 @@ class SellerService
      */
     public function getData()
     {
+        $data = $this->getDataCached();
+
+        if (!empty($data)) {
+            return $data;
+        }
+
         $data = $this->getDataApiMelhorEnvio();
 
         $address = (new Address())->getAddressFrom();
@@ -32,15 +39,15 @@ class SellerService
             $data->address->postal_code = (!empty($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
         }
 
-        return (object) [
+        $data = (object) [
             "name" => (!empty($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => (!empty($store->email)) ? $store->email :  $data->email,
             "document" => (!empty($store->document)) ? null : $data->document,
             'company_document' => (!empty($store->document)) ? $store->document : null,
             "address" => (!empty($store->address->address)) ? $store->address->address : $data->address->address,
-            "complement" =>  (!empty($store->address->complement)) ? $store->address->complement : $data->address->complement,
-            "number" =>  (!empty($store->address->number)) ? $store->address->number : $data->address->number,
+            "complement" => (!empty($store->address->complement)) ? $store->address->complement : $data->address->complement,
+            "number" => (!empty($store->address->number)) ? $store->address->number : $data->address->number,
             "district" => (!empty($store->address->district)) ? $store->address->district : $data->address->district,
             "city" => (!empty($store->address->city->city)) ? $store->address->city->city : $data->address->city->city,
             "state_abbr" => (!empty($store->address->city->state->state_abbr)) ? $store->address->city->state->state_abbr : $data->address->city->state->state_abbr,
@@ -48,6 +55,9 @@ class SellerService
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
 
+        $this->storeDatSession($data);
+
+        return $data;
     }
 
     /**
@@ -67,5 +77,60 @@ class SellerService
         }
 
         return $data;
+    }
+
+    /**
+     * Function to save data user on session.   
+     *
+     * @param object $data
+     * @return void
+     */
+    private function storeDatSession($data)
+    {
+        if (empty($_SESSION)) {
+            session_start();
+        }
+
+        $_SESSION[self::USER_SESSION]['data'] = $data;
+        $_SESSION[self::USER_SESSION]['created'] = date('Y-m-d H:i:s');
+    }
+
+    /**
+     * Function to get data stored on session.
+     *
+     * @return object
+     */
+    private function getDataCached()
+    {
+        if (empty($_SESSION)) {
+            session_start();
+        }
+
+        if (isset($_SESSION[self::USER_SESSION]['data']) && !$this->isSessionCachedUserExpired()) {
+            return $_SESSION[self::USER_SESSION]['data'];
+        }
+    }
+
+    /**
+     * Function to check if data cacked is expired
+     *
+     * @return boolean
+     */
+    private function isSessionCachedUserExpired()
+    {
+        if (!isset($_SESSION[self::USER_SESSION]['created'])) {
+            return true;
+        }
+
+        $created = $_SESSION[self::USER_SESSION]['created'];
+
+        $dateLimit = date('Y-m-d H:i:s', strtotime('-1 minutes'));
+
+        if ($dateLimit > $created) {
+            unset($_SESSION[self::USER_SESSION]);
+            return true;
+        }
+
+        return false;
     }
 }
