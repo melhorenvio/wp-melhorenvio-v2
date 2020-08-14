@@ -77,13 +77,4 @@ class SessionService
 
         return false;
     }
-
-    public function delete()
-    {
-        delete_option('melhorenvio_user_info');
-
-        if (!empty($_SESSION)) {
-            session_unset();
-        }
-    }
 }
