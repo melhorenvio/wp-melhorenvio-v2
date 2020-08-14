@@ -71,64 +71,88 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      *
-     * @param int $order_id
-     * @param int $choosen
+     * @param int $post_id
+     * @param int $service_id
      * @return json $results
      */
     public function sendOrder()
     {
-        if (empty($_GET['order_id'])) {
+        if (empty($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do pedido'
             ], 412);
         }
 
-        if (empty($_GET['choosen'])) {
+        if (empty($_GET['service_id'])) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Informar o ID do serviço selecionado'
             ], 412);
         }
 
-        $orderId = $_GET['order_id'];
-        $choosen = $_GET['choosen'];
+        $postId = $_GET['post_id'];
 
-        $products = (new OrdersProductsService())->getProductsOrder($orderId);
+        $orderId = null;
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
+        $serviceId = $_GET['service_id'];
 
-        $cartResult = (new CartService())->add(
-            $orderId,
-            $products,
-            $buyer,
-            $choosen
-        );
+        $status = null;
 
-        if (empty($cartResult['order_id'])) {
+        $orderQuotationService = new OrderQuotationService();
+            
+        $dataOrder = $orderQuotationService->getData($postId);
 
-            (new OrderQuotationService())->removeDataQuotation($orderId);
-
-            if (isset($cartResult['errors'])) {
-                return wp_send_json([
-                    'success' => false,
-                    'errors' => $cartResult['errors'],
-                ], 400);
-            }            
-
-            return wp_send_json([
-                'success' => false,
-                'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
-            ], 400);
+        if (!empty($dataOrder['order_id'])) {
+            $orderId = $dataOrder['order_id'];
         }
 
-        $paymentResult = (new OrderService())->payByOrderId($orderId, $cartResult['order_id']);
+        if (!empty($dataOrder['status'])) {
+            $status = $dataOrder['status'];
+        }
+
+        if (empty($status) && empty($orderId)) {
+            $products = (new OrdersProductsService())->getProductsOrder($postId);
+
+            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+
+            $cartResult = (new CartService())->add(
+                $postId,
+                $products,
+                $buyer,
+                $serviceId
+            );
+
+
+            if (empty($cartResult['order_id'])) {
+                $orderQuotationService->removeDataQuotation($postId);
+
+                if (isset($cartResult['errors'])) {
+                        return wp_send_json([
+                        'success' => false,
+                        'errors' => $cartResult['errors'],
+                    ], 400);
+                }
+
+                return wp_send_json([
+                    'success' => false,
+                    'errors' => (array) 'Ocorreu um erro ao envio o pedido para o carrinho de compras do Melhor Envio.',
+                ], 400);
+            }
+
+            $orderId = $cartResult['order_id'];
+
+            $status = $cartResult['status'];
+
+        }
+
+        $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
 
         if (empty($paymentResult['order_id'])) {
 
-            (new OrderQuotationService())->removeDataQuotation($orderId);
+            (new OrderQuotationService())->removeDataQuotation($postId);
 
-            (new CartService())->remove($orderId, $cartResult['order_id']);
+            (new CartService())->remove($postId, $cartResult['order_id']);
 
             if (isset($paymentResult['errors'])) {
                 return wp_send_json([
@@ -142,9 +166,11 @@ class OrdersController
                 'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
                 'result' => $paymentResult
             ], 400);
+
+            $status = $paymentResult['status'];
         }
 
-        $labelResult = (new OrderService())->createLabel($_GET['order_id']);
+        $labelResult = (new OrderService())->createLabel($postId);
 
         return wp_send_json([
             'success' => true,

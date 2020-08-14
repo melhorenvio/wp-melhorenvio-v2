@@ -44,7 +44,7 @@
 
     <a
       v-if="buttonBuy(item)"
-      @click="beforeAddCart({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
+      @click="beforeAddCart({id:item.id, choosen:item.service_id, non_commercial: item.non_commercial})"
       href="javascript:;"
       class="action-button -adicionar container__link"
       data-tip="Comprar"
@@ -282,6 +282,11 @@ export default {
       }
     },
     buttonBuy(item) {
+
+      if (!item.service_id) {
+        return false;
+      }
+      
       if (!(item.status == "posted" || item.status == "released")) {
         return true;
       }
