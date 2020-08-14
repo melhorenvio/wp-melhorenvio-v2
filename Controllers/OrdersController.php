@@ -39,23 +39,23 @@ class OrdersController
     /**
      * Function to add the order to the shopping cart
      *
-     * @param int $orderId
+     * @param int $post_id
      * @param int $service
      * @param bool $nonCommercial
      * @return json
      */
     public function addCart()
     {
-        $orderId = $_GET['order_id'];
+        $postId = $_GET['post_id'];
 
         $service = $_GET['service'];
 
-        $products = (new OrdersProductsService())->getProductsOrder($orderId);
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
 
         $result = (new CartService())->add(
-            $orderId,
+            $postId,
             $products,
             $buyer,
             $service

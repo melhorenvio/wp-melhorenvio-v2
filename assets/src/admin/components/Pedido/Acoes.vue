@@ -5,7 +5,7 @@
     <a class="action-button container__link"
       v-if="buttonCart(item)"
       data-tip="Adicionar o pedido no carrinho de compras"
-      @click="sendCartSimple({id:item.id, choosen:item.cotation.choose_method, non_commercial: item.non_commercial})"
+      @click="sendCartSimple({id:item.id, service_id:item.cotation.choose_method, non_commercial: item.non_commercial})"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@
 
     <a
       v-if="buttonBuy(item)"
-      @click="beforeAddCart({id:item.id, choosen:item.service_id, non_commercial: item.non_commercial})"
+      @click="beforeAddCart({id:item.id, service_id:item.service_id, non_commercial: item.non_commercial})"
       href="javascript:;"
       class="action-button -adicionar container__link"
       data-tip="Comprar"
@@ -282,7 +282,6 @@ export default {
       }
     },
     buttonBuy(item) {
-
       if (!item.service_id) {
         return false;
       }
