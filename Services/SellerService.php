@@ -16,8 +16,10 @@ class SellerService
      * @return object $dataSeller
      */
     public function getData()
-    {
-        $data = $this->getDataCached();
+    {   
+        $sessionService = new SessionService();
+
+        $data = $sessionService->getDataCached(self::USER_SESSION);
 
         if (!empty($data)) {
             return $data;
@@ -55,7 +57,7 @@ class SellerService
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
 
-        $this->storeUserDataSession($data);
+        $sessionService->storeData(self::USER_SESSION, $data);
 
         return $data;
     }
@@ -77,60 +79,5 @@ class SellerService
         }
 
         return $data;
-    }
-
-    /**
-     * Function to save data user on session.   
-     *
-     * @param object $data
-     * @return void
-     */
-    private function storeUserDataSession($data)
-    {
-        if (empty($_SESSION)) {
-            session_start();
-        }
-
-        $_SESSION[self::USER_SESSION]['data'] = $data;
-        $_SESSION[self::USER_SESSION]['created'] = date('Y-m-d H:i:s');
-    }
-
-    /**
-     * Function to get data stored on session.
-     *
-     * @return object
-     */
-    private function getDataCached()
-    {
-        if (empty($_SESSION)) {
-            session_start();
-        }
-
-        if (isset($_SESSION[self::USER_SESSION]['data']) && !$this->isSessionCachedUserExpired()) {
-            return $_SESSION[self::USER_SESSION]['data'];
-        }
-    }
-
-    /**
-     * Function to check if data cacked is expired
-     *
-     * @return boolean
-     */
-    private function isSessionCachedUserExpired()
-    {
-        if (!isset($_SESSION[self::USER_SESSION]['created'])) {
-            return true;
-        }
-
-        $created = $_SESSION[self::USER_SESSION]['created'];
-
-        $dateLimit = date('Y-m-d H:i:s', strtotime('-1 minutes'));
-
-        if ($dateLimit > $created) {
-            unset($_SESSION[self::USER_SESSION]);
-            return true;
-        }
-
-        return false;
     }
 }

@@ -2,48 +2,88 @@
 
 namespace Services;
 
+/**
+ * Service responsible for managing the data stored in the session
+ */
 class SessionService
 {
-    public function clear()
+    /**
+     * Minutes that the data must be stored in the session
+     */
+    const TIME_SESSION = 1;
+
+    public function __construct()
     {
-        $codeStore = md5(get_option('home'));
-
-        if (isset($_SESSION[$codeStore]['cotations'])) {
-
-            foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
-
-                if (!isset($cotation['created'])) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-
-                if ($this->isExpiredQuotationCached($cotation)) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-            }
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
         }
     }
 
     /**
-     * Function to check if the quote has expired in the session
+     * Function to get data stored on session.
      *
-     * @param array $quotation
+     * @param string $key
+     * @return object
+     */
+    public function getDataCached($key)
+    {
+        if ($this->isExpiredCache($key)) {
+            return false;
+        }
+
+        return $_SESSION[$key]['data'];
+    }
+
+    /**
+     * Function to save data user on session.   
+     *
+     * @param string $key
+     * @param mixed $data
+     * @return void
+     */
+    public function storeData($key, $data)
+    {
+        $_SESSION[$key]['data'] = $data;
+        $_SESSION[$key]['created'] = date('Y-m-d H:i:s');
+    }   
+
+    /**
+     * Function to check if data cacked is expired
+     * 
+     * @param string $key
      * @return boolean
      */
-    public function isExpiredQuotationCached($quotation)
+    public function isExpiredCache($key)
     {
-        $dateNow = date("Y-m-d h:i:s");
+        if (empty($_SESSION[$key]['created']) ) {
+            return true;
+        }
 
-        return (date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($quotation['created']))) < $dateNow);
+        $created = $_SESSION[$key]['created'];
+
+        $dateLimit = date(
+            'Y-m-d H:i:s', 
+            strtotime(sprintf("-%d minutes", self::TIME_SESSION))
+        );
+
+        if ($dateLimit > $created) {
+            unset($_SESSION[$key]);
+            return true;
+        }
+
+        if (empty($_SESSION[$key]['data'])) {
+            return true;
+        }
+
+        return false;
     }
 
     public function delete()
     {
-        $codeStore = md5(get_option('home'));
-
         delete_option('melhorenvio_user_info');
 
-        if (!empty($_SESSION[$codeStore])) {
-            unset($_SESSION[$codeStore]);
+        if (!empty($_SESSION)) {
+            unset($_SESSION);
         }
     }
 }

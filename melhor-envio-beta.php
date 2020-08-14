@@ -106,7 +106,6 @@ final class Base_Plugin
 
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
 
-        (new SessionService())->clear();
     }
 
     /**
