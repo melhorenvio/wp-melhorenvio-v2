@@ -40,6 +40,7 @@ const orders = {
             })
             delete order.content.status
             delete order.content.order_id
+            delete order.content.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         cancelCart: (state, data) => {
@@ -67,6 +68,8 @@ const orders = {
             })
             order.content.status = 'pending'
             order.content.order_id = data.order_id
+            order.content.protocol = data.protocol
+            order.content.service_id = data.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         addCart: (state, data) => {
@@ -82,6 +85,7 @@ const orders = {
             order.content.status = 'released'
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
+            order.content.service_id = data.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         refreshCotation: (state, data) => {
@@ -313,13 +317,14 @@ const orders = {
                     commit('toggleLoader', false)
                     reject();
                 }
-                if (data.id && data.choosen) {
-                    Axios.post(`${ajaxurl}?action=add_cart&order_id=${data.id}&service=${data.choosen}&non_commercial=${data.non_commercial}`, data)
+                if (data.id && data.service_id) {
+                    Axios.post(`${ajaxurl}?action=add_cart&post_id=${data.id}&service=${data.service_id}&non_commercial=${data.non_commercial}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
                             commit('addCartSimple', {
                                 id: data.id,
                                 order_id: response.data.order_id,
+                                service_id: data.service_id
                             })
                             resolve(response.data);
                         }).catch((error) => {
@@ -335,9 +340,10 @@ const orders = {
                     reject();
                     return false;
                 }
-                if (data.id && data.choosen) {
 
-                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data)
+                if (data.id && data.service_id) {
+
+                    Axios.post(`${ajaxurl}?action=add_order&post_id=${data.id}&service_id=${data.service_id}&non_commercial=${data.non_commercial}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
                             if (!response.data.success) {
@@ -346,6 +352,7 @@ const orders = {
                             commit('addCart', {
                                 id: data.id,
                                 order_id: response.data.data.order_id,
+                                service_id: data.service_id
                             })
                             resolve(response.data);
                         }).catch((error) => {

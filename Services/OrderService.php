@@ -368,7 +368,8 @@ class OrderService
                     'order_id' => null,
                     'status' => null,
                     'protocol' => null,
-                    'tracking' => null
+                    'tracking' => null,
+                    'service_id' => null
                 ];
                 continue;
             }
@@ -377,11 +378,23 @@ class OrderService
 
             $info = end($dataOrder);
 
+            if (!is_object($info) && $info[0] == 'Not Found') {
+                $response[$post->ID] = [
+                    'order_id' => null,
+                    'status' => null,
+                    'protocol' => null,
+                    'tracking' => null,
+                    'service_id' => null
+                ];
+                continue;
+            }
+
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
                 'status' => $info->status,
                 'protocol' => $info->protocol,
-                'tracking' => $info->tracking
+                'tracking' => $info->tracking,
+                'service_id' => (!empty($data['choose_method'])) ? $data['choose_method'] : null
             ];
 
             if (!is_null($info->tracking)) {
@@ -391,7 +404,7 @@ class OrderService
                 );
             }
         }
-
+        
         return $response;
     }
 

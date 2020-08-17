@@ -65,6 +65,7 @@ class ListOrderService
                     $statusMelhorEnvio[$postId]['status']
                 ),
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
+                'service_id' => $statusMelhorEnvio[$postId]['service_id'],
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
