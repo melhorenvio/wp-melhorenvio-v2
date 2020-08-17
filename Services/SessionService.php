@@ -10,7 +10,7 @@ class SessionService
     /**
      * Minutes that the data must be stored in the session
      */
-    const TIME_SESSION = 1;
+    const TIME_SESSION = 5;
 
     public function __construct()
     {
