@@ -373,7 +373,9 @@ class OrderService
                 continue;
             }
 
-            $info = end($this->getInfoOrder($data['order_id']));
+            $dataOrder = $this->getInfoOrder($data['order_id']);
+
+            $info = end($dataOrder);
 
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],

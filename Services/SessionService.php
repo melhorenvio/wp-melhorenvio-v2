@@ -2,48 +2,79 @@
 
 namespace Services;
 
+/**
+ * Service responsible for managing the data stored in the session
+ */
 class SessionService
 {
-    public function clear()
+    /**
+     * Minutes that the data must be stored in the session
+     */
+    const TIME_SESSION = 5;
+
+    public function __construct()
     {
-        $codeStore = md5(get_option('home'));
-
-        if (isset($_SESSION[$codeStore]['cotations'])) {
-
-            foreach ($_SESSION[$codeStore]['cotations'] as $key => $cotation) {
-
-                if (!isset($cotation['created'])) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-
-                if ($this->isExpiredQuotationCached($cotation)) {
-                    unset($_SESSION[$codeStore]['cotations'][$key]);
-                }
-            }
+        if (empty(session_id())) {
+            session_start();
         }
     }
 
     /**
-     * Function to check if the quote has expired in the session
+     * Function to get data stored on session.
      *
-     * @param array $quotation
-     * @return boolean
+     * @param string $key
+     * @return object
      */
-    public function isExpiredQuotationCached($quotation)
+    public function getDataCached($key)
     {
-        $dateNow = date("Y-m-d h:i:s");
+        if ($this->isExpiredCache($key)) {
+            return false;
+        }
 
-        return (date('Y-m-d H:i:s', strtotime('+2 hours', strtotime($quotation['created']))) < $dateNow);
+        return $_SESSION[$key]['data'];
     }
 
-    public function delete()
+    /**
+     * Function to save data user on session.   
+     *
+     * @param string $key
+     * @param mixed $data
+     * @return void
+     */
+    public function storeData($key, $data)
     {
-        $codeStore = md5(get_option('home'));
+        $_SESSION[$key]['data'] = $data;
+        $_SESSION[$key]['created'] = date('Y-m-d H:i:s');
+    }   
 
-        delete_option('melhorenvio_user_info');
-
-        if (!empty($_SESSION[$codeStore])) {
-            unset($_SESSION[$codeStore]);
+    /**
+     * Function to check if data cacked is expired
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function isExpiredCache($key)
+    {
+        if (empty($_SESSION[$key]['created']) ) {
+            return true;
         }
+
+        $created = $_SESSION[$key]['created'];
+
+        $dateLimit = date(
+            'Y-m-d H:i:s', 
+            strtotime(sprintf("-%d minutes", self::TIME_SESSION))
+        );
+
+        if ($dateLimit > $created) {
+            unset($_SESSION[$key]);
+            return true;
+        }
+
+        if (empty($_SESSION[$key]['data'])) {
+            return true;
+        }
+
+        return false;
     }
 }

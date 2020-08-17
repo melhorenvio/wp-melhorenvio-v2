@@ -5,6 +5,7 @@
 - Correções de pequenos problemas em versões antigas do PHP.
 - Ordenação de cotação pelo preço.
 - Ajuste nos dados do remetente na etiqueta, exibindo dados e endereço da loja selecionada.
+- Solução do problema de lentidão da calculadora do produto.
 
 ## [2.4.7] - 2019-08-26
 ## Fixed
