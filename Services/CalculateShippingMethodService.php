@@ -83,7 +83,9 @@ class CalculateShippingMethodService
                 ];
             }
 
-            return $rate;
+            if (!empty($rate)) {
+                return $rate;
+            }
         }
 
         return false;

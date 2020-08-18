@@ -9,13 +9,22 @@ use Models\Address;
  */
 class SellerService
 {
+    const USER_SESSION = 'user_seller_melhor_envio';
     /**
      * Get data user on API Melhor Envio
      *
      * @return object $dataSeller
      */
     public function getData()
-    {
+    {   
+        $sessionService = new SessionService();
+
+        $data = $sessionService->getDataCached(self::USER_SESSION);
+
+        if (!empty($data)) {
+            return $data;
+        }
+
         $data = $this->getDataApiMelhorEnvio();
 
         $address = (new Address())->getAddressFrom();
@@ -32,22 +41,25 @@ class SellerService
             $data->address->postal_code = (!empty($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
         }
 
-        return (object) [
-            "name" => (isset($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
+        $data = (object) [
+            "name" => (!empty($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => (!empty($store->email)) ? $store->email :  $data->email,
             "document" => (!empty($store->document)) ? null : $data->document,
             'company_document' => (!empty($store->document)) ? $store->document : null,
             "address" => (!empty($store->address->address)) ? $store->address->address : $data->address->address,
-            "complement" =>  (!empty($store->address->complement)) ? $store->address->complement : $data->address->complement,
-            "number" =>  (!empty($store->address->number)) ? $store->address->number : $data->address->number,
+            "complement" => (!empty($store->address->complement)) ? $store->address->complement : $data->address->complement,
+            "number" => (!empty($store->address->number)) ? $store->address->number : $data->address->number,
             "district" => (!empty($store->address->district)) ? $store->address->district : $data->address->district,
             "city" => (!empty($store->address->city->city)) ? $store->address->city->city : $data->address->city->city,
-            "state_abbr" => (!empty($store->address->city->state->abbr)) ? $store->address->city->state->abbr : $data->address->city->state->abbr,
+            "state_abbr" => (!empty($store->address->city->state->state_abbr)) ? $store->address->city->state->state_abbr : $data->address->city->state->state_abbr,
             "country_id" => 'BR',
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
 
+        $sessionService->storeData(self::USER_SESSION, $data);
+
+        return $data;
     }
 
     /**

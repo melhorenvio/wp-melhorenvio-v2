@@ -40,6 +40,7 @@ const orders = {
             })
             delete order.content.status
             delete order.content.order_id
+            delete order.content.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         cancelCart: (state, data) => {
@@ -55,6 +56,22 @@ const orders = {
             order.content.status = null
             state.orders.splice(order.position, 1, order.content)
         },
+        addCartSimple: (state, data) => {
+            let order
+            state.orders.find((item, index) => {
+                if (item.id === data.id) {
+                    order = {
+                        position: index,
+                        content: JSON.parse(JSON.stringify(item))
+                    }
+                }
+            })
+            order.content.status = 'pending'
+            order.content.order_id = data.order_id
+            order.content.protocol = data.protocol
+            order.content.service_id = data.service_id
+            state.orders.splice(order.position, 1, order.content)
+        },
         addCart: (state, data) => {
             let order
             state.orders.find((item, index) => {
@@ -68,6 +85,7 @@ const orders = {
             order.content.status = 'released'
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
+            order.content.service_id = data.service_id
             state.orders.splice(order.position, 1, order.content)
         },
         refreshCotation: (state, data) => {
@@ -289,28 +307,24 @@ const orders = {
         stopLoader: ({ commit }) => {
             commit('toggleLoader', false)
         },
-        setMessageError: ({ commit }, msg) => {
+        setMessageModal: ({ commit }, msg) => {
             commit('setMsgModal', msg)
             commit('toggleModal', true)
         },
-        addCart: ({ commit }, data) => {
+        addCartSimple: ({ commit }, data) => {
             return new Promise((resolve, reject) => {
                 if (!data) {
                     commit('toggleLoader', false)
                     reject();
-                    return false;
                 }
-                if (data.id && data.choosen) {
-
-                    Axios.post(`${ajaxurl}?action=add_order&order_id=${data.id}&choosen=${data.choosen}&non_commercial=${data.non_commercial}`, data)
+                if (data.id && data.service_id) {
+                    Axios.post(`${ajaxurl}?action=add_cart&post_id=${data.id}&service=${data.service_id}&non_commercial=${data.non_commercial}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
-                            if (!response.data.success) {
-                                reject(response.data);
-                            }
-                            commit('addCart', {
+                            commit('addCartSimple', {
                                 id: data.id,
-                                order_id: response.data.data.order_id,
+                                order_id: response.data.order_id,
+                                service_id: data.service_id
                             })
                             resolve(response.data);
                         }).catch((error) => {
@@ -319,7 +333,34 @@ const orders = {
                 }
             })
         },
+        addCart: ({ commit }, data) => {
+            return new Promise((resolve, reject) => {
+                if (!data) {
+                    commit('toggleLoader', false)
+                    reject();
+                    return false;
+                }
 
+                if (data.id && data.service_id) {
+
+                    Axios.post(`${ajaxurl}?action=add_order&post_id=${data.id}&service_id=${data.service_id}&non_commercial=${data.non_commercial}`, data)
+                        .then(response => {
+                            commit('toggleLoader', false)
+                            if (!response.data.success) {
+                                reject(response.data);
+                            }
+                            commit('addCart', {
+                                id: data.id,
+                                order_id: response.data.data.order_id,
+                                service_id: data.service_id
+                            })
+                            resolve(response.data);
+                        }).catch((error) => {
+                            reject(error);
+                        });
+                }
+            })
+        },
         refreshCotation: (context, data) => {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=update_order&id=${data.id}&order_id=${data.order_id}`).then(response => {
@@ -349,9 +390,6 @@ const orders = {
                 context.commit('removeCart', data.id)
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
-
-                context.commit('setMsgModal', 'Item #' + data.id + ' removido do carrinho')
-                context.commit('toggleModal', true)
 
             }).catch(error => {
                 context.commit('setMsgModal', error.message)

@@ -26,19 +26,6 @@ class Address
      */
     public function getAddressesShopping() 
     {
-        // Get info on session
-        $codeStore = md5(get_option('home'));
-
-        if (isset($_SESSION[$codeStore][self::OPTION_ADDRESS])) {
-
-            return array(
-                'success'   => true,
-                'origin'    => 'session',
-                'addresses' => $_SESSION[$codeStore][self::OPTION_ADDRESS]
-            );
-        } 
-
-        // Get info on API Melhor Envio
         $response = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADDRESS,
             'GET',
@@ -48,16 +35,8 @@ class Address
         
         $selectedAddress = get_option(self::OPTION_ADDRESS_SELECTED);
 
-        $_SESSION[$codeStore][self::OPTION_ADDRESS_SELECTED] = get_option(self::OPTION_ADDRESS_SELECTED);
-
-        if (!isset($response->data)) {
-            return array(
-                'success'   => false,
-                'addresses' => null
-            );
-        }
-
         $addresses = array();
+
         foreach ($response->data as $address) {
 
             $addresses[] = array(
@@ -71,13 +50,9 @@ class Address
                 'city'        => $address->city->city,
                 'state'       => $address->city->state->state_abbr,
                 'country'     => $address->city->state->country->id,
-                'selected'    => ($selectedAddress == $address->id) ? true : false
+                'selected'    => ($selectedAddress == $address->id)
             );
         }
-
-        $_SESSION[$codeStore][self::OPTION_ADDRESS] = $addresses;
-
-        add_option(self::OPTION_ADDRESSES, $address, true);
 
         return array(
             'success' => true,
@@ -86,29 +61,26 @@ class Address
         );
     }
 
-    public function setAddressShopping($id) 
+    public function setAddressShopping($addressId) 
     {    
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED] = $id;
+        $_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
 
         $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
 
-        // Clear agencies list in session to load with new address
-        unset($_SESSION['melhor_envio']['agencies']);
-
-        if  (!$addressDefault) {
-            add_option(self::OPTION_ADDRESS_SELECTED, $id);
+        if  (empty($addressDefault)) {
+            add_option(self::OPTION_ADDRESS_SELECTED, $addressId);
             return array(
                 'success' => true,
-                'id' => $id
+                'id' => $addressId
             );
         }
 
-        update_option(self::OPTION_ADDRESS_SELECTED, $id);
+        update_option(self::OPTION_ADDRESS_SELECTED, $addressId);
         return array(
             'success' => true,
-            'id' => $id
+            'id' => $addressId
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Agency;
+use Models\Option;
 
 class CartService
 {
@@ -27,6 +28,8 @@ class CartService
 
         $orderInvoiceService = new OrderInvoicesService();
 
+        $options = (new Option())->getOptions();
+
         $body = array(
             'from' => $from,
             'to' => $to,
@@ -36,8 +39,8 @@ class CartService
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
                 "insurance_value" => $this->getInsuranceValueByProducts($products),
-                "receipt" => (get_option('melhorenvio_ar') == 'true') ? true : false,
-                "own_hand" => (get_option('melhorenvio_mp') == 'true') ? true : false,
+                "receipt" => $options->ar,
+                "own_hand" => $options->mp,
                 "collect" => false,
                 "reverse" => false,
                 "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
@@ -63,10 +66,6 @@ class CartService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
-            return $result;
-        }
-
         return (new OrderQuotationService())->updateDataQuotation(
             $orderId,
             $result->id,
@@ -81,21 +80,16 @@ class CartService
     /**
      * Function to remove order in cart by Melhor Envio.
      *
-     * @param int $orderId
+     * @param int $postId
+     * @param string $orderId
      * @return bool
      */
-    public function remove($orderId)
+    public function remove($postId, $orderId)
     {
-        $data = (new OrderQuotationService())->getData($orderId);
-
-        if (!isset($data['order_id'])) {
-            return false;
-        }
-
-        (new OrderQuotationService())->removeDataQuotation($orderId);
+        (new OrderQuotationService())->removeDataQuotation($postId);
 
         (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $data['order_id'],
+            self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $orderId,
             'DELETE',
             []
         );
@@ -188,10 +182,6 @@ class CartService
 
         if (!array_key_exists("products", $body)) {
             $errors[] = sprintf("Informar o produtos do envio do pedido %s", $orderId);
-        }
-
-        if (isset($body['service']) && $body['service'] >= 3 && !array_key_exists("agency", $body)) {
-            $errors[] = sprintf("Informar a agência do envio do pedido %s", $orderId);
         }
 
         if (!isset($body['volumes'])) {

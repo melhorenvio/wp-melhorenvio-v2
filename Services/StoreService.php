@@ -27,32 +27,21 @@ class StoreService
     {
         $stores = $this->getStores();
 
-        if (!isset($stores)) {
+        if (empty($stores)) {
             return false;
         }
 
-        $store = array_map(function ($store) {
-            if (isset($store->selected)) {
-                return $store;
-            }
-        }, $stores);
+        $storesSelected = array_filter($stores, function($store) {
+            return !empty($store->selected);
+        });
 
-        if (!isset($store[0]->document)) {
+        $storeSelected = end($storesSelected);
+
+        if (empty($storeSelected->name)) {
             return false;
         }
 
-
-        $storeSelected = $store[0];
-
-
-        $storeAddresses = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $storeSelected->id . '/addresses',
-            'GET',
-            [],
-            false
-        );
-
-        $storeSelected->address = end($storeAddresses->data);
+        $storeSelected->address = $this->getAddressStore($storeSelected);
     
         return $storeSelected;
     }
@@ -64,7 +53,9 @@ class StoreService
      */
     public function getStores()
     {
-        session_start();
+        if (empty($_SESSION)) {
+            session_start();
+        }
 
         $codeStore = md5(get_option('home'));
 
@@ -94,12 +85,38 @@ class StoreService
             if ($store->id == $storeSelected) {
                 $store->selected = true;
             }
+
+            $store->address = $this->getAddressStore($store);
+
             return $store;
         }, $stores);
 
         $_SESSION[$codeStore][self::OPTION_STORES] = $stores;
 
         return $stores;
+    }
+
+    /**
+     * Function to get the address of a store
+     *
+     * @param object $store
+     * @return object
+     */
+    public function getAddressStore($store)
+    {
+        $addresses = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $store->id . '/addresses',
+            'GET',
+            [],
+            false
+        );
+
+        if (empty($addresses->data)) {
+            return [];
+        }
+
+        
+        return end($addresses->data);
     }
 
     /**
