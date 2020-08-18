@@ -211,7 +211,7 @@
                       <b>E-mail:</b>
                       {{ `${option.email} ` }}
                     </li>
-                    <template v-if="option.address !== null">
+                    <template v-if="option.address">
                         <li v-if="option.address.label">
                             <b>Identificação:</b>
                             {{ `${option.address.label} ` }}
@@ -220,7 +220,7 @@
                             <b>Endereço:</b>
                             {{ `${option.address.address}, ${option.address.number} ` }}
                         </li>
-                        <li v-if="option.address.city.city && option.address.city.state.state_abbr">
+                        <li v-if="option.address.city && option.address.city.city && option.address.city.state.state_abbr">
                             {{ `${option.address.city.city}/${option.address.city.state.state_abbr} ` }}
                         </li>
                         <li v-if="option.address.postal_code">
