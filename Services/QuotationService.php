@@ -47,6 +47,8 @@ class QuotationService
     ) {
         $seller = (new SellerService())->getData();
 
+        $options = (new Option())->getOptions();
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -54,7 +56,10 @@ class QuotationService
             'to' => [
                 'postal_code' => $postalCode
             ],
-            'options'  => (new Option())->getOptions(),
+            'options' => [
+                'own_hand' => $options->mp,
+                'receipt' => $options->ar
+            ],
             'products' => $products
         ];
 
@@ -88,6 +93,8 @@ class QuotationService
     ) {
         $seller = (new SellerService())->getData();
 
+        $options = (new Option())->getOptions();
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -95,7 +102,10 @@ class QuotationService
             'to' => [
                 'postal_code' => $postalCode
             ],
-            'options'  => (new Option())->getOptions(),
+            'options' => [
+                'own_hand' => $options->mp,
+                'receipt' => $options->ar
+            ],
             'packages' => $packages
         ];
 
@@ -143,8 +153,13 @@ class QuotationService
      */
     public function orderingQuotationByPrice($quotation)
     {
+        if (is_null($quotation)) {
+            return $quotation;
+        }
+
         uasort($quotation, function ($a, $b) {
             if ($a == $b) return 0;
+            if (!isset($a->price) || !isset($b->price)) return 0;
             return ($a->price < $b->price) ? -1 : 1;
         });
         return $quotation;
@@ -162,7 +177,9 @@ class QuotationService
     {
         $hash = md5(json_encode($bodyQuotation));
 
-        session_start();
+        if (!isset($_SESSION)) {
+            session_start();
+        }
 
         if (!isset($_SESSION['quotation'][$hash])) {
             unset($_SESSION['quotation'][$hash]);

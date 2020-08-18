@@ -15,14 +15,4 @@ class SessionsController
     {
         return wp_send_json($_SESSION, 200);
     }
-
-    /**
-     * Function to delete the plugin session
-     *
-     * @return json
-     */
-    public function deleteSession()
-    {
-        return wp_send_json((new SessionService())->delete(), 200);
-    }
 }

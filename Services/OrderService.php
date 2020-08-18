@@ -361,10 +361,6 @@ class OrderService
         $response = [];
 
         foreach ($posts as $post) {
-            $status = null;
-            $protocol = null;
-            $tracking = null;
-
             $data = (new OrderQuotationService())->getData($post->ID);
 
             if (empty($data)) {
@@ -372,41 +368,43 @@ class OrderService
                     'order_id' => null,
                     'status' => null,
                     'protocol' => null,
-                    'tracking' => null
+                    'tracking' => null,
+                    'service_id' => null
                 ];
                 continue;
             }
 
-            $info = $this->getInfoOrder($data['order_id']);
+            $dataOrder = $this->getInfoOrder($data['order_id']);
 
-            if (isset(end($info)->tracking)) {
-                $tracking = end($info)->tracking;
-            }
+            $info = end($dataOrder);
 
-            if (isset(end($info)->status)) {
-                $status   =  end($info)->status;
-                $protocol = end($info)->protocol;
-                $tracking = $tracking;
-            }
-
-            if (isset($data['status'])) {
-                $status = $data['status'];
-            }
-
-            if (isset($data['protocol'])) {
-                $protocol = $data['protocol'];
+            if (!is_object($info) && $info[0] == 'Not Found') {
+                $response[$post->ID] = [
+                    'order_id' => null,
+                    'status' => null,
+                    'protocol' => null,
+                    'tracking' => null,
+                    'service_id' => null
+                ];
+                continue;
             }
 
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
-                'status' => $status,
-                'protocol' => $protocol,
-                'tracking' => $tracking
+                'status' => $info->status,
+                'protocol' => $info->protocol,
+                'tracking' => $info->tracking,
+                'service_id' => (!empty($data['choose_method'])) ? $data['choose_method'] : null
             ];
 
-            (new TrackingService())->addTrackingOrder($post->ID, $tracking);
+            if (!is_null($info->tracking)) {
+                (new TrackingService())->addTrackingOrder(
+                    $post->ID,
+                    $info->tracking
+                );
+            }
         }
-
+        
         return $response;
     }
 

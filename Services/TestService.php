@@ -15,8 +15,6 @@ class TestService
 
     public function run()
     {
-        (new SessionService())->clear();
-
         $response = [
             'version' => $this->version,
             'php' => phpversion(),
