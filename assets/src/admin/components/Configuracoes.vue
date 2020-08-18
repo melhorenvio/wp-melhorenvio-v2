@@ -211,20 +211,22 @@
                       <b>E-mail:</b>
                       {{ `${option.email} ` }}
                     </li>
-                    <li v-if="option.address.label">
-                      <b>Identificação:</b>
-                      {{ `${option.address.label} ` }}
-                    </li>
-                    <li v-if="option.address.address">
-                      <b>Endereço:</b>
-                      {{ `${option.address.address}, ${option.address.number} ` }}
-                    </li>
-                    <li>
-                      {{ `${option.address.city.city}/${option.address.city.state.state_abbr} ` }}
-                    </li>
-                    <li>
-                      {{ `CEP: ${option.address.postal_code}` }}
-                    </li>
+                    <template v-if="option.address">
+                        <li v-if="option.address.label">
+                            <b>Identificação:</b>
+                            {{ `${option.address.label} ` }}
+                        </li>
+                        <li v-if="option.address.address && option.address.number">
+                            <b>Endereço:</b>
+                            {{ `${option.address.address}, ${option.address.number} ` }}
+                        </li>
+                        <li v-if="option.address.city && option.address.city.city && option.address.city.state.state_abbr">
+                            {{ `${option.address.city.city}/${option.address.city.state.state_abbr} ` }}
+                        </li>
+                        <li v-if="option.address.postal_code">
+                            {{ `CEP: ${option.address.postal_code}` }}
+                        </li>
+                    </template>
                   </ul>
                 </div>
               </label>
