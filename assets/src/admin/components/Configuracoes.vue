@@ -211,7 +211,7 @@
                       <b>E-mail:</b>
                       {{ `${option.email} ` }}
                     </li>
-                    <template v-if="option.address">
+                    <template v-if="option.address != null && option.address.length > 0">
                         <li v-if="option.address.label">
                             <b>Identificação:</b>
                             {{ `${option.address.label} ` }}
