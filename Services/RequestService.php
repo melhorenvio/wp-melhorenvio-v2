@@ -45,7 +45,6 @@ class RequestService
      */
     public function request($route, $typeRequest, $body, $useJson = true)
     {
-
         if ($useJson) {
             $body = json_encode($body);
         }

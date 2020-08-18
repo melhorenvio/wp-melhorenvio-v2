@@ -183,6 +183,7 @@
       <div class="wpme_config">
         <h2>Loja</h2>
         <p>Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada.</p>
+        <small>Esse endereço será exibido na etiqueta do Melhor Envio.</small> </br></br>
         <div class="wpme_flex">
           <ul class="wpme_address">
             <li
@@ -210,6 +211,22 @@
                       <b>E-mail:</b>
                       {{ `${option.email} ` }}
                     </li>
+                    <template v-if="option.address">
+                        <li v-if="option.address.label">
+                            <b>Identificação:</b>
+                            {{ `${option.address.label} ` }}
+                        </li>
+                        <li v-if="option.address.address && option.address.number">
+                            <b>Endereço:</b>
+                            {{ `${option.address.address}, ${option.address.number} ` }}
+                        </li>
+                        <li v-if="option.address.city && option.address.city.city && option.address.city.state.state_abbr">
+                            {{ `${option.address.city.city}/${option.address.city.state.state_abbr} ` }}
+                        </li>
+                        <li v-if="option.address.postal_code">
+                            {{ `CEP: ${option.address.postal_code}` }}
+                        </li>
+                    </template>
                   </ul>
                 </div>
               </label>
