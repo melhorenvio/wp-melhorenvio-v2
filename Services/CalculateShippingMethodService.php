@@ -32,9 +32,10 @@ class CalculateShippingMethodService
      * @param string $title
      * @param float $taxExtra
      * @param int $timeExtra
+     * @param int $percent
      * @return void
      */
-    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra)
+    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
@@ -66,7 +67,8 @@ class CalculateShippingMethodService
                     ),
                     'cost' => MoneyHelper::cost(
                         $result->price,
-                        $taxExtra
+                        $taxExtra,
+                        $percent
                     ),
                     'calc_tax' => 'per_item',
                     'meta_data' => [
@@ -76,7 +78,8 @@ class CalculateShippingMethodService
                         ),
                         'price' => MoneyHelper::price(
                             $result->price,
-                            $taxExtra
+                            $taxExtra,
+                            $percent
                         ),
                         'company' => $company
                     ]
