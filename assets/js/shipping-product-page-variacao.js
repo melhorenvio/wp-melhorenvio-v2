@@ -5,7 +5,7 @@
 
 		jQuery(document).ready(function() {  
 
-			if (jQuery('.variations_form').length == 0) {
+			if (!jQuery('.variations_form')){
 				return;
 			}
 
