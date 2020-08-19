@@ -41,6 +41,7 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
         $this->title = $this->get_option('title');
         $this->additional_time = $this->get_option('additional_time');
         $this->additional_tax = $this->get_option('additional_tax');
+        $this->percent_tax = $this->get_option('percent_tax');
         $this->supports = array(
             'shipping-zones',
             'instance-settings',
@@ -80,6 +81,14 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
                 'default'     => '0',
                 'placeholder' => '0',
             ),
+            'percent_tax'    => array(
+                'title'       => 'Percentual de Taxa adicional',
+                'type'        => 'text',
+                'description' => 'Adiciona um percentual sobre o valor do frete cobrado ao cliente final',
+                'desc_tip'    => true,
+                'default'     => '0',
+                'placeholder' => '0',
+            ),
             'additional_time'    => array(
                 'title'       => 'Dias extras',
                 'type'        => 'text',
@@ -111,7 +120,8 @@ abstract class WC_Melhor_Envio_Shipping extends WC_Shipping_Method
             $this->company,
             $this->title,
             $this->additional_tax,
-            $this->additional_time
+            $this->additional_time,
+            $this->percent_tax
         );
 
         if ($rate) {
