@@ -15,7 +15,30 @@ use Services\QuotationService;
  */
 class QuotationController
 {
+    /**
+     * No requirement to have free shipping
+     */
     const FREE_SHIPPING = 'free_shipping';
+    
+    /**
+     * Minimum order value for free shipping
+     */
+    const FREE_SHIPPING_MIN_AMOUNT = 'min_amount';
+
+    /**
+     * Requirement to have free shipping coupon and minimum order value
+     */
+    const FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT = 'both';
+
+    /**
+     * Requirement to have free shipping coupon
+     */
+    const FREE_SHIPPING_COUPOM = 'either';
+
+    /**
+     * Requirement to have free shipping coupon or minimum order value
+     */
+    const FREE_SHIPPING_COUPON_OR_MIN_AMOUNT = 'coupon';
 
     /**
      * Construct of CotationController
@@ -244,25 +267,25 @@ class QuotationController
             );
         }
 
-        if ($freeShipping->requires == 'min_amount' && !empty($freeShipping->min_amount)) {
+        if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
                 "Frete grátis para pedidos com valor mínimo de %s", 
                 MoneyHelper::price($freeShipping->min_amount)
             );
         }
 
-        if ($freeShipping->requires == 'both' && !empty($freeShipping->min_amount)) {
+        if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
                 "Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
                 MoneyHelper::price($freeShipping->min_amount)
             );
         }
 
-        if ($freeShipping->requires == 'either') {
+        if ($freeShipping->requires == self::FREE_SHIPPING_COUPOM) {
             $labelFreeShippig = "Frete grátis para utilização de coupom grátis";
         }
 
-        if ($freeShipping->requires == 'coupon' && !empty($freeShipping->min_amount)) {
+        if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
                 "Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
                 MoneyHelper::price($freeShipping->min_amount)
