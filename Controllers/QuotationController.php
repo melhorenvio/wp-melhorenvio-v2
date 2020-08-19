@@ -15,6 +15,8 @@ use Services\QuotationService;
  */
 class QuotationController
 {
+    const FREE_SHIPPING = 'free_shipping';
+
     /**
      * Construct of CotationController
      */
@@ -172,12 +174,26 @@ class QuotationController
 
             $rate = end($rate);
 
+            if ($rate->method_id == self::FREE_SHIPPING) {
+
+                if(!empty($shippingMethod->min_amount)) {
+
+                    $valueTotal = floatval($data['produto_preco']) * intval($data['quantity']);
+
+                    if ($valueTotal < floatval($shippingMethod->min_amount)) {
+                        continue;
+                    }
+                }
+            }
+
             //WARNING: Não remover o casting de string no !empty. 
 
             $rates[] = [
                 'id' => $shippingMethod->id,
                 'name' => $shippingMethod->title,
-                'price' => (!empty( (string) $rate->meta_data['price'])) ? $rate->meta_data['price'] : null,
+                'price' => (!empty( (string) $rate->meta_data['price'])) 
+                    ? $rate->meta_data['price'] 
+                    : MoneyHelper::price($rate->get_cost(), 0, 0),
                 'delivery_time' => (!empty( (string) $rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
             ];
         }

@@ -65,6 +65,9 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 * **Samuel Desconsi** - *Melhor Envio* - [SamXDesc](https://github.com/SamXDesc)
 
 ## CHANGELOG
+### [2.8.2]
+- Correção da exibição de frete grátis e taxa fixa.
+
 ### [2.8.1] - 2020-08
 - Retorno do botão de enviar pedido para o carrinho de compras do Melhor Envio.
 - Correção de problemas com valores diferentes entre plugin e Melhor Envio.
