@@ -165,25 +165,40 @@ class QuotationController
 
         $rates = array();
 
-        foreach ($shippingMethods as $shippingMethod) {
+        $free = array_filter($shippingMethods, function ($item) {
+            if($item->id == self::FREE_SHIPPING) {
+                return $item;
+            }
+        });
+
+        if (!empty($free)) {
+
+            $labelFreeShippig = $this->rateForFreeShipping($free);
+
+            if (!empty($labelFreeShippig)) {
+                $rates[] = [
+                    'id' => self::FREE_SHIPPING,
+                    'name' => "Frete grátis¹",
+                    'price' => 'R$0,00',
+                    'delivery_time' => null,
+                    'observations' => $labelFreeShippig
+                ];
+            }
+            
+        }
+
+        foreach ($shippingMethods as $shippingMethod) { 
+
             $rate = $shippingMethod->get_rates_for_package($package);
 
             if (empty($rate)) {
                 continue;
             }
 
-            $rate = end($rate);
+            $rate = end($rate);         
 
             if ($rate->method_id == self::FREE_SHIPPING) {
-
-                if(!empty($shippingMethod->min_amount)) {
-
-                    $valueTotal = floatval($data['produto_preco']) * intval($data['quantity']);
-
-                    if ($valueTotal < floatval($shippingMethod->min_amount)) {
-                        continue;
-                    }
-                }
+                continue;
             }
 
             //WARNING: Não remover o casting de string no !empty. 
@@ -197,12 +212,64 @@ class QuotationController
                 'delivery_time' => (!empty( (string) $rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
             ];
         }
+        
         $rates = $this->orderingRatesByPrice($rates);
 
         return wp_send_json([
             'success' => true,
             'data' => $rates
         ], 200);
+    }
+
+    /**
+     * Function to set the type of free shipping
+     *
+     * @param array $free
+     * @return string|bool
+     */
+    public function rateForFreeShipping($free)
+    {
+        $labelFreeShippig = null;
+
+        $freeShipping = end($free);
+
+        if (empty($freeShipping->requires)) {
+            $labelFreeShippig = 'Frete Grátis';
+        }
+
+        if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
+            $labelFreeShippig = sprintf(
+                "Frete grátis com valor mínimo de %s", 
+                MoneyHelper::price($freeShipping->min_amount)
+            );
+        }
+
+        if ($freeShipping->requires == 'min_amount' && !empty($freeShipping->min_amount)) {
+            $labelFreeShippig = sprintf(
+                "Frete grátis para pedidos com valor mínimo de %s", 
+                MoneyHelper::price($freeShipping->min_amount)
+            );
+        }
+
+        if ($freeShipping->requires == 'both' && !empty($freeShipping->min_amount)) {
+            $labelFreeShippig = sprintf(
+                "Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
+                MoneyHelper::price($freeShipping->min_amount)
+            );
+        }
+
+        if ($freeShipping->requires == 'either') {
+            $labelFreeShippig = "Frete grátis para utilização de coupom grátis";
+        }
+
+        if ($freeShipping->requires == 'coupon' && !empty($freeShipping->min_amount)) {
+            $labelFreeShippig = sprintf(
+                "Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
+                MoneyHelper::price($freeShipping->min_amount)
+            );
+        }
+
+        return $labelFreeShippig;
     }
 
     /**

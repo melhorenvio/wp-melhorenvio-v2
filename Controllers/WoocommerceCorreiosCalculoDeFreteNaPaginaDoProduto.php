@@ -210,6 +210,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                             <tbody>
                             </tbody>
                         </table>
+                        <small class="observation-shipping-free">1¹Lorem lroem lorem </small>
                     </div>
                 </div>
 

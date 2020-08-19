@@ -5,6 +5,8 @@
 
         $(document).on('keyup', '.iptCep', function (e) {
 
+            jQuery('.observation-shipping-free').hide();
+
             resetarTabela();
 
             if ($(this).val().length === 9) {
@@ -86,7 +88,6 @@
                     error: function (jqXHR, exception) {
                         inpCEP.removeAttr('disabled');
                         inpCEP.val('');
-                        console.log(jqXHR);
                         alert(jqXHR.responseJSON.message);
                         esconderLoader();
                         esconderTabela();
@@ -96,10 +97,16 @@
                     success: function (response) {
                         var row = '';
                         let { data } = response;
+
                         data.map(item => {
+
+                            if (item.observations) {
+                                jQuery('.observation-shipping-free').show();
+                                jQuery('.observation-shipping-free').html("¹" + item.observations);
+                            }
+
                             let name = item.name.split('(');
                             name = name[0];
-
                             if (!item.price) {
                                 item.price = '*';
                             }
