@@ -67,6 +67,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ## CHANGELOG
 ### [2.8.2]
 - Correção da exibição de frete grátis e taxa fixa.
+- Adicionando percentual extra sobre o valor do frete.
 
 ### [2.8.1] - 2020-08
 - Retorno do botão de enviar pedido para o carrinho de compras do Melhor Envio.
