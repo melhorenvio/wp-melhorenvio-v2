@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Address;
+use Models\Seller;
 
 /**
  * Class responsible for the service of managing the store salesperson
@@ -17,11 +18,20 @@ class SellerService
      */
     public function getData()
     {   
+        $seller = new Seller();
+
         $sessionService = new SessionService();
 
         $data = $sessionService->getDataCached(self::USER_SESSION);
 
+        if(!empty($data)) {
+            return $data;
+        }
+
+        $data = $seller->get();
+        
         if (!empty($data)) {
+            $sessionService->storeData(self::USER_SESSION, $data);
             return $data;
         }
 
@@ -32,7 +42,7 @@ class SellerService
         $store = (new StoreService())->getStoreSelected();
 
         if (!empty($address['address']['id'])) {
-            $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
+            $data->address->address = 'teste' . (!empty($address['address']['address'])) ? $address['address']['address'] : null;
             $data->address->complement = (!empty($address['address']['complement'])) ? $address['address']['complement'] : null;
             $data->address->number = (!empty($address['address']['number'])) ? $address['address']['number'] : null;
             $data->address->district = (!empty($address['address']['district'])) ? $address['address']['district'] : null;
@@ -56,6 +66,8 @@ class SellerService
             "country_id" => 'BR',
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
+
+        $seller->save($data);
 
         $sessionService->storeData(self::USER_SESSION, $data);
 
