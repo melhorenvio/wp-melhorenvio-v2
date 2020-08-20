@@ -68,10 +68,10 @@ class QuotationController
         $this->isValidRequest($data);
 
         $rates = (new QuotationProductPageService(
-            $data['id_produto'], 
-            $data['cep_origem'], 
-            $data['quantity'])
-        )->getRatesShipping();
+            $data['id_produto'],
+            $data['cep_origem'],
+            $data['quantity']
+        ))->getRatesShipping();
 
         if (!empty($rates['error'])) {
             return wp_send_json([

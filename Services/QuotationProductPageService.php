@@ -13,7 +13,7 @@ class QuotationProductPageService
      * No requirement to have free shipping
      */
     const FREE_SHIPPING = 'free_shipping';
-    
+
     /**
      * Minimum order value for free shipping
      */
@@ -84,7 +84,7 @@ class QuotationProductPageService
      * @param int $quantity
      */
     public function __construct($productId, $postalCode, $quantity)
-    {   
+    {
         $this->product = wc_get_product($productId);
 
         $this->postalCode = PostalCodeHelper::postalcode($postalCode);
@@ -112,7 +112,10 @@ class QuotationProductPageService
         if (empty($this->destination)) {
             return [
                 'success' => false,
-                'error' => sprintf("Não encontramos um endereço válido para o CEP %d", $this->postalCode)
+                'error' => sprintf(
+                    "Não encontramos um endereço válido para o CEP %d",
+                    $this->postalCode
+                )
             ];
         }
 
@@ -134,7 +137,7 @@ class QuotationProductPageService
             ];
         }
 
-        $rates = $this->filterRateByShippingMethods();
+        $this->filterRateByShippingMethods();
 
         $this->orderingRatesByPrice();
 
@@ -148,8 +151,8 @@ class QuotationProductPageService
     }
 
     /**
-     * Function to create the package in the patterns used in WooCommerce to make requests
-     * for WooCommerce native delivery methods and zones.
+     * Function to create the package in the patterns used in WooCommerce 
+     * to make requests for WooCommerce native delivery methods and zones.
      *
      * @return void
      */
@@ -198,17 +201,15 @@ class QuotationProductPageService
      */
     private function getShippingMethodsByPackage()
     {
-        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package( $this->package);
+        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($this->package);
 
         $shippingMethods = $shippingZone->get_shipping_methods(true);
 
         if ($this->product) {
-
             $productShippingClassId = $this->product->get_shipping_class_id();
 
             if ($productShippingClassId) {
                 foreach ($shippingMethods as $key => $method) {
-
                     if (empty($method->instance_settings['shipping_class_id'])) {
                         continue;
                     }
@@ -235,14 +236,13 @@ class QuotationProductPageService
      */
     private function filterRateByShippingMethods()
     {
-        $this->rates = array_map(function($shippingMethod) {
+        $this->rates = array_map(function ($shippingMethod) {
 
             $rate = $shippingMethod->get_rates_for_package($this->package);
 
             $rate = end($rate);
 
             if (!empty($rate)) {
-
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
@@ -253,7 +253,6 @@ class QuotationProductPageService
                         ? $rate->meta_data['delivery_time']
                         : null,
                 ];
-                
             }
         }, $this->shippingMethods);
 
@@ -271,7 +270,7 @@ class QuotationProductPageService
     private function showFreeShippingMethod()
     {
         $free = array_filter($this->shippingMethods, function ($item) {
-            if($item->id == self::FREE_SHIPPING) {
+            if ($item->id == self::FREE_SHIPPING) {
                 return $item;
             }
         });
@@ -282,7 +281,7 @@ class QuotationProductPageService
             if (!empty($labelFreeShippig)) {
                 $this->rates[] = [
                     'id' => self::FREE_SHIPPING,
-                    'name' => ($labelFreeShippig == 'Frete Grátis') 
+                    'name' => ($labelFreeShippig == 'Frete Grátis')
                         ? end($free)->title
                         : sprintf("¹%s", end($free)->title),
                     'price' => 'R$0,00',
@@ -311,22 +310,22 @@ class QuotationProductPageService
 
         if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
-                "¹Frete grátis com valor mínimo de %s", 
-                MoneyHelper::price($freeShipping->min_amount)
+                "¹Frete grátis com valor mínimo de %s",
+                MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
-                "¹Frete grátis para pedidos com valor mínimo de %s", 
-                MoneyHelper::price($freeShipping->min_amount)
+                "¹Frete grátis para pedidos com valor mínimo de %s",
+                MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
                 "¹Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
-                MoneyHelper::price($freeShipping->min_amount)
+                MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
@@ -337,7 +336,7 @@ class QuotationProductPageService
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             $labelFreeShippig = sprintf(
                 "¹Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
-                MoneyHelper::price($freeShipping->min_amount)
+                MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
