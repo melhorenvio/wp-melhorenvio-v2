@@ -23,6 +23,7 @@ class ConfigurationsService
         $response = [];
 
         (new Seller())->destroy();
+        (new SessionService())->destroy(SellerService::USER_SESSION);
 
         if (isset($data['address'])) {
             $response['address'] = (new Address())->setAddressShopping(
