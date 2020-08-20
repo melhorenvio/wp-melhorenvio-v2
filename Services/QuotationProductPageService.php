@@ -276,17 +276,17 @@ class QuotationProductPageService
         });
 
         if (!empty($free)) {
-            $labelFreeShippig = $this->rateForFreeShipping($free);
+            $labelFreeShipping = $this->rateForFreeShipping($free);
 
-            if (!empty($labelFreeShippig)) {
+            if (!empty($labelFreeShipping)) {
                 $this->rates[] = [
                     'id' => self::FREE_SHIPPING,
-                    'name' => ($labelFreeShippig == 'Frete Grátis')
+                    'name' => ($labelFreeShipping == 'Frete Grátis')
                         ? end($free)->title
                         : sprintf("¹%s", end($free)->title),
                     'price' => 'R$0,00',
                     'delivery_time' => null,
-                    'observations' => $labelFreeShippig
+                    'observations' => $labelFreeShipping
                 ];
             }
         }
@@ -300,47 +300,45 @@ class QuotationProductPageService
      */
     private function rateForFreeShipping($free)
     {
-        $labelFreeShippig = null;
+        $labelFreeShipping = null;
 
         $freeShipping = end($free);
 
-        if (empty($freeShipping->requires)) {
-            $labelFreeShippig = 'Frete Grátis';
-        }
-
+        $labelFreeShipping = 'Frete Grátis';
+        
         if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
+            $labelFreeShipping = sprintf(
                 "¹Frete grátis com valor mínimo de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
+            $labelFreeShipping = sprintf(
                 "¹Frete grátis para pedidos com valor mínimo de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
+            $labelFreeShipping = sprintf(
                 "¹Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_COUPOM) {
-            $labelFreeShippig = "¹Frete grátis para utilização de coupom grátis";
+            $labelFreeShipping = "¹Frete grátis para utilização de coupom grátis";
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
+            $labelFreeShipping = sprintf(
                 "¹Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
-        return $labelFreeShippig;
+        return $labelFreeShipping;
     }
 
     /**
