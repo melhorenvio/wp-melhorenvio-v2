@@ -235,6 +235,8 @@ class QuotationProductPageService
      */
     private function filterRateByShippingMethods()
     {
+        $this->showFreeShippingMethod();
+        
         $this->rates = array_map(function ($shippingMethod) {
 
             $rate = $shippingMethod->get_rates_for_package($this->package);
@@ -255,7 +257,7 @@ class QuotationProductPageService
             }
         }, $this->shippingMethods);
 
-        $this->showFreeShippingMethod();
+        
     }
 
     /**
