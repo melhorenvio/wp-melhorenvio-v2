@@ -12,6 +12,12 @@ use Models\Seller;
 
 class ConfigurationsService
 {
+    /**
+     * Function to save the salesperson's settings.
+     *
+     * @param array $data
+     * @return array
+     */
     public function saveConfigurations($data)
     {
         $response = [];
@@ -19,7 +25,9 @@ class ConfigurationsService
         (new Seller())->destroy();
 
         if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping($data['address']);
+            $response['address'] = (new Address())->setAddressShopping(
+                $data['address']
+            );
         }
 
         if (isset($data['store'])) {
@@ -31,29 +39,32 @@ class ConfigurationsService
         }
 
         if (isset($data['show_calculator'])) {
-            $response['show_calculator'] = (new CalculatorShow())->set($data['show_calculator']);
+            $response['show_calculator'] = (new CalculatorShow())->set(
+                $data['show_calculator']
+            );
         }
 
         if (isset($data['show_all_agencies_jadlog'])) {
-            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())->set($data['show_all_agencies_jadlog']);
-        }
-
-        if (isset($data['methods_shipments'])) {
-            foreach ($data['methods_shipments'] as $key => $method) {
-                $response['method'][$key] = $this->saveoptionsMethod($method);
-            }
+            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())
+                ->set($data['show_all_agencies_jadlog']);
         }
 
         if (isset($data['where_calculator'])) {
-            $response['where_calculator'] = $this->setWhereCalculator($data['where_calculator']);
+            $response['where_calculator'] = $this->setWhereCalculator(
+                $data['where_calculator']
+            );
         }
 
         if (isset($data['path_plugins'])) {
-            $response['path_plugins'] = $this->setPathPlugins($data['path_plugins']);
+            $response['path_plugins'] = $this->savePathPlugins(
+                $data['path_plugins']
+            );
         }
 
         if (isset($data['options_calculator'])) {
-            $response['options_calculator'] = $this->setOptionsCalculator($data['options_calculator']);
+            $response['options_calculator'] = $this->setOptionsCalculator(
+                $data['options_calculator']
+            );
         }
 
         return $response;
@@ -87,19 +98,14 @@ class ConfigurationsService
         ];
     }
 
-    public function saveoptionsMethod($item)
-    {
-        $id = $item['id'];
-
-        delete_option('melhor_envio_option_method_shipment_' . $id);
-        add_option('melhor_envio_option_method_shipment_' . $id, $item);
-
-        return get_option('melhor_envio_option_method_shipment_' . $id);
-    }
-
+    /**
+     * Function to save the moment that will be called the product calculator
+     *
+     * @param string $option
+     * @return void
+     */
     public function setWhereCalculator($option)
     {
-
         delete_option('melhor_envio_option_where_show_calculator');
         add_option('melhor_envio_option_where_show_calculator', $option);
 
@@ -129,7 +135,13 @@ class ConfigurationsService
         ];
     }
 
-    public function setPathPlugins($path)
+    /**
+     * Function to save the plugin's directory path
+     *
+     * @param stroing $path
+     * @return string
+     */
+    public function savePathPlugins($path)
     {
         delete_option('melhor_envio_path_plugins');
         add_option('melhor_envio_path_plugins', $path);

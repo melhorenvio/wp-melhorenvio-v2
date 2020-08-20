@@ -5,13 +5,9 @@ namespace Controllers;
 use Models\Address;
 use Models\Agency;
 use Models\Store;
-use Models\CalculatorShow;
-use Models\JadlogAgenciesShow;
 use Models\Method;
 use Services\ConfigurationsService;
-use Services\MethodShippingService;
 use Services\OptionsMethodShippingService;
-use Services\StoreService;
 
 /**
  * Class responsible for the configuration controller
@@ -257,7 +253,7 @@ class ConfigurationController
     public function saveAll()
     {
         $response = (new ConfigurationsService())->saveConfigurations($_POST);
-        
+
         return wp_send_json($response, 200);
     }
 }
