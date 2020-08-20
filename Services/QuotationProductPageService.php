@@ -247,6 +247,9 @@ class QuotationProductPageService
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
+                    'cost' => (!empty((string) $rate->meta_data['price']))
+                        ? $rate->meta_data['price']
+                        : MoneyHelper::cost($rate->get_cost(), 0, 0),
                     'price' => (!empty((string) $rate->meta_data['price']))
                         ? $rate->meta_data['price']
                         : MoneyHelper::price($rate->get_cost(), 0, 0),
@@ -286,6 +289,7 @@ class QuotationProductPageService
                         ? end($free)->title
                         : sprintf("¹%s", end($free)->title),
                     'price' => 'R$0,00',
+                    'cost' => 0,
                     'delivery_time' => null,
                     'observations' => $labelFreeShipping
                 ];
