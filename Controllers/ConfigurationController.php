@@ -190,17 +190,6 @@ class ConfigurationController
         ], 200);
     }
 
-    public function getPathPluginsArray()
-    {
-        $path = get_option('melhor_envio_path_plugins');
-
-        if (!$path) {
-            $path = ABSPATH . 'wp-content/plugins';
-        }
-
-        return $path;
-    }
-
     public function getWhereCalculator()
     {
         $option = get_option('melhor_envio_option_where_show_calculator');
@@ -229,19 +218,6 @@ class ConfigurationController
             return 'woocommerce_before_add_to_cart_button';
         }
         return $option;
-    }
-
-    /**
-     * Function for obtaining acknowledgment options and own hands
-     *
-     * @return array
-     */
-    public function getOptionsCalculator()
-    {
-        return [
-            'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
-        ];
     }
 
     /**

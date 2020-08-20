@@ -94,8 +94,8 @@ class ConfigurationsService
                 : get_option('melhor_envio_option_where_show_calculator'),
             'metodos'             => (new OptionsMethodShippingService())->get(),
             'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
-            'path_plugins'        => (new ConfigurationController())->getPathPluginsArray(),
-            'options_calculator'  => (new ConfigurationController())->getOptionsCalculator()
+            'path_plugins'        => $this->getPathPluginsArray(),
+            'options_calculator'  => $this->getOptionsCalculator()
         ];
     }
 
@@ -161,5 +161,21 @@ class ConfigurationsService
             'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
             'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
         ];
+    }
+
+    /**
+     * Function to get path plugin.
+     *
+     * @return string
+     */
+    public function getPathPluginsArray()
+    {
+        $path = get_option('melhor_envio_path_plugins');
+
+        if (!$path) {
+            $path = ABSPATH . 'wp-content/plugins';
+        }
+
+        return $path;
     }
 }
