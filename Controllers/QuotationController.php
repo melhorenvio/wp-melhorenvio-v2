@@ -9,37 +9,14 @@ use Helpers\MoneyHelper;
 use Services\CalculateShippingMethodService;
 use Services\LocationService;
 use Services\QuotationService;
+use Services\QuotationProductPageService;
+
 
 /**
  * Class responsible for the quotation controller
  */
 class QuotationController
 {
-    /**
-     * No requirement to have free shipping
-     */
-    const FREE_SHIPPING = 'free_shipping';
-    
-    /**
-     * Minimum order value for free shipping
-     */
-    const FREE_SHIPPING_MIN_AMOUNT = 'min_amount';
-
-    /**
-     * Requirement to have free shipping coupon and minimum order value
-     */
-    const FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT = 'both';
-
-    /**
-     * Requirement to have free shipping coupon
-     */
-    const FREE_SHIPPING_COUPOM = 'either';
-
-    /**
-     * Requirement to have free shipping coupon or minimum order value
-     */
-    const FREE_SHIPPING_COUPON_OR_MIN_AMOUNT = 'coupon';
-
     /**
      * Construct of CotationController
      */
@@ -88,227 +65,25 @@ class QuotationController
     {
         $data = $_POST['data'];
 
-        $cep_origem = preg_replace('/\D/', '', $data['cep_origem']);
-
-        $data['cep_origem'] = str_pad($cep_origem, 8, '0', STR_PAD_LEFT);
-
         $this->isValidRequest($data);
 
-        $destination = (new LocationService())->getAddressByPostalCode($data['cep_origem']);
+        $rates = (new QuotationProductPageService(
+            $data['id_produto'], 
+            $data['cep_origem'], 
+            $data['quantity'])
+        )->getRatesShipping();
 
-        if (empty($destination)) {
+        if (!empty($rates['error'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'CEP inválido ou não encontrado'
-            ], 404);
+                'error' => $rates['error']
+            ], 400);
         }
-
-        if (!isset($destination->cep) || !isset($destination->uf)) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'CEP inválido ou não encontrado'
-            ], 404);
-        }
-
-        $product = wc_get_product($data['id_produto']);
-
-        $shipping_class_id = 0;
-
-        if ($product) {
-            $shipping_class_id = $product->get_shipping_class_id();
-        }
-
-        if (!empty($data['shipping_class_id'])) {
-            $shipping_class_id = $data['shipping_class_id'];
-        }
-
-        $package = array(
-            'ship_via'     => '',
-            'destination'  => array(
-                'country'  => 'BR',
-                'state'    => $destination->uf,
-                'postcode' => $destination->cep,
-            ),
-            'cotationProduct' => array(
-                (object) array(
-                    'id' => $data['id_produto'],
-                    'shipping_class_id' => $shipping_class_id,
-                    'weight' => floatval($data['produto_peso']),
-                    'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_largura'])
-                    ),
-                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_comprimento'])
-                    ),
-                    'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($data['produto_altura'])
-                    ),
-                    'quantity' => intval($data['quantity']),
-                    'price' => floatval(
-                        $data['produto_preco']
-                    ),
-                    'insurance_value'    => floatval(
-                        $data['produto_preco']
-                    ),
-                    'notConverterWeight' => true
-                )
-            )
-        );
-
-        $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($package);
-
-        $shippingMethods = $shippingZone->get_shipping_methods(true);
-
-        if ($product) {
-            $productShippingClassId = $product->get_shipping_class_id();
-
-            if ($productShippingClassId) {
-                foreach ($shippingMethods as $key => $method) {
-                    if (empty($method->instance_settings['shipping_class_id'])) {
-                        continue;
-                    }
-
-                    if ($method->instance_settings['shipping_class_id'] == CalculateShippingMethodService::ANY_DELIVERY) {
-                        continue;
-                    }
-
-                    if ($productShippingClassId != $method->instance_settings['shipping_class_id']) {
-                        unset($shippingMethods[$key]);
-                    }
-                }
-            }
-        }
-
-        if (count($shippingMethods) == 0) {
-            return wp_send_json([
-                'success' => false,
-                'message' => 'Não é feito envios para o CEP informado'
-            ], 401);
-        }
-
-        $rates = array();
-
-        $free = array_filter($shippingMethods, function ($item) {
-            if($item->id == self::FREE_SHIPPING) {
-                return $item;
-            }
-        });
-
-        if (!empty($free)) {
-
-            $labelFreeShippig = $this->rateForFreeShipping($free);
-
-            if (!empty($labelFreeShippig)) {
-                $rates[] = [
-                    'id' => self::FREE_SHIPPING,
-                    'name' => "Frete grátis¹",
-                    'price' => 'R$0,00',
-                    'delivery_time' => null,
-                    'observations' => $labelFreeShippig
-                ];
-            }
-            
-        }
-
-        foreach ($shippingMethods as $shippingMethod) { 
-
-            $rate = $shippingMethod->get_rates_for_package($package);
-
-            if (empty($rate)) {
-                continue;
-            }
-
-            $rate = end($rate);         
-
-            if ($rate->method_id == self::FREE_SHIPPING) {
-                continue;
-            }
-
-            //WARNING: Não remover o casting de string no !empty. 
-
-            $rates[] = [
-                'id' => $shippingMethod->id,
-                'name' => $shippingMethod->title,
-                'price' => (!empty( (string) $rate->meta_data['price'])) 
-                    ? $rate->meta_data['price'] 
-                    : MoneyHelper::price($rate->get_cost(), 0, 0),
-                'delivery_time' => (!empty( (string) $rate->meta_data['delivery_time'])) ? $rate->meta_data['delivery_time'] : null,
-            ];
-        }
-        
-        $rates = $this->orderingRatesByPrice($rates);
 
         return wp_send_json([
             'success' => true,
             'data' => $rates
         ], 200);
-    }
-
-    /**
-     * Function to set the type of free shipping
-     *
-     * @param array $free
-     * @return string|bool
-     */
-    public function rateForFreeShipping($free)
-    {
-        $labelFreeShippig = null;
-
-        $freeShipping = end($free);
-
-        if (empty($freeShipping->requires)) {
-            $labelFreeShippig = 'Frete Grátis';
-        }
-
-        if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
-                "Frete grátis com valor mínimo de %s", 
-                MoneyHelper::price($freeShipping->min_amount)
-            );
-        }
-
-        if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
-                "Frete grátis para pedidos com valor mínimo de %s", 
-                MoneyHelper::price($freeShipping->min_amount)
-            );
-        }
-
-        if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
-                "Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
-                MoneyHelper::price($freeShipping->min_amount)
-            );
-        }
-
-        if ($freeShipping->requires == self::FREE_SHIPPING_COUPOM) {
-            $labelFreeShippig = "Frete grátis para utilização de coupom grátis";
-        }
-
-        if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShippig = sprintf(
-                "Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
-                MoneyHelper::price($freeShipping->min_amount)
-            );
-        }
-
-        return $labelFreeShippig;
-    }
-
-    /**
-     * Function to sort the rates by price
-     *
-     * @param array $quotation
-     * @return array
-     */
-    public function orderingRatesByPrice($rates)
-    {
-        uasort($rates, function ($a, $b) {
-            if ($a == $b) return 0;
-            return ($a['price'] < $b['price']) ? -1 : 1;
-        });
-
-        return array_values($rates);
     }
 
     /**

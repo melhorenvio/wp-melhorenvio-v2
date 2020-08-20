@@ -88,7 +88,7 @@
                     error: function (jqXHR, exception) {
                         inpCEP.removeAttr('disabled');
                         inpCEP.val('');
-                        alert(jqXHR.responseJSON.message);
+                        alert(jqXHR.responseJSON.error);
                         esconderLoader();
                         esconderTabela();
                         resetarTabela();
@@ -100,16 +100,12 @@
 
                         data.map(item => {
 
-                            if (item.observations) {
+                            if (item.observations && item.observations !== 'Frete Grátis') {
                                 jQuery('.observation-shipping-free').show();
-                                jQuery('.observation-shipping-free').html("¹" + item.observations);
+                                jQuery('.observation-shipping-free').html(item.observations);
                             }
 
-                            let name = item.name.split('(');
-                            name = name[0];
-                            if (!item.price) {
-                                item.price = '*';
-                            }
+                            let name = item.name
 
                             if (!item.delivery_time) {
                                 item.delivery_time = '*';
