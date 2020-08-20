@@ -67,6 +67,9 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ## CHANGELOG
 ### [2.8.2]
 - Correção da exibição de frete grátis e taxa fixa.
+- Ajuste cálculo de produto com variação na tela do produto.
+- Adicionando percentual extra sobre o valor do frete.
+
 - Adicionando percentual extra sobre o valor do frete.
 
 ### [2.8.1] - 2020-08

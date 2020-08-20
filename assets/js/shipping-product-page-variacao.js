@@ -5,11 +5,12 @@
 
 		jQuery(document).ready(function() {  
 
-			if (typeof(jQuery('.variations_form') == 'undefined') || jQuery('.variations_form').length == 0) {
+			if (!jQuery('.variations_form')){
 				return;
 			}
 
 			var variations = jQuery('.variations_form').data('product_variations');
+
 			updateVariation(variations);
 			
 			jQuery('.variations select').change(function() {	
@@ -30,6 +31,7 @@
 		jQuery('.variations select').each(function() {
 				
 			var key = jQuery(this).attr('data-attribute_name');
+
 			var value = this.value;
 
 			if (value == "") {
