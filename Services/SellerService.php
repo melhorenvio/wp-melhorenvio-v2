@@ -42,7 +42,7 @@ class SellerService
         $store = (new StoreService())->getStoreSelected();
 
         if (!empty($address['address']['id'])) {
-            $data->address->address = 'teste' . (!empty($address['address']['address'])) ? $address['address']['address'] : null;
+            $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
             $data->address->complement = (!empty($address['address']['complement'])) ? $address['address']['complement'] : null;
             $data->address->number = (!empty($address['address']['number'])) ? $address['address']['number'] : null;
             $data->address->district = (!empty($address['address']['district'])) ? $address['address']['district'] : null;
