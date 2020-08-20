@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Helpers\TimeHelper;
 use Helpers\MoneyHelper;
 use Helpers\DimensionsHelper;
 use Helpers\PostalCodeHelper;
@@ -305,7 +304,7 @@ class QuotationProductPageService
         $freeShipping = end($free);
 
         $labelFreeShipping = 'Frete Grátis';
-        
+
         if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
             $labelFreeShipping = sprintf(
                 "¹Frete grátis com valor mínimo de %s",
