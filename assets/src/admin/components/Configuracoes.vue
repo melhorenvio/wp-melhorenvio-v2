@@ -252,7 +252,7 @@
           </li>
           <li>
             <input type="checkbox" value="Personalizar" v-model="options_calculator.vs" />
-            Usar valor segurado
+            Usar valor segurado <small>(Correios)</small>
           </li>
         </ul>
       </div>

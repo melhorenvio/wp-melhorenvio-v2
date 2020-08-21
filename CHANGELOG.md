@@ -2,6 +2,7 @@
 ### [2.8.2]
 - Ajuste cálculo de produto com variação na tela do produto.
 - Adicionando percentual extra sobre o valor do frete.
+- Opção de ativar/desativar valor segurado
 
 ### [2.8.1] - 2020-08
 - Retorno do botão de enviar pedido para o carrinho de compras do Melhor Envio.
