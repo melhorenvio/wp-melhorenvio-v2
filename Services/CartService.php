@@ -28,6 +28,8 @@ class CartService
 
         $orderInvoiceService = new OrderInvoicesService();
 
+        $shippingMethodService = new CalculateShippingMethodService();
+
         $options = (new Option())->getOptions();
 
         $body = array(
@@ -38,7 +40,7 @@ class CartService
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
-                "insurance_value" => ($options->vs) ? $this->getInsuranceValueByProducts($products) : 0,
+                "insurance_value" => ($shippingMethodService->insuranceValueIsRequired($options->vs,  $shippingMethodId)) ? $this->getInsuranceValueByProducts($products) : 0,
                 "receipt" => $options->ar,
                 "own_hand" => $options->mp,
                 "collect" => false,

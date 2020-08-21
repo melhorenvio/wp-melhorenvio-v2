@@ -50,6 +50,14 @@ class QuotationService
 
         $options = (new Option())->getOptions();
 
+        $productService = new ProductsService();  
+
+        $shippingMethodService = new CalculateShippingMethodService();
+
+        if (!$options->vs && !$shippingMethodService->isCorreios($service)) {
+            $products = $productService->removePrice($products);
+        }
+
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -60,8 +68,8 @@ class QuotationService
             'options' => [
                 'own_hand' => $options->mp,
                 'receipt' => $options->ar,
-                'insurance_value' => ($options->vs) 
-                    ? (new ProductsService())->getInsuranceValue($products) 
+                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->vs, $service)) 
+                    ? $productService->getInsuranceValue($products) 
                     : 0,
             ],
             'products' => $products
