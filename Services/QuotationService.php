@@ -45,6 +45,7 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
+
         $seller = (new SellerService())->getData();
 
         $options = (new Option())->getOptions();
@@ -58,7 +59,10 @@ class QuotationService
             ],
             'options' => [
                 'own_hand' => $options->mp,
-                'receipt' => $options->ar
+                'receipt' => $options->ar,
+                'insurance_value' => ($options->vs) 
+                    ? (new ProductsService())->getInsuranceValue($products) 
+                    : 0,
             ],
             'products' => $products
         ];
