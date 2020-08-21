@@ -32,8 +32,6 @@ class OrderService
      */
     public function cancel($postId)
     {
-        $orders = [];
-
         $orderId = $this->getOrderIdByPostId($postId);
 
         if (is_null($orderId)) {
@@ -48,7 +46,7 @@ class OrderService
             'reason_id'   => self::REASON_CANCELED_USER,
             'description' => 'Cancelado pelo usuário'
         ];
-        
+
         (new OrderQuotationService())->removeDataQuotation($postId);
 
         return (new RequestService())->request(
@@ -68,7 +66,7 @@ class OrderService
     public function isCancellable($orderId)
     {
         $body = [
-            "orders"=> [
+            "orders" => [
                 $orderId,
             ]
         ];
@@ -430,7 +428,7 @@ class OrderService
                 );
             }
         }
-        
+
         return $response;
     }
 

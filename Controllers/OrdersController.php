@@ -100,7 +100,7 @@ class OrdersController
         $status = null;
 
         $orderQuotationService = new OrderQuotationService();
-            
+
         $dataOrder = $orderQuotationService->getData($postId);
 
         if (!empty($dataOrder['order_id'])) {
@@ -128,7 +128,7 @@ class OrdersController
                 $orderQuotationService->removeDataQuotation($postId);
 
                 if (isset($cartResult['errors'])) {
-                        return wp_send_json([
+                    return wp_send_json([
                         'success' => false,
                         'errors' => $cartResult['errors'],
                     ], 400);
@@ -143,7 +143,6 @@ class OrdersController
             $orderId = $cartResult['order_id'];
 
             $status = $cartResult['status'];
-
         }
 
         $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
@@ -233,7 +232,10 @@ class OrdersController
 
         return wp_send_json([
             'success' => true,
-            'message' => (array) sprintf("Pedido %s cancelado com sucesso", $_GET['post_id'])
+            'message' => (array) sprintf(
+                "Pedido %s cancelado com sucesso",
+                $_GET['post_id']
+            )
         ], 200);
     }
 

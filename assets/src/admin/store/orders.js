@@ -22,7 +22,6 @@ const orders = {
             state.orders = data
         },
         loadMore: (state, data) => {
-
             state.filters.skip += data.length
             data.map(item => {
                 state.orders.push(item)
