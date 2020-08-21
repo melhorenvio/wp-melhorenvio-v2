@@ -38,7 +38,7 @@ class CartService
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
-                "insurance_value" => $this->getInsuranceValueByProducts($products),
+                "insurance_value" => ($options->vs) ? $this->getInsuranceValueByProducts($products) : 0,
                 "receipt" => $options->ar,
                 "own_hand" => $options->mp,
                 "collect" => false,
