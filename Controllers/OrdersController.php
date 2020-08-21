@@ -224,13 +224,6 @@ class OrdersController
 
         $result = (new OrderService())->cancel($_GET['post_id']);
 
-        if (empty($result['success'])) {
-            return wp_send_json([
-                'success' => false,
-                'message' => (array) 'Esse pedido não pode ser cancelado'
-            ], 400);
-        }
-        
         if (empty(end($result)->canceled)) {
             return wp_send_json([
                 'success' => false,

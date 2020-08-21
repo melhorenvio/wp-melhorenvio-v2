@@ -43,13 +43,6 @@ class OrderService
             ];
         }
 
-        if (empty($this->isCancellable($orderId))) {
-            return [
-                'success' => false,
-                'message' => 'Esse pedido não pode ser cancelado'
-            ];
-        }
-
         $body['order'] = [
             'id'          => $orderId,
             'reason_id'   => self::REASON_CANCELED_USER,

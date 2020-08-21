@@ -41,7 +41,7 @@
         />
       </svg>
     </a>
-
+    
     <a
       v-if="buttonBuy(item)"
       @click="beforeAddCart({id:item.id, service_id:item.service_id, non_commercial: item.non_commercial})"
@@ -295,17 +295,17 @@ export default {
       if (typeof item.cotation.choose_method === "undefined") {
         return false;
       }
-      if (item.status == "pending" || item.status == "released" || item.status == "canceled") {
+      if (item.status == "pending" || item.status == "released") {
         return false;
       }
       if (
         item.cotation.choose_method == 1 ||
         item.cotation.choose_method == 2 ||
-        (item.cotation.choose_method == 17 && item.status == null)
+        (item.cotation.choose_method == 17 && (item.status == null || item.status == 'canceled'))
       ) {
         return true;
       }
-      if (item.cotation.choose_method >= 3 && item.status == null) {
+      if (item.cotation.choose_method >= 3 && (item.status == null || item.status == 'canceled')) {
         if (item.non_commercial) {
           return true;
         }
