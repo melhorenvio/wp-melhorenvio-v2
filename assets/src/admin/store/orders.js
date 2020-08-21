@@ -53,7 +53,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = null
+            order.content.status = 'canceled'
             state.orders.splice(order.position, 1, order.content)
         },
         addCartSimple: (state, data) => {
@@ -401,27 +401,20 @@ const orders = {
         updateQuotation: (context, data) => {
             context.commit('updateQuotation', data)
         },
-        cancelCart: (context, data) => {
+        cancelOrder: (context, data) => {
             context.commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-
-                if (!response.data.success) {
-                    context.commit('setMsgModal', response.data.message)
-                    context.commit('toggleLoader', false)
-                    context.commit('toggleModal', true)
-                    return false
-                }
-
-                context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado')
+            Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}`, data).then(response => {
+                console.log(response);
+                context.commit('setMsgModal', response.data.message)
                 context.commit('toggleModal', true)
-                context.commit('cancelCart', data.id)
+                context.commit('cancelCart', data.post_id)
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
             }).catch(error => {
-                context.commit('setMsgModal', error.message)
+                console.log(error);
+                context.commit('setMsgModal', 'Etiqueta não pode ser cancelada.')
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
-                return false
             })
         },
         payTicket: (context, data) => {

@@ -10,6 +10,8 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_CANCEL = '/shipment/cancel';
 
+    const ROUTE_MELHOR_ENVIO_CANCELLABLE = '/shipment/cancellable';
+
     const ROUTE_MELHOR_ENVIO_TRACKING = '/shipment/tracking';
 
     const ROUTE_MELHOR_ENVIO_CART = '/cart';
@@ -41,20 +43,51 @@ class OrderService
             ];
         }
 
-        $orders[] = [
+        if (empty($this->isCancellable($orderId))) {
+            return [
+                'success' => false,
+                'message' => 'Esse pedido não pode ser cancelado'
+            ];
+        }
+
+        $body['order'] = [
             'id'          => $orderId,
             'reason_id'   => self::REASON_CANCELED_USER,
             'description' => 'Cancelado pelo usuário'
         ];
-
-        (new OrderQuotationService())->removeDataQuotation($orderId);
+        
+        (new OrderQuotationService())->removeDataQuotation($postId);
 
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CANCEL,
             'POST',
-            ['orders' => $orders],
+            json_encode($body),
             false
         );
+    }
+
+    /**
+     * Function to see if the tag is cancelable
+     *
+     * @param string $orderId
+     * @return bool
+     */
+    public function isCancellable($orderId)
+    {
+        $body = [
+            "orders"=> [
+                $orderId,
+            ]
+        ];
+
+        $result = (new RequestService())->request(
+            self::ROUTE_MELHOR_ENVIO_CANCELLABLE,
+            'GET',
+            $body,
+            true
+        );
+
+        return !empty(end($result)->cancellable);
     }
 
     /**

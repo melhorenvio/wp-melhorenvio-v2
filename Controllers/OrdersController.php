@@ -215,25 +215,32 @@ class OrdersController
      */
     public function cancelOrder()
     {
-        if (!isset($_GET['id'])) {
+        if (!isset($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Informar o ID do pedido'
+                'message' => (array) 'Informar o ID do pedido'
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['id']);
+        $result = (new OrderService())->cancel($_GET['post_id']);
 
-        if (!$result['success']) {
+        if (empty($result['success'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao cancelar o pedido'
+                'message' => (array) 'Esse pedido não pode ser cancelado'
+            ], 400);
+        }
+        
+        if (empty(end($result)->canceled)) {
+            return wp_send_json([
+                'success' => false,
+                'message' => (array) 'Ocorreu um erro ao cancelar o pedido'
             ], 400);
         }
 
         return wp_send_json([
             'success' => true,
-            'message' => 'Pedido cancelado'
+            'message' => (array) sprintf("Pedido %s cancelado com sucesso", $_GET['post_id'])
         ], 200);
     }
 
