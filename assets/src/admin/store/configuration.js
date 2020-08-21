@@ -16,7 +16,8 @@ const configuration = {
         show_all_jadlog_agencies: false,
         options_calculator: {
             ar: false,
-            mp: false
+            mp: false,
+            vs: true
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
@@ -194,6 +195,7 @@ const configuration = {
                 if (data.options_calculator != null) {
                     form.append('options_calculator[ar]', data.options_calculator.ar);
                     form.append('options_calculator[mp]', data.options_calculator.mp);
+                    form.append('options_calculator[vs]', data.options_calculator.vs);
                 }
 
                 Axios.post(`${ajaxurl}?action=save_configuracoes`, form).then(function (response) {

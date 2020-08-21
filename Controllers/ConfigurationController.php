@@ -162,7 +162,8 @@ class ConfigurationController
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
                     'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true"),
-                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true")
+                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true"),
+                    'vs' => (isset($options[$method->code]['vs']) && $options[$method->code]['vs'] == "true")
                 ];
             }
         }
@@ -275,9 +276,11 @@ class ConfigurationController
     {
         delete_option('melhorenvio_ar');
         delete_option('melhorenvio_mp');
+        delete_option('melhorenvio_vs');
 
         add_option('melhorenvio_ar', $options['ar'], true);
         add_option('melhorenvio_mp', $options['mp'], true);
+        add_option('melhorenvio_vs', $options['vs'], true);
 
         return [
             'success' => true,
@@ -294,7 +297,8 @@ class ConfigurationController
     {
         return [
             'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
+            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN),
+            'vs' => filter_var(get_option('melhorenvio_vs', "true"), FILTER_VALIDATE_BOOLEAN)
         ];
     }
 

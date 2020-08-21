@@ -250,6 +250,10 @@
             <input type="checkbox" value="Personalizar" v-model="options_calculator.mp" />
             Mãos própria
           </li>
+          <li>
+            <input type="checkbox" value="Personalizar" v-model="options_calculator.vs" />
+            Usar valor segurado
+          </li>
         </ul>
       </div>
     </div>
@@ -416,7 +420,8 @@ export default {
       show_all_agencies_jadlog: false,
       options_calculator: {
         ar: false,
-        mp: true
+        mp: true,
+        vs: true
       },
       path_plugins: "",
       show_path: false,

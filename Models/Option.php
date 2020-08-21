@@ -30,11 +30,13 @@ class Option
     {
         $ar = get_option('melhorenvio_ar');
         $mp = get_option('melhorenvio_mp');
+        $vs = get_option('melhorenvio_vs');
 
 
         return (object) array( 
             'ar' => filter_var($ar, FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var($mp, FILTER_VALIDATE_BOOLEAN)
+            'mp' => filter_var($mp, FILTER_VALIDATE_BOOLEAN),
+            'vs' => filter_var($vs, FILTER_VALIDATE_BOOLEAN)
         );
     }
 
