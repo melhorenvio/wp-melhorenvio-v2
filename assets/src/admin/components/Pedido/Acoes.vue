@@ -167,7 +167,7 @@
 
     <a
       @click="cancelOrder({post_id:item.id, order_id:item.order_id})"
-      v-if="item.status == "released""
+      v-if="item.status == 'released'"
       href="javascript:;"
       class="action-button -excluir container__link"
       data-tip="Cancelar pedido"
@@ -269,8 +269,9 @@ export default {
         })
         .catch(error => {
           this.setMessageModal(error.response.data.errors);
-        }).finally( () => {
-            this.stopLoader();
+        })
+        .finally(() => {
+          this.stopLoader();
         });
     },
     cancelOrderSimple: function(data) {
@@ -290,8 +291,9 @@ export default {
         })
         .catch(error => {
           this.setMessageModal(error.response.data.errors);
-        }).finally( () => {
-            this.stopLoader();
+        })
+        .finally(() => {
+          this.stopLoader();
         });
     },
     buttonCart(item) {
@@ -301,14 +303,16 @@ export default {
       if (item.status == "pending" || item.status == "released") {
         return false;
       }
-      if (item.cotation.choose_method == 1 ||
-         item.cotation.choose_method == 2 ||
+      if (
+        item.cotation.choose_method == 1 ||
+        item.cotation.choose_method == 2 ||
         (item.cotation.choose_method == 17 &&
           (item.status == null || item.status == "canceled"))
       ) {
         return true;
       }
-      if (item.cotation.choose_method >= 3 &&
+      if (
+        item.cotation.choose_method >= 3 &&
         (item.status == null || item.status == "canceled")
       ) {
         if (item.non_commercial) {
@@ -324,7 +328,9 @@ export default {
         return false;
       }
 
-      if (!(item.status == "posted" ||
+      if (
+        !(
+          item.status == "posted" ||
           item.status == "released" ||
           item.status == "canceled"
         )
@@ -335,7 +341,8 @@ export default {
       return false;
     },
     buttonCancel(item) {
-      if (item.status == "posted" ||
+      if (
+        item.status == "posted" ||
         item.status == "generated" ||
         item.status == "released"
       ) {
