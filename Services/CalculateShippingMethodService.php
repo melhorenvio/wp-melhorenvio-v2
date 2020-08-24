@@ -236,7 +236,7 @@ class CalculateShippingMethodService
      * Function to check if the insured amount is mandatory
      *
      * @param bool $optionalInsuredAmount
-     * @param int|string $serviceId
+     * @param int $serviceId
      * @return bool
      */
     public function insuranceValueIsRequired($optionalInsuredAmount, $serviceId)

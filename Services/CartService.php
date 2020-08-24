@@ -17,7 +17,7 @@ class CartService
      * @param int $orderId
      * @param array $products
      * @param array $to
-     * @param integer $shippingMethodId
+     * @param int $shippingMethodId
      * @return void
      */
     public function add($orderId, $products, $to, $shippingMethodId)
