@@ -50,7 +50,7 @@ class MoneyHelper
      * @param float $percent
      * @return string
      */
-    private function calculateFinalValue($value, $extra, $percent)
+    public static function calculateFinalValue($value, $extra, $percent)
     {
 
         $percentExtra = ($value / 100) * $percent;
