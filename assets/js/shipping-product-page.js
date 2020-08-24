@@ -86,7 +86,6 @@
                     error: function (jqXHR, exception) {
                         inpCEP.removeAttr('disabled');
                         inpCEP.val('');
-                        console.log(jqXHR);
                         alert(jqXHR.responseJSON.message);
                         esconderLoader();
                         esconderTabela();

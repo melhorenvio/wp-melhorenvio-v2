@@ -286,8 +286,6 @@ const orders = {
         insertInvoice: ({ commit }, data) => {
             commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}`).then(response => {
-
-                console.log(response.data);
                 commit('updateInvoice', data);
                 commit('setMsgModal', response.data.message)
                 commit('toggleLoader', false)
@@ -403,14 +401,12 @@ const orders = {
         cancelOrder: (context, data) => {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}`, data).then(response => {
-                console.log(response);
                 context.commit('setMsgModal', response.data.message)
                 context.commit('toggleModal', true)
                 context.commit('cancelCart', data.post_id)
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
             }).catch(error => {
-                console.log(error);
                 context.commit('setMsgModal', 'Etiqueta não pode ser cancelada.')
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)

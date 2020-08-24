@@ -266,12 +266,11 @@ export default {
             `Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`
           );
           this.setMessageModal(msg);
-          this.stopLoader();
-          return;
         })
         .catch(error => {
           this.setMessageModal(error.response.data.errors);
-          this.stopLoader();
+        }).finally( () => {
+            this.stopLoader();
         });
     },
     cancelOrderSimple: function(data) {
@@ -286,13 +285,13 @@ export default {
             const msgErr = [];
             msgErr.push("Etiqueta #" + data.id + " comprada com sucesso.");
             this.setMessageModal(msgErr);
-            this.stopLoader();
             return;
           }
         })
         .catch(error => {
           this.setMessageModal(error.response.data.errors);
-          this.stopLoader();
+        }).finally( () => {
+            this.stopLoader();
         });
     },
     buttonCart(item) {
@@ -302,16 +301,14 @@ export default {
       if (item.status == "pending" || item.status == "released") {
         return false;
       }
-      if (
-        item.cotation.choose_method == 1 ||
-        item.cotation.choose_method == 2 ||
+      if (item.cotation.choose_method == 1 ||
+         item.cotation.choose_method == 2 ||
         (item.cotation.choose_method == 17 &&
           (item.status == null || item.status == "canceled"))
       ) {
         return true;
       }
-      if (
-        item.cotation.choose_method >= 3 &&
+      if (item.cotation.choose_method >= 3 &&
         (item.status == null || item.status == "canceled")
       ) {
         if (item.non_commercial) {
@@ -327,9 +324,7 @@ export default {
         return false;
       }
 
-      if (
-        !(
-          item.status == "posted" ||
+      if (!(item.status == "posted" ||
           item.status == "released" ||
           item.status == "canceled"
         )
@@ -340,8 +335,7 @@ export default {
       return false;
     },
     buttonCancel(item) {
-      if (
-        item.status == "posted" ||
+      if (item.status == "posted" ||
         item.status == "generated" ||
         item.status == "released"
       ) {
