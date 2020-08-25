@@ -192,7 +192,7 @@ const configuration = {
                     form.append('path_plugins', data.path_plugins);
                 }
 
-                if (data.options_calculator != null) {
+                if (!is_null(data.options_calculator)) {
                     form.append('options_calculator[ar]', data.options_calculator.ar);
                     form.append('options_calculator[mp]', data.options_calculator.mp);
                     form.append('options_calculator[vs]', data.options_calculator.vs);
