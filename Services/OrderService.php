@@ -58,30 +58,6 @@ class OrderService
     }
 
     /**
-     * Function to see if the tag is cancelable
-     *
-     * @param string $orderId
-     * @return bool
-     */
-    public function isCancellable($orderId)
-    {
-        $body = [
-            "orders" => [
-                $orderId,
-            ]
-        ];
-
-        $result = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_CANCELLABLE,
-            'GET',
-            $body,
-            true
-        );
-
-        return !empty(end($result)->cancellable);
-    }
-
-    /**
      * Function to get info about order in api Melhor Envio.
      *
      * @param int $orderId
