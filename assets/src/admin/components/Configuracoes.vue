@@ -248,7 +248,7 @@
           </li>
           <li>
             <input type="checkbox" value="Personalizar" v-model="options_calculator.mp" />
-            Mãos própria
+            Mão própria
           </li>
         </ul>
       </div>

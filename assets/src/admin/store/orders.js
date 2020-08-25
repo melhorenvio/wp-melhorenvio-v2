@@ -1,5 +1,6 @@
 'use strict'
 import Axios from 'axios'
+import StatusMelhorEnvio from '../utils/status'
 
 const orders = {
     namespaced: true,
@@ -52,7 +53,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'canceled'
+            order.content.status = StatusMelhorEnvio.STATUS_CANCELED
             state.orders.splice(order.position, 1, order.content)
         },
         addCartSimple: (state, data) => {
@@ -65,7 +66,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = StatusMelhorEnvio.STATUS_PENDING
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             order.content.service_id = data.service_id
@@ -81,7 +82,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             order.content.service_id = data.service_id
@@ -129,7 +130,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             state.orders.splice(order.position, 1, order.content)
         },
         createTicket: (state, data) => {
@@ -142,7 +143,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'generated'
+            order.content.status = StatusMelhorEnvio.STATUS_GENERATED
             state.orders.splice(order.position, 1, order.content)
         },
         printTicket: (state, data) => {
@@ -155,7 +156,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             state.orders.splice(order.position, 1, order.content)
         },
         setStatusWc: (state, data) => {
