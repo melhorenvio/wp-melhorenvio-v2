@@ -301,49 +301,45 @@ class QuotationProductPageService
      * Function to set the type of free shipping
      *
      * @param array $free
-     * @return string|bool
+     * @return string
      */
     private function rateForFreeShipping($free)
     {
-        $labelFreeShipping = null;
-
         $freeShipping = end($free);
 
-        $labelFreeShipping = 'Frete Grátis';
-
         if (!empty($freeShipping->requires) && !empty($freeShipping->min_amount)) {
-            $labelFreeShipping = sprintf(
+            return sprintf(
                 "¹Frete grátis com valor mínimo de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShipping = sprintf(
+            return sprintf(
                 "¹Frete grátis para pedidos com valor mínimo de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShipping = sprintf(
+            return sprintf(
                 "¹Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_COUPOM) {
-            $labelFreeShipping = "¹Frete grátis para utilização de coupom grátis";
+            return "¹Frete grátis para utilização de coupom grátis";
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
-            $labelFreeShipping = sprintf(
+            return sprintf(
                 "¹Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
-        return $labelFreeShipping;
+        return 'Frete Grátis';
     }
 
     /**
