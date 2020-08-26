@@ -112,7 +112,7 @@ class QuotationProductPageService
             return [
                 'success' => false,
                 'error' => sprintf(
-                    "Não encontramos um endereço válido para o CEP %d",
+                    "Não encontramos um endereço válido para o CEP %s",
                     $this->postalCode
                 )
             ];
