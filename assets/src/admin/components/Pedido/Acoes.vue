@@ -233,6 +233,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import statusMelhorEnvio from '../../utils/status';
 export default {
   data: () => {
     return {};
@@ -300,20 +301,20 @@ export default {
       if (typeof item.cotation.choose_method === "undefined") {
         return false;
       }
-      if (item.status == "pending" || item.status == "released") {
+      if (item.status == statusMelhorEnvio.STATUS_PENDING || item.status == statusMelhorEnvio.STATUS_RELEASED) {
         return false;
       }
       if (
         item.cotation.choose_method == 1 ||
         item.cotation.choose_method == 2 ||
         (item.cotation.choose_method == 17 &&
-          (item.status == null || item.status == "canceled"))
+          (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED))
       ) {
         return true;
       }
       if (
         item.cotation.choose_method >= 3 &&
-        (item.status == null || item.status == "canceled")
+        (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED)
       ) {
         if (item.non_commercial) {
           return true;
@@ -330,9 +331,9 @@ export default {
 
       if (
         !(
-          item.status == "posted" ||
-          item.status == "released" ||
-          item.status == "canceled"
+          item.status == statusMelhorEnvio.STATUS_POSTED ||
+          item.status == statusMelhorEnvio.STATUS_RELEASED ||
+          item.status == statusMelhorEnvio.STATUS_CANCELED
         )
       ) {
         return true;
@@ -342,9 +343,9 @@ export default {
     },
     buttonCancel(item) {
       if (
-        item.status == "posted" ||
-        item.status == "generated" ||
-        item.status == "released"
+        item.status == statusMelhorEnvio.STATUS_POSTED ||
+        item.status == statusMelhorEnvio.STATUS_GENERATED ||
+        item.status == statusMelhorEnvio.STATUS_RELEASED
       ) {
         return true;
       }
