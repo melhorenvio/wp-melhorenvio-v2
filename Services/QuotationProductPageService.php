@@ -21,12 +21,12 @@ class QuotationProductPageService
     /**
      * Requirement to have free shipping coupon and minimum order value
      */
-    const FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT = 'both';
+    const FREE_SHIPPIING_COUPON_AND_MIN_AMOUNT = 'both';
 
     /**
      * Requirement to have free shipping coupon
      */
-    const FREE_SHIPPING_COUPOM = 'either';
+    const FREE_SHIPPING_COUPON = 'either';
 
     /**
      * Requirement to have free shipping coupon or minimum order value
@@ -129,7 +129,7 @@ class QuotationProductPageService
 
         $this->createPackageToCalculate();
 
-        $this->getShippingMethodsByPackage();
+        $this->setShippingMethodsByPackage();
 
         if (count($this->shippingMethods) == 0) {
             return [
@@ -222,7 +222,7 @@ class QuotationProductPageService
      *
      * @return void
      */
-    private function getShippingMethodsByPackage()
+    private function setShippingMethodsByPackage()
     {
         $shippingZone = \WC_Shipping_Zones::get_zone_matching_package($this->package);
 
@@ -345,20 +345,20 @@ class QuotationProductPageService
             );
         }
 
-        if ($freeShipping->requires == self::FREE_SHIPPIING_COUPOM_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
+        if ($freeShipping->requires == self::FREE_SHIPPIING_COUPON_AND_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             return sprintf(
-                "¹Frete grátis para utilização de coupom grátis para pedidos mínimos de %s",
+                "¹Frete grátis para utilização de cupom grátis para pedidos mínimos de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
 
-        if ($freeShipping->requires == self::FREE_SHIPPING_COUPOM) {
-            return "¹Frete grátis para utilização de coupom grátis";
+        if ($freeShipping->requires == self::FREE_SHIPPING_COUPON) {
+            return "¹Frete grátis para utilização de cupom grátis";
         }
 
         if ($freeShipping->requires == self::FREE_SHIPPING_MIN_AMOUNT && !empty($freeShipping->min_amount)) {
             return sprintf(
-                "¹Frete grátis para utilização de coupom com valor mínimo de pedido de %s",
+                "¹Frete grátis para utilização de cupom com valor mínimo de pedido de %s",
                 MoneyHelper::price($freeShipping->min_amount, 0, 0)
             );
         }
@@ -374,7 +374,7 @@ class QuotationProductPageService
     public function orderingRatesByPrice()
     {
         uasort($this->rates, function ($a, $b) {
-            if ($a == $b) return 0;
+            if ($a === $b) return 0;
             return ($a['price'] < $b['price']) ? -1 : 1;
         });
 

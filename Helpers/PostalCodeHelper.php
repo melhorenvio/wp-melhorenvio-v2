@@ -12,7 +12,7 @@ class PostalCodeHelper
      */
     public static function postalcode($postalCode)
     {
-        $postalCode = ExtractNumberHelper::extractOnyNumber($postalCode);
+        $postalCode = ExtractNumberHelper::extractOnlyNumber($postalCode);
 
         return floatval(str_pad($postalCode, 8, '0', STR_PAD_LEFT));
     }
