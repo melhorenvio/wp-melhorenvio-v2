@@ -248,15 +248,7 @@ class CalculateShippingMethodService
         if (!$this->isCorreios($serviceId)) {
             return true;
         }
- 
-        if ($optionalInsuredAmount && !$this->isCorreios($serviceId)) {
-            return true;
-        }
-
-        if ($optionalInsuredAmount && $this->isCorreios($serviceId)) {
-            return true;
-        }
-
-        return false;
+        
+        return $optionalInsuredAmount;
     }
 }
