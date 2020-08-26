@@ -15,9 +15,9 @@ const configuration = {
         show_calculator: false,
         show_all_jadlog_agencies: false,
         options_calculator: {
-            ar: false,
-            mp: false,
-            vs: true
+            receipt: false,
+            own_hand: false,
+            insurance_value: true
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
