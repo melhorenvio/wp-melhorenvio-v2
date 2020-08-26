@@ -43,7 +43,7 @@ class QuotationProductPageService
     /**
      * Buyer postal code
      *
-     * @var float
+     * @var string
      */
     protected $postalCode;
 
@@ -79,7 +79,7 @@ class QuotationProductPageService
      * Service Builder
      *
      * @param int $productId
-     * @param float $postalCode
+     * @param string $postalCode
      * @param int $quantity
      */
     public function __construct($productId, $postalCode, $quantity)
