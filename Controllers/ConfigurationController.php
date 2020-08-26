@@ -8,6 +8,7 @@ use Models\Store;
 use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\Method;
+use Models\Option;
 use Services\ConfigurationsService;
 use Services\MethodShippingService;
 use Services\OptionsMethodShippingService;
@@ -161,9 +162,9 @@ class ConfigurationController
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true"),
-                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true"),
-                    'vs' => (isset($options[$method->code]['vs']) && $options[$method->code]['vs'] == "true")
+                    'receipt' => (isset($options[$method->code]['receipt']) && $options[$method->code]['receipt'] == "true"),
+                    'own_hand' => (isset($options[$method->code]['own_hand']) && $options[$method->code]['own_hand'] == "true"),
+                    'insurance_value' => (isset($options[$method->code]['insurance_value']) && $options[$method->code]['insurance_value'] == "true")
                 ];
             }
         }
@@ -274,13 +275,13 @@ class ConfigurationController
      */
     public function setOptionsCalculator($options)
     {
-        delete_option('melhorenvio_ar');
-        delete_option('melhorenvio_mp');
-        delete_option('melhorenvio_vs');
+        delete_option(Option::OPTION_RECEIPT);
+        delete_option(Option::OPTION_OWN_HAND);
+        delete_option(Option::OPTION_INSURANCE_VALUE);
 
-        add_option('melhorenvio_ar', $options['ar'], true);
-        add_option('melhorenvio_mp', $options['mp'], true);
-        add_option('melhorenvio_vs', $options['vs'], true);
+        add_option(Option::OPTION_RECEIPT, $options['receipt'], true);
+        add_option(Option::OPTION_OWN_HAND, $options['own_hand'], true);
+        add_option(Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true);
 
         return [
             'success' => true,
@@ -296,9 +297,9 @@ class ConfigurationController
     public function getOptionsCalculator()
     {
         return [
-            'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN),
-            'vs' => filter_var(get_option('melhorenvio_vs', "true"), FILTER_VALIDATE_BOOLEAN)
+            'receipt' => filter_var(get_option(Option::OPTION_RECEIPT, "false"), FILTER_VALIDATE_BOOLEAN),
+            'own_hand' => filter_var(get_option(Option::OPTION_OWN_HAND, "false"), FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var(get_option(Option::OPTION_INSURANCE_VALUE, "true"), FILTER_VALIDATE_BOOLEAN)
         ];
     }
 

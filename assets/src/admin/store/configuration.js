@@ -170,20 +170,6 @@ const configuration = {
                     form.append('show_all_agencies_jadlog', data.show_all_agencies_jadlog);
                 }
 
-                if (data.methods_shipments != null) {
-
-                    data.methods_shipments.forEach(function(item, index) {
-
-                        form.append('methods_shipments[' + index +'][id]', item.code);
-                        form.append('methods_shipments[' + index +'][tax]', item.tax);
-                        form.append('methods_shipments[' + index +'][time]', item.time);
-                        form.append('methods_shipments[' + index +'][name]', item.name);
-                        form.append('methods_shipments[' + index +'][perc]', item.perc);
-                        form.append('methods_shipments[' + index +'][ar]', item.ar);
-                        form.append('methods_shipments[' + index +'][mp]', item.mp);
-                    });
-                }
-
                 if (data.where_calculator != null) {
                     form.append('where_calculator', data.where_calculator);
                 }
@@ -192,11 +178,9 @@ const configuration = {
                     form.append('path_plugins', data.path_plugins);
                 }
 
-                if (!is_null(data.options_calculator)) {
-                    form.append('options_calculator[ar]', data.options_calculator.ar);
-                    form.append('options_calculator[mp]', data.options_calculator.mp);
-                    form.append('options_calculator[vs]', data.options_calculator.vs);
-                }
+                form.append('options_calculator[receipt]', data.options_calculator.receipt);
+                form.append('options_calculator[own_hand]', data.options_calculator.own_hand);
+                form.append('options_calculator[insurance_value]', data.options_calculator.insurance_value);
 
                 Axios.post(`${ajaxurl}?action=save_configuracoes`, form).then(function (response) {
                     if (response && response.status === 200) {

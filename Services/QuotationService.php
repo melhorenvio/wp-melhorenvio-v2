@@ -66,9 +66,9 @@ class QuotationService
                 'postal_code' => $postalCode
             ],
             'options' => [
-                'own_hand' => $options->mp,
-                'receipt' => $options->ar,
-                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->vs, $service)) 
+                'own_hand' => $options->own_hand,
+                'receipt' => $options->receipt,
+                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) 
                     ? $productService->getInsuranceValue($products) 
                     : 0,
             ],
@@ -115,8 +115,8 @@ class QuotationService
                 'postal_code' => $postalCode
             ],
             'options' => [
-                'own_hand' => $options->mp,
-                'receipt' => $options->ar
+                'own_hand' => $options->own_hand,
+                'receipt' => $options->receipt
             ],
             'packages' => $packages
         ];
