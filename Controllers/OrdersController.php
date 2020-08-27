@@ -217,7 +217,7 @@ class OrdersController
         if (!isset($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => (array) 'Informar o ID do pedido'
+                'message' => ['Informar o ID do pedido']
             ], 400);
         }
 
@@ -226,16 +226,16 @@ class OrdersController
         if (empty(end($result)->canceled)) {
             return wp_send_json([
                 'success' => false,
-                'message' => (array) 'Ocorreu um erro ao cancelar o pedido'
+                'message' => ['Ocorreu um erro ao cancelar o pedido']
             ], 400);
         }
 
         return wp_send_json([
             'success' => true,
-            'message' => (array) sprintf(
+            'message' => [sprintf(
                 "Pedido %s cancelado com sucesso",
                 $_GET['post_id']
-            )
+            )]
         ], 200);
     }
 
