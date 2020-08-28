@@ -184,11 +184,7 @@ class RouterService
     {
         $pathController = new PathController();
 
-        foreach (['wp_ajax_check_path', 'wp_ajax_nopriv_check_path'] as $action) {
-            add_action($action, function () use ($pathController) {
-                return $pathController->getPathPlugin();
-            });
-        }
+        add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
     }
 
     
