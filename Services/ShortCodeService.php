@@ -52,6 +52,7 @@ class ShortCodeService
                         <table class="border-none">
                             <tr>
                                 <td>
+                                    <p>Simulação de frete</p>
                                     <input type="number" maxlength="9" class="iptCepShortcode" placeholder="Informe seu cep">
                                 </td>
                                 <td>
