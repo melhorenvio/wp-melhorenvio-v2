@@ -10,6 +10,7 @@ use Controllers\SessionsController;
 use Controllers\StatusController;
 use Controllers\TokenController;
 use Controllers\UsersController;
+use Controllers\PathController;
 
 /**
  * Class responsible for managing the routes of the plugin
@@ -27,6 +28,7 @@ class RouterService
         $this->loadRoutesTest();
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
+        $this->loadRoutesPath();
     }
 
     /**
@@ -172,4 +174,22 @@ class RouterService
             });
         }
     }
+
+    /**
+     * function to start path routes
+     *
+     * @return void
+     */
+    private function loadRoutesPath()
+    {
+        $pathController = new PathController();
+
+        foreach (['wp_ajax_check_path', 'wp_ajax_nopriv_check_path'] as $action) {
+            add_action($action, function () use ($pathController) {
+                return $pathController->getPathPlugin();
+            });
+        }
+    }
+
+    
 }
