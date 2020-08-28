@@ -24,7 +24,7 @@ class WooCommerceService
             return array(
                 'id' => 'free_shipping',
                 'label' => 'Frete grátis',
-                'cost' => '',
+                'cost' => 0,
                 'calc_tax' => 'per_item',
                 'meta_data' => array(
                     'delivery_time' => '',
