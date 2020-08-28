@@ -248,7 +248,7 @@
           </li>
           <li>
             <input type="checkbox" value="Personalizar" v-model="options_calculator.own_hand" />
-            Mãos própria
+            Mão própria
           </li>
           <li>
             <input type="checkbox" value="Personalizar" v-model="options_calculator.insurance_value" />

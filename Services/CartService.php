@@ -40,7 +40,9 @@ class CartService
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
-                "insurance_value" => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)) ? $this->getInsuranceValueByProducts($products) : 0,
+                "insurance_value" => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)) 
+                    ? $this->getInsuranceValueByProducts($products) 
+                    : 0,
                 "receipt" => $options->receipt,
                 "own_hand" => $options->own_hand,
                 "collect" => false,

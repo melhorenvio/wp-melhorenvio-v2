@@ -54,7 +54,7 @@ class QuotationService
 
         $shippingMethodService = new CalculateShippingMethodService();
 
-        if (!$options->vs && !$shippingMethodService->isCorreios($service)) {
+        if (!$shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) {
             $products = $productService->removePrice($products);
         }
 

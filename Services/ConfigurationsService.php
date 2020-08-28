@@ -5,6 +5,7 @@ namespace Services;
 use Controllers\ConfigurationController;
 use Models\Address;
 use Models\Agency;
+use Models\Option;
 use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\UseInsurance;
@@ -124,11 +125,14 @@ class ConfigurationsService
      */
     public function setOptionsCalculator($options)
     {
-        delete_option('melhorenvio_ar');
-        delete_option('melhorenvio_mp');
+        delete_option(Option::OPTION_RECEIPT);
+        delete_option(Option::OPTION_OWN_HAND);
+        delete_option(Option::OPTION_INSURANCE_VALUE);
 
-        add_option('melhorenvio_ar', $options['ar'], true);
-        add_option('melhorenvio_mp', $options['mp'], true);
+        add_option(Option::OPTION_RECEIPT, $options['receipt'], true);
+        add_option(Option::OPTION_OWN_HAND, $options['own_hand'], true);
+        add_option(Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true);
+
 
         return [
             'success' => true,
@@ -158,8 +162,9 @@ class ConfigurationsService
     public function getOptionsCalculator()
     {
         return [
-            'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
+            'receipt' => filter_var(get_option(Option::OPTION_RECEIPT, "false"), FILTER_VALIDATE_BOOLEAN),
+            'own_hand' => filter_var(get_option(Option::OPTION_OWN_HAND, "false"), FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var(get_option(Option::OPTION_INSURANCE_VALUE, "true"), FILTER_VALIDATE_BOOLEAN)
         ];
     }
 
