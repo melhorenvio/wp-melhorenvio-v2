@@ -108,10 +108,10 @@
                             let name = item.name
 
                             if (!item.delivery_time) {
-                                item.delivery_time = '*';
+                                item.delivery_time = '';
                             }
 
-                            row += `<tr><td>${name}</td><td>${item.price}</td><td>${item.delivery_time}</td></tr>`;
+                            row += `<tr><td>${name} ${item.delivery_time}: ${item.price}</td></tr>`;
                         });
 
                         if (row == '') {

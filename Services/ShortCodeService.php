@@ -52,7 +52,7 @@ class ShortCodeService
                         <table class="border-none">
                             <tr>
                                 <td>
-                                    <input type="text" maxlength="9" class="iptCepShortcode" placeholder="Informe seu cep" onkeydown="return mascara(this, "#####-###");>
+                                    <input type="number" maxlength="9" class="iptCepShortcode" placeholder="Informe seu cep">
                                 </td>
                                 <td>
                                 <input type="submit" value="Calcular">
@@ -71,8 +71,6 @@ class ShortCodeService
                         <thead>
                             <tr>
                                 <td><strong>Forma de envio</strong></td>
-                                <td><strong>Custo estimado</strong></td>
-                                <td><strong>Entrega estimada</strong></td>
                             </tr>
                         </thead>
                         <tbody>
