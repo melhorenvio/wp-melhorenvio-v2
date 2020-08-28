@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Address;
+use Models\Seller;
 
 /**
  * Class responsible for the service of managing the store salesperson
@@ -17,11 +18,20 @@ class SellerService
      */
     public function getData()
     {   
+        $seller = new Seller();
+
         $sessionService = new SessionService();
 
         $data = $sessionService->getDataCached(self::USER_SESSION);
 
+        if(!empty($data)) {
+            return $data;
+        }
+
+        $data = $seller->get();
+        
         if (!empty($data)) {
+            $sessionService->storeData(self::USER_SESSION, $data);
             return $data;
         }
 
@@ -56,6 +66,8 @@ class SellerService
             "country_id" => 'BR',
             "postal_code" => (!empty($store->address->postal_code)) ? $store->address->postal_code : $data->address->postal_code,
         ];
+
+        $seller->save($data);
 
         $sessionService->storeData(self::USER_SESSION, $data);
 

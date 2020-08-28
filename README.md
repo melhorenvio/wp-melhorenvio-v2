@@ -68,6 +68,7 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 ### [2.8.2]
 - Ajuste cálculo de produto com variação na tela do produto.
 - Adicionando percentual extra sobre o valor do frete.
+- Ajuste para salvar dados do vendedor nos options do Wordpress.
 - Correções de warnings
 
 ### [2.8.1] - 2020-08
