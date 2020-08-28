@@ -259,15 +259,13 @@ class QuotationProductPageService
      */
     private function filterRateByShippingMethods()
     {
-        $this->showFreeShippingMethod();
-        
         $this->rates = array_map(function ($shippingMethod) {
 
             $rate = $shippingMethod->get_rates_for_package($this->package);
 
             $rate = end($rate);
 
-            if (!empty($rate)) {
+            if (!empty($rate) && $rate->method_id != self::FREE_SHIPPING) {
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
@@ -283,7 +281,8 @@ class QuotationProductPageService
                 ];
             }
         }, $this->shippingMethods);
-
+        
+        $this->showFreeShippingMethod();
         
     }
 
@@ -304,6 +303,7 @@ class QuotationProductPageService
         });
 
         if (!empty($free)) {
+
             $labelFreeShipping = $this->rateForFreeShipping($free);
 
             if (!empty($labelFreeShipping)) {
