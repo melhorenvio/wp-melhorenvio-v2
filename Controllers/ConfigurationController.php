@@ -5,14 +5,10 @@ namespace Controllers;
 use Models\Address;
 use Models\Agency;
 use Models\Store;
-use Models\CalculatorShow;
-use Models\JadlogAgenciesShow;
 use Models\Method;
 use Models\Option;
 use Services\ConfigurationsService;
-use Services\MethodShippingService;
 use Services\OptionsMethodShippingService;
-use Services\StoreService;
 
 /**
  * Class responsible for the configuration controller
@@ -183,14 +179,6 @@ class ConfigurationController
         add_option('melhor_envio_path_plugins', $_GET['path']);
     }
 
-    public function setPathPlugins($path)
-    {
-        delete_option('melhor_envio_path_plugins');
-        add_option('melhor_envio_path_plugins', $path);
-
-        return get_option('melhor_envio_path_plugins');
-    }
-
     public function getPathPlugins()
     {
         $path = get_option('melhor_envio_path_plugins');
@@ -202,39 +190,6 @@ class ConfigurationController
         return wp_send_json([
             'path' => $path
         ], 200);
-    }
-
-    public function getPathPluginsArray()
-    {
-        $path = get_option('melhor_envio_path_plugins');
-
-        if (!$path) {
-            $path = ABSPATH . 'wp-content/plugins';
-        }
-
-        return $path;
-    }
-
-    public function saveoptionsMethod($item)
-    {
-        $id = $item['id'];
-
-        delete_option('melhor_envio_option_method_shipment_' . $id);
-        add_option('melhor_envio_option_method_shipment_' . $id, $item);
-
-        return get_option('melhor_envio_option_method_shipment_' . $id);
-    }
-
-    public function setWhereCalculator($option)
-    {
-
-        delete_option('melhor_envio_option_where_show_calculator');
-        add_option('melhor_envio_option_where_show_calculator', $option);
-
-        return [
-            'success' => true,
-            'option' => $option
-        ];
     }
 
     public function getWhereCalculator()
@@ -311,47 +266,8 @@ class ConfigurationController
      */
     public function saveAll()
     {
-        $data = $_POST;
+        $response = (new ConfigurationsService())->saveConfigurations($_POST);
 
-        $response = [];
-
-        if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping($data['address']);
-        }
-
-        if (isset($data['store'])) {
-            $response['store'] = (new StoreService())->setStore($data['store']);
-        }
-
-        if (isset($data['agency'])) {
-            $response['agency'] = (new Agency())->setAgency($data['agency']);
-        }
-
-        if (isset($data['show_calculator'])) {
-            $response['show_calculator'] = (new CalculatorShow())->set($data['show_calculator']);
-        }
-
-        if (isset($data['show_all_agencies_jadlog'])) {
-            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())->set($data['show_all_agencies_jadlog']);
-        }
-
-        if (isset($data['methods_shipments'])) {
-            foreach ($data['methods_shipments'] as $key => $method) {
-                $response['method'][$key] = $this->saveoptionsMethod($method);
-            }
-        }
-
-        if (isset($data['where_calculator'])) {
-            $response['where_calculator'] = $this->setWhereCalculator($data['where_calculator']);
-        }
-
-        if (isset($data['path_plugins'])) {
-            $response['path_plugins'] = $this->setPathPlugins($data['path_plugins']);
-        }
-
-        if (isset($data['options_calculator'])) {
-            $response['options_calculator'] = $this->setOptionsCalculator($data['options_calculator']);
-        }
         return wp_send_json($response, 200);
     }
 }
