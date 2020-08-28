@@ -191,7 +191,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                     <div class="row">
                         <div class="col-75">
                             <p>Simulação de frete</p>
-                            <input type="text" maxlength="9" class="iptCep" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
+                            <input type="text" style="width:100%" maxlength="9" class="iptCep" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
                         </div>
                     </div>
 
@@ -210,6 +210,7 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                             <tbody>
                             </tbody>
                         </table>
+                        <small class="observation-shipping-free"></small>
                     </div>
                 </div>
 
