@@ -159,6 +159,13 @@ class QuotationProductPageService
      */
     private function createPackageToCalculate()
     {
+        $contents = [];
+
+        $contents[$this->product->id] = [
+            'data' => $this->product,
+            'quantity' => $this->quantity
+        ];
+
         $this->package = [
             'ship_via'     => '',
             'destination'  => [
@@ -166,32 +173,7 @@ class QuotationProductPageService
                 'state'    => $this->destination->uf,
                 'postcode' => $this->destination->cep,
             ],
-            'cotationProduct' => [
-                (object) [
-                    'id' => $this->product->get_id(),
-                    'shipping_class_id' => $this->product->get_shipping_class_id(),
-                    'weight' => DimensionsHelper::convertWeightUnit(
-                        floatval($this->product->get_weight())
-                    ),
-                    'width' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($this->product->get_width())
-                    ),
-                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($this->product->get_length())
-                    ),
-                    'height' => DimensionsHelper::convertUnitDimensionToCentimeter(
-                        floatval($this->product->get_height())
-                    ),
-                    'quantity' => $this->quantity,
-                    'price' => floatval(
-                        $this->product->get_price()
-                    ),
-                    'insurance_value'    => floatval(
-                        $this->product->get_price()
-                    ),
-                    'notConverterWeight' => true
-                ]
-            ]
+            'contents' => $contents,
         ];
     }
 
@@ -266,6 +248,19 @@ class QuotationProductPageService
             $rate = end($rate);
 
             if (!empty($rate) && $rate->method_id != self::FREE_SHIPPING) {
+
+                $delivery_time = null;
+
+                if (!empty((string) $rate->meta_data['delivery_time'])) {
+                    $delivery_time = $rate->meta_data['delivery_time'];
+                }
+
+                if (!empty((string) $rate->meta_data['_delivery_forecast'])) {
+                    $delivery_time = ($rate->meta_data['_delivery_forecast'] == 1) 
+                        ? "(1 dia útil)" 
+                        : sprintf("(%s dias úteis)", $rate->meta_data['_delivery_forecast']) ;
+                }
+
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
@@ -275,9 +270,7 @@ class QuotationProductPageService
                     'price' => (!empty((string) $rate->meta_data['price']))
                         ? $rate->meta_data['price']
                         : MoneyHelper::price($rate->get_cost(), 0, 0),
-                    'delivery_time' => (!empty((string) $rate->meta_data['delivery_time']))
-                        ? $rate->meta_data['delivery_time']
-                        : null,
+                    'delivery_time' => $delivery_time
                 ];
             }
         }, $this->shippingMethods);
