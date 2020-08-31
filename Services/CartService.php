@@ -17,7 +17,7 @@ class CartService
      * @param int $orderId
      * @param array $products
      * @param array $to
-     * @param integer $shippingMethodId
+     * @param int $shippingMethodId
      * @return void
      */
     public function add($orderId, $products, $to, $shippingMethodId)
@@ -27,6 +27,8 @@ class CartService
         $quotation = (new QuotationService())->calculateQuotationByOrderId($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
+
+        $shippingMethodService = new CalculateShippingMethodService();
 
         $options = (new Option())->getOptions();
 
@@ -38,9 +40,11 @@ class CartService
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
-                "insurance_value" => $this->getInsuranceValueByProducts($products),
-                "receipt" => $options->ar,
-                "own_hand" => $options->mp,
+                "insurance_value" => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)) 
+                    ? $this->getInsuranceValueByProducts($products) 
+                    : 0,
+                "receipt" => $options->receipt,
+                "own_hand" => $options->own_hand,
                 "collect" => false,
                 "reverse" => false,
                 "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),

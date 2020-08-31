@@ -43,6 +43,7 @@ class CalculateShippingMethodService
             ? $package['cotationProduct']
             : (new CartWooCommerceService())->getProducts();
 
+
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,
             $to,
@@ -229,5 +230,25 @@ class CalculateShippingMethodService
         ];
 
         return (in_array($productShippingClassId, $shippingsMehodsWithoutClass) && in_array($shippingClassId, $shippingsMehodsWithoutClass));
+    }
+
+    /**
+     * Function to check if the insured amount is mandatory
+     *
+     * @param bool $optionalInsuredAmount
+     * @param string $serviceId
+     * @return bool
+     */
+    public function insuranceValueIsRequired($optionalInsuredAmount, $serviceId)
+    {
+        if ($optionalInsuredAmount && is_null($serviceId)) {
+            return true;
+        }
+
+        if (!$this->isCorreios($serviceId)) {
+            return true;
+        }
+        
+        return $optionalInsuredAmount;
     }
 }
