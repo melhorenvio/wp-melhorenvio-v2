@@ -203,8 +203,6 @@ class WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto {
                             <thead>
                                 <tr>
                                     <td><strong>Forma de envio</strong></td>
-                                    <td><strong>Custo estimado</strong></td>
-                                    <td><strong>Entrega estimada</strong></td>
                                 </tr>
                             </thead>
                             <tbody>
