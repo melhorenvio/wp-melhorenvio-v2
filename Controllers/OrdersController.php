@@ -100,7 +100,7 @@ class OrdersController
         $status = null;
 
         $orderQuotationService = new OrderQuotationService();
-            
+
         $dataOrder = $orderQuotationService->getData($postId);
 
         if (!empty($dataOrder['order_id'])) {
@@ -128,7 +128,7 @@ class OrdersController
                 $orderQuotationService->removeDataQuotation($postId);
 
                 if (isset($cartResult['errors'])) {
-                        return wp_send_json([
+                    return wp_send_json([
                         'success' => false,
                         'errors' => $cartResult['errors'],
                     ], 400);
@@ -143,7 +143,6 @@ class OrdersController
             $orderId = $cartResult['order_id'];
 
             $status = $cartResult['status'];
-
         }
 
         $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
@@ -215,25 +214,28 @@ class OrdersController
      */
     public function cancelOrder()
     {
-        if (!isset($_GET['id'])) {
+        if (!isset($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Informar o ID do pedido'
+                'message' => ['Informar o ID do pedido']
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['id']);
+        $result = (new OrderService())->cancel($_GET['post_id']);
 
-        if (!$result['success']) {
+        if (empty(end($result)->canceled)) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao cancelar o pedido'
+                'message' => ['Ocorreu um erro ao cancelar o pedido']
             ], 400);
         }
 
         return wp_send_json([
             'success' => true,
-            'message' => 'Pedido cancelado'
+            'message' => [sprintf(
+                "Pedido %s cancelado com sucesso",
+                $_GET['post_id']
+            )]
         ], 200);
     }
 

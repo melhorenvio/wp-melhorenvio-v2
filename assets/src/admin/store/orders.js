@@ -1,5 +1,6 @@
 'use strict'
 import Axios from 'axios'
+import StatusMelhorEnvio from '../utils/status'
 
 const orders = {
     namespaced: true,
@@ -22,7 +23,6 @@ const orders = {
             state.orders = data
         },
         loadMore: (state, data) => {
-
             state.filters.skip += data.length
             data.map(item => {
                 state.orders.push(item)
@@ -53,7 +53,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = null
+            order.content.status = StatusMelhorEnvio.STATUS_CANCELED
             state.orders.splice(order.position, 1, order.content)
         },
         addCartSimple: (state, data) => {
@@ -66,7 +66,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'pending'
+            order.content.status = StatusMelhorEnvio.STATUS_PENDING
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             order.content.service_id = data.service_id
@@ -82,7 +82,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             order.content.order_id = data.order_id
             order.content.protocol = data.protocol
             order.content.service_id = data.service_id
@@ -130,7 +130,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             state.orders.splice(order.position, 1, order.content)
         },
         createTicket: (state, data) => {
@@ -143,7 +143,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'generated'
+            order.content.status = StatusMelhorEnvio.STATUS_GENERATED
             state.orders.splice(order.position, 1, order.content)
         },
         printTicket: (state, data) => {
@@ -156,7 +156,7 @@ const orders = {
                     }
                 }
             })
-            order.content.status = 'released'
+            order.content.status = StatusMelhorEnvio.STATUS_RELEASED
             state.orders.splice(order.position, 1, order.content)
         },
         setStatusWc: (state, data) => {
@@ -287,8 +287,6 @@ const orders = {
         insertInvoice: ({ commit }, data) => {
             commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}`).then(response => {
-
-                console.log(response.data);
                 commit('updateInvoice', data);
                 commit('setMsgModal', response.data.message)
                 commit('toggleLoader', false)
@@ -401,27 +399,18 @@ const orders = {
         updateQuotation: (context, data) => {
             context.commit('updateQuotation', data)
         },
-        cancelCart: (context, data) => {
+        cancelOrder: (context, data) => {
             context.commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=cancel_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-
-                if (!response.data.success) {
-                    context.commit('setMsgModal', response.data.message)
-                    context.commit('toggleLoader', false)
-                    context.commit('toggleModal', true)
-                    return false
-                }
-
-                context.commit('setMsgModal', 'Item #' + data.id + '  Cancelado')
+            Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}`, data).then(response => {
+                context.commit('setMsgModal', response.data.message)
                 context.commit('toggleModal', true)
-                context.commit('cancelCart', data.id)
+                context.commit('cancelCart', data.post_id)
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
             }).catch(error => {
-                context.commit('setMsgModal', error.message)
+                context.commit('setMsgModal', 'Etiqueta não pode ser cancelada.')
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
-                return false
             })
         },
         payTicket: (context, data) => {

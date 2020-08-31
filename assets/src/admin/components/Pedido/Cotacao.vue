@@ -28,6 +28,22 @@
               {{ pack.dimensions.length }}cm C -
               {{ pack.weight }}Kg
             </p>
+
+            <p>
+              <b>Opcionais:</b> </br>
+              Aviso: 
+                <small v-if="item.cotation[item.cotation.choose_method].additional_services.receipt">Sim</small>
+                <small v-else>Não</small>
+                </br>
+              Mão própria:
+                <small v-if="item.cotation[item.cotation.choose_method].additional_services.own_hand">Sim</small>
+                <small v-else>Não</small>
+                </br>
+              Coleta:
+                <small v-if="item.cotation[item.cotation.choose_method].additional_services.collect">Sim</small>
+                <small v-else>Não</small>
+                </br>
+            </p>
           </template>
 
           <template v-if="item.cotation && item.cotation[item.cotation.choose_method]">

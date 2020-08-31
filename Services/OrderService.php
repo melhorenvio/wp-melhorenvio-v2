@@ -10,6 +10,8 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_CANCEL = '/shipment/cancel';
 
+    const ROUTE_MELHOR_ENVIO_CANCELLABLE = '/shipment/cancellable';
+
     const ROUTE_MELHOR_ENVIO_TRACKING = '/shipment/tracking';
 
     const ROUTE_MELHOR_ENVIO_CART = '/cart';
@@ -30,8 +32,6 @@ class OrderService
      */
     public function cancel($postId)
     {
-        $orders = [];
-
         $orderId = $this->getOrderIdByPostId($postId);
 
         if (is_null($orderId)) {
@@ -41,18 +41,18 @@ class OrderService
             ];
         }
 
-        $orders[] = [
+        $body['order'] = [
             'id'          => $orderId,
             'reason_id'   => self::REASON_CANCELED_USER,
             'description' => 'Cancelado pelo usuário'
         ];
 
-        (new OrderQuotationService())->removeDataQuotation($orderId);
+        (new OrderQuotationService())->removeDataQuotation($postId);
 
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CANCEL,
             'POST',
-            ['orders' => $orders],
+            json_encode($body),
             false
         );
     }
@@ -404,7 +404,7 @@ class OrderService
                 );
             }
         }
-        
+
         return $response;
     }
 
