@@ -274,7 +274,7 @@ class QuotationProductPageService
                 ];
             }
         }, $this->shippingMethods);
-        
+
         $this->showFreeShippingMethod();
         
     }

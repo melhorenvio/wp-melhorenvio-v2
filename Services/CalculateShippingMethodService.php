@@ -39,10 +39,9 @@ class CalculateShippingMethodService
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
-        $products = (isset($package['cotationProduct']))
-            ? $package['cotationProduct']
+        $products = (isset($package['contents']))
+            ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
-
 
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,

@@ -52,10 +52,12 @@ class QuotationService
 
         $productService = new ProductsService();  
 
+        $productsFilter = $productService->filter($products);
+
         $shippingMethodService = new CalculateShippingMethodService();
 
         if (!$shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) {
-            $products = $productService->removePrice($products);
+            $productsFilter = $productService->removePrice($productsFilter);
         }
 
         $body = [
@@ -69,10 +71,10 @@ class QuotationService
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
                 'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) 
-                    ? $productService->getInsuranceValue($products) 
+                    ? $productService->getInsuranceValue($productsFilter) 
                     : 0,
             ],
-            'products' => $products
+            'products' => $productsFilter
         ];
 
         $quotation = $this->getSessionCachedQuotation($body, $service);

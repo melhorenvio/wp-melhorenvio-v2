@@ -74,8 +74,6 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 - Ajuste para salvar dados do vendedor nos options do Wordpress.
 - Correções de warnings
 
-- Adicionando percentual extra sobre o valor do frete.
-
 ### [2.8.1] - 2020-08
 - Retorno do botão de enviar pedido para o carrinho de compras do Melhor Envio.
 - Correção de problemas com valores diferentes entre plugin e Melhor Envio.
