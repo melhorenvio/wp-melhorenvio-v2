@@ -6,6 +6,7 @@ use Models\Address;
 use Models\Agency;
 use Models\Store;
 use Models\Method;
+use Models\Option;
 use Services\ConfigurationsService;
 use Services\OptionsMethodShippingService;
 
@@ -157,8 +158,9 @@ class ConfigurationController
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true"),
-                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true")
+                    'receipt' => (isset($options[$method->code]['receipt']) && $options[$method->code]['receipt'] == "true"),
+                    'own_hand' => (isset($options[$method->code]['own_hand']) && $options[$method->code]['own_hand'] == "true"),
+                    'insurance_value' => (isset($options[$method->code]['insurance_value']) && $options[$method->code]['insurance_value'] == "true")
                 ];
             }
         }
@@ -218,6 +220,42 @@ class ConfigurationController
             return 'woocommerce_before_add_to_cart_button';
         }
         return $option;
+    }
+
+    /**
+     * Function to save receipt and own hands options
+     *
+     * @param array $options
+     * @return array
+     */
+    public function setOptionsCalculator($options)
+    {
+        delete_option(Option::OPTION_RECEIPT);
+        delete_option(Option::OPTION_OWN_HAND);
+        delete_option(Option::OPTION_INSURANCE_VALUE);
+
+        add_option(Option::OPTION_RECEIPT, $options['receipt'], true);
+        add_option(Option::OPTION_OWN_HAND, $options['own_hand'], true);
+        add_option(Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true);
+
+        return [
+            'success' => true,
+            'options' => $this->getOptionsCalculator()
+        ];
+    }
+
+    /**
+     * Function for obtaining acknowledgment options and own hands
+     *
+     * @return array
+     */
+    public function getOptionsCalculator()
+    {
+        return [
+            'receipt' => filter_var(get_option(Option::OPTION_RECEIPT, "false"), FILTER_VALIDATE_BOOLEAN),
+            'own_hand' => filter_var(get_option(Option::OPTION_OWN_HAND, "false"), FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var(get_option(Option::OPTION_INSURANCE_VALUE, "true"), FILTER_VALIDATE_BOOLEAN)
+        ];
     }
 
     /**

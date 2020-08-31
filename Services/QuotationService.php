@@ -45,9 +45,18 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
+
         $seller = (new SellerService())->getData();
 
         $options = (new Option())->getOptions();
+
+        $productService = new ProductsService();  
+
+        $shippingMethodService = new CalculateShippingMethodService();
+
+        if (!$shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) {
+            $products = $productService->removePrice($products);
+        }
 
         $body = [
             'from' => [
@@ -57,8 +66,11 @@ class QuotationService
                 'postal_code' => $postalCode
             ],
             'options' => [
-                'own_hand' => $options->mp,
-                'receipt' => $options->ar
+                'own_hand' => $options->own_hand,
+                'receipt' => $options->receipt,
+                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) 
+                    ? $productService->getInsuranceValue($products) 
+                    : 0,
             ],
             'products' => $products
         ];
@@ -103,8 +115,8 @@ class QuotationService
                 'postal_code' => $postalCode
             ],
             'options' => [
-                'own_hand' => $options->mp,
-                'receipt' => $options->ar
+                'own_hand' => $options->own_hand,
+                'receipt' => $options->receipt
             ],
             'packages' => $packages
         ];
