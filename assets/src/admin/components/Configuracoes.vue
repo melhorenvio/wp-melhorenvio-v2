@@ -243,12 +243,16 @@
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" v-model="options_calculator.ar" />
+            <input type="checkbox" value="Personalizar" v-model="options_calculator.receipt" />
             Aviso de recebimento
           </li>
           <li>
-            <input type="checkbox" value="Personalizar" v-model="options_calculator.mp" />
+            <input type="checkbox" value="Personalizar" v-model="options_calculator.own_hand" />
             Mão própria
+          </li>
+          <li>
+            <input type="checkbox" value="Personalizar" v-model="options_calculator.insurance_value" />
+            Usar valor segurado <small>(Correios)</small>
           </li>
         </ul>
       </div>
@@ -415,8 +419,9 @@ export default {
       show_calculator: false,
       show_all_agencies_jadlog: false,
       options_calculator: {
-        ar: false,
-        mp: true
+        receipt: false,
+        own_hand: true,
+        insurance_value: true
       },
       path_plugins: "",
       show_path: false,
@@ -551,18 +556,17 @@ export default {
     },
     updateConfig() {
       this.setLoader(true);
-      var data = new Array();
-
+      let data = new Array();
       data["address"] = this.address;
       data["store"] = this.store;
       data["agency"] = this.agency;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
-      data["methods_shipments"] = this.methods_shipments;
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
-      var respSave = this.saveAll(data);
+
+      let respSave = this.saveAll(data);
 
       respSave
         .then(resolve => {

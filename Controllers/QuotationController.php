@@ -61,7 +61,7 @@ class QuotationController
         $this->isValidRequest($data);
 
         $rates = (new QuotationProductPageService(
-            $data['id_produto'],
+            intval($data['id_produto']),
             $data['cep_origem'],
             $data['quantity']
         ))->getRatesShipping();
