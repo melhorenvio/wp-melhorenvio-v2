@@ -25,12 +25,53 @@ class QuotationService
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
 
-        $quotations = $this->calculateQuotationByProducts(
-            $products,
-            $buyer->postal_code,
-            null
+        $seller = (new SellerService())->getData();
+
+        $options = (new Option())->getOptions();
+
+        $productService = new ProductsService();
+
+        $productsFilter = $productService->filter($products);
+
+        $shippingMethodService = new CalculateShippingMethodService();
+
+        $body = [
+            'from' => [
+                'postal_code' => $seller->postal_code,
+            ],
+            'to' => [
+                'postal_code' => $buyer->postal_code
+            ],
+            'options' => [
+                'own_hand' => $options->own_hand,
+                'receipt' => $options->receipt,
+                'insurance_value' => true
+            ],
+            'products' => $productsFilter,
+        ];
+
+        $quotations = (new RequestService())->request(
+            self::ROUTE_API_MELHOR_CALCULATE,
+            'POST',
+            $body,
+            true
         );
 
+        if (!$options->insurance_value) {
+            $body['products'] = $productService->removePrice($productsFilter);
+            $body['options']['insurance_value'] = false;
+            $body['services'] = implode(CalculateShippingMethodService::SERVICES_CORREIOS, ',');
+
+            $quotationWithoutInsurance = (new RequestService())->request(
+                self::ROUTE_API_MELHOR_CALCULATE,
+                'POST',
+                $body,
+                true
+            );
+
+            $quotations = array_merge($quotations, $quotationWithoutInsurance);
+        }
+        
         return (new OrderQuotationService())->saveQuotation($orderId, $quotations);
     }
 
