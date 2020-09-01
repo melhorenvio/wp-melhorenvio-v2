@@ -23,13 +23,19 @@ class QuotationService
 
         $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
 
-        $quotation = $this->calculateQuotationByProducts(
+        $quotations = $this->calculateQuotationByProducts(
             $products,
             $buyer->postal_code,
             null
         );
 
-        return (new OrderQuotationService())->saveQuotation($orderId, $quotation);
+        $quotations = $this->findItemCorreiosForRecalculeQuotationWithoutInsurance(
+            $quotations, 
+            $products, 
+            $buyer
+        );
+
+        return (new OrderQuotationService())->saveQuotation($orderId, $quotations);
     }
 
     /**
@@ -244,5 +250,49 @@ class QuotationService
         }
 
         return false;
+    }
+
+    /**
+     * Function to check if the quotation is Correios and has errors
+     *
+     * @param object $quotation
+     * @return boolean
+     */
+    private function isCorreiosWithErrors($quotation)
+    {
+        $calculateService = new CalculateShippingMethodService();
+
+        return (!empty($quotation->error) || !$calculateService->isCorreios($quotation->id));
+    }
+
+    /**
+     * Function to search for quotation Correios and to reject without insurance value
+     *
+     * @param array $quotations
+     * @param array $products
+     * @param object $buyer
+     * 
+     * @return array
+     */
+    private function findItemCorreiosForRecalculeQuotationWithoutInsurance($quotations, $products, $buyer)
+    {
+        $options = (new option())->getOptions();
+        
+        if (!$options->insurance_value) {
+            foreach ($quotations as $key => $quotation) {
+
+                if ($this->isCorreiosWithErrors($quotation)) {
+                    continue;
+                }
+
+                $quotations[$key] = $this->calculateQuotationByProducts(
+                    $products,
+                    $buyer->postal_code,
+                    $quotation->id
+                );
+            }
+        }
+
+        return $quotations;
     }
 }
