@@ -12,30 +12,15 @@ class ProductsService
      */
     public function getInsuranceValue($products)
     {
-        if (is_object($products)) {
-            return $products->price;
-        }
-
         $insuranceValue = 0;
         foreach ($products as $product) {
-            if (is_object($product)) {
-                $insuranceValue = $insuranceValue + $product->price;
-            }
-
             if (is_array($product)) {
-
-                if (!empty($product['data']) && is_object($product['data'])) {
-                    $value = $product['data']->get_price();
-                }
-
                 if (!empty($product['unitary_value'])) {
                     $value = $product['unitary_value'] * $product['quantity'];
                 }
-
                 $insuranceValue = $insuranceValue + $value;
             }
         }
-
         return $insuranceValue;
     }
 
@@ -48,20 +33,10 @@ class ProductsService
      */
     public function removePrice($products)
     {
-        if (is_object($products)) {
-            unset($products->price);
-            unset($products->insurance_value);
-            return $products;
-        }
-
         foreach ($products as $key => $product) {
-            if (is_object($product)) {
-                unset($products[$key]->price);
-                unset($products[$key]->insurance_value);
-            } else {
-                unset($products[$key]['price']);
-                unset($products[$key]['insurance_value']);
-            }
+            unset($products[$key]['price']);
+            unset($products[$key]['insurance_value']);
+            
         }
 
         return $products;
