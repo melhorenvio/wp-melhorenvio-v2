@@ -304,9 +304,7 @@ class QuotationProductPageService
     private function showFreeShippingMethod()
     {
         $free = array_filter($this->shippingMethods, function ($item) {
-            if ($item->id == self::FREE_SHIPPING) {
-                return $item;
-            }
+            return $item->id == self::FREE_SHIPPING;
         });
 
         if (!empty($free)) {
