@@ -29,7 +29,7 @@ class ProductsService
                 }
 
                 if (!empty($product['unitary_value'])) {
-                    $value = $product['unitary_value'];
+                    $value = $product['unitary_value'] * $product['quantity'];
                 }
 
                 $insuranceValue = $insuranceValue + $value;

@@ -187,16 +187,12 @@ class QuotationProductPageService
         global $woocommerce;
 
         $woocommerce->customer->set_shipping_postcode( $this->destination->cep );
-        $woocommerce->customer->set_postcode( $this->destination->cep );
 
         $woocommerce->customer->set_shipping_city( $this->destination->cidade );
-        $woocommerce->customer->set_city( $this->destination->cidade );
 
         $woocommerce->customer->set_shipping_state( $this->destination->uf );
-        $woocommerce->customer->set_state( $this->destination->uf );
 
         $woocommerce->customer->set_shipping_address( $this->destination->logradouro );
-        $woocommerce->customer->set_address( $this->destination->logradouro );
     }
 
     /**
