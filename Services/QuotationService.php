@@ -33,8 +33,6 @@ class QuotationService
 
         $productsFilter = $productService->filter($products);
 
-        $shippingMethodService = new CalculateShippingMethodService();
-
         $body = [
             'from' => [
                 'postal_code' => $seller->postal_code,
@@ -71,7 +69,7 @@ class QuotationService
 
             $quotations = array_merge($quotations, $quotationWithoutInsurance);
         }
-        
+
         return (new OrderQuotationService())->saveQuotation($orderId, $quotations);
     }
 
@@ -312,7 +310,7 @@ class QuotationService
     private function findItemCorreiosForRecalculeQuotationWithoutInsurance($quotations, $products, $buyer)
     {
         $options = (new option())->getOptions();
-        
+
         if (!$options->insurance_value) {
             foreach ($quotations as $key => $quotation) {
 
