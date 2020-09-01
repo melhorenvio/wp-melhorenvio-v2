@@ -247,7 +247,7 @@ class CalculateShippingMethodService
         if (!$this->isCorreios($serviceId)) {
             return true;
         }
-        
+
         return $optionalInsuredAmount;
     }
 }

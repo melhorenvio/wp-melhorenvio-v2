@@ -13,13 +13,13 @@ class ProductsService
     public function getInsuranceValue($products)
     {
         if (is_object($products)) {
-            return $products->price * $products->quantity;
+            return $products->price;
         }
 
         $insuranceValue = 0;
         foreach ($products as $product) {
             if (is_object($product)) {
-                $insuranceValue = $insuranceValue + ($product->price * $product->quantity);
+                $insuranceValue = $insuranceValue + $product->price;
             }
 
             if (is_array($product)) {
@@ -32,7 +32,7 @@ class ProductsService
                     $value = $product['unitary_value'];
                 }
 
-                $insuranceValue = $insuranceValue + ($value * $product['quantity']);
+                $insuranceValue = $insuranceValue + $value;
             }
         }
 
@@ -89,7 +89,7 @@ class ProductsService
                     'length' => $product->get_length(),
                     'weight' =>  $product->get_weight(),
                     'unitary_value' =>  $product->get_price(),
-                    'insurance_value' => ($product->get_price() * $item['quantity']),
+                    'insurance_value' => $product->get_price(),
                     'quantity' =>   $item['quantity']
                 ];
             }

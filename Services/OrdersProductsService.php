@@ -29,7 +29,7 @@ class OrdersProductsService
                 "name"            => $_product->get_name(),
                 "quantity"        => $item_product->get_quantity(),
                 "unitary_value"   => round($_product->get_price(), 2),
-                "insurance_value" => round(($_product->get_price() * $item_product->get_quantity()), 2),
+                "insurance_value" => round($_product->get_price(), 2),
                 "weight"          => DimensionsHelper::convertWeightUnit($_product->get_weight()),
                 "width"           => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_width()),
                 "height"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_height()),
