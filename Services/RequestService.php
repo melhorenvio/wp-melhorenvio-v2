@@ -62,9 +62,9 @@ class RequestService
             )
         );
 
-        if (isset($response->errors) || isset($response->error)) {
-            return $this->treatmentErrors($response);
-        }
+        //if (isset($response->errors) || isset($response->error)) {
+        //    return $this->treatmentErrors($response);
+        //}
 
         return $response;
     }

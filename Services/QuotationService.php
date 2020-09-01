@@ -11,6 +11,8 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
+    const PERCENT_INSURANCE_VALUE = 5;
+
     /**
      * Function to calculate a quotation by order_id.
      *
@@ -27,12 +29,6 @@ class QuotationService
             $products,
             $buyer->postal_code,
             null
-        );
-
-        $quotations = $this->findItemCorreiosForRecalculeQuotationWithoutInsurance(
-            $quotations, 
-            $products, 
-            $buyer
         );
 
         return (new OrderQuotationService())->saveQuotation($orderId, $quotations);

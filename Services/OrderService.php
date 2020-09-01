@@ -206,7 +206,17 @@ class OrderService
         );
 
         if (array_key_exists('errors', $result)) {
-            return $result;
+            return [
+                'success' => false,
+                'errors' => $result->errors
+            ];
+        }
+
+        if (array_key_exists('error', $result)) {
+            return [
+                'success' => false,
+                'errors' => [$result->error]
+            ];
         }
 
         $response = (new OrderQuotationService())->updateDataQuotation(
@@ -246,7 +256,17 @@ class OrderService
         );
 
         if (array_key_exists('errors', $result)) {
-            return $result;
+            return [
+                'success' => false,
+                'errors' => $result->errors
+            ];
+        }
+
+        if (array_key_exists('error', $result)) {
+            return [
+                'success' => false,
+                'errors' => [$result->error]
+            ];
         }
 
         $data = (new OrderQuotationService())->getData($postId);

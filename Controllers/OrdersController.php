@@ -61,8 +61,12 @@ class OrdersController
             $service
         );
 
-        if (isset($result['success']) && !$result['success']) {
-            return wp_send_json($result, 400);
+
+        if (!empty($result['errors'])) {
+            return wp_send_json([
+                'success' => false,
+                'errors' => [$result['errors']]
+            ], 400);
         }
 
         return wp_send_json($result, 200);
@@ -80,14 +84,14 @@ class OrdersController
         if (empty($_GET['post_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Informar o ID do pedido'
+                'errors' => ['Informar o ID do pedido']
             ], 412);
         }
 
         if (empty($_GET['service_id'])) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Informar o ID do serviço selecionado'
+                'errors' => ['Informar o ID do serviço selecionado']
             ], 412);
         }
 
