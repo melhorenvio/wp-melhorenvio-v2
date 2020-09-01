@@ -76,9 +76,7 @@ class QuotationService
             'options' => [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service))
-                    ? $productService->getInsuranceValue($productsFilter)
-                    : 0,
+                'insurance_value' => $shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)
             ],
             'products' => $productsFilter
         ];
