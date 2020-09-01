@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\DimensionsHelper;
+
 class ProductsService
 {
     /**
@@ -62,7 +64,7 @@ class ProductsService
                     'width' =>  $product->get_width(),
                     'height' =>  $product->get_height(),
                     'length' => $product->get_length(),
-                    'weight' =>  $product->get_weight(),
+                    'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
                     'unitary_value' =>  $product->get_price(),
                     'insurance_value' => $product->get_price(),
                     'quantity' =>   $item['quantity']
