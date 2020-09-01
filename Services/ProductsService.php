@@ -11,7 +11,7 @@ class ProductsService
      * @return float
      */
     public function getInsuranceValue($products)
-    {   
+    {
         if (is_object($products)) {
             return $products->price * $products->quantity;
         }
@@ -28,7 +28,7 @@ class ProductsService
                     $value = $product['data']->get_price();
                 }
 
-                if (!empty($product['unitary_value'])){
+                if (!empty($product['unitary_value'])) {
                     $value = $product['unitary_value'];
                 }
 
@@ -73,26 +73,28 @@ class ProductsService
      * @param array $products
      * @return array
      */
-    public function filter($data) {
-
+    public function filter($data)
+    {
         $products = [];
-        
+
         foreach ($data as $item) {
-
-            $product = $item['data'];
-
-            $products[] = [
-                'id'=>  $product->get_name(),
-                'width'=>  $product->get_width(),
-                'height'=>  $product->get_height(),
-                'length'=> $product->get_length(),
-                'weight'=>  $product->get_weight(),
-                'unitary_value'=>  $product->get_price(),
-                'quantity'=>   $item['quantity']
-            ];
+            if (empty($item['data'])) {
+                $products[] = $item;
+            } else {
+                $product = $item['data'];
+                $products[] = [
+                    'id' =>  $product->get_name(),
+                    'width' =>  $product->get_width(),
+                    'height' =>  $product->get_height(),
+                    'length' => $product->get_length(),
+                    'weight' =>  $product->get_weight(),
+                    'unitary_value' =>  $product->get_price(),
+                    'insurance_value' => ($product->get_price() * $item['quantity']),
+                    'quantity' =>   $item['quantity']
+                ];
+            }
         }
 
         return $products;
     }
-
 }

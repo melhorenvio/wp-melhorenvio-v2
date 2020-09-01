@@ -50,7 +50,7 @@ class QuotationService
 
         $options = (new Option())->getOptions();
 
-        $productService = new ProductsService();  
+        $productService = new ProductsService();
 
         $productsFilter = $productService->filter($products);
 
@@ -70,8 +70,8 @@ class QuotationService
             'options' => [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) 
-                    ? $productService->getInsuranceValue($productsFilter) 
+                'insurance_value' => ($shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service))
+                    ? $productService->getInsuranceValue($productsFilter)
                     : 0,
             ],
             'products' => $productsFilter
