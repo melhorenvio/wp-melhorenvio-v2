@@ -61,11 +61,11 @@ class ProductsService
                 $product = $item['data'];
                 $products[] = [
                     'id' =>  $product->get_name(),
-                    'width' =>  $product->get_width(),
-                    'height' =>  $product->get_height(),
-                    'length' => $product->get_length(),
+                    'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
+                    'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
+                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
                     'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-                    'unitary_value' =>  $product->get_price(),
+                    'unitary_value' => $product->get_price(),
                     'insurance_value' => $product->get_price(),
                     'quantity' =>   $item['quantity']
                 ];

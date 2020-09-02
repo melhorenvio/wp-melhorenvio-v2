@@ -83,13 +83,6 @@ class CartService
             ];
         }
 
-        if (!empty($result->error)) {
-            return [
-                'success' => false,
-                'errors' => $result->error
-            ];
-        }
-
         if (empty($result->id)) {
             return [
                 'success' => false,
