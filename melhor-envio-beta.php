@@ -59,7 +59,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     return false;
 }
 
-use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
+use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Models\Method;
 use Services\RouterService;
@@ -105,7 +105,6 @@ final class Base_Plugin
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
-
     }
 
     /**
@@ -293,8 +292,7 @@ final class Base_Plugin
 
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
-            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
-            $cotacaoProd->run();
+            (new ShowCalculatorProductPage())->insertCalculator();
         }
 
         add_action('init', array($this, 'init_classes'));

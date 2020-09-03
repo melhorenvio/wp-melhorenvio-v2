@@ -76,11 +76,6 @@
                         'action': 'cotation_product_page',
                         'data': {
                             'cep_origem': cep,
-                            'produto_altura': altura,
-                            'produto_largura': largura,
-                            'produto_comprimento': comprimento,
-                            'produto_peso': peso,
-                            'produto_preco': preco,
                             'id_produto': id_produto,
                             'quantity': qty
                         }
@@ -130,7 +125,7 @@
 
         function exibirLoader() {
             $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calcular-frete').css('display', 'none');
-            $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calcular-frete-loader').css('display', 'inline-block');
+            $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calcular-frete-loader').css('display', 'flex');
         }
 
         function esconderLoader() {
