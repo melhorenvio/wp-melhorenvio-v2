@@ -75,37 +75,45 @@ class ShowCalculatorProductPage
         wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
         wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
-?>
-        <div id="woocommerce-correios-calculo-de-frete-na-pagina-do-produto" class="containerCalculator">
+        echo sprintf(
+            "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
             <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
-            <input type="hidden" id="calculo_frete_endpoint_url" value="<?php echo admin_url('admin-ajax.php'); ?>">
-            <input type="hidden" id="calculo_frete_produto_altura" value="<?php echo $this->height; ?>">
-            <input type="hidden" id="calculo_frete_produto_largura" value="<?php echo $this->width; ?>">
-            <input type="hidden" id="calculo_frete_produto_comprimento" value="<?php echo $this->length; ?>">
-            <input type="hidden" id="calculo_frete_produto_peso" value="<?php echo $this->weight; ?>">
-            <input type="hidden" id="calculo_frete_produto_preco" value="<?php echo $this->price; ?>">
-            <input type="hidden" id="id_produto" value="<?php echo $this->id; ?>">
-            <div class="calculatorRow">
-                <div class="row">
-                    <div class="col-75">
+            <input type='hidden' id='calculo_frete_endpoint_url' value='%s'>
+            <input type='hidden' id='calculo_frete_produto_altura' value='%f'>
+            <input type='hidden' id='calculo_frete_produto_largura' value='%f'>
+            <input type='hidden' id='calculo_frete_produto_comprimento' value='%f'>
+            <input type='hidden' id='calculo_frete_produto_peso' value='%f'>
+            <input type='hidden' id='calculo_frete_produto_preco' value='%f'>
+            <input type='hidden' id='id_produto' value='%d'>
+            <div class='calculatorRow'>
+                <div class='row'>
+                    <div class='col-75'>
                         <p>Simulação de frete</p>
-                        <input type="text" maxlength="9" class="iptCep calculatorRow" placeholder="Informe seu cep" onkeydown="return mascara(this, '#####-###');">
+                        <input type='text' maxlength='9' class='iptCep calculatorRow' placeholder='Informe seu cep' onkeydown='%s'>
                     </div>
                 </div>
-                <div id="calcular-frete-loader">
-                    <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif" />
+                <div id='calcular-frete-loader'>
+                    <img src='https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif' />
                 </div>
-                <div class="resultado-frete tableResult">
+                <div class=resultado-frete tableResult>
                     <table>
                         <thead>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
-                    <small class="observation-shipping-free"></small>
+                    <small class='observation-shipping-free'></small>
                 </div>
             </div>
-        </div>
-<?php
+        </div>",
+            admin_url('admin-ajax.php'),
+            $this->height,
+            $this->width,
+            $this->length,
+            $this->weight,
+            $this->price,
+            $this->id,
+            'return mascara(this, "#####-###")'
+        );
     }
 }

@@ -2,7 +2,6 @@
     'use strict';
     $(function () {
         $(document).on('keyup', '.iptCepShortcode', function (e) {
-            console.log($('.iptCepShortcode').val());
             if ($('.iptCepShortcode').val().length === 9) {
                 resetarTabela();
                 if ($(e.target).is('a#cfpp_credits')) { return; }
