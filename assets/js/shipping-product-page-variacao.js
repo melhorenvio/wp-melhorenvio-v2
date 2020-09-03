@@ -3,7 +3,7 @@
 
     jQuery(function () {
         jQuery(document).ready(function () {
-            showOrHideCalculatorLessDimensions();
+            toggleCalculator();
             if (!jQuery('.variations_form')) {
                 return;
             }
@@ -54,35 +54,7 @@
             jQuery('#calculo_frete_produto_largura').val(variations[selected].dimensions.width)
             jQuery('#calculo_frete_produto_comprimento').val(variations[selected].dimensions.length)
             jQuery('#calculo_frete_produto_peso').val(variations[selected].weight)
-            showOrHideCalculatorLessDimensions();
+            toggleCalculator();
         }
     }
-
-    function getDimensions() {
-        let dimensions = {
-            'heigth': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura').val(),
-            'width': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_largura').val(),
-            'length': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_comprimento').val(),
-            'weight': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_peso').val()
-        }
-        return dimensions;
-    }
-
-    function showOrHideCalculatorLessDimensions() {
-        let dimensions = getDimensions();
-        if (!dimensions.width
-            || !dimensions.heigth
-            || !dimensions.length
-            || !dimensions.weight
-            || dimensions.width == 0
-            || dimensions.heigth == 0
-            || dimensions.length == 0
-            || dimensions.weight == 0
-        ) {
-            jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').css('display', 'none');
-            return;
-        }
-        jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').css('display', 'block');
-    }
-
 })(jQuery);
