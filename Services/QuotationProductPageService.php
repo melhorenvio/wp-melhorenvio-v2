@@ -255,9 +255,7 @@ class QuotationProductPageService
 
                 $delivery_time = null;
                 $price = 0;
-
                 if (property_exists($rate, 'meta_data')) {
-                    
                     $meta_data = $rate->meta_data;
 
                     if (!empty($meta_data['price'])) {
@@ -270,27 +268,28 @@ class QuotationProductPageService
 
                     if (!empty($meta_data['_delivery_forecast'])) {
                         $delivery_time = ($meta_data['_delivery_forecast'] == 1)
-                        ? "(1 dia útil)"
-                        : sprintf("(%s dias úteis)", $meta_data['_delivery_forecast']) ;
+                            ? "(1 dia útil)"
+                            : sprintf("(%s dias úteis)", $meta_data['_delivery_forecast']);
                     }
                 }
+
+                $cost = $rate->get_cost();
 
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
                     'cost' => (!empty((string) $price))
                         ? $price
-                        : MoneyHelper::cost($rate->get_cost(), 0, 0),
+                        : MoneyHelper::cost($cost, 0, 0),
                     'price' => (!empty((string) $price))
                         ? $price
-                        : MoneyHelper::price($rate->get_cost(), 0, 0),
+                        : MoneyHelper::price($cost, 0, 0),
                     'delivery_time' => $delivery_time
                 ];
             }
         }, $this->shippingMethods);
-        
+
         $this->showFreeShippingMethod();
-        
     }
 
     /**
