@@ -30,6 +30,10 @@ class ShortCodeService
      */
     public function addCalculoDeFrete()
     {
+        wp_enqueue_script('produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
+        wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
+        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
+
         echo sprintf(
             "
             <style>

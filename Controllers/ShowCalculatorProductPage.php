@@ -33,7 +33,6 @@ class ShowCalculatorProductPage
     {
         wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', 'jquery');
         wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js', 'jquery');
-        wp_enqueue_script('produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
     }
 
     /**
