@@ -74,6 +74,10 @@
             || !dimensions.heigth
             || !dimensions.length
             || !dimensions.weight
+            || dimensions.width == 0
+            || dimensions.heigth == 0
+            || dimensions.length == 0
+            || dimensions.weight == 0
         ) {
             jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').css('display', 'none');
             return;
