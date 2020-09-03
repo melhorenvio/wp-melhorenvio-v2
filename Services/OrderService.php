@@ -205,17 +205,10 @@ class OrderService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
+        if (!empty($result->errors)) {
             return [
                 'success' => false,
                 'errors' => $result->errors
-            ];
-        }
-
-        if (array_key_exists('error', $result)) {
-            return [
-                'success' => false,
-                'errors' => [$result->error]
             ];
         }
 
@@ -255,17 +248,10 @@ class OrderService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
+        if (!empty($result->errors)) {
             return [
                 'success' => false,
                 'errors' => $result->errors
-            ];
-        }
-
-        if (array_key_exists('error', $result)) {
-            return [
-                'success' => false,
-                'errors' => [$result->error]
             ];
         }
 
