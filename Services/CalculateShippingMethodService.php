@@ -39,10 +39,9 @@ class CalculateShippingMethodService
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
-        $products = (isset($package['cotationProduct']))
-            ? $package['cotationProduct']
+        $products = (isset($package['contents']))
+            ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
-
 
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,
@@ -248,7 +247,7 @@ class CalculateShippingMethodService
         if (!$this->isCorreios($serviceId)) {
             return true;
         }
-        
+
         return $optionalInsuredAmount;
     }
 }
