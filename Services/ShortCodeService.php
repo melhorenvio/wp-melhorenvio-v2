@@ -65,7 +65,7 @@ class ShortCodeService
                     <table>
                         <thead>
                             <tr>
-                                <td><strong>Forma de envio</strong></td>
+                                <td><strong>Formas de envios</strong></td>
                             </tr>
                         </thead>
                         <tbody>
