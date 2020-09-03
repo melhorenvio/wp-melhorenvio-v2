@@ -16,6 +16,7 @@ class ProductsService
     {
         $insuranceValue = 0;
         foreach ($products as $product) {
+            $value = 0;
             if (is_array($product)) {
                 if (!empty($product['unitary_value'])) {
                     $value = $product['unitary_value'] * $product['quantity'];
@@ -38,7 +39,6 @@ class ProductsService
         foreach ($products as $key => $product) {
             unset($products[$key]['price']);
             unset($products[$key]['insurance_value']);
-            
         }
 
         return $products;
