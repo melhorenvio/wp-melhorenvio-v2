@@ -3,10 +3,11 @@
 
     jQuery(function () {
         jQuery(document).ready(function () {
+            showOrHideCalculatorLessDimensions();
             if (!jQuery('.variations_form')) {
                 return;
             }
-            var variations = jQuery('.variations_form').data('product_variations');
+            let variations = jQuery('.variations_form').data('product_variations');
             updateVariation(variations);
             jQuery('.variations select').change(function () {
                 updateVariation(variations);
@@ -15,14 +16,14 @@
     });
 
     function updateVariation(variations) {
-        var attribbutes = new Array();
+        let attribbutes = new Array();
         if (jQuery('.variations select').length == 0) {
             return;
         }
 
         jQuery('.variations select').each(function () {
-            var key = jQuery(this).attr('data-attribute_name');
-            var value = this.value;
+            let key = jQuery(this).attr('data-attribute_name');
+            let value = this.value;
             if (value == "") {
                 return;
             }
@@ -36,7 +37,7 @@
             return;
         }
 
-        var selected;
+        let selected;
         if (jQuery('.variations select').length == attribbutes.length) {
             variations.map(function (variant, index) {
                 attribbutes.map(function (attr) {
@@ -48,12 +49,36 @@
         }
 
         if (typeof selected == 'number') {
-            console.log(variations[selected].weight)
             jQuery('#id_produto').val(variations[selected].variation_id)
             jQuery('#calculo_frete_produto_altura').val(variations[selected].dimensions.height)
             jQuery('#calculo_frete_produto_largura').val(variations[selected].dimensions.width)
             jQuery('#calculo_frete_produto_comprimento').val(variations[selected].dimensions.length)
             jQuery('#calculo_frete_produto_peso').val(variations[selected].weight)
+            showOrHideCalculatorLessDimensions();
         }
     }
+
+    function getDimensions() {
+        let dimensions = {
+            'heigth': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura').val(),
+            'width': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_largura').val(),
+            'length': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_comprimento').val(),
+            'weight': jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_peso').val()
+        }
+        return dimensions;
+    }
+
+    function showOrHideCalculatorLessDimensions() {
+        let dimensions = getDimensions();
+        if (!dimensions.width
+            || !dimensions.heigth
+            || !dimensions.length
+            || !dimensions.weight
+        ) {
+            jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').css('display', 'none');
+            return;
+        }
+        jQuery('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').css('display', 'block');
+    }
+
 })(jQuery);
