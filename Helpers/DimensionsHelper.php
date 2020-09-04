@@ -29,17 +29,10 @@ class DimensionsHelper
      */
     public static function convertUnitDimensionToCentimeter($value)
     {
-        $value = floatval($value);
+        $value  = (float) $value;
+        $toUnit = 'cm';
+        $fromUnit = strtolower(get_option('woocommerce_dimension_unit'));
 
-        $unit = get_option('woocommerce_dimension_unit');
-        if ($unit == 'mm') {
-            $value = $value / 10;
-        }
-
-        if ($unit == 'm') {
-            $value = $value * 10;
-        }
-
-        return number_format($value, 2, '.', '');
+        return floatval(number_format(wc_get_dimension( $value, $toUnit, $fromUnit ), 2, '.', ''));
     }
 }

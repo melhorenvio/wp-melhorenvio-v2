@@ -205,8 +205,11 @@ class OrderService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
-            return $result;
+        if (!empty($result->errors)) {
+            return [
+                'success' => false,
+                'errors' => $result->errors
+            ];
         }
 
         $response = (new OrderQuotationService())->updateDataQuotation(
@@ -245,8 +248,11 @@ class OrderService
             true
         );
 
-        if (array_key_exists('errors', $result)) {
-            return $result;
+        if (!empty($result->errors)) {
+            return [
+                'success' => false,
+                'errors' => $result->errors
+            ];
         }
 
         $data = (new OrderQuotationService())->getData($postId);

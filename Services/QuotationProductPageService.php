@@ -161,7 +161,7 @@ class QuotationProductPageService
     {
         $contents = [];
 
-        $contents[$this->product->id] = [
+        $contents[$this->product->get_id()] = [
             'data' => $this->product,
             'quantity' => $this->quantity
         ];
@@ -186,17 +186,21 @@ class QuotationProductPageService
     {
         global $woocommerce;
 
-        $woocommerce->customer->set_shipping_postcode( $this->destination->cep );
-        $woocommerce->customer->set_postcode( $this->destination->cep );
+        if (!empty($this->destination->cep)) {
+            $woocommerce->customer->set_shipping_postcode($this->destination->cep);
+        }
 
-        $woocommerce->customer->set_shipping_city( $this->destination->cidade );
-        $woocommerce->customer->set_city( $this->destination->cidade );
+        if (!empty($this->destination->cidade)) {
+            $woocommerce->customer->set_shipping_city($this->destination->cidade);
+        }
 
-        $woocommerce->customer->set_shipping_state( $this->destination->uf );
-        $woocommerce->customer->set_state( $this->destination->uf );
+        if (!empty($this->destination->uf)) {
+            $woocommerce->customer->set_shipping_state($this->destination->uf);
+        }
 
-        $woocommerce->customer->set_shipping_address( $this->destination->logradouro );
-        $woocommerce->customer->set_address( $this->destination->logradouro );
+        if (!empty($this->destination->logradouro)) {
+            $woocommerce->customer->set_shipping_address($this->destination->logradouro);
+        }
     }
 
     /**
@@ -250,33 +254,42 @@ class QuotationProductPageService
             if (!empty($rate) && $rate->method_id != self::FREE_SHIPPING) {
 
                 $delivery_time = null;
+                $price = 0;
+                if (property_exists($rate, 'meta_data')) {
+                    $meta_data = $rate->meta_data;
 
-                if (!empty((string) $rate->meta_data['delivery_time'])) {
-                    $delivery_time = $rate->meta_data['delivery_time'];
+                    if (!empty($meta_data['price'])) {
+                        $price = $meta_data['price'];
+                    }
+
+                    if (!empty($meta_data['delivery_time'])) {
+                        $delivery_time = $meta_data['delivery_time'];
+                    }
+
+                    if (!empty($meta_data['_delivery_forecast'])) {
+                        $delivery_time = ($meta_data['_delivery_forecast'] == 1)
+                            ? "(1 dia útil)"
+                            : sprintf("(%s dias úteis)", $meta_data['_delivery_forecast']);
+                    }
                 }
 
-                if (!empty((string) $rate->meta_data['_delivery_forecast'])) {
-                    $delivery_time = ($rate->meta_data['_delivery_forecast'] == 1) 
-                        ? "(1 dia útil)" 
-                        : sprintf("(%s dias úteis)", $rate->meta_data['_delivery_forecast']) ;
-                }
+                $cost = $rate->get_cost();
 
                 return [
                     'id' => $shippingMethod->id,
                     'name' => $shippingMethod->title,
-                    'cost' => (!empty((string) $rate->meta_data['price']))
-                        ? $rate->meta_data['price']
-                        : MoneyHelper::cost($rate->get_cost(), 0, 0),
-                    'price' => (!empty((string) $rate->meta_data['price']))
-                        ? $rate->meta_data['price']
-                        : MoneyHelper::price($rate->get_cost(), 0, 0),
+                    'cost' => (!empty((string) $price))
+                        ? $price
+                        : MoneyHelper::cost($cost, 0, 0),
+                    'price' => (!empty((string) $price))
+                        ? $price
+                        : MoneyHelper::price($cost, 0, 0),
                     'delivery_time' => $delivery_time
                 ];
             }
         }, $this->shippingMethods);
-        
+
         $this->showFreeShippingMethod();
-        
     }
 
     /**
@@ -290,9 +303,7 @@ class QuotationProductPageService
     private function showFreeShippingMethod()
     {
         $free = array_filter($this->shippingMethods, function ($item) {
-            if ($item->id == self::FREE_SHIPPING) {
-                return $item;
-            }
+            return $item->id == self::FREE_SHIPPING;
         });
 
         if (!empty($free)) {
@@ -368,7 +379,10 @@ class QuotationProductPageService
     {
         uasort($this->rates, function ($a, $b) {
             if ($a === $b) return 0;
-            return ($a['price'] < $b['price']) ? -1 : 1;
+            if (!empty($a['price']) && !empty($b['price'])) {
+                return ($a['price'] < $b['price']) ? -1 : 1;
+            }
+            return 0;
         });
 
         return array_values($this->rates);

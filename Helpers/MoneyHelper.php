@@ -2,8 +2,6 @@
 
 namespace Helpers;
 
-use Services\OptionsMethodShippingService;
-
 class MoneyHelper
 {
     /**
@@ -52,7 +50,6 @@ class MoneyHelper
      */
     public static function calculateFinalValue($value, $extra, $percent)
     {
-
         $percentExtra = ($value / 100) * $percent;
 
         return $value + $percentExtra + $extra;

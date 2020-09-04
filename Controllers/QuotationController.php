@@ -70,7 +70,7 @@ class QuotationController
             return wp_send_json([
                 'success' => false,
                 'error' => $rates['error']
-            ], 400);
+            ], 500);
         }
 
         return wp_send_json([
