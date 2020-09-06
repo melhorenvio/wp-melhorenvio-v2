@@ -50,12 +50,18 @@ class ShowCalculatorProductPage
     {
         global $product;
         if (is_product() && !$product->is_virtual('yes')) {
-            $this->preparaProduto($product);
+            $this->prepareProduct($product);
             add_action($this->whereShowCalculator, array($this, 'addCalculateShipping'), 11);
         }
     }
 
-    public function preparaProduto($product)
+    /**
+     * Function to define product properties in the calculator form
+     *
+     * @param object $product
+     * @return void
+     */
+    public function prepareProduct($product)
     {
         $this->product = $product;
         $this->height = $product->get_height();
