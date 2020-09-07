@@ -132,11 +132,11 @@ class RouterService
     private function loadRoutesTest()
     {
         add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.8.0'))->run();
+            (new TestService('2.9.0'))->run();
         });
 
         add_action('wp_ajax_environment', function () {
-            (new TestService('2.8.0'))->run();
+            (new TestService('2.9.0'))->run();
         });
     }
 
@@ -186,6 +186,4 @@ class RouterService
 
         add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
     }
-
-    
 }
