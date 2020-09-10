@@ -1,6 +1,7 @@
 function toggleCalculator() {
 
-    if (!document.querySelector('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura')) {
+    let widthProduct = document.querySelector('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura');
+    if (!widthProduct) {
         return;
     }
 
