@@ -5,13 +5,10 @@ namespace Controllers;
 use Models\Address;
 use Models\Agency;
 use Models\Store;
-use Models\CalculatorShow;
-use Models\JadlogAgenciesShow;
 use Models\Method;
+use Models\Option;
 use Services\ConfigurationsService;
-use Services\MethodShippingService;
 use Services\OptionsMethodShippingService;
-use Services\StoreService;
 
 /**
  * Class responsible for the configuration controller
@@ -161,8 +158,9 @@ class ConfigurationController
                     'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
                     'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
                     'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'ar' => (isset($options[$method->code]['ar']) && $options[$method->code]['ar'] == "true"),
-                    'mp' => (isset($options[$method->code]['mp']) && $options[$method->code]['mp'] == "true")
+                    'receipt' => (isset($options[$method->code]['receipt']) && $options[$method->code]['receipt'] == "true"),
+                    'own_hand' => (isset($options[$method->code]['own_hand']) && $options[$method->code]['own_hand'] == "true"),
+                    'insurance_value' => (isset($options[$method->code]['insurance_value']) && $options[$method->code]['insurance_value'] == "true")
                 ];
             }
         }
@@ -181,14 +179,6 @@ class ConfigurationController
         add_option('melhor_envio_path_plugins', $_GET['path']);
     }
 
-    public function setPathPlugins($path)
-    {
-        delete_option('melhor_envio_path_plugins');
-        add_option('melhor_envio_path_plugins', $path);
-
-        return get_option('melhor_envio_path_plugins');
-    }
-
     public function getPathPlugins()
     {
         $path = get_option('melhor_envio_path_plugins');
@@ -200,39 +190,6 @@ class ConfigurationController
         return wp_send_json([
             'path' => $path
         ], 200);
-    }
-
-    public function getPathPluginsArray()
-    {
-        $path = get_option('melhor_envio_path_plugins');
-
-        if (!$path) {
-            $path = ABSPATH . 'wp-content/plugins';
-        }
-
-        return $path;
-    }
-
-    public function saveoptionsMethod($item)
-    {
-        $id = $item['id'];
-
-        delete_option('melhor_envio_option_method_shipment_' . $id);
-        add_option('melhor_envio_option_method_shipment_' . $id, $item);
-
-        return get_option('melhor_envio_option_method_shipment_' . $id);
-    }
-
-    public function setWhereCalculator($option)
-    {
-
-        delete_option('melhor_envio_option_where_show_calculator');
-        add_option('melhor_envio_option_where_show_calculator', $option);
-
-        return [
-            'success' => true,
-            'option' => $option
-        ];
     }
 
     public function getWhereCalculator()
@@ -273,11 +230,13 @@ class ConfigurationController
      */
     public function setOptionsCalculator($options)
     {
-        delete_option('melhorenvio_ar');
-        delete_option('melhorenvio_mp');
+        delete_option(Option::OPTION_RECEIPT);
+        delete_option(Option::OPTION_OWN_HAND);
+        delete_option(Option::OPTION_INSURANCE_VALUE);
 
-        add_option('melhorenvio_ar', $options['ar'], true);
-        add_option('melhorenvio_mp', $options['mp'], true);
+        add_option(Option::OPTION_RECEIPT, $options['receipt'], true);
+        add_option(Option::OPTION_OWN_HAND, $options['own_hand'], true);
+        add_option(Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true);
 
         return [
             'success' => true,
@@ -293,8 +252,9 @@ class ConfigurationController
     public function getOptionsCalculator()
     {
         return [
-            'ar' => filter_var(get_option('melhorenvio_ar', "false"), FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var(get_option('melhorenvio_mp', "false"), FILTER_VALIDATE_BOOLEAN)
+            'receipt' => filter_var(get_option(Option::OPTION_RECEIPT, "false"), FILTER_VALIDATE_BOOLEAN),
+            'own_hand' => filter_var(get_option(Option::OPTION_OWN_HAND, "false"), FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var(get_option(Option::OPTION_INSURANCE_VALUE, "true"), FILTER_VALIDATE_BOOLEAN)
         ];
     }
 
@@ -306,47 +266,8 @@ class ConfigurationController
      */
     public function saveAll()
     {
-        $data = $_POST;
+        $response = (new ConfigurationsService())->saveConfigurations($_POST);
 
-        $response = [];
-
-        if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping($data['address']);
-        }
-
-        if (isset($data['store'])) {
-            $response['store'] = (new StoreService())->setStore($data['store']);
-        }
-
-        if (isset($data['agency'])) {
-            $response['agency'] = (new Agency())->setAgency($data['agency']);
-        }
-
-        if (isset($data['show_calculator'])) {
-            $response['show_calculator'] = (new CalculatorShow())->set($data['show_calculator']);
-        }
-
-        if (isset($data['show_all_agencies_jadlog'])) {
-            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())->set($data['show_all_agencies_jadlog']);
-        }
-
-        if (isset($data['methods_shipments'])) {
-            foreach ($data['methods_shipments'] as $key => $method) {
-                $response['method'][$key] = $this->saveoptionsMethod($method);
-            }
-        }
-
-        if (isset($data['where_calculator'])) {
-            $response['where_calculator'] = $this->setWhereCalculator($data['where_calculator']);
-        }
-
-        if (isset($data['path_plugins'])) {
-            $response['path_plugins'] = $this->setPathPlugins($data['path_plugins']);
-        }
-
-        if (isset($data['options_calculator'])) {
-            $response['options_calculator'] = $this->setOptionsCalculator($data['options_calculator']);
-        }
         return wp_send_json($response, 200);
     }
 }

@@ -17,7 +17,7 @@ class CartService
      * @param int $orderId
      * @param array $products
      * @param array $to
-     * @param integer $shippingMethodId
+     * @param int $shippingMethodId
      * @return void
      */
     public function add($orderId, $products, $to, $shippingMethodId)
@@ -28,7 +28,17 @@ class CartService
 
         $orderInvoiceService = new OrderInvoicesService();
 
+        $shippingMethodService = new CalculateShippingMethodService();
+
         $options = (new Option())->getOptions();
+
+        $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId)) 
+            ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
+            : true;
+
+        $insuranceValue = ($insuraceRequired) 
+            ? (new ProductsService())->getInsuranceValue($products) 
+            : 0;
 
         $body = array(
             'from' => $from,
@@ -38,9 +48,9 @@ class CartService
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
             'options' => array(
-                "insurance_value" => $this->getInsuranceValueByProducts($products),
-                "receipt" => $options->ar,
-                "own_hand" => $options->mp,
+                "insurance_value" => $insuranceValue,
+                "receipt" => $options->receipt,
+                "own_hand" => $options->own_hand,
                 "collect" => false,
                 "reverse" => false,
                 "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
@@ -65,6 +75,20 @@ class CartService
             $body,
             true
         );
+
+        if (!empty($result->errors)) {
+            return [
+                'success' => false,
+                'errors' => $result->errors
+            ];
+        }
+
+        if (empty($result->id)) {
+            return [
+                'success' => false,
+                'errors' => 'Não possui possível enviar o pedido para o carrinho de compras'
+            ];
+        }
 
         return (new OrderQuotationService())->updateDataQuotation(
             $orderId,
