@@ -1,4 +1,10 @@
 function toggleCalculator() {
+
+    let widthProduct = document.querySelector('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_produto_altura');
+    if (!widthProduct) {
+        return;
+    }
+
     let dimensions = getDimension();
     if (!dimensions.width
         || !dimensions.heigth
