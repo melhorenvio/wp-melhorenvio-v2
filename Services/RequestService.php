@@ -44,7 +44,7 @@ class RequestService
      * @return object $response
      */
     public function request($route, $typeRequest, $body, $useJson = true)
-    {
+    {        
         if ($useJson) {
             $body = json_encode($body);
         }
@@ -62,8 +62,13 @@ class RequestService
             )
         );
 
-        if (isset($response->errors) || isset($response->error)) {
-            return $this->treatmentErrors($response);
+        $errors =  $this->treatmentErrors($response);
+
+        if (!empty($errors)) {
+            return (object) [
+                'success' => false,
+                'errors' => $errors,
+            ];
         }
 
         return $response;
@@ -76,31 +81,22 @@ class RequestService
      * @return array $errors
      */
     private function treatmentErrors($data)
-    {
-        $response = [];
+    {   
+        $errorsResponse = [];
 
-        if (isset($data->error)) {
-            $response[] = $data->error;
-        }
-
-        if (isset($data->errors) && is_array($data->errors)) {
-            foreach ($data->errors as $error) {
-                if (is_array($error)) {
-                    foreach ($error as $err) {
-                        $response[] = $err;
-                    }
-
-                    return $response;
-                }
-
-                $response[] = $error;
+        if (!empty($data->errors)) {
+            foreach($data->errors as $errors) {
+                $errorsResponse[] = $errors;
             }
         }
 
-        return [
-            'success' => false,
-            'message' => null,
-            'errors' => $response
-        ];
+        $errors = [];
+        if (!empty($errorsResponse) && is_array($errorsResponse)) {
+            foreach ($errorsResponse as $error) {
+                $errors[] = end($error);
+            }
+        }
+
+        return $errors;
     }
 }

@@ -1,4 +1,13 @@
 ### Changelog
+### [2.9.0]
+- Correção da exibição de frete grátis e taxa fixa.
+- Ajuste cálculo de produto com variação na tela do produto.
+- Adicionando percentual extra sobre o valor do frete.
+- Adicionando função para cancelar etiquetas.
+- Opção de ativar/desativar valor segurado
+- Ajuste para salvar dados do vendedor nos options do Wordpress.
+- Correções de warnings
+
 ### [2.8.1] - 2020-08
 - Retorno do botão de enviar pedido para o carrinho de compras do Melhor Envio.
 - Correção de problemas com valores diferentes entre plugin e Melhor Envio.

@@ -10,6 +10,7 @@ use Controllers\SessionsController;
 use Controllers\StatusController;
 use Controllers\TokenController;
 use Controllers\UsersController;
+use Controllers\PathController;
 
 /**
  * Class responsible for managing the routes of the plugin
@@ -27,6 +28,7 @@ class RouterService
         $this->loadRoutesTest();
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
+        $this->loadRoutesPath();
     }
 
     /**
@@ -130,11 +132,11 @@ class RouterService
     private function loadRoutesTest()
     {
         add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.8.0'))->run();
+            (new TestService('2.9.0'))->run();
         });
 
         add_action('wp_ajax_environment', function () {
-            (new TestService('2.8.0'))->run();
+            (new TestService('2.9.0'))->run();
         });
     }
 
@@ -171,5 +173,17 @@ class RouterService
                 return $locationController->getAddressByPostalCode($_GET['postal_code']);
             });
         }
+    }
+
+    /**
+     * function to start path routes
+     *
+     * @return void
+     */
+    private function loadRoutesPath()
+    {
+        $pathController = new PathController();
+
+        add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
     }
 }
