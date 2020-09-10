@@ -29,6 +29,11 @@ class ShowCalculatorProductPage
         add_action('wp_ajax_nopriv_escutar_solicitacoes_de_frete', array($this, 'escutar_solicitacoes_de_frete'));
     }
 
+    /**
+     * Function to insert CSS and JS.
+     *
+     * @return void
+     */
     public function enqueueCssJsFrontend()
     {
         wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', 'jquery');
@@ -43,10 +48,15 @@ class ShowCalculatorProductPage
      */
     public function insertCalculator()
     {
-        add_action($this->whereShowCalculator, array($this, 'isProdutoSingle'));
+        add_action($this->whereShowCalculator, array($this, 'isProductSingle'));
     }
 
-    public function isProdutoSingle()
+    /**
+     * Function to check if is a single producu.
+     *
+     * @return void
+     */
+    public function isProductSingle()
     {
         global $product;
         if (is_product() && !$product->is_virtual('yes')) {
