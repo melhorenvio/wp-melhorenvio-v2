@@ -4,6 +4,12 @@ namespace Models;
 
 class Option 
 {
+    const OPTION_RECEIPT = 'melhorenvio_ar';
+
+    const OPTION_OWN_HAND = 'melhorenvio_mp';
+
+    const OPTION_INSURANCE_VALUE = 'melhorenvio_vs';
+
     /**
      * @return void
      */
@@ -28,13 +34,15 @@ class Option
      */
     public function getOptions()
     {
-        $ar = get_option('melhorenvio_ar');
-        $mp = get_option('melhorenvio_mp');
+        $receipt = get_option(self::OPTION_RECEIPT);
+        $own_hand = get_option(self::OPTION_OWN_HAND);
+        $insurance_value = get_option(self::OPTION_INSURANCE_VALUE);
 
 
         return (object) array( 
-            'ar' => filter_var($ar, FILTER_VALIDATE_BOOLEAN),
-            'mp' => filter_var($mp, FILTER_VALIDATE_BOOLEAN)
+            'receipt' => filter_var($receipt, FILTER_VALIDATE_BOOLEAN),
+            'own_hand' => filter_var($own_hand, FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var($insurance_value, FILTER_VALIDATE_BOOLEAN)
         );
     }
 

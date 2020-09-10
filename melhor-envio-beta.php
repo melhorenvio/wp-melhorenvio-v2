@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.8.1
+Version: 2.9.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -59,7 +59,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     return false;
 }
 
-use Controllers\WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto;
+use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Models\Method;
 use Services\RouterService;
@@ -81,7 +81,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = '2.8.1';
+    public $version = '2.9.0';
 
     /**
      * Holds various class instances
@@ -105,7 +105,6 @@ final class Base_Plugin
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
-
     }
 
     /**
@@ -293,8 +292,7 @@ final class Base_Plugin
 
         $hideCalculator = (new CalculatorShow)->get();
         if ($hideCalculator) {
-            $cotacaoProd = new WoocommerceCorreiosCalculoDeFreteNaPaginaDoProduto();
-            $cotacaoProd->run();
+            (new ShowCalculatorProductPage())->insertCalculator();
         }
 
         add_action('init', array($this, 'init_classes'));
@@ -338,9 +336,6 @@ final class Base_Plugin
 
         function orderingQuotationsByPrice($rates, $package)
         {
-            if (empty($rates)) return;
-            if (!is_array($rates)) return;
-
             uasort($rates, function ($a, $b) {
                 if ($a == $b) return 0;
                 return ($a->cost < $b->cost) ? -1 : 1;

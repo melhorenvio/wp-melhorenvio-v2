@@ -183,8 +183,8 @@ class Quotation
     private function createQuotationBody()
     {
         $options = array(
-            'receipt' => $this->options->ar,
-            'own_hand' => $this->options->mp,
+            'receipt' => $this->options->receipt,
+            'own_hand' => $this->options->own_hand,
             'collect'  => false
         );
 

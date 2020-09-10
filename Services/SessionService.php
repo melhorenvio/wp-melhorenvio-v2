@@ -77,4 +77,15 @@ class SessionService
 
         return false;
     }
+
+    /**
+     * Function to destroy a item on session.
+     *
+     * @param string $key
+     * @return void
+     */
+    public function destroy($key)
+    {
+        unset($_SESSION[$key]);
+    }
 }

@@ -2,7 +2,8 @@
   <div class="container">
     <a v-if="item.log" :href="item.log" class="action-button container__link"></a>
 
-    <a class="action-button container__link"
+    <a
+      class="action-button container__link"
       v-if="buttonCart(item)"
       data-tip="Adicionar o pedido no carrinho de compras"
       @click="sendCartSimple({id:item.id, service_id:item.cotation.choose_method, non_commercial: item.non_commercial})"
@@ -165,6 +166,38 @@
     </a>
 
     <a
+      @click="cancelOrder({post_id:item.id, order_id:item.order_id})"
+      v-if="item.status == 'released'"
+      href="javascript:;"
+      class="action-button -excluir container__link"
+      data-tip="Cancelar pedido"
+    >
+      <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
+        <title>Cancelar</title>
+        <g id="Camada_2" data-name="Camada 2">
+          <g id="Camada_10" data-name="Camada 10">
+            <path
+              class="cls-1"
+              d="M304.95,62.21H267.32v-.62c0-20.76-8.31-37.36-24-48C230,4.57,212.08,0,190,0s-40,4.57-53.31,13.57c-15.72,10.65-24,27.26-24,48v.62H78.25C43.15,62.21,0,106.59,0,142.7a9.41,9.41,0,0,0,9.41,9.41H15V490.59A9.41,9.41,0,0,0,24.42,500H358.54a9.41,9.41,0,0,0,9.41-9.41V462.17a9.41,9.41,0,0,0-18.83,0v19H33.83V152.12H349.12v263a9.41,9.41,0,0,0,18.83,0v-263h5.84a9.41,9.41,0,0,0,9.41-9.41C383.2,106.59,340.05,62.21,304.95,62.21Zm-173.46-.62c0-19.51,10.15-42.77,58.51-42.77s58.51,23.26,58.51,42.77v.62h-117ZM20.24,133.29c2.79-10,9.57-21.14,19-31C51.89,89.18,66.82,81,78.25,81H304.95c11.43,0,26.36,8.15,39,21.26,9.48,9.86,16.26,21,19,31Z"
+            />
+            <path
+              class="cls-1"
+              d="M98.57,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+            />
+            <path
+              class="cls-1"
+              d="M182.13,217.67V415.1a9.41,9.41,0,1,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+            />
+            <path
+              class="cls-1"
+              d="M265.69,217.67V415.1a9.41,9.41,0,0,0,18.83,0V217.67a9.41,9.41,0,1,0-18.83,0Z"
+            />
+          </g>
+        </g>
+      </svg>
+    </a>
+
+    <a
       v-if="item.status && item.order_id && item.id && item.status == 'pending'"
       @click="removeCart({id:item.id, order_id:item.order_id})"
       href="javascript:;"
@@ -200,6 +233,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import statusMelhorEnvio from '../../utils/status';
 export default {
   data: () => {
     return {};
@@ -218,24 +252,28 @@ export default {
       "stopLoader",
       "setMessageModal",
       "removeCart",
-      "cancelCart",
+      "cancelOrder",
       "payTicket",
+      "cancelTicket",
       "createTicket",
       "printTicket"
     ]),
     sendCartSimple: function(data) {
       this.initLoader();
-      this.addCartSimple(data).then(response => {
-        const msg = [];
-            msg.push(`Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`);
-            this.setMessageModal(msg);
-            this.stopLoader();
-            return;
-        
-      }).catch(error => {
-        this.setMessageModal(error.response.data.errors);
-        this.stopLoader();
-      })
+      this.addCartSimple(data)
+        .then(response => {
+          const msg = [];
+          msg.push(
+            `Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`
+          );
+          this.setMessageModal(msg);
+        })
+        .catch(error => {
+          this.setMessageModal(error.response.data.errors);
+        })
+        .finally(() => {
+          this.stopLoader();
+        });
     },
     cancelOrderSimple: function(data) {
       this.initLoader();
@@ -249,12 +287,13 @@ export default {
             const msgErr = [];
             msgErr.push("Etiqueta #" + data.id + " comprada com sucesso.");
             this.setMessageModal(msgErr);
-            this.stopLoader();
             return;
           }
         })
         .catch(error => {
           this.setMessageModal(error.response.data.errors);
+        })
+        .finally(() => {
           this.stopLoader();
         });
     },
@@ -262,17 +301,21 @@ export default {
       if (typeof item.cotation.choose_method === "undefined") {
         return false;
       }
-      if (item.status == "pending" || item.status == "released") {
+      if (item.status == statusMelhorEnvio.STATUS_PENDING || item.status == statusMelhorEnvio.STATUS_RELEASED) {
         return false;
       }
       if (
         item.cotation.choose_method == 1 ||
         item.cotation.choose_method == 2 ||
-        (item.cotation.choose_method == 17 && item.status == null)
+        (item.cotation.choose_method == 17 &&
+          (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED))
       ) {
         return true;
       }
-      if (item.cotation.choose_method >= 3 && item.status == null) {
+      if (
+        item.cotation.choose_method >= 3 &&
+        (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED)
+      ) {
         if (item.non_commercial) {
           return true;
         }
@@ -285,17 +328,24 @@ export default {
       if (!item.service_id) {
         return false;
       }
-      
-      if (!(item.status == "posted" || item.status == "released")) {
+
+      if (
+        !(
+          item.status == statusMelhorEnvio.STATUS_POSTED ||
+          item.status == statusMelhorEnvio.STATUS_RELEASED ||
+          item.status == statusMelhorEnvio.STATUS_CANCELED
+        )
+      ) {
         return true;
       }
+
       return false;
     },
     buttonCancel(item) {
       if (
-        item.status == "posted" ||
-        item.status == "generated" ||
-        item.status == "released"
+        item.status == statusMelhorEnvio.STATUS_POSTED ||
+        item.status == statusMelhorEnvio.STATUS_GENERATED ||
+        item.status == statusMelhorEnvio.STATUS_RELEASED
       ) {
         return true;
       }

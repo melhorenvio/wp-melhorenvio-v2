@@ -32,14 +32,15 @@ class CalculateShippingMethodService
      * @param string $title
      * @param float $taxExtra
      * @param int $timeExtra
+     * @param int $percent
      * @return void
      */
-    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra)
+    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
         $to = preg_replace('/\D/', '', $package['destination']['postcode']);
 
-        $products = (isset($package['cotationProduct']))
-            ? $package['cotationProduct']
+        $products = (isset($package['contents']))
+            ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
 
         $result = (new QuotationService())->calculateQuotationByProducts(
@@ -66,7 +67,8 @@ class CalculateShippingMethodService
                     ),
                     'cost' => MoneyHelper::cost(
                         $result->price,
-                        $taxExtra
+                        $taxExtra,
+                        $percent
                     ),
                     'calc_tax' => 'per_item',
                     'meta_data' => [
@@ -76,7 +78,8 @@ class CalculateShippingMethodService
                         ),
                         'price' => MoneyHelper::price(
                             $result->price,
-                            $taxExtra
+                            $taxExtra,
+                            $percent
                         ),
                         'company' => $company
                     ]
@@ -226,5 +229,25 @@ class CalculateShippingMethodService
         ];
 
         return (in_array($productShippingClassId, $shippingsMehodsWithoutClass) && in_array($shippingClassId, $shippingsMehodsWithoutClass));
+    }
+
+    /**
+     * Function to check if the insured amount is mandatory
+     *
+     * @param bool $optionalInsuredAmount
+     * @param string $serviceId
+     * @return bool
+     */
+    public function insuranceValueIsRequired($optionalInsuredAmount, $serviceId)
+    {
+        if ($optionalInsuredAmount && is_null($serviceId)) {
+            return true;
+        }
+
+        if (!$this->isCorreios($serviceId)) {
+            return true;
+        }
+
+        return $optionalInsuredAmount;
     }
 }
