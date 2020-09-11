@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.1]
+- Correção error fatal ao enviar produto para o carrinho de compraas
+
 ### [2.9.0]
 - Correção da exibição de frete grátis e taxa fixa.
 - Ajuste cálculo de produto com variação na tela do produto.
