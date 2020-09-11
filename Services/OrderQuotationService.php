@@ -30,11 +30,11 @@ class OrderQuotationService
      */
     public function getQuotation($postId)
     {
-        $quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
+        //$quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
 
-        if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
-            $quotation = (new QuotationService())->calculateQuotationByPostId($postId);
-        }
+        //if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
+        $quotation = (new QuotationService())->calculateQuotationByPostId($postId);
+        //}
 
         $quotation = $this->checkHasCorreiosWithVolumes($quotation);
 

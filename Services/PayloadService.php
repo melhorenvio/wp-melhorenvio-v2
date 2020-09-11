@@ -16,19 +16,19 @@ class PayloadService
      */
     public function save($postId)
     {
-        $payload = $this->mount($postId);
+        $payload = $this->createPayloadCheckoutOrder($postId);
         if (!empty($payload)) {
             $payload = (new Payload())->save($postId, $payload);
         }
     }
 
     /**
-     * function to mount payload
+     * function to payload after finishied order in woocommerce.
      *
      * @param int $postId
-     * @return array
+     * @return object
      */
-    public function mount($postId)
+    public function createPayloadCheckoutOrder($postId)
     {
         $products = (new OrdersProductsService())->getProductsOrder($postId);
         $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
@@ -37,6 +37,10 @@ class PayloadService
         $productService = new ProductsService();
         $productsFilter = $productService->filter($products);
         $serviceId = (new Method($postId))->getMethodShipmentSelected($postId);
+
+        $useInsuranceValue = (new CalculateShippingMethodService())->isCorreios($serviceId)
+            ? $options->insurance_value
+            : true;
 
         $body = (object) [
             'from' => (object) [
@@ -48,7 +52,7 @@ class PayloadService
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => true
+                'insurance_value' => $useInsuranceValue
             ],
             'products' => (object) $productsFilter,
             'service_selected' => $serviceId,
