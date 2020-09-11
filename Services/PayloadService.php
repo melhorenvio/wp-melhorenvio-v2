@@ -94,6 +94,10 @@ class PayloadService
             'products' => (object) $productsFilter
         ];
 
+        if (!$options->insurance_value) {
+            $payload = $this->removeInsuranceValue($payload);
+        }
+
         return $payload;
     }
 
