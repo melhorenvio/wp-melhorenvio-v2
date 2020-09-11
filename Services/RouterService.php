@@ -11,6 +11,7 @@ use Controllers\StatusController;
 use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\PathController;
+use Controllers\PayloadsController;
 
 /**
  * Class responsible for managing the routes of the plugin
@@ -29,6 +30,7 @@ class RouterService
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
         $this->loadRoutesPath();
+        $this->laodRoutesPayload();
     }
 
     /**
@@ -185,5 +187,27 @@ class RouterService
         $pathController = new PathController();
 
         add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
+    }
+
+    /**
+     * function to start payload routes
+     *
+     * @return void
+     */
+    private function laodRoutesPayload()
+    {
+        $payloadsController = new PayloadsController();
+
+        foreach (['wp_ajax_get_payload', 'wp_ajax_nopriv_get_payload'] as $action) {
+            add_action($action, function () use ($payloadsController) {
+                if (!isset($_GET['post_id'])) {
+                    return wp_send_json([
+                        'error' => true,
+                        'message' => 'Informar o campo "post_id"'
+                    ], 400);
+                }
+                return $payloadsController->show($_GET['post_id']);
+            });
+        }
     }
 }

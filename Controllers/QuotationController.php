@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Services\PayloadService;
 use Services\QuotationService;
 use Services\QuotationProductPageService;
 
@@ -29,6 +30,8 @@ class QuotationController
     public function makeCotationOrder($orderId)
     {
         $result = (new QuotationService())->calculateQuotationByOrderId($orderId);
+
+        (new PayloadService())->save(($orderId));
 
         unset($_SESSION['quotation']);
 

@@ -37,8 +37,8 @@ class ProductsService
     public function removePrice($products)
     {
         foreach ($products as $key => $product) {
-            unset($products[$key]['price']);
-            unset($products[$key]['insurance_value']);
+            unset($products[$key]->price);
+            unset($products[$key]->insurance_value);
         }
 
         return $products;
