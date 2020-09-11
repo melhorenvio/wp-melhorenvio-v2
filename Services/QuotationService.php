@@ -12,48 +12,60 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
-    const PERCENT_INSURANCE_VALUE = 5;
-
     /**
-     * Function to calculate a quotation by order_id.
+     * function to calculate quotation.
      *
-     * @param int $orderId
-     * @return object $quotation
+     * @param object $body
+     * @param bool $useInsuranceValue
+     * @return array
      */
-    public function calculateQuotationByOrderId($orderId)
+    public function calculate($payload)
     {
-        $options = (new Option())->getOptions();
+        $requestService = new RequestService();
 
-        $productService = new ProductsService();
-
-        $body = (new Payload())->get($orderId);
-
-        if (empty($body)) {
-            $body = (new PayloadService())->mount($orderId);
-        }
-
-        $quotations = (new RequestService())->request(
+        $quotations = $requestService->request(
             self::ROUTE_API_MELHOR_CALCULATE,
             'POST',
-            $body,
+            $payload,
             true
         );
 
-        if (!$options->insurance_value) {
-            $body->products = $productService->removePrice((array) $body->products);
-            $body->options->insurance_value = false;
-            $body->services = implode(CalculateShippingMethodService::SERVICES_CORREIOS, ",");
-            $quotationWithoutInsurance = (new RequestService())->request(
+        if (!$payload->options->insurance_value) {
+            $payload = (new PayloadService())->removeInsuranceValue($payload);
+            $quotsWithoutValue = $requestService->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
                 'POST',
-                $body,
+                $payload,
                 true
             );
 
-            $quotations = array_merge($quotations, $quotationWithoutInsurance);
+            $quotations = array_merge($quotations, $quotsWithoutValue);
         }
 
-        return (new OrderQuotationService())->saveQuotation($orderId, $quotations);
+        return $quotations;
+    }
+    /**
+     * Function to calculate a quotation by post_id.
+     *
+     * @param int $postId
+     * @return object $quotation
+     */
+    public function calculateQuotationByPostId($postId)
+    {
+        $payload = (new Payload())->get($postId);
+
+        if (empty($payload)) {
+            $products = (new OrdersProductsService())->getProductsOrder($postId);
+            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+            $payload = (new PayloadService())->createPayloadByProducts(
+                $buyer->postal_code,
+                $products
+            );
+        }
+
+        $quotations = $this->calculate($payload);
+
+        return (new OrderQuotationService())->saveQuotation($postId, $quotations);
     }
 
     /**
@@ -69,40 +81,16 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
-
-        $seller = (new SellerService())->getData();
-
-        $options = (new Option())->getOptions();
-
-        $productService = new ProductsService();
-
-        $productsFilter = $productService->filter($products);
-
-        $shippingMethodService = new CalculateShippingMethodService();
-
-        if (!$shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) {
-            $productsFilter = $productService->removePrice($productsFilter);
-        }
-
-        $body = (new PayloadService())->mountByProducts(
-            $seller->postal_code,
+        $payload = (new PayloadService())->createPayloadByProducts(
             $postalCode,
-            $productsFilter,
-            $options,
-            $service
+            $products
         );
 
-        $quotation = $this->getSessionCachedQuotation($body, $service);
+        $quotation = $this->getSessionCachedQuotation($payload, $service);
 
         if (!$quotation) {
-            $quotation = (new RequestService())->request(
-                self::ROUTE_API_MELHOR_CALCULATE,
-                'POST',
-                $body,
-                true
-            );
-
-            $this->storeQuotationSession($body, $quotation);
+            $quotation = $this->calculate($payload);
+            $this->storeQuotationSession($payload, $quotation);
         }
 
         return $quotation;

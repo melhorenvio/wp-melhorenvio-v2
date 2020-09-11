@@ -56,10 +56,10 @@ class ProductsService
 
         foreach ($data as $item) {
             if (empty($item['data'])) {
-                $products[] = $item;
+                $products[] = (object) $item;
             } else {
                 $product = $item['data'];
-                $products[] = [
+                $products[] = (object) [
                     'id' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
                     'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
