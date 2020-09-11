@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Models\Option;
 use Models\Payload;
 
 /**
@@ -113,6 +112,7 @@ class QuotationService
 
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
+
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
     }
 
@@ -187,7 +187,11 @@ class QuotationService
     {
         $hash = md5(json_encode($bodyQuotation));
 
-        if (!isset($_SESSION['quotation'][$hash]['created'])) {
+        if (isset($_SESSION['quotation'][$hash]->success) && !$_SESSION['quotation'][$hash]->success) {
+            return true;
+        }
+
+        if (empty($_SESSION['quotation'][$hash]['created'])) {
             return true;
         }
 
