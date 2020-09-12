@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Models\Option;
 use Models\Payload;
 
 /**
@@ -18,7 +19,7 @@ class QuotationService
      * @param bool $useInsuranceValue
      * @return array
      */
-    public function calculate($payload)
+    public function calculate($payload, $useInsuranceValue)
     {
         $requestService = new RequestService();
 
@@ -29,7 +30,7 @@ class QuotationService
             true
         );
 
-        if (!$payload->options->insurance_value) {
+        if (!$useInsuranceValue) {
             $payload = (new PayloadService())->removeInsuranceValue($payload);
             $quotsWithoutValue = $requestService->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
@@ -39,10 +40,28 @@ class QuotationService
             );
 
             $quotations = array_merge($quotations, $quotsWithoutValue);
+
+            $quotations = $this->setKeyQuotationAsServiceid($quotations);
         }
 
         return $quotations;
     }
+
+    /**
+     * function to set each key of array as service id
+     *
+     * @param array $quotations
+     * @return array
+     */
+    private function setKeyQuotationAsServiceid($quotations)
+    {
+        $response = [];
+        foreach ($quotations as $quotation) {
+            $response[$quotation->id] = $quotation;
+        }
+        return $response;
+    }
+
     /**
      * Function to calculate a quotation by post_id.
      *
@@ -62,7 +81,10 @@ class QuotationService
             );
         }
 
-        $quotations = $this->calculate($payload);
+        $quotations = $this->calculate(
+            $payload,
+            $payload->options->insurance_value
+        );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
     }
@@ -80,15 +102,18 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
+
         $payload = (new PayloadService())->createPayloadByProducts(
             $postalCode,
             $products
         );
 
+        $options = (new Option())->getOptions();
+
         $quotation = $this->getSessionCachedQuotation($payload, $service);
 
         if (!$quotation) {
-            $quotation = $this->calculate($payload);
+            $quotation = $this->calculate($payload, $options->insurance_value);
             $this->storeQuotationSession($payload, $quotation);
         }
 
@@ -109,10 +134,8 @@ class QuotationService
         }
 
         $quotation = $this->orderingQuotationByPrice($quotation);
-
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
-
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
     }
 

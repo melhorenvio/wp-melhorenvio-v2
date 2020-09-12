@@ -94,10 +94,6 @@ class PayloadService
             'products' => (object) $productsFilter
         ];
 
-        if (!$options->insurance_value) {
-            $payload = $this->removeInsuranceValue($payload);
-        }
-
         return $payload;
     }
 
@@ -109,8 +105,7 @@ class PayloadService
      */
     public function removeInsuranceValue($payload)
     {
-        $productService = new ProductsService();
-        $payload->products = $productService->removePrice((array) $payload->products);
+        $payload->products = (new ProductsService())->removePrice((array) $payload->products);
         $payload->options->insurance_value = false;
         $payload->services = implode(CalculateShippingMethodService::SERVICES_CORREIOS, ",");
 

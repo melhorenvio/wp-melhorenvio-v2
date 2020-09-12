@@ -4,6 +4,7 @@ namespace Services;
 
 use Models\Agency;
 use Models\Option;
+use Models\Payload;
 
 class CartService
 {
@@ -22,6 +23,12 @@ class CartService
      */
     public function add($orderId, $products, $to, $shippingMethodId)
     {
+        $payloadSaved = (new Payload())->get($orderId);
+
+        if (!empty($payloadSaved->products)) {
+            $products = $payloadSaved->products;
+        }
+
         $from = (new SellerService())->getData();
 
         $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
@@ -30,7 +37,9 @@ class CartService
 
         $shippingMethodService = new CalculateShippingMethodService();
 
-        $options = (new Option())->getOptions();
+        $options = (!empty($payloadSaved->options))
+            ? $payloadSaved->options
+            : (new Option())->getOptions();
 
         $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
             ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)

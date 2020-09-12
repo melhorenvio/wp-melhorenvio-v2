@@ -17,12 +17,10 @@ class ProductsService
         $insuranceValue = 0;
         foreach ($products as $product) {
             $value = 0;
-            if (is_array($product)) {
-                if (!empty($product['unitary_value'])) {
-                    $value = $product['unitary_value'] * $product['quantity'];
-                }
-                $insuranceValue = $insuranceValue + $value;
+            if (!empty($product->unitary_value)) {
+                $value = $product->unitary_value * $product->quantity;
             }
+            $insuranceValue = $insuranceValue + $value;
         }
         return $insuranceValue;
     }
