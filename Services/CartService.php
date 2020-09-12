@@ -17,11 +17,11 @@ class CartService
      *
      * @param int $orderId
      * @param array $products
-     * @param array $to
+     * @param array $dataBuyer
      * @param int $shippingMethodId
      * @return void
      */
-    public function add($orderId, $products, $to, $shippingMethodId)
+    public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
         $payloadSaved = (new Payload())->get($orderId);
 
@@ -29,20 +29,23 @@ class CartService
             $products = $payloadSaved->products;
         }
 
-        $from = (new SellerService())->getData();
+        $dataFrom = (new SellerService())->getData();
 
         $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
 
-        $shippingMethodService = new CalculateShippingMethodService();
+        $methodService = new CalculateShippingMethodService();
 
         $options = (!empty($payloadSaved->options))
             ? $payloadSaved->options
             : (new Option())->getOptions();
 
-        $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
-            ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
+        $insuraceRequired = ($methodService->isCorreios($shippingMethodId))
+            ? $methodService->insuranceValueIsRequired(
+                $options->insurance_value,
+                $shippingMethodId
+            )
             : true;
 
         $insuranceValue = ($insuraceRequired)
@@ -50,8 +53,8 @@ class CartService
             : 0;
 
         $body = array(
-            'from' => $from,
-            'to' => $to,
+            'from' => $dataFrom,
+            'to' => $dataBuyer,
             'agency' => (new Agency())->getCodeAgencySelected(),
             'service' => $shippingMethodId,
             'products' => $products,
@@ -168,23 +171,6 @@ class CartService
         }
 
         return $volumes;
-    }
-
-    /**
-     * Sum values of products.
-     *
-     * @param array $products
-     * @return float $value
-     */
-    private function getInsuranceValueByProducts($products)
-    {
-        $value = 0;
-
-        foreach ($products as $product) {
-            $value += ($product['unitary_value'] * $product['quantity']);
-        }
-
-        return $value;
     }
 
     /**

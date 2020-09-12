@@ -26,11 +26,11 @@ class ProductsService
     }
 
     /**
-     * Function to remove the price field from 
+     * function to remove the price field from
      * the product to perform the quote without insurance value
      *
-     * @param array|object $products
-     * @return array|object
+     * @param array $products
+     * @return array
      */
     public function removePrice($products)
     {
