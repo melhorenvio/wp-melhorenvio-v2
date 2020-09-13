@@ -32,6 +32,7 @@ class BuyerService
         return (object) [
             "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => FormaterHelper::formatPhone($phone),
+            "phoneMasked" => $phone,
             "email" => $order->get_billing_email(),
             "document" => $document,
             "company_document" => (!empty($cnpj)) ? $cnpj : null,
