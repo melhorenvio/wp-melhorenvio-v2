@@ -28,7 +28,7 @@ class ListOrderService
             ];
         }
 
-        $orders = $this->setData($posts);
+        $orders = $this->getData($posts);
 
         return [
             'orders' => $orders,
@@ -42,7 +42,7 @@ class ListOrderService
      * @param array $posts
      * @return array
      */
-    private function setData($posts)
+    private function getData($posts)
     {
         $orders = [];
 
@@ -73,8 +73,10 @@ class ListOrderService
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
                 'service_id' => $statusMelhorEnvio[$postId]['service_id'],
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
-                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
-                'invoice'        => $invoice,
+                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key']))
+                    ? true
+                    : false,
+                'invoice' => $invoice,
                 'products' => $ordersProductsService->getProductsOrder($postId),
                 'cotation' => [],
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
