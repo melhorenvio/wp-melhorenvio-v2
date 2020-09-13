@@ -48,6 +48,12 @@ class ListOrderService
 
         $statusMelhorEnvio = (new OrderService())->mergeStatus($posts);
 
+        $buyerService = new BuyerService();
+
+        $translateHelper = new TranslateStatusHelper();
+
+        $ordersProductsService = new OrdersProductsService();
+
         foreach ($posts as $post) {
             $postId = $post->ID;
 
@@ -59,9 +65,9 @@ class ListOrderService
                 'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
                     ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
                     : null,
-                'to' => (new BuyerService())->getDataBuyerByOrderId($post->ID),
+                'to' => $buyerService->getDataBuyerByOrderId($post->ID),
                 'status' => $statusMelhorEnvio[$postId]['status'],
-                'status_texto' => (new TranslateStatusHelper())->translateNameStatus(
+                'status_texto' => $translateHelper->translateNameStatus(
                     $statusMelhorEnvio[$postId]['status']
                 ),
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
@@ -69,7 +75,7 @@ class ListOrderService
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
-                'products' => (new OrdersProductsService())->getProductsOrder($postId),
+                'products' => $ordersProductsService->getProductsOrder($postId),
                 'cotation' => [],
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
