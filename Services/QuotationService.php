@@ -136,7 +136,7 @@ class QuotationService
         $quotation = $this->orderingQuotationByPrice($quotation);
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
-        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+        $_SESSION['quotation'][$hash]->created = date('Y-m-d H:i:s');
     }
 
     /**

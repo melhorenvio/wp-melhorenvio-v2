@@ -25,11 +25,15 @@ class CartService
     {
         $payloadSaved = (new Payload())->get($orderId);
 
-        if (!empty($payloadSaved->products)) {
-            $products = $payloadSaved->products;
-        }
+        $products = (!empty($payloadSaved->products))
+            ? $payloadSaved->products
+            : $products;
 
-        $dataFrom = (new SellerService())->getData();
+        $dataBuyer = (!empty($payloadSaved->buyer))
+            ? $payloadSaved->buyer
+            : $dataBuyer;
+
+        $dataFrom =  (new SellerService())->getData();
 
         $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
 

@@ -198,16 +198,34 @@ class RouterService
     {
         $payloadsController = new PayloadsController();
 
-        foreach (['wp_ajax_get_payload', 'wp_ajax_nopriv_get_payload'] as $action) {
-            add_action($action, function () use ($payloadsController) {
-                if (!isset($_GET['post_id'])) {
-                    return wp_send_json([
-                        'error' => true,
-                        'message' => 'Informar o campo "post_id"'
-                    ], 400);
-                }
-                return $payloadsController->show($_GET['post_id']);
-            });
-        }
+        add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->show($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_get_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->showLogged($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->destroy($_GET['post_id']);
+        });
     }
 }

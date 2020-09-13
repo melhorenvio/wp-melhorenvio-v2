@@ -23,6 +23,22 @@ class PayloadService
     }
 
     /**
+     * Function to return the payload data of the quote hiding customer data
+     *
+     * @param int $postId
+     * @return object
+     */
+    public function getPayloadHideImportantData($postId)
+    {
+        $payload = (new Payload())->get($postId);
+
+        unset($payload->seller);
+        unset($payload->buyer);
+
+        return $payload;
+    }
+
+    /**
      * function to payload after finishied order in woocommerce.
      *
      * @param int $postId
@@ -56,6 +72,12 @@ class PayloadService
             ],
             'products' => (object) $productsFilter,
             'service_selected' => $serviceId,
+            'seller' => $seller,
+            'buyer' => $buyer,
+            'units' => [
+                'weight' => strtolower(get_option('woocommerce_weight_unit')),
+                'dimension' => strtolower(get_option('woocommerce_dimension_unit'))
+            ],
             'created' => date('Y-m-d h:i:s')
         ];
 
@@ -107,7 +129,10 @@ class PayloadService
     {
         $payload->products = (new ProductsService())->removePrice((array) $payload->products);
         $payload->options->insurance_value = false;
-        $payload->services = implode(CalculateShippingMethodService::SERVICES_CORREIOS, ",");
+        $payload->services = implode(
+            CalculateShippingMethodService::SERVICES_CORREIOS,
+            ","
+        );
 
         return $payload;
     }
