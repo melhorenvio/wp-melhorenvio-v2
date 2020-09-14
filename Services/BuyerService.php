@@ -6,6 +6,9 @@ use Helpers\FormaterHelper;
 
 class BuyerService
 {
+    const PERSON = 1;
+
+    const COMPANY = 2;
     /**
      * Get data of buyer by order id
      *
@@ -35,8 +38,11 @@ class BuyerService
         $dataBilling = $this->getBillingAddress($order);
         $dataShipping = $this->getShippingAddress($order);
 
+        $typePerson = get_post_meta($orderId, '_billing_persontype', true);
+
+
         $body = (object) [
-            "name" => (!empty($order->get_billing_company()))
+            "name" => ($typePerson == self::COMPANY)
                 ? $order->get_billing_company()
                 : $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => FormaterHelper::formatPhone($phone),
@@ -66,11 +72,11 @@ class BuyerService
                 : $dataBilling->postal_code,
         ];
 
-        if (empty($cnpj)) {
+        if ($typePerson == self::PERSON) {
             $body->document = $cpf;
         }
 
-        if (!empty($cnpj)) {
+        if (!empty($cnpj) && $typePerson == self::COMPANY) {
             $body->company_document = $cnpj;
             unset($body->document);
         }
