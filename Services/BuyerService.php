@@ -6,7 +6,7 @@ use Helpers\FormaterHelper;
 
 class BuyerService
 {
-    const PERSON = 1;
+    const PERSONAL = 1;
 
     const COMPANY = 2;
     /**
@@ -40,6 +40,9 @@ class BuyerService
 
         $typePerson = get_post_meta($orderId, '_billing_persontype', true);
 
+        if (empty($typePerson)) {
+            $typePerson = self::PERSONAL;
+        }
 
         $body = (object) [
             "name" => ($typePerson == self::COMPANY)
@@ -72,7 +75,7 @@ class BuyerService
                 : $dataBilling->postal_code,
         ];
 
-        if ($typePerson == self::PERSON) {
+        if ($typePerson == self::PERSONAL) {
             $body->document = $cpf;
         }
 
