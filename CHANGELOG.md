@@ -1,4 +1,7 @@
 ### Changelog
+### [2.10.0]
+- Serviço de notificação de erros no plugin 
+
 ### [2.9.1]
 - Correção error fatal ao enviar produto para o carrinho de compraas
 

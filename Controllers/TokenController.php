@@ -2,7 +2,6 @@
 
 namespace Controllers;
 
-use Models\Token;
 use Services\TokenService;
 
 class TokenController
@@ -49,7 +48,17 @@ class TokenController
             $_POST['environment']
         );
 
-        return wp_send_json($result, (!$result['success']) ? 400 : 200);
+        if ($result) {
+            return wp_send_json([
+                'success' => true,
+                'message' => 'Token salvo com sucesso'
+            ], 200);
+        }
+
+        return wp_send_json([
+            'success' => false,
+            'message' => 'Ocorreu um erro ao salvar o token'
+        ], 400);
     }
 
     /**
@@ -60,10 +69,13 @@ class TokenController
     public function verifyToken()
     {
         if (!get_option('wpmelhorenvio_token')) {
-            return wp_send_json(['exists_token' => false]);
-            die;
+            return wp_send_json([
+                'exists_token' => false
+            ], 200);
         }
-        return wp_send_json(['exists_token' => true], 200);
+        return wp_send_json([
+            'exists_token' => true
+        ], 200);
     }
 
     public function validateToken($token)

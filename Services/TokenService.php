@@ -13,6 +13,12 @@ class TokenService
      */
     public function get()
     {
+        $tokenData = (new Token())->get();
+
+        if (!$this->isValid($tokenData)) {
+            return false;
+        }
+
         return (new Token())->get();
     }
 
@@ -22,23 +28,13 @@ class TokenService
      * @param string $token
      * @param string $tokenSandbox
      * @param string $tokenEnvironment
-     * @return array $response
+     * @return bool
      */
     public function save($token, $tokenSandbox, $tokenEnvironment)
     {
         $result = (new Token())->save($token, $tokenSandbox, $tokenEnvironment);
 
-        if (!empty($result['token']) && !empty($result['token_environment'])) {
-            return [
-                'success' => true,
-                'message' => 'Token salvo com sucesso'
-            ];
-        }
-
-        return [
-            'success' => false,
-            'message' => 'Ocorreu um erro ao salvar o token'
-        ];
+        return (!empty($result['token']) && !empty($result['token_environment']));
     }
 
     /**
@@ -57,7 +53,26 @@ class TokenService
         ];
     }
 
-    public function isValide($token)
+    /**
+     * function to check if user has token valid
+     *
+     * @param array $dataToken
+     * @return boolean
+     */
+    public function isValid($dataToken)
     {
+        if (empty($dataToken)) {
+            return false;
+        }
+
+        $token = ($dataToken['token_environment'] == Token::SANDBOX)
+            ? $dataToken['token_sandbox']
+            : $dataToken['token'];
+
+        if (empty($token)) {
+            return false;
+        }
+
+        return true;
     }
 }

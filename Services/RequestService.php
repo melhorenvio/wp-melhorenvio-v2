@@ -20,6 +20,12 @@ class RequestService
     {
         $tokenData = (new TokenService())->get();
 
+        if (!$tokenData) {
+            return wp_send_json([
+                'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
+            ], 401);
+        }
+
         if ($tokenData['token_environment'] == 'production') {
             $this->token = $tokenData['token'];
             $this->url = self::URL;

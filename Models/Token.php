@@ -12,6 +12,8 @@ class Token
 
     const PRODUCTION = 'production';
 
+    const SANDBOX = 'sandox';
+
     /**
      * function to get tokens in options wordpress.
      *
