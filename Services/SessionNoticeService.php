@@ -30,7 +30,7 @@ class SessionNoticeService
         if (!$key) {
             $html = sprintf(
                 '<p>%s <a href="%s"></br>
-                <small>remover aviso</small></a></p>',
+                <small>Não exibir mais</small></a></p>',
                 $notice,
                 get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
             );

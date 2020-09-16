@@ -36,9 +36,10 @@ class NoticeHelper
 
         add_action('admin_notices', function () use ($message, $type) {
             echo sprintf('<div class="notice %s is-dismissible"> 
-                <p><strong>%s</strong></p>
+                <p><strong>Atenção usuário do Melhor Envio</strong></p>
+                <p>%s</p>
                 <button type="button" class="notice-dismiss">
-                    <span class="screen-reader-text">Dismiss this notice.</span>
+                    <span class="screen-reader-text"><a href="">Dismiss this notice.<a></span>
                 </button>
             </div>', $type, $message);
         });
