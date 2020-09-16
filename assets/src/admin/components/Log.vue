@@ -35,12 +35,12 @@
                 <li><b>Data:</b> {{item.date}}</li>
                 <li>
                     <b>Tipo:</b> 
-                    <span v-if="item.type == 'make_cotation'">Cotação</span>
+                    <span v-if="item.type == 'make_quotation'">Cotação</span>
                     <span v-if="item.type == 'send_order'">Carrinho</span>
-                    <span v-if="item.type == 'error_cotation'">Erro na cotação</span>
+                    <span v-if="item.type == 'error_quotation'">Erro na cotação</span>
                 </li>
                 <li>
-                    <template v-if="item.type == 'make_cotation'">
+                    <template v-if="item.type == 'make_quotation'">
                         <ul v-for="(product, id) in item.body.products" :key="id">
                             <li>
                                 <b>Produto: </b>
@@ -91,7 +91,7 @@
                     </ul>
                 </template>
 
-                <template v-if="item.type == 'error_cotation'">
+                <template v-if="item.type == 'error_quotation'">
                     <ul v-for="(product, id) in item.body.products" :key="id">
                         <li v-if="product.volumes[0]">
                             <b>Produto: </b>

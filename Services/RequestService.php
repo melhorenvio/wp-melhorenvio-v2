@@ -44,7 +44,7 @@ class RequestService
      * @return object $response
      */
     public function request($route, $typeRequest, $body, $useJson = true)
-    {        
+    {
         if ($useJson) {
             $body = json_encode($body);
         }
@@ -81,16 +81,20 @@ class RequestService
      * @return array $errors
      */
     private function treatmentErrors($data)
-    {   
+    {
         $errorsResponse = [];
+        $errors = [];
+
+        if (!empty($data->error)) {
+            $errors[] = $data->error;
+        }
 
         if (!empty($data->errors)) {
-            foreach($data->errors as $errors) {
+            foreach ($data->errors as $errors) {
                 $errorsResponse[] = $errors;
             }
         }
 
-        $errors = [];
         if (!empty($errorsResponse) && is_array($errorsResponse)) {
             foreach ($errorsResponse as $error) {
                 $errors[] = end($error);
