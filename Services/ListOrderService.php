@@ -48,6 +48,8 @@ class ListOrderService
 
         $statusMelhorEnvio = (new OrderService())->mergeStatus($posts);
 
+        $quotationService = new QuotationService();
+
         foreach ($posts as $post) {
             $postId = $post->ID;
 
@@ -70,7 +72,7 @@ class ListOrderService
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
                 'products' => (new OrdersProductsService())->getProductsOrder($postId),
-                'cotation' => [],
+                'quotation' => $quotationService->calculateQuotationByOrderId($postId),
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
