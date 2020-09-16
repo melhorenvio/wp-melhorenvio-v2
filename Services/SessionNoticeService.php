@@ -25,9 +25,18 @@ class SessionNoticeService
     public function add($notice)
     {
         $notices = $_SESSION[self::ID_NOTICES_SESSION];
-        if (!array_search($notice, array_column($notices, 'notice'))) {
-            $_SESSION[self::ID_NOTICES_SESSION][] = [
-                'notice' => $notice,
+
+        $key = array_search($notice, array_column($notices, 'notice'));
+        if (!$key) {
+            $html = sprintf(
+                '<p>%s <a href="%s"></br>
+                <small>remover aviso</small></a></p>',
+                $notice,
+                get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
+            );
+
+            $_SESSION[self::ID_NOTICES_SESSION][md5($notice)] = [
+                'notice' => $html,
                 'created' => date('Y-m-d H:i:s')
             ];
         }
@@ -45,6 +54,9 @@ class SessionNoticeService
         unset($notices[$index]);
         unset($_SESSION[self::ID_NOTICES_SESSION]);
         $_SESSION[self::ID_NOTICES_SESSION] = $notices;
+
+        wp_redirect($_SERVER['HTTP_REFERER']);
+        exit;
     }
 
     /**
@@ -55,10 +67,11 @@ class SessionNoticeService
     public function get()
     {
         $notices = $_SESSION[self::ID_NOTICES_SESSION];
+
         foreach ($notices as $key => $notice) {
-            $dateLimit = date('Y-m-d H:i:s', strtotime('-2 minutes'));
+            $dateLimit = date('Y-m-d H:i:s', strtotime('-5 minutes'));
             if ($dateLimit > $notice['created']) {
-                unset($notices[$key]);
+                //unset($notices[$key]);
             }
         }
 

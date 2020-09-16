@@ -29,16 +29,7 @@ class RouterService
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
         $this->loadRoutesPath();
-
-        //REMOVER
-        add_action('wp_ajax_get_notices', function () {
-            (new SessionNoticeService())->get();
-        });
-
-        //REMOVER
-        add_action('wp_ajax_remove_notices', function () {
-            (new SessionNoticeService())->remove(0);
-        });
+        $this->loadRoutesNotices();
     }
 
     /**
@@ -195,5 +186,21 @@ class RouterService
         $pathController = new PathController();
 
         add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
+    }
+
+    /**
+     * function to start path notices
+     *
+     * @return void
+     */
+    public function loadRoutesNotices()
+    {
+        add_action('wp_ajax_get_notices', function () {
+            (new SessionNoticeService())->get();
+        });
+
+        add_action('wp_ajax_remove_notices', function () {
+            (new SessionNoticeService())->remove($_GET['id']);
+        });
     }
 }

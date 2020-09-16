@@ -111,12 +111,16 @@ class CheckHealthService
     {
         $notices = (new SessionNoticeService())->get();
 
+        $notices = array_map(function ($notice) {
+            return $notice['notice'];
+        }, $notices);
+
         $notices = array_unique($notices);
 
         if (!empty($notices)) {
             foreach ($notices as $notice) {
                 $this->helperNotice->addNotice(
-                    $notice['notice'],
+                    $notice,
                     $this->helperNotice::NOTICE_INFO
                 );
             }
