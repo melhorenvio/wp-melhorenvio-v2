@@ -119,8 +119,8 @@ class RouterService
     {
         $tokensController = new TokenController();
 
-        add_action('wp_ajax_get_token', [$tokensController, 'getToken']);
-        add_action('wp_ajax_save_token', [$tokensController, 'saveToken']);
+        add_action('wp_ajax_get_token', [$tokensController, 'get']);
+        add_action('wp_ajax_save_token', [$tokensController, 'save']);
         add_action('wp_ajax_verify_token', [$tokensController, 'verifyToken']);
     }
 
