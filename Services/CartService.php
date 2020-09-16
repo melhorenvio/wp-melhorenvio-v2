@@ -32,11 +32,11 @@ class CartService
 
         $options = (new Option())->getOptions();
 
-        $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
+        $insuranceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
             ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
             : true;
 
-        $insuranceValue = ($insuraceRequired)
+        $insuranceValue = ($insuranceRequired)
             ? (new ProductsService())->getInsuranceValue($products)
             : 0;
 
