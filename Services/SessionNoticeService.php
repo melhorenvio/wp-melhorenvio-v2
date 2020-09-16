@@ -66,16 +66,6 @@ class SessionNoticeService
      */
     public function get()
     {
-        $notices = $_SESSION[self::ID_NOTICES_SESSION];
-
-        foreach ($notices as $key => $notice) {
-            $dateLimit = date('Y-m-d H:i:s', strtotime('-5 minutes'));
-            if ($dateLimit > $notice['created']) {
-                //unset($notices[$key]);
-            }
-        }
-
-        $_SESSION[self::ID_NOTICES_SESSION] = $notices;
-        return $notices;
+        return $_SESSION[self::ID_NOTICES_SESSION];
     }
 }
