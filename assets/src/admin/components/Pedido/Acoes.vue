@@ -6,7 +6,7 @@
       class="action-button container__link"
       v-if="buttonCart(item)"
       data-tip="Adicionar o pedido no carrinho de compras"
-      @click="sendCartSimple({id:item.id, service_id:item.cotation.choose_method, non_commercial: item.non_commercial})"
+      @click="sendCartSimple({id:item.id, service_id:item.quotation.choose_method, non_commercial: item.non_commercial})"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -233,7 +233,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import statusMelhorEnvio from '../../utils/status';
+import statusMelhorEnvio from "../../utils/status";
 export default {
   data: () => {
     return {};
@@ -298,23 +298,28 @@ export default {
         });
     },
     buttonCart(item) {
-      if (typeof item.cotation.choose_method === "undefined") {
-        return false;
-      }
-      if (item.status == statusMelhorEnvio.STATUS_PENDING || item.status == statusMelhorEnvio.STATUS_RELEASED) {
+      if (typeof item.quotation.choose_method === "undefined") {
         return false;
       }
       if (
-        item.cotation.choose_method == 1 ||
-        item.cotation.choose_method == 2 ||
-        (item.cotation.choose_method == 17 &&
-          (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED))
+        item.status == statusMelhorEnvio.STATUS_PENDING ||
+        item.status == statusMelhorEnvio.STATUS_RELEASED
+      ) {
+        return false;
+      }
+      if (
+        item.quotation.choose_method == 1 ||
+        item.quotation.choose_method == 2 ||
+        (item.quotation.choose_method == 17 &&
+          (item.status == null ||
+            item.status == statusMelhorEnvio.STATUS_CANCELED))
       ) {
         return true;
       }
       if (
-        item.cotation.choose_method >= 3 &&
-        (item.status == null || item.status == statusMelhorEnvio.STATUS_CANCELED)
+        item.quotation.choose_method >= 3 &&
+        (item.status == null ||
+          item.status == statusMelhorEnvio.STATUS_CANCELED)
       ) {
         if (item.non_commercial) {
           return true;
