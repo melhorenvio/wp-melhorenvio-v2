@@ -97,6 +97,11 @@ class RequestService
     private function treatmentErrors($data)
     {
         $errorsResponse = [];
+        $errors = [];
+
+        if (!empty($data->error)) {
+            $errors[] = $data->error;
+        }
 
         if (!empty($data->errors)) {
             foreach ($data->errors as $errors) {
@@ -104,7 +109,6 @@ class RequestService
             }
         }
 
-        $errors = [];
         if (!empty($errorsResponse) && is_array($errorsResponse)) {
             foreach ($errorsResponse as $error) {
                 $errors[] = end($error);

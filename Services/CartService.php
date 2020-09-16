@@ -32,11 +32,11 @@ class CartService
 
         $options = (new Option())->getOptions();
 
-        $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
+        $insuranceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
             ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
             : true;
 
-        $insuranceValue = ($insuraceRequired)
+        $insuranceValue = ($insuranceRequired)
             ? (new ProductsService())->getInsuranceValue($products)
             : 0;
 
@@ -79,14 +79,14 @@ class CartService
         if (!empty($result->errors)) {
             return [
                 'success' => false,
-                'errors' => $result->errors
+                'errors' => end($result->errors)
             ];
         }
 
         if (empty($result->id)) {
             return [
                 'success' => false,
-                'errors' => 'Não possui possível enviar o pedido para o carrinho de compras'
+                'errors' => 'Não foi possível enviar o pedido para o carrinho de compras'
             ];
         }
 
