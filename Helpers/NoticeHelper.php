@@ -28,7 +28,7 @@ class NoticeHelper
      * @param string $type
      * @return void
      */
-    public function addNotice($message, $type)
+    public static function addNotice($message, $type)
     {
         $type = (in_array($type, self::TYPES_NOTICE))
             ? $type

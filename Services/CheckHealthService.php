@@ -9,13 +9,6 @@ use Helpers\NoticeHelper;
  */
 class CheckHealthService
 {
-    protected $helperNotice;
-
-    public function __construct()
-    {
-        $this->helperNotice = new NoticeHelper();
-    }
-
     public function init()
     {
         $this->hasShippingMethodsMelhorEnvio();
@@ -41,9 +34,9 @@ class CheckHealthService
                         <p>%s</p>
                     </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
 
-                $this->helperNotice->addNotice(
+                NoticeHelper::addNotice(
                     $message,
-                    $this->helperNotice::NOTICE_INFO
+                    NoticeHelper::NOTICE_INFO
                 );
             }
         });
@@ -59,7 +52,7 @@ class CheckHealthService
         $token = (new TokenService())->get();
         if (!$token) {
             $message = 'Atenção! você não possui um token Melhor Envio cadastrado, acesse a plataforma do <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">Melhor Envio</a> e gere seu token de acesso';
-            $this->helperNotice->addNotice($message, $this->helperNotice::NOTICE_INFO);
+            NoticeHelper::addNotice($message, NoticeHelper::NOTICE_INFO);
         }
     }
 
@@ -92,7 +85,7 @@ class CheckHealthService
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                $this->helperNotice->addNotice($err, $this->helperNotice::NOTICE_INFO);
+                NoticeHelper::addNotice($err, NoticeHelper::NOTICE_INFO);
             }
         }
 
@@ -119,9 +112,9 @@ class CheckHealthService
 
         if (!empty($notices)) {
             foreach ($notices as $notice) {
-                $this->helperNotice->addNotice(
+                NoticeHelper::addNotice(
                     $notice,
-                    $this->helperNotice::NOTICE_INFO
+                    NoticeHelper::NOTICE_INFO
                 );
             }
         }

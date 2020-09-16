@@ -54,7 +54,7 @@ if (!defined('ABSPATH')) {
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
-    (new NoticeHelper())->addNotice(
+    NoticeHelper::addNotice(
         'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
         'notice-error'
     );
