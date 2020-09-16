@@ -68,6 +68,14 @@ class RequestService
             )
         );
 
+        if (!empty($response->message) && $response->message == 'Unauthenticated.') {
+            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
+            return (object) [
+                'success' => false,
+                'errors' => ['Usuário não autenticado'],
+            ];
+        }
+
         $errors =  $this->treatmentErrors($response);
 
         if (!empty($errors)) {

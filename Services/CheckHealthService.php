@@ -20,6 +20,7 @@ class CheckHealthService
     {
         $this->hasShippingMethodsMelhorEnvio();
         $this->hasToken();
+        $this->noticesSessions();
     }
 
     /**
@@ -91,7 +92,7 @@ class CheckHealthService
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                (new NoticeHelper())->addNotice($err, 'notice-error');
+                $this->helperNotice->addNotice($err, $this->helperNotice::NOTICE_INFO);
             }
         }
 
@@ -99,5 +100,26 @@ class CheckHealthService
             'errors' => $errors,
             'errorsPath' => $errorsPath
         ];
+    }
+
+    /**
+     * function to check has notices in sessions.
+     *
+     * @return void
+     */
+    public function noticesSessions()
+    {
+        $notices = (new SessionNoticeService())->get();
+
+        $notices = array_unique($notices);
+
+        if (!empty($notices)) {
+            foreach ($notices as $notice) {
+                $this->helperNotice->addNotice(
+                    $notice['notice'],
+                    $this->helperNotice::NOTICE_INFO
+                );
+            }
+        }
     }
 }

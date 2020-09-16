@@ -29,6 +29,16 @@ class RouterService
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
         $this->loadRoutesPath();
+
+        //REMOVER
+        add_action('wp_ajax_get_notices', function () {
+            (new SessionNoticeService())->get();
+        });
+
+        //REMOVER
+        add_action('wp_ajax_remove_notices', function () {
+            (new SessionNoticeService())->remove(0);
+        });
     }
 
     /**
