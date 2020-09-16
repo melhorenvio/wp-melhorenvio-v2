@@ -2,16 +2,18 @@
 
 namespace Services;
 
+use Helpers\NoticeHelper;
+
 /**
  * Health service class
  */
 class CheckHealthService
 {
-    protected $serviceNotice;
+    protected $helperNotice;
 
     public function __construct()
     {
-        $this->serviceNotice = new NoticeService();
+        $this->helperNotice = new NoticeHelper();
     }
 
     public function init()
@@ -38,9 +40,9 @@ class CheckHealthService
                         <p>%s</p>
                     </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
 
-                $this->serviceNotice->addNotice(
+                $this->helperNotice->addNotice(
                     $message,
-                    $this->serviceNotice::NOTICE_INFO
+                    $this->helperNotice::NOTICE_INFO
                 );
             }
         });
@@ -56,7 +58,7 @@ class CheckHealthService
         $token = (new TokenService())->get();
         if (!$token) {
             $message = 'Atenção! você não possui um token Melhor Envio cadastrado, acesse a plataforma do <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">Melhor Envio</a> e gere seu token de acesso';
-            $this->serviceNotice->addNotice($message, $this->serviceNotice::NOTICE_INFO);
+            $this->helperNotice->addNotice($message, $this->helperNotice::NOTICE_INFO);
         }
     }
 
@@ -89,7 +91,7 @@ class CheckHealthService
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                (new NoticeService())->addNotice($err, 'notice-error');
+                (new NoticeHelper())->addNotice($err, 'notice-error');
             }
         }
 

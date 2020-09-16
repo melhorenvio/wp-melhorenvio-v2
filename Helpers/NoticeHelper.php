@@ -1,11 +1,11 @@
 <?php
 
-namespace Services;
+namespace Helpers;
 
 /**
- * Notice service class
+ * Notice helper class
  */
-class NoticeService
+class NoticeHelper
 {
     const TYPE_NOTICE_DEFAULT = 'notice-error';
 
