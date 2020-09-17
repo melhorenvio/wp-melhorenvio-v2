@@ -1,5 +1,5 @@
 ### Changelog
-### [2.9.10]
+### [2.10.0]
 - Criação de função de usuário para suporte do Melhor Envio (Acesso restrito)
 
 ### [2.9.1]
