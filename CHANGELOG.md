@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.10]
+- Criação de função de usuário para suporte do Melhor Envio (Acesso restrito)
+
 ### [2.9.1]
 - Correção error fatal ao enviar produto para o carrinho de compraas
 
