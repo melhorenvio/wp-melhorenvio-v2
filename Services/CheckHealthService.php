@@ -104,6 +104,10 @@ class CheckHealthService
     {
         $notices = (new SessionNoticeService())->get();
 
+        if (empty($notices)) {
+            return false;
+        }
+
         $notices = array_map(function ($notice) {
             return $notice['notice'];
         }, $notices);
