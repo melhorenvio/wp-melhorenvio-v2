@@ -1,5 +1,6 @@
 ### Changelog
 ### [2.9.2]
+- Criação de função de usuário para suporte do Melhor Envio (Acesso restrito)
 - Removendo requisiçoes desnecessárias para rota shipping/services na API do Melhor Envio 
 - Enviando a versão do plugin do Melhor Envio no cabeçalho nas requisições para a API do melhor envio.
 

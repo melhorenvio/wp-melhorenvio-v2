@@ -61,6 +61,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
+use Services\RolesService;
 use Services\RouterService;
 use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
@@ -300,6 +301,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
+        (new RolesService())->init();
 
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
