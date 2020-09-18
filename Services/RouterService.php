@@ -131,8 +131,7 @@ class RouterService
      */
     private function loadRoutesTest()
     {
-        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
-        $version = $plugin_data['Version'];
+        $version = '2.9.2';
 
         add_action('wp_ajax_nopriv_environment', function () use ($version) {
             (new TestService($version))->run();
