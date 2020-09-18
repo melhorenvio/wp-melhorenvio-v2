@@ -1,5 +1,5 @@
 ### Changelog
-### [2.10.0]
+### [2.9.2]
 - enviando a versão do plugin no cabeçalho nas requisições para a API do melhor envio.
 
 ### [2.9.1]
