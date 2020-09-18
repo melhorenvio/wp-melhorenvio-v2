@@ -139,7 +139,6 @@ class RouterService
         });
 
         add_action('wp_ajax_environment', function () use ($version) {
-            $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
             (new TestService($version))->run();
         });
     }
