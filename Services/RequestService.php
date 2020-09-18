@@ -2,8 +2,6 @@
 
 namespace Services;
 
-use Models\Version;
-
 class RequestService
 {
     const URL = 'https://api.melhorenvio.com/v2/me';
@@ -35,7 +33,7 @@ class RequestService
         $this->headers = array(
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
-            'version-wordpress' => $plugin_data['Version'],
+            'version-plugin-me' => $plugin_data['Version'],
             'Authorization' => 'Bearer ' . $this->token,
         );
     }
