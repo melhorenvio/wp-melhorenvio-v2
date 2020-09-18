@@ -93,6 +93,10 @@ class OrderService
     {
         $data = (new OrderQuotationService())->getData($postId);
 
+        if (empty($data['order_id'])) {
+            return null;
+        }
+
         $body = [
             'orders' => (array) $data['order_id']
         ];
