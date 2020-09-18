@@ -1,9 +1,11 @@
 ### Changelog
 ### [2.9.2]
 - Criação de função de usuário para suporte do Melhor Envio (Acesso restrito)
+- Removendo requisiçoes desnecessárias para rota shipping/services na API do Melhor Envio 
+- Enviando a versão do plugin do Melhor Envio no cabeçalho nas requisições para a API do melhor envio.
 
 ### [2.9.1]
-- Correção error fatal ao enviar produto para o carrinho de compraas
+- Correção error fatal ao enviar produto para o carrinho de compras
 
 ### [2.9.0]
 - Correção da exibição de frete grátis e taxa fixa.

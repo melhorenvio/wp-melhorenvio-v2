@@ -61,10 +61,8 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
-use Models\Method;
 use Services\RolesService;
 use Services\RouterService;
-use Services\SessionService;
 use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
 use Services\TrackingService;
@@ -76,13 +74,12 @@ use Services\TrackingService;
  */
 final class Base_Plugin
 {
-
     /**
      * Plugin version
      *
      * @var string
      */
-    public $version = '2.9.0';
+    public $version;
 
     /**
      * Holds various class instances
@@ -99,6 +96,10 @@ final class Base_Plugin
      */
     public function __construct()
     {
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+
+        $this->version = $plugin_data['Version'];
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));
@@ -353,7 +354,6 @@ final class Base_Plugin
      */
     public function init_classes()
     {
-
         try {
             if ($this->is_request('admin')) {
                 $this->container['admin'] = new App\Admin();

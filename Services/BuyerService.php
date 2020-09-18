@@ -6,6 +6,9 @@ use Helpers\FormaterHelper;
 
 class BuyerService
 {
+    const PERSONAL = 1;
+
+    const COMPANY = 2;
     /**
      * Get data of buyer by order id
      *
@@ -16,11 +19,17 @@ class BuyerService
     {
         $order = new \WC_Order($orderId);
 
-        $cpf  = get_post_meta($orderId, '_billing_cpf', true);
-        $cnpj = get_post_meta($orderId, '_billing_cnpj', true);
+        $cpf  = FormaterHelper::formatDocument(get_post_meta(
+            $orderId,
+            '_billing_cpf',
+            true
+        ));
+        $cnpj = FormaterHelper::formatDocument(get_post_meta(
+            $orderId,
+            '_billing_cnpj',
+            true
+        ));
         $phone = get_post_meta($orderId, '_billing_cellphone', true);
-
-        $document = ($cpf) ? $cpf : $cnpj;
 
         if (empty($phone)) {
             $phone = $order->get_billing_phone();
@@ -29,24 +38,53 @@ class BuyerService
         $dataBilling = $this->getBillingAddress($order);
         $dataShipping = $this->getShippingAddress($order);
 
-        return (object) [
-            "name" => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+        $typePerson = get_post_meta($orderId, '_billing_persontype', true);
+
+        if (empty($typePerson)) {
+            $typePerson = self::PERSONAL;
+        }
+
+        $body = (object) [
+            "name" => ($typePerson == self::COMPANY)
+                ? $order->get_billing_company()
+                : $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => FormaterHelper::formatPhone($phone),
             "email" => $order->get_billing_email(),
-            "document" => $document,
-            "company_document" => (!empty($cnpj)) ? $cnpj : null,
-            "state_register" => null, // (opcional) (a menos que seja transportadora e logÃ­stica reversa)
-            "address" => (isset($dataShipping->address)) ? $dataShipping->address : $dataBilling->address,
-            "complement" => (isset($dataShipping->complement)) ? $dataShipping->complement : $dataBilling->complement,
-            "number" => (isset($dataShipping->number)) ? $dataShipping->number : $dataBilling->number,
-            "district" => (isset($dataShipping->district)) ? $dataShipping->district : $dataBilling->district,
-            "city" => (isset($dataShipping->city)) ? $dataShipping->city : $dataBilling->city,
-            "state_abbr" => (isset($dataShipping->state_abbr)) ? $dataShipping->state_abbr : $dataBilling->state_abbr,
+            "state_register" => null,
+            "address" => (isset($dataShipping->address))
+                ? $dataShipping->address
+                : $dataBilling->address,
+            "complement" => (isset($dataShipping->complement))
+                ? $dataShipping->complement
+                : $dataBilling->complement,
+            "number" => (isset($dataShipping->number))
+                ? $dataShipping->number
+                : $dataBilling->number,
+            "district" => (isset($dataShipping->district))
+                ? $dataShipping->district
+                : $dataBilling->district,
+            "city" => (isset($dataShipping->city))
+                ? $dataShipping->city
+                : $dataBilling->city,
+            "state_abbr" => (isset($dataShipping->state_abbr))
+                ? $dataShipping->state_abbr
+                : $dataBilling->state_abbr,
             "country_id" => 'BR',
             "postal_code" => (isset($dataShipping->postal_code))
                 ? $dataShipping->postal_code
                 : $dataBilling->postal_code,
         ];
+
+        if ($typePerson == self::PERSONAL) {
+            $body->document = $cpf;
+        }
+
+        if (!empty($cnpj) && $typePerson == self::COMPANY) {
+            $body->company_document = $cnpj;
+            unset($body->document);
+        }
+
+        return $body;
     }
 
     /**
