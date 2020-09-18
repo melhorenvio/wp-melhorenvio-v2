@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.10.0
+Version: 2.9.2
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
