@@ -73,13 +73,12 @@ use Services\TrackingService;
  */
 final class Base_Plugin
 {
-
     /**
      * Plugin version
      *
      * @var string
      */
-    public $version = '2.9.0';
+    public $version;
 
     /**
      * Holds various class instances
@@ -96,6 +95,10 @@ final class Base_Plugin
      */
     public function __construct()
     {
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+
+        $this->version = $plugin_data['Version'];
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));
