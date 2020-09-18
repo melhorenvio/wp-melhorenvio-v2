@@ -50,6 +50,10 @@ class ListOrderService
 
         $quotationService = new QuotationService();
 
+        $buyerService = new BuyerService();
+
+        $translateHelper = new TranslateStatusHelper();
+
         foreach ($posts as $post) {
             $postId = $post->ID;
 
@@ -61,7 +65,7 @@ class ListOrderService
                 'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
                     ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
                     : null,
-                'to' => $buyerService->getDataBuyerByOrderId($post->ID),
+                'to' => $buyerService->getDataBuyerByOrderId($postId),
                 'status' => $statusMelhorEnvio[$postId]['status'],
                 'status_texto' => $translateHelper->translateNameStatus(
                     $statusMelhorEnvio[$postId]['status']
@@ -72,7 +76,7 @@ class ListOrderService
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
                 'products' => (new OrdersProductsService())->getProductsOrder($postId),
-                'quotation' => $quotationService->calculateQuotationByOrderId($postId),
+                'quotation' => $quotationService->calculateQuotationByPostId($postId),
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }

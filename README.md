@@ -64,12 +64,3 @@ Não esqueça de cadastrar de forma correta as medidas do produto na aba de entr
 Observação: Atenção com as medidas de unidades utilizadas, cuidado se você está utilizando gramas ou quilos, metros ou centímetros, isso vai aplicar no valor da cotação e no bom funcionamento da calculadora de fretes do Melhor Envio.
  
 Pronto! o plugin do Melhor Envio está funcionando.
-
-== Changelog ==
-- Correção da exibição de frete grátis e taxa fixa.
-- Ajuste cálculo de produto com variação na tela do produto.
-- Adicionando percentual extra sobre o valor do frete.
-- Adicionando função para cancelar etiquetas.
-- Opção de ativar/desativar valor segurado
-- Ajuste para salvar dados do vendedor nos options do Wordpress.
-- Correções de warnings

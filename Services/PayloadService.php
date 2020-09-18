@@ -5,6 +5,7 @@ namespace Services;
 use Models\Method;
 use Models\Option;
 use Models\Payload;
+use Models\ShippingService;
 
 class PayloadService
 {
@@ -130,7 +131,7 @@ class PayloadService
         $payload->products = (new ProductsService())->removePrice((array) $payload->products);
         $payload->options->insurance_value = false;
         $payload->services = implode(
-            CalculateShippingMethodService::SERVICES_CORREIOS,
+            ShippingService::SERVICES_CORREIOS,
             ","
         );
 

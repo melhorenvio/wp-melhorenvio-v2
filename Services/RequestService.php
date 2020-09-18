@@ -20,6 +20,12 @@ class RequestService
     {
         $tokenData = (new TokenService())->get();
 
+        if (!$tokenData) {
+            return wp_send_json([
+                'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
+            ], 401);
+        }
+
         if ($tokenData['token_environment'] == 'production') {
             $this->token = $tokenData['token'];
             $this->url = self::URL;
@@ -62,6 +68,22 @@ class RequestService
                 wp_remote_post($this->url . $route, $params)
             )
         );
+
+        if (empty($response)) {
+            (new SessionNoticeService())->add('Ocorreu um erro ao se conectar com a API do Melhor Envio');
+            return (object) [
+                'success' => false,
+                'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],
+            ];
+        }
+
+        if (!empty($response->message) && $response->message == 'Unauthenticated.') {
+            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
+            return (object) [
+                'success' => false,
+                'errors' => ['Usuário não autenticado'],
+            ];
+        }
 
         $errors =  $this->treatmentErrors($response);
 

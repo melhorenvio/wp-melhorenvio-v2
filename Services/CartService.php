@@ -45,8 +45,8 @@ class CartService
             ? $payloadSaved->options
             : (new Option())->getOptions();
 
-        $insuranceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
-            ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
+        $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
+            ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
             : true;
 
         $insuranceValue = ($insuranceRequired)

@@ -33,12 +33,18 @@ class Address
             false
         );
 
+        if (empty($response->data)) {
+            return [
+                'success' => false,
+                'message' => 'Não foi possível obter endereços da API do Melhor Envio'
+            ];
+        }
+
         $selectedAddress = get_option(self::OPTION_ADDRESS_SELECTED);
 
         $addresses = array();
 
         foreach ($response->data as $address) {
-
             $addresses[] = array(
                 'id'          => $address->id,
                 'address'     => $address->address,

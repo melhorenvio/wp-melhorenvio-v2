@@ -39,9 +39,10 @@ class QuotationService
                 true
             );
 
-            $quotations = array_merge($quotations, $quotsWithoutValue);
-
-            $quotations = $this->setKeyQuotationAsServiceid($quotations);
+            if (is_array($quotations) && is_array($quotsWithoutValue)) {
+                $quotations = array_merge($quotations, $quotsWithoutValue);
+                $quotations = $this->setKeyQuotationAsServiceid($quotations);
+            }
         }
 
         return $quotations;
@@ -136,7 +137,7 @@ class QuotationService
         $quotation = $this->orderingQuotationByPrice($quotation);
         $hash = md5(json_encode($bodyQuotation));
         $_SESSION['quotation'][$hash] = $quotation;
-        $_SESSION['quotation'][$hash]->created = date('Y-m-d H:i:s');
+        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
     }
 
     /**
@@ -148,6 +149,10 @@ class QuotationService
     public function orderingQuotationByPrice($quotation)
     {
         if (is_null($quotation)) {
+            return $quotation;
+        }
+
+        if (!is_array($quotation)) {
             return $quotation;
         }
 

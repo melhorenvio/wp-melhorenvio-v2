@@ -34,7 +34,7 @@ class ConfigurationController
      * @param string $tokenUser
      * @return mixed
      */
-    public function saveToken($tokenUser)
+    public function save($tokenUser)
     {
         $token = get_option('melhorenvio_token');
         if (!$token) {

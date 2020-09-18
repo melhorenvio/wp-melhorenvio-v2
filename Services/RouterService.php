@@ -31,6 +31,7 @@ class RouterService
         $this->loadRoutesLocation();
         $this->loadRoutesPath();
         $this->laodRoutesPayload();
+        $this->loadRoutesNotices();
     }
 
     /**
@@ -121,8 +122,8 @@ class RouterService
     {
         $tokensController = new TokenController();
 
-        add_action('wp_ajax_get_token', [$tokensController, 'getToken']);
-        add_action('wp_ajax_save_token', [$tokensController, 'saveToken']);
+        add_action('wp_ajax_get_token', [$tokensController, 'get']);
+        add_action('wp_ajax_save_token', [$tokensController, 'save']);
         add_action('wp_ajax_verify_token', [$tokensController, 'verifyToken']);
     }
 
@@ -228,6 +229,22 @@ class RouterService
                 ], 400);
             }
             return $payloadsController->destroy($_GET['post_id']);
+        });
+    }
+
+    /*
+     * function to start path notices
+     *
+     * @return void
+     */
+    public function loadRoutesNotices()
+    {
+        add_action('wp_ajax_get_notices', function () {
+            (new SessionNoticeService())->get();
+        });
+
+        add_action('wp_ajax_remove_notices', function () {
+            (new SessionNoticeService())->remove($_GET['id']);
         });
     }
 }
