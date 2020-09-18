@@ -62,10 +62,14 @@ class SessionNoticeService
     /**
      * function to list all notices in session.
      *
-     * @return array
+     * @return bool|array
      */
     public function get()
     {
-        return $_SESSION[self::ID_NOTICES_SESSION];
+        if (!empty($_SESSION[self::ID_NOTICES_SESSION])) {
+            return $_SESSION[self::ID_NOTICES_SESSION];
+        }
+
+        return false;
     }
 }
