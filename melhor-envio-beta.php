@@ -61,7 +61,6 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
-use Models\Version;
 use Services\RouterService;
 use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
@@ -79,7 +78,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = Version::VERSION;
+    public $version;
 
     /**
      * Holds various class instances
@@ -96,6 +95,10 @@ final class Base_Plugin
      */
     public function __construct()
     {
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+
+        $this->version = $plugin_data['Version'];
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));

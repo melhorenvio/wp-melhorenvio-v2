@@ -30,10 +30,12 @@ class RequestService
             $this->url = self::SANDBOX_URL;
         }
 
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+
         $this->headers = array(
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
-            'version-wordpress' => Version::VERSION,
+            'version-wordpress' => $plugin_data['Version'],
             'Authorization' => 'Bearer ' . $this->token,
         );
     }
