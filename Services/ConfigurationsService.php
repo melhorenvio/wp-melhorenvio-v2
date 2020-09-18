@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Controllers\ConfigurationController;
 use Models\Address;
 use Models\Agency;
 use Models\Option;
@@ -10,6 +9,7 @@ use Models\CalculatorShow;
 use Models\JadlogAgenciesShow;
 use Models\UseInsurance;
 use Models\Seller;
+use Models\ShippingService;
 
 class ConfigurationsService
 {
@@ -24,6 +24,7 @@ class ConfigurationsService
         $response = [];
 
         (new Seller())->destroy();
+        (new ShippingService())->destroy();
         (new SessionService())->destroy(SellerService::USER_SESSION);
 
         if (isset($data['address'])) {
@@ -93,7 +94,6 @@ class ConfigurationsService
             'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
-            'metodos'             => (new OptionsMethodShippingService())->get(),
             'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
             'path_plugins'        => $this->getPathPluginsArray(),
             'options_calculator'  => $this->getOptionsCalculator()
