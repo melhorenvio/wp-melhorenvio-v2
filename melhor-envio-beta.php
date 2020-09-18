@@ -96,9 +96,7 @@ final class Base_Plugin
      */
     public function __construct()
     {
-        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
-
-        $this->version = $plugin_data['Version'];
+        $this->version = '2.9.2';
 
         $this->define_constants();
 

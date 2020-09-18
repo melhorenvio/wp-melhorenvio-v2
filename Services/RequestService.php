@@ -28,12 +28,10 @@ class RequestService
             $this->url = self::SANDBOX_URL;
         }
 
-        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
-
         $this->headers = array(
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
-            'version-plugin-me' => $plugin_data['Version'],
+            'version-plugin-me' => '2.9.2',
             'Authorization' => 'Bearer ' . $this->token,
         );
     }
