@@ -132,12 +132,15 @@ class RouterService
      */
     private function loadRoutesTest()
     {
-        add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.9.0'))->run();
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+        $version = $plugin_data['Version'];
+
+        add_action('wp_ajax_nopriv_environment', function () use ($version) {
+            (new TestService($version))->run();
         });
 
-        add_action('wp_ajax_environment', function () {
-            (new TestService('2.9.0'))->run();
+        add_action('wp_ajax_environment', function () use ($version) {
+            (new TestService($version))->run();
         });
     }
 

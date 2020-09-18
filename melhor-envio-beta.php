@@ -8,7 +8,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.9.1
+Version: 2.9.2
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -64,6 +64,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Services\CheckHealthService;
+use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
@@ -80,7 +81,7 @@ final class Base_Plugin
      *
      * @var string
      */
-    public $version = '2.9.0';
+    public $version;
 
     /**
      * Holds various class instances
@@ -97,6 +98,10 @@ final class Base_Plugin
      */
     public function __construct()
     {
+        $plugin_data = get_plugin_data(BASEPLUGIN_FILE);
+
+        $this->version = $plugin_data['Version'];
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));
@@ -259,6 +264,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
+        (new RolesService())->init();
 
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
