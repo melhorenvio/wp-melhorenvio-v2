@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.2]
+- Removendo requisiçoes desnecessárias para rota shipping/services na API do Melhor Envio 
+
 ### [2.9.1]
 - Correção error fatal ao enviar produto para o carrinho de compraas
 
