@@ -28,7 +28,7 @@ class ListOrderService
             ];
         }
 
-        $orders = $this->setData($posts);
+        $orders = $this->getData($posts);
 
         return [
             'orders' => $orders,
@@ -42,7 +42,7 @@ class ListOrderService
      * @param array $posts
      * @return array
      */
-    private function setData($posts)
+    private function getData($posts)
     {
         $orders = [];
 
@@ -61,9 +61,9 @@ class ListOrderService
                 'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
                     ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
                     : null,
-                'to' => (new BuyerService())->getDataBuyerByOrderId($post->ID),
+                'to' => $buyerService->getDataBuyerByOrderId($post->ID),
                 'status' => $statusMelhorEnvio[$postId]['status'],
-                'status_texto' => (new TranslateStatusHelper())->translateNameStatus(
+                'status_texto' => $translateHelper->translateNameStatus(
                     $statusMelhorEnvio[$postId]['status']
                 ),
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],

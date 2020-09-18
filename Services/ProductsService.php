@@ -17,28 +17,26 @@ class ProductsService
         $insuranceValue = 0;
         foreach ($products as $product) {
             $value = 0;
-            if (is_array($product)) {
-                if (!empty($product['unitary_value'])) {
-                    $value = $product['unitary_value'] * $product['quantity'];
-                }
-                $insuranceValue = $insuranceValue + $value;
+            if (!empty($product->unitary_value)) {
+                $value = $product->unitary_value * $product->quantity;
             }
+            $insuranceValue = $insuranceValue + $value;
         }
         return $insuranceValue;
     }
 
     /**
-     * Function to remove the price field from 
+     * function to remove the price field from
      * the product to perform the quote without insurance value
      *
-     * @param array|object $products
-     * @return array|object
+     * @param array $products
+     * @return array
      */
     public function removePrice($products)
     {
         foreach ($products as $key => $product) {
-            unset($products[$key]['price']);
-            unset($products[$key]['insurance_value']);
+            unset($products[$key]->price);
+            unset($products[$key]->insurance_value);
         }
 
         return $products;
@@ -56,10 +54,10 @@ class ProductsService
 
         foreach ($data as $item) {
             if (empty($item['data'])) {
-                $products[] = $item;
+                $products[] = (object) $item;
             } else {
                 $product = $item['data'];
-                $products[] = [
+                $products[] = (object) [
                     'id' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
                     'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),

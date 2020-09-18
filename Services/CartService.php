@@ -4,6 +4,7 @@ namespace Services;
 
 use Models\Agency;
 use Models\Option;
+use Models\Payload;
 
 class CartService
 {
@@ -16,21 +17,33 @@ class CartService
      *
      * @param int $orderId
      * @param array $products
-     * @param array $to
+     * @param array $dataBuyer
      * @param int $shippingMethodId
      * @return void
      */
-    public function add($orderId, $products, $to, $shippingMethodId)
+    public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
-        $from = (new SellerService())->getData();
+        $payloadSaved = (new Payload())->get($orderId);
 
-        $quotation = (new QuotationService())->calculateQuotationByOrderId($orderId);
+        $products = (!empty($payloadSaved->products))
+            ? $payloadSaved->products
+            : $products;
+
+        $dataBuyer = (!empty($payloadSaved->buyer))
+            ? $payloadSaved->buyer
+            : $dataBuyer;
+
+        $dataFrom =  (new SellerService())->getData();
+
+        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
 
-        $shippingMethodService = new CalculateShippingMethodService();
+        $methodService = new CalculateShippingMethodService();
 
-        $options = (new Option())->getOptions();
+        $options = (!empty($payloadSaved->options))
+            ? $payloadSaved->options
+            : (new Option())->getOptions();
 
         $insuranceRequired = ($shippingMethodService->isCorreios($shippingMethodId))
             ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
@@ -41,8 +54,8 @@ class CartService
             : 0;
 
         $body = array(
-            'from' => $from,
-            'to' => $to,
+            'from' => $dataFrom,
+            'to' => $dataBuyer,
             'agency' => (new Agency())->getCodeAgencySelected(),
             'service' => $shippingMethodId,
             'products' => $products,
@@ -159,23 +172,6 @@ class CartService
         }
 
         return $volumes;
-    }
-
-    /**
-     * Sum values of products.
-     *
-     * @param array $products
-     * @return float $value
-     */
-    private function getInsuranceValueByProducts($products)
-    {
-        $value = 0;
-
-        foreach ($products as $product) {
-            $value += ($product['unitary_value'] * $product['quantity']);
-        }
-
-        return $value;
     }
 
     /**
