@@ -94,7 +94,10 @@ class OrderService
         $data = (new OrderQuotationService())->getData($postId);
 
         if (empty($data['order_id'])) {
-            return null;
+            return [
+                'success' => false,
+                'message' => 'Pedido não possui etiqueta do Melhor Envio'
+            ];
         }
 
         $body = [
