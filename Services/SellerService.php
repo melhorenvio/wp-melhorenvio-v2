@@ -17,21 +17,12 @@ class SellerService
      * @return object $dataSeller
      */
     public function getData()
-    {   
+    {
         $seller = new Seller();
 
-        $sessionService = new SessionService();
-
-        $data = $sessionService->getDataCached(self::USER_SESSION);
-
-        if(!empty($data)) {
-            return $data;
-        }
-
         $data = $seller->get();
-        
+
         if (!empty($data)) {
-            $sessionService->storeData(self::USER_SESSION, $data);
             return $data;
         }
 
@@ -68,8 +59,6 @@ class SellerService
         ];
 
         $seller->save($data);
-
-        $sessionService->storeData(self::USER_SESSION, $data);
 
         return $data;
     }
