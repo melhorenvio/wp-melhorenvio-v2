@@ -10,7 +10,6 @@ use Models\Seller;
  */
 class SellerService
 {
-    const USER_SESSION = 'user_seller_melhor_envio';
     /**
      * Get data user on API Melhor Envio
      *
