@@ -87,6 +87,8 @@ class QuotationService
             $payload->options->insurance_value
         );
 
+        $this->checkIfHasErrorsOrder($quotations, $postId);
+
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
     }
 
@@ -103,7 +105,6 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
-
         $payload = (new PayloadService())->createPayloadByProducts(
             $postalCode,
             $products
@@ -120,6 +121,7 @@ class QuotationService
 
         return $quotation;
     }
+
 
     /**
      * Function to save response quotation on session.
@@ -233,5 +235,34 @@ class QuotationService
         }
 
         return false;
+    }
+
+    /**
+     * Function to go through the quote and check for errors 
+     * and notify the store administrator.
+     *
+     * @param array $quotations
+     * @param array $products
+     * @return void
+     */
+    private function checkIfHasErrorsProduct($quotations, $products)
+    {
+        $labelProducts = (new ProductsService())->createLabelTitleProducts($products);
+        $errors = '';
+        foreach ($quotations as $quotation) {
+            if (!empty($quotation->error)) {
+                $errors = $errors .  sprintf(
+                    "<b>%s</b> %s </br>",
+                    $quotation->name,
+                    $quotation->error
+                );
+            }
+        }
+
+        if (!empty($errors)) {
+            (new SessionNoticeService())->add(
+                sprintf("%s </br> %s", $labelProducts, $errors)
+            );
+        }
     }
 }
