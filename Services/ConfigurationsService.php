@@ -25,7 +25,6 @@ class ConfigurationsService
 
         (new Seller())->destroy();
         (new ShippingService())->destroy();
-        (new SessionService())->destroy(SellerService::USER_SESSION);
 
         if (isset($data['address'])) {
             $response['address'] = (new Address())->setAddressShopping(

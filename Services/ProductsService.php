@@ -34,12 +34,21 @@ class ProductsService
      */
     public function removePrice($products)
     {
-        foreach ($products as $key => $product) {
-            unset($products[$key]->price);
-            unset($products[$key]->insurance_value);
+        $response = [];
+        foreach ($products as $product) {
+            $response[] = (object) [
+                'id' => $product->id,
+                'name' => $product->name,
+                'quantity' => $product->quantity,
+                'unitary_value' => $product->unitary_value,
+                'weight' => $product->weight,
+                'width' => $product->width,
+                'height' => $product->height,
+                'length' => $product->length,
+            ];
         }
 
-        return $products;
+        return $response;
     }
 
     /**
@@ -70,7 +79,8 @@ class ProductsService
                 }
 
                 $products[] = (object) [
-                    'id' =>  $product->get_name(),
+                    'id' =>  $product->get_id(),
+                    'name' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
                     'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
                     'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
