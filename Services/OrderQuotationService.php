@@ -33,7 +33,7 @@ class OrderQuotationService
         $quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
-            $quotation = (new QuotationService())->calculateQuotationByOrderId($postId);
+            $quotation = (new QuotationService())->calculateQuotationByPostId($postId);
         }
 
         $quotation = $this->checkHasCorreiosWithVolumes($quotation);

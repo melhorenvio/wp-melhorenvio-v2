@@ -49,6 +49,7 @@ class BuyerService
                 ? $order->get_billing_company()
                 : $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             "phone" => FormaterHelper::formatPhone($phone),
+            "phoneMasked" => $phone,
             "email" => $order->get_billing_email(),
             "state_register" => null,
             "address" => (isset($dataShipping->address))
