@@ -65,15 +65,22 @@ class PayloadsController
      */
     public function destroy($postId)
     {
-        if ((new Payload())->destroy($postId)) {
-            return wp_send_json([
-                'success' => true
-            ], 200);
-        }
+        try {
+            if ((new Payload())->destroy($postId)) {
+                return wp_send_json([
+                    'success' => true
+                ], 200);
+            }
 
-        return wp_send_json([
-            'success' => false,
-            'error' => 'Ocorreu um erro ao remover o payload'
-        ], 400);
+            return wp_send_json([
+                'success' => false,
+                'error' => 'Não foi possível remover o payload'
+            ], 400);
+        } catch (\Exception $exception) {
+            return wp_send_json([
+                'success' => false,
+                'error' => 'Ocorreu um erro ao remover o payload'
+            ], 400);
+        }
     }
 }
