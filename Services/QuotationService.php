@@ -30,7 +30,7 @@ class QuotationService
             true
         );
 
-        if (!$useInsuranceValue) {
+        if (empty($useInsuranceValue)) {
             $payload = (new PayloadService())->removeInsuranceValue($payload);
             $quotsWithoutValue = $requestService->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
@@ -87,8 +87,6 @@ class QuotationService
             $payload->options->insurance_value
         );
 
-        $this->checkIfHasErrorsOrder($quotations, $postId);
-
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
     }
 
@@ -137,9 +135,11 @@ class QuotationService
         }
 
         $quotation = $this->orderingQuotationByPrice($quotation);
-        $hash = md5(json_encode($bodyQuotation));
-        $_SESSION['quotation'][$hash] = $quotation;
-        $_SESSION['quotation'][$hash]->created = date('Y-m-d H:i:s');
+
+        $hash = $this->generateHashQuotation($bodyQuotation);
+
+        $_SESSION['quotation'][$hash]['data'] = $quotation;
+        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
     }
 
     /**
@@ -167,6 +167,40 @@ class QuotationService
     }
 
     /**
+     * function to created a hash by quotation.
+     *
+     * @param object $payload
+     * @return string
+     */
+    private function generateHashQuotation($payload)
+    {
+        $products = [];
+
+        if (!empty($payload->products)) {
+            foreach ($payload->products as $product) {
+                $products[] = [
+                    'id' => $product->id,
+                    'width' => $product->width,
+                    'height' => $product->height,
+                    'length' => $product->length,
+                    'weight' => $product->weight,
+                    'unitary_value' => $product->unitary_value,
+                    'quantity' => $product->quantity,
+                ];
+            }
+        }
+        return md5(json_encode([
+            'from' => $payload->from->postal_code,
+            'to' => $payload->to->postal_code,
+            'options' => [
+                'own_hand' => $payload->options->own_hand,
+                'receipt' => $payload->options->receipt,
+            ],
+            'products' => $products
+        ]));
+    }
+
+    /**
      * Function to search for the quotation of a shipping service in the session, 
      * if it does not find false returns
      *
@@ -176,7 +210,7 @@ class QuotationService
      */
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
-        $hash = md5(json_encode($bodyQuotation));
+        $hash = $this->generateHashQuotation($bodyQuotation);
 
         if (!isset($_SESSION)) {
             session_start();
@@ -192,7 +226,7 @@ class QuotationService
         }
 
         $quotations = array_filter(
-            $_SESSION['quotation'][$hash],
+            $_SESSION['quotation'][$hash]['data'],
             function ($item) use ($service) {
                 if (isset($item->id) && $item->id == $service) {
                     return $item;
@@ -215,7 +249,7 @@ class QuotationService
      */
     private function isSessionCachedQuotationExpired($bodyQuotation)
     {
-        $hash = md5(json_encode($bodyQuotation));
+        $hash = $this->generateHashQuotation($bodyQuotation);
 
         if (isset($_SESSION['quotation'][$hash]->success) && !$_SESSION['quotation'][$hash]->success) {
             return true;
