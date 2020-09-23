@@ -79,7 +79,8 @@ class ProductsService
                 }
 
                 $products[] = (object) [
-                    'id' =>  $product->get_name(),
+                    'id' =>  $product->get_id(),
+                    'name' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
                     'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
                     'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),

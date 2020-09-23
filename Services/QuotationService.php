@@ -226,7 +226,7 @@ class QuotationService
         }
 
         $quotations = array_filter(
-            $_SESSION['quotation'][$hash]['data'],
+            (array) $_SESSION['quotation'][$hash]['data'],
             function ($item) use ($service) {
                 if (isset($item->id) && $item->id == $service) {
                     return $item;
