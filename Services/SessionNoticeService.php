@@ -24,22 +24,40 @@ class SessionNoticeService
      */
     public function add($notice)
     {
-        $notices = $_SESSION[self::ID_NOTICES_SESSION];
+        $notices = (!empty($_SESSION[self::ID_NOTICES_SESSION]))
+            ? $_SESSION[self::ID_NOTICES_SESSION]
+            : [];
 
-        $key = array_search($notice, array_column($notices, 'notice'));
-        if (!$key) {
-            $html = sprintf(
-                '<p>%s <a href="%s"></br>
-                <small>Não exibir mais</small></a></p>',
-                $notice,
-                get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
-            );
-
-            $_SESSION[self::ID_NOTICES_SESSION][md5($notice)] = [
-                'notice' => $html,
-                'created' => date('Y-m-d H:i:s')
-            ];
+        if (!empty($notices)) {
+            $key = array_search($notice, array_column($notices, 'notice'));
+            if (!$key) {
+                $this->insertSession($notice);
+            }
+            return;
         }
+
+        $this->insertSession($notice);
+    }
+
+    /**
+     * function to insert notice insession.
+     *
+     * @param string $notice
+     * @return void
+     */
+    private function insertSession($notice)
+    {
+        $html = sprintf(
+            '<p>%s <a href="%s"></br>
+            <small>Não exibir mais</small></a></p>',
+            $notice,
+            get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
+        );
+
+        $_SESSION[self::ID_NOTICES_SESSION][md5($notice)] = [
+            'notice' => $html,
+            'created' => date('Y-m-d H:i:s')
+        ];
     }
 
     /**
