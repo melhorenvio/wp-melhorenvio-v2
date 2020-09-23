@@ -68,7 +68,7 @@ class PayloadsController
         if ((new Payload())->destroy($postId)) {
             return wp_send_json([
                 'success' => true
-            ], 2000);
+            ], 200);
         }
 
         return wp_send_json([
