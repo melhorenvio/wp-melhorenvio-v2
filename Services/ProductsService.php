@@ -52,11 +52,23 @@ class ProductsService
     {
         $products = [];
 
+        $noticeService = new SessionNoticeService();
+
         foreach ($data as $item) {
             if (empty($item['data'])) {
                 $products[] = (object) $item;
             } else {
                 $product = $item['data'];
+
+                if (!$this->hasAllDimensions(($product))) {
+                    $message = sprintf(
+                        "Verificar as medidas do produto  <a href='%s'>%s</a>",
+                        get_edit_post_link($product->get_id()),
+                        $product->get_name()
+                    );
+                    $noticeService->add($message);
+                }
+
                 $products[] = (object) [
                     'id' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
@@ -71,5 +83,45 @@ class ProductsService
         }
 
         return $products;
+    }
+
+    /**
+     * function to check if prouct has all dimensions.
+     *
+     * @param object $product
+     * @return boolean
+     */
+    private function hasAllDimensions($product)
+    {
+        return (!empty($product->get_width()) &&
+            !empty($product->get_height()) &&
+            !empty($product->get_length()) &&
+            !empty($product->get_weight()));
+    }
+
+    /**
+     * function to return a label with the name of products.
+     *
+     * @param array $products
+     * @return string
+     */
+    public function createLabelTitleProducts($products)
+    {
+        $title = '';
+        foreach ($products as $id => $product) {
+            if (!empty($product['data']->get_name())) {
+                $title = $title . sprintf(
+                    "<a href='%s'>%s</a>, ",
+                    get_edit_post_link($id),
+                    $product['data']->get_name()
+                );
+            }
+        }
+
+        if (!empty($title)) {
+            $title = substr($title, 0, -2);
+        }
+
+        return 'Produto(s): ' . $title;
     }
 }
