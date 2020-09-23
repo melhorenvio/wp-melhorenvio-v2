@@ -174,6 +174,7 @@ class QuotationProductPageService
                 'postcode' => $this->destination->cep,
             ],
             'contents' => $contents,
+            'contents_cost' => $this->product->get_price() * $this->quantity
         ];
     }
 
