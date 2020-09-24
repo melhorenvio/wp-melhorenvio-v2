@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Models\Option;
 
 class TestService
 {
@@ -15,17 +16,30 @@ class TestService
 
     public function run()
     {
+        if (empty($_GET['hash'])) {
+            return wp_send_json([
+                'message' => 'Acesso não autorizado'
+            ], 401);
+        }
+
+        if (md5($_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
+            return wp_send_json([
+                'message' => 'Acesso não autorizado'
+            ], 401);
+        }
+
         $response = [
             'version' => $this->version,
             'php' => phpversion(),
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData()),
             'metrics' => $this->getMetrics(),
-            'path' => dirname(__FILE__)
+            'path' => $this->getPathPlugins(),
+            'options' => (new Option())->getOptions(),
+            'plugins' => $this->getListPluginsInstaleds()
         ];
 
         if (isset($_GET['postalcode'])) {
-
             $product = $this->getProductToTest();
 
             $quotation = (new QuotationService())->calculateQuotationByProducts(
@@ -49,41 +63,15 @@ class TestService
     }
 
     /**
-     * Function to get cep destiny
+     * Function to return path plugins.
      *
-     * @param array $data
-     * @return string $cep
+     * @return string
      */
-    private function cepDestiny($data)
+    private function getPathPlugins()
     {
-        return (isset($data['cep'])) ? $data['cep'] : '01018020';
-    }
-
-    /**
-     * Function to get packages
-     *
-     * @param array $data
-     * @return array $packages
-     */
-    private function packages($data)
-    {
-        return [
-            'width'  => (isset($data['width']))  ? (float) $data['width']  : 17,
-            'height' => (isset($data['height'])) ? (float) $data['height'] : 23,
-            'length' => (isset($data['length'])) ? (float) $data['length'] : 10,
-            'weight' => (isset($data['weight'])) ? (float) $data['weight'] : 1
-        ];
-    }
-
-    /**
-     * Function to get insurance vale
-     *
-     * @param array $data
-     * @return float $insurance_value
-     */
-    private function insuranceValue($data)
-    {
-        return (isset($data['insurance_value']))  ? (float) $data['insurance_value']  : 20.50;
+        $dir = dirname(__FILE__);
+        $data = explode('/plugin-woocommerce', $dir);
+        return $data[0];
     }
 
     /**
@@ -93,26 +81,10 @@ class TestService
      */
     private function getListPluginsInstaleds()
     {
-        return apply_filters('network_admin_active_plugins', get_option('active_plugins'));
-    }
-
-    /**
-     * Function to get a list of methods shipments
-     *
-     * @return array $shipping_methods
-     */
-    private function getShippingServices()
-    {
-        $services = [];
-        foreach (glob(ABSPATH . '/wp-content/plugins/melhor-envio-cotacao/services_methods/*.php') as $filename) {
-            $services[] = $filename;
-        }
-
-        foreach (glob(ABSPATH . '/wp-content/plugins/plugin-woocommerce/services_methods/*.php') as $filename) {
-            $services[] = $filename;
-        }
-
-        return $services;
+        return apply_filters(
+            'network_admin_active_plugins',
+            get_option('active_plugins')
+        );
     }
 
     /**
@@ -131,11 +103,14 @@ class TestService
 
     private function getProductToTest()
     {
-        $args = [];
+        if (!empty($_GET['product'])) {
+            $_product = wc_get_product($_GET['product']);
+        }
 
-        $products = wc_get_products($args);
-
-        $_product = $products[rand(0, (count($products) - 1))];
+        if (empty($_GET['product']) || empty($_product)) {
+            $products = wc_get_products([]);
+            $_product = $products[rand(0, (count($products) - 1))];
+        }
 
         return [
             "id"              => $_product->get_id(),
