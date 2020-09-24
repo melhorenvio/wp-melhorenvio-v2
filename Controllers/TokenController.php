@@ -77,8 +77,4 @@ class TokenController
             'exists_token' => true
         ], 200);
     }
-
-    public function validateToken($token)
-    {
-    }
 }
