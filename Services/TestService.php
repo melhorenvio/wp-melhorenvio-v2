@@ -40,8 +40,7 @@ class TestService
         ];
 
         if (isset($_GET['postalcode'])) {
-            $product = $this->getProductToTest();
-
+            $product[0] = $this->getProductToTest();
             $quotation = (new QuotationService())->calculateQuotationByProducts(
                 $product,
                 $_GET['postalcode'],
@@ -101,6 +100,11 @@ class TestService
         ];
     }
 
+    /**
+     * function to get produto to test.
+     *
+     * @return array
+     */
     private function getProductToTest()
     {
         if (!empty($_GET['product'])) {
@@ -112,12 +116,18 @@ class TestService
             $_product = $products[rand(0, (count($products) - 1))];
         }
 
+        $options = (new Option())->getOptions();
+
+        $quantity = (!empty($_GET['quantity'])) ? intval($_GET['quantity']) : 1;
+
         return [
             "id"              => $_product->get_id(),
             "name"            => $_product->get_name(),
-            "quantity"        => 1,
+            "quantity"        => $quantity,
             "unitary_value"   => round($_product->get_price(), 2),
-            "insurance_value" => round($_product->get_price(), 2),
+            "insurance_value" => (!empty($options->insurance_value))
+                ? (round($_product->get_price(), 2) * $quantity)
+                : 0,
             "weight"          => DimensionsHelper::convertWeightUnit($_product->weight),
             "width"           => DimensionsHelper::convertUnitDimensionToCentimeter($_product->width),
             "height"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->height),
