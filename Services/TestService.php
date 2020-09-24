@@ -50,10 +50,23 @@ class TestService
             $response['product'] = $product;
 
             foreach ($quotation as $item) {
+
+                //echo '<pre>';
+                //var_dump($item);
+
+
                 $response['quotation'][$item->id] = [
                     "Serviço" => $item->name,
                     "Valor" => $item->price,
-                    'Erro' => $item->error
+                    'Erro' => $item->error,
+                    'Entrega' => (isset($item->delivery_range))
+                        ? sprintf(
+                            "%d a %d dias",
+                            $item->delivery_range->min,
+                            $item->delivery_range->max
+                        )
+                        : null,
+                    'Pacotes' => []
                 ];
             }
         }
@@ -94,9 +107,25 @@ class TestService
      */
     private function hideDataMe($data)
     {
+        if (empty($data->email)) {
+            return [
+                'message' => 'Usuário não autenticado'
+            ];
+        }
+
+        $dataEmail = explode('@', $data->email);
+
+        $total = strlen($dataEmail[0]);
+        $hide = round((strlen($dataEmail[0]) / 2));
+
         return [
             'postal_code' => $data->postal_code,
-            'email' => $data->email
+            'email' => sprintf(
+                "%s%s@%s",
+                str_repeat("*", $hide),
+                substr($dataEmail[0], $hide, $total),
+                $dataEmail[1]
+            )
         ];
     }
 
