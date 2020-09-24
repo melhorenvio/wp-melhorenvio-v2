@@ -50,10 +50,17 @@ class TestService
             $response['product'] = $product;
 
             foreach ($quotation as $item) {
-
-                //echo '<pre>';
-                //var_dump($item);
-
+                $packages = [];
+                if (!empty($item->packages)) {
+                    foreach ($item->packages as $package) {
+                        $packages[] = [
+                            'largura' => $package->dimensions->width,
+                            'altura' => $package->dimensions->height,
+                            'comprimento' => $package->dimensions->length,
+                            'peso' => $package->weight
+                        ];
+                    }
+                }
 
                 $response['quotation'][$item->id] = [
                     "Serviço" => $item->name,
@@ -66,7 +73,7 @@ class TestService
                             $item->delivery_range->max
                         )
                         : null,
-                    'Pacotes' => []
+                    'Pacotes' => $packages
                 ];
             }
         }
