@@ -21,10 +21,15 @@ class Token
      */
     public function get()
     {
+        $environment = get_option(self::OPTION_TOKEN_ENVIRONMENT, self::PRODUCTION);
+        if ($environment != self::PRODUCTION || $environment != self::SANDBOX) {
+            $environment = self::PRODUCTION;
+        }
+
         return [
             'token' => get_option(self::OPTION_TOKEN, ''),
             'token_sandbox' => get_option(self::OPTION_TOKEN_SANDBOX, ''),
-            'token_environment' => get_option(self::OPTION_TOKEN_ENVIRONMENT, self::PRODUCTION)
+            'token_environment' => $environment
         ];
     }
 
