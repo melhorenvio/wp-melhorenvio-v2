@@ -66,6 +66,7 @@ class PayloadService
             'to' => (object) [
                 'postal_code' => $buyer->postal_code
             ],
+            'services' => implode(ShippingService::SERVICES_AVAILABLES, ","),
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
@@ -109,6 +110,7 @@ class PayloadService
             'to' => (object) [
                 'postal_code' => $postalCode
             ],
+            'services' => implode(ShippingService::SERVICES_AVAILABLES, ","),
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
