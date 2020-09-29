@@ -23,7 +23,7 @@ class ProductsService
             $insuranceValue = $insuranceValue + $value;
         }
 
-        if ($insuranceValue == 0) {
+        if ($insuranceValue === 0) {
             $insuranceValue = 1;
         }
 
