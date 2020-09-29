@@ -22,6 +22,11 @@ class ProductsService
             }
             $insuranceValue = $insuranceValue + $value;
         }
+
+        if ($insuranceValue == 0) {
+            $insuranceValue = 1;
+        }
+
         return $insuranceValue;
     }
 
