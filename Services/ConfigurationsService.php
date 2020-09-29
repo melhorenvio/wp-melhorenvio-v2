@@ -23,8 +23,7 @@ class ConfigurationsService
     {
         $response = [];
 
-        (new Seller())->destroy();
-        (new ShippingService())->destroy();
+        (new ClearDataStored())->clear();
 
         if (isset($data['address'])) {
             $response['address'] = (new Address())->setAddressShopping(
