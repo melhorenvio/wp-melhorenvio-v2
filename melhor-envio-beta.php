@@ -64,6 +64,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Services\CheckHealthService;
+use Services\ClearDataStored;
 use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
@@ -210,6 +211,8 @@ final class Base_Plugin
         }
 
         update_option('baseplugin_version', BASEPLUGIN_VERSION);
+
+        (new ClearDataStored())->clear();
     }
 
     /**
@@ -282,7 +285,6 @@ final class Base_Plugin
         });
 
         add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
-
         function orderingQuotationsByPrice($rates, $package)
         {
             uasort($rates, function ($a, $b) {
@@ -291,6 +293,10 @@ final class Base_Plugin
             });
             return $rates;
         }
+
+        add_action('upgrader_process_complete', function ($upgrader_object, $options) {
+            (new ClearDataStored())->clear();
+        });
     }
 
     /**
