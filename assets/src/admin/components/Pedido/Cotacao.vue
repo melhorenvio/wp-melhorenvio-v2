@@ -43,6 +43,9 @@
                 <small v-if="item.quotation[item.quotation.choose_method].additional_services.collect">Sim</small>
                 <small v-else>Não</small>
                 </br>
+            Valor segurado:
+                <small>R${{item.quotation[item.quotation.choose_method].packages[0].insurance_value}}</small>
+                </br>
             </p>
           </template>
 
