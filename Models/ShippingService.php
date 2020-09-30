@@ -8,6 +8,8 @@ class ShippingService
 
     const SERVICES_JADLOG = [3, 4];
 
+    const SERVICES_AVAILABLES = [1, 2, 3, 4, 9, 17];
+
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
     /**
