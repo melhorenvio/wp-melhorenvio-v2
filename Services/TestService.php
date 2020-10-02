@@ -7,6 +7,8 @@ use Models\Option;
 
 class TestService
 {
+    const DEFAULT_QUANTITY_PRODUCT = 1;
+
     protected $version;
 
     public function __construct($version)
@@ -154,7 +156,9 @@ class TestService
 
         $options = (new Option())->getOptions();
 
-        $quantity = (!empty($_GET['quantity'])) ? intval($_GET['quantity']) : 1;
+        $quantity = (!empty($_GET['quantity']))
+            ? intval($_GET['quantity'])
+            : self::DEFAULT_QUANTITY_PRODUCT;
 
         return [
             "id"              => $_product->get_id(),
