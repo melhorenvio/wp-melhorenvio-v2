@@ -36,7 +36,7 @@ class TestService
             'metrics' => $this->getMetrics(),
             'path' => $this->getPathPlugins(),
             'options' => (new Option())->getOptions(),
-            'plugins' => $this->getListPluginsInstaleds()
+            'plugins' => $this->getInstalledPlugins()
         ];
 
         if (isset($_GET['postalcode'])) {
@@ -98,7 +98,7 @@ class TestService
      *
      * @return array $plugins
      */
-    private function getListPluginsInstaleds()
+    private function getInstalledPlugins()
     {
         return apply_filters(
             'network_admin_active_plugins',
