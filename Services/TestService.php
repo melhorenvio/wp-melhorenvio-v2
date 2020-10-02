@@ -147,7 +147,7 @@ class TestService
             $_product = wc_get_product($_GET['product']);
         }
 
-        if (empty($_GET['product']) || empty($_product)) {
+        if (empty($_product)) {
             $products = wc_get_products([]);
             $_product = $products[rand(0, (count($products) - 1))];
         }
