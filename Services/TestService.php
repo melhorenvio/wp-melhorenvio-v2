@@ -34,7 +34,7 @@ class TestService
             'environment' => (new TokenService())->check(),
             'user' => $this->hideDataMe((new SellerService())->getData()),
             'metrics' => $this->getMetrics(),
-            'path' => $this->getPathPlugins(),
+            'path' => $this->getPluginsPath(),
             'options' => (new Option())->getOptions(),
             'plugins' => $this->getInstalledPlugins()
         ];
@@ -86,7 +86,7 @@ class TestService
      *
      * @return string
      */
-    private function getPathPlugins()
+    private function getPluginsPath()
     {
         $dir = dirname(__FILE__);
         $data = explode('/plugin-woocommerce', $dir);
