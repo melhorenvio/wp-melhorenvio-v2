@@ -19,7 +19,7 @@ class TokenService
             return false;
         }
 
-        return (new Token())->get();
+        return $tokenData;
     }
 
     /**
@@ -33,6 +33,8 @@ class TokenService
     public function save($token, $tokenSandbox, $tokenEnvironment)
     {
         $result = (new Token())->save($token, $tokenSandbox, $tokenEnvironment);
+
+        (new ClearDataStored())->clear();
 
         return (!empty($result['token']) && !empty($result['token_environment']));
     }
