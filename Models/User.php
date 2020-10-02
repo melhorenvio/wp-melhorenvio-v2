@@ -4,7 +4,7 @@ namespace Models;
 
 use Services\RequestService;
 
-class User 
+class User
 {
     const OPTION_USER_INFO = 'melhorenvio_user_info';
 
@@ -15,7 +15,7 @@ class User
      *
      * @return Array
      */
-    public function get() 
+    public function get()
     {
         // Get info on session
         $codeStore = md5(get_option('home'));
@@ -26,7 +26,7 @@ class User
             return array(
                 'success' => false,
                 'message' => 'Erro ao consultar o servidor'
-            );  
+            );
         }
 
         $data = get_object_vars($response);
@@ -43,32 +43,6 @@ class User
     }
 
     /**
-     * @return Array
-     */
-    public function getBalance() 
-    {
-        $response = (new RequestService())->request(
-            '/balance',
-            'GET',
-            [],
-            false
-        );
-
-        if (isset($response->balance)) {
-            return array(
-                'success' => true,
-                'balance' => 'R$' . number_format($response->balance, 2, ',', '.'),
-                'value' => $response->balance
-            );
-        }
-        
-        return array(
-            'success' => false,
-            'message' => 'Erro ao conectar a API'
-        );
-    }
-
-    /**
      * Reset data about user on Database and Session
      *
      * @return void
@@ -77,7 +51,7 @@ class User
     {
         $codeStore = md5(get_option('home'));
 
-        delete_option(self::OPTION_USER_INFO, true);   
+        delete_option(self::OPTION_USER_INFO, true);
 
         unset($_SESSION[$codeStore][self::SESSION_USER_INFO]);
     }
