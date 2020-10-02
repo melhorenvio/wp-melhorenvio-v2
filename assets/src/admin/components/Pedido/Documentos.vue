@@ -38,7 +38,7 @@
       <p>
         <b>
           <span v-if="item.status == statusMelhorEnvio.STATUS_GENERATED">Pronta para imprimir</span>
-          <span v-if="item.status == statusMelhorEnvio.STATUS_PAIDED">Pronta para imprimir</span>
+          <span v-if="item.status == statusMelhorEnvio.STATUS_PAID">Pronta para imprimir</span>
           <span v-if="item.status == statusMelhorEnvio.STATUS_RELEASED">Pronta para imprimir</span>
           <span v-if="item.status == statusMelhorEnvio.STATUS_POSTED">Etiqueta postada</span>
         </b>

@@ -4,7 +4,7 @@ const STATUS_RELEASED = 'released';
 const STATUS_GENERATED = 'generated';
 const STATUS_POSTED = 'posted';
 const STATUS_PRINTED = 'printed';
-const STATUS_PAIDED = 'paid';
+const STATUS_PAID = 'paid';
 
 export default {
     STATUS_CANCELED,
@@ -13,5 +13,5 @@ export default {
     STATUS_GENERATED,
     STATUS_POSTED,
     STATUS_PRINTED,
-    STATUS_PAIDED,
+    STATUS_PAID,
 };
