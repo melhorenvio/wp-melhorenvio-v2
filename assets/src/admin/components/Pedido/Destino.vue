@@ -7,6 +7,7 @@
     {{to.phoneMasked}}
     <br />
     {{to.address}}, {{to.number}}
+    <template v-if="to.complement">- {{to.complement}}</template>
     <br />
     {{to.city}}/{{to.state_abbr}}
   </span>
