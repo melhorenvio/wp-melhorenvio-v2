@@ -40,7 +40,7 @@ class TestService
         ];
 
         if (isset($_GET['postalcode'])) {
-            $product[0] = $this->getProductToTest();
+            $product[] = $this->getProductToTest();
             $quotation = (new QuotationService())->calculateQuotationByProducts(
                 $product,
                 $_GET['postalcode'],
