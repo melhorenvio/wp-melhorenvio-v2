@@ -37,10 +37,10 @@
     <template v-else>
       <p>
         <b>
-          <span v-if="item.status == `generated`">Pronta para imprimir</span>
-          <span v-if="item.status == `paid`">Pronta para imprimir</span>
-          <span v-if="item.status == `released`">Pronta para imprimir</span>
-          <span v-if="item.status == `posted`">Etiqueta postada</span>
+          <span v-if="item.status == statusMelhorEnvio.STATUS_GENERATED">Pronta para imprimir</span>
+          <span v-if="item.status == statusMelhorEnvio.STATUS_PAIDED">Pronta para imprimir</span>
+          <span v-if="item.status == statusMelhorEnvio.STATUS_RELEASED">Pronta para imprimir</span>
+          <span v-if="item.status == statusMelhorEnvio.STATUS_POSTED">Etiqueta postada</span>
         </b>
       </p>
     </template>
@@ -48,6 +48,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+import statusMelhorEnvio from "../../utils/status";
 export default {
   props: {
     item: {
