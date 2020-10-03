@@ -65,12 +65,14 @@ class AgenciesJadlogService
             $city
         );
 
-        return (new RequestService())->request(
+        $agencies = (new RequestService())->request(
             $route,
             'GET',
             [],
             false
         );
+
+        return $this->markAsSelectedByUser($agencies);
     }
 
     /**

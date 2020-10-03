@@ -194,7 +194,11 @@
             >
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input type="radio" :id="option.id" :value="option.id" v-model="store" />
+                  <input @click="showAgencies({
+                        city: option.address.city.city, 
+                        state: option.address.city.state.state_abbr
+                        })" 
+                    type="radio" :id="option.id" :value="option.id" v-model="store" />
                   <h3>{{option.name}}</h3>
                 </div>
                 <div class="wpme_address-body">
