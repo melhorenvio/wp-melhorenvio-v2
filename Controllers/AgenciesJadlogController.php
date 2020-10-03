@@ -28,12 +28,35 @@ class AgenciesJadlogController
     /**
      * function to get agencies jadlog by city and state
      *
+     * @param string city
+     * @param string state
      * @return json
      */
     public function getByAddress($city, $state)
     {
         try {
             $agencies = (new AgenciesJadlogService())->getByAddress($city, $state);
+            return wp_send_json([
+                'success' => true,
+                'agencies' => $agencies
+            ], 200);
+        } catch (\Exception $exception) {
+            return wp_send_json([
+                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
+            ], 400);
+        }
+    }
+
+    /**
+     * function to get agencies jadlog by state
+     *
+     * @param string state
+     * @return json
+     */
+    public function getByState($state)
+    {
+        try {
+            $agencies = (new AgenciesJadlogService())->getByState($state);
             return wp_send_json([
                 'success' => true,
                 'agencies' => $agencies

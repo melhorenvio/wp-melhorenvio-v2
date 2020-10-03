@@ -670,7 +670,20 @@ export default {
       });
     },
     changeJadlogOptions() {
-      this.agency = "";
+       this.agency = "";
+        let selectedAddress = this.addresses.filter(item => {
+          if (item.selected) {
+            return item;
+          }
+        });
+        this.$http
+            .post(`${ajaxurl}?action=get_agency_jadlog&state=${selectedAddress[0].state}`)
+            .then(response => {
+                if (response && response.status === 200) {
+                    console.log(response.data.agencies);
+                    this.setAgencies(response.data.agencies);
+                }
+            });
     }
   },
   watch: {

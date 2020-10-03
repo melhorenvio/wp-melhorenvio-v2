@@ -100,6 +100,10 @@ class RouterService
             if (empty($_GET['city']) && empty($_GET['state'])) {
                 return $agenciesJadlogController->get();
             }
+
+            if (!empty($_GET['state']) && empty($_GET['address'])) {
+                return $agenciesJadlogController->getByState($_GET['state']);
+            }
             return $agenciesJadlogController->getByAddress($_GET['city'], $_GET['state']);
         });
 
