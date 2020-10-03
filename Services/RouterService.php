@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Controllers\AgenciesJadlogController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -93,9 +94,15 @@ class RouterService
     private function loadRoutesConfigurations()
     {
         $configurationsController = new ConfigurationController();
+        $agenciesJadlogController = new AgenciesJadlogController();
 
-        add_action('wp_ajax_get_agency_jadlog', [$configurationsController, 'getAgencyJadlog']);
-        add_action('wp_ajax_get_all_agencies_jadlog', [$configurationsController, 'getAgencyJadlog']);
+        add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
+            if (empty($_GET['city']) && empty($_GET['state'])) {
+                return $agenciesJadlogController->get();
+            }
+            return $agenciesJadlogController->getByAddress($_GET['city'], $_GET['state']);
+        });
+
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
         add_action('wp_ajax_get_metodos', [$configurationsController, 'getMethodsEnables']);
         add_action('wp_ajax_save_configuracoes', [$configurationsController, 'saveAll']);

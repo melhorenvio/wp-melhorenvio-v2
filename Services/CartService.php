@@ -2,7 +2,6 @@
 
 namespace Services;
 
-use Models\Agency;
 use Models\Option;
 use Models\Payload;
 
@@ -56,7 +55,7 @@ class CartService
         $body = array(
             'from' => $dataFrom,
             'to' => $dataBuyer,
-            'agency' => (new Agency())->getCodeAgencySelected(),
+            'agency' => (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser(),
             'service' => $shippingMethodId,
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
