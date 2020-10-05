@@ -141,13 +141,12 @@
                 class="show-all-agencies"
                 id="show-all-agencies"
                 v-model="show_all_agencies_jadlog"
-                @change="changeJadlogOptions()"
+                @change="showAgenciesState()"
               />
               <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
             </div>
             <br />
-
-            <template v-if="!show_all_agencies_jadlog">
+            <template>
               <select name="agencies" id="agencies" v-model="agency">
                 <option value>Selecione...</option>
                 <option
@@ -157,20 +156,6 @@
                   :selected="option.selected"
                 >
                   <strong>{{option.name}}</strong>
-                </option>
-              </select>
-            </template>
-
-            <template v-else>
-              <select name="agencies" id="agencies" v-model="agency">
-                <option value>Selecione...</option>
-                <option
-                  v-for="optionAll in allAgencies"
-                  :value="optionAll.id"
-                  :key="optionAll.id"
-                  :selected="optionAll.selected"
-                >
-                  <strong>{{optionAll.name}}</strong>
                 </option>
               </select>
             </template>
@@ -194,7 +179,11 @@
             >
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input type="radio" :id="option.id" :value="option.id" v-model="store" />
+                  <input @click="showAgencies({
+                        city: option.address.city.city, 
+                        state: option.address.city.state.state_abbr
+                        })" 
+                    type="radio" :id="option.id" :value="option.id" v-model="store" />
                   <h3>{{option.name}}</h3>
                 </div>
                 <div class="wpme_address-body">
@@ -592,6 +581,12 @@ export default {
               responseAgencies = response.data.agencies;
               resolve(true);
             }
+          })
+          .catch(error => {
+              alert(error.response.data.message);
+          })
+          .finally(() => {
+              this.setLoader(false);
           });
       });
 
@@ -665,8 +660,23 @@ export default {
         }
       });
     },
-    changeJadlogOptions() {
-      this.agency = "";
+    showAgenciesState() {
+        this.setLoader(true);
+        this.agency = "";
+        let selectedAddress = this.addresses.filter(item => {
+          if (item.selected) {
+            return item;
+          }
+        });
+        this.$http.post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
+            .then(response => {
+                this.setAgencies(response.data.agencies);
+            }).catch(error => {
+                alert(error.response.data.message);
+            })
+            .finally(() => {
+                this.stopLoader();
+            });
     }
   },
   watch: {

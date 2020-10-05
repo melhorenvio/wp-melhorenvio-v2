@@ -87,19 +87,6 @@ class ConfigurationController
     }
 
     /**
-     * User selected function to return jadlog agency
-     *
-     * @return json
-     */
-    public function getAgencyJadlog()
-    {
-        return wp_send_json(
-            (new Agency())->get(),
-            200
-        );
-    }
-
-    /**
      * Function to search user stores
      *
      * @return json

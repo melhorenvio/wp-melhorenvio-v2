@@ -6,10 +6,6 @@ use Models\Address;
 use Models\Agency;
 use Models\Option;
 use Models\CalculatorShow;
-use Models\JadlogAgenciesShow;
-use Models\UseInsurance;
-use Models\Seller;
-use Models\ShippingService;
 
 class ConfigurationsService
 {
@@ -45,11 +41,6 @@ class ConfigurationsService
             );
         }
 
-        if (isset($data['show_all_agencies_jadlog'])) {
-            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())
-                ->set($data['show_all_agencies_jadlog']);
-        }
-
         if (isset($data['where_calculator'])) {
             $response['where_calculator'] = $this->setWhereCalculator(
                 $data['where_calculator']
@@ -78,21 +69,17 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $responseAgencies = (new Agency())->get();
+        $agenciesJadlog = (new AgenciesJadlogService());
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
             'stores'              => (new StoreService())->getStores(),
-            'agencies'            => $responseAgencies['agencies'],
-            'allAgencies'         => $responseAgencies['allAgencies'],
-            'agencySelected'      => $responseAgencies['agencySelected'],
+            'agencies'            => $agenciesJadlog->get(),
+            'agencySelected'      => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
             'calculator'          => (new CalculatorShow())->get(),
-            'all_agencies_jadlog' => (new JadlogAgenciesShow())->get(),
-            'use_insurance'       => (new UseInsurance())->get(),
             'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
-            'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
             'path_plugins'        => $this->getPathPluginsArray(),
             'options_calculator'  => $this->getOptionsCalculator()
         ];
