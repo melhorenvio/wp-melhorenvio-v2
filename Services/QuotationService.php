@@ -21,6 +21,10 @@ class QuotationService
      */
     public function calculate($payload, $useInsuranceValue)
     {
+        if (empty($payload->to->postal_code)) {
+            return false;
+        }
+
         $requestService = new RequestService();
 
         $quotations = $requestService->request(
