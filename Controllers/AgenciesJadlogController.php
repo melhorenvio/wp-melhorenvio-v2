@@ -21,7 +21,7 @@ class AgenciesJadlogController
         } catch (\Exception $exception) {
             return wp_send_json([
                 'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
-            ], 400);
+            ], 500);
         }
     }
 
@@ -55,7 +55,7 @@ class AgenciesJadlogController
         } catch (\Exception $exception) {
             return wp_send_json([
                 'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
-            ], 400);
+            ], 500);
         }
     }
 
@@ -76,7 +76,7 @@ class AgenciesJadlogController
         } catch (\Exception $exception) {
             return wp_send_json([
                 'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
-            ], 400);
+            ], 500);
         }
     }
 
@@ -96,7 +96,7 @@ class AgenciesJadlogController
         } catch (\Exception $exception) {
             return wp_send_json([
                 'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
-            ], 400);
+            ], 500);
         }
     }
 }
