@@ -57,13 +57,13 @@ class AgenciesJadlogService
      */
     public function getByAddress($city, $state)
     {
-        $route = sprintf(
+        $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s&city=%s",
             self::ROUTE_GET_AGENCIES,
             self::COMPANY_ID_JADLOG,
             $state,
             $city
-        );
+        ));
 
         $agencies = (new RequestService())->request(
             $route,
@@ -83,12 +83,12 @@ class AgenciesJadlogService
      */
     public function getByState($state)
     {
-        $route = sprintf(
+        $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s",
             self::ROUTE_GET_AGENCIES,
             self::COMPANY_ID_JADLOG,
             $state
-        );
+        ));
 
         return (new RequestService())->request(
             $route,
@@ -96,6 +96,20 @@ class AgenciesJadlogService
             [],
             false
         );
+    }
+
+    /**
+     * function to get agencies jadlog states user
+     *
+     * @return array
+     */
+    public function getByStateUser()
+    {
+        $seller = (new SellerService())->getData();
+
+        $agencies = $this->getByState($seller->state_abbr);
+
+        return $this->markAsSelectedByUser($agencies);
     }
 
     /**

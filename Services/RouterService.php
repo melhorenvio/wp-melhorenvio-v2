@@ -97,12 +97,11 @@ class RouterService
         $agenciesJadlogController = new AgenciesJadlogController();
 
         add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
-            if (empty($_GET['city']) && empty($_GET['state'])) {
+            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
                 return $agenciesJadlogController->get();
             }
-
-            if (!empty($_GET['state']) && empty($_GET['address'])) {
-                return $agenciesJadlogController->getByState($_GET['state']);
+            if (!empty($_GET['my-state'])) {
+                return $agenciesJadlogController->getByStateUser();
             }
             return $agenciesJadlogController->getByAddress($_GET['city'], $_GET['state']);
         });
