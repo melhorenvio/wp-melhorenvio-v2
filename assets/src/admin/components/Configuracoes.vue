@@ -241,7 +241,7 @@
           </li>
           <li>
             <input type="checkbox" value="Personalizar" v-model="options_calculator.insurance_value" />
-            Usar valor segurado <small>(Correios)</small>
+            Assegurar sempre 
           </li>
         </ul>
       </div>
