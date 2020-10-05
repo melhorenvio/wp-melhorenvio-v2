@@ -641,8 +641,6 @@ export default {
       this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
         if (response.data.token) {
           var token = response.data.token;
-
-          // JWT Token Decode
           var base64Url = token.split(".")[1];
           var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
           var tokenDecoded = decodeURIComponent(
@@ -668,22 +666,6 @@ export default {
           this.$router.push("Token");
         }
       });
-    },
-    changeJadlogOptions() {
-       this.agency = "";
-        let selectedAddress = this.addresses.filter(item => {
-          if (item.selected) {
-            return item;
-          }
-        });
-        this.$http
-            .post(`${ajaxurl}?action=get_agency_jadlog&state=${selectedAddress[0].state}`)
-            .then(response => {
-                if (response && response.status === 200) {
-                    console.log(response.data.agencies);
-                    this.setAgencies(response.data.agencies);
-                }
-            });
     }
   },
   watch: {
