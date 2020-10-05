@@ -69,18 +69,17 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $agenciesJadlog = (new AgenciesJadlogService())->get();
+        $agenciesJadlog = (new AgenciesJadlogService());
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
             'stores'              => (new StoreService())->getStores(),
-            'agencies'            => $agenciesJadlog,
-            'agencySelected'      => (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser(),
+            'agencies'            => $agenciesJadlog->get(),
+            'agencySelected'      => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
             'calculator'          => (new CalculatorShow())->get(),
             'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
-            'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
             'path_plugins'        => $this->getPathPluginsArray(),
             'options_calculator'  => $this->getOptionsCalculator()
         ];
