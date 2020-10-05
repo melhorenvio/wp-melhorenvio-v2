@@ -31,7 +31,7 @@ class StoreService
             return false;
         }
 
-        $storesSelected = array_filter($stores, function($store) {
+        $storesSelected = array_filter($stores, function ($store) {
             return !empty($store->selected);
         });
 
@@ -42,7 +42,7 @@ class StoreService
         }
 
         $storeSelected->address = $this->getAddressStore($storeSelected);
-    
+
         return $storeSelected;
     }
 
@@ -53,7 +53,7 @@ class StoreService
      */
     public function getStores()
     {
-        if (empty($_SESSION)) {
+        if (empty(session_id())) {
             session_start();
         }
 
@@ -115,7 +115,7 @@ class StoreService
             return [];
         }
 
-        
+
         return end($addresses->data);
     }
 
