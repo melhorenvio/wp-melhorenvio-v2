@@ -663,11 +663,6 @@ export default {
     showAgenciesState() {
         this.setLoader(true);
         this.agency = "";
-        let selectedAddress = this.addresses.filter(item => {
-          if (item.selected) {
-            return item;
-          }
-        });
         this.$http.post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
             .then(response => {
                 this.setAgencies(response.data.agencies);
@@ -675,7 +670,7 @@ export default {
                 alert(error.response.data.message);
             })
             .finally(() => {
-                this.stopLoader();
+                this.setLoader(false);
             });
     }
   },
