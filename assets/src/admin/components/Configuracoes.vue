@@ -491,16 +491,8 @@ export default {
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
       options_calculator_: "getOptionsCalculator",
-      configs: "getConfigs",
-      services_codes: "getServicesCodes"
+      configs: "getConfigs"
     }),
-    filteredsShipments() {
-      let filter = this.services_codes;
-      let filtereds = this.methods_shipments.filter(function(shipment) {
-        return filter.find(el => el == shipment.code);
-      });
-      return filtereds;
-    }
   },
   methods: {
     ...mapActions("configuration", [
@@ -514,30 +506,6 @@ export default {
         this.canUpdate = false;
       } else {
         this.canUpdate = true;
-      }
-    },
-    showModalEditMethod(code) {
-      this.codeshiping = [];
-      for (var i = 0; i < this.services_codes.length; i++) {
-        var service = this.services_codes[i];
-        var status = false;
-        if (service == code) {
-          status = true;
-        }
-        this.codeshiping[service] = {
-          id: service,
-          status: status
-        };
-      }
-    },
-    getServicesCodesstatus() {
-      this.codeshiping = [];
-      for (var i = 0; i < this.services_codes.length; i++) {
-        var service = this.services_codes[i];
-        this.codeshiping[service] = {
-          id: service,
-          status: false
-        };
       }
     },
     closeShowModalEditMethod() {
@@ -711,9 +679,6 @@ export default {
     },
     agencySelected_(e) {
       this.agency = e;
-    },
-    services_codes() {
-      this.getServicesCodesstatus();
     },
     show_calculator_(e) {
       this.show_calculator = e;

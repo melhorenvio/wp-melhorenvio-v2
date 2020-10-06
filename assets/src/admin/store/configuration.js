@@ -23,8 +23,7 @@ const configuration = {
         agencySelected: null,
         methods_shipments: [],
         show_load: true,
-        configs: [],
-        services_codes: []
+        configs: []
     },
     mutations: {
         toggleLoader: (state, data) => {
@@ -68,9 +67,6 @@ const configuration = {
         },
         setOptionsCalculator: (state, data) => {
             state.options_calculator = data;
-        },
-        setServicesCodes: (state, data) => {
-            state.services_codes = data;
         }
     },
     getters: {
@@ -87,8 +83,7 @@ const configuration = {
         getMethodsShipments: state => state.methods_shipments,
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
-        getOptionsCalculator: state => state.options_calculator,
-        getServicesCodes: state => state.services_codes
+        getOptionsCalculator: state => state.options_calculator
     },
     actions: {
         getConfigs: ({ commit }, data) => {
@@ -118,7 +113,6 @@ const configuration = {
                         commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)
-                        commit('setServicesCodes', response.data.services_codes)
                         resolve(true)
                     }
                 }).catch((error) => {
