@@ -308,20 +308,20 @@ class QuotationProductPageService
         });
 
         if (!empty($free)) {
-
             $labelFreeShipping = $this->rateForFreeShipping($free);
-
-            if (!empty($labelFreeShipping)) {
-                $this->rates[] = [
-                    'id' => self::FREE_SHIPPING,
-                    'name' => ($labelFreeShipping == 'Frete Grátis')
-                        ? end($free)->title
-                        : sprintf("¹%s", end($free)->title),
-                    'price' => 'R$0,00',
-                    'cost' => 0,
-                    'delivery_time' => null,
-                    'observations' => $labelFreeShipping
-                ];
+            if (end($free)->requires !== self::FREE_SHIPPING_COUPON_OR_MIN_AMOUNT) {
+                if (!empty($labelFreeShipping)) {
+                    $this->rates[] = [
+                        'id' => self::FREE_SHIPPING,
+                        'name' => ($labelFreeShipping == 'Frete Grátis')
+                            ? end($free)->title
+                            : sprintf("¹%s", end($free)->title),
+                        'price' => 'R$0,00',
+                        'cost' => 0,
+                        'delivery_time' => null,
+                        'observations' => $labelFreeShipping
+                    ];
+                }
             }
         }
     }
