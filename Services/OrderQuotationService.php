@@ -118,11 +118,13 @@ class OrderQuotationService
         $result = [];
 
         foreach ($quotation as $item) {
-            $result[$item->id] = $item;
-            if (isset($item->packages)) {
-                foreach ($item->packages as $key => $package) {
-                    if ($package->weight == 0) {
-                        $result[$item->id]->packages[$key]->weigh = 0.01;
+            if (!empty($item->id)) {
+                $result[$item->id] = $item;
+                if (isset($item->packages)) {
+                    foreach ($item->packages as $key => $package) {
+                        if ($package->weight == 0) {
+                            $result[$item->id]->packages[$key]->weight = 0.01;
+                        }
                     }
                 }
             }
