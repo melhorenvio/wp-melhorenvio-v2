@@ -46,7 +46,7 @@ class Option
     }
 
     /**
-     * @param [type] $options
+     * @param array $options
      * @return void
      */
     public function save($options)
