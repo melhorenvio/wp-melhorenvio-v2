@@ -11,7 +11,7 @@ class AgenciesJadlogService
     const COMPANY_ID_JADLOG = 2;
 
     /**
-     * function to get agencues jadlog on API Melhor Envio.
+     * function to get jadlog agencies on Melhor Envio API.
      *
      * @return array
      */

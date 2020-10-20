@@ -147,19 +147,4 @@ class Address
             'address' => []
         );
     }
-
-    public function resetData()
-    {
-        $codeStore = md5(get_option('home'));
-
-        // delete_option(self::OPTION_ADDRESS);
-
-        // delete_option(self::OPTION_ADDRESSES);
-
-        // delete_option(self::OPTION_ADDRESS_SELECTED);
-
-        // unset($_SESSION[$codeStore][self::OPTION_ADDRESS_SELECTED]);
-
-        // unset($_SESSION[$codeStore][self::OPTION_ADDRESS]);
-    }
 }

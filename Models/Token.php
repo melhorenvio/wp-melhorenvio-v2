@@ -37,7 +37,7 @@ class Token
     /**
      * @param string $token
      * @param string $tokenSandbox
-     * @param string $token_environment
+     * @param string $environment
      * @return array $data
      */
     public function save($token, $tokenSandbox, $environment)
