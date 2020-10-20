@@ -294,7 +294,7 @@ final class Base_Plugin
             return $rates;
         }
 
-        add_action('upgrader_process_complete', function ($upgrader_object, $options) {
+        add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
     }
