@@ -63,6 +63,7 @@ if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
 
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
+use Models\Version;
 use Services\CheckHealthService;
 use Services\ClearDataStored;
 use Services\RolesService;
@@ -99,7 +100,7 @@ final class Base_Plugin
      */
     public function __construct()
     {
-        $this->version = '2.9.2';
+        $this->version = Version::VERSION;
 
         $this->define_constants();
 
