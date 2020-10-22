@@ -141,13 +141,12 @@
                 class="show-all-agencies"
                 id="show-all-agencies"
                 v-model="show_all_agencies_jadlog"
-                @change="changeJadlogOptions()"
+                @change="showAgenciesState()"
               />
               <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
             </div>
             <br />
-
-            <template v-if="!show_all_agencies_jadlog">
+            <template>
               <select name="agencies" id="agencies" v-model="agency">
                 <option value>Selecione...</option>
                 <option
@@ -157,20 +156,6 @@
                   :selected="option.selected"
                 >
                   <strong>{{option.name}}</strong>
-                </option>
-              </select>
-            </template>
-
-            <template v-else>
-              <select name="agencies" id="agencies" v-model="agency">
-                <option value>Selecione...</option>
-                <option
-                  v-for="optionAll in allAgencies"
-                  :value="optionAll.id"
-                  :key="optionAll.id"
-                  :selected="optionAll.selected"
-                >
-                  <strong>{{optionAll.name}}</strong>
                 </option>
               </select>
             </template>
@@ -194,7 +179,11 @@
             >
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input type="radio" :id="option.id" :value="option.id" v-model="store" />
+                  <input @click="showAgencies({
+                        city: option.address.city.city, 
+                        state: option.address.city.state.state_abbr
+                        })" 
+                    type="radio" :id="option.id" :value="option.id" v-model="store" />
                   <h3>{{option.name}}</h3>
                 </div>
                 <div class="wpme_address-body">
@@ -243,16 +232,16 @@
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" v-model="options_calculator.receipt" />
+            <input type="checkbox" value="Personalizar" data-cy="receipt" v-model="options_calculator.receipt" />
             Aviso de recebimento
           </li>
           <li>
-            <input type="checkbox" value="Personalizar" v-model="options_calculator.own_hand" />
+            <input type="checkbox" value="Personalizar" data-cy="own_hand" v-model="options_calculator.own_hand" />
             Mão própria
           </li>
           <li>
-            <input type="checkbox" value="Personalizar" v-model="options_calculator.insurance_value" />
-            Usar valor segurado <small>(Correios)</small>
+            <input type="checkbox" value="Personalizar" data-cy="insurance_value" v-model="options_calculator.insurance_value" />
+            Assegurar sempre 
           </li>
         </ul>
       </div>
@@ -502,16 +491,8 @@ export default {
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
       options_calculator_: "getOptionsCalculator",
-      configs: "getConfigs",
-      services_codes: "getServicesCodes"
+      configs: "getConfigs"
     }),
-    filteredsShipments() {
-      let filter = this.services_codes;
-      let filtereds = this.methods_shipments.filter(function(shipment) {
-        return filter.find(el => el == shipment.code);
-      });
-      return filtereds;
-    }
   },
   methods: {
     ...mapActions("configuration", [
@@ -525,30 +506,6 @@ export default {
         this.canUpdate = false;
       } else {
         this.canUpdate = true;
-      }
-    },
-    showModalEditMethod(code) {
-      this.codeshiping = [];
-      for (var i = 0; i < this.services_codes.length; i++) {
-        var service = this.services_codes[i];
-        var status = false;
-        if (service == code) {
-          status = true;
-        }
-        this.codeshiping[service] = {
-          id: service,
-          status: status
-        };
-      }
-    },
-    getServicesCodesstatus() {
-      this.codeshiping = [];
-      for (var i = 0; i < this.services_codes.length; i++) {
-        var service = this.services_codes[i];
-        this.codeshiping[service] = {
-          id: service,
-          status: false
-        };
       }
     },
     closeShowModalEditMethod() {
@@ -592,6 +549,12 @@ export default {
               responseAgencies = response.data.agencies;
               resolve(true);
             }
+          })
+          .catch(error => {
+              alert(error.response.data.message);
+          })
+          .finally(() => {
+              this.setLoader(false);
           });
       });
 
@@ -665,8 +628,18 @@ export default {
         }
       });
     },
-    changeJadlogOptions() {
-      this.agency = "";
+    showAgenciesState() {
+        this.setLoader(true);
+        this.agency = "";
+        this.$http.post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
+            .then(response => {
+                this.setAgencies(response.data.agencies);
+            }).catch(error => {
+                alert(error.response.data.message);
+            })
+            .finally(() => {
+                this.setLoader(false);
+            });
     }
   },
   watch: {
@@ -701,9 +674,6 @@ export default {
     },
     agencySelected_(e) {
       this.agency = e;
-    },
-    services_codes() {
-      this.getServicesCodesstatus();
     },
     show_calculator_(e) {
       this.show_calculator = e;

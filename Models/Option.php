@@ -2,7 +2,7 @@
 
 namespace Models;
 
-class Option 
+class Option
 {
     const OPTION_RECEIPT = 'melhorenvio_ar';
 
@@ -13,7 +13,7 @@ class Option
     /**
      * @return void
      */
-    public function get() 
+    public function get()
     {
         $options = get_option('melhorenvio_options');
 
@@ -30,27 +30,26 @@ class Option
     /**
      * Function for receiving quote options (AR and MP)
      *
-     * @return void
+     * @return object
      */
     public function getOptions()
     {
         $receipt = get_option(self::OPTION_RECEIPT);
-        $own_hand = get_option(self::OPTION_OWN_HAND);
-        $insurance_value = get_option(self::OPTION_INSURANCE_VALUE);
+        $ownHand = get_option(self::OPTION_OWN_HAND);
+        $insuranceValue = get_option(self::OPTION_INSURANCE_VALUE);
 
-
-        return (object) array( 
+        return (object) array(
             'receipt' => filter_var($receipt, FILTER_VALIDATE_BOOLEAN),
-            'own_hand' => filter_var($own_hand, FILTER_VALIDATE_BOOLEAN),
-            'insurance_value' => filter_var($insurance_value, FILTER_VALIDATE_BOOLEAN)
+            'own_hand' => filter_var($ownHand, FILTER_VALIDATE_BOOLEAN),
+            'insurance_value' => filter_var($insuranceValue, FILTER_VALIDATE_BOOLEAN)
         );
     }
 
     /**
-    * @param [type] $options
-    * @return void
-    */
-    public function save($options) 
+     * @param array $options
+     * @return void
+     */
+    public function save($options)
     {
         $data = [
             'tax' => floatval($options['tax']),

@@ -1,12 +1,14 @@
 <?php
 
+use Helpers\NoticeHelper;
+
 require __DIR__ . '/vendor/autoload.php';
 
 /*
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.9.1
+Version: 2.9.2
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -51,20 +53,20 @@ if (!defined('ABSPATH')) {
 }
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
-    add_action('admin_notices', function () {
-        echo sprintf('<div class="error">
-            <p>%s</p>
-        </div>', 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin');
-    });
+    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
+    NoticeHelper::addNotice(
+        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
+        'notice-error'
+    );
     return false;
 }
 
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
-use Models\Method;
+use Services\CheckHealthService;
+use Services\ClearDataStored;
+use Services\RolesService;
 use Services\RouterService;
-use Services\SessionService;
-use Services\ShippingMelhorEnvioService;
 use Services\ShortCodeService;
 use Services\TrackingService;
 
@@ -75,13 +77,12 @@ use Services\TrackingService;
  */
 final class Base_Plugin
 {
-
     /**
      * Plugin version
      *
      * @var string
      */
-    public $version = '2.9.0';
+    public $version;
 
     /**
      * Holds various class instances
@@ -98,6 +99,8 @@ final class Base_Plugin
      */
     public function __construct()
     {
+        $this->version = '2.9.2';
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));
@@ -182,54 +185,15 @@ final class Base_Plugin
             $pathPlugins = ABSPATH . 'wp-content/plugins';
         }
 
-        $errorsPath = [];
-
-        if (!is_dir($pathPlugins . '/woocommerce')) {
-            $errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
-        }
-
-        $errors = [];
-
-        $pluginsActiveds = apply_filters('network_admin_active_plugins', get_option('active_plugins'));
-
-        if (!class_exists('WooCommerce')) {
-            $errors[] = 'Você precisa do plugin WooCommerce ativado no wordpress para utilizar o plugin do Melhor Envio';
-        }
-
-        if (!in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds) && !is_multisite()) {
-            $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
-        }
-
-        if (!empty($errors)) {
-            foreach ($errors as $err) {
-                add_action('admin_notices', function () use ($err) {
-                    echo sprintf('<div class="error">
-                        <p>%s</p>
-                    </div>', $err);
-                });
-            }
+        $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
+        if (!empty($result['errors'])) {
             return false;
         }
 
-        if (empty($errorsPath)) {
-            try {
-                @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
-                include_once $pathPlugins . '/woocommerce/woocommerce.php';
-                include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
-            } catch (Exception $e) {
-                add_action('admin_notices', function () {
-                    echo sprintf('<div class="error">
-                        <p>%s (%s)</p>
-                    </div>', 'Erro ao incluir as classes do WooCommerce', $e->getMessage());
-                });
-                return false;
-            }
-        } else {
-            add_action('admin_notices', function () {
-                echo sprintf('<div class="error">
-                    <p>%s</p>
-                </div>', 'Verifique o caminho do diretório de plugins na página de configurações do plugin do Melhor Envio.');
-            });
+        if (empty($result['errorsPath'])) {
+            @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/woocommerce.php';
+            include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
         }
     }
 
@@ -247,6 +211,8 @@ final class Base_Plugin
         }
 
         update_option('baseplugin_version', BASEPLUGIN_VERSION);
+
+        (new ClearDataStored())->clear();
     }
 
     /**
@@ -287,7 +253,7 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-
+        (new CheckHealthService())->init();
         (new TrackingService())->createTrackingColumnOrdersClient();
 
         $hideCalculator = (new CalculatorShow)->get();
@@ -299,6 +265,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
+        (new RolesService())->init();
 
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
@@ -317,23 +284,7 @@ final class Base_Plugin
             return $methods;
         });
 
-
-        add_action('woocommerce_init', function () {
-            $methods = (new ShippingMelhorEnvioService())
-                ->getMethodsActivedsMelhorEnvio();
-
-            if (count($methods) == 0) {
-                add_action('admin_notices', function () {
-                    echo sprintf('<div class="error">
-                        <h2>Atenção usuário do Plugin Melhor Envio</h2>
-                        <p>%s</p>
-                    </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
-                });
-            }
-        });
-
         add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
-
         function orderingQuotationsByPrice($rates, $package)
         {
             uasort($rates, function ($a, $b) {
@@ -342,6 +293,10 @@ final class Base_Plugin
             });
             return $rates;
         }
+
+        add_action('upgrader_process_complete', function () {
+            (new ClearDataStored())->clear();
+        });
     }
 
     /**
@@ -351,7 +306,6 @@ final class Base_Plugin
      */
     public function init_classes()
     {
-
         try {
             if ($this->is_request('admin')) {
                 $this->container['admin'] = new App\Admin();
@@ -370,11 +324,8 @@ final class Base_Plugin
             }
 
             add_shortcode('calculadora_melhor_envio', function ($attr) {
-
                 if (isset($attr['product_id'])) {
-
                     $product = wc_get_product($attr['product_id']);
-
                     if ($product) {
                         (new ShortCodeService($product))->shortcode();
                     }

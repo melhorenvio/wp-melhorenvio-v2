@@ -17,31 +17,43 @@ class ProductsService
         $insuranceValue = 0;
         foreach ($products as $product) {
             $value = 0;
-            if (is_array($product)) {
-                if (!empty($product['unitary_value'])) {
-                    $value = $product['unitary_value'] * $product['quantity'];
-                }
-                $insuranceValue = $insuranceValue + $value;
+            if (!empty($product->unitary_value)) {
+                $value = $product->unitary_value * $product->quantity;
             }
+            $insuranceValue = $insuranceValue + $value;
         }
+
+        if ($insuranceValue === 0) {
+            $insuranceValue = 1;
+        }
+
         return $insuranceValue;
     }
 
     /**
-     * Function to remove the price field from 
+     * function to remove the price field from
      * the product to perform the quote without insurance value
      *
-     * @param array|object $products
-     * @return array|object
+     * @param array $products
+     * @return array
      */
     public function removePrice($products)
     {
-        foreach ($products as $key => $product) {
-            unset($products[$key]['price']);
-            unset($products[$key]['insurance_value']);
+        $response = [];
+        foreach ($products as $product) {
+            $response[] = (object) [
+                'id' => $product->id,
+                'name' => $product->name,
+                'quantity' => $product->quantity,
+                'unitary_value' => $product->unitary_value,
+                'weight' => $product->weight,
+                'width' => $product->width,
+                'height' => $product->height,
+                'length' => $product->length,
+            ];
         }
 
-        return $products;
+        return $response;
     }
 
     /**
@@ -54,13 +66,26 @@ class ProductsService
     {
         $products = [];
 
+        $noticeService = new SessionNoticeService();
+
         foreach ($data as $item) {
             if (empty($item['data'])) {
-                $products[] = $item;
+                $products[] = (object) $item;
             } else {
                 $product = $item['data'];
-                $products[] = [
-                    'id' =>  $product->get_name(),
+
+                if (!$this->hasAllDimensions(($product))) {
+                    $message = sprintf(
+                        "Verificar as medidas do produto  <a href='%s'>%s</a>",
+                        get_edit_post_link($product->get_id()),
+                        $product->get_name()
+                    );
+                    $noticeService->add($message);
+                }
+
+                $products[] = (object) [
+                    'id' =>  $product->get_id(),
+                    'name' =>  $product->get_name(),
                     'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
                     'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
                     'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
@@ -73,5 +98,45 @@ class ProductsService
         }
 
         return $products;
+    }
+
+    /**
+     * function to check if prouct has all dimensions.
+     *
+     * @param object $product
+     * @return boolean
+     */
+    private function hasAllDimensions($product)
+    {
+        return (!empty($product->get_width()) &&
+            !empty($product->get_height()) &&
+            !empty($product->get_length()) &&
+            !empty($product->get_weight()));
+    }
+
+    /**
+     * function to return a label with the name of products.
+     *
+     * @param array $products
+     * @return string
+     */
+    public function createLabelTitleProducts($products)
+    {
+        $title = '';
+        foreach ($products as $id => $product) {
+            if (!empty($product['data']->get_name())) {
+                $title = $title . sprintf(
+                    "<a href='%s'>%s</a>, ",
+                    get_edit_post_link($id),
+                    $product['data']->get_name()
+                );
+            }
+        }
+
+        if (!empty($title)) {
+            $title = substr($title, 0, -2);
+        }
+
+        return 'Produto(s): ' . $title;
     }
 }

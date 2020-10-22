@@ -2,14 +2,10 @@
 
 namespace Services;
 
-use Controllers\ConfigurationController;
 use Models\Address;
 use Models\Agency;
 use Models\Option;
 use Models\CalculatorShow;
-use Models\JadlogAgenciesShow;
-use Models\UseInsurance;
-use Models\Seller;
 
 class ConfigurationsService
 {
@@ -23,8 +19,7 @@ class ConfigurationsService
     {
         $response = [];
 
-        (new Seller())->destroy();
-        (new SessionService())->destroy(SellerService::USER_SESSION);
+        (new ClearDataStored())->clear();
 
         if (isset($data['address'])) {
             $response['address'] = (new Address())->setAddressShopping(
@@ -44,11 +39,6 @@ class ConfigurationsService
             $response['show_calculator'] = (new CalculatorShow())->set(
                 $data['show_calculator']
             );
-        }
-
-        if (isset($data['show_all_agencies_jadlog'])) {
-            $response['show_all_agencies_jadlog'] = (new JadlogAgenciesShow())
-                ->set($data['show_all_agencies_jadlog']);
         }
 
         if (isset($data['where_calculator'])) {
@@ -79,22 +69,17 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $responseAgencies = (new Agency())->get();
+        $agenciesJadlog = (new AgenciesJadlogService());
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
             'stores'              => (new StoreService())->getStores(),
-            'agencies'            => $responseAgencies['agencies'],
-            'allAgencies'         => $responseAgencies['allAgencies'],
-            'agencySelected'      => $responseAgencies['agencySelected'],
+            'agencies'            => $agenciesJadlog->get(),
+            'agencySelected'      => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
             'calculator'          => (new CalculatorShow())->get(),
-            'all_agencies_jadlog' => (new JadlogAgenciesShow())->get(),
-            'use_insurance'       => (new UseInsurance())->get(),
             'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
-            'metodos'             => (new OptionsMethodShippingService())->get(),
-            'services_codes'      => (new ShippingMelhorEnvioService())->getCodesEnableds(),
             'path_plugins'        => $this->getPathPluginsArray(),
             'options_calculator'  => $this->getOptionsCalculator()
         ];
