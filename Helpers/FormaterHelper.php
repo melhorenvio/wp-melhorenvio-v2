@@ -23,6 +23,7 @@ class FormaterHelper
      */
     public function maskPhone($phone)
     {
+        $phone = preg_replace('/\D/', '', $phone);
         $string = '';
         $string .= '(' . substr($phone, 0, 2) . ') ';
         $string .= substr($phone, 2, 4) . '-' . substr($phone, 6, 10);

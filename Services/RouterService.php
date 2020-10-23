@@ -13,6 +13,7 @@ use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\PathController;
 use Controllers\PayloadsController;
+use Models\Version;
 
 /**
  * Class responsible for managing the routes of the plugin
@@ -144,7 +145,7 @@ class RouterService
      */
     private function loadRoutesTest()
     {
-        $version = '2.9.2';
+        $version = Version::VERSION;
 
         add_action('wp_ajax_nopriv_environment', function () use ($version) {
             (new TestService($version))->run();
