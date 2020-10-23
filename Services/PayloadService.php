@@ -66,7 +66,7 @@ class PayloadService
             'to' => (object) [
                 'postal_code' => $buyer->postal_code
             ],
-            'services' => implode(ShippingService::SERVICES_AVAILABLES, ","),
+            'services' => implode(",", ShippingService::SERVICES_AVAILABLES),
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
@@ -89,7 +89,7 @@ class PayloadService
     /**
      * function to create product-based payload
      *
-     * @param string $to
+     * @param string $postalCode
      * @param array $products
      * @return object
      */
@@ -103,7 +103,7 @@ class PayloadService
 
         $productsFilter = $productService->filter($products);
 
-        $payload =  (object) [
+        return  (object) [
             'from' => (object) [
                 'postal_code' => $seller->postal_code,
             ],
@@ -118,8 +118,6 @@ class PayloadService
             ],
             'products' => (object) $productsFilter
         ];
-
-        return $payload;
     }
 
     /**
@@ -133,8 +131,8 @@ class PayloadService
         $payload->products = (new ProductsService())->removePrice((array) $payload->products);
         $payload->options->insurance_value = false;
         $payload->services = implode(
-            ShippingService::SERVICES_CORREIOS,
-            ","
+            ",",
+            ShippingService::SERVICES_CORREIOS
         );
 
         return $payload;
