@@ -28,7 +28,7 @@ class ListOrderService
             ];
         }
 
-        $orders = $this->setData($posts);
+        $orders = $this->getData($posts);
 
         return [
             'orders' => $orders,
@@ -42,11 +42,17 @@ class ListOrderService
      * @param array $posts
      * @return array
      */
-    private function setData($posts)
+    private function getData($posts)
     {
         $orders = [];
 
         $statusMelhorEnvio = (new OrderService())->mergeStatus($posts);
+
+        $quotationService = new QuotationService();
+
+        $buyerService = new BuyerService();
+
+        $translateHelper = new TranslateStatusHelper();
 
         foreach ($posts as $post) {
             $postId = $post->ID;
@@ -59,9 +65,9 @@ class ListOrderService
                 'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
                     ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
                     : null,
-                'to' => (new BuyerService())->getDataBuyerByOrderId($post->ID),
+                'to' => $buyerService->getDataBuyerByOrderId($postId),
                 'status' => $statusMelhorEnvio[$postId]['status'],
-                'status_texto' => (new TranslateStatusHelper())->translateNameStatus(
+                'status_texto' => $translateHelper->translateNameStatus(
                     $statusMelhorEnvio[$postId]['status']
                 ),
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
@@ -70,7 +76,7 @@ class ListOrderService
                 'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
                 'invoice'        => $invoice,
                 'products' => (new OrdersProductsService())->getProductsOrder($postId),
-                'cotation' => [],
+                'quotation' => $quotationService->calculateQuotationByPostId($postId),
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
