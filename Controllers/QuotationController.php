@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Services\PayloadService;
 use Services\QuotationService;
 use Services\QuotationProductPageService;
 
@@ -23,12 +24,14 @@ class QuotationController
     /**
      * Function to make a quotation by order woocommerce
      *
-     * @param int $orderId
+     * @param int $postId
      * @return void
      */
-    public function makeCotationOrder($orderId)
+    public function makeCotationOrder($postId)
     {
-        $result = (new QuotationService())->calculateQuotationByOrderId($orderId);
+        $result = (new QuotationService())->calculateQuotationByPostId($postId);
+
+        (new PayloadService())->save(($postId));
 
         unset($_SESSION['quotation']);
 

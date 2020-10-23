@@ -183,7 +183,7 @@
             </ul>
             <template v-if="toggleInfo == item.id">
               <informacoes
-                :volume="item.cotation[item.cotation.choose_method].volumes[0]"
+                :volume="item.quotation[item.quotation.choose_method].volumes[0]"
                 :products="item.products"
               ></informacoes>
             </template>
@@ -464,7 +464,7 @@ export default {
       return new Promise((resolve, reject) => {
         let data = {
           id: order.id,
-          choosen: order.cotation.choose_method,
+          choosen: order.quotation.choose_method,
           non_commercial: order.non_commercial
         };
 
@@ -504,7 +504,7 @@ export default {
       return new Promise(resolve => {
         let ordersToGetQuotations = [];
         this.orders.filter(order => {
-          if (order.status == null && order.cotation.length == 0) {
+          if (order.status == null && order.quotation.length == 0) {
             ordersToGetQuotations.push(order.id);
           }
         });

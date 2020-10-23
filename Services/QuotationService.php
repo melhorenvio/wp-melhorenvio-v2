@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Option;
+use Models\Payload;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -11,66 +12,86 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
-    const PERCENT_INSURANCE_VALUE = 5;
-
     /**
-     * Function to calculate a quotation by order_id.
+     * function to calculate quotation.
      *
-     * @param int $orderId
-     * @return object $quotation
+     * @param object $body
+     * @param bool $useInsuranceValue
+     * @return array
      */
-    public function calculateQuotationByOrderId($orderId)
+    public function calculate($payload, $useInsuranceValue)
     {
-        $products = (new OrdersProductsService())->getProductsOrder($orderId);
+        if (empty($payload->to->postal_code)) {
+            return false;
+        }
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($orderId);
+        $requestService = new RequestService();
 
-        $seller = (new SellerService())->getData();
-
-        $options = (new Option())->getOptions();
-
-        $productService = new ProductsService();
-
-        $productsFilter = $productService->filter($products);
-
-        $body = [
-            'from' => [
-                'postal_code' => $seller->postal_code,
-            ],
-            'to' => [
-                'postal_code' => $buyer->postal_code
-            ],
-            'options' => [
-                'own_hand' => $options->own_hand,
-                'receipt' => $options->receipt,
-                'insurance_value' => true
-            ],
-            'products' => $productsFilter,
-        ];
-
-        $quotations = (new RequestService())->request(
+        $quotations = $requestService->request(
             self::ROUTE_API_MELHOR_CALCULATE,
             'POST',
-            $body,
+            $payload,
             true
         );
 
-        if (!$options->insurance_value) {
-            $body['products'] = $productService->removePrice($productsFilter);
-            $body['options']['insurance_value'] = false;
-            $body['services'] = implode(CalculateShippingMethodService::SERVICES_CORREIOS, ',');
-
-            $quotationWithoutInsurance = (new RequestService())->request(
+        if (empty($useInsuranceValue)) {
+            $payload = (new PayloadService())->removeInsuranceValue($payload);
+            $quotsWithoutValue = $requestService->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
                 'POST',
-                $body,
+                $payload,
                 true
             );
 
-            $quotations = array_merge($quotations, $quotationWithoutInsurance);
+            if (is_array($quotations) && is_array($quotsWithoutValue)) {
+                $quotations = array_merge($quotations, $quotsWithoutValue);
+                $quotations = $this->setKeyQuotationAsServiceid($quotations);
+            }
         }
 
-        return (new OrderQuotationService())->saveQuotation($orderId, $quotations);
+        return $quotations;
+    }
+
+    /**
+     * function to set each key of array as service id
+     *
+     * @param array $quotations
+     * @return array
+     */
+    private function setKeyQuotationAsServiceid($quotations)
+    {
+        $response = [];
+        foreach ($quotations as $quotation) {
+            $response[$quotation->id] = $quotation;
+        }
+        return $response;
+    }
+
+    /**
+     * Function to calculate a quotation by post_id.
+     *
+     * @param int $postId
+     * @return object $quotation
+     */
+    public function calculateQuotationByPostId($postId)
+    {
+        $payload = (new Payload())->get($postId);
+
+        if (empty($payload)) {
+            $products = (new OrdersProductsService())->getProductsOrder($postId);
+            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+            $payload = (new PayloadService())->createPayloadByProducts(
+                $buyer->postal_code,
+                $products
+            );
+        }
+
+        $quotations = $this->calculate(
+            $payload,
+            $payload->options->insurance_value
+        );
+
+        return (new OrderQuotationService())->saveQuotation($postId, $quotations);
     }
 
     /**
@@ -86,97 +107,23 @@ class QuotationService
         $postalCode,
         $service = null
     ) {
-
-        $seller = (new SellerService())->getData();
+        $payload = (new PayloadService())->createPayloadByProducts(
+            $postalCode,
+            $products
+        );
 
         $options = (new Option())->getOptions();
 
-        $productService = new ProductsService();
-
-        $productsFilter = $productService->filter($products);
-
-        $shippingMethodService = new CalculateShippingMethodService();
-
-        if (!$shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)) {
-            $productsFilter = $productService->removePrice($productsFilter);
-        }
-
-        $body = [
-            'from' => [
-                'postal_code' => $seller->postal_code,
-            ],
-            'to' => [
-                'postal_code' => $postalCode
-            ],
-            'options' => [
-                'own_hand' => $options->own_hand,
-                'receipt' => $options->receipt,
-                'insurance_value' => $shippingMethodService->insuranceValueIsRequired($options->insurance_value, $service)
-            ],
-            'products' => $productsFilter
-        ];
-
-        $quotation = $this->getSessionCachedQuotation($body, $service);
+        $quotation = $this->getSessionCachedQuotation($payload, $service);
 
         if (!$quotation) {
-            $quotation = (new RequestService())->request(
-                self::ROUTE_API_MELHOR_CALCULATE,
-                'POST',
-                $body,
-                true
-            );
-
-            $this->storeQuotationSession($body, $quotation);
+            $quotation = $this->calculate($payload, $options->insurance_value);
+            $this->storeQuotationSession($payload, $quotation);
         }
 
         return $quotation;
     }
 
-    /**
-     * Function to calculate a quotation by packages.
-     *
-     * @param array $packages
-     * @param string $postal_code
-     * @return object $quotation
-     */
-    public function calculateQuotationByPackages(
-        $packages,
-        $postalCode,
-        $service = null
-    ) {
-        $seller = (new SellerService())->getData();
-
-        $options = (new Option())->getOptions();
-
-        $body = [
-            'from' => [
-                'postal_code' => $seller->postal_code,
-            ],
-            'to' => [
-                'postal_code' => $postalCode
-            ],
-            'options' => [
-                'own_hand' => $options->own_hand,
-                'receipt' => $options->receipt
-            ],
-            'packages' => $packages
-        ];
-
-        $quotation = $this->getSessionCachedQuotation($body, $service);
-
-        if (!$quotation) {
-            $quotation = (new RequestService())->request(
-                self::ROUTE_API_MELHOR_CALCULATE,
-                'POST',
-                $body,
-                true
-            );
-
-            $this->storeQuotationSession($body, $quotation);
-        }
-
-        return $quotation;
-    }
 
     /**
      * Function to save response quotation on session.
@@ -193,8 +140,9 @@ class QuotationService
 
         $quotation = $this->orderingQuotationByPrice($quotation);
 
-        $hash = md5(json_encode($bodyQuotation));
-        $_SESSION['quotation'][$hash] = $quotation;
+        $hash = $this->generateHashQuotation($bodyQuotation);
+
+        $_SESSION['quotation'][$hash]['data'] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
     }
 
@@ -210,12 +158,50 @@ class QuotationService
             return $quotation;
         }
 
+        if (!is_array($quotation)) {
+            return $quotation;
+        }
+
         uasort($quotation, function ($a, $b) {
             if ($a == $b) return 0;
             if (!isset($a->price) || !isset($b->price)) return 0;
             return ($a->price < $b->price) ? -1 : 1;
         });
         return $quotation;
+    }
+
+    /**
+     * function to created a hash by quotation.
+     *
+     * @param object $payload
+     * @return string
+     */
+    private function generateHashQuotation($payload)
+    {
+        $products = [];
+
+        if (!empty($payload->products)) {
+            foreach ($payload->products as $product) {
+                $products[] = [
+                    'id' => $product->id,
+                    'width' => $product->width,
+                    'height' => $product->height,
+                    'length' => $product->length,
+                    'weight' => $product->weight,
+                    'unitary_value' => $product->unitary_value,
+                    'quantity' => $product->quantity,
+                ];
+            }
+        }
+        return md5(json_encode([
+            'from' => $payload->from->postal_code,
+            'to' => $payload->to->postal_code,
+            'options' => [
+                'own_hand' => $payload->options->own_hand,
+                'receipt' => $payload->options->receipt,
+            ],
+            'products' => $products
+        ]));
     }
 
     /**
@@ -228,7 +214,7 @@ class QuotationService
      */
     private function getSessionCachedQuotation($bodyQuotation, $service)
     {
-        $hash = md5(json_encode($bodyQuotation));
+        $hash = $this->generateHashQuotation($bodyQuotation);
 
         if (!isset($_SESSION)) {
             session_start();
@@ -244,7 +230,7 @@ class QuotationService
         }
 
         $quotations = array_filter(
-            $_SESSION['quotation'][$hash],
+            (array) $_SESSION['quotation'][$hash]['data'],
             function ($item) use ($service) {
                 if (isset($item->id) && $item->id == $service) {
                     return $item;
@@ -267,9 +253,13 @@ class QuotationService
      */
     private function isSessionCachedQuotationExpired($bodyQuotation)
     {
-        $hash = md5(json_encode($bodyQuotation));
+        $hash = $this->generateHashQuotation($bodyQuotation);
 
-        if (!isset($_SESSION['quotation'][$hash]['created'])) {
+        if (isset($_SESSION['quotation'][$hash]->success) && !$_SESSION['quotation'][$hash]->success) {
+            return true;
+        }
+
+        if (empty($_SESSION['quotation'][$hash]['created'])) {
             return true;
         }
 
@@ -286,46 +276,31 @@ class QuotationService
     }
 
     /**
-     * Function to check if the quotation is Correios and has errors
-     *
-     * @param object $quotation
-     * @return boolean
-     */
-    private function isCorreiosWithErrors($quotation)
-    {
-        $calculateService = new CalculateShippingMethodService();
-
-        return (!empty($quotation->error) || !$calculateService->isCorreios($quotation->id));
-    }
-
-    /**
-     * Function to search for quotation Correios and to reject without insurance value
+     * Function to go through the quote and check for errors 
+     * and notify the store administrator.
      *
      * @param array $quotations
      * @param array $products
-     * @param object $buyer
-     * 
-     * @return array
+     * @return void
      */
-    private function findItemCorreiosForRecalculeQuotationWithoutInsurance($quotations, $products, $buyer)
+    private function checkIfHasErrorsProduct($quotations, $products)
     {
-        $options = (new option())->getOptions();
-
-        if (!$options->insurance_value) {
-            foreach ($quotations as $key => $quotation) {
-
-                if ($this->isCorreiosWithErrors($quotation)) {
-                    continue;
-                }
-
-                $quotations[$key] = $this->calculateQuotationByProducts(
-                    $products,
-                    $buyer->postal_code,
-                    $quotation->id
+        $labelProducts = (new ProductsService())->createLabelTitleProducts($products);
+        $errors = '';
+        foreach ($quotations as $quotation) {
+            if (!empty($quotation->error)) {
+                $errors = $errors .  sprintf(
+                    "<b>%s</b> %s </br>",
+                    $quotation->name,
+                    $quotation->error
                 );
             }
         }
 
-        return $quotations;
+        if (!empty($errors)) {
+            (new SessionNoticeService())->add(
+                sprintf("%s </br> %s", $labelProducts, $errors)
+            );
+        }
     }
 }

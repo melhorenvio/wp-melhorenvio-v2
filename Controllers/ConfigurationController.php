@@ -34,7 +34,7 @@ class ConfigurationController
      * @param string $tokenUser
      * @return mixed
      */
-    public function saveToken($tokenUser)
+    public function save($tokenUser)
     {
         $token = get_option('melhorenvio_token');
         if (!$token) {
@@ -84,19 +84,6 @@ class ConfigurationController
             'success' => true,
             'message' => 'Agência selecionada atualizada com successo.'
         ], 200);
-    }
-
-    /**
-     * User selected function to return jadlog agency
-     *
-     * @return json
-     */
-    public function getAgencyJadlog()
-    {
-        return wp_send_json(
-            (new Agency())->get(),
-            200
-        );
     }
 
     /**

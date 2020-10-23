@@ -5,6 +5,7 @@ namespace Controllers;
 use Models\Address;
 use Models\Store;
 use Models\User;
+use Services\BalanceService;
 use Services\OrderQuotationService;
 
 class UsersController
@@ -125,7 +126,12 @@ class UsersController
      */
     public function getBalance()
     {
-        $balance = (new User())->getBalance();
+        $balance = (new BalanceService())->get();
+
+        if (empty($balance['success'])) {
+            return wp_send_json($balance, 400);
+        }
+
         return wp_send_json($balance, 200);
     }
 

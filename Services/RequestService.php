@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Models\Version;
+
 class RequestService
 {
     const URL = 'https://api.melhorenvio.com/v2/me';
@@ -20,6 +22,12 @@ class RequestService
     {
         $tokenData = (new TokenService())->get();
 
+        if (!$tokenData) {
+            return wp_send_json([
+                'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
+            ], 401);
+        }
+
         if ($tokenData['token_environment'] == 'production') {
             $this->token = $tokenData['token'];
             $this->url = self::URL;
@@ -31,6 +39,7 @@ class RequestService
         $this->headers = array(
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
+            'version-plugin-me' => Version::VERSION,
             'Authorization' => 'Bearer ' . $this->token,
         );
     }
@@ -44,7 +53,7 @@ class RequestService
      * @return object $response
      */
     public function request($route, $typeRequest, $body, $useJson = true)
-    {        
+    {
         if ($useJson) {
             $body = json_encode($body);
         }
@@ -61,6 +70,22 @@ class RequestService
                 wp_remote_post($this->url . $route, $params)
             )
         );
+
+        if (empty($response)) {
+            (new SessionNoticeService())->add('Ocorreu um erro ao se conectar com a API do Melhor Envio');
+            return (object) [
+                'success' => false,
+                'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],
+            ];
+        }
+
+        if (!empty($response->message) && $response->message == 'Unauthenticated.') {
+            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
+            return (object) [
+                'success' => false,
+                'errors' => ['Usuário não autenticado'],
+            ];
+        }
 
         $errors =  $this->treatmentErrors($response);
 
@@ -81,16 +106,20 @@ class RequestService
      * @return array $errors
      */
     private function treatmentErrors($data)
-    {   
+    {
         $errorsResponse = [];
+        $errors = [];
+
+        if (!empty($data->error)) {
+            $errors[] = $data->error;
+        }
 
         if (!empty($data->errors)) {
-            foreach($data->errors as $errors) {
+            foreach ($data->errors as $errors) {
                 $errorsResponse[] = $errors;
             }
         }
 
-        $errors = [];
         if (!empty($errorsResponse) && is_array($errorsResponse)) {
             foreach ($errorsResponse as $error) {
                 $errors[] = end($error);

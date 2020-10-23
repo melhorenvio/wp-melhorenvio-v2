@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Controllers\AgenciesJadlogController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -11,6 +12,8 @@ use Controllers\StatusController;
 use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\PathController;
+use Controllers\PayloadsController;
+use Models\Version;
 
 /**
  * Class responsible for managing the routes of the plugin
@@ -29,6 +32,8 @@ class RouterService
         $this->loadRoutesSession();
         $this->loadRoutesLocation();
         $this->loadRoutesPath();
+        $this->laodRoutesPayload();
+        $this->loadRoutesNotices();
     }
 
     /**
@@ -90,9 +95,18 @@ class RouterService
     private function loadRoutesConfigurations()
     {
         $configurationsController = new ConfigurationController();
+        $agenciesJadlogController = new AgenciesJadlogController();
 
-        add_action('wp_ajax_get_agency_jadlog', [$configurationsController, 'getAgencyJadlog']);
-        add_action('wp_ajax_get_all_agencies_jadlog', [$configurationsController, 'getAgencyJadlog']);
+        add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
+            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
+                return $agenciesJadlogController->get();
+            }
+            if (!empty($_GET['my-state'])) {
+                return $agenciesJadlogController->getByStateUser();
+            }
+            return $agenciesJadlogController->getByAddress($_GET['city'], $_GET['state']);
+        });
+
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
         add_action('wp_ajax_get_metodos', [$configurationsController, 'getMethodsEnables']);
         add_action('wp_ajax_save_configuracoes', [$configurationsController, 'saveAll']);
@@ -119,8 +133,8 @@ class RouterService
     {
         $tokensController = new TokenController();
 
-        add_action('wp_ajax_get_token', [$tokensController, 'getToken']);
-        add_action('wp_ajax_save_token', [$tokensController, 'saveToken']);
+        add_action('wp_ajax_get_token', [$tokensController, 'get']);
+        add_action('wp_ajax_save_token', [$tokensController, 'save']);
         add_action('wp_ajax_verify_token', [$tokensController, 'verifyToken']);
     }
 
@@ -131,12 +145,14 @@ class RouterService
      */
     private function loadRoutesTest()
     {
-        add_action('wp_ajax_nopriv_environment', function () {
-            (new TestService('2.9.0'))->run();
+        $version = Version::VERSION;
+
+        add_action('wp_ajax_nopriv_environment', function () use ($version) {
+            (new TestService($version))->run();
         });
 
-        add_action('wp_ajax_environment', function () {
-            (new TestService('2.9.0'))->run();
+        add_action('wp_ajax_environment', function () use ($version) {
+            (new TestService($version))->run();
         });
     }
 
@@ -185,5 +201,61 @@ class RouterService
         $pathController = new PathController();
 
         add_action('wp_ajax_check_path', [$pathController, 'getPathPlugin']);
+    }
+
+    /**
+     * function to start payload routes
+     *
+     * @return void
+     */
+    private function laodRoutesPayload()
+    {
+        $payloadsController = new PayloadsController();
+
+        add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->show($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_get_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->showLogged($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+            return $payloadsController->destroy($_GET['post_id']);
+        });
+    }
+
+    /*
+     * function to start path notices
+     *
+     * @return void
+     */
+    public function loadRoutesNotices()
+    {
+        add_action('wp_ajax_get_notices', function () {
+            (new SessionNoticeService())->get();
+        });
+
+        add_action('wp_ajax_remove_notices', function () {
+            (new SessionNoticeService())->remove($_GET['id']);
+        });
     }
 }

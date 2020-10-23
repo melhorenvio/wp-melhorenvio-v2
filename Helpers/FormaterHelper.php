@@ -16,6 +16,21 @@ class FormaterHelper
     }
 
     /**
+     * function to insert mask phone
+     *
+     * @param string $phone
+     * @return string
+     */
+    public function maskPhone($phone)
+    {
+        $phone = preg_replace('/\D/', '', $phone);
+        $string = '';
+        $string .= '(' . substr($phone, 0, 2) . ') ';
+        $string .= substr($phone, 2, 4) . '-' . substr($phone, 6, 10);
+        return $string;
+    }
+
+    /**
      * Remove characters and use only numbers.
      *
      * @param string $document

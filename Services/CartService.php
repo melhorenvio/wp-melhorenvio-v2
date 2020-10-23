@@ -2,8 +2,8 @@
 
 namespace Services;
 
-use Models\Agency;
 use Models\Option;
+use Models\Payload;
 
 class CartService
 {
@@ -16,34 +16,46 @@ class CartService
      *
      * @param int $orderId
      * @param array $products
-     * @param array $to
+     * @param array $dataBuyer
      * @param int $shippingMethodId
      * @return void
      */
-    public function add($orderId, $products, $to, $shippingMethodId)
+    public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
-        $from = (new SellerService())->getData();
+        $payloadSaved = (new Payload())->get($orderId);
 
-        $quotation = (new QuotationService())->calculateQuotationByOrderId($orderId);
+        $products = (!empty($payloadSaved->products))
+            ? $payloadSaved->products
+            : $products;
+
+        $dataBuyer = (!empty($payloadSaved->buyer))
+            ? $payloadSaved->buyer
+            : $dataBuyer;
+
+        $dataFrom =  (new SellerService())->getData();
+
+        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
 
-        $shippingMethodService = new CalculateShippingMethodService();
+        $methodService = new CalculateShippingMethodService();
 
-        $options = (new Option())->getOptions();
+        $options = (!empty($payloadSaved->options))
+            ? $payloadSaved->options
+            : (new Option())->getOptions();
 
-        $insuraceRequired = ($shippingMethodService->isCorreios($shippingMethodId)) 
-            ? $shippingMethodService->insuranceValueIsRequired($options->insurance_value,  $shippingMethodId)
+        $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
+            ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
             : true;
 
-        $insuranceValue = ($insuraceRequired) 
-            ? (new ProductsService())->getInsuranceValue($products) 
+        $insuranceValue = ($insuranceRequired)
+            ? (new ProductsService())->getInsuranceValue($products)
             : 0;
 
         $body = array(
-            'from' => $from,
-            'to' => $to,
-            'agency' => (new Agency())->getCodeAgencySelected(),
+            'from' => $dataFrom,
+            'to' => $dataBuyer,
+            'agency' => (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser(),
             'service' => $shippingMethodId,
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
@@ -79,14 +91,14 @@ class CartService
         if (!empty($result->errors)) {
             return [
                 'success' => false,
-                'errors' => $result->errors
+                'errors' => end($result->errors)
             ];
         }
 
         if (empty($result->id)) {
             return [
                 'success' => false,
-                'errors' => 'Não possui possível enviar o pedido para o carrinho de compras'
+                'errors' => 'Não foi possível enviar o pedido para o carrinho de compras'
             ];
         }
 
@@ -159,23 +171,6 @@ class CartService
         }
 
         return $volumes;
-    }
-
-    /**
-     * Sum values of products.
-     *
-     * @param array $products
-     * @return float $value
-     */
-    private function getInsuranceValueByProducts($products)
-    {
-        $value = 0;
-
-        foreach ($products as $product) {
-            $value += ($product['unitary_value'] * $product['quantity']);
-        }
-
-        return $value;
     }
 
     /**
