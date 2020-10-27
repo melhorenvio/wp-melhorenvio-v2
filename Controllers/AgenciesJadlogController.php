@@ -20,7 +20,7 @@ class AgenciesJadlogController
             );
         } catch (\Exception $exception) {
             return wp_send_json([
-                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
+                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências da Jadlog da (Error code 1)'
             ], 500);
         }
     }
@@ -54,7 +54,7 @@ class AgenciesJadlogController
             ], 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
+                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências da Jadlog (Error code 2)'
             ], 500);
         }
     }
@@ -75,7 +75,7 @@ class AgenciesJadlogController
             ], 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
+                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências da Jadlog (Error code 3)'
             ], 500);
         }
     }
@@ -95,7 +95,7 @@ class AgenciesJadlogController
             ], 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências'
+                'success' => false, 'message' => 'Ocorreu um erro ao obter as agências da Jadlog (Error code 4)'
             ], 500);
         }
     }
