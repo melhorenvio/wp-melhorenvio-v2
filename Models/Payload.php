@@ -20,7 +20,7 @@ class Payload
         $payload = get_post_meta($postId, self::POST_META_PAYLOAD, true);
 
         if (!empty($payload)) {
-            return json_decode($payload);
+            return utf8_decode(json_decode($payload));
         }
 
         return false;
