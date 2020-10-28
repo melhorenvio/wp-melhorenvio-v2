@@ -20,7 +20,7 @@ class Payload
         $payload = get_post_meta($postId, self::POST_META_PAYLOAD, true);
 
         if (!empty($payload)) {
-            return json_decode($payload, JSON_UNESCAPED_UNICODE);
+            return json_decode($payload);
         }
 
         return false;
@@ -42,7 +42,7 @@ class Payload
         return add_post_meta(
             $postId,
             self::POST_META_PAYLOAD,
-            json_encode($payload),
+            json_encode($payload, JSON_UNESCAPED_UNICODE),
             true
         );
     }
