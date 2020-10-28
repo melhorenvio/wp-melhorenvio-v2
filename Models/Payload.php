@@ -42,7 +42,7 @@ class Payload
         return add_post_meta(
             $postId,
             self::POST_META_PAYLOAD,
-            json_encode($payload),
+            json_encode($payload, JSON_UNESCAPED_UNICODE),
             true
         );
     }
