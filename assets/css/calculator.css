@@ -1,9 +1,18 @@
 <style>
     /* Style inputs, select elements and textareas */
-
+    /* INICIO ESTERILIZAÇÂO DA CALCULADORA */
+    #delivery_truck {
+    fill: #429a45;
+    margin-right: 10px;
+    vertical-align: bottom;
+    width: 36px;
+    display: inline-block;
+    }
+    .containerCalculator input[type=text]{width:50% !important;}
     .containerCalculator .calculatorRow {
         width: 100%;
     }
+    /* FIM ESTERILIZAÇÂO DA CALCULADORA */
 
     #calcular-frete-loader {
         display: none;
