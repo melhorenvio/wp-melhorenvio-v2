@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.3]
+- Correção de caracteres quebrados no endereço de destino na etiqueta Melhor Envio.
+
 ### [2.9.2]
 - Criação de função de usuário para suporte do Melhor Envio (Acesso restrito).
 - Removendo requisiçoes desnecessárias para rota shipping/services na API do Melhor Envio.
