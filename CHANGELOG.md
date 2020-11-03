@@ -1,6 +1,6 @@
 ### Changelog
-### [2.9.4]
--
+### [2.9.5]
+- Encerando session após escrita.
 
 ### [2.9.3]
 - Correção de caracteres quebrados no endereço de destino na etiqueta Melhor Envio.

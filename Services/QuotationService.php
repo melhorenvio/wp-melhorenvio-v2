@@ -145,7 +145,7 @@ class QuotationService
         $_SESSION['quotation'][$hash]['data'] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
 
-        //session_write_close();
+        session_write_close();
     }
 
     /**
@@ -231,15 +231,6 @@ class QuotationService
             return false;
         }
 
-        //echo 'here';
-        //echo '<pre>';
-        //5164f11adde89a751c991bdac3985754  01018020   
-        //c3af8ce3631fe2292d72337165427463 96020360
-
-        //var_dump($_SESSION['quotation']['5164f11adde89a751c991bdac3985754']['data'][4]->price);
-        //var_dump($_SESSION['quotation']['c3af8ce3631fe2292d72337165427463']['data'][4]->price);
-        //die;
-
         $quotations = array_filter(
             (array) $_SESSION['quotation'][$hash]['data'],
             function ($item) use ($service) {
@@ -249,7 +240,7 @@ class QuotationService
             }
         );
 
-        //session_write_close();
+        session_write_close();
 
         if (!is_array($quotations)) {
             return false;
