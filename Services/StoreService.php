@@ -93,6 +93,8 @@ class StoreService
 
         $_SESSION[$codeStore][self::OPTION_STORES] = $stores;
 
+        session_write_close();
+
         return $stores;
     }
 

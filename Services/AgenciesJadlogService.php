@@ -149,7 +149,7 @@ class AgenciesJadlogService
 
         $agencies = $this->get();
 
-        if (isset($agencies['success']) && !$agencies['success']) {
+        if (isset($agencies->success) && !$agencies->success) {
             return null;
         }
 

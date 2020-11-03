@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.4]
+-
+
 ### [2.9.3]
 - Correção de caracteres quebrados no endereço de destino na etiqueta Melhor Envio.
 
