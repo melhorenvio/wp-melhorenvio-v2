@@ -20,7 +20,7 @@ class AgenciesJadlogService
         $seller = (new SellerService())->getData();
 
         if (empty($seller->city)) {
-            return [
+            return (object) [
                 'success' => false,
                 'message' => 'Não foi possível obter as agências Jadlog'
             ];
@@ -29,13 +29,13 @@ class AgenciesJadlogService
         $agencies = [];
         if (!empty($seller->city) && !empty($seller->state_abbr)) {
             $agencies = $this->getByAddress($seller->city, $seller->state_abbr);
-            if (empty($agencies)) {
+            if (empty($agencies->success)) {
                 $agencies = $this->getByState($seller->state_abbr);
             }
         }
 
         if (empty($agencies)) {
-            return [
+            return (object) [
                 'success' => false,
                 'message' => sprintf(
                     "Ocorreu um erro ao obter agências Jadlog para a cidade %s/%s",
@@ -149,7 +149,7 @@ class AgenciesJadlogService
 
         $agencies = $this->get();
 
-        if (isset($agencies['success']) && !$agencies['success']) {
+        if (isset($agencies->success) && !$agencies->success) {
             return null;
         }
 
