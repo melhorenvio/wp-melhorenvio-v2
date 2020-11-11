@@ -59,7 +59,7 @@
                     },
                     success: function (response) {
                         var row = '';
-                        let { data } = response;
+                        let  data  = response.data.quotations;
                         data.map(item => {
                             let name = item.name.split('(');
                             name = name[0];

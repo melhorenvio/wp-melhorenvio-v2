@@ -97,7 +97,7 @@ class QuotationService
     /**
      * Function to calculate a quotation by products.
      *
-     * @param array $products  
+     * @param array $products
      * @param  string $postal_code
      * @param int $service
      * @return  object $quotation
@@ -144,6 +144,8 @@ class QuotationService
 
         $_SESSION['quotation'][$hash]['data'] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+
+        session_write_close();
     }
 
     /**
@@ -205,7 +207,7 @@ class QuotationService
     }
 
     /**
-     * Function to search for the quotation of a shipping service in the session, 
+     * Function to search for the quotation of a shipping service in the session,
      * if it does not find false returns
      *
      * @param array $bodyQuotation
@@ -237,6 +239,8 @@ class QuotationService
                 }
             }
         );
+
+        session_write_close();
 
         if (!is_array($quotations)) {
             return false;
@@ -276,7 +280,7 @@ class QuotationService
     }
 
     /**
-     * Function to go through the quote and check for errors 
+     * Function to go through the quote and check for errors
      * and notify the store administrator.
      *
      * @param array $quotations
