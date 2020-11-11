@@ -37,6 +37,8 @@ class SessionNoticeService
         }
 
         $this->insertSession($notice);
+
+        session_write_close();
     }
 
     /**

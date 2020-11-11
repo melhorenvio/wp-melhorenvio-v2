@@ -118,6 +118,7 @@ class ShowCalculatorProductPage
                         <tbody>
                         </tbody>
                     </table>
+                    <small id='destiny-shipping-mehor-envio'></small></br>
                     <small class='observation-shipping-free'></small>
                 </div>
             </div>
