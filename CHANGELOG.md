@@ -1,6 +1,7 @@
 ### Changelog
 ### [2.9.5]
 - Encerando session após escrita.
+- Correção de warning de encerrar session antes de realizar requests HTTP.
 
 ### [2.9.4]
 - Correção do problema de loop infinito na aba de configurações.
