@@ -9,13 +9,6 @@ class SessionNoticeService
 {
     const ID_NOTICES_SESSION = 'notices_melhor_envio';
 
-    public function __construct()
-    {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-    }
-
     /**
      * function to save notice in session
      *
@@ -24,6 +17,10 @@ class SessionNoticeService
      */
     public function add($notice)
     {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
         $notices = (!empty($_SESSION[self::ID_NOTICES_SESSION]))
             ? $_SESSION[self::ID_NOTICES_SESSION]
             : [];
@@ -86,10 +83,18 @@ class SessionNoticeService
      */
     public function get()
     {
-        if (!empty($_SESSION[self::ID_NOTICES_SESSION])) {
-            return $_SESSION[self::ID_NOTICES_SESSION];
+        $notices = false;
+
+        if (!isset($_SESSION)) {
+            session_start();
         }
 
-        return false;
+        if (!empty($_SESSION[self::ID_NOTICES_SESSION])) {
+            $notices = $_SESSION[self::ID_NOTICES_SESSION];
+        }
+
+        session_write_close();
+
+        return $notices;
     }
 }
