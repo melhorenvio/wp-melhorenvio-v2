@@ -44,10 +44,14 @@ class BuyerService
             $typePerson = self::PERSONAL;
         }
 
+        $nameBuyer = (!empty($order->get_shipping_first_name()))
+            ? sprintf("%s %s", $order->get_shipping_first_name(), $order->get_shipping_last_name())
+            : sprintf("%s %s", $order->get_billing_first_name(), $order->get_billing_last_name());
+
         $body = (object) [
             "name" => ($typePerson == self::COMPANY)
                 ? $order->get_billing_company()
-                : $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+                : $nameBuyer,
             "phone" => FormaterHelper::formatPhone($phone),
             "phoneMasked" => $phone,
             "email" => $order->get_billing_email(),

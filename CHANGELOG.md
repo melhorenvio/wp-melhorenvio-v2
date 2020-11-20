@@ -2,6 +2,7 @@
 ### [2.9.5]
 - Encerando session após escrita.
 - Correção de warning de encerrar session antes de realizar requests HTTP.
+- Correção dados da etiqueta referente aos dados de entrega e faturamento.
 
 ### [2.9.4]
 - Correção do problema de loop infinito na aba de configurações.
