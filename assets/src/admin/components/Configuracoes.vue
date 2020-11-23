@@ -104,7 +104,7 @@
                   :id="option.id"
                   :value="option.id"
                   v-model="address"
-                  @click="showAgencies({city: option.city, state: option.state})"
+                  @click="showJadlogAgencies({city: option.city, state: option.state})"
                 />
                 <h2>{{option.label}}</h2>
               </div>
@@ -141,7 +141,7 @@
                 class="show-all-agencies"
                 id="show-all-agencies"
                 v-model="show_all_agencies_jadlog"
-                @change="showAgenciesState()"
+                @change="showJadlogAgenciesState()"
               />
               <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
             </div>
@@ -164,6 +164,32 @@
       </div>
     </div>
     <hr />
+
+    <div class="wpme_config">
+      <h2>Azul Cargo Express</h2>
+      <p>Escolha a agência Azul Cargo Express de sua preferência para realizar o envio dos seus produtos.</p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <template>
+              <select name="agenciesAzul" id="agenciesAzul" v-model="agency_azul">
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesAzul"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{option.name}}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
     <template v-if="stores.length > 0">
       <div class="wpme_config">
         <h2>Loja</h2>
@@ -179,7 +205,7 @@
             >
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input @click="showAgencies({
+                  <input @click="showJadlogAgencies({
                         city: option.address.city.city, 
                         state: option.address.city.state.state_abbr
                         })" 
@@ -403,14 +429,16 @@ export default {
       address: null,
       store: null,
       agency: null,
+      agency_azul: null,
       show_modal: false,
       custom_calculator: false,
       show_calculator: false,
       show_all_agencies_jadlog: false,
+      show_all_agencies_azul: false,
       options_calculator: {
         receipt: false,
         own_hand: true,
-        insurance_value: true
+        insurance_value: true,
       },
       path_plugins: "",
       show_path: false,
@@ -419,61 +447,61 @@ export default {
         decimal: ",",
         thousands: ".",
         precision: 2,
-        masked: false
+        masked: false,
       },
       percent: {
         decimal: ",",
         thousands: ".",
         precision: 0,
-        masked: false
+        masked: false,
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
       where_calculator_collect: [
         {
           id: "woocommerce_before_single_product",
-          name: "Antes do titulo do produto (Depende do tema do projeto)"
+          name: "Antes do titulo do produto (Depende do tema do projeto)",
         },
         {
           id: "woocommerce_after_single_product",
-          name: "Depois do titulo do produto"
+          name: "Depois do titulo do produto",
         },
         {
           id: "woocommerce_single_product_summary",
-          name: "Antes da descrição do produto"
+          name: "Antes da descrição do produto",
         },
         {
           id: "woocommerce_before_add_to_cart_form",
-          name: "Antes do fórmulario de comprar"
+          name: "Antes do fórmulario de comprar",
         },
         {
           id: "woocommerce_before_variations_form",
-          name: "Antes das opçoes do produto"
+          name: "Antes das opçoes do produto",
         },
         {
           id: "woocommerce_before_add_to_cart_button",
-          name: "Antes do botão de comprar"
+          name: "Antes do botão de comprar",
         },
         {
           id: "woocommerce_before_single_variation",
-          name: "Antes do campo de variações"
+          name: "Antes do campo de variações",
         },
         {
           id: "woocommerce_single_variation",
-          name: "Antes das variações"
+          name: "Antes das variações",
         },
         {
           id: "woocommerce_after_add_to_cart_form",
-          name: "Depois do botão de comprar"
+          name: "Depois do botão de comprar",
         },
         {
           id: "woocommerce_product_meta_start",
-          name: "Antes das informações do produto"
+          name: "Antes das informações do produto",
         },
         {
           id: "woocommerce_share",
-          name: "Depois dos botões de compartilhamento"
-        }
-      ]
+          name: "Depois dos botões de compartilhamento",
+        },
+      ],
     };
   },
   computed: {
@@ -481,7 +509,9 @@ export default {
       addresses: "getAddress",
       stores: "getStores",
       agencySelected_: "getAgencySelected",
+      agencyAzulSelected_: "getAgencyAzulSelected",
       agencies: "getAgencies",
+      agenciesAzul: "getAgenciesAzul",
       allAgencies: "getAllAgencies",
       style_calculator: "getStyleCalculator",
       methods_shipments: "getMethodsShipments",
@@ -490,16 +520,17 @@ export default {
       where_calculator_: "getWhereCalculator",
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
+      show_all_agencies_azul_: "getShowAllAzulAgencies",
       options_calculator_: "getOptionsCalculator",
-      configs: "getConfigs"
+      configs: "getConfigs",
     }),
   },
   methods: {
     ...mapActions("configuration", [
       "getConfigs",
       "setLoader",
-      "setAgencies",
-      "saveAll"
+      "setAgenciesAzul",
+      "saveAll",
     ]),
     requiredInput(element) {
       if (element.length == 0 || element.length > 100) {
@@ -517,8 +548,10 @@ export default {
       data["address"] = this.address;
       data["store"] = this.store;
       data["agency"] = this.agency;
+      data["agency_azul"] = this.agency_azul;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
+      data["show_all_agencies_azul"] = this.show_all_agencies_azul;
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
@@ -526,16 +559,16 @@ export default {
       let respSave = this.saveAll(data);
 
       respSave
-        .then(resolve => {
+        .then((resolve) => {
           this.setLoader(false);
           this.clearSession();
           this.show_modal = true;
         })
-        .catch(function(erro) {
+        .catch(function (erro) {
           this.setLoader(false);
         });
     },
-    showAgencies(data) {
+    showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
       var responseAgencies = [];
@@ -544,22 +577,50 @@ export default {
           .post(
             `${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`
           )
-          .then(function(response) {
+          .then(function (response) {
             if (response && response.status === 200) {
               responseAgencies = response.data.agencies;
               resolve(true);
             }
           })
-          .catch(error => {
-              alert(error.response.data.message);
+          .catch((error) => {
+            alert(error.response.data.message);
           })
           .finally(() => {
-              this.setLoader(false);
+            this.setLoader(false);
           });
       });
 
-      promiseAgencies.then(resolve => {
+      promiseAgencies.then((resolve) => {
         this.setAgencies(responseAgencies);
+        this.setLoader(false);
+      });
+    },
+    showAzulAgencies(data) {
+      this.setLoader(true);
+      this.agency_azul = "";
+      var responseAgencies = [];
+      var promiseAgencies = new Promise((resolve, reject) => {
+        this.$http
+          .post(
+            `${ajaxurl}?action=get_agency_azul&city=${data.city}&state=${data.state}`
+          )
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgencies = response.data.agencies;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesAzul(responseAgencies);
         this.setLoader(false);
       });
     },
@@ -570,7 +631,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http
           .get(`${ajaxurl}?action=delete_melhor_envio_session`)
-          .then(response => {
+          .then((response) => {
             resolve(true);
           });
       });
@@ -588,7 +649,7 @@ export default {
       return val;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then(response => {
+      this.$http.get(`${ajaxurl}?action=verify_token`).then((response) => {
         if (!response.data.exists_token) {
           this.$router.push("Token");
         }
@@ -597,7 +658,7 @@ export default {
       });
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
+      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
         if (response.data.token) {
           var token = response.data.token;
 
@@ -607,7 +668,7 @@ export default {
           var tokenDecoded = decodeURIComponent(
             atob(base64)
               .split("")
-              .map(function(c) {
+              .map(function (c) {
                 return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
               })
               .join("")
@@ -628,24 +689,26 @@ export default {
         }
       });
     },
-    showAgenciesState() {
-        this.setLoader(true);
-        this.agency = "";
-        this.$http.post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
-            .then(response => {
-                this.setAgencies(response.data.agencies);
-            }).catch(error => {
-                alert(error.response.data.message);
-            })
-            .finally(() => {
-                this.setLoader(false);
-            });
-    }
+    showJadlogAgenciesState() {
+      this.setLoader(true);
+      this.agency = "";
+      this.$http
+        .post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
+        .then((response) => {
+          this.setAgencies(response.data.agencies);
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        })
+        .finally(() => {
+          this.setLoader(false);
+        });
+    },
   },
   watch: {
     addresses() {
       if (this.addresses.length > 0) {
-        this.addresses.filter(item => {
+        this.addresses.filter((item) => {
           if (item.selected) {
             this.address = item.id;
           }
@@ -654,7 +717,7 @@ export default {
     },
     stores() {
       if (this.stores.length > 0) {
-        this.stores.filter(item => {
+        this.stores.filter((item) => {
           if (item.selected) {
             this.store = item.id;
           }
@@ -664,7 +727,7 @@ export default {
     agencies() {
       this.setLoader(true);
       if (this.agencies.length > 0) {
-        this.agencies.filter(item => {
+        this.agencies.filter((item) => {
           if (item.selected) {
             this.agency = item.id;
           }
@@ -672,8 +735,22 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesAzul() {
+      this.setLoader(true);
+      if (this.agenciesAzul.length > 0) {
+        this.agenciesAzul.filter((item) => {
+          if (item.selected) {
+            this.agency_azul = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
     agencySelected_(e) {
       this.agency = e;
+    },
+    agencyAzulSelected_(e) {
+      this.agency_azul = e;
     },
     show_calculator_(e) {
       this.show_calculator = e;
@@ -689,16 +766,16 @@ export default {
     },
     options_calculator_(e) {
       this.options_calculator = e;
-    }
+    },
   },
   mounted() {
     this.getToken();
     this.setLoader(true);
     var promiseConfigs = this.getConfigs();
-    promiseConfigs.then(resolve => {
+    promiseConfigs.then((resolve) => {
       this.setLoader(false);
     });
-  }
+  },
 };
 </script>
 

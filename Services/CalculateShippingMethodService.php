@@ -129,6 +129,17 @@ class CalculateShippingMethodService
     }
 
     /**
+     * Check if it is "Azul Cargo"
+     *
+     * @param int $code
+     * @return boolean
+     */
+    public function isAzulCArgo($code)
+    {
+        return in_array($code, ShippingService::SERVICES_AZUL);
+    }
+
+    /**
      * Function to extract the quotation by the shipping method
      *
      * @param array $quotations
