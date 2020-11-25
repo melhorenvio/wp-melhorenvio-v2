@@ -56,26 +56,26 @@ class BuyerService
             "phoneMasked" => $phone,
             "email" => $order->get_billing_email(),
             "state_register" => null,
-            "address" => (isset($dataShipping->address))
+            "address" => (!empty($dataShipping->address))
                 ? $dataShipping->address
                 : $dataBilling->address,
-            "complement" => (isset($dataShipping->complement))
+            "complement" => (!empty($dataShipping->complement))
                 ? $dataShipping->complement
                 : $dataBilling->complement,
-            "number" => (isset($dataShipping->number))
+            "number" => (!empty($dataShipping->number))
                 ? $dataShipping->number
                 : $dataBilling->number,
-            "district" => (isset($dataShipping->district))
+            "district" => (!empty($dataShipping->district))
                 ? $dataShipping->district
                 : $dataBilling->district,
-            "city" => (isset($dataShipping->city))
+            "city" => (!empty($dataShipping->city))
                 ? $dataShipping->city
                 : $dataBilling->city,
-            "state_abbr" => (isset($dataShipping->state_abbr))
+            "state_abbr" => (!empty($dataShipping->state_abbr))
                 ? $dataShipping->state_abbr
                 : $dataBilling->state_abbr,
             "country_id" => 'BR',
-            "postal_code" => (isset($dataShipping->postal_code))
+            "postal_code" => (!empty($dataShipping->postal_code))
                 ? $dataShipping->postal_code
                 : $dataBilling->postal_code,
         ];
