@@ -29,10 +29,6 @@ class AgencyAzul
     public function setAgency($id)
     {
         delete_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER);
-        if (!add_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER, $id)) {
-            return false;
-        }
-
-        return true;
+        return add_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER, $id);
     }
 }
