@@ -27,7 +27,7 @@ class AgenciesAzulService
         }
 
         $agencies = [];
-        if (!empty($seller->city) && !empty($seller->state_abbr)) {
+        if (!empty($seller->state_abbr)) {
             $agencies = $this->getByAddress($seller->city, $seller->state_abbr);
             if (empty($agencies->success)) {
                 $agencies = $this->getByState($seller->state_abbr);
