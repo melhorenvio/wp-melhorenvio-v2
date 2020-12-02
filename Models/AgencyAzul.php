@@ -23,6 +23,8 @@ class AgencyAzul
     }
 
     /**
+     * function to save the Azul Cargo agency id by the user
+     * 
      * @param string $id
      * @return bool
      */
