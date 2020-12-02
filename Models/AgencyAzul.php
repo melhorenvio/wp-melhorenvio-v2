@@ -4,7 +4,11 @@ namespace Models;
 
 class AgencyAzul
 {
-    const AGENCY_SELECTED = 'melhorenvio_agency_azul_v2';
+    /**
+     * Constant to store in Wordpress options the agency ID "Azul Cargo Express"
+     * selected by the user.
+     */
+    const AGENCY_ID_AZUL_CARGO_SELECTED_USER = 'melhorenvio_agency_azul_v2';
 
     /**
      * function to get the id of agency azul selected.
@@ -13,7 +17,7 @@ class AgencyAzul
      */
     public function getSelected()
     {
-        $id = get_option(self::AGENCY_SELECTED, false);
+        $id = get_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER, false);
 
         return (empty($id)) ? false : intval($id);
     }
@@ -24,8 +28,8 @@ class AgencyAzul
      */
     public function setAgency($id)
     {
-        delete_option(self::AGENCY_SELECTED);
-        if (!add_option(self::AGENCY_SELECTED, $id)) {
+        delete_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER);
+        if (!add_option(self::AGENCY_ID_AZUL_CARGO_SELECTED_USER, $id)) {
             return false;
         }
 
