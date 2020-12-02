@@ -22,7 +22,7 @@ class AgenciesAzulService
         if (empty($seller->city)) {
             return (object) [
                 'success' => false,
-                'message' => 'Não foi possível obter as agências Azul Cargo Express'
+                'message' => 'Não foi possível obter a cidade cadastrada para obter as informações das agências de Azul Cargo Express'
             ];
         }
 
