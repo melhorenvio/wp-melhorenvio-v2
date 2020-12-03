@@ -134,7 +134,7 @@ class CalculateShippingMethodService
      * @param int $code
      * @return boolean
      */
-    public function isAzulCArgo($code)
+    public function isAzulCargo($code)
     {
         return in_array($code, ShippingService::SERVICES_AZUL);
     }

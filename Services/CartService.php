@@ -127,7 +127,7 @@ class CartService
             return (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser();
         }
 
-        if ($shippingMethodService->isAzulCArgo($shippingMethodId)) {
+        if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
             return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
         }
 
