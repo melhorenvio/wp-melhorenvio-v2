@@ -3,6 +3,7 @@
 - Encerando session após escrita.
 - Correção de warning de encerrar session antes de realizar requests HTTP.
 - Adicionando serviços de Azul Cargo.
+- Correção de problema na exibição de rastreio na tela de meus pedidos do usuário final.
 
 ### [2.9.4]
 - Correção do problema de loop infinito na aba de configurações.
