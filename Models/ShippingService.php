@@ -10,9 +10,24 @@ class ShippingService
 
     const SERVICES_AZUL = [15, 16];
 
-    const SERVICES_AVAILABLES = [1, 2, 3, 4, 9, 15, 16, 17];
+    const SERVICES_VIA_BRASIL = [9];
 
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
+
+    /**
+     * Function to return avalaible services.
+     *
+     * @return array
+     */
+    public static function getAvailableServices()
+    {
+        return array_merge(
+            self::SERVICES_CORREIOS,
+            self::SERVICES_JADLOG,
+            self::SERVICES_AZUL,
+            self::SERVICES_VIA_BRASIL
+        );
+    }
 
     /**
      * function to save shipping services.
