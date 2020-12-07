@@ -4,6 +4,7 @@
 - Correção de warning de encerrar session antes de realizar requests HTTP.
 - Correção dados da etiqueta referente aos dados de entrega e faturamento.
 - Correção de problema na exibição de rastreio na tela de meus pedidos do usuário final.
+- Inserindo mensagem de observação de frete grátis caso necessário no shortcode da calculadora.
 
 ### [2.9.4]
 - Correção do problema de loop infinito na aba de configurações.
