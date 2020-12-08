@@ -76,6 +76,7 @@ class ConfigurationsService
     {
         $agenciesJadlog = (new AgenciesJadlogService());
         $agenciesAzul = (new AgenciesAzulService());
+        $token = (new TokenService())->get();
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
@@ -89,7 +90,8 @@ class ConfigurationsService
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
             'path_plugins'        => $this->getPathPluginsArray(),
-            'options_calculator'  => $this->getOptionsCalculator()
+            'options_calculator'  => $this->getOptionsCalculator(),
+            'token_environment'   => $token['token_environment']
         ];
     }
 

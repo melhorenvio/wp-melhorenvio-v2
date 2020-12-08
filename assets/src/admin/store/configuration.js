@@ -24,6 +24,7 @@ const configuration = {
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
         agencyAzulSelected: null,
+        token_enviroment: 'production',
         methods_shipments: [],
         show_load: true,
         configs: []
@@ -79,6 +80,9 @@ const configuration = {
         },
         setOptionsCalculator: (state, data) => {
             state.options_calculator = data;
+        },
+        setTokenEnvironment: (state, data) => {
+            state.token_enviroment = data;
         }
     },
     getters: {
@@ -97,7 +101,8 @@ const configuration = {
         getMethodsShipments: state => state.methods_shipments,
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
-        getOptionsCalculator: state => state.options_calculator
+        getOptionsCalculator: state => state.options_calculator,
+        getEnvironment: state => state.token_enviroment
     },
     actions: {
         getConfigs: ({ commit }, data) => {
@@ -134,6 +139,7 @@ const configuration = {
                         commit('setMethodShipments', response.data.metodos)
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)
+                        commit('setTokenEnvironment', response.data.token_environment)
                         resolve(true)
                     }
                 }).catch((error) => {
