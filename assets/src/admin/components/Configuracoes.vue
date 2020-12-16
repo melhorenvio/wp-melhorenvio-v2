@@ -165,7 +165,7 @@
     </div>
     <hr />
 
-    <div class="wpme_config">
+    <div v-show="token_environment == 'production'" class="wpme_config">
       <h2>Azul Cargo Express</h2>
       <p>Escolha a agência Azul Cargo Express de sua preferência para realizar o envio dos seus produtos.</p>
       <div class="wpme_flex">
@@ -522,6 +522,7 @@ export default {
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
       show_all_agencies_azul_: "getShowAllAzulAgencies",
       options_calculator_: "getOptionsCalculator",
+      token_environment: "getEnvironment",
       configs: "getConfigs",
     }),
   },
@@ -531,6 +532,7 @@ export default {
       "setLoader",
       "setAgenciesAzul",
       "saveAll",
+      "getEnvironment",
     ]),
     requiredInput(element) {
       if (element.length == 0 || element.length > 100) {
