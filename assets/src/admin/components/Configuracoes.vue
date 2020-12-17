@@ -258,15 +258,15 @@
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="receipt" v-model="options_calculator.receipt" />
+            <input type="checkbox" value="Personalizar" data-cy="receipt" v-model="options_calculator && options_calculator.receipt" />
             Aviso de recebimento
           </li>
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="own_hand" v-model="options_calculator.own_hand" />
+            <input type="checkbox" value="Personalizar" data-cy="own_hand" v-model="options_calculator && options_calculator.own_hand" />
             Mão própria
           </li>
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="insurance_value" v-model="options_calculator.insurance_value" />
+            <input type="checkbox" value="Personalizar" data-cy="insurance_value" v-model="options_calculator && options_calculator.insurance_value" />
             Assegurar sempre 
           </li>
         </ul>
@@ -531,6 +531,7 @@ export default {
       "getConfigs",
       "setLoader",
       "setAgenciesAzul",
+      "setAgencies",
       "saveAll",
       "getEnvironment",
     ]),
