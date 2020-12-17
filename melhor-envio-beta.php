@@ -281,7 +281,7 @@ final class Base_Plugin
             $methods['melhorenvio_via_brasil_rodoviario']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario';
             $methods['melhorenvio_latam']  = 'WC_Melhor_Envio_Shipping_Latam';
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
-            $methods['melhorenvio_azull_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
+            $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
             return $methods;
         });
