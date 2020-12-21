@@ -18,8 +18,9 @@ class PayloadService
     public function save($postId)
     {
         $payload = $this->createPayloadCheckoutOrder($postId);
+
         if (!empty($payload)) {
-            $payload = (new Payload())->save($postId, $payload);
+            (new Payload())->save($postId, $payload);
         }
     }
 
@@ -47,6 +48,7 @@ class PayloadService
      */
     public function createPayloadCheckoutOrder($postId)
     {
+        $order = new \WC_Order( $postId );
         $products = (new OrdersProductsService())->getProductsOrder($postId);
         $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
         $seller = (new SellerService())->getData();
@@ -55,11 +57,7 @@ class PayloadService
         $productsFilter = $productService->filter($products);
         $serviceId = (new Method($postId))->getMethodShipmentSelected($postId);
 
-        $useInsuranceValue = (new CalculateShippingMethodService())->isCorreios($serviceId)
-            ? $options->insurance_value
-            : true;
-
-        $body = (object) [
+        return (object) [
             'from' => (object) [
                 'postal_code' => $seller->postal_code,
             ],
@@ -70,7 +68,8 @@ class PayloadService
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => $useInsuranceValue
+                'insurance_value' => $order->get_subtotal(),
+                'use_insurance_value' => $options->insurance_value
             ],
             'products' => (object) $productsFilter,
             'service_selected' => $serviceId,
@@ -80,10 +79,9 @@ class PayloadService
                 'weight' => strtolower(get_option('woocommerce_weight_unit')),
                 'dimension' => strtolower(get_option('woocommerce_dimension_unit'))
             ],
+            'shipping_total' => $order->get_shipping_total(),
             'created' => date('Y-m-d h:i:s')
         ];
-
-        return $body;
     }
 
     /**
@@ -114,7 +112,7 @@ class PayloadService
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => true
+                'insurance_value' => $productService->getInsuranceValue($productsFilter)
             ],
             'products' => (object) $productsFilter
         ];
@@ -129,7 +127,7 @@ class PayloadService
     public function removeInsuranceValue($payload)
     {
         $payload->products = (new ProductsService())->removePrice((array) $payload->products);
-        $payload->options->insurance_value = false;
+        $payload->options->insurance_value = 0;
         $payload->services = implode(
             ",",
             ShippingService::SERVICES_CORREIOS
