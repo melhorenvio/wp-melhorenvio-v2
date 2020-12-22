@@ -18,7 +18,7 @@ class CartService
      * @param array $products
      * @param array $dataBuyer
      * @param int $shippingMethodId
-     * @return void
+     * @return array
      */
     public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
@@ -45,7 +45,7 @@ class CartService
             : (new Option())->getOptions();
 
         $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
-            ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
+            ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
             : true;
 
         $insuranceValue = ($insuranceRequired)
