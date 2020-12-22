@@ -88,7 +88,9 @@ class QuotationService
 
         $quotations = $this->calculate(
             $payload,
-            $payload->options->use_insurance_value
+            (isset($payload->options->use_insurance_value))
+                ? $payload->options->use_insurance_value
+                : $payload->options->insurance_value
         );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
