@@ -13,8 +13,6 @@ class OrderQuotationService
 
     const OPTION_TOKEN_ENVIRONMENT = 'wpmelhorenvio_token_environment';
 
-    const CORREIOS_MINI_CODE = 17;
-
     protected $env;
 
     public function __construct()
