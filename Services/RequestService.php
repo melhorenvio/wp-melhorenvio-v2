@@ -72,7 +72,6 @@ class RequestService
         );
 
         if (empty($response)) {
-            (new SessionNoticeService())->add('Ocorreu um erro ao se conectar com a API do Melhor Envio');
             return (object) [
                 'success' => false,
                 'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],

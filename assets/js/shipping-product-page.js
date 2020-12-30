@@ -58,8 +58,9 @@
                         return false;
                     },
                     success: function (response) {
+                        $('#destiny-shipping-mehor-envio').text('Frete para ' + response.data.destination);
                         var row = '';
-                        let { data } = response;
+                        let  data  = response.data.quotations;
                         data.map(item => {
                             if (item.observations && item.observations !== 'Frete Grátis') {
                                 jQuery('.observation-shipping-free').show();
@@ -106,6 +107,7 @@
 
         function resetarTabela() {
             $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').html('');
+            $('#destiny-shipping-mehor-envio').text('');
         }
 
         $(".single_variation_wrap").on("show_variation", function (event, variation) {

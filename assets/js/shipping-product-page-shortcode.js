@@ -1,6 +1,7 @@
 (function ($) {
     'use strict';
     $(function () {
+        $('.observation-shipping-free-shortcode').hide();
         $(document).on('keyup', '.iptCepShortcode', function (e) {
             if ($('.iptCepShortcode').val().length === 9) {
                 resetarTabela();
@@ -59,8 +60,14 @@
                     },
                     success: function (response) {
                         var row = '';
-                        let { data } = response;
+                        let  data  = response.data.quotations;
                         data.map(item => {
+
+                            if (item.observations && item.observations !== 'Frete Grátis') {
+                                $('.observation-shipping-free-shortcode').show();
+                                $('.observation-shipping-free-shortcode').html(item.observations);
+                            }
+
                             let name = item.name.split('(');
                             name = name[0];
                             if (!item.delivery_time) {

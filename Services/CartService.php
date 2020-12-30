@@ -18,7 +18,7 @@ class CartService
      * @param array $products
      * @param array $dataBuyer
      * @param int $shippingMethodId
-     * @return void
+     * @return array
      */
     public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
@@ -45,7 +45,7 @@ class CartService
             : (new Option())->getOptions();
 
         $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
-            ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
+            ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
             : true;
 
         $insuranceValue = ($insuranceRequired)
@@ -55,7 +55,7 @@ class CartService
         $body = array(
             'from' => $dataFrom,
             'to' => $dataBuyer,
-            'agency' => (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser(),
+            'agency' => $this->getAgencyToInsertCart($shippingMethodId),
             'service' => $shippingMethodId,
             'products' => $products,
             'volumes' => $this->getVolumes($quotation, $shippingMethodId),
@@ -111,6 +111,27 @@ class CartService
             null,
             $result->self_tracking
         );
+    }
+
+    /**
+     * function to get agency selected by service_Id
+     *
+     * @param string $shippingMethodId
+     * @return int|null
+     */
+    private function getAgencyToInsertCart($shippingMethodId)
+    {
+        $shippingMethodService = new CalculateShippingMethodService();
+
+        if ($shippingMethodService->isJadlog($shippingMethodId)) {
+            return (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser();
+        }
+
+        if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
+            return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
+        }
+
+        return null;
     }
 
     /**

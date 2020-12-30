@@ -47,7 +47,7 @@ class QuotationService
                 $quotations = array_merge($quotations, $quotsWithoutValue);
                 $quotations = $this->setKeyQuotationAsServiceid($quotations);
             }
-        }
+        };
 
         return $quotations;
     }
@@ -71,7 +71,7 @@ class QuotationService
      * Function to calculate a quotation by post_id.
      *
      * @param int $postId
-     * @return object $quotation
+     * @return array $quotation
      */
     public function calculateQuotationByPostId($postId)
     {
@@ -88,7 +88,9 @@ class QuotationService
 
         $quotations = $this->calculate(
             $payload,
-            $payload->options->insurance_value
+            (isset($payload->options->use_insurance_value))
+                ? $payload->options->use_insurance_value
+                : $payload->options->insurance_value
         );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
@@ -97,16 +99,17 @@ class QuotationService
     /**
      * Function to calculate a quotation by products.
      *
-     * @param array $products  
+     * @param array $products
      * @param  string $postal_code
      * @param int $service
-     * @return  object $quotation
+     * @return array|false|object
      */
     public function calculateQuotationByProducts(
         $products,
         $postalCode,
         $service = null
     ) {
+
         $payload = (new PayloadService())->createPayloadByProducts(
             $postalCode,
             $products
@@ -115,6 +118,7 @@ class QuotationService
         $options = (new Option())->getOptions();
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);
+
 
         if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);
@@ -144,6 +148,8 @@ class QuotationService
 
         $_SESSION['quotation'][$hash]['data'] = $quotation;
         $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+
+        session_write_close();
     }
 
     /**
@@ -205,7 +211,7 @@ class QuotationService
     }
 
     /**
-     * Function to search for the quotation of a shipping service in the session, 
+     * Function to search for the quotation of a shipping service in the session,
      * if it does not find false returns
      *
      * @param array $bodyQuotation
@@ -237,6 +243,8 @@ class QuotationService
                 }
             }
         );
+
+        session_write_close();
 
         if (!is_array($quotations)) {
             return false;
@@ -276,7 +284,7 @@ class QuotationService
     }
 
     /**
-     * Function to go through the quote and check for errors 
+     * Function to go through the quote and check for errors
      * and notify the store administrator.
      *
      * @param array $quotations

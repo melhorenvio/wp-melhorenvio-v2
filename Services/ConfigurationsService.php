@@ -4,6 +4,7 @@ namespace Services;
 
 use Models\Address;
 use Models\Agency;
+use Models\AgencyAzul;
 use Models\Option;
 use Models\CalculatorShow;
 
@@ -33,6 +34,10 @@ class ConfigurationsService
 
         if (isset($data['agency'])) {
             $response['agency'] = (new Agency())->setAgency($data['agency']);
+        }
+
+        if (isset($data['agency_azul'])) {
+            $response['agency_azul'] = (new AgencyAzul())->setAgency($data['agency_azul']);
         }
 
         if (isset($data['show_calculator'])) {
@@ -70,18 +75,23 @@ class ConfigurationsService
     public function getConfigurations()
     {
         $agenciesJadlog = (new AgenciesJadlogService());
+        $agenciesAzul = (new AgenciesAzulService());
+        $token = (new TokenService())->get();
 
         return [
             'addresses'           => (new Address())->getAddressesShopping()['addresses'],
             'stores'              => (new StoreService())->getStores(),
             'agencies'            => $agenciesJadlog->get(),
             'agencySelected'      => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
+            'agenciesAzul'        => $agenciesAzul->get(),
+            'agencyAzulSelected'  => $agenciesAzul->getSelectedAgencyOrAnyByCityUser(),
             'calculator'          => (new CalculatorShow())->get(),
             'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
             'path_plugins'        => $this->getPathPluginsArray(),
-            'options_calculator'  => $this->getOptionsCalculator()
+            'options_calculator'  => $this->getOptionsCalculator(),
+            'token_environment'   => $token['token_environment']
         ];
     }
 

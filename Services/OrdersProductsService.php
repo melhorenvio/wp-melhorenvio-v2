@@ -6,6 +6,8 @@ use Helpers\DimensionsHelper;
 
 class OrdersProductsService
 {
+    const PRODUCT_COMPOSITE = 'WC_Product_Composite';
+
     /**
      * Get products by order
      *
@@ -15,12 +17,14 @@ class OrdersProductsService
     public function getProductsOrder($orderId)
     {
         $order  = wc_get_order($orderId);
+
         $products = [];
 
         foreach ($order->get_items() as $item_product) {
+
             $_product = $item_product->get_product();
 
-            if (is_bool($_product)) {
+            if (is_bool($_product) || get_class($_product) === self::PRODUCT_COMPOSITE) {
                 continue;
             }
 
