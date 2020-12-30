@@ -71,6 +71,7 @@ class ShortCodeService
                         <tbody>
                         </tbody>
                     </table>
+                    <small class='observation-shipping-free-shortcode'></small>
                 </div>
             </div> ",
             $this->product->get_id(),

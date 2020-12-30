@@ -1,4 +1,18 @@
 ### Changelog
+### [2.9.5]
+- Encerando session após escrita.
+- Correção de warning de encerrar session antes de realizar requests HTTP.
+- Adicionando serviços de Azul Cargo.
+- Correção dados da etiqueta referente aos dados de entrega e faturamento.
+- Correção de problema na exibição de rastreio na tela de meus pedidos do usuário final.
+- Inserindo mensagem de observação de frete grátis caso necessário no shortcode da calculadora.
+
+### [2.9.4]
+- Correção do problema de loop infinito na aba de configurações.
+
+### [2.9.3]
+- Correção de caracteres quebrados no endereço de destino na etiqueta Melhor Envio.
+
 ### [2.9.2]
 - Criação de função de usuário para suporte do Melhor Envio (Acesso restrito).
 - Removendo requisiçoes desnecessárias para rota shipping/services na API do Melhor Envio.

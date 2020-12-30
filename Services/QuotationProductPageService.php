@@ -3,7 +3,6 @@
 namespace Services;
 
 use Helpers\MoneyHelper;
-use Helpers\DimensionsHelper;
 use Helpers\PostalCodeHelper;
 
 class QuotationProductPageService
@@ -94,7 +93,7 @@ class QuotationProductPageService
     }
 
     /**
-     * Function to search the WooCommerce shipping methods for the product 
+     * Function to search the WooCommerce shipping methods for the product
      * and the zones chosen by the seller.
      *
      * @return array
@@ -148,11 +147,21 @@ class QuotationProductPageService
                 $result[] = $rate;
             }
         }
-        return $result;
+
+        return [
+            'quotations' => $result,
+            'destination' => sprintf(
+                "%s, %s/%s (%s)",
+                $this->destination->logradouro,
+                $this->destination->cidade,
+                $this->destination->uf,
+                $this->postalCode
+            )
+        ];
     }
 
     /**
-     * Function to create the package in the patterns used in WooCommerce 
+     * Function to create the package in the patterns used in WooCommerce
      * to make requests for WooCommerce native delivery methods and zones.
      *
      * @return void
@@ -239,7 +248,7 @@ class QuotationProductPageService
     }
 
     /**
-     * Function to map shipping methods and enter 
+     * Function to map shipping methods and enter
      * necessary information for the product screen calculator.
      *
      * @return void
@@ -294,9 +303,9 @@ class QuotationProductPageService
     }
 
     /**
-     * Function to manage free shipping on the product screen. 
-     * the native free shipping of WooCommerce is based on the total value of the cart, 
-     * as the cart is probably empty on the product screen, 
+     * Function to manage free shipping on the product screen.
+     * the native free shipping of WooCommerce is based on the total value of the cart,
+     * as the cart is probably empty on the product screen,
      * it is necessary to modify the standard operation of the free shipping of WooCommerce.
      *
      * @return void

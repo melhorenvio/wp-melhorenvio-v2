@@ -3,7 +3,13 @@
     <template v-if="item.status == null">
       <div class="formBox paddingBox">
         <template
-          v-if="item.quotation.choose_method == 3 || item.quotation.choose_method == 4 || item.quotation.choose_method == 10"
+          v-if="
+            item.quotation.choose_method == services.JADLOG_PACKAGE ||
+            item.quotation.choose_method == services.JADLOG_COM ||
+            item.quotation.choose_method == services.LATAM ||
+            item.quotation.choose_method == services.AZUL_AMANHA ||
+            item.quotation.choose_method == services.AZUL_ECOMMERCE
+          "
         >
           <fieldset class="checkLine">
             <div class="inputBox">
@@ -14,7 +20,14 @@
           <br />
         </template>
         <template
-          v-if="((item.quotation.choose_method == 3 || item.quotation.choose_method == 4 || item.quotation.choose_method == 10 )  && !item.non_commercial) || (item.quotation.choose_method == 8 || item.quotation.choose_method == 9)"
+          v-if="
+            ((item.quotation.choose_method == services.JADLOG_PACKAGE ||
+              item.quotation.choose_method == services.JADLOG_COM ||
+              item.quotation.choose_method == services.JADLOG_LATAM) &&
+              !item.non_commercial) ||
+            item.quotation.choose_method == services.VIA_BRASIL_AERO ||
+            item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
+          "
         >
           <fieldset>
             <div>
@@ -27,7 +40,12 @@
               <input type="text" v-model="item.invoice.key" />
               <br />
               <br />
-              <button class="btn-border -full-blue" @click="insertInvoice(item)">Salvar</button>
+              <button
+                class="btn-border -full-blue"
+                @click="insertInvoice(item)"
+              >
+                Salvar
+              </button>
             </div>
           </fieldset>
         </template>
@@ -37,10 +55,18 @@
     <template v-else>
       <p>
         <b>
-          <span v-if="item.status == statusMelhorEnvio.STATUS_GENERATED">Pronta para imprimir</span>
-          <span v-if="item.status == statusMelhorEnvio.STATUS_PAID">Pronta para imprimir</span>
-          <span v-if="item.status == statusMelhorEnvio.STATUS_RELEASED">Pronta para imprimir</span>
-          <span v-if="item.status == statusMelhorEnvio.STATUS_POSTED">Etiqueta postada</span>
+          <span v-if="item.status == status.STATUS_GENERATED"
+            >Pronta para imprimir</span
+          >
+          <span v-if="item.status == status.STATUS_PAID"
+            >Pronta para imprimir</span
+          >
+          <span v-if="item.status == status.STATUS_RELEASED"
+            >Pronta para imprimir</span
+          >
+          <span v-if="item.status == status.STATUS_POSTED"
+            >Etiqueta postada</span
+          >
         </b>
       </p>
     </template>
@@ -49,16 +75,23 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import shippingServices from "../../utils/shipping-services";
 export default {
+  data: () => {
+    return {
+      services: shippingServices,
+      status: statusMelhorEnvio,
+    };
+  },
   props: {
     item: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   methods: {
-    ...mapActions("orders", ["insertInvoice"])
+    ...mapActions("orders", ["insertInvoice"]),
   },
-  mounted() {}
+  mounted() {},
 };
 </script>
