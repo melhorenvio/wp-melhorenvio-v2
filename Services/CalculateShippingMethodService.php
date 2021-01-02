@@ -30,7 +30,7 @@ class CalculateShippingMethodService
      * @param float $taxExtra
      * @param int $timeExtra
      * @param int $percent
-     * @return void
+     * @return false
      */
     public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
@@ -54,6 +54,20 @@ class CalculateShippingMethodService
             if (isset($result->price) && isset($result->name)) {
                 if ($this->isCorreios($code) && $this->hasMultipleVolumes($result)) {
                     return false;
+                }
+
+                $additionalData = (new AdditionalQuotationService())->get();
+
+                if (!empty($additionalData['taxExtra'])) {
+                    $taxExtra = $additionalData['taxExtra'];
+                }
+
+                if (!empty($additionalData['timeExtra'])) {
+                    $timeExtra =  $additionalData['timeExtra'];
+                }
+
+                if (!empty($additionalData['percentExtra'])) {
+                    $percent = $additionalData['percentExtra'];
                 }
 
                 $rate = [
@@ -103,7 +117,7 @@ class CalculateShippingMethodService
             return false;
         }
 
-        return (count($quotation->packages) >= 2) ? true : false;
+        return count($quotation->packages) >= 2;
     }
 
     /**

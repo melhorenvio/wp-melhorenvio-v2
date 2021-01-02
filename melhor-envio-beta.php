@@ -70,6 +70,8 @@ use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
+use Services\ShippingClassDataByProductService;
+use Services\AdditionalQuotationService;
 
 /**
  * Base_Plugin class
@@ -254,6 +256,12 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
+        add_action('init', function() {
+            if (!session_id()) {
+                session_start();
+            }
+        });
+
         (new CheckHealthService())->init();
         (new TrackingService())->createTrackingColumnOrdersClient();
 
@@ -299,6 +307,28 @@ final class Base_Plugin
         add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
+
+        add_action('woocommerce_add_to_cart', function() {
+            if(!empty($_POST['product_id'])) {
+                $dataShipping = (new ShippingClassDataByProductService())
+                    ->get($_POST['product_id']);
+
+                (new AdditionalQuotationService())->register(
+                    $_POST['product_id'],
+                    $dataShipping['additional_tax'],
+                    $dataShipping['additional_time'],
+                    $dataShipping['percent_tax']
+                );
+            }
+        });
+
+        add_action( 'woocommerce_remove_cart_item', function($cart_item_key, $cart) {
+            foreach($cart->cart_contents as $key => $item) {
+                if ($key == $cart_item_key) {
+                    (new AdditionalQuotationService())->removeItem($item['product_id']);
+                }
+             }
+        }, 10, 2 );
     }
 
     /**
