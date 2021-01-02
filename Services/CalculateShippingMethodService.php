@@ -30,7 +30,7 @@ class CalculateShippingMethodService
      * @param float $taxExtra
      * @param int $timeExtra
      * @param int $percent
-     * @return void
+     * @return false
      */
     public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
