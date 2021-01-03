@@ -77,6 +77,7 @@ class AdditionalQuotationService
 
         if ($woocommerce->cart->get_cart_contents_count() == 0) {
             $_SESSION[self::SESSION_KEY_ADDITIONAL] = null;
+            return false;
         }
 
         foreach ($woocommerce->cart->get_cart() as $cart) {

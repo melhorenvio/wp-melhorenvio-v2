@@ -72,6 +72,7 @@ use Services\ShortCodeService;
 use Services\TrackingService;
 use Services\ShippingClassDataByProductService;
 use Services\AdditionalQuotationService;
+use Services\ProcessAdditionalTaxService;
 
 /**
  * Base_Plugin class
@@ -308,27 +309,7 @@ final class Base_Plugin
             (new ClearDataStored())->clear();
         });
 
-        add_action('woocommerce_add_to_cart', function() {
-            if(!empty($_POST['product_id'])) {
-                $dataShipping = (new ShippingClassDataByProductService())
-                    ->get($_POST['product_id']);
-
-                (new AdditionalQuotationService())->register(
-                    $_POST['product_id'],
-                    $dataShipping['additional_tax'],
-                    $dataShipping['additional_time'],
-                    $dataShipping['percent_tax']
-                );
-            }
-        });
-
-        add_action( 'woocommerce_remove_cart_item', function($cart_item_key, $cart) {
-            foreach($cart->cart_contents as $key => $item) {
-                if ($key == $cart_item_key) {
-                    (new AdditionalQuotationService())->removeItem($item['product_id']);
-                }
-             }
-        }, 10, 2 );
+        (new ProcessAdditionalTaxService())->init();
     }
 
     /**
