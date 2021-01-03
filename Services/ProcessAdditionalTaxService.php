@@ -33,6 +33,12 @@ class ProcessAdditionalTaxService
         $dataShipping = (new ShippingClassDataByProductService())
             ->get($productId);
 
+        if (!isset($dataShipping['additional_tax']) ||
+            !isset($dataShipping['additional_time']) ||
+            !isset($dataShipping['percent_tax'])) {
+            return false;
+        }
+
         return (new AdditionalQuotationService())->register(
             $productId,
             $dataShipping['additional_tax'],
