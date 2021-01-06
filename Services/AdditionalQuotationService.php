@@ -75,7 +75,7 @@ class AdditionalQuotationService
 
         global $woocommerce;
 
-        if ($woocommerce->cart->get_cart_contents_count() == 0) {
+        if (empty($woocommerce->cart->get_cart_contents_count() )) {
             $_SESSION[self::SESSION_KEY_ADDITIONAL] = null;
             return false;
         }
