@@ -112,6 +112,12 @@ export default {
         this.show_loader = false;
       });
     },
+    getUrlToConfiguration() {
+      let fullUrl = window.location.href;
+      let splitUrl = fullUrl.split('wp-admin/');
+      let urlRedirect = splitUrl[0] + 'wp-admin/admin.php?page=melhor-envio#/configuracoes';
+      return urlRedirect;
+    },
     saveToken() {
       let bodyFormData = new FormData();
       bodyFormData.append("token", this.token);
@@ -124,8 +130,7 @@ export default {
           method: "POST"
         })
           .then(response => {
-            window.location.href =
-              "/wp-admin/admin.php?page=melhor-envio#/configuracoes";
+            window.location.href = this.getUrlToConfiguration();
           })
           .catch(err => console.log(err));
       }
