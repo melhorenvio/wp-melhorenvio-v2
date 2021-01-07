@@ -100,7 +100,7 @@ class QuotationService
      * Function to calculate a quotation by products.
      *
      * @param array $products
-     * @param  string $postal_code
+     * @param $postalCode
      * @param int $service
      * @return array|false|object
      */
@@ -118,7 +118,6 @@ class QuotationService
         $options = (new Option())->getOptions();
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);
-
 
         if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);
