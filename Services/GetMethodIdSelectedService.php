@@ -21,11 +21,12 @@ class GetMethodIdSelectedService
     public function get($postId)
     {
         $order = wc_get_order( $postId );
-        $method_id = self::DEFAULT_METHOD_ID;
-        foreach( $order->get_items( 'shipping' ) as $item_id => $shipping_item_obj ){
-            $shipping_item_data = $shipping_item_obj->get_data();
-            $method_id = $shipping_item_data['method_id'];
-        }
+
+        $shipping_item_data = end($order->get_items( 'shipping' ))->get_data();
+
+        $method_id = (empty($shipping_item_data['method_id'])) 
+            ? self::DEFAULT_METHOD_ID  
+            : $shipping_item_data['method_id'];
 
         return ShippingService::getCodeByMethodId($method_id);
     }
