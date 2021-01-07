@@ -91,13 +91,14 @@ class OrderQuotationService
      */
     public function saveQuotation($orderId, $quotation)
     {
-        $choose = (new Method($orderId))->getMethodShipmentSelected($orderId);
+        //$choose = (new Method($orderId))->getMethodShipmentSelected($orderId);
+        $methodId = (new GetMethodIdSelectedService())->get($orderId);
 
         $data = $this->setKeyAsCodeService($quotation);
         $data['date_quotation'] = date('Y-m-d H:i:d');
-        $data['choose_method'] = (!is_null($choose)) ? $choose : 2;
+        $data['choose_method'] = $methodId;
         $data['free_shipping'] = false;
-        $data['diff'] = is_null($choose);
+        $data['diff'] = is_null($methodId);
 
         delete_post_meta($orderId, self::POST_META_ORDER_QUOTATION);
         add_post_meta($orderId, self::POST_META_ORDER_QUOTATION, $data, true);

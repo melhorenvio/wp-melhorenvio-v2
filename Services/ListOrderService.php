@@ -10,7 +10,7 @@ class ListOrderService
      * Function to return the list of orders
      *
      * @param array $args
-     * @return void
+     * @return array
      */
     public function getList($args)
     {
@@ -73,7 +73,7 @@ class ListOrderService
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
                 'service_id' => $statusMelhorEnvio[$postId]['service_id'],
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
-                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
+                'non_commercial' => is_null($invoice['number']) || is_null($invoice['key']),
                 'invoice'        => $invoice,
                 'products' => (new OrdersProductsService())->getProductsOrder($postId),
                 'quotation' => $quotationService->calculateQuotationByPostId($postId),
