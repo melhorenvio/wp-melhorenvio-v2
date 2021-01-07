@@ -67,8 +67,8 @@ class TestService
 
                 $response['quotation'][$item->id] = [
                     "Serviço" => $item->name,
-                    "Valor" => $item->price,
-                    'Erro' => $item->error,
+                    "Valor" => (isset($item->price)) ? $item->price : null,
+                    'Erro' => (isset($item->error)) ? $item->error : null,
                     'Entrega' => (isset($item->delivery_range))
                         ? sprintf(
                             "%d a %d dias",
