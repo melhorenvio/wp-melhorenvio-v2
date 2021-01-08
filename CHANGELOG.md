@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.6]
+- Listagem de plugins incompatíveis.
+
 ### [2.9.5]
 - Encerando session após escrita.
 - Correção de warning de encerrar session antes de realizar requests HTTP.
