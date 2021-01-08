@@ -91,7 +91,7 @@ class OrderQuotationService
      */
     public function saveQuotation($orderId, $quotation)
     {
-        $methodId = (new GetMethodIdSelectedService())->get($orderId);
+        $methodId = (new OrderService())->getMethodIdSelected($orderId);
 
         $data = $this->setKeyAsCodeService($quotation);
         $data['date_quotation'] = date('Y-m-d H:i:d');
