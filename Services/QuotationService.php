@@ -77,14 +77,21 @@ class QuotationService
     {
         $payload = (new Payload())->get($postId);
 
-        if (empty($payload)) {
+
+        //if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
+
+            //echo '<pre>';
+            //var_dump($postId);
+            //var_dump($products);
+            //die;
+
             $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
             $payload = (new PayloadService())->createPayloadByProducts(
                 $buyer->postal_code,
                 $products
             );
-        }
+        //}
 
         $quotations = $this->calculate(
             $payload,
