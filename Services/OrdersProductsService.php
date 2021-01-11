@@ -81,6 +81,27 @@ class OrdersProductsService
             return $productsComposite;
         }
 
+        if ($this->isCompositeWholeAndInclude($productsComposite, $shipping_fee, $pricing)) {
+            $value = 0;
+            foreach ($products as $product) {
+                $value += $product['insurance_value'];
+            }
+            foreach($productsComposite as $key => $product) {
+                $productsComposite[$key]['unitary_value'] = $value;
+                $productsComposite[$key]['insurance_value'] = $value;
+
+            }
+            return $productsComposite;
+        }
+
+        if ($this->isCompositeWholeAndExclude($productsComposite, $shipping_fee, $pricing)) {
+            foreach($productsComposite as $key => $product) {
+                $productsComposite[$key]['unitary_value'] = $_product->get_price();
+                $productsComposite[$key]['insurance_value'] = $_product->get_price();
+            }
+            return $productsComposite;
+        }
+
         return $products;
     }
 
@@ -98,6 +119,40 @@ class OrdersProductsService
             !empty($productsComposite) &&
             $shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
             $pricing == self::PRODUCT_COMPOSITE_PRICING_ONLY
+        );
+    }
+
+    /**
+     * Function to check product is shippging == whole and pricing == 'include'
+     *
+     * @param $productsComposite
+     * @param $shipping_fee
+     * @param $pricing
+     * @return bool
+     */
+    private function isCompositeWholeAndInclude($productsComposite, $shipping_fee, $pricing)
+    {
+        return (
+            !empty($productsComposite) &&
+            $shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
+            $pricing == self::PRODUCT_COMPOSITE_PRICING_INCLUDE
+        );
+    }
+
+    /**
+     * Function to check product is shippging == whole and pricing == 'exclude'
+     *
+     * @param $productsComposite
+     * @param $shipping_fee
+     * @param $pricing
+     * @return bool
+     */
+    private function isCompositeWholeAndExclude($productsComposite, $shipping_fee, $pricing)
+    {
+        return (
+            !empty($productsComposite) &&
+            $shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
+            $pricing == self::PRODUCT_COMPOSITE_PRICING_EXCLUDE
         );
     }
 }
