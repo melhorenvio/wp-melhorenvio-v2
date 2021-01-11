@@ -31,7 +31,6 @@ class OrderQuotationService
         $quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
-            echo $postId;die;
             $quotation = (new QuotationService())->calculateQuotationByPostId($postId);
         }
 

@@ -75,11 +75,6 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
-        //echo '<pre>';
-        //var_dump('POST_ID ' . $postId);
-        //$payload = (new Payload())->get($postId);
-        //var_dump($payload->products);
-
         if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
             $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
