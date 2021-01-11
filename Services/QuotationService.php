@@ -75,29 +75,25 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
-        $payload = (new Payload())->get($postId);
+        //echo '<pre>';
+        //var_dump('POST_ID ' . $postId);
+        //$payload = (new Payload())->get($postId);
+        //var_dump($payload->products);
 
-
-        //if (empty($payload)) {
+        if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
-
-            //echo '<pre>';
-            //var_dump($postId);
-            //var_dump($products);
-            //die;
-
             $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
             $payload = (new PayloadService())->createPayloadByProducts(
                 $buyer->postal_code,
                 $products
             );
-        //}
+        }
 
         $quotations = $this->calculate(
             $payload,
             (isset($payload->options->use_insurance_value))
                 ? $payload->options->use_insurance_value
-                : $payload->options->insurance_value
+                : false
         );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
