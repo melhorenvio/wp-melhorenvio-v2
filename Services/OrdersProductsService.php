@@ -40,6 +40,21 @@ class OrdersProductsService
 
             $_product = $item_product->get_product();
 
+            /**
+             * Aqui é verificado se o produto é da classe do plugin Composite Product,
+             * ou seja, esse produto possui regras para essa classe.
+             * O produto pode ter as medidas da embalagem principal ou dos produtos interno da embalagem principal.
+             * SHIPPING_FEE (post_meta shipping_fee)
+             * - WHOLE = usa as medidas da caixa principal
+             * - EACH = usa as medidas de cada produto de contém a embalagem principal.
+             *
+             * O produto pode ter o preço da embalagem principal,
+             * da soma de dos produtos + embalagem ou apenas o preço dos prodtuos internos.
+             * PRICING(post_meta pricing)
+             * - ONLY = apenas o preço da embalagem princiapl
+             * - INCLUDE = o preço da embalagem principal + preço dos produtos internos
+             * - EXCLUDE = apenas o preços dos produtos internos.
+             */
             if (is_bool($_product) || get_class($_product) === self::PRODUCT_COMPOSITE) {
 
                 $shipping_fee = get_post_meta($_product->get_id(), self::PRODUCT_COMPOSITE_SHIPPING_FEE, true);
