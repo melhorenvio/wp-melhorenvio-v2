@@ -6,9 +6,7 @@ use Helpers\NoticeHelper;
 
 class ListPluginsIncompatiblesService
 {
-    const PLUGINS_INCOMPATIBLES = [
-        'wpc-composite-products/wpc-composite-products.php'
-    ];
+    const URL_PLUGINS_INCOMPATIBLES = 'https://wordpress-plugin.s3.us-east-2.amazonaws.com/plugins-incompatible.json';
 
     /**
      * Function to init a seach by plugins incompatibles.
@@ -19,12 +17,14 @@ class ListPluginsIncompatiblesService
     {
         $installed = $this->getListPluginsInstalled();
 
-        if (empty($installed) || empty(self::PLUGINS_INCOMPATIBLES)) {
+        $incompatibles = $this->getListPluginsIncompatibles();
+
+        if (empty($installed) || empty($incompatibles)) {
             return false;
         }
 
         foreach ($installed as $plugin) {
-            if (in_array($plugin,self::PLUGINS_INCOMPATIBLES)) {
+            if (in_array($plugin, $incompatibles)) {
                 NoticeHelper::addNotice(
                     sprintf("O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.", $plugin),
                     NoticeHelper::NOTICE_INFO
@@ -44,5 +44,10 @@ class ListPluginsIncompatiblesService
             'network_admin_active_plugins',
             get_option('active_plugins')
         );
+    }
+
+    public function getListPluginsIncompatibles()
+    {
+        return json_decode(file_get_contents(self::URL_PLUGINS_INCOMPATIBLES));
     }
 }
