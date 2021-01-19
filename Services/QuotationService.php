@@ -100,7 +100,7 @@ class QuotationService
      * Function to calculate a quotation by products.
      *
      * @param array $products
-     * @param $postalCode
+     * @param string $postalCode
      * @param int $service
      * @return array|false|object
      */
