@@ -35,6 +35,7 @@ class RouterService
         $this->loadRoutesPath();
         $this->laodRoutesPayload();
         $this->loadRoutesNotices();
+        $this->loadRoutesTestUserWooCommerceData();
     }
 
     /**
@@ -268,6 +269,26 @@ class RouterService
 
         add_action('wp_ajax_remove_notices', function () {
             (new SessionNoticeService())->remove($_GET['id']);
+        });
+    }
+
+    public function loadRoutesTestUserWooCommerceData()
+    {
+        $locationService = new LocationService();
+
+        add_action('wp_ajax_test_user_woocommerce_data', function () use ($locationService) {
+
+            if (empty($_GET['postcode'])) {
+                return wp_send_json([
+                    'message' => 'Informar o parametro "postcode"'
+                ]);
+            }
+
+            $address = $locationService->getAddressByPostalCode($_GET['postcode']);
+
+            $userData = (new UserWooCommerceDataService())->set($address, true);
+
+            return wp_send_json($userData);
         });
     }
 }
