@@ -5,6 +5,7 @@
     <a
       class="action-button container__link"
       v-if="buttonCart(item)"
+      data-cy="input-add-cart"
       data-tip="Adicionar o pedido no carrinho de compras"
       @click="sendCartSimple({id:item.id, service_id:item.quotation.choose_method, non_commercial: item.non_commercial})"
     >
@@ -47,6 +48,7 @@
       v-if="buttonBuy(item)"
       @click="beforeAddCart({id:item.id, service_id:item.service_id, non_commercial: item.non_commercial})"
       href="javascript:;"
+      data-cy="input-buy-button"
       class="action-button -adicionar container__link"
       data-tip="Comprar"
     >
@@ -77,6 +79,7 @@
       v-if="item.status && (item.status == 'released'  || item.status == 'posted' || item.status == 'paid' || item.status == 'generated' || item.status == 'printed')"
       @click="printTicket({id:item.id, order_id:item.order_id})"
       class="action-button -adicionar container__link"
+      data-cy="input-buy-button"
       data-tip="Imprimir etiqueta"
     >
       <svg
@@ -170,6 +173,7 @@
       v-if="item.status == 'released'"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-remove-button"
       data-tip="Cancelar pedido"
     >
       <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
@@ -202,6 +206,7 @@
       @click="removeCart({id:item.id, order_id:item.order_id})"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-remove-button"
       data-tip="Remover do Carrinho de compras"
     >
       <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
