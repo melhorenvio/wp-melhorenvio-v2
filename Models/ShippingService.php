@@ -75,7 +75,7 @@ class ShippingService
         case "melhorenvio_correios_mini":
             return self::CORREIOS_MINI;
         default:
-            return self::CORREIOS_SEDEX;
+            return null;
         }
     }
 
