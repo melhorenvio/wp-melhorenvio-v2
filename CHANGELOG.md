@@ -1,10 +1,7 @@
 ### Changelog
 ### [2.9.6]
-<<<<<<< HEAD
 - Ajustes no método de serviço selecionado pelo comprador.
-=======
 -  Ajuste no redirecionamento após salvar o token do Melhor Envio.
->>>>>>> develop
 
 ### [2.9.5]
 - Encerando session após escrita.
