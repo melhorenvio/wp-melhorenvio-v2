@@ -124,7 +124,7 @@ class QuotationProductPageService
             ];
         }
 
-        $this->setAddressUserForWooCommerce();
+        (new UserWooCommerceDataService())->set($this->destination, false);
 
         $this->createPackageToCalculate();
 
@@ -185,32 +185,6 @@ class QuotationProductPageService
             'contents' => $contents,
             'contents_cost' => $this->product->get_price() * $this->quantity
         ];
-    }
-
-    /**
-     * Function to define the user's address obtained in the Melhor Envio to woocommerce
-     *
-     * @return void
-     */
-    private function setAddressUserForWooCommerce()
-    {
-        global $woocommerce;
-
-        if (!empty($this->destination->cep)) {
-            $woocommerce->customer->set_shipping_postcode($this->destination->cep);
-        }
-
-        if (!empty($this->destination->cidade)) {
-            $woocommerce->customer->set_shipping_city($this->destination->cidade);
-        }
-
-        if (!empty($this->destination->uf)) {
-            $woocommerce->customer->set_shipping_state($this->destination->uf);
-        }
-
-        if (!empty($this->destination->logradouro)) {
-            $woocommerce->customer->set_shipping_address($this->destination->logradouro);
-        }
     }
 
     /**

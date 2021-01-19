@@ -1,6 +1,7 @@
 ### Changelog
 ### [2.9.6]
 - Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.
+-  Ajuste no redirecionamento após salvar o token do Melhor Envio.
 
 ### [2.9.5]
 - Encerando session após escrita.
