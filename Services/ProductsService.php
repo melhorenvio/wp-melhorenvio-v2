@@ -16,15 +16,14 @@ class ProductsService
     {
         $insuranceValue = 0;
         foreach ($products as $product) {
-            $value = 0;
+            $product = (object) $product;
             if (!empty($product->unitary_value)) {
-                $value = $product->unitary_value * $product->quantity;
+                $insuranceValue += $product->unitary_value * $product->quantity;
             }
-            $insuranceValue = $insuranceValue + $value;
         }
 
-        if ($insuranceValue === 0) {
-            $insuranceValue = 1;
+        if ($insuranceValue == 0) {
+            $insuranceValue = floatval(1);
         }
 
         return $insuranceValue;

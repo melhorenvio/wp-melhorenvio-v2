@@ -48,6 +48,7 @@ class CartService
             ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
             : true;
 
+
         $insuranceValue = ($insuranceRequired)
             ? (new ProductsService())->getInsuranceValue($products)
             : 0;
