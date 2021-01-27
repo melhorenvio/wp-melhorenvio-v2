@@ -4,6 +4,7 @@ namespace Services;
 
 use Controllers\AgenciesAzulController;
 use Controllers\AgenciesJadlogController;
+use Controllers\AgenciesLatamController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -99,6 +100,7 @@ class RouterService
         $configurationsController = new ConfigurationController();
         $agenciesJadlogController = new AgenciesJadlogController();
         $agenciesAzulController = new AgenciesAzulController();
+        $agenciesLatamController = new AgenciesLatamController();
 
         add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
             if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
@@ -118,6 +120,16 @@ class RouterService
                 return $agenciesAzulController->getByStateUser();
             }
             return $agenciesAzulController->getByAddress($_GET['city'], $_GET['state']);
+        });
+
+        add_action('wp_ajax_get_agency_latam', function () use ($agenciesLatamController) {
+            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
+                return $agenciesLatamController->get();
+            }
+            if (!empty($_GET['my-state'])) {
+                return $agenciesLatamController->getByStateUser();
+            }
+            return $agenciesLatamController->getByAddress($_GET['city'], $_GET['state']);
         });
 
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);

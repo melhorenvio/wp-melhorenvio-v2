@@ -10,8 +10,10 @@ const configuration = {
         stores: [],
         agencies: [],
         agenciesAzul: [],
+        agenciesLatam: [],
         allAgencies: [],
         allAgenciesAzul: [],
+        allAgenciesLatam: [],
         styleCalculator: [],
         path_plugins: null,
         show_calculator: false,
@@ -24,6 +26,7 @@ const configuration = {
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
         agencyAzulSelected: null,
+        agencyLatamSelected: null,
         token_enviroment: 'production',
         methods_shipments: [],
         show_load: true,
@@ -48,17 +51,26 @@ const configuration = {
         setAgencyAzul: (state, data) => {
             state.agenciesAzul = data
         },
+        setAgencyLatam: (state, data) => {
+            state.agenciesLatam = data
+        },
         setAgencySelected: (state, data) => {
             state.agencySelected = data
         },
         setAgencyAzulSelected: (state, data) => {
             state.agencyAzulSelected = data
         },
+        setAgencyLatamSelected: (state, data) => {
+            state.agencyLatamSelected = data
+        },
         setAllAgency: (state, data) => {
             state.allAgencies = data
         },
         setAllAgencyAzul: (state, data) => {
             state.allAgenciesAzul = data
+        },
+        setAllAgencyLatam: (state, data) => {
+            state.allAgenciesLatam = data
         },
         setPathPlugins: (state, data) => {
             state.path_plugins = data;
@@ -90,9 +102,11 @@ const configuration = {
         getStores: state => state.stores,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
+        getAgenciesLatam: state => state.agenciesLatam,
         getAllAgencies: state => state.allAgencies,
         getAgencySelected: state => state.agencySelected,
         getAgencyAzulSelected: state => state.agencyAzulSelected,
+        getAgencyLatamSelected: state => state.agencyLatamSelected,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
         getShowCalculator: state => state.show_calculator,
@@ -127,11 +141,17 @@ const configuration = {
                             commit('setAllAgencyAzul', response.data.allAgenciesAzul);
                         }
 
+                        if (response.data.agenciesLatam && !_.isNull(response.data.agenciesLatam)) {
+                            commit('setAgencyLatam', response.data.agenciesLatam);
+                            commit('setAllAgencyLatam', response.data.allAgenciesLatam);
+                        }
+
                         if (response.data.stores && !_.isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
                         }
                         commit('setAgencySelected', response.data.agencySelected)
                         commit('setAgencyAzulSelected', response.data.agencyAzulSelected)
+                        commit('setAgencyLatamSelected', response.data.agencyLatamSelected)
                         commit('setStyleCalculator', response.data.style_calculator)
                         commit('setPathPlugins', response.data.path_plugins)
                         commit('setShowCalculator', response.data.calculator)
@@ -161,8 +181,16 @@ const configuration = {
             Axios.post(`${ajaxurl}?action=get_agency_azul&city=${data.city}&state=${data.state}`).then(function (response) {
                 commit('toggleLoader', false);
                 if (response && response.status === 200) {
-                    console.log(response.data.agencies);
                     commit('setAgencyAzul', response.data.agencies);
+                }
+            })
+        },
+        getAgenciesLatam: ({ commit }, data) => {
+            commit('toggleLoader', true);
+            Axios.post(`${ajaxurl}?action=get_agency_latam&city=${data.city}&state=${data.state}`).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAgencyLatam', response.data.agencies);
                 }
             })
         },
@@ -195,6 +223,10 @@ const configuration = {
 
                 if (data.agency_azul != null) {
                     form.append('agency_azul', data.agency_azul);
+                }
+
+                if (data.agency_latam != null) {
+                    form.append('agency_latam', data.agency_latam);
                 }
 
                 if (data.show_calculator != null) {
@@ -232,6 +264,9 @@ const configuration = {
         },
         setAgenciesAzul: ({ commit }, data) => {
             commit('setAgencyAzul', data)
+        },
+        setAgenciesLatam: ({ commit }, data) => {
+            commit('setAgencyLatam', data)
         },
         setAllAgencies: ({ commit }, data) => {
             commit('setAllAgency', data)
