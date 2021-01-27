@@ -89,7 +89,7 @@ class ShowCalculatorProductPage
     public function addCalculateShipping()
     {
         wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
-        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
+        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js?hash=' . rand(0,1000));
 
         echo sprintf(
             "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
