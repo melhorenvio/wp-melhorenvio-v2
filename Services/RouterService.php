@@ -37,6 +37,7 @@ class RouterService
         $this->laodRoutesPayload();
         $this->loadRoutesNotices();
         $this->loadRoutesTestUserWooCommerceData();
+        $this->loadRouteDataUser();
     }
 
     /**
@@ -301,6 +302,22 @@ class RouterService
             $userData = (new UserWooCommerceDataService())->set($address, true);
 
             return wp_send_json($userData);
+        });
+    }
+
+    /*
+     * function to start user data routes
+     *
+     * @return void
+     */
+    public function loadRouteDataUser()
+    {
+        $usersController = new UsersController();
+
+        add_action('wp_ajax_user_woocommerce_data', function () use ($usersController) {
+            return wp_send_json([
+                'data' => $usersController->getFrom()
+            ]);
         });
     }
 }
