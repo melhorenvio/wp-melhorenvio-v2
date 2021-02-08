@@ -267,6 +267,10 @@ class CalculateShippingMethodService
             return true;
         }
 
+        if (is_null($optionalInsuredAmount)) {
+            return true;
+        }
+
         return $optionalInsuredAmount;
     }
 }
