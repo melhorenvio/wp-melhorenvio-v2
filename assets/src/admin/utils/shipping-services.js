@@ -5,6 +5,7 @@ const JADLOG_COM = 4;
 const VIA_BRASIL_AERO = 8;
 const VIA_BRASIL_RODOVIARIO = 9;
 const LATAM = 10;
+const LATAM_JUNTOS = 12;
 const AZUL_AMANHA = 15;
 const AZUL_ECOMMERCE = 16;
 const CORREIOS_MINI = 17;
@@ -17,6 +18,7 @@ export default {
     VIA_BRASIL_AERO,
     VIA_BRASIL_RODOVIARIO,
     LATAM,
+    LATAM_JUNTOS,
     AZUL_AMANHA,
     AZUL_ECOMMERCE,
     CORREIOS_MINI

@@ -131,6 +131,10 @@ class CartService
             return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
         }
 
+        if ($shippingMethodService->isLatamCargo($shippingMethodId)) {
+            return (new AgenciesLatamService())->getSelectedAgencyOrAnyByCityUser();
+        }
+
         return null;
     }
 
