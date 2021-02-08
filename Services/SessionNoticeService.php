@@ -85,15 +85,9 @@ class SessionNoticeService
     {
         $notices = false;
 
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-
         if (!empty($_SESSION[self::ID_NOTICES_SESSION])) {
             $notices = $_SESSION[self::ID_NOTICES_SESSION];
         }
-
-        session_write_close();
 
         return $notices;
     }
