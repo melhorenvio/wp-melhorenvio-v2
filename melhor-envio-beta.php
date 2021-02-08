@@ -313,14 +313,6 @@ final class Base_Plugin
                 $this->container['admin'] = new App\Admin();
             }
 
-            if ($this->is_request('frontend')) {
-                $this->container['frontend'] = new App\Frontend();
-            }
-
-            if ($this->is_request('ajax')) {
-                // $this->container['ajax'] =  new App\Ajax();
-            }
-
             if ($this->is_request('rest')) {
                 $this->container['rest'] = new App\REST_API();
             }
