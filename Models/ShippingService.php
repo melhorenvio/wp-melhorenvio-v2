@@ -32,7 +32,6 @@ class ShippingService
 
     const SERVICES_LATAM = [12];
 
-
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
     /**
