@@ -190,6 +190,31 @@
     </div>
     <hr />
 
+    <div v-show="token_environment == 'production'" class="wpme_config">
+      <h2>LATAM Cargo</h2>
+      <p>Escolha a unidade Latam Cargo de sua preferência para realizar o envio dos seus produtos.</p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <template>
+              <select name="agenciesLatam" id="agenciesLatam" v-model="agency_latam">
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesLatam"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{option.name}}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
     <template v-if="stores.length > 0">
       <div class="wpme_config">
         <h2>Loja</h2>
@@ -430,6 +455,7 @@ export default {
       store: null,
       agency: null,
       agency_azul: null,
+      agency_latam: null,
       show_modal: false,
       custom_calculator: false,
       show_calculator: false,
@@ -510,8 +536,10 @@ export default {
       stores: "getStores",
       agencySelected_: "getAgencySelected",
       agencyAzulSelected_: "getAgencyAzulSelected",
+      agencyLatamSelected_: "getAgencyLatamSelected",
       agencies: "getAgencies",
       agenciesAzul: "getAgenciesAzul",
+      agenciesLatam: "getAgenciesLatam",
       allAgencies: "getAllAgencies",
       style_calculator: "getStyleCalculator",
       methods_shipments: "getMethodsShipments",
@@ -521,6 +549,7 @@ export default {
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
       show_all_agencies_azul_: "getShowAllAzulAgencies",
+      show_all_agencies_latam: "getShowAllLatamAgencies",
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
@@ -531,6 +560,7 @@ export default {
       "getConfigs",
       "setLoader",
       "setAgenciesAzul",
+      "setAgenciesLatam",
       "setAgencies",
       "saveAll",
       "getEnvironment",
@@ -552,9 +582,11 @@ export default {
       data["store"] = this.store;
       data["agency"] = this.agency;
       data["agency_azul"] = this.agency_azul;
+      data["agency_latam"] = this.agency_latam;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
       data["show_all_agencies_azul"] = this.show_all_agencies_azul;
+      data["show_all_agencies_latam"] = this.show_all_agencies_latam;
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
@@ -624,6 +656,34 @@ export default {
 
       promiseAgencies.then((resolve) => {
         this.setAgenciesAzul(responseAgencies);
+        this.setLoader(false);
+      });
+    },
+    showALatamAgencies(data) {
+      this.setLoader(true);
+      this.agency_latam = "";
+      var responseAgencies = [];
+      var promiseAgencies = new Promise((resolve, reject) => {
+        this.$http
+          .post(
+            `${ajaxurl}?action=get_agency_latam&city=${data.city}&state=${data.state}`
+          )
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgencies = response.data.agencies;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesLatam(responseAgencies);
         this.setLoader(false);
       });
     },
@@ -749,11 +809,25 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesLatam() {
+      this.setLoader(true);
+      if (this.agenciesLatam.length > 0) {
+        this.agenciesLatam.filter((item) => {
+          if (item.selected) {
+            this.agency_latam = item.id;
+          }
+        });
+      }
+      this.setLoader(false); 
+    },
     agencySelected_(e) {
       this.agency = e;
     },
     agencyAzulSelected_(e) {
       this.agency_azul = e;
+    },
+    agencyLatamSelected_(e) {
+      this.agency_latam = e;
     },
     show_calculator_(e) {
       this.show_calculator = e;

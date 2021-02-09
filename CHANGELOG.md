@@ -1,7 +1,10 @@
 ### Changelog
 ### [2.9.6]
 - Ajustes no método de serviço selecionado pelo comprador.
+- Listagem de plugins incompatíveis.
 -  Ajuste no redirecionamento após salvar o token do Melhor Envio.
+- Adicionando serviço LATAM CArgo Juntos
+- Adicioando seletor de unidades LATAM Cargos no painel administrativo
 
 ### [2.9.5]
 - Encerando session após escrita.
