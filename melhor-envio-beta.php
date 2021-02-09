@@ -70,6 +70,7 @@ use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
+use Services\ListPluginsIncompatiblesService;
 
 /**
  * Base_Plugin class
@@ -299,6 +300,10 @@ final class Base_Plugin
         add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
+
+        if (is_admin()) {
+            (new ListPluginsIncompatiblesService())->init();
+        }
     }
 
     /**
