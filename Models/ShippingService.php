@@ -30,6 +30,9 @@ class ShippingService
 
     const CORREIOS_MINI = 17;
 
+    const SERVICES_LATAM = [12];
+
+
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
     /**
@@ -43,7 +46,8 @@ class ShippingService
             self::SERVICES_CORREIOS,
             self::SERVICES_JADLOG,
             self::SERVICES_AZUL,
-            self::SERVICES_VIA_BRASIL
+            self::SERVICES_VIA_BRASIL,
+            self::SERVICES_LATAM
         );
     }
 

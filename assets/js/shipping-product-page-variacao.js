@@ -27,6 +27,7 @@
             if (value == "") {
                 return;
             }
+
             attribbutes.push({
                 'key': key,
                 'value': value
@@ -64,7 +65,7 @@
             return;
         }
 
-        jQuery('#id_produto').val(variation.variation_id)
+        jQuery('#id_produto').val(jQuery('.variation_id').val())
         jQuery('#calculo_frete_produto_altura').val(variation.dimensions.height)
         jQuery('#calculo_frete_produto_largura').val(variation.dimensions.width)
         jQuery('#calculo_frete_produto_comprimento').val(variation.dimensions.length)

@@ -4,6 +4,7 @@ namespace Services;
 
 use Controllers\AgenciesAzulController;
 use Controllers\AgenciesJadlogController;
+use Controllers\AgenciesLatamController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -36,6 +37,7 @@ class RouterService
         $this->laodRoutesPayload();
         $this->loadRoutesNotices();
         $this->loadRoutesTestUserWooCommerceData();
+        $this->loadRouteDataUser();
     }
 
     /**
@@ -99,6 +101,7 @@ class RouterService
         $configurationsController = new ConfigurationController();
         $agenciesJadlogController = new AgenciesJadlogController();
         $agenciesAzulController = new AgenciesAzulController();
+        $agenciesLatamController = new AgenciesLatamController();
 
         add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
             if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
@@ -118,6 +121,16 @@ class RouterService
                 return $agenciesAzulController->getByStateUser();
             }
             return $agenciesAzulController->getByAddress($_GET['city'], $_GET['state']);
+        });
+
+        add_action('wp_ajax_get_agency_latam', function () use ($agenciesLatamController) {
+            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
+                return $agenciesLatamController->get();
+            }
+            if (!empty($_GET['my-state'])) {
+                return $agenciesLatamController->getByStateUser();
+            }
+            return $agenciesLatamController->getByAddress($_GET['city'], $_GET['state']);
         });
 
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
@@ -289,6 +302,22 @@ class RouterService
             $userData = (new UserWooCommerceDataService())->set($address, true);
 
             return wp_send_json($userData);
+        });
+    }
+
+    /*
+     * function to start user data routes
+     *
+     * @return void
+     */
+    public function loadRouteDataUser()
+    {
+        $usersController = new UsersController();
+
+        add_action('wp_ajax_user_woocommerce_data', function () use ($usersController) {
+            return wp_send_json([
+                'data' => $usersController->getFrom()
+            ]);
         });
     }
 }
