@@ -30,7 +30,7 @@ class CalculateShippingMethodService
      * @param float $taxExtra
      * @param int $timeExtra
      * @param int $percent
-     * @return false
+     * @return bool
      */
     public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
@@ -154,6 +154,17 @@ class CalculateShippingMethodService
     }
 
     /**
+     * Check if it is "LATAM Cargo"
+     *
+     * @param int $code
+     * @return boolean
+     */
+    public function isLatamCargo($code)
+    {
+        return in_array($code, ShippingService::SERVICES_LATAM);
+    }
+
+    /**
      * Function to extract the quotation by the shipping method
      *
      * @param array $quotations
@@ -267,6 +278,10 @@ class CalculateShippingMethodService
         }
 
         if (!$this->isCorreios($serviceId)) {
+            return true;
+        }
+
+        if (is_null($optionalInsuredAmount)) {
             return true;
         }
 

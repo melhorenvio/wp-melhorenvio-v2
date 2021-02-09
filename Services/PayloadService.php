@@ -112,7 +112,8 @@ class PayloadService
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => $productService->getInsuranceValue($productsFilter)
+                'insurance_value' => $productService->getInsuranceValue($productsFilter),
+                'use_insurance_value' => $options->insurance_value
             ],
             'products' => (object) $productsFilter
         ];

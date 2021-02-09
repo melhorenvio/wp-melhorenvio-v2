@@ -71,6 +71,7 @@ use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
 use Services\ProcessAdditionalTaxService;
+use Services\ListPluginsIncompatiblesService;
 
 /**
  * Base_Plugin class
@@ -286,7 +287,7 @@ final class Base_Plugin
             $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
             $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
             $methods['melhorenvio_via_brasil_rodoviario']  = 'WC_Melhor_Envio_Shipping_Via_Brasil_Rodoviario';
-            $methods['melhorenvio_latam']  = 'WC_Melhor_Envio_Shipping_Latam';
+            $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
             $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
@@ -308,6 +309,10 @@ final class Base_Plugin
         });
 
         (new ProcessAdditionalTaxService())->init();
+
+        if (is_admin()) {
+            (new ListPluginsIncompatiblesService())->init();
+        }
     }
 
     /**
@@ -320,14 +325,6 @@ final class Base_Plugin
         try {
             if ($this->is_request('admin')) {
                 $this->container['admin'] = new App\Admin();
-            }
-
-            if ($this->is_request('frontend')) {
-                $this->container['frontend'] = new App\Frontend();
-            }
-
-            if ($this->is_request('ajax')) {
-                // $this->container['ajax'] =  new App\Ajax();
             }
 
             if ($this->is_request('rest')) {
