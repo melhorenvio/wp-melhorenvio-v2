@@ -7,6 +7,7 @@ use Models\Store;
 use Models\User;
 use Services\BalanceService;
 use Services\OrderQuotationService;
+use Services\StoreService;
 
 class UsersController
 {
@@ -39,9 +40,9 @@ class UsersController
 
         if (isset($info->data->message) && preg_match('/unauthenticated/i', $info->data->message) ? false : true) {
 
-            $company = (new Store)->getStore();
+            $company = (new StoreService())->getStoreSelected();
 
-            $address = (new Address)->getAddressFrom();
+            $address = (new Address())->getAddressFrom();
 
             $address = $address['address'];
 
@@ -51,8 +52,8 @@ class UsersController
 
             $email = null;
 
-            if (isset($company['email'])) {
-                $email = $company['email'];
+            if (isset($company->email)) {
+                $email = $company->email;
             }
 
             if (isset($info->data['email'])) {
@@ -60,14 +61,14 @@ class UsersController
             }
 
             return (object) [
-                "name" => (isset($company['name']))
-                    ? $company['name']
+                "name" => (isset($company->name))
+                    ? $company->name
                     : $info->data['firstname'] . ' ' . $info->data['lastname'],
                 "phone" => (isset($info->data['phone']->phone)) ? $info->data['phone']->phone : null,
                 "email" => $email,
                 "document" => $info->data['document'],
-                "company_document" => (isset($company['document'])) ? $company['document'] : null,
-                "state_register" => (isset($company['state_register'])) ? $company['state_register'] : null,
+                "company_document" => (isset($company->document)) ? $company->document : null,
+                "state_register" => (isset($company->state_register)) ? $company->state_register : null,
                 "address" => $address['address'],
                 "complement" => $address['complement'],
                 "number" => $address['number'],

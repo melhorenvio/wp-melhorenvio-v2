@@ -18,7 +18,7 @@ class AdditionalQuotationService
      * Function to scan the rate, time and extra percentage data
      * that is stored in the session to return the highest values.
      *
-     * @return false|array
+     * @return bool|array
      */
     public function get()
     {
