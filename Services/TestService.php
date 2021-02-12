@@ -66,12 +66,12 @@ class TestService
                 }
 
                 $response['quotation'][$item->id] = [
-                    "Serviço" => $item->name,
-                    "Valor" => $item->price,
+                    'Serviço' => $item->name,
+                    'Valor' => $item->price,
                     'Erro' => $item->error,
                     'Entrega' => (isset($item->delivery_range))
                         ? sprintf(
-                            "%d a %d dias",
+                            '%d a %d dias',
                             $item->delivery_range->min,
                             $item->delivery_range->max
                         )
