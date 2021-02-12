@@ -12,6 +12,24 @@ class ShippingService
 
     const SERVICES_VIA_BRASIL = [9];
 
+    const CORREIOS_PAC = 1;
+
+    const CORREIOS_SEDEX = 2;
+
+    const JADLOG_PACKAGE = 3;
+
+    const JADLOG_COM = 4;
+
+    const VIA_BRASIL_AEREO = 8;
+
+    const VIA_BRASIL_RODOVIARIO = 9;
+
+    const AZUL_AMANHA = 15;
+
+    const AZUL_ECOMMERCE = 16;
+
+    const CORREIOS_MINI = 17;
+
     const SERVICES_LATAM = [12];
 
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
@@ -31,6 +49,39 @@ class ShippingService
             self::SERVICES_LATAM
         );
     }
+
+    /**
+     * Function to converter method_id to code Melhor envio.
+     *
+     * @param $methodId
+     * @return int
+     */
+    public static function getCodeByMethodId($methodId)
+    {
+        switch ($methodId) {
+        case "melhorenvio_correios_pac":
+            return self::CORREIOS_PAC;
+        case "melhorenvio_correios_sedex":
+            return self::CORREIOS_SEDEX;
+        case "melhorenvio_jadlog_package":
+            return self::JADLOG_PACKAGE;
+        case "melhorenvio_jadlog_com":
+            return self::JADLOG_COM;
+        case "melhorenvio_via_brasil_aereo":
+            return self::VIA_BRASIL_AEREO;
+        case "melhorenvio_via_brasil_rodoviario":
+            return self::VIA_BRASIL_RODOVIARIO;
+        case "melhorenvio_azul_amanha":
+            return self::AZUL_AMANHA;
+        case "melhorenvio_azul_ecommerce":
+            return self::AZUL_ECOMMERCE;
+        case "melhorenvio_correios_mini":
+            return self::CORREIOS_MINI;
+        default:
+            return null;
+        }
+    }
+
 
     /**
      * function to save shipping services.
