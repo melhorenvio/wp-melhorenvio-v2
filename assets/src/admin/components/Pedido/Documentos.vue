@@ -27,7 +27,7 @@
               item.quotation.choose_method == services.LATAM ||
               item.quotation.choose_method == services.LATAM_JUNTOS) &&
               !item.non_commercial) ||
-            item.quotation.choose_method == services.VIA_BRASIL_AERO ||
+            item.quotation.choose_method == services.VIA_BRASIL_AEREO ||
             item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
           "
         >

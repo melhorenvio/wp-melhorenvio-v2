@@ -20,7 +20,7 @@ class ShippingService
 
     const JADLOG_COM = 4;
 
-    const VIA_BRASIL_AERO = 8;
+    const VIA_BRASIL_AEREO = 8;
 
     const VIA_BRASIL_RODOVIARIO = 9;
 
@@ -67,8 +67,8 @@ class ShippingService
             return self::JADLOG_PACKAGE;
         case "melhorenvio_jadlog_com":
             return self::JADLOG_COM;
-        case "melhorenvio_via_brasil_aero":
-            return self::VIA_BRASIL_AERO;
+        case "melhorenvio_via_brasil_aereo":
+            return self::VIA_BRASIL_AEREO;
         case "melhorenvio_via_brasil_rodoviario":
             return self::VIA_BRASIL_RODOVIARIO;
         case "melhorenvio_azul_amanha":
