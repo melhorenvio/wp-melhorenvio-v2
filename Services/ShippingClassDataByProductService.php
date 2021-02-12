@@ -18,7 +18,7 @@ class ShippingClassDataByProductService
 
         $zone_ids = array_keys( array('') + \WC_Shipping_Zones::get_zones() );
 
-        $data = [
+        $settings = [
             'additional_tax' => 0,
             'additional_time' => 0,
             'percent_tax' => 0
@@ -32,12 +32,12 @@ class ShippingClassDataByProductService
                 if ($product_class_id == $dataShippingMethod['shipping_class_id']) {
                     unset($dataShippingMethod['shipping_class_id']);
                     unset($dataShippingMethod['title']);
-                    $data = $dataShippingMethod;
+                    $settings = $dataShippingMethod;
                 }
             }
         }
 
-        return $data;
+        return $settings;
     }
 
 }
