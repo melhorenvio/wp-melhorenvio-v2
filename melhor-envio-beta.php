@@ -70,6 +70,7 @@ use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
+use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
 
 /**
@@ -255,6 +256,12 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
+        add_action('init', function() {
+            if (!session_id()) {
+                session_start();
+            }
+        });
+
         (new CheckHealthService())->init();
         (new TrackingService())->createTrackingColumnOrdersClient();
 
@@ -300,6 +307,8 @@ final class Base_Plugin
         add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
+
+        (new ProcessAdditionalTaxService())->init();
 
         if (is_admin()) {
             (new ListPluginsIncompatiblesService())->init();

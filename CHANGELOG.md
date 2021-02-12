@@ -1,5 +1,6 @@
 ### Changelog
 ### [2.9.6]
+- Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.
 - Listagem de plugins incompatíveis.
 -  Ajuste no redirecionamento após salvar o token do Melhor Envio.
 - Adicionando serviço LATAM CArgo Juntos
