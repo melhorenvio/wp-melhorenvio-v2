@@ -20,6 +20,11 @@ class CalculateShippingMethodService
     const WITHOUT_DELIVERY = 0;
 
     /**
+     * Constant that defines the quantity of items in a shipment that it considers to have multiple volumes
+     */
+    const QUANTITY_DEFINE_VOLUME = 2;
+
+    /**
      * Function to carry out the freight quote in the Melhor Envio api.
      *
      * @param array $package
@@ -117,7 +122,7 @@ class CalculateShippingMethodService
             return false;
         }
 
-        return count($quotation->packages) >= 2;
+        return count($quotation->packages) >= self::QUANTITY_DEFINE_VOLUME;
     }
 
     /**
