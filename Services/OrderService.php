@@ -512,9 +512,7 @@ class OrderService
     public function getMethodIdSelected($postId)
     {
         $order = wc_get_order( $postId );
-
         $shipping_item_data = end($order->get_items( 'shipping' ))->get_data();
-
         $method_id = (empty($shipping_item_data['method_id']))
             ? self::DEFAULT_METHOD_ID
             : $shipping_item_data['method_id'];

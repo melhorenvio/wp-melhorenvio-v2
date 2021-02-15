@@ -41,9 +41,9 @@ class AdditionalQuotationService
 
             if (!empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {
                 foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart] as $data) {
-                    $tax = floatval($data['taxExtra']);
-                    $time = floatval($data['timeExtra']);
-                    $percent = floatval($data['percentExtra']);
+                    $tax =  (!empty($data['taxExtra'])) ? floatval($data['taxExtra']) : 0;
+                    $time = (!empty($data['timeExtra'])) ? floatval($data['timeExtra']) : 0;
+                    $percent = (!empty($data['percentExtra'])) ? floatval($data['percentExtra']) : 0;
 
                     $maxTax = ($tax > $maxTax) ? $tax : $maxTax;
                     $maxTime = ($time > $maxTime) ? $time : $maxTime;
@@ -71,7 +71,9 @@ class AdditionalQuotationService
      */
     public function register($product_id, $taxExtra, $timeExtra, $percent)
     {
-        session_start();
+        if (!session_id()) {
+            session_start();
+        }
 
         global $woocommerce;
 
@@ -95,6 +97,14 @@ class AdditionalQuotationService
             }
 
             $dataCachedAdditional = $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart];
+            
+            $dataCachedAdditional = array_merge(
+                $dataCachedAdditional, [
+                    'taxExtra' => 0,
+                    'timeExtra' => 0,
+                    'percent' => 0
+                ]
+            );
 
             $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id] = [
                 'taxExtra' => ($taxExtra > $dataCachedAdditional['taxExtra'])
