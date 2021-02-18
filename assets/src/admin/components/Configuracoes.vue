@@ -681,7 +681,6 @@ export default {
             }
           })
           .catch((error) => {
-            responseAgenciesLatam = [];
             this.setAgenciesLatam([]);
           })
           .finally(() => {
