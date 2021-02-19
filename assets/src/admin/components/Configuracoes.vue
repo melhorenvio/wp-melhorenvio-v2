@@ -104,7 +104,7 @@
                   :id="option.id"
                   :value="option.id"
                   v-model="address"
-                  @click="showJadlogAgencies({city: option.city, state: option.state})"
+                  @click="refreshAgencies({city: option.city, state: option.state})"
                 />
                 <h2>{{option.label}}</h2>
               </div>
@@ -129,7 +129,7 @@
     </div>
     <hr />
 
-    <div class="wpme_config">
+    <div class="wpme_config" v-show="agencies.length > 0">
       <h2>Jadlog</h2>
       <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos.</p>
       <div class="wpme_flex">
@@ -165,7 +165,7 @@
     </div>
     <hr />
 
-    <div v-show="token_environment == 'production'" class="wpme_config">
+    <div v-show="token_environment == 'production' && agenciesAzul.length > 0 "  class="wpme_config">
       <h2>Azul Cargo Express</h2>
       <p>Escolha a agência Azul Cargo Express de sua preferência para realizar o envio dos seus produtos.</p>
       <div class="wpme_flex">
@@ -190,7 +190,7 @@
     </div>
     <hr />
 
-    <div v-show="token_environment == 'production'" class="wpme_config">
+    <div v-show="token_environment == 'production' && agenciesLatam.length > 0 " class="wpme_config">
       <h2>LATAM Cargo</h2>
       <p>Escolha a unidade Latam Cargo de sua preferência para realizar o envio dos seus produtos.</p>
       <div class="wpme_flex">
@@ -230,7 +230,7 @@
             >
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input @click="showJadlogAgencies({
+                  <input @click="refreshAgencies({
                         city: option.address.city.city, 
                         state: option.address.city.state.state_abbr
                         })" 
@@ -603,6 +603,11 @@ export default {
           this.setLoader(false);
         });
     },
+    refreshAgencies(data) {
+      this.showJadlogAgencies(data);
+      this.showAzulAgencies(data);
+      this.showALatamAgencies(data);
+    },
     showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
@@ -619,6 +624,7 @@ export default {
             }
           })
           .catch((error) => {
+            responseAgencies = [];
             alert(error.response.data.message);
           })
           .finally(() => {
@@ -634,7 +640,7 @@ export default {
     showAzulAgencies(data) {
       this.setLoader(true);
       this.agency_azul = "";
-      var responseAgencies = [];
+      var responseAgenciesAzul = [];
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
@@ -642,12 +648,12 @@ export default {
           )
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgencies = response.data.agencies;
+              responseAgenciesAzul = response.data.agencies;
               resolve(true);
             }
           })
           .catch((error) => {
-            alert(error.response.data.message);
+            this.setAgenciesAzul([]);
           })
           .finally(() => {
             this.setLoader(false);
@@ -655,14 +661,14 @@ export default {
       });
 
       promiseAgencies.then((resolve) => {
-        this.setAgenciesAzul(responseAgencies);
+        this.setAgenciesAzul(responseAgenciesAzul);
         this.setLoader(false);
       });
     },
     showALatamAgencies(data) {
       this.setLoader(true);
       this.agency_latam = "";
-      var responseAgencies = [];
+      var responseAgenciesLatam = [];
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
@@ -670,12 +676,12 @@ export default {
           )
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgencies = response.data.agencies;
+              responseAgenciesLatam = response.data.agencies;
               resolve(true);
             }
           })
           .catch((error) => {
-            alert(error.response.data.message);
+            this.setAgenciesLatam([]);
           })
           .finally(() => {
             this.setLoader(false);
@@ -683,7 +689,7 @@ export default {
       });
 
       promiseAgencies.then((resolve) => {
-        this.setAgenciesLatam(responseAgencies);
+        this.setAgenciesLatam(responseAgenciesLatam);
         this.setLoader(false);
       });
     },
@@ -818,7 +824,7 @@ export default {
           }
         });
       }
-      this.setLoader(false); 
+      this.setLoader(false);
     },
     agencySelected_(e) {
       this.agency = e;
