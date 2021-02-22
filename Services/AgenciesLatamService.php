@@ -130,7 +130,7 @@ class AgenciesLatamService
             $data = (array) $agency;
             $data['selected'] = ($data['id'] === $selectedAgency);
             return (object) $data;
-        }, $agencies);
+        }, (array) $agencies);
     }
 
     /**
