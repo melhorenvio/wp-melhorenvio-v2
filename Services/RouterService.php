@@ -267,6 +267,24 @@ class RouterService
             }
             return $payloadsController->destroy($_GET['post_id']);
         });
+
+        add_action('wp_ajax_get_payload_cart', function() use ($payloadsController) {
+            if (!isset($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+
+            if (!isset($_GET['service'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "service"'
+                ], 400);
+            }
+            
+            return $payloadsController->showPayloadCart($_GET['post_id'], $_GET['service']);
+        });
     }
 
     /*

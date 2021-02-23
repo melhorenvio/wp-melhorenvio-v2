@@ -41,6 +41,22 @@ class PayloadService
     }
 
     /**
+     * Function to view payload to add item cart.
+     * 
+     * @param int $postId
+     * @param int $methodId
+     * @return array
+     */
+    public function getPayloadToCart($postId, $methodId)
+    {
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
+
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+
+        return (new CartService())->createPayloadToCart($postId, $products, $buyer, $methodId);
+    }
+
+    /**
      * function to payload after finishied order in woocommerce.
      *
      * @param int $postId

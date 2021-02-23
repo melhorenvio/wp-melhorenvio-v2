@@ -71,7 +71,7 @@ class PayloadsController
                     'success' => true
                 ], 200);
             }
-
+            
             return wp_send_json([
                 'success' => false,
                 'error' => 'Não foi possível remover o payload'
@@ -80,6 +80,31 @@ class PayloadsController
             return wp_send_json([
                 'success' => false,
                 'error' => 'Ocorreu um erro ao remover o payload'
+            ], 400);
+        }
+    }
+
+    /**
+     * function to retrieve payload to insert item cart.
+     * 
+     * @param int $postId
+     * @return json
+     */
+    public function showPayloadCart($postId, $service)
+    {
+        try {
+            $payload = (new PayloadService())->getPayloadToCart($postId, $service);
+
+            if (empty($payload)) {
+                return wp_send_json([
+                    'message' => 'Payload não encontrado para o post id ' . $postId
+                ], 404);
+            }
+
+            return wp_send_json($payload, 200);
+        } catch (\Exception $exception) {
+            return wp_send_json([
+                'message' => 'Ocorreu um erro ao obter o payload'
             ], 400);
         }
     }
