@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.7]
+- Ajuste na finalização de pedidos de produtos virtuais e remoção de pedidos virtuais na listagem de pedidos do plugin. 
+
 ### [2.9.6]
 - Ajustes no método de serviço selecionado pelo comprador.
 - Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.
