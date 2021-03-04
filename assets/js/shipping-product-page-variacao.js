@@ -4,16 +4,34 @@
     jQuery(function () {
         jQuery(document).ready(function () {
             toggleCalculator();
+            setProduct();
             if (!jQuery('.variations_form')) {
                 return;
             }
             let variations = jQuery('.variations_form').data('product_variations');
             updateVariation(variations);
             jQuery('.variations select').change(function () {
+                setProduct();
                 updateVariation(variations);
             });
         })
     });
+
+    function setProduct()
+    {
+        setTimeout(function() { 
+            let variantion_id = jQuery('.variation_id').val();
+            let product_id = jQuery('.cart').data('product_id');
+
+            let selected_product = variantion_id;
+            if (variantion_id == 0) {
+                selected_product = product_id;
+            }
+
+           if (typeof product_id != "undefined" && typeof variantion_id != "undefined")
+            jQuery('#id_produto').val(selected_product)
+         }, 200);
+    }
 
     function updateVariation(variations) {
         let attribbutes = new Array();
@@ -27,6 +45,7 @@
             if (value == "") {
                 return;
             }
+
             attribbutes.push({
                 'key': key,
                 'value': value
@@ -64,7 +83,6 @@
             return;
         }
 
-        jQuery('#id_produto').val(variation.variation_id)
         jQuery('#calculo_frete_produto_altura').val(variation.dimensions.height)
         jQuery('#calculo_frete_produto_largura').val(variation.dimensions.width)
         jQuery('#calculo_frete_produto_comprimento').val(variation.dimensions.length)

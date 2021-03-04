@@ -75,8 +75,6 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
-        $payload = (new Payload())->get($postId);
-
         if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
             $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
@@ -90,7 +88,7 @@ class QuotationService
             $payload,
             (isset($payload->options->use_insurance_value))
                 ? $payload->options->use_insurance_value
-                : $payload->options->insurance_value
+                : false
         );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
@@ -100,7 +98,7 @@ class QuotationService
      * Function to calculate a quotation by products.
      *
      * @param array $products
-     * @param  string $postal_code
+     * @param string $postalCode
      * @param int $service
      * @return array|false|object
      */
@@ -118,7 +116,6 @@ class QuotationService
         $options = (new Option())->getOptions();
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);
-
 
         if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);

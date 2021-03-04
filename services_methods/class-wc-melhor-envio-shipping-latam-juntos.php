@@ -1,20 +1,20 @@
 <?php
 
 if (class_exists('WC_Melhor_Envio_Shipping')) {
-    class WC_Melhor_Envio_Shipping_Via_Brasil_Aero extends WC_Melhor_Envio_Shipping
+    class WC_Melhor_Envio_Shipping_Latam_Juntos extends WC_Melhor_Envio_Shipping
     {
-        const ID = 'melhorenvio_via_brasil_aero';
+        const ID = 'melhorenvio_latam_juntos';
 
-        const TITLE = 'Via Brasil Aero';
+        const TITLE = 'LATAM Cargo Juntos';
 
-        const METHOD_TITLE = "Via Brasil Aero (Melhor Envio)";
+        const METHOD_TITLE = "LATAM Cargo Juntos (Melhor Envio)";
 
-        public $code = 8;
+        public $code = 12;
 
-        public $company = 'Via Brasil';
+        public $company = 'LATAM Cargo';
 
         /**
-         * Initialize Via Brasil Aero.
+         * Initialize Latam.
          *
          * @param int $instance_id Shipping zone instance.
          */
