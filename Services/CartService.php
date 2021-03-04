@@ -48,7 +48,7 @@ class CartService
             ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
             : true;
 
-        $insuranceValue = ($insuranceRequired)
+        $insuranceValue = (!empty($insuranceRequired))
             ? (new ProductsService())->getInsuranceValue($products)
             : 0;
 
@@ -129,6 +129,10 @@ class CartService
 
         if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
             return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
+        }
+
+        if ($shippingMethodService->isLatamCargo($shippingMethodId)) {
+            return (new AgenciesLatamService())->getSelectedAgencyOrAnyByCityUser();
         }
 
         return null;

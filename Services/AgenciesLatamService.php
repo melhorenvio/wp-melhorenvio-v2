@@ -2,16 +2,16 @@
 
 namespace Services;
 
-use Models\AgencyAzul;
+use Models\AgencyLatam;
 
-class AgenciesAzulService
+class AgenciesLatamService
 {
     const ROUTE_GET_AGENCIES = '/shipment/agencies';
 
-    const COMPANY_ID_AZUL_CARGO_EXPRESS = 9;
+    const COMPANY_ID_LATAM = 6;
 
     /**
-     * function to get Azul Cargo Express agencies on Melhor Envio API.
+     * function to get Latam agencies on Melhor Envio API.
      *
      * @return array
      */
@@ -22,7 +22,7 @@ class AgenciesAzulService
         if (empty($seller->city)) {
             return (object) [
                 'success' => false,
-                'message' => 'Não foi possível obter a cidade cadastrada para obter as informações das agências de Azul Cargo Express'
+                'message' => 'Não foi possível obter a cidade cadastrada para obter as informações das unidades Latam'
             ];
         }
 
@@ -38,7 +38,7 @@ class AgenciesAzulService
             return (object) [
                 'success' => false,
                 'message' => sprintf(
-                    "Ocorreu um erro ao obter agências Azul Cargo Express para a cidade %s/%s",
+                    "Ocorreu um erro ao obter unidades Latam para a cidade %s/%s",
                     $seller->city,
                     $seller->state_abbr
                 )
@@ -49,7 +49,7 @@ class AgenciesAzulService
     }
 
     /**
-     * function to get agencies Azul Cargo Express by city
+     * function to get agencies Latam by city
      *
      * @param string $city
      * @param string $state
@@ -60,7 +60,7 @@ class AgenciesAzulService
         $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s&city=%s",
             self::ROUTE_GET_AGENCIES,
-            self::COMPANY_ID_AZUL_CARGO_EXPRESS,
+            self::COMPANY_ID_LATAM,
             $state,
             $city
         ));
@@ -76,7 +76,7 @@ class AgenciesAzulService
     }
 
     /**
-     * function to get agencies Azul Cargo Express by state
+     * function to get agencies Latam by state
      *
      * @param string $state
      * @return object
@@ -86,7 +86,7 @@ class AgenciesAzulService
         $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s",
             self::ROUTE_GET_AGENCIES,
-            self::COMPANY_ID_AZUL_CARGO_EXPRESS,
+            self::COMPANY_ID_LATAM,
             $state
         ));
 
@@ -99,7 +99,7 @@ class AgenciesAzulService
     }
 
     /**
-     * function to get agencies Azul Cargo Express states user
+     * function to get agencies Latam states user
      *
      * @return array
      */
@@ -120,7 +120,7 @@ class AgenciesAzulService
      */
     public function markAsSelectedByUser($agencies)
     {
-        $selectedAgency = (new AgencyAzul())->getSelected();
+        $selectedAgency = (new AgencyLatam())->getSelected();
 
         if (empty($selectedAgency)) {
             return $agencies;
@@ -141,7 +141,7 @@ class AgenciesAzulService
      */
     public function getSelectedAgencyOrAnyByCityUser()
     {
-        $selectedAgency = (new AgencyAzul())->getSelected();
+        $selectedAgency = (new AgencyLatam())->getSelected();
 
         if (!empty($selectedAgency)) {
             return $selectedAgency;

@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Method;
+use Models\ShippingService;
 
 class OrderService
 {
@@ -23,6 +24,8 @@ class OrderService
     const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
 
     const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/search?q=';
+
+    const DEFAULT_METHOD_ID = 'melhorenvio_correios_sedex';
 
     /**
      * Function to cancel order on api Melhor Envio.
@@ -498,5 +501,22 @@ class OrderService
             'url' => $result->url,
             'errors' => $errors
         ];
+    }
+
+    /**
+     * Function to get method_id selected by postId
+     *
+     * @param $postId
+     * @return int
+     */
+    public function getMethodIdSelected($postId)
+    {
+        $order = wc_get_order( $postId );
+        $shipping_item_data = end($order->get_items( 'shipping' ))->get_data();
+        $method_id = (empty($shipping_item_data['method_id']))
+            ? self::DEFAULT_METHOD_ID
+            : $shipping_item_data['method_id'];
+
+        return ShippingService::getCodeByMethodId($method_id);
     }
 }
