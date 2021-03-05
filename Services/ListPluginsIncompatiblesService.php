@@ -46,8 +46,19 @@ class ListPluginsIncompatiblesService
         );
     }
 
+    /**
+     * Function to retrive a list with plugins incompatibles.
+     * 
+     * @return array
+     */
     public function getListPluginsIncompatibles()
     {
-        return json_decode(file_get_contents(self::URL_PLUGINS_INCOMPATIBLES));
+        return json_decode(
+            wp_remote_retrieve_body(
+                wp_remote_get(
+                    self::URL_PLUGINS_INCOMPATIBLES
+                )
+            )
+        );
     }
 }
