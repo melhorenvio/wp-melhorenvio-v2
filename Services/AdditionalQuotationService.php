@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\SessionHelper;
+
 /**
  * Class AdditionalQuotationService
  * @package Services
@@ -22,7 +24,7 @@ class AdditionalQuotationService
      */
     public function get()
     {
-        session_start();
+        SessionHelper::initIfNotExists();
 
         global $woocommerce;
 
@@ -71,9 +73,7 @@ class AdditionalQuotationService
      */
     public function register($product_id, $taxExtra, $timeExtra, $percent)
     {
-        if (!session_id()) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         global $woocommerce;
 
@@ -131,7 +131,7 @@ class AdditionalQuotationService
      */
     public function removeItem($productId)
     {
-        session_start();
+        SessionHelper::initIfNotExists();
 
         foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL] as $key => $cart) {
             foreach ($cart as $key2 => $item) {
