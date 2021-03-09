@@ -71,6 +71,10 @@ class MoneyHelper
 
         preg_match('/\d+(?:\.\d+)+/', $value, $matches);
 
+        if (empty($matches[0])) {
+            return 0;
+        }
+
         return floatval($matches[0]);
     }
 }
