@@ -54,4 +54,15 @@ class MoneyHelper
 
         return $value + $percentExtra + $extra;
     }
+
+    /**
+     * Function to converter price to floatval
+     * 
+     * @param string $price
+     * @return float
+     */
+    public static function converterPriceToFloat($value)
+    {
+        return floatval(str_replace(',', '.', $value));
+    }
 }
