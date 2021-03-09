@@ -63,6 +63,14 @@ class MoneyHelper
      */
     public static function converterPriceToFloat($value)
     {
-        return floatval(str_replace(',', '.', $value));
+        if ($value == "0") {
+           return 0;
+        }
+
+        $value = str_replace(',', '.', $value);
+
+        preg_match('/\d+(?:\.\d+)+/', $value, $matches);
+
+        return floatval($matches[0]);
     }
 }
