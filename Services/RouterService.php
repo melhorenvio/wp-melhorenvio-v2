@@ -206,7 +206,7 @@ class RouterService
 
         foreach (['wp_ajax_get_address', 'wp_ajax_nopriv_get_address'] as $action) {
             add_action($action, function () use ($locationController) {
-                if (!isset($_GET['postal_code'])) {
+                if (empty($_GET['postal_code'])) {
                     return wp_send_json([
                         'error' => true,
                         'message' => 'Informar o campo "postal_code"'
@@ -239,7 +239,7 @@ class RouterService
         $payloadsController = new PayloadsController();
 
         add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
@@ -249,7 +249,7 @@ class RouterService
         });
 
         add_action('wp_ajax_get_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
@@ -259,13 +259,31 @@ class RouterService
         });
 
         add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
                 ], 400);
             }
             return $payloadsController->destroy($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_get_payload_cart', function() use ($payloadsController) {
+            if (empty($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+
+            if (empty($_GET['service'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "service"'
+                ], 400);
+            }
+            
+            return $payloadsController->showPayloadCart($_GET['post_id'], $_GET['service']);
         });
     }
 

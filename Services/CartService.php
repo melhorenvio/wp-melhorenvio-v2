@@ -22,55 +22,7 @@ class CartService
      */
     public function add($orderId, $products, $dataBuyer, $shippingMethodId)
     {
-        $payloadSaved = (new Payload())->get($orderId);
-
-        $products = (!empty($payloadSaved->products))
-            ? $payloadSaved->products
-            : $products;
-
-        $dataBuyer = (!empty($payloadSaved->buyer))
-            ? $payloadSaved->buyer
-            : $dataBuyer;
-
-        $dataFrom =  (new SellerService())->getData();
-
-        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
-
-        $orderInvoiceService = new OrderInvoicesService();
-
-        $methodService = new CalculateShippingMethodService();
-
-        $options = (!empty($payloadSaved->options))
-            ? $payloadSaved->options
-            : (new Option())->getOptions();
-
-        $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
-            ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
-            : true;
-
-        $insuranceValue = (!empty($insuranceRequired))
-            ? (new ProductsService())->getInsuranceValue($products)
-            : 0;
-
-        $body = array(
-            'from' => $dataFrom,
-            'to' => $dataBuyer,
-            'agency' => $this->getAgencyToInsertCart($shippingMethodId),
-            'service' => $shippingMethodId,
-            'products' => $products,
-            'volumes' => $this->getVolumes($quotation, $shippingMethodId),
-            'options' => array(
-                "insurance_value" => $insuranceValue,
-                "receipt" => $options->receipt,
-                "own_hand" => $options->own_hand,
-                "collect" => false,
-                "reverse" => false,
-                "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
-                "invoice" => $orderInvoiceService->getInvoiceOrder($orderId),
-                'platform' => self::PLATAFORM,
-                'reminder' => null
-            )
-        );
+        $body = $this->createPayloadToCart($orderId, $products, $dataBuyer, $shippingMethodId);
 
         $errors = $this->checkParamsBody($body, $orderId);
 
@@ -110,6 +62,68 @@ class CartService
             $shippingMethodId,
             null,
             $result->self_tracking
+        );
+    }
+
+    /**
+     * Function to create payload to insert item on Cart Melhor Envio
+     *
+     * @param int $orderId
+     * @param array $products
+     * @param array $dataBuyer
+     * @param int $shippingMethodId
+     * @return array
+     */
+    public function createPayloadToCart($orderId, $products, $dataBuyer, $shippingMethodId)
+    {
+        $payloadSaved = (new Payload())->get($orderId);
+
+        $products = (!empty($payloadSaved->products))
+            ? $payloadSaved->products
+            : $products;
+
+        $dataBuyer = (!empty($payloadSaved->buyer))
+            ? $payloadSaved->buyer
+            : $dataBuyer;
+
+        $dataFrom =  (new SellerService())->getData();
+
+        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
+
+        $orderInvoiceService = new OrderInvoicesService();
+
+        $methodService = new CalculateShippingMethodService();
+
+        $options = (!empty($payloadSaved->options))
+            ? $payloadSaved->options
+            : (new Option())->getOptions();
+
+        $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
+            ? $methodService->insuranceValueIsRequired($options->use_insurance_value, $shippingMethodId)
+            : true;
+
+        $insuranceValue = (!empty($insuranceRequired))
+            ? (new ProductsService())->getInsuranceValue($products)
+            : 0;
+
+        return array(
+            'from' => $dataFrom,
+            'to' => $dataBuyer,
+            'agency' => $this->getAgencyToInsertCart($shippingMethodId),
+            'service' => $shippingMethodId,
+            'products' => $products,
+            'volumes' => $this->getVolumes($quotation, $shippingMethodId),
+            'options' => array(
+                "insurance_value" => $insuranceValue,
+                "receipt" => $options->receipt,
+                "own_hand" => $options->own_hand,
+                "collect" => false,
+                "reverse" => false,
+                "non_commercial" => $orderInvoiceService->isNonCommercial($orderId),
+                "invoice" => $orderInvoiceService->getInvoiceOrder($orderId),
+                'platform' => self::PLATAFORM,
+                'reminder' => null
+            )
         );
     }
 
