@@ -4,6 +4,7 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
+use Helpers\SessionHelper;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -135,9 +136,7 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         $quotation = $this->orderingQuotationByPrice($quotation);
 
@@ -219,9 +218,7 @@ class QuotationService
     {
         $hash = $this->generateHashQuotation($bodyQuotation);
 
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         if (!isset($_SESSION['quotation'][$hash])) {
             unset($_SESSION['quotation'][$hash]);

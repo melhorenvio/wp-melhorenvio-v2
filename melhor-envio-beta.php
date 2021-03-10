@@ -72,6 +72,7 @@ use Services\ShortCodeService;
 use Services\TrackingService;
 use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
+use Helpers\SessionHelper;
 
 /**
  * Base_Plugin class
@@ -256,10 +257,9 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
+        
         add_action('init', function() {
-            if (!session_id()) {
-                session_start();
-            }
+            SessionHelper::initIfNotExists();
         });
 
         (new CheckHealthService())->init();

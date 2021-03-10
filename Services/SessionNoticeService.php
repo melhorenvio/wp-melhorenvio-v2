@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\SessionHelper;
+
 /**
  * Service responsible for managing the data stored in the session
  */
@@ -17,9 +19,7 @@ class SessionNoticeService
      */
     public function add($notice)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         $notices = (!empty($_SESSION[self::ID_NOTICES_SESSION]))
             ? $_SESSION[self::ID_NOTICES_SESSION]
