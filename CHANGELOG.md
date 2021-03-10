@@ -1,5 +1,6 @@
 ### Changelog
-### [2.9.7] 
+### [2.9.7]
+- Ajuste na finalização de pedidos de produtos virtuais e remoção de pedidos virtuais na listagem de pedidos do plugin. 
 
 ### [2.9.6]
 - Ajustes no método de serviço selecionado pelo comprador.

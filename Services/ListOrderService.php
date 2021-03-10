@@ -54,10 +54,18 @@ class ListOrderService
 
         $translateHelper = new TranslateStatusHelper();
 
+        $productService = new OrdersProductsService();
+
         foreach ($posts as $post) {
             $postId = $post->ID;
 
             $invoice = (new InvoiceService())->getInvoice($postId);
+
+            $products = $productService->getProductsOrder($postId);
+
+            if ($this->hasOnlyVirtualProducts($products)) {
+                continue;
+            }
 
             $orders[] = [
                 'id' => $postId,
@@ -75,13 +83,31 @@ class ListOrderService
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
                 'non_commercial' => is_null($invoice['number']) || is_null($invoice['key']),
                 'invoice'        => $invoice,
-                'products' => (new OrdersProductsService())->getProductsOrder($postId),
+                'products' => $products,
                 'quotation' => $quotationService->calculateQuotationByPostId($postId),
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
 
         return $orders;
+    }
+
+    /**
+     * Function to check if the products informed are all virtual.
+     * 
+     * @param array $products
+     * @return bool
+     */
+    public function hasOnlyVirtualProducts($products)
+    {   
+        $allVirtual = true;
+        foreach ($products as $product) {
+            if(!$product['is_virtual']) {
+                $allVirtual = false;
+            }
+        }
+        
+        return $allVirtual;
     }
 
     /**

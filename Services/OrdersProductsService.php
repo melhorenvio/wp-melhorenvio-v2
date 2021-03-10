@@ -46,7 +46,8 @@ class OrdersProductsService
                 "weight" => DimensionsHelper::convertWeightUnit($_product->get_weight()),
                 "width" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_width()),
                 "height" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_height()),
-                "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length())
+                "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
+                'is_virtual' => $_product->get_virtual()
             ];
         }
 
