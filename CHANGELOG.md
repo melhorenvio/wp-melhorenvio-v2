@@ -1,7 +1,13 @@
 ### Changelog
+### [2.9.8]
+- Criando helper para iniciar session
+- Correções de warning de PHP
+- Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
+- Correção no processo de finalização de compras de produtos virtuais
+- Ajuste para usar valores com centavos nas taxas extras de envios
+
 ### [2.9.7]
 - Ajuste na finalização de pedidos de produtos virtuais e remoção de pedidos virtuais na listagem de pedidos do plugin. 
-- Correção do problema para exibição de botões de ações, caso o cliente final não tenho selecionado um método do Melhor Envio.
 
 ### [2.9.6]
 - Ajustes no método de serviço selecionado pelo comprador.
