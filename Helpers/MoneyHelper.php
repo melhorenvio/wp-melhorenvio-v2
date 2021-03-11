@@ -65,6 +65,8 @@ class MoneyHelper
     {
         if (is_string($value)) {
             $value = trim($value);
+
+            $value = str_replace('R$', '', $value);
     
             if (preg_match('/^\d*\.\d+\,\d+/', $value)) {
                 $value = str_replace('.', '', $value);
