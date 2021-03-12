@@ -64,6 +64,9 @@ class MoneyHelper
     public static function converterPriceToFloat($value)
     {
         if (is_string($value)) {
+
+            $value = preg_replace("/[^0-9,.]/", "", $value);
+            
             $value = trim($value);
     
             if (preg_match('/^\d*\.\d+\,\d+/', $value)) {
@@ -71,8 +74,6 @@ class MoneyHelper
             } elseif (preg_match('/^\d*\,\d+\.\d+/', $value)) {
                 $value = str_replace(',', '', $value);
             }
-
-            $value = preg_replace("/[^0-9,.]/", "", $value);
     
             return (float) str_replace(',', '.', $value);
         }
