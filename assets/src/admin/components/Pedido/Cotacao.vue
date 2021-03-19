@@ -77,7 +77,7 @@
         Rastreio:
         <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a>
       </p>
-      <p v-if="item.quotation.diff">*cliente não selecionou um método de envio do Melhor Envio.</p>
+      <p v-if="item.quotation.diff == true">*cliente não selecionou um método de envio do Melhor Envio.</p>
     </template>
 
     <template v-if="item.quotation.free_shipping">
@@ -91,9 +91,9 @@ export default {
   props: {
     item: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
-  mounted() {}
+  mounted() {},
 };
 </script>
