@@ -51,9 +51,13 @@ class CompositeProductBundleService
 
         $this->item_product = $item_product;
 
-        $this->shipping_fee = self::getShippingFeeType($this->product->get_id());
+        if (!empty($this->product)) {
+            $this->shipping_fee = self::getShippingFeeType($this->product->get_id());
+        }
 
-        $this->pricing = self::getPricingType($this->product->get_id());
+        if (!empty($this->product)) {
+            $this->pricing = self::getPricingType($this->product->get_id());
+        }
     }
 
     /**
