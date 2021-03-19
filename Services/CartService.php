@@ -4,6 +4,7 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
+use Helpers\SessionHelper;
 
 class CartService
 {
@@ -247,5 +248,47 @@ class CartService
         }
 
         return $errors;
+    }
+
+    /** 
+     * Function to get data and information about items in the shopping cart
+     * 
+     * @return array
+     */
+    public function getInfoCart()
+    {
+        SessionHelper::initIfNotExists();
+
+        global $woocommerce;
+
+        $data = [];
+
+        foreach ($woocommerce->cart->get_cart() as $cart) {
+            foreach($cart as $item) {
+                if (gettype($item) == 'object')  {
+                    $productId = $item->get_id();
+                    if (!empty($productId)) {
+                        $data['products'][$productId] = [
+                            'name' => $item->get_name(),
+                            'price' => $item->get_price()
+                        ];
+
+                        if (!empty($_SESSION['melhorenvio_additional'])) {
+                            foreach ($_SESSION['melhorenvio_additional'] as $dataSession) {
+                                foreach($dataSession as $keyProduct =>$product) {
+                                    $data['products'][$productId]['taxas_extras'] = $product;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($_SESSION['melhorenvio_additional'])) {
+            $data['adicionais_extras'] = $_SESSION['melhorenvio_additional'];
+        }
+
+        return $data;
     }
 }
