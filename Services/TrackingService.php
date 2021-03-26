@@ -26,7 +26,44 @@ class TrackingService
      */
     public function getTrackingOrder($orderId)
     {
-        return get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
+        $data =  get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
+
+        if (!empty($data)) {
+            return $data;
+        }
+
+        $data =  (new OrderQuotationService())->getData($orderId);
+        
+        if (empty($data) || empty($data['order_id'])) {
+            return null;
+        }
+
+        if(!empty($data['tracking'])) {
+            return $data['tracking'];
+        }
+
+        $data = (new OrderService())->getInfoOrder($data['order_id']);
+
+        if (empty($data)) {
+            return null;
+        }
+
+        if (is_array($data)) {
+            $data = end($data);
+        }
+
+        $tracking = (!empty($data->tracking)) ? $data->tracking : null;
+
+        if (empty($tracking)) {
+            $tracking = (!empty($data->self_tracking)) ? $data->self_tracking : null;
+        }
+
+        if (!empty($tracking)) {
+            $this->addTrackingOrder($orderId, $tracking);
+            return $tracking;
+        }
+
+        return null;
     }
 
     /**
