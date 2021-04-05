@@ -440,7 +440,6 @@ const orders = {
             Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
               if(response.status == 200) {
                 Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-                    console.log(response);
                     if (!response.data.success) {
                         commit('setMsgModal', 'Etiquetas geradas!')
                         commit('toggleLoader', false)
