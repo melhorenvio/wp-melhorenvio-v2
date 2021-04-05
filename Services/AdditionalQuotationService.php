@@ -133,6 +133,10 @@ class AdditionalQuotationService
     {
         SessionHelper::initIfNotExists();
 
+        if (empty($_SESSION[self::SESSION_KEY_ADDITIONAL] )) {
+            return false;
+        }
+
         foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL] as $key => $cart) {
             foreach ($cart as $key2 => $item) {
                 if ($key2 == $productId) {
