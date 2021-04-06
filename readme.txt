@@ -8,6 +8,7 @@
 * Ajuste para usar valores com centavos nas taxas extras de envios
 * Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
 * Ajuste erro 500 na listagem de pedidos
+* Removendo listagem duplicada de rastreio
 
 = 2.9.7 =
 * Ajustes no método de serviço selecionado pelo comprador.
