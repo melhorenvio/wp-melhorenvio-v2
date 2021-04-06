@@ -7,7 +7,8 @@
 * Correção no processo de finalização de compras de produtos virtuais
 * Ajuste para usar valores com centavos nas taxas extras de envios
 * Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
- 
+* Ajuste erro 500 na listagem de pedidos
+
 = 2.9.7 =
 * Ajustes no método de serviço selecionado pelo comprador.
 * Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.
