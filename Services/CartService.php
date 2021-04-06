@@ -263,7 +263,7 @@ class CartService
 
         $data = [];
 
-        foreach ($woocommerce->cart->get_cart() as $cart) {
+        foreach($woocommerce->cart->get_cart() as $cart) {
             foreach($cart as $item) {
                 if (gettype($item) == 'object')  {
                     $productId = $item->get_id();
@@ -274,7 +274,7 @@ class CartService
                         ];
 
                         if (!empty($_SESSION['melhorenvio_additional'])) {
-                            foreach ($_SESSION['melhorenvio_additional'] as $dataSession) {
+                            foreach($_SESSION['melhorenvio_additional'] as $dataSession) {
                                 foreach($dataSession as $keyProduct =>$product) {
                                     $data['products'][$productId]['taxas_extras'] = $product;
                                 }
