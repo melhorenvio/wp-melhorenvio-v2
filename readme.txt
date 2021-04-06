@@ -8,7 +8,8 @@
 * Ajuste para usar valores com centavos nas taxas extras de envios
 * Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
 * Correção do problema de link de rastreio na aba de pedidos dos clientes
- 
+* Ajuste erro 500 na listagem de pedidos
+
 = 2.9.7 =
 * Ajustes no método de serviço selecionado pelo comprador.
 * Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.

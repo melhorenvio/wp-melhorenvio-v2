@@ -55,6 +55,7 @@
             <fieldset class="selectLine">
               <div class="inputBox">
                 <select
+                  data-cy="input-quotation"
                   v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')"
                   v-model="item.quotation.choose_method"
                 >
