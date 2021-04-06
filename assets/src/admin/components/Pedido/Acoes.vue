@@ -9,6 +9,7 @@
     <a
       class="action-button container__link"
       v-if="buttonCart(item)"
+      data-cy="input-add-cart"
       data-tip="Adicionar o pedido no carrinho de compras"
       @click="
         sendCartSimple({
@@ -77,6 +78,7 @@
         })
       "
       href="javascript:;"
+      data-cy="input-buy-button"
       class="action-button -adicionar container__link"
       data-tip="Comprar"
     >
@@ -114,6 +116,7 @@
       "
       @click="createTicket({ id: item.id, order_id: item.order_id })"
       class="action-button -adicionar container__link"
+      data-cy="input-print-button"
       data-tip="Imprimir etiqueta"
     >
       <svg
@@ -207,6 +210,7 @@
       v-if="item.status == 'released'"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-cancel-button"
       data-tip="Cancelar pedido"
     >
       <svg
@@ -243,6 +247,7 @@
       @click="removeCart({ id: item.id, order_id: item.order_id })"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-remove-button"
       data-tip="Remover do Carrinho de compras"
     >
       <svg
