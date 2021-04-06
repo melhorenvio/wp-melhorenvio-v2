@@ -3,10 +3,10 @@
     <h1>Meu Token</h1>
     <span>Insira o token gerado no Melhor Envio</span>
     <br />
-    <textarea rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
+    <textarea data-cy="token-production" rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
     <br />
     <p>
-      <input type="checkbox" v-model="environment" true-value="sandbox" false-value="production" />
+      <input data-cy="environment-token" type="checkbox" v-model="environment" true-value="sandbox" false-value="production" />
       Utilizar ambiente Sandbox
     </p>
 
@@ -16,6 +16,7 @@
       cols="100"
       v-model="token_sandbox"
       placeholder="Token Sandbox"
+      data-cy="token-sandbox"
     ></textarea>
     <br />
     <br />

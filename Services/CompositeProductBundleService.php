@@ -51,9 +51,13 @@ class CompositeProductBundleService
 
         $this->item_product = $item_product;
 
-        $this->shipping_fee = self::getShippingFeeType($this->product->get_id());
+        if (!empty($this->product)) {
+            $this->shipping_fee = self::getShippingFeeType($this->product->get_id());
+        }
 
-        $this->pricing = self::getPricingType($this->product->get_id());
+        if (!empty($this->product)) {
+            $this->pricing = self::getPricingType($this->product->get_id());
+        }
     }
 
     /**
@@ -119,8 +123,10 @@ class CompositeProductBundleService
 
         if (self::isCompositeWholeAndExclude($productsComposite, $shipping_fee, $pricing)) {
             foreach($productsComposite as $key => $product) {
-                $productsComposite[$key]['unitary_value'] = $_product->get_price();
-                $productsComposite[$key]['insurance_value'] = $_product->get_price();
+                if (!empty($_product)) {
+                    $productsComposite[$key]['unitary_value'] = $_product->get_price();
+                    $productsComposite[$key]['insurance_value'] = $_product->get_price();
+                }
             }
             return $productsComposite;
         }
