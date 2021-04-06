@@ -26,19 +26,19 @@ class TrackingService
      */
     public function getTrackingOrder($orderId)
     {
-        $data =  get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
+        $data = get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
 
         if (!empty($data)) {
             return $data;
         }
 
-        $data =  (new OrderQuotationService())->getData($orderId);
+        $data = (new OrderQuotationService())->getData($orderId);
         
         if (empty($data) || empty($data['order_id'])) {
             return null;
         }
 
-        if(!empty($data['tracking'])) {
+        if (!empty($data['tracking'])) {
             return $data['tracking'];
         }
 
