@@ -29,7 +29,7 @@ class ShippingClassDataByProductService
             $shipping_methods = $shipping_zone->get_shipping_methods( true, 'values' );
             foreach ( $shipping_methods as $instance_id => $shipping_method ) {
                 $dataShippingMethod = $shipping_method->instance_settings;
-                if ($product_class_id == $dataShippingMethod['shipping_class_id']) {
+                if (isset($dataShippingMethod['shipping_class_id']) && $product_class_id == $dataShippingMethod['shipping_class_id']) {
                     unset($dataShippingMethod['shipping_class_id']);
                     unset($dataShippingMethod['title']);
                     $settings = $dataShippingMethod;

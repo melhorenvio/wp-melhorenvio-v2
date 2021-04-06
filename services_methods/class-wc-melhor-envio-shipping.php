@@ -1,6 +1,7 @@
 <?php
 
 use Services\CalculateShippingMethodService;
+use Helpers\MoneyHelper;
 
 /**
  * Default Melhor Envio shipping method abstract class.
@@ -121,9 +122,9 @@ if (class_exists('WC_Shipping_Method')) {
                 $this->instance_id,
                 $this->company,
                 $this->title,
-                $this->additional_tax,
-                $this->additional_time,
-                $this->percent_tax
+                MoneyHelper::converterPriceToFloat($this->additional_tax),
+                intval($this->additional_time),
+                MoneyHelper::converterPriceToFloat($this->percent_tax)
             );
 
             if ($rate) {
