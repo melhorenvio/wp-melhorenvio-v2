@@ -104,7 +104,8 @@
                   :id="option.id"
                   :value="option.id"
                   v-model="address"
-                  @click="refreshAgencies({city: option.city, state: option.state})"
+                  data-cy="address-input"
+                  @click="showJadlogAgencies({city: option.city, state: option.state})"
                 />
                 <h2>{{option.label}}</h2>
               </div>
@@ -147,7 +148,7 @@
             </div>
             <br />
             <template>
-              <select name="agencies" id="agencies" v-model="agency">
+              <select name="agencies" id="agencies" v-model="agency" data-cy="input-agency-jadlog">
                 <option value>Selecione...</option>
                 <option
                   v-for="option in agencies"
@@ -172,7 +173,7 @@
         <ul class="wpme_address">
           <li>
             <template>
-              <select name="agenciesAzul" id="agenciesAzul" v-model="agency_azul">
+              <select name="agenciesAzul" id="agenciesAzul" v-model="agency_azul" data-cy="input-agency-azul">
                 <option value>Selecione...</option>
                 <option
                   v-for="option in agenciesAzul"
@@ -234,7 +235,7 @@
                         city: option.address.city.city, 
                         state: option.address.city.state.state_abbr
                         })" 
-                    type="radio" :id="option.id" :value="option.id" v-model="store" />
+                    type="radio" :id="option.id" :value="option.id" v-model="store" data-cy="input-stores" />
                   <h3>{{option.name}}</h3>
                 </div>
                 <div class="wpme_address-body">
@@ -307,13 +308,14 @@
           <li>
             <label for="41352">
               <div class="wpme_address-top" style="border-bottom: none;">
-                <input type="checkbox" value="exibir" v-model="show_calculator" />
+                <input type="checkbox" value="exibir" v-model="show_calculator" data-cy="input-show-calculator" />
                 <label for="two">exibir a calculadora na tela do produto</label>
               </div>
               <br />
 
               <select
                 v-show="show_calculator"
+                data-cy="input-where-calculator"
                 name="agencies"
                 id="agencies"
                 v-model="where_calculator"
@@ -346,13 +348,14 @@
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" v-model="show_path" />
+            <input type="checkbox" value="Personalizar" v-model="show_path" data-cy="input-show-path" />
             <span>Estou ciente dos riscos</span>
             <br />
             <br />
             <input
               v-show="show_path"
               v-model="path_plugins"
+              data-cy="input-path"
               type="text"
               placeholder="/home/htdocs/html/wp-content/plugins"
             />

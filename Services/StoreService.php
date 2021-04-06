@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\SessionHelper;
+
 class StoreService
 {
     const URL = 'https://api.melhorenvio.com';

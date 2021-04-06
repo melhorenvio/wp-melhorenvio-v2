@@ -83,23 +83,26 @@ class ConfigurationsService
         $agenciesAzul = (new AgenciesAzulService());
         $agenciesLatam = (new AgenciesLatamService());
         $token = (new TokenService())->get();
+        $addresses =  (!empty((new Address())->getAddressesShopping()['addresses'])) 
+            ? (new Address())->getAddressesShopping()['addresses'] 
+            :  [];
 
         return [
-            'addresses'           => (new Address())->getAddressesShopping()['addresses'],
-            'stores'              => (new StoreService())->getStores(),
-            'agencies'            => $agenciesJadlog->get(),
-            'agencySelected'      => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesAzul'        => $agenciesAzul->get(),
+            'addresses' => $addresses,
+            'stores' => (new StoreService())->getStores(),
+            'agencies' => $agenciesJadlog->get(),
+            'agencySelected' => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
+            'agenciesAzul'  => $agenciesAzul->get(),
             'agencyAzulSelected'  => $agenciesAzul->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesLatam'       => $agenciesLatam->get(),
+            'agenciesLatam'  => $agenciesLatam->get(),
             'agencyLatamSelected' => $agenciesLatam->getSelectedAgencyOrAnyByCityUser(),
-            'calculator'          => (new CalculatorShow())->get(),
-            'where_calculator'    => (!get_option('melhor_envio_option_where_show_calculator'))
+            'calculator' => (new CalculatorShow())->get(),
+            'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
-            'path_plugins'        => $this->getPathPluginsArray(),
-            'options_calculator'  => $this->getOptionsCalculator(),
-            'token_environment'   => $token['token_environment']
+            'path_plugins'  => $this->getPathPluginsArray(),
+            'options_calculator' => $this->getOptionsCalculator(),
+            'token_environment'  => $token['token_environment']
         ];
     }
 
