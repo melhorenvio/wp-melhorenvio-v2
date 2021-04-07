@@ -15,6 +15,7 @@ use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\PathController;
 use Controllers\PayloadsController;
+use Controllers\CartController;
 use Models\Version;
 
 /**
@@ -38,6 +39,7 @@ class RouterService
         $this->loadRoutesNotices();
         $this->loadRoutesTestUserWooCommerceData();
         $this->loadRouteDataUser();
+        $this->loadRouteCart();
     }
 
     /**
@@ -335,6 +337,17 @@ class RouterService
         add_action('wp_ajax_user_woocommerce_data', function () use ($usersController) {
             return wp_send_json([
                 'data' => $usersController->getFrom()
+            ]);
+        });
+    }
+
+    public function loadRouteCart()
+    {
+        $cartController = new CartController();
+
+        add_action('wp_ajax_show_cart', function () use ($cartController) {
+            return wp_send_json([
+                'data' => $cartController->getInfoCart()
             ]);
         });
     }
