@@ -32,7 +32,7 @@ class FormController
     {
         $data =  (new FormService())->showForm();
         return wp_send_json([
-            'result' =>$data
+            'result' => $data
         ]);
     }
 
@@ -44,7 +44,7 @@ class FormController
     {
         $data =  (new FormService())->hideForm();
         return wp_send_json([
-            'result' =>$data
+            'result' => $data
         ]);
     }
 }
