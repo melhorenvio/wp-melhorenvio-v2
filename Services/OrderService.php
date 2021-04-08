@@ -251,6 +251,12 @@ class OrderService
             'mode' => 'public'
         ];
 
+        $data = (new OrderQuotationService())->getData($postId);
+
+        if ($data['status'] == 'generated') {
+            return $data;
+        }
+
         $result = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CREATE_LABEL,
             'POST',
