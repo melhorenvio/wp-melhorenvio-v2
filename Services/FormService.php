@@ -1,0 +1,58 @@
+<?php
+
+namespace Services;
+
+class FormService
+{
+    const SHOW = 'show_form_melhor_envio';
+
+    const HIDE = 'hide_form_melhor_envio';
+
+    const OPTION_SHOW_FORM = 'hide_form_melhor_envio';
+
+    /**
+     * Function to check whether to display and insert the search form alert on the administrative page
+     */
+    public function  insertForm()
+    {
+        $showForm = $this->isHideForm();
+        $show = self::SHOW;
+        if ($showForm == $show) {
+            add_action('admin_notices', function () {
+                echo '<div class="notice info is-dismissible"> 
+                    <p><strong>O Melhor Envio quer ouvir você!</strong></p>
+                    <p>Gostaríamos de saber mais sobre a sua experiência com o plugin para que possamos aprimorá-lo. <a href="/wp-admin/admin-ajax.php?action=open_form_melhor_envio">Clique aqui</a> e nos ajude respondendo a pesquisa.</p>
+                </div>';
+            });
+        }
+    }
+
+    /**
+     * Function for obtaining the visibility of the alert for the search form
+     * @return string
+     */
+    public function isHideForm()
+    {
+        return get_option(self::OPTION_SHOW_FORM, self::SHOW);
+    }
+
+    /**
+     * Function to hide the form alert
+     * @return bool
+     */
+    public function hideForm()
+    {
+        delete_option(self::OPTION_SHOW_FORM);
+        return add_option(self::OPTION_SHOW_FORM, self::HIDE, true);
+    }
+
+    /**
+     * Function to show the form alert
+     * @return bool
+     */
+    public function showForm()
+    {
+        delete_option(self::OPTION_SHOW_FORM);
+        return add_option(self::OPTION_SHOW_FORM, self::SHOW, true);
+    }
+}

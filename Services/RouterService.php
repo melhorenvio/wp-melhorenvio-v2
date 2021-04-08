@@ -16,6 +16,7 @@ use Controllers\UsersController;
 use Controllers\PathController;
 use Controllers\PayloadsController;
 use Controllers\CartController;
+use Controllers\FormController;
 use Models\Version;
 
 /**
@@ -40,6 +41,7 @@ class RouterService
         $this->loadRoutesTestUserWooCommerceData();
         $this->loadRouteDataUser();
         $this->loadRouteCart();
+        $this->loadRouteForm();
     }
 
     /**
@@ -349,6 +351,28 @@ class RouterService
             return wp_send_json([
                 'data' => $cartController->getInfoCart()
             ]);
+        });
+    }
+
+    /*
+     * function to start form routes
+     *
+     * @return void
+     */
+    public function loadRouteForm()
+    {
+        $formController = new FormController();
+
+        add_action('wp_ajax_open_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->openForm());
+        });
+
+        add_action('wp_ajax_show_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->showForm());
+        });
+
+        add_action('wp_ajax_hide_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->hideForm());
         });
     }
 }
