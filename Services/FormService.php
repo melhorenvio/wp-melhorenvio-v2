@@ -15,7 +15,7 @@ class FormService
      */
     public function  insertForm()
     {
-        $showForm = $this->isHideForm();
+        $showForm = $this->getVisibilityForm();
         $show = self::SHOW;
         if ($showForm == $show) {
             add_action('admin_notices', function () {
@@ -31,7 +31,7 @@ class FormService
      * Function for obtaining the visibility of the alert for the search form
      * @return string
      */
-    public function isHideForm()
+    public function getVisibilityForm()
     {
         return get_option(self::OPTION_SHOW_FORM, self::SHOW);
     }
