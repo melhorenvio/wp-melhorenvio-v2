@@ -114,7 +114,7 @@
           item.status == 'generated' ||
           item.status == 'printed')
       "
-      @click="printTicket({ id: item.id, order_id: item.order_id })"
+      @click="createTicket({ id: item.id, order_id: item.order_id })"
       class="action-button -adicionar container__link"
       data-cy="input-print-button"
       data-tip="Imprimir etiqueta"

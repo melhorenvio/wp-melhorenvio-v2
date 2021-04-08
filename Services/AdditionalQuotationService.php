@@ -37,7 +37,7 @@ class AdditionalQuotationService
         $maxTime = 0;
         $maxPercent = 0;
 
-        foreach ($woocommerce->cart->get_cart() as $cart) {
+        foreach($woocommerce->cart->get_cart() as $cart) {
 
             $hashCart = $cart['key'];
 
@@ -82,7 +82,7 @@ class AdditionalQuotationService
             return false;
         }
 
-        foreach ($woocommerce->cart->get_cart() as $cart) {
+        foreach($woocommerce->cart->get_cart() as $cart) {
             $hashCart = $cart['key'];
 
             if (empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {

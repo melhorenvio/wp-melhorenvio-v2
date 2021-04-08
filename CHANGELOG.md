@@ -6,6 +6,7 @@
 - Correção no processo de finalização de compras de produtos virtuais
 - Ajuste para usar valores com centavos nas taxas extras de envios
 - Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
+- Correção do problema de link de rastreio na aba de pedidos dos clientes
 - Ajuste erro 500 na listagem de pedidos
 - Removendo listagem duplicada de rastreio
 
