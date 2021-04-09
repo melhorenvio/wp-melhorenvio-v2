@@ -76,6 +76,8 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
+        $payload  = (new Payload())->get($postId);
+
         if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
             $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
