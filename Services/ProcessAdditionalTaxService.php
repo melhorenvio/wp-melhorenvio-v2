@@ -31,20 +31,25 @@ class ProcessAdditionalTaxService
             : $_POST['add-to-cart'];
 
         $dataShipping = (new ShippingClassDataByProductService())
-            ->get($productId);
+            ->get($productId);    
 
-        if (!isset($dataShipping['additional_tax']) ||
-            !isset($dataShipping['additional_time']) ||
-            !isset($dataShipping['percent_tax'])) {
-            return false;
+        $additionQuotationService = new AdditionalQuotationService();
+        
+        foreach ($dataShipping as $instanceId => $item) {
+            if (!isset($item['additional_tax']) ||
+                !isset($item['additional_time']) ||
+                !isset($item['percent_tax'])) {
+                continue;
+            }
+
+            $additionQuotationService->register(
+                $productId,
+                $instanceId,
+                $item['additional_tax'],
+                $item['additional_time'],
+                $item['percent_tax']
+            );
         }
-
-        return (new AdditionalQuotationService())->register(
-            $productId,
-            $dataShipping['additional_tax'],
-            $dataShipping['additional_time'],
-            $dataShipping['percent_tax']
-        );
     }
 
     /**

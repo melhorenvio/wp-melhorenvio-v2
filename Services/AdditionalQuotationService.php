@@ -33,45 +33,53 @@ class AdditionalQuotationService
             return false;
         }
 
-        $maxTax = 0;
-        $maxTime = 0;
-        $maxPercent = 0;
+        $responseFees = [];
 
         foreach($woocommerce->cart->get_cart() as $cart) {
 
             $hashCart = $cart['key'];
 
             if (!empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {
-                foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart] as $data) {
-                    $tax =  (!empty($data['taxExtra'])) ? floatval($data['taxExtra']) : 0;
-                    $time = (!empty($data['timeExtra'])) ? floatval($data['timeExtra']) : 0;
-                    $percent = (!empty($data['percentExtra'])) ? floatval($data['percentExtra']) : 0;
 
-                    $maxTax = ($tax > $maxTax) ? $tax : $maxTax;
-                    $maxTime = ($time > $maxTime) ? $time : $maxTime;
-                    $maxPercent = ($percent > $maxPercent) ? $percent : $maxPercent;
+                foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart] as $productId => $instances) {
+                    foreach ($instances as $instanceId => $data) {
+                        $maxTax = 0;
+                        $maxTime = 0;
+                        $maxPercent = 0;
+
+                        $tax =  (!empty($data['taxExtra'])) ? floatval($data['taxExtra']) : 0;
+                        $time = (!empty($data['timeExtra'])) ? floatval($data['timeExtra']) : 0;
+                        $percent = (!empty($data['percentExtra'])) ? floatval($data['percentExtra']) : 0;
+
+                        $maxTax = ($tax > $maxTax) ? $tax : $maxTax;
+                        $maxTime = ($time > $maxTime) ? $time : $maxTime;
+                        $maxPercent = ($percent > $maxPercent) ? $percent : $maxPercent;
+
+                        $responseFees[$instanceId] = [
+                            'taxExtra' => $maxTax,
+                            'timeExtra' => $maxTime,
+                            'percentExtra' => $maxPercent
+                        ];
+                    }
                 }
             }
         }
-
-        return [
-            'taxExtra' => $maxTax,
-            'timeExtra' => $maxTime,
-            'percentExtra' => $maxPercent
-        ];
+        
+        return $responseFees;
     }
 
     /**
      * Function to save the fees, time and extra percentage of the product in the session
      * when it is inserted in the shopping cart.
      *
-     * @param $product_id
-     * @param $taxExtra
-     * @param $timeExtra
-     * @param $percent
+     * @param int $product_id
+     * @param float $instanceId
+     * @param float $taxExtra
+     * @param int $timeExtra
+     * @param float $percent
      * @return bool
      */
-    public function register($product_id, $taxExtra, $timeExtra, $percent)
+    public function register($product_id, $instanceId, $taxExtra, $timeExtra, $percent)
     {
         SessionHelper::initIfNotExists();
 
@@ -86,7 +94,7 @@ class AdditionalQuotationService
             $hashCart = $cart['key'];
 
             if (empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {
-                $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id] = [
+                $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
                     'taxExtra' => $taxExtra,
                     'timeExtra' => $timeExtra,
                     'percent' => $percent
@@ -97,7 +105,7 @@ class AdditionalQuotationService
             }
 
             $dataCachedAdditional = $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart];
-            
+
             $dataCachedAdditional = array_merge(
                 $dataCachedAdditional, [
                     'taxExtra' => 0,
@@ -106,7 +114,7 @@ class AdditionalQuotationService
                 ]
             );
 
-            $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id] = [
+            $_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
                 'taxExtra' => ($taxExtra > $dataCachedAdditional['taxExtra'])
                     ? $taxExtra
                     : $dataCachedAdditional['taxExtra'],
