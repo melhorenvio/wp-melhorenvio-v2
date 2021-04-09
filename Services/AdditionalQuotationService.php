@@ -33,6 +33,9 @@ class AdditionalQuotationService
             return false;
         }
 
+        $maxTax = 0;
+        $maxTime = 0;
+        $maxPercent = 0;
         $responseFees = [];
 
         foreach($woocommerce->cart->get_cart() as $cart) {
@@ -40,10 +43,6 @@ class AdditionalQuotationService
             $hashCart = $cart['key'];
 
             if (!empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {
-
-                $maxTax = 0;
-                $maxTime = 0;
-                $maxPercent = 0;
 
                 foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart] as $productId => $instances) {
                     foreach ($instances as $instanceId => $data) {
