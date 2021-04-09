@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Models\Order;
 use Models\Method;
 use Models\ShippingService;
 
@@ -253,7 +254,7 @@ class OrderService
 
         $data = (new OrderQuotationService())->getData($postId);
 
-        if ($data['status'] == 'generated') {
+        if ($data['status'] == Order::STATUS_GENERATED) {
             return $data;
         }
 
@@ -277,7 +278,7 @@ class OrderService
             $postId,
             $data['order_id'],
             $data['protocol'],
-            'generated',
+            Order::STATUS_GENERATED,
             $data['choose_method'],
             $data['purchase_id'],
             $data['tracking']
@@ -314,7 +315,7 @@ class OrderService
             $postId,
             $data['order_id'],
             $data['protocol'],
-            'released',
+            Order::STATUS_RELEASED,
             $data['choose_method'],
             $data['purchase_id'],
             $data['tracking']
@@ -459,7 +460,7 @@ class OrderService
                 }
             }
 
-            if ($data['status'] == 'pending') {
+            if ($data['status'] == Order::STATUS_PENDING) {
                 $data = $this->payByOrderId($postId, $data['order_id']);
 
                 if (isset($data['message'])) {
@@ -467,7 +468,7 @@ class OrderService
                 }
             }
 
-            if ($data['status'] == 'paid') {
+            if ($data['status'] == Order::STATUS_PAID) {
                 $data = $this->createLabel($postId);
 
                 if (isset($data['message'])) {
@@ -481,7 +482,7 @@ class OrderService
                 $orders[$postId] = $data['order_id'];
             }
 
-            if ($data['status'] == 'generated' || $data['status'] == 'released') {
+            if ($data['status'] == Order::STATUS_GENERATED || $data['status'] == Order::STATUS_RELEASED) {
                 if (isset($data['message'])) {
                     $errors[$postId][] = $data['message'];
                 }
