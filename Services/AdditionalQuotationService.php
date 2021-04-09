@@ -41,12 +41,12 @@ class AdditionalQuotationService
 
             if (!empty($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart])) {
 
+                $maxTax = 0;
+                $maxTime = 0;
+                $maxPercent = 0;
+
                 foreach ($_SESSION[self::SESSION_KEY_ADDITIONAL][$hashCart] as $productId => $instances) {
                     foreach ($instances as $instanceId => $data) {
-                        $maxTax = 0;
-                        $maxTime = 0;
-                        $maxPercent = 0;
-
                         $tax =  (!empty($data['taxExtra'])) ? floatval($data['taxExtra']) : 0;
                         $time = (!empty($data['timeExtra'])) ? floatval($data['timeExtra']) : 0;
                         $percent = (!empty($data['percentExtra'])) ? floatval($data['percentExtra']) : 0;
