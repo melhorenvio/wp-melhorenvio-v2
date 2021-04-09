@@ -33,7 +33,7 @@ class AdditionalQuotationService
             return false;
         }
 
-        $responseTaxas = [];
+        $responseFees = [];
 
         foreach($woocommerce->cart->get_cart() as $cart) {
 
@@ -55,7 +55,7 @@ class AdditionalQuotationService
                         $maxTime = ($time > $maxTime) ? $time : $maxTime;
                         $maxPercent = ($percent > $maxPercent) ? $percent : $maxPercent;
 
-                        $responseTaxas[$instanceId] = [
+                        $responseFees[$instanceId] = [
                             'taxExtra' => $maxTax,
                             'timeExtra' => $maxTime,
                             'percentExtra' => $maxPercent
@@ -65,7 +65,7 @@ class AdditionalQuotationService
             }
         }
         
-        return $responseTaxas;
+        return $responseFees;
     }
 
     /**
