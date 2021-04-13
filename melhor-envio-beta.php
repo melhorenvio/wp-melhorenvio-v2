@@ -72,7 +72,7 @@ use Services\ShortCodeService;
 use Services\TrackingService;
 use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
-use Services\FormService;
+use Services\NoticeFormService;
 use Helpers\SessionHelper;
 
 /**
@@ -195,7 +195,7 @@ final class Base_Plugin
             return false;
         }
 
-        (new FormService())->insertForm();
+        (new NoticeFormService())->insertForm();
 
         if (empty($result['errorsPath'])) {
             @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';

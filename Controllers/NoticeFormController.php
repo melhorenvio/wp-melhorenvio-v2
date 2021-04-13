@@ -2,24 +2,24 @@
 
 namespace Controllers;
 
-use Services\FormService;
+use Services\NoticeFormService;
 
 /**
  * Controller responsible for controlling the alert to display the search link about the new plugin
  */
-class FormController
+class NoticeFormController
 {
     /**
      * Link to search form
      */
-    const URL_FORM_MELHOR_ENVIO = 'http://melhorenvio.com';
+    const URL_FORM_MELHOR_ENVIO = 'http://menv.io/pesquisa-wordpress';
 
     /**
      * Function to open the form link and hide the form alert
      */
     public function openForm()
     {
-        $visibility = (new FormService())->hideForm();
+        $visibility = (new NoticeFormService())->hideForm();
         wp_redirect( self::URL_FORM_MELHOR_ENVIO );
         exit;
     }
@@ -30,7 +30,7 @@ class FormController
      */
     public function showForm()
     {
-        $data =  (new FormService())->showForm();
+        $data =  (new NoticeFormService())->showForm();
         return wp_send_json([
             'result' => $data
         ]);

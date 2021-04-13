@@ -16,7 +16,7 @@ use Controllers\UsersController;
 use Controllers\PathController;
 use Controllers\PayloadsController;
 use Controllers\CartController;
-use Controllers\FormController;
+use Controllers\NoticeFormController;
 use Models\Version;
 
 /**
@@ -361,7 +361,7 @@ class RouterService
      */
     public function loadRouteForm()
     {
-        $formController = new FormController();
+        $formController = new NoticeFormController();
 
         add_action('wp_ajax_open_form_melhor_envio', function () use ($formController) {
             return wp_send_json($formController->openForm());

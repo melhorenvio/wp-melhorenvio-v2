@@ -6,7 +6,7 @@ use Models\Version;
 
 class RequestService
 {
-    const URL = 'https://api.melhorenvio.com/v2/me';
+    const URL = 'https://api.melhorenvio.com/v2/me'; todo: trocar URL para produção.
 
     const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api/v2/me';
 

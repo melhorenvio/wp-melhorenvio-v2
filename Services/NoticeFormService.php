@@ -2,7 +2,7 @@
 
 namespace Services;
 
-class FormService
+class NoticeFormService
 {
     const SHOW = 'show_form_melhor_envio';
 
