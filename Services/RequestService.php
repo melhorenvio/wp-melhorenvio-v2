@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Services\ManageRequestService;
 use Models\Version;
 
 class RequestService
@@ -65,11 +66,32 @@ class RequestService
             'timeout ' => self::TIMEOUT
         );
 
+        $time_pre = microtime(true);
+
+        $responseRemote = wp_remote_post($this->url . $route, $params);
+
         $response = json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_post($this->url . $route, $params)
-            )
+            wp_remote_retrieve_body($responseRemote)
         );
+
+        $time_post = microtime(true);
+
+        $exec_time = ($time_post - $time_pre) / 1000000000;
+
+        if ($this->needReportThisRequest($responseRemote, $exec_time)) {
+            (new ManageRequestService())->register(
+                $route, 
+                $responseRemote['response']['code'], 
+                $typeRequest,
+                $responseRemote['response']['code'] != 200 
+                    ? (!empty($body)) 
+                        ? json_decode($body) 
+                        : null
+                    : null,
+                $responseRemote['response']['code'] != 200 ? json_decode($responseRemote['body']) : null,
+                $exec_time
+            );
+        }
 
         if (empty($response)) {
             return (object) [
@@ -126,5 +148,17 @@ class RequestService
         }
 
         return $errors;
+    }
+
+    /** 
+     * Function to check if need save this requst
+     * 
+     * @param array $response
+     * @param float $execTime
+     * @return bool
+     */
+    private function needReportThisRequest($response, $execTime)
+    {
+        return ($execTime > self::TIMEOUT || $response['response']['code'] != 200 || empty($response));
     }
 }

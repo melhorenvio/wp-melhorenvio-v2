@@ -17,6 +17,7 @@ use Controllers\PathController;
 use Controllers\PayloadsController;
 use Controllers\CartController;
 use Controllers\NoticeFormController;
+use Controllers\RequestsController;
 use Models\Version;
 
 /**
@@ -42,6 +43,7 @@ class RouterService
         $this->loadRouteDataUser();
         $this->loadRouteCart();
         $this->loadRouteForm();
+        $this->loadRequestController();
     }
 
     /**
@@ -374,5 +376,23 @@ class RouterService
         add_action('wp_ajax_hide_form_melhor_envio', function () use ($formController) {
             return wp_send_json($formController->hideForm());
         });
+    }
+
+    /*
+     * function to start requests routes
+     *
+     * @return void
+     */
+    public function loadRequestController()
+    {
+        $requestsController = new RequestsController;
+
+        add_action('wp_ajax_logs_requests', function () use ($requestsController) {
+           return $requestsController->getLogs();
+        });
+
+        add_action('wp_ajax_delete_logs_requests', function () use ($requestsController) {
+            return $requestsController->deleteLogs();
+         });
     }
 }
