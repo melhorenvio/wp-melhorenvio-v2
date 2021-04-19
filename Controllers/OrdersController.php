@@ -306,7 +306,7 @@ class OrdersController
         if (empty($result->url)) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao gerar a etiqueta'
+                'message' => 'Ocorreu um erro ao imprimir a etiqueta'
             ], 400);
         }
 

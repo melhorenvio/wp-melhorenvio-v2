@@ -551,8 +551,6 @@ export default {
       where_calculator_: "getWhereCalculator",
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
-      show_all_agencies_azul_: "getShowAllAzulAgencies",
-      show_all_agencies_latam: "getShowAllLatamAgencies",
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
@@ -588,8 +586,6 @@ export default {
       data["agency_latam"] = this.agency_latam;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
-      data["show_all_agencies_azul"] = this.show_all_agencies_azul;
-      data["show_all_agencies_latam"] = this.show_all_agencies_latam;
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;

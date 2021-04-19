@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Models\Order;
 use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
@@ -59,7 +60,7 @@ class CartService
             $orderId,
             $result->id,
             $result->protocol,
-            'pending',
+            Order::STATUS_PENDING,
             $shippingMethodId,
             null,
             $result->self_tracking

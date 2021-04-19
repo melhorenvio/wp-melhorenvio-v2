@@ -63,6 +63,16 @@ class CalculateShippingMethodService
 
                 $additionalData = (new AdditionalQuotationService())->get();
 
+                if (empty($additionalData[$id])) {
+                   $additionalData = [
+                       'taxExtra' => 0,
+                       'timeExtra' => 0,
+                       'percentExtra' => 0
+                    ];
+                }
+
+                $additionalData = $additionalData[$id];
+
                 if (!empty($additionalData['taxExtra'])) {
                     $taxExtra = $additionalData['taxExtra'];
                 }

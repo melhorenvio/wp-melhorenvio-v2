@@ -13,9 +13,7 @@ class ShippingClassDataByProductService
     public function get($productId)
     {
         $product = wc_get_product( $productId );
-
         $product_class_id = $product->get_shipping_class_id();
-
         $zone_ids = array_keys( array('') + \WC_Shipping_Zones::get_zones() );
 
         $settings = [
@@ -28,10 +26,10 @@ class ShippingClassDataByProductService
             $shipping_zone = new \WC_Shipping_Zone($zone_id);
             $shipping_methods = $shipping_zone->get_shipping_methods( true, 'values' );
             foreach ( $shipping_methods as $instance_id => $shipping_method ) {
-                $dataShippingMethod = $shipping_method->instance_settings;
-                if (isset($dataShippingMethod['shipping_class_id']) && $product_class_id == $dataShippingMethod['shipping_class_id']) {
-                    unset($dataShippingMethod['shipping_class_id']);
-                    unset($dataShippingMethod['title']);
+                $dataShippingMethod[$shipping_method->instance_id] = $shipping_method->instance_settings;
+                if (isset($dataShippingMethod[$shipping_method->instance_id]['shipping_class_id']) && $product_class_id == $dataShippingMethod[$shipping_method->instance_id] ['shipping_class_id']) {
+                    unset($dataShippingMethod[$shipping_method->instance_id]['shipping_class_id']);
+                    unset($dataShippingMethod[$shipping_method->instance_id]['title']);
                     $settings = $dataShippingMethod;
                 }
             }

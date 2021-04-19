@@ -74,10 +74,6 @@
     </template>
 
     <template v-if="item.quotation && item.quotation[item.quotation.choose_method]">
-      <p v-if="item.tracking != null">
-        Rastreio:
-        <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a>
-      </p>
       <p v-if="item.quotation.diff == true">*cliente não selecionou um método de envio do Melhor Envio.</p>
     </template>
 
