@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.9.8
+Version: 2.9.9
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -64,3 +64,15 @@ Não esqueça de cadastrar de forma correta as medidas do produto na aba de entr
 Observação: Atenção com as medidas de unidades utilizadas, cuidado se você está utilizando gramas ou quilos, metros ou centímetros, isso vai aplicar no valor da cotação e no bom funcionamento da calculadora de fretes do Melhor Envio.
  
 Pronto! o plugin do Melhor Envio está funcionando.
+
+== Changelog ==
+### [2.9.9]
+- Criando helper para iniciar session
+- Correções de warning de PHP
+- Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
+- Correção no processo de finalização de compras de produtos virtuais
+- Ajuste para usar valores com centavos nas taxas extras de envios
+- Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
+- Correção do problema de link de rastreio na aba de pedidos dos clientes
+- Ajuste erro 500 na listagem de pedidos
+- Removendo listagem duplicada de rastreio

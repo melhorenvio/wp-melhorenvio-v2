@@ -1,5 +1,5 @@
 ### Changelog
-### [2.9.8]
+### [2.9.9]
 - Criando helper para iniciar session
 - Correções de warning de PHP
 - Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
