@@ -260,11 +260,6 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        
-        add_action('init', function() {
-            SessionHelper::initIfNotExists();
-        });
-
         (new CheckHealthService())->init();
         (new TrackingService())->createTrackingColumnOrdersClient();
 
