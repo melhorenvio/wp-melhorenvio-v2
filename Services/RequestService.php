@@ -13,6 +13,11 @@ class RequestService
 
     const TIMEOUT = 10;
 
+    /**
+     * constant with the timeout for an http request, if you pass this value, a log should be generated with that request
+     */
+    const TIME_LIMIT_LOG_REQUEST = 1000;
+
     protected $token;
 
     protected $headers;
@@ -161,6 +166,6 @@ class RequestService
      */
     private function needReportThisRequest($response, $execTime)
     {
-        return ($execTime > 0 || $response['response']['code'] != 200 || empty($response));
+        return ($execTime > self::TIME_LIMIT_LOG_REQUEST || $response['response']['code'] != 200 || empty($response));
     }
 }
