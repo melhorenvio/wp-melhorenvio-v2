@@ -20,7 +20,7 @@ class RequestsController
 
         return wp_send_json([
             'data' => (new ManageRequestService())->get($ordering)
-        ], 200);
+        ], \WP_Http::OK);
     }
 
     /**
@@ -32,6 +32,6 @@ class RequestsController
     {
         return wp_send_json([
             'data' => (new ManageRequestService())->deleteAll()
-        ], 200);
+        ], \WP_Http::OK);
     }
 }
