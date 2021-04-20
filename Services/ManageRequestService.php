@@ -54,7 +54,7 @@ class ManageRequestService
 
         update_option(self::WP_OPTIONS_REQUEST_LOGS, $requests);
 
-        usort($requests, function($a, $b) {
+        usort($requests, function($a, $b) use ($ordering) {
             return $a[$ordering] > $b[$ordering];
         });
 
