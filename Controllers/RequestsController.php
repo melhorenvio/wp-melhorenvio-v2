@@ -23,6 +23,11 @@ class RequestsController
         ], 200);
     }
 
+    /**
+     * Controller function to delte all  items in log requests
+     * 
+     * @return array
+     */
     public function deleteLogs()
     {
         return wp_send_json([
