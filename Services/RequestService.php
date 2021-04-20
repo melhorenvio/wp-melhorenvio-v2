@@ -76,19 +76,21 @@ class RequestService
 
         $time_post = microtime(true);
 
-        $exec_time = ($time_post - $time_pre) / 1000000000;
+        $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
+
+        $responseCode = $responseRemote['response']['code'];
 
         if ($this->needReportThisRequest($responseRemote, $exec_time)) {
             (new ManageRequestService())->register(
                 $route, 
-                $responseRemote['response']['code'], 
+               $responseCode, 
                 $typeRequest,
-                $responseRemote['response']['code'] != 200 
+               $responseCode != 200 
                     ? (!empty($body)) 
                         ? json_decode($body) 
                         : null
                     : null,
-                $responseRemote['response']['code'] != 200 ? json_decode($responseRemote['body']) : null,
+               $responseCode != 200 ? json_decode($responseRemote['body']) : null,
                 $exec_time
             );
         }
@@ -159,6 +161,6 @@ class RequestService
      */
     private function needReportThisRequest($response, $execTime)
     {
-        return ($execTime > self::TIMEOUT || $response['response']['code'] != 200 || empty($response));
+        return ($execTime > 0 || $response['response']['code'] != 200 || empty($response));
     }
 }
