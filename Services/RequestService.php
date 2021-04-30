@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Services\ManageRequestService;
 use Models\Version;
 
 class RequestService
@@ -11,6 +12,11 @@ class RequestService
     const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api/v2/me';
 
     const TIMEOUT = 10;
+
+    /**
+     * constant with the timeout for an http request, if you pass this value, a log should be generated with that request
+     */
+    const TIME_LIMIT_LOG_REQUEST = 1000;
 
     protected $token;
 
@@ -65,11 +71,34 @@ class RequestService
             'timeout ' => self::TIMEOUT
         );
 
+        $time_pre = microtime(true);
+
+        $responseRemote = wp_remote_post($this->url . $route, $params);
+
         $response = json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_post($this->url . $route, $params)
-            )
+            wp_remote_retrieve_body($responseRemote)
         );
+
+        $time_post = microtime(true);
+
+        $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
+
+        $responseCode = $responseRemote['response']['code'];
+
+        if ($this->needReportThisRequest($responseRemote, $exec_time)) {
+            (new ManageRequestService())->register(
+                $route, 
+               $responseCode, 
+                $typeRequest,
+               $responseCode != 200 
+                    ? (!empty($body)) 
+                        ? json_decode($body) 
+                        : null
+                    : null,
+               $responseCode != 200 ? json_decode($responseRemote['body']) : null,
+                $exec_time
+            );
+        }
 
         if (empty($response)) {
             return (object) [
@@ -126,5 +155,17 @@ class RequestService
         }
 
         return $errors;
+    }
+
+    /** 
+     * Function to check if need save this requst
+     * 
+     * @param array $response
+     * @param float $execTime
+     * @return bool
+     */
+    private function needReportThisRequest($response, $execTime)
+    {
+        return ($execTime > self::TIME_LIMIT_LOG_REQUEST || $response['response']['code'] != 200 || empty($response));
     }
 }
