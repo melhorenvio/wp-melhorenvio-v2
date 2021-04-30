@@ -1,5 +1,5 @@
 === Melhor Envio V2 ===
-Version: 2.9.9
+Version: 2.9.10
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -66,6 +66,9 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+### [2.9.10]
+- Correção do aviso de erro de session_start()
+
 ### [2.9.9]
 - Criando helper para iniciar session
 - Correções de warning de PHP

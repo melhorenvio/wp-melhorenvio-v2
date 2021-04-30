@@ -8,7 +8,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.9.9
+Version: 2.9.10
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -260,11 +260,6 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        
-        add_action('init', function() {
-            SessionHelper::initIfNotExists();
-        });
-
         (new CheckHealthService())->init();
         (new TrackingService())->createTrackingColumnOrdersClient();
 
