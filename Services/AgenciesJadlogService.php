@@ -122,15 +122,21 @@ class AgenciesJadlogService
     {
         $selectedAgency = (new Agency())->getSelected();
 
+        if (empty($agencies)) {
+            return null;
+        }
+
         if (empty($selectedAgency)) {
             return $agencies;
         }
 
-        return array_map(function ($agency) use ($selectedAgency) {
+        return array_map(function ($agency) use ( $selectedAgency) {
             $data = (array) $agency;
-            $data['selected'] = ($data['id'] === $selectedAgency);
-            return (object) $data;
-        }, $agencies);
+            if (!empty($data['id'])) {
+                $data['selected'] = ($data['id'] === $selectedAgency);
+                return (object) $data;
+            }
+        }, (array) $agencies);
     }
 
     /**
