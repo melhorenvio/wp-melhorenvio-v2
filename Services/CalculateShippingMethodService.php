@@ -61,24 +61,25 @@ class CalculateShippingMethodService
                     return false;
                 }
 
-                //echo '<pre>';
-                //var_dump($taxExtra);
-                //var_dump($timeExtra);
-                //die;
-
                 $additionalData = (new AdditionalQuotationService())->get();
 
-                $taxExtra = (!empty($additionalData[$id]['taxExtra']))  
-                    ? $additionalData[$id]['taxExtra']
-                    :  $taxExtra;
+                if (!empty($additionalData[$id]['taxExtra'])) {
+                    $taxExtra = ($additionalData[$id]['taxExtra'] >= $taxExtra) 
+                        ?  $additionalData[$id]['taxExtra'] 
+                        : $taxExtra;
+                } 
 
-                $timeExtra = (!empty($additionalData[$id]['timeExtra']))  
-                    ? $additionalData[$id]['timeExtra']
-                    : $timeExtra;
+                if (!empty($additionalData[$id]['timeExtra'])) {
+                    $timeExtra = ($additionalData[$id]['timeExtra'] >= $timeExtra) 
+                        ?  $additionalData[$id]['timeExtra'] 
+                        : $timeExtra;
+                }
 
-                $percent = (!empty($additionalData[$id]['percent']))  
-                    ? $additionalData[$id]['percent']
-                    : $percent;
+                if (!empty($additionalData[$id]['percent'])) {
+                    $percent = ($additionalData[$id]['percent'] >= $percent) 
+                        ?  $additionalData[$id]['percent'] 
+                        : $percent;
+                } 
 
                 $rate = [
                     'id' => $id,
