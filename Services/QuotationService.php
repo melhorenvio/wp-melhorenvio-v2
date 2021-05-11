@@ -22,7 +22,7 @@ class QuotationService
      */
     public function calculate($payload, $useInsuranceValue)
     {
-        if (empty($payload->to->postal_code)) {
+        if (empty($payload)) {
             return false;
         }
 
