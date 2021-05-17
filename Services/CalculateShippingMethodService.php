@@ -63,27 +63,23 @@ class CalculateShippingMethodService
 
                 $additionalData = (new AdditionalQuotationService())->get();
 
-                if (empty($additionalData[$id])) {
-                   $additionalData = [
-                       'taxExtra' => 0,
-                       'timeExtra' => 0,
-                       'percentExtra' => 0
-                    ];
+                if (!empty($additionalData[$id]['taxExtra'])) {
+                    $taxExtra = ($additionalData[$id]['taxExtra'] >= $taxExtra) 
+                        ?  $additionalData[$id]['taxExtra'] 
+                        : $taxExtra;
+                } 
+
+                if (!empty($additionalData[$id]['timeExtra'])) {
+                    $timeExtra = ($additionalData[$id]['timeExtra'] >= $timeExtra) 
+                        ?  $additionalData[$id]['timeExtra'] 
+                        : $timeExtra;
                 }
 
-                $additionalData = $additionalData[$id];
-
-                if (!empty($additionalData['taxExtra'])) {
-                    $taxExtra = $additionalData['taxExtra'];
-                }
-
-                if (!empty($additionalData['timeExtra'])) {
-                    $timeExtra =  $additionalData['timeExtra'];
-                }
-
-                if (!empty($additionalData['percentExtra'])) {
-                    $percent = $additionalData['percentExtra'];
-                }
+                if (!empty($additionalData[$id]['percent'])) {
+                    $percent = ($additionalData[$id]['percent'] >= $percent) 
+                        ?  $additionalData[$id]['percent'] 
+                        : $percent;
+                } 
 
                 $rate = [
                     'id' => $id,

@@ -223,7 +223,7 @@ class QuotationService
         SessionHelper::initIfNotExists();
 
         if (!isset($_SESSION['quotation'][$hash])) {
-            unset($_SESSION['quotation'][$hash]);
+            unset($_SESSION['quotation']);
             return false;
         }
 
