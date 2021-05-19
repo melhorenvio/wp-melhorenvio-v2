@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.11]
+- Validação de cep de destino para cotação
+
 ### [2.9.10]
 - Correção do aviso de erro de session_start()
 
