@@ -4,6 +4,8 @@ namespace Helpers;
 
 class PostalCodeHelper
 {
+    const SIZE_POSTAL_CODE = 8;
+
     /**
      * Function to format postal code
      *
@@ -14,7 +16,6 @@ class PostalCodeHelper
     {
         $postalCode = ExtractNumberHelper::extractOnlyNumber($postalCode);
 
-        return str_pad($postalCode, 8, '0', STR_PAD_LEFT);
+        return str_pad($postalCode, self::SIZE_POSTAL_CODE, '0', STR_PAD_LEFT);
     }
-
 }

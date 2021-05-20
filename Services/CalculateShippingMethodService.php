@@ -41,7 +41,7 @@ class CalculateShippingMethodService
     public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
         $to = PostalCodeHelper::postalcode($package['destination']['postcode']);
-        if (strlen($to) != 8) {
+        if (strlen($to) != PostalCodeHelper::SIZE_POSTAL_CODE) {
             return false;
         }
 
