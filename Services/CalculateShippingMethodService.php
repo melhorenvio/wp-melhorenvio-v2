@@ -5,6 +5,7 @@ namespace Services;
 use Helpers\MoneyHelper;
 use Helpers\TimeHelper;
 use Models\ShippingService;
+use Helpers\PostalCodeHelper;
 
 class CalculateShippingMethodService
 {
@@ -39,7 +40,10 @@ class CalculateShippingMethodService
      */
     public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
     {
-        $to = preg_replace('/\D/', '', $package['destination']['postcode']);
+        $to = PostalCodeHelper::postalcode($package['destination']['postcode']);
+        if (strlen($to) != PostalCodeHelper::SIZE_POSTAL_CODE) {
+            return false;
+        }
 
         $products = (isset($package['contents']))
             ? $package['contents']

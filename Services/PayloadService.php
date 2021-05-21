@@ -198,7 +198,7 @@ class PayloadService
         }
 
         $from = PostalCodeHelper::postalcode($payload->from->postal_code);
-        if (strlen($from) != 8) {
+        if (strlen($from) != PostalCodeHelper::SIZE_POSTAL_CODE) {
             return false;
         }
 
@@ -207,7 +207,7 @@ class PayloadService
         }
 
         $to = PostalCodeHelper::postalcode($payload->to->postal_code);
-        if (strlen($to) != 8) {
+        if (strlen($to) != PostalCodeHelper::SIZE_POSTAL_CODE) {
             return false;
         }
 
