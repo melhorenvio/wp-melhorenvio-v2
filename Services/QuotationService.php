@@ -116,6 +116,10 @@ class QuotationService
             $products
         );
 
+        if (empty($payload)) {
+            return false;
+        }
+
         $options = (new Option())->getOptions();
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);

@@ -61,6 +61,12 @@ class OrdersController
             $service
         );
 
+        if (empty($result)) {
+            return wp_send_json([
+                'success' => false,
+                'errors' => ['Não foi possível enviar o pedido para o carrinho de compras do Melhor Envio.']
+            ], 400);
+        }
 
         if (!empty($result['errors'])) {
             return wp_send_json([
