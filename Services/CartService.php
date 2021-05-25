@@ -221,7 +221,7 @@ class CartService
      * Function to validate params before send to request
      *
      * @param array $body
-     * @return void
+     * @return array
      */
     private function validatePayloadBeforeAddCart($body, $orderId)
     {
@@ -417,7 +417,7 @@ class CartService
         if (empty($body['options'])) {
             $errors[] = 'Informar os opcionais do envio.';
         }
-        
+
         return $errors;
     }
 
