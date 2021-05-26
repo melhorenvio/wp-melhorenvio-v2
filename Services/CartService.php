@@ -7,6 +7,7 @@ use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
+use Helpers\CpfHelper;
 
 class CartService
 {
@@ -300,6 +301,12 @@ class CartService
             $errors[] = 'Informar o documento do destinatário do pedido.';
         }
 
+        if (!empty($body['to']->document)) {
+            if (!CpfHelper::validate($body['to']->document)) {
+                $errors[] = sprintf("O CPF %s do destinatário não é válido", $body['to']->document);
+            }
+        }
+
         if (!empty($body['to']) && empty($body['to']->address)) {
             $errors[] = 'Informar o endereço do destinatário do pedido.';
         }
@@ -372,7 +379,7 @@ class CartService
             $errors[] = 'Informar o(s) volume(s) do envio.';
         }
 
-        if (!empty($body['volumes']) && !is_array($body['volumes'])) {
+        if (!empty($body['volumes'])) {
             if (empty($body['volumes']['height'])) {
                 $errors[] ="Informar a altura do volume.";
             }
@@ -395,6 +402,7 @@ class CartService
         }
 
         if (!empty($body['volumes']) && is_array($body['volumes'])) {
+            
             foreach ($body['volumes']  as $key => $volume) {
                 if (empty($volume['height'])) {
                     $errors[] = sprintf("Informar a altura do volume %d.", $key++);
