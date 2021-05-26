@@ -372,7 +372,7 @@ class CartService
             $errors[] = 'Informar o(s) volume(s) do envio.';
         }
 
-        if (!empty($body['volumes']) && !is_array($body['volumes'])) {
+        if (!empty($body['volumes'])) {
             if (empty($body['volumes']['height'])) {
                 $errors[] ="Informar a altura do volume.";
             }
@@ -392,26 +392,6 @@ class CartService
 
         if (empty($body['options'])) {
             $errors[] = 'Informar os opcionais do envio.';
-        }
-
-        if (!empty($body['volumes']) && is_array($body['volumes'])) {
-            foreach ($body['volumes']  as $key => $volume) {
-                if (empty($volume['height'])) {
-                    $errors[] = sprintf("Informar a altura do volume %d.", $key++);
-                }
-
-                if (empty($volume['width'])) {
-                    $errors[] = sprintf("Informar a largura do volume %d.", $key++);
-                }
-
-                if (empty($volume['length'])) {
-                    $errors[] = sprintf("Informar o comprimento do volume %d.", $key++);
-                }
-
-                if (empty($volume['weight'])) {
-                    $errors[] = sprintf("Informar o peso do volume %d.", $key++);
-                }
-            }
         }
 
         if (empty($body['options'])) {
