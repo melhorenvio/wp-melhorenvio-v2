@@ -254,6 +254,12 @@ class CartService
             $errors[] = 'Informar o documento do remetente do pedido.';
         }
 
+        if (!empty($body['from']->document)) {
+            if (!CpfHelper::validate($body['from']->document)) {
+                $errors[] = sprintf("O CPF %s do remetente não é válido", $body['from']->document);
+            }
+        }
+
         if (!empty($body['from']) && empty($body['from']->address)) {
             $errors[] = 'Informar o endereço do remetente do pedido.';
         }
@@ -399,27 +405,6 @@ class CartService
 
         if (empty($body['options'])) {
             $errors[] = 'Informar os opcionais do envio.';
-        }
-
-        if (!empty($body['volumes']) && is_array($body['volumes'])) {
-            
-            foreach ($body['volumes']  as $key => $volume) {
-                if (empty($volume['height'])) {
-                    $errors[] = sprintf("Informar a altura do volume %d.", $key++);
-                }
-
-                if (empty($volume['width'])) {
-                    $errors[] = sprintf("Informar a largura do volume %d.", $key++);
-                }
-
-                if (empty($volume['length'])) {
-                    $errors[] = sprintf("Informar o comprimento do volume %d.", $key++);
-                }
-
-                if (empty($volume['weight'])) {
-                    $errors[] = sprintf("Informar o peso do volume %d.", $key++);
-                }
-            }
         }
 
         if (empty($body['options'])) {
