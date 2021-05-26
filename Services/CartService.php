@@ -341,7 +341,7 @@ class CartService
         }
 
         if (!$isCorreios && empty($body['agency'])) {
-            $errors[] = 'É necessário informar a agencia de postagem para esse serviço de envio';
+            $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
         if (empty($body['products'])) {
