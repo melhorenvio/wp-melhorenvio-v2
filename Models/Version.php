@@ -4,5 +4,5 @@ namespace Models;
 
 class Version
 {
-    const VERSION = '2.9.11';
+    const VERSION = '2.9.12';
 }
