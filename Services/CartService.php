@@ -234,111 +234,8 @@ class CartService
 
         $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
 
-        if (empty($body['from'])) {
-            $errors[] = 'Informar o remetente o pedido.';            
-        }
-
-        if (!empty($body['from']) && empty($body['from']->name)) {
-            $errors[] = 'Informar o nome do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->phone) && !$isCorreios) {
-            $errors[] = 'Informar o nome do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->email) && !$isCorreios) {
-            $errors[] = 'Informar o e-mail do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->document) && !$isCorreios) {
-            $errors[] = 'Informar o documento do remetente do pedido.';
-        }
-
-        if (!empty($body['from']->document)) {
-            if (!CpfHelper::validate($body['from']->document)) {
-                $errors[] = sprintf("O CPF %s do remetente não é válido", $body['from']->document);
-            }
-        }
-
-        if (!empty($body['from']) && empty($body['from']->address)) {
-            $errors[] = 'Informar o endereço do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->number)) {
-            $errors[] = 'Informar o número do endereço do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->city)) {
-            $errors[] = 'Informar a cidade do remetente do pedido.';
-        }
-
-        if (!empty($body['from']) && empty($body['from']->state_abbr)) {
-            $errors[] = 'Informar o estado do remetente do pedido.';
-        }
-
-        if (empty($body['from']->postal_code)) {
-            $errors[] = 'Informar o CEP do remetente do pedido.';
-        }
-
-        if (!empty($body['from']->postal_code)) {
-            $body['from']->postal_code = PostalCodeHelper::postalcode($body['from']->postal_code);
-            if (strlen($body['from']->postal_code) != PostalCodeHelper::SIZE_POSTAL_CODE) {
-                $errors[] = 'CEP do rementente incorreto.';
-            }
-        }
-
-        if (empty($body['to'])) {
-            $errors[] = 'Informar o destinatário o pedido.';            
-        }
-
-        if (!empty($body['to']) && empty($body['to']->name)) {
-            $errors[] = 'Informar o nome do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->phone) && !$isCorreios) {
-            $errors[] = 'Informar o nome do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->email) && !$isCorreios) {
-            $errors[] = 'Informar o e-mail do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->document) && !$isCorreios) {
-            $errors[] = 'Informar o documento do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']->document)) {
-            if (!CpfHelper::validate($body['to']->document)) {
-                $errors[] = sprintf("O CPF %s do destinatário não é válido", $body['to']->document);
-            }
-        }
-
-        if (!empty($body['to']) && empty($body['to']->address)) {
-            $errors[] = 'Informar o endereço do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->number)) {
-            $errors[] = 'Informar o número do endereço do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->city)) {
-            $errors[] = 'Informar a cidade do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']) && empty($body['to']->state_abbr)) {
-            $errors[] = 'Informar o estado do destinatário do pedido.';
-        }
-
-        if (empty($body['to']->postal_code)) {
-            $errors[] = 'Informar o CEP do destinatário do pedido.';
-        }
-
-        if (!empty($body['to']->postal_code)) {
-            $body['to']->postal_code = PostalCodeHelper::postalcode($body['to']->postal_code);
-            if (strlen($body['to']->postal_code) != PostalCodeHelper::SIZE_POSTAL_CODE) {
-                $errors[] = 'CEP do destinatário incorreto.';
-            }
-        }
+        $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
+        $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
         if (!$isCorreios && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
@@ -350,33 +247,35 @@ class CartService
 
         if (!empty($body['products'])) {
             foreach  ($body['products'] as $key => $product) {
-            
+
+                $index = $key++;
+
                 if (empty($product['name'])) {
-                    $errors[] = sprintf("Infomar o nome do produto %d", $key++);
+                    $errors[] = sprintf("Infomar o nome do produto %d", $index);
                 }
 
                 if (empty($product['quantity'])) {
-                    $errors[] = sprintf("Infomar a quantidade do produto %d", $key++);
+                    $errors[] = sprintf("Infomar a quantidade do produto %d", $index);
                 }
 
                 if (empty($product['unitary_value'])) {
-                    $errors[] = sprintf("Infomar o valor unitário do produto %d", $key++);
+                    $errors[] = sprintf("Infomar o valor unitário do produto %d", $index);
                 }
 
                 if (empty($product['weight'])) {
-                    $errors[] = sprintf("Infomar o peso do produto %d", $key++);
+                    $errors[] = sprintf("Infomar o peso do produto %d", $index);
                 }
 
                 if (empty($product['width'])) {
-                    $errors[] = sprintf("Infomar a largura do produto %d", $key++);
+                    $errors[] = sprintf("Infomar a largura do produto %d", $index);
                 }
 
                 if (empty($product['height'])) {
-                    $errors[] = sprintf("Infomar a altura do produto %d", $key++);
+                    $errors[] = sprintf("Infomar a altura do produto %d", $index);
                 }
 
                 if (empty($product['length'])) {
-                    $errors[] = sprintf("Infomar o comprimento do produto %d", $key++);
+                    $errors[] = sprintf("Infomar o comprimento do produto %d", $index);
                 }
             }
         }
@@ -413,6 +312,69 @@ class CartService
 
         return $errors;
     }
+
+    /**
+     * Function to validate date address createPayloadToCart
+     * 
+     * @param string $key
+     * @param string $user
+     * @param array $body
+     * @param bool $isCorreios
+     * @return array
+     */
+    private function validateAddress($key, $user, $body, $isCorreios)
+    {
+        $errors = [];
+    
+        if (empty($body[$key])) {
+            $errors[] = "Informar o {$user} o pedido.";            
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->name)) {
+            $errors[] = "Informar o nome do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->phone) && !$isCorreios) {
+            $errors[] = "Informar o nome do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->email) && !$isCorreios) {
+            $errors[] = "Informar o e-mail do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->document) && !$isCorreios) {
+            $errors[] = "Informar o documento do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->address)) {
+            $errors[] = "Informar o endereço do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->number)) {
+            $errors[] = "Informar o número do endereço do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->city)) {
+            $errors[] = "Informar a cidade do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->state_abbr)) {
+            $errors[] = "Informar o estado do {$user} do pedido.";
+        }
+
+        if (empty($body[$key]->postal_code)) {
+            $errors[] = "Informar o CEP do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]->postal_code)) {
+            $body[$key]->postal_code = PostalCodeHelper::postalcode($body[$key]->postal_code);
+            if (strlen($body[$key]->postal_code) != PostalCodeHelper::SIZE_POSTAL_CODE) {
+                $errors[] = "CEP do {$user} incorreto.";
+            }
+        }
+
+        return $errors;
+      }
 
     /** 
      * Function to get data and information about items in the shopping cart
