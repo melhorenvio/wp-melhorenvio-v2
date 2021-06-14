@@ -67,6 +67,11 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.9.12 =
+* Ajustes validações payload para API do Melhor Envio
+* Ajuste no uso de valor segurado nas cotações
+* Adição de uso de CNAE para transportadoras privadas
+* Validações para CEP
 
 = 2.9.11 =
 * Validação de cep de destino para cotação
