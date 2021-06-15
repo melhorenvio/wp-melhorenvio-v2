@@ -242,11 +242,11 @@ class CartService
         }
 
         if (empty($body['products'])) {
-            $errors[]  = 'É necessário informar os produtos do envio.';
+            $errors[] = 'É necessário informar os produtos do envio.';
         }
 
         if (!empty($body['products'])) {
-            foreach  ($body['products'] as $key => $product) {
+            foreach ($body['products'] as $key => $product) {
 
                 $index = $key++;
 
