@@ -61,6 +61,9 @@ class OrdersController
             $service
         );
 
+        if (empty($result['success']) && $result['errors'] == 'validation.nfe') {
+            $result['errors'] = "A chave e a nota fiscal estão incorretas, por favor verificar as mesmas";
+        }
 
         if (!empty($result['errors'])) {
             return wp_send_json([
