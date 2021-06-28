@@ -39,13 +39,15 @@
         }
 
         let selected = 0;
-        if (jQuery('.variations select').length == attribbutes.length) {
-            variations.map(function (variant, index) {
+        if (jQuery('.variations select').length == attribbutes.length) {           
+            variations.map(function (variant, index) { 
+                let matches = []
                 attribbutes.map(function (attr) {
                     if (variant.attributes[attr.key] == attr.value) {
-                        selected = index;
+                        matches.push( attr.key )
                     }
                 });
+                if( matches.length === attribbutes.length ) selected = index;
             });
         }
 
