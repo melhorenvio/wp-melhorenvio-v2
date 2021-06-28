@@ -217,8 +217,10 @@ class PayloadService
 
         if (!empty($payload->products)) {
             foreach ($payload->products as $product) {
-                if (!$this->isProductValid($product)) {
-                    return false;
+                if (!$product->is_virtual) {
+                    if (!$this->isProductValid($product)) {
+                        return false;
+                    }
                 }
            }
         }

@@ -84,6 +84,8 @@ class CartService
             ? $payloadSaved->products
             : $products;
 
+        $products = $this->removeProductsVirtual($products);
+
         $dataBuyer = (!empty($payloadSaved->buyer))
             ? $payloadSaved->buyer
             : $dataBuyer;
@@ -127,6 +129,23 @@ class CartService
                 'reminder' => null
             )
         );
+    }
+
+    /**
+     * Function to remove virtual product 
+     * 
+     * @param array $products
+     * @return array
+     */
+    private function removeProductsVirtual($products)
+    {
+        foreach ($products as $key => $product) {
+            if ($product['is_virtual']) {
+                unset($products[$key]);
+            }
+        }
+
+        return $products;
     }
 
     /**
