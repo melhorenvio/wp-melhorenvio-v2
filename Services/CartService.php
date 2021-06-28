@@ -140,7 +140,7 @@ class CartService
     private function removeProductsVirtual($products)
     {
         foreach ($products as $key => $product) {
-            if ($product['is_virtual']) {
+            if (isset($product['is_virtual']) && $product['is_virtual']) {
                 unset($products[$key]);
             }
         }
