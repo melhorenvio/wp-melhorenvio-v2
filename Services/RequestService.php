@@ -86,21 +86,6 @@ class RequestService
 
         $responseCode = $responseRemote['response']['code'];
 
-        if ($this->needReportThisRequest($responseRemote, $exec_time)) {
-            (new ManageRequestService())->register(
-                $route, 
-               $responseCode, 
-                $typeRequest,
-               $responseCode != 200 
-                    ? (!empty($body)) 
-                        ? json_decode($body) 
-                        : null
-                    : null,
-               $responseCode != 200 ? json_decode($responseRemote['body']) : null,
-                $exec_time
-            );
-        }
-
         if ($responseCode != 200) {
             (new ClearDataStored())->clear();
         }
@@ -160,17 +145,5 @@ class RequestService
         }
 
         return $errors;
-    }
-
-    /** 
-     * Function to check if need save this requst
-     * 
-     * @param array $response
-     * @param float $execTime
-     * @return bool
-     */
-    private function needReportThisRequest($response, $execTime)
-    {
-        return ($execTime > self::TIME_LIMIT_LOG_REQUEST || $response['response']['code'] != 200 || empty($response));
     }
 }
