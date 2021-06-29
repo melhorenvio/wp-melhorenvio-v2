@@ -132,15 +132,14 @@ class CartService
     }
 
     /**
-     * Function to remove virtual product 
      * 
      * @param array $products
      * @return array
      */
-    private function removeVirtualProducts($products)
+    private function removeVirtualProducts(&$products)
     {
         foreach ($products as $key => $product) {
-            if (isset($product['is_virtual']) && $product['is_virtual']) {
+            if (!empty($product['is_virtual'])) {
                 unset($products[$key]);
             }
         }

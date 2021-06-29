@@ -217,7 +217,7 @@ class PayloadService
 
         if (!empty($payload->products)) {
             foreach ($payload->products as $product) {
-                if (isset($product->is_virtual) && $product->is_virtual) {
+                if (!empty($product->is_virtual)) {
                     continue;
                 }
 
