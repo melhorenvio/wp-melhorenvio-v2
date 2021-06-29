@@ -84,7 +84,7 @@ class CartService
             ? $payloadSaved->products
             : $products;
 
-        $products = $this->removeProductsVirtual($products);
+        $products = $this->removeVirtualProducts($products);
 
         $dataBuyer = (!empty($payloadSaved->buyer))
             ? $payloadSaved->buyer
@@ -137,7 +137,7 @@ class CartService
      * @param array $products
      * @return array
      */
-    private function removeProductsVirtual($products)
+    private function removeVirtualProducts($products)
     {
         foreach ($products as $key => $product) {
             if (isset($product['is_virtual']) && $product['is_virtual']) {
