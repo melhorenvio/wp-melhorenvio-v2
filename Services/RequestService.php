@@ -3,6 +3,7 @@
 namespace Services;
 
 use Services\ManageRequestService;
+use Services\ClearDataStored;
 use Models\Version;
 
 class RequestService
@@ -98,6 +99,10 @@ class RequestService
                $responseCode != 200 ? json_decode($responseRemote['body']) : null,
                 $exec_time
             );
+        }
+
+        if ($responseCode != 200) {
+            (new ClearDataStored())->clear();
         }
 
         if (empty($response)) {
