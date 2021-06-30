@@ -4,7 +4,9 @@ Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam
 Requires at least: 4.7
 Tested up to: 5.7.2
 Stable tag: 2.9.9
-Requires PHP: 5.6
+Requires PHP: 5.6+
+Requires Wordpress 4.0+
+Requires WooCommerce 4.0+
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
