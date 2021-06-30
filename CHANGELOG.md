@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.12]
+- Adição do cnae nas informações das lojas
+
 ### [2.9.11]
 - Validação de cep de destino para cotação
 

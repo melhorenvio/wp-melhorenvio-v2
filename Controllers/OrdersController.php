@@ -61,11 +61,8 @@ class OrdersController
             $service
         );
 
-        if (empty($result)) {
-            return wp_send_json([
-                'success' => false,
-                'errors' => ['Não foi possível enviar o pedido para o carrinho de compras do Melhor Envio.']
-            ], 400);
+        if (empty($result['success']) && $result['errors'] == 'validation.nfe') {
+            $result['errors'] = "A chave e a nota fiscal estão incorretas, por favor verificar as mesmas";
         }
 
         if (!empty($result['errors'])) {

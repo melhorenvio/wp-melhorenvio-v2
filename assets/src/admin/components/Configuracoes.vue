@@ -244,6 +244,10 @@
                       <b>CNPJ:</b>
                       {{ `${option.document}` }}
                     </li>
+                      <li v-if="option.economic_activity_code">
+                      <b>CNAE:</b>
+                      {{ `${option.economic_activity_code}` }}
+                    </li>
                     <li v-if="option.state_register">
                       <b>Inscrição estadual:</b>
                       {{ `${option.state_register}` }}
