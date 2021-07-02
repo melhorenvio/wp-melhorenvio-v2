@@ -504,7 +504,7 @@ export default {
       return new Promise(resolve => {
         let ordersToGetQuotations = [];
         this.orders.filter(order => {
-          if (order.status == null && order.quotation.length == 0) {
+          if (!order.status && !order.quotation.length) {
             ordersToGetQuotations.push(order.id);
           }
         });
