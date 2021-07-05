@@ -7,6 +7,7 @@ use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
+use Helpers\CpfHelper;
 
 class CartService
 {
@@ -237,15 +238,15 @@ class CartService
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
         if (!$isCorreios && empty($body['agency'])) {
-            $errors[] = 'É necessário informar a agencia de postagem para esse serviço de envio';
+            $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
         if (empty($body['products'])) {
-            $errors[]  = 'É necessário informar os produtos do envio.';
+            $errors[] = 'É necessário informar os produtos do envio.';
         }
 
         if (!empty($body['products'])) {
-            foreach  ($body['products'] as $key => $product) {
+            foreach ($body['products'] as $key => $product) {
 
                 $index = $key++;
 
