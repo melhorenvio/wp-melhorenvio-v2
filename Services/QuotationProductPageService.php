@@ -107,16 +107,6 @@ class QuotationProductPageService
             ];
         }
 
-        if (empty($this->destination)) {
-            return [
-                'success' => false,
-                'error' => sprintf(
-                    "Não encontramos um endereço válido para o CEP %s",
-                    $this->postalCode
-                )
-            ];
-        }
-
         if (!is_int($this->quantity) || $this->quantity == 0) {
             return [
                 'success' => false,
@@ -124,7 +114,9 @@ class QuotationProductPageService
             ];
         }
 
-        (new UserWooCommerceDataService())->set($this->destination, false);
+        if (!empty($this->destination)) {
+            (new UserWooCommerceDataService())->set($this->destination, false);
+        }
 
         $this->createPackageToCalculate();
 
@@ -148,15 +140,19 @@ class QuotationProductPageService
             }
         }
 
-        return [
-            'quotations' => $result,
-            'destination' => sprintf(
-                "%s, %s/%s (%s)",
-                $this->destination->logradouro,
+        $addressLabel = (!empty($this->destination))
+            ? sprintf(
+                "%s, %s/%s (%s)", 
+                $this->destination->logradouro, 
                 $this->destination->cidade,
                 $this->destination->uf,
                 $this->postalCode
-            )
+                )
+            : sprintf("CEP %s", $this->postalCode);
+
+        return [
+            'quotations' => $result,
+            'destination' => $addressLabel
         ];
     }
 
@@ -179,8 +175,8 @@ class QuotationProductPageService
             'ship_via'     => '',
             'destination'  => [
                 'country'  => 'BR',
-                'state'    => $this->destination->uf,
-                'postcode' => $this->destination->cep,
+                'state'    =>  (!empty( $this->destination->uf)) ? $this->destination->uf : null,
+                'postcode' => (!empty($this->destination->cep)) ? $this->destination->cep : $this->postalCode,
             ],
             'contents' => $contents,
             'contents_cost' => $this->product->get_price() * $this->quantity
