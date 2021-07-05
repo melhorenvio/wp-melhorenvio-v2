@@ -14,10 +14,10 @@ Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 5.0
+Tested up to: 2.9.9
 Requires PHP: 5.6
 WC requires at least: 4.0
-WC tested up to: 5.7
+WC tested up to: 5.7.2
 Domain Path: /languages
 */
 
