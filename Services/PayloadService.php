@@ -187,7 +187,7 @@ class PayloadService
      * @param object $payload
      * @return bool
      */
-    private function validatePayload($payload)
+    public function validatePayload($payload)
     {
         if (gettype($payload) != "object") {
             return false;

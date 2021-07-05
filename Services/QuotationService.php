@@ -5,6 +5,7 @@ namespace Services;
 use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
+use Services\PayloadService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -87,6 +88,10 @@ class QuotationService
             );
         }
 
+        if (!(new PayloadService())->validatePayload($payload)) {
+            return false;
+        }
+
         $quotations = $this->calculate(
             $payload,
             (isset($payload->options->use_insurance_value))
@@ -115,6 +120,10 @@ class QuotationService
             $postalCode,
             $products
         );
+
+        if (empty($payload)) {
+            return false;
+        }
 
         $options = (new Option())->getOptions();
 

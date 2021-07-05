@@ -31,7 +31,9 @@ class QuotationController
     {
         $result = (new QuotationService())->calculateQuotationByPostId($postId);
 
-        (new PayloadService())->save(($postId));
+        if ($result) {
+            (new PayloadService())->save(($postId));
+        }
 
         unset($_SESSION['quotation']);
 

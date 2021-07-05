@@ -6,6 +6,7 @@ use Models\Order;
 use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
+use Helpers\PostalCodeHelper;
 
 class CartService
 {
@@ -26,7 +27,7 @@ class CartService
     {
         $body = $this->createPayloadToCart($orderId, $products, $dataBuyer, $shippingMethodId);
 
-        $errors = $this->checkParamsBody($body, $orderId);
+        $errors = $this->validatePayloadBeforeAddCart($body, $orderId);
 
         if (!empty($errors)) {
             return [
@@ -108,7 +109,7 @@ class CartService
             ? (new ProductsService())->getInsuranceValue($products)
             : 0;
 
-        return array(
+        $payload = array(
             'from' => $dataFrom,
             'to' => $dataBuyer,
             'agency' => $this->getAgencyToInsertCart($shippingMethodId),
@@ -127,6 +128,8 @@ class CartService
                 'reminder' => null
             )
         );
+
+        return $payload;
     }
 
     /**
@@ -218,38 +221,159 @@ class CartService
      * Function to validate params before send to request
      *
      * @param array $body
-     * @return void
+     * @return array
      */
-    private function checkParamsBody($body, $orderId)
+    private function validatePayloadBeforeAddCart($body, $orderId)
     {
         $errors = [];
 
-        if ((new CalculateShippingMethodService())->isJadlog($body['service']) && empty($body['agency'])) {
-            $errors[] = sprintf("Informar a agência Jadlog do envio %s", $orderId);
+        if (empty($body['service'])) {
+            $errors[] = 'Informar o serviço de envio.';
         }
 
-        if (!array_key_exists("from", $body)) {
-            $errors[] = sprintf("Informar origem do envio do pedido %s", $orderId);
+        $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
+
+        $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
+        $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
+
+        if (!$isCorreios && empty($body['agency'])) {
+            $errors[] = 'É necessário informar a agencia de postagem para esse serviço de envio';
         }
 
-        if (!array_key_exists("to", $body)) {
-            $errors[] = sprintf("Informar destino do envio do pedido %s", $orderId);
+        if (empty($body['products'])) {
+            $errors[]  = 'É necessário informar os produtos do envio.';
         }
 
-        if (!array_key_exists("service", $body)) {
-            $errors[] = sprintf("Informar o serviço do envio do pedido %s", $orderId);
+        if (!empty($body['products'])) {
+            foreach  ($body['products'] as $key => $product) {
+
+                $index = $key++;
+
+                if (empty($product['name'])) {
+                    $errors[] = sprintf("Infomar o nome do produto %d", $index);
+                }
+
+                if (empty($product['quantity'])) {
+                    $errors[] = sprintf("Infomar a quantidade do produto %d", $index);
+                }
+
+                if (empty($product['unitary_value'])) {
+                    $errors[] = sprintf("Infomar o valor unitário do produto %d", $index);
+                }
+
+                if (empty($product['weight'])) {
+                    $errors[] = sprintf("Infomar o peso do produto %d", $index);
+                }
+
+                if (empty($product['width'])) {
+                    $errors[] = sprintf("Infomar a largura do produto %d", $index);
+                }
+
+                if (empty($product['height'])) {
+                    $errors[] = sprintf("Infomar a altura do produto %d", $index);
+                }
+
+                if (empty($product['length'])) {
+                    $errors[] = sprintf("Infomar o comprimento do produto %d", $index);
+                }
+            }
         }
 
-        if (!array_key_exists("products", $body)) {
-            $errors[] = sprintf("Informar o produtos do envio do pedido %s", $orderId);
+        if (empty($body['volumes'])) {
+            $errors[] = 'Informar o(s) volume(s) do envio.';
         }
 
-        if (!isset($body['volumes'])) {
-            $errors[] = sprintf("Informar os volumes do envio do pedido %s", $orderId);
+        if (!empty($body['volumes'])) {
+            if (empty($body['volumes']['height'])) {
+                $errors[] ="Informar a altura do volume.";
+            }
+
+            if (empty($body['volumes']['width'])) {
+                $errors[] = "Informar a largura do volume.";
+            }
+
+            if (empty($body['volumes']['length'])) {
+                $errors[] = "Informar o comprimento do volume.";
+            }
+
+            if (empty($body['volumes']['weight'])) {
+                $errors[] = "Informar o peso do volume.";
+            }
+        }
+
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
+        }
+
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
         }
 
         return $errors;
     }
+
+    /**
+     * Function to validate date address createPayloadToCart
+     * 
+     * @param string $key
+     * @param string $user
+     * @param array $body
+     * @param bool $isCorreios
+     * @return array
+     */
+    private function validateAddress($key, $user, $body, $isCorreios)
+    {
+        $errors = [];
+    
+        if (empty($body[$key])) {
+            $errors[] = "Informar o {$user} o pedido.";            
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->name)) {
+            $errors[] = "Informar o nome do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->phone) && !$isCorreios) {
+            $errors[] = "Informar o nome do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->email) && !$isCorreios) {
+            $errors[] = "Informar o e-mail do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->document) && !$isCorreios) {
+            $errors[] = "Informar o documento do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->address)) {
+            $errors[] = "Informar o endereço do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->number)) {
+            $errors[] = "Informar o número do endereço do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->city)) {
+            $errors[] = "Informar a cidade do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]) && empty($body[$key]->state_abbr)) {
+            $errors[] = "Informar o estado do {$user} do pedido.";
+        }
+
+        if (empty($body[$key]->postal_code)) {
+            $errors[] = "Informar o CEP do {$user} do pedido.";
+        }
+
+        if (!empty($body[$key]->postal_code)) {
+            $body[$key]->postal_code = PostalCodeHelper::postalcode($body[$key]->postal_code);
+            if (strlen($body[$key]->postal_code) != PostalCodeHelper::SIZE_POSTAL_CODE) {
+                $errors[] = "CEP do {$user} incorreto.";
+            }
+        }
+
+        return $errors;
+      }
 
     /** 
      * Function to get data and information about items in the shopping cart
