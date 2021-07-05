@@ -195,8 +195,6 @@ final class Base_Plugin
             return false;
         }
 
-        (new NoticeFormService())->insertForm();
-
         if (empty($result['errorsPath'])) {
             @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
             include_once $pathPlugins . '/woocommerce/woocommerce.php';
