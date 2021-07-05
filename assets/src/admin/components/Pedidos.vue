@@ -570,12 +570,6 @@ export default {
     wpstatus() {
       this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
     },
-    //orders() {
-    //  this.getOrdersWithoutQuotations().then((response) => {
-    //    this.ordersToGetQuotations = response;
-    //    this.getQuotations();
-    //  });
-    //},
   },
   mounted() {
     this.getToken();
