@@ -56,7 +56,7 @@ class WooCommerceBundleProductsService
         return (object) [
             "id" => $product->get_id(),
             "name" => $product->get_name(),
-            "quantity" => 1, //todo: rever a quantidade.
+            "quantity" => 1,
             "unitary_value" => round($product->get_price(), 2),
             "insurance_value" => round($product->get_price(), 2),
             "weight" => DimensionsHelper::convertWeightUnit($product->get_weight()),
@@ -93,7 +93,7 @@ class WooCommerceBundleProductsService
         $products[] = (object)  [
             "id" => $productBunblde['id'],
             "name" => $productBunblde['name'],
-            "quantity" => 1, //todo: rever a quantidade.
+            "quantity" => 1,
             "unitary_value" => round($productBunblde['regular_price'], 2),
             "insurance_value" => round($productBunblde['regular_price'], 2),
             "weight" => DimensionsHelper::convertWeightUnit($weigthExtra),
@@ -119,7 +119,7 @@ class WooCommerceBundleProductsService
         $products[] = (object)  [
             "id" => $productBunblde['id'],
             "name" => $productBunblde['name'],
-            "quantity" => 1, //todo: rever a quantidade.
+            "quantity" => 1,
             "unitary_value" => round($productBunblde['regular_price'], 2),
             "insurance_value" => round($productBunblde['regular_price'], 2),
             "weight" => DimensionsHelper::convertWeightUnit($productBunblde['width']),
