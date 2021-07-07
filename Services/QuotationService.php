@@ -6,6 +6,7 @@ use Models\Option;
 use Models\Payload;
 use Helpers\SessionHelper;
 use Services\PayloadService;
+use Services\WooCommerceBundleProductsService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -120,6 +121,10 @@ class QuotationService
             $postalCode,
             $products
         );
+
+        //echo '<pre>';
+        //var_dump($payload);
+        //die;
 
         if (empty($payload)) {
             return false;

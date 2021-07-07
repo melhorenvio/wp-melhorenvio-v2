@@ -101,12 +101,12 @@ class ListOrderService
     public function hasOnlyVirtualProducts($products)
     {   
         foreach ($products as $product) {
-            if(!$product['is_virtual']) {
-                return false;
+            if($product->is_virtual) {
+                return true;
             }
         }
         
-        return true;
+        return false;
     }
 
     /**

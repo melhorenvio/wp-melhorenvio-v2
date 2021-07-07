@@ -80,19 +80,8 @@ class RequestService
             wp_remote_retrieve_body($responseRemote)
         );
 
-        $time_post = microtime(true);
-
-        $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
-
-        $responseCode = (!empty($responseRemote['response']['code'])) 
-            ? $responseRemote['response']['code'] 
-            : null;
-
-        if ($responseCode != 200) {
-            (new ClearDataStored())->clear();
-        }
-
         if (empty($response)) {
+            (new ClearDataStored())->clear();
             return (object) [
                 'success' => false,
                 'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],

@@ -215,7 +215,7 @@ class PayloadService
             return false;
         }
 
-        if (!empty($payload->products)) {
+        if (!empty($payload->products)) {    
             foreach ($payload->products as $product) {
                 if (!empty($product->is_virtual)) {
                     continue;
@@ -258,7 +258,7 @@ class PayloadService
             return false;
         }
 
-        if (empty($product->unitary_value)) {
+        if (!isset($product->unitary_value)) {
             return false;
         }
 

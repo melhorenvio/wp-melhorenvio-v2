@@ -143,7 +143,7 @@ class CartService
     private function removeVirtualProducts(&$products)
     {
         foreach ($products as $key => $product) {
-            if (!empty($product['is_virtual'])) {
+            if (!empty($product->is_virtual)) {
                 unset($products[$key]);
             }
         }
@@ -268,31 +268,31 @@ class CartService
 
                 $index = $key++;
 
-                if (empty($product['name'])) {
+                if (empty($product->name)) {
                     $errors[] = sprintf("Infomar o nome do produto %d", $index);
                 }
 
-                if (empty($product['quantity'])) {
+                if (empty($product->quantity)) {
                     $errors[] = sprintf("Infomar a quantidade do produto %d", $index);
                 }
 
-                if (empty($product['unitary_value'])) {
+                if (empty($product->unitary_value)) {
                     $errors[] = sprintf("Infomar o valor unitário do produto %d", $index);
                 }
 
-                if (empty($product['weight'])) {
+                if (empty($product->weight)) {
                     $errors[] = sprintf("Infomar o peso do produto %d", $index);
                 }
 
-                if (empty($product['width'])) {
+                if (empty($product->width)) {
                     $errors[] = sprintf("Infomar a largura do produto %d", $index);
                 }
 
-                if (empty($product['height'])) {
+                if (empty($product->height)) {
                     $errors[] = sprintf("Infomar a altura do produto %d", $index);
                 }
 
-                if (empty($product['length'])) {
+                if (empty($product->length)) {
                     $errors[] = sprintf("Infomar o comprimento do produto %d", $index);
                 }
             }
@@ -303,20 +303,22 @@ class CartService
         }
 
         if (!empty($body['volumes'])) {
-            if (empty($body['volumes']['height'])) {
-                $errors[] ="Informar a altura do volume.";
-            }
+            foreach ($body['volumes'] as $volume) {
+                if (empty($volume['height'])) {
+                    $errors[] ="Informar a altura do volume.";
+                }
 
-            if (empty($body['volumes']['width'])) {
-                $errors[] = "Informar a largura do volume.";
-            }
+                if (empty($volume['width'])) {
+                    $errors[] = "Informar a largura do volume.";
+                }
 
-            if (empty($body['volumes']['length'])) {
-                $errors[] = "Informar o comprimento do volume.";
-            }
+                if (empty($volume['length'])) {
+                    $errors[] = "Informar o comprimento do volume.";
+                }
 
-            if (empty($body['volumes']['weight'])) {
-                $errors[] = "Informar o peso do volume.";
+                if (empty($volume['weight'])) {
+                    $errors[] = "Informar o peso do volume.";
+                }
             }
         }
 
@@ -360,7 +362,7 @@ class CartService
             $errors[] = "Informar o e-mail do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->document) && !$isCorreios) {
+        if (!empty($body[$key]) && (empty($body[$key]->document) && empty($body[$key]->company_document)) && !$isCorreios) {
             $errors[] = "Informar o documento do {$user} do pedido.";
         }
 

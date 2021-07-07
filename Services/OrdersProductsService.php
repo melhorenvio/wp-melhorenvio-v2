@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Services\WooCommerceBundleProductsService;
 
 class OrdersProductsService
 {
@@ -37,7 +38,11 @@ class OrdersProductsService
                 $productsComposite[$key] = $productComposite;
             }
 
-            $products[$key] = [
+            if (get_class($_product) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE) {
+                return (new WooCommerceBundleProductsService())->getProductsByTypeBundle($_product, $item_product);
+            }
+
+            $products[] = (object) [
                 "id" => $_product->get_id(),
                 "name" => $_product->get_name(),
                 "quantity" => $item_product->get_quantity(),
