@@ -298,37 +298,57 @@ class CartService
             }
         }
 
-        if (empty($body['volumes'])) {
-            $errors[] = 'Informar o(s) volume(s) do envio.';
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
         }
 
-        foreach ($body['volumes'] as $volume) {
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
+        }
 
-            if (!empty($volume)) {
-                if (empty($volume['height'])) {
-                    $errors[] ="Informar a altura do volume.";
-                }
+        if (empty($body['volumes'])) {
+            $errors[] = 'Informar o(s) volume(s) do envio.';
+            return $errors;
+        }
 
-                if (empty($volume['width'])) {
-                    $errors[] = "Informar a largura do volume.";
-                }
+        if (empty($body['volumes'][0])) {
+            $errors = $this->validateVolume($body['volumes'], $errors);
+        }
 
-                if (empty($volume['length'])) {
-                    $errors[] = "Informar o comprimento do volume.";
-                }
-
-                if (empty($volume['weight'])) {
-                    $errors[] = "Informar o peso do volume.";
-                }
+        if (!empty($body['volumes'][0])) {
+            foreach ($body['volumes'] as $volume) {
+                $errors = $this->validateVolume($volume, $errors);
             }
         }
 
-        if (empty($body['options'])) {
-            $errors[] = 'Informar os opcionais do envio.';
-        }
+        return $errors;
+    }
 
-        if (empty($body['options'])) {
-            $errors[] = 'Informar os opcionais do envio.';
+    /**
+     * Function to validate volume
+     * 
+     * @param array $volume
+     * @param array $errors
+     * @return array
+     */
+    private function validateVolume($volume, $errors)
+    {
+        if (!empty($volume)) {
+            if (empty($volume['height'])) {
+                $errors[] ="Informar a altura do volume.";
+            }
+
+            if (empty($volume['width'])) {
+                $errors[] = "Informar a largura do volume.";
+            }
+
+            if (empty($volume['length'])) {
+                $errors[] = "Informar o comprimento do volume.";
+            }
+
+            if (empty($volume['weight'])) {
+                $errors[] = "Informar o peso do volume.";
+            }
         }
 
         return $errors;
