@@ -298,34 +298,57 @@ class CartService
             }
         }
 
-        if (empty($body['volumes'])) {
-            $errors[] = 'Informar o(s) volume(s) do envio.';
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
         }
 
-        if (!empty($body['volumes'])) {
-            if (empty($body['volumes']['height'])) {
+        if (empty($body['options'])) {
+            $errors[] = 'Informar os opcionais do envio.';
+        }
+
+        if (empty($body['volumes'])) {
+            $errors[] = 'Informar o(s) volume(s) do envio.';
+            return $errors;
+        }
+
+        if (empty($body['volumes'][0])) {
+            $errors = $this->validateVolume($body['volumes'], $errors);
+        }
+
+        if (!empty($body['volumes'][0])) {
+            foreach ($body['volumes'] as $volume) {
+                $errors = $this->validateVolume($volume, $errors);
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Function to validate volume
+     * 
+     * @param array $volume
+     * @param array $errors
+     * @return array
+     */
+    private function validateVolume($volume, $errors)
+    {
+        if (!empty($volume)) {
+            if (empty($volume['height'])) {
                 $errors[] ="Informar a altura do volume.";
             }
 
-            if (empty($body['volumes']['width'])) {
+            if (empty($volume['width'])) {
                 $errors[] = "Informar a largura do volume.";
             }
 
-            if (empty($body['volumes']['length'])) {
+            if (empty($volume['length'])) {
                 $errors[] = "Informar o comprimento do volume.";
             }
 
-            if (empty($body['volumes']['weight'])) {
+            if (empty($volume['weight'])) {
                 $errors[] = "Informar o peso do volume.";
             }
-        }
-
-        if (empty($body['options'])) {
-            $errors[] = 'Informar os opcionais do envio.';
-        }
-
-        if (empty($body['options'])) {
-            $errors[] = 'Informar os opcionais do envio.';
         }
 
         return $errors;
@@ -360,7 +383,7 @@ class CartService
             $errors[] = "Informar o e-mail do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->document) && !$isCorreios) {
+        if (!empty($body[$key]) && (empty($body[$key]->document) && empty($body[$key]->company_document)) && !$isCorreios) {
             $errors[] = "Informar o documento do {$user} do pedido.";
         }
 
