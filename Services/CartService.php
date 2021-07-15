@@ -302,21 +302,24 @@ class CartService
             $errors[] = 'Informar o(s) volume(s) do envio.';
         }
 
-        if (!empty($body['volumes'])) {
-            if (empty($body['volumes']['height'])) {
-                $errors[] ="Informar a altura do volume.";
-            }
+        foreach ($body['volumes'] as $volume) {
 
-            if (empty($body['volumes']['width'])) {
-                $errors[] = "Informar a largura do volume.";
-            }
+            if (!empty($volume)) {
+                if (empty($volume['height'])) {
+                    $errors[] ="Informar a altura do volume.";
+                }
 
-            if (empty($body['volumes']['length'])) {
-                $errors[] = "Informar o comprimento do volume.";
-            }
+                if (empty($volume['width'])) {
+                    $errors[] = "Informar a largura do volume.";
+                }
 
-            if (empty($body['volumes']['weight'])) {
-                $errors[] = "Informar o peso do volume.";
+                if (empty($volume['length'])) {
+                    $errors[] = "Informar o comprimento do volume.";
+                }
+
+                if (empty($volume['weight'])) {
+                    $errors[] = "Informar o peso do volume.";
+                }
             }
         }
 
@@ -360,7 +363,7 @@ class CartService
             $errors[] = "Informar o e-mail do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->document) && !$isCorreios) {
+        if (!empty($body[$key]) && (empty($body[$key]->document) && empty($body[$key]->company_document)) && !$isCorreios) {
             $errors[] = "Informar o documento do {$user} do pedido.";
         }
 
