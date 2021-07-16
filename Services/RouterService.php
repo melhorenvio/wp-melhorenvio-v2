@@ -4,6 +4,7 @@ namespace Services;
 
 use Controllers\AgenciesAzulController;
 use Controllers\AgenciesJadlogController;
+use Controllers\AgenciesLatamController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -14,6 +15,9 @@ use Controllers\TokenController;
 use Controllers\UsersController;
 use Controllers\PathController;
 use Controllers\PayloadsController;
+use Controllers\CartController;
+use Controllers\NoticeFormController;
+use Controllers\RequestsController;
 use Models\Version;
 
 /**
@@ -35,6 +39,11 @@ class RouterService
         $this->loadRoutesPath();
         $this->laodRoutesPayload();
         $this->loadRoutesNotices();
+        $this->loadRoutesTestUserWooCommerceData();
+        $this->loadRouteDataUser();
+        $this->loadRouteCart();
+        $this->loadRouteForm();
+        $this->loadRequestController();
     }
 
     /**
@@ -98,6 +107,7 @@ class RouterService
         $configurationsController = new ConfigurationController();
         $agenciesJadlogController = new AgenciesJadlogController();
         $agenciesAzulController = new AgenciesAzulController();
+        $agenciesLatamController = new AgenciesLatamController();
 
         add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
             if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
@@ -117,6 +127,16 @@ class RouterService
                 return $agenciesAzulController->getByStateUser();
             }
             return $agenciesAzulController->getByAddress($_GET['city'], $_GET['state']);
+        });
+
+        add_action('wp_ajax_get_agency_latam', function () use ($agenciesLatamController) {
+            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
+                return $agenciesLatamController->get();
+            }
+            if (!empty($_GET['my-state'])) {
+                return $agenciesLatamController->getByStateUser();
+            }
+            return $agenciesLatamController->getByAddress($_GET['city'], $_GET['state']);
         });
 
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
@@ -192,7 +212,7 @@ class RouterService
 
         foreach (['wp_ajax_get_address', 'wp_ajax_nopriv_get_address'] as $action) {
             add_action($action, function () use ($locationController) {
-                if (!isset($_GET['postal_code'])) {
+                if (empty($_GET['postal_code'])) {
                     return wp_send_json([
                         'error' => true,
                         'message' => 'Informar o campo "postal_code"'
@@ -225,7 +245,7 @@ class RouterService
         $payloadsController = new PayloadsController();
 
         add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
@@ -235,7 +255,7 @@ class RouterService
         });
 
         add_action('wp_ajax_get_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
@@ -245,13 +265,31 @@ class RouterService
         });
 
         add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
-            if (!isset($_GET['post_id'])) {
+            if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => 'Informar o campo "post_id"'
                 ], 400);
             }
             return $payloadsController->destroy($_GET['post_id']);
+        });
+
+        add_action('wp_ajax_get_payload_cart', function() use ($payloadsController) {
+            if (empty($_GET['post_id'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "post_id"'
+                ], 400);
+            }
+
+            if (empty($_GET['service'])) {
+                return wp_send_json([
+                    'error' => true,
+                    'message' => 'Informar o campo "service"'
+                ], 400);
+            }
+            
+            return $payloadsController->showPayloadCart($_GET['post_id'], $_GET['service']);
         });
     }
 
@@ -269,5 +307,92 @@ class RouterService
         add_action('wp_ajax_remove_notices', function () {
             (new SessionNoticeService())->remove($_GET['id']);
         });
+    }
+
+    public function loadRoutesTestUserWooCommerceData()
+    {
+        $locationService = new LocationService();
+
+        add_action('wp_ajax_test_user_woocommerce_data', function () use ($locationService) {
+
+            if (empty($_GET['postcode'])) {
+                return wp_send_json([
+                    'message' => 'Informar o parametro "postcode"'
+                ]);
+            }
+
+            $address = $locationService->getAddressByPostalCode($_GET['postcode']);
+
+            $userData = (new UserWooCommerceDataService())->set($address, true);
+
+            return wp_send_json($userData);
+        });
+    }
+
+    /*
+     * function to start user data routes
+     *
+     * @return void
+     */
+    public function loadRouteDataUser()
+    {
+        $usersController = new UsersController();
+
+        add_action('wp_ajax_user_woocommerce_data', function () use ($usersController) {
+            return wp_send_json([
+                'data' => $usersController->getFrom()
+            ]);
+        });
+    }
+
+    public function loadRouteCart()
+    {
+        $cartController = new CartController();
+
+        add_action('wp_ajax_show_cart', function () use ($cartController) {
+            return wp_send_json([
+                'data' => $cartController->getInfoCart()
+            ]);
+        });
+    }
+
+    /*
+     * function to start form routes
+     *
+     * @return void
+     */
+    public function loadRouteForm()
+    {
+        $formController = new NoticeFormController();
+
+        add_action('wp_ajax_open_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->openForm());
+        });
+
+        add_action('wp_ajax_show_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->showForm());
+        });
+
+        add_action('wp_ajax_hide_form_melhor_envio', function () use ($formController) {
+            return wp_send_json($formController->hideForm());
+        });
+    }
+
+    /*
+     * function to start requests routes
+     *
+     * @return void
+     */
+    public function loadRequestController()
+    {
+        $requestsController = new RequestsController;
+
+        add_action('wp_ajax_logs_requests', function () use ($requestsController) {
+           return $requestsController->getLogs();
+        });
+
+        add_action('wp_ajax_delete_logs_requests', function () use ($requestsController) {
+            return $requestsController->deleteLogs();
+         });
     }
 }

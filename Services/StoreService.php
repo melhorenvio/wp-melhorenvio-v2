@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\SessionHelper;
+
 class StoreService
 {
     const URL = 'https://api.melhorenvio.com';
@@ -53,9 +55,7 @@ class StoreService
      */
     public function getStores()
     {
-        if (empty(session_id())) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         $codeStore = md5(get_option('home'));
 

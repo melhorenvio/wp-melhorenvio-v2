@@ -437,37 +437,13 @@ const orders = {
         },
         createTicket: ({ commit }, data) => {
             commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=create_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-
-                if (!response.data.success) {
-                    commit('setMsgModal', response.data.message)
-                    commit('toggleLoader', false)
-                    commit('toggleModal', true)
-                    return false
-                }
-
-                commit('createTicket', data.id)
-                commit('setMsgModal', 'Item #' + data.id + ' gerado com sucesso')
-                commit('toggleModal', true)
-                commit('toggleLoader', false)
-            }).catch(error => {
-                commit('setMsgModal', error.message)
-                commit('toggleLoader', false)
-                commit('toggleModal', true)
-                return false
-            })
-        },
-        printTicket: ({ commit }, data) => {
-            commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-
                 if (!response.data.success) {
                     commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
                     return false
                 }
-
                 commit('printTicket', data.id)
                 commit('toggleLoader', false)
                 window.open(response.data.data.url, '_blank');
@@ -476,7 +452,7 @@ const orders = {
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 return false
-            })
+            });
         },
         getStatusWooCommerce: ({ commit }) => {
             Axios.get(`${ajaxurl}?action=get_status_woocommerce`).then(response => {

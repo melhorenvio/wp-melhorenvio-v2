@@ -107,16 +107,6 @@ class QuotationProductPageService
             ];
         }
 
-        if (empty($this->destination)) {
-            return [
-                'success' => false,
-                'error' => sprintf(
-                    "Não encontramos um endereço válido para o CEP %s",
-                    $this->postalCode
-                )
-            ];
-        }
-
         if (!is_int($this->quantity) || $this->quantity == 0) {
             return [
                 'success' => false,
@@ -124,7 +114,9 @@ class QuotationProductPageService
             ];
         }
 
-        $this->setAddressUserForWooCommerce();
+        if (!empty($this->destination)) {
+            (new UserWooCommerceDataService())->set($this->destination, false);
+        }
 
         $this->createPackageToCalculate();
 
@@ -148,15 +140,19 @@ class QuotationProductPageService
             }
         }
 
-        return [
-            'quotations' => $result,
-            'destination' => sprintf(
-                "%s, %s/%s (%s)",
-                $this->destination->logradouro,
+        $addressLabel = (!empty($this->destination))
+            ? sprintf(
+                "%s, %s/%s (%s)", 
+                $this->destination->logradouro, 
                 $this->destination->cidade,
                 $this->destination->uf,
                 $this->postalCode
-            )
+                )
+            : sprintf("CEP %s", $this->postalCode);
+
+        return [
+            'quotations' => $result,
+            'destination' => $addressLabel
         ];
     }
 
@@ -179,38 +175,12 @@ class QuotationProductPageService
             'ship_via'     => '',
             'destination'  => [
                 'country'  => 'BR',
-                'state'    => $this->destination->uf,
-                'postcode' => $this->destination->cep,
+                'state'    =>  (!empty( $this->destination->uf)) ? $this->destination->uf : null,
+                'postcode' => (!empty($this->destination->cep)) ? $this->destination->cep : $this->postalCode,
             ],
             'contents' => $contents,
             'contents_cost' => $this->product->get_price() * $this->quantity
         ];
-    }
-
-    /**
-     * Function to define the user's address obtained in the Melhor Envio to woocommerce
-     *
-     * @return void
-     */
-    private function setAddressUserForWooCommerce()
-    {
-        global $woocommerce;
-
-        if (!empty($this->destination->cep)) {
-            $woocommerce->customer->set_shipping_postcode($this->destination->cep);
-        }
-
-        if (!empty($this->destination->cidade)) {
-            $woocommerce->customer->set_shipping_city($this->destination->cidade);
-        }
-
-        if (!empty($this->destination->uf)) {
-            $woocommerce->customer->set_shipping_state($this->destination->uf);
-        }
-
-        if (!empty($this->destination->logradouro)) {
-            $woocommerce->customer->set_shipping_address($this->destination->logradouro);
-        }
     }
 
     /**

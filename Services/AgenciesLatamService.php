@@ -2,16 +2,16 @@
 
 namespace Services;
 
-use Models\Agency;
+use Models\AgencyLatam;
 
-class AgenciesJadlogService
+class AgenciesLatamService
 {
     const ROUTE_GET_AGENCIES = '/shipment/agencies';
 
-    const COMPANY_ID_JADLOG = 2;
+    const COMPANY_ID_LATAM = 6;
 
     /**
-     * function to get jadlog agencies on Melhor Envio API.
+     * function to get Latam agencies on Melhor Envio API.
      *
      * @return array
      */
@@ -22,12 +22,12 @@ class AgenciesJadlogService
         if (empty($seller->city)) {
             return (object) [
                 'success' => false,
-                'message' => 'Não foi possível obter as agências Jadlog'
+                'message' => 'Não foi possível obter a cidade cadastrada para obter as informações das unidades Latam'
             ];
         }
 
         $agencies = [];
-        if (!empty($seller->city) && !empty($seller->state_abbr)) {
+        if (!empty($seller->state_abbr)) {
             $agencies = $this->getByAddress($seller->city, $seller->state_abbr);
             if (empty($agencies->success)) {
                 $agencies = $this->getByState($seller->state_abbr);
@@ -38,7 +38,7 @@ class AgenciesJadlogService
             return (object) [
                 'success' => false,
                 'message' => sprintf(
-                    "Ocorreu um erro ao obter agências Jadlog para a cidade %s/%s",
+                    "Ocorreu um erro ao obter unidades Latam para a cidade %s/%s",
                     $seller->city,
                     $seller->state_abbr
                 )
@@ -49,7 +49,7 @@ class AgenciesJadlogService
     }
 
     /**
-     * function to get agencies jadlog by city
+     * function to get agencies Latam by city
      *
      * @param string $city
      * @param string $state
@@ -60,7 +60,7 @@ class AgenciesJadlogService
         $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s&city=%s",
             self::ROUTE_GET_AGENCIES,
-            self::COMPANY_ID_JADLOG,
+            self::COMPANY_ID_LATAM,
             $state,
             $city
         ));
@@ -76,7 +76,7 @@ class AgenciesJadlogService
     }
 
     /**
-     * function to get agencies jadlog by state
+     * function to get agencies Latam by state
      *
      * @param string $state
      * @return object
@@ -86,7 +86,7 @@ class AgenciesJadlogService
         $route = urldecode(sprintf(
             "%s?company=%d&country=BR&state=%s",
             self::ROUTE_GET_AGENCIES,
-            self::COMPANY_ID_JADLOG,
+            self::COMPANY_ID_LATAM,
             $state
         ));
 
@@ -99,7 +99,7 @@ class AgenciesJadlogService
     }
 
     /**
-     * function to get agencies jadlog states user
+     * function to get agencies Latam states user
      *
      * @return array
      */
@@ -120,22 +120,16 @@ class AgenciesJadlogService
      */
     public function markAsSelectedByUser($agencies)
     {
-        $selectedAgency = (new Agency())->getSelected();
-
-        if (empty($agencies)) {
-            return null;
-        }
+        $selectedAgency = (new AgencyLatam())->getSelected();
 
         if (empty($selectedAgency)) {
             return $agencies;
         }
 
-        return array_map(function ($agency) use ( $selectedAgency) {
+        return array_map(function ($agency) use ($selectedAgency) {
             $data = (array) $agency;
-            if (!empty($data['id'])) {
-                $data['selected'] = ($data['id'] === $selectedAgency);
-                return (object) $data;
-            }
+            $data['selected'] = ($data['id'] === $selectedAgency);
+            return (object) $data;
         }, (array) $agencies);
     }
 
@@ -147,7 +141,7 @@ class AgenciesJadlogService
      */
     public function getSelectedAgencyOrAnyByCityUser()
     {
-        $selectedAgency = (new Agency())->getSelected();
+        $selectedAgency = (new AgencyLatam())->getSelected();
 
         if (!empty($selectedAgency)) {
             return $selectedAgency;

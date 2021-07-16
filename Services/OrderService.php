@@ -2,7 +2,9 @@
 
 namespace Services;
 
+use Models\Order;
 use Models\Method;
+use Models\ShippingService;
 
 class OrderService
 {
@@ -23,6 +25,8 @@ class OrderService
     const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
 
     const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/search?q=';
+
+    const DEFAULT_METHOD_ID = 'melhorenvio_correios_sedex';
 
     /**
      * Function to cancel order on api Melhor Envio.
@@ -248,6 +252,12 @@ class OrderService
             'mode' => 'public'
         ];
 
+        $data = (new OrderQuotationService())->getData($postId);
+
+        if ($data['status'] == Order::STATUS_GENERATED) {
+            return $data;
+        }
+
         $result = (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CREATE_LABEL,
             'POST',
@@ -268,7 +278,7 @@ class OrderService
             $postId,
             $data['order_id'],
             $data['protocol'],
-            'generated',
+            Order::STATUS_GENERATED,
             $data['choose_method'],
             $data['purchase_id'],
             $data['tracking']
@@ -305,7 +315,7 @@ class OrderService
             $postId,
             $data['order_id'],
             $data['protocol'],
-            'released',
+            Order::STATUS_RELEASED,
             $data['choose_method'],
             $data['purchase_id'],
             $data['tracking']
@@ -450,7 +460,7 @@ class OrderService
                 }
             }
 
-            if ($data['status'] == 'pending') {
+            if ($data['status'] == Order::STATUS_PENDING) {
                 $data = $this->payByOrderId($postId, $data['order_id']);
 
                 if (isset($data['message'])) {
@@ -458,7 +468,7 @@ class OrderService
                 }
             }
 
-            if ($data['status'] == 'paid') {
+            if ($data['status'] == Order::STATUS_PAID) {
                 $data = $this->createLabel($postId);
 
                 if (isset($data['message'])) {
@@ -472,7 +482,7 @@ class OrderService
                 $orders[$postId] = $data['order_id'];
             }
 
-            if ($data['status'] == 'generated' || $data['status'] == 'released') {
+            if ($data['status'] == Order::STATUS_GENERATED || $data['status'] == Order::STATUS_RELEASED) {
                 if (isset($data['message'])) {
                     $errors[$postId][] = $data['message'];
                 }
@@ -498,5 +508,26 @@ class OrderService
             'url' => $result->url,
             'errors' => $errors
         ];
+    }
+
+    /**
+     * Function to get method_id selected by postId
+     *
+     * @param $postId
+     * @return int|bool
+     */
+    public function getMethodIdSelected($postId)
+    {
+        $order = wc_get_order( $postId );
+        $items = $order->get_items( 'shipping' );
+        if (empty($items)) {
+           return false;
+        }
+        $shipping_item_data = end($items)->get_data();
+        $method_id = (empty($shipping_item_data['method_id']))
+            ? self::DEFAULT_METHOD_ID
+            : $shipping_item_data['method_id'];
+
+        return ShippingService::getCodeByMethodId($method_id);
     }
 }
