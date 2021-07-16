@@ -6,6 +6,7 @@ use Models\Method;
 use Models\Option;
 use Models\Payload;
 use Models\ShippingService;
+use Helpers\PostalCodeHelper;
 
 class PayloadService
 {
@@ -37,6 +38,37 @@ class PayloadService
         unset($payload->seller);
         unset($payload->buyer);
 
+        if (!$this->validatePayload($payload)) {
+            return false;
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Function to view payload to add item cart.
+     * 
+     * @param int $postId
+     * @param int $methodId
+     * @return array
+     */
+    public function getPayloadToCart($postId, $methodId)
+    {
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
+
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+
+        $payload =  (new CartService())->createPayloadToCart(
+            $postId, 
+            $products, 
+            $buyer, 
+            $methodId
+        );
+
+        if (!$this->validatePayload($payload)) {
+            return false;
+        }
+
         return $payload;
     }
 
@@ -57,7 +89,7 @@ class PayloadService
         $productsFilter = $productService->filter($products);
         $serviceId = (new Method($postId))->getMethodShipmentSelected($postId);
 
-        return (object) [
+        $paylod = (object) [
             'from' => (object) [
                 'postal_code' => $seller->postal_code,
             ],
@@ -82,6 +114,12 @@ class PayloadService
             'shipping_total' => $order->get_shipping_total(),
             'created' => date('Y-m-d h:i:s')
         ];
+
+        if (!$this->validatePayload($payload)) {
+            return false;
+        }
+
+        return $payload;
     }
 
     /**
@@ -101,7 +139,7 @@ class PayloadService
 
         $productsFilter = $productService->filter($products);
 
-        return  (object) [
+        $payload =  (object) [
             'from' => (object) [
                 'postal_code' => $seller->postal_code,
             ],
@@ -112,10 +150,17 @@ class PayloadService
             'options' => (object) [
                 'own_hand' => $options->own_hand,
                 'receipt' => $options->receipt,
-                'insurance_value' => $productService->getInsuranceValue($productsFilter)
+                'insurance_value' => $productService->getInsuranceValue($productsFilter),
+                'use_insurance_value' => $options->insurance_value
             ],
             'products' => (object) $productsFilter
         ];
+
+        if (!$this->validatePayload($payload)) {
+            return false;
+        }
+
+        return $payload;
     }
 
     /**
@@ -134,5 +179,93 @@ class PayloadService
         );
 
         return $payload;
+    }
+
+    /**
+     * Function to validate payload.
+     * 
+     * @param object $payload
+     * @return bool
+     */
+    public function validatePayload($payload)
+    {
+        if (gettype($payload) != "object") {
+            return false;
+        }
+        
+        if (empty($payload->from) || empty($payload->from->postal_code)) {
+            return false;
+        }
+
+        $from = PostalCodeHelper::postalcode($payload->from->postal_code);
+        if (strlen($from) != PostalCodeHelper::SIZE_POSTAL_CODE) {
+            return false;
+        }
+
+        if (empty($payload->to) || empty($payload->to->postal_code)) {
+            return false;
+        }
+
+        $to = PostalCodeHelper::postalcode($payload->to->postal_code);
+        if (strlen($to) != PostalCodeHelper::SIZE_POSTAL_CODE) {
+            return false;
+        }
+
+        if (empty($payload->options)) {
+            return false;
+        }
+
+        if (!empty($payload->products)) {
+            foreach ($payload->products as $product) {
+                if (!empty($product->is_virtual)) {
+                    continue;
+                }
+
+                if (!$this->isProductValid($product)) {
+                    return false;
+                }
+           }
+        }
+
+        return true;
+    }
+
+    /**
+     * validates if the payload product is valid.
+     * 
+     * @param object $product
+     * @return bool
+     */
+    private function isProductValid($product)
+    {
+        if (empty($product->name)) {
+            return false;
+        }
+
+        if (empty($product->width)) {
+            return false;
+        }
+
+        if (empty($product->height)) {
+            return false;
+        }
+
+        if (empty($product->length)) {
+            return false;
+        }
+
+        if (empty($product->weight)) {
+            return false;
+        }
+
+        if (empty($product->unitary_value)) {
+            return false;
+        }
+
+        if (empty($product->quantity)) {
+            return false;
+        }
+
+        return true;
     }
 }

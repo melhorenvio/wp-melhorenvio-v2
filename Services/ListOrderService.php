@@ -10,7 +10,7 @@ class ListOrderService
      * Function to return the list of orders
      *
      * @param array $args
-     * @return void
+     * @return array
      */
     public function getList($args)
     {
@@ -54,10 +54,18 @@ class ListOrderService
 
         $translateHelper = new TranslateStatusHelper();
 
+        $productService = new OrdersProductsService();
+
         foreach ($posts as $post) {
             $postId = $post->ID;
 
             $invoice = (new InvoiceService())->getInvoice($postId);
+
+            $products = $productService->getProductsOrder($postId);
+
+            if ($this->hasOnlyVirtualProducts($products)) {
+                continue;
+            }
 
             $orders[] = [
                 'id' => $postId,
@@ -73,15 +81,32 @@ class ListOrderService
                 'order_id' => $statusMelhorEnvio[$postId]['order_id'],
                 'service_id' => $statusMelhorEnvio[$postId]['service_id'],
                 'protocol' => $statusMelhorEnvio[$postId]['protocol'],
-                'non_commercial' => (is_null($invoice['number']) || is_null($invoice['key'])) ? true : false,
+                'non_commercial' => is_null($invoice['number']) || is_null($invoice['key']),
                 'invoice'        => $invoice,
-                'products' => (new OrdersProductsService())->getProductsOrder($postId),
+                'products' => $products,
                 'quotation' => $quotationService->calculateQuotationByPostId($postId),
                 'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
 
         return $orders;
+    }
+
+    /**
+     * Function to check if the products informed are all virtual.
+     * 
+     * @param array $products
+     * @return bool
+     */
+    public function hasOnlyVirtualProducts($products)
+    {   
+        foreach ($products as $product) {
+            if(!$product['is_virtual']) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     /**

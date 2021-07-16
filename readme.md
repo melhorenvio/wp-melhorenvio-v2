@@ -1,15 +1,23 @@
-=== Melhor Envio V2 ===
-Version: 2.9.5
-Author: Melhor Envio
-Author URI: melhorenvio.com.br
-License: GPL2
+=== Melhor Envio ===
+Version: 2.9.14
+Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
+Requires at least: 4.7
+Tested up to: 5.7.2
+Stable tag: 2.9.14
+Requires PHP: 5.6+
+Requires Wordpress 4.0+
+Requires WooCommerce 4.0+
+License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: baseplugin
-Tested up to: 5.6
-Requires PHP: 5.6
+
+Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
 
 == Description ==
-# Plugin Melhor Envio
+Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
+A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
+Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
+Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema.
+
 Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
 A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
 Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
@@ -26,11 +34,6 @@ Com a instalação do plugin do Woocomerce você pode ampliar ainda mais a autom
 - Gerar, imprimir ou cancelar etiquetas do Melhor Envio pelo painel do Wordpress.
 - Adicionar taxas e tempo extra para as etiquetas (exemplo: inserir um custo extra para embalagem, aumentar 2 dias no tempo de entrega).
 - Possibilidade de selecionar a Jadlog como agência padrão para geração de etiquetas.
-
-### Pré-requisitos
-- PHP v.5.6
-- Wordpress 4.0+
-- WooCommerce 4.0+
 
 ### Compatibilidade
 Caso seja utilizado algum outro plugin que altere o Woocommerce não é garantida a sua compatibilidade, como plugins que adicionam ao Woocommerce funcionalidades de marketplace.
@@ -64,3 +67,28 @@ Não esqueça de cadastrar de forma correta as medidas do produto na aba de entr
 Observação: Atenção com as medidas de unidades utilizadas, cuidado se você está utilizando gramas ou quilos, metros ou centímetros, isso vai aplicar no valor da cotação e no bom funcionamento da calculadora de fretes do Melhor Envio.
  
 Pronto! o plugin do Melhor Envio está funcionando.
+
+== Changelog ==
+= 2.9.14 =
+* Ajustes validações payload para API do Melhor Envio
+* Ajuste no uso de valor segurado nas cotações
+* Adição de uso de CNAE para transportadoras privadas
+* Validações para CEP
+
+= 2.9.11 =
+* Validação de cep de destino para cotação
+
+= 2.9.10 =
+* Correção do aviso de erro de session_start()
+* Correção do problema ocorrido em algumas lojas ao inserir produtos no carrinho de compras
+
+= 2.9.9 =
+* Criando helper para iniciar session
+* Correções de warning de PHP
+* Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
+* Correção no processo de finalização de compras de produtos virtuais
+* Ajuste para usar valores com centavos nas taxas extras de envios
+* Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
+* Correção do problema de link de rastreio na aba de pedidos dos clientes
+* Ajuste erro 500 na listagem de pedidos
+* Removendo listagem duplicada de rastreio
