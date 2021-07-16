@@ -1,5 +1,5 @@
 === Melhor Envio ===
-Version: 2.9.12
+Version: 2.9.13
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
 Tested up to: 5.7.2
@@ -69,7 +69,7 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
-= 2.9.12 =
+= 2.9.13 =
 * Ajustes validações payload para API do Melhor Envio
 * Ajuste no uso de valor segurado nas cotações
 * Adição de uso de CNAE para transportadoras privadas
