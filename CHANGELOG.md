@@ -1,5 +1,5 @@
 ### Changelog
-### [2.9.13]
+### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
 - Ajuste no uso de valor segurado nas cotações
 - Adição de uso de CNAE para transportadoras privadas
