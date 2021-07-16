@@ -38,7 +38,8 @@ class TestService
             'metrics' => $this->getMetrics(),
             'path' => $this->getPluginsPath(),
             'options' => (new Option())->getOptions(),
-            'plugins' => $this->getInstalledPlugins()
+            'plugins' => $this->getInstalledPlugins(),
+            'shipping-methods' => $this->getShippingMethods()
         ];
 
         if (isset($_GET['postalcode'])) {
@@ -65,12 +66,12 @@ class TestService
                 }
 
                 $response['quotation'][$item->id] = [
-                    "Serviço" => $item->name,
-                    "Valor" => $item->price,
-                    'Erro' => $item->error,
+                    'Serviço' => $item->name,
+                    'Valor' => isset($item->price) ? $item->price : null,
+                    'Erro' => isset($item->error) ? $item->error : null,
                     'Entrega' => (isset($item->delivery_range))
                         ? sprintf(
-                            "%d a %d dias",
+                            '%d a %d dias',
                             $item->delivery_range->min,
                             $item->delivery_range->max
                         )
@@ -186,5 +187,34 @@ class TestService
             'weight_unit' => get_option('woocommerce_weight_unit'),
             'dimension_unit' => get_option('woocommerce_dimension_unit')
         ];
+    }
+
+    /**
+     * function to return shipping methods selected by user.
+     *
+     * @return array
+     */
+    private function getShippingMethods()
+    {
+        $shippingMethods = (new ShippingMelhorEnvioService())
+            ->getMethodsActivedsMelhorEnvio();
+
+        $response = [];
+
+        foreach ($shippingMethods as $item) {
+            if ($item->enabled == 'yes') {
+                $response[$item->code][] = [
+                    'title' => $item->method_title,
+                    'custom-title' => $item->title,
+                    'additional' => [
+                        'additional_tax' => $item->instance_settings['additional_tax'],
+                        'percent_tax' => $item->instance_settings['percent_tax'],
+                        'additional_time' => $item->instance_settings['additional_time'],
+                    ]
+                ];
+            }
+        }
+
+        return $response;
     }
 }

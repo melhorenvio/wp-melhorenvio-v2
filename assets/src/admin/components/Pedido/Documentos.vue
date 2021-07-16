@@ -7,6 +7,7 @@
             item.quotation.choose_method == services.JADLOG_PACKAGE ||
             item.quotation.choose_method == services.JADLOG_COM ||
             item.quotation.choose_method == services.LATAM ||
+            item.quotation.choose_method == services.LATAM_JUNTOS ||
             item.quotation.choose_method == services.AZUL_AMANHA ||
             item.quotation.choose_method == services.AZUL_ECOMMERCE
           "
@@ -23,9 +24,10 @@
           v-if="
             ((item.quotation.choose_method == services.JADLOG_PACKAGE ||
               item.quotation.choose_method == services.JADLOG_COM ||
-              item.quotation.choose_method == services.JADLOG_LATAM) &&
+              item.quotation.choose_method == services.LATAM ||
+              item.quotation.choose_method == services.LATAM_JUNTOS) &&
               !item.non_commercial) ||
-            item.quotation.choose_method == services.VIA_BRASIL_AERO ||
+            item.quotation.choose_method == services.VIA_BRASIL_AEREO ||
             item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
           "
         >

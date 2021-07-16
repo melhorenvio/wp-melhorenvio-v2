@@ -6,6 +6,15 @@ use Services\OrderQuotationService;
 
 class Order
 {
+    // Não confundir esses status com os status utlizados no Melhor Envio.
+
+    const STATUS_GENERATED = 'generated';
+
+    const STATUS_RELEASED = 'released';
+
+    const STATUS_PAID = 'paid';
+
+    const STATUS_PENDING = 'pending';
 
     private $id;
 

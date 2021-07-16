@@ -4,6 +4,8 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
+use Helpers\SessionHelper;
+use Services\PayloadService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -21,7 +23,7 @@ class QuotationService
      */
     public function calculate($payload, $useInsuranceValue)
     {
-        if (empty($payload->to->postal_code)) {
+        if (empty($payload)) {
             return false;
         }
 
@@ -75,7 +77,7 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
-        $payload = (new Payload())->get($postId);
+        $payload  = (new Payload())->get($postId);
 
         if (empty($payload)) {
             $products = (new OrdersProductsService())->getProductsOrder($postId);
@@ -86,11 +88,15 @@ class QuotationService
             );
         }
 
+        if (!(new PayloadService())->validatePayload($payload)) {
+            return false;
+        }
+
         $quotations = $this->calculate(
             $payload,
             (isset($payload->options->use_insurance_value))
                 ? $payload->options->use_insurance_value
-                : $payload->options->insurance_value
+                : false
         );
 
         return (new OrderQuotationService())->saveQuotation($postId, $quotations);
@@ -100,7 +106,7 @@ class QuotationService
      * Function to calculate a quotation by products.
      *
      * @param array $products
-     * @param  string $postal_code
+     * @param string $postalCode
      * @param int $service
      * @return array|false|object
      */
@@ -115,10 +121,13 @@ class QuotationService
             $products
         );
 
+        if (empty($payload)) {
+            return false;
+        }
+
         $options = (new Option())->getOptions();
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);
-
 
         if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);
@@ -138,9 +147,7 @@ class QuotationService
      */
     private function storeQuotationSession($bodyQuotation, $quotation)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         $quotation = $this->orderingQuotationByPrice($quotation);
 
@@ -222,12 +229,10 @@ class QuotationService
     {
         $hash = $this->generateHashQuotation($bodyQuotation);
 
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        SessionHelper::initIfNotExists();
 
         if (!isset($_SESSION['quotation'][$hash])) {
-            unset($_SESSION['quotation'][$hash]);
+            unset($_SESSION['quotation']);
             return false;
         }
 

@@ -1,4 +1,39 @@
 ### Changelog
+### [2.9.14]
+- Ajustes validações payload para API do Melhor Envio
+- Ajuste no uso de valor segurado nas cotações
+- Adição de uso de CNAE para transportadoras privadas
+- Validações para CEP
+
+### [2.9.11]
+- Validação de cep de destino para cotação
+
+### [2.9.10]
+- Correção do aviso de erro de session_start()
+- Correção do problema ocorrido em algumas lojas ao inserir produtos no carrinho de compras
+
+### [2.9.9]
+- Criando helper para iniciar session
+- Correções de warning de PHP
+- Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
+- Correção no processo de finalização de compras de produtos virtuais
+- Ajuste para usar valores com centavos nas taxas extras de envios
+- Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
+- Correção do problema de link de rastreio na aba de pedidos dos clientes
+- Ajuste erro 500 na listagem de pedidos
+- Removendo listagem duplicada de rastreio
+
+### [2.9.7]
+- Ajuste na finalização de pedidos de produtos virtuais e remoção de pedidos virtuais na listagem de pedidos do plugin. 
+
+### [2.9.6]
+- Ajustes no método de serviço selecionado pelo comprador.
+- Função para utilizar sempre a maior taxa, prazo ou percentual extra com base nas classes de entregas dos produtos inseridos no carrinho de compras.
+- Listagem de plugins incompatíveis.
+-  Ajuste no redirecionamento após salvar o token do Melhor Envio.
+- Adicionando serviço LATAM CArgo Juntos
+- Adicioando seletor de unidades LATAM Cargos no painel administrativo
+
 ### [2.9.5]
 - Encerando session após escrita.
 - Correção de warning de encerrar session antes de realizar requests HTTP.

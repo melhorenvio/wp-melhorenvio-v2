@@ -61,6 +61,9 @@ class OrdersController
             $service
         );
 
+        if (empty($result['success']) && $result['errors'] == 'validation.nfe') {
+            $result['errors'] = "A chave e a nota fiscal estão incorretas, por favor verificar as mesmas";
+        }
 
         if (!empty($result['errors'])) {
             return wp_send_json([
@@ -279,6 +282,13 @@ class OrdersController
     {
         $result = (new OrderService())->createLabel($_GET['id']);
 
+        if (empty($result['order_id'])) {
+            return wp_send_json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao gerar a etiqueta'
+            ], 400);
+        }
+
         return wp_send_json([
             'success' => true,
             'message' => 'Pedido gerado',
@@ -294,16 +304,14 @@ class OrdersController
      */
     public function printTicket()
     {
-        $createResult = (new OrderService())->createLabel($_GET['id']);
+        $result = (new OrderService())->printLabel($_GET['id']);
 
-        if (!isset($createResult['status'])) {
+        if (empty($result->url)) {
             return wp_send_json([
                 'success' => false,
-                'message' => 'Ocorreu um erro ao gerar a etiqueta'
+                'message' => 'Ocorreu um erro ao imprimir a etiqueta'
             ], 400);
         }
-
-        $result = (new OrderService())->printLabel($_GET['id']);
 
         return wp_send_json([
             'success' => true,
