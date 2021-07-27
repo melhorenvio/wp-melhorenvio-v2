@@ -95,7 +95,7 @@ class TrackingService
         add_action('woocommerce_my_account_my_orders_column_tracking', function ($order) {
 
             $text = 'Não disponível';
-            if (in_array($order->get_status(), ['processing', 'completed'])) {
+            if ($this->isWaitingToBePosted($order)) {
                 $text = 'Aguardando postagem';
                 $data = (new TrackingService())->getTrackingOrder($order->get_id());
             }
@@ -104,5 +104,14 @@ class TrackingService
                 ? sprintf("<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data)
                 : $text;
         });
+    }
+
+    /**
+     * @param $order
+     * @return bool
+     */
+    private function isWaitingToBePosted($order)
+    {
+        return in_array($order->get_status(), ['processing', 'completed']);
     }
 }
