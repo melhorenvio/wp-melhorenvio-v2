@@ -106,6 +106,8 @@ final class Base_Plugin
     {
         $this->version = Version::VERSION;
 
+        SessionHelper::initIfNotExists();
+
         $this->define_constants();
 
         register_activation_hook(__FILE__, array($this, 'activate'));
