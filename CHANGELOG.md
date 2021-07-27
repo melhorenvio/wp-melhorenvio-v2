@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.15]
+- Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
+
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
 - Ajuste no uso de valor segurado nas cotações
