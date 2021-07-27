@@ -14,7 +14,7 @@ class SessionHelper
      */
    public static function initIfNotExists()
    {
-        if (!self::exists()) {
+        if (!self::exists() && !empty($_SESSION)) {
             session_start();
         }
    }
