@@ -4,6 +4,7 @@ namespace Services;
 
 use Helpers\DimensionsHelper;
 use Models\Option;
+use Models\ResponseStatus;
 
 class TestService
 {
@@ -21,13 +22,13 @@ class TestService
         if (empty($_GET['hash'])) {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
-            ], 401);
+            ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
         if (md5($_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
-            ], 401);
+            ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
         $response = [
@@ -81,7 +82,7 @@ class TestService
             }
         }
 
-        return wp_send_json($response, 200);
+        return wp_send_json($response, ResponseStatus::HTTP_OK);
     }
 
     /**

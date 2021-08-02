@@ -5,6 +5,7 @@ namespace Services;
 use Services\ManageRequestService;
 use Services\ClearDataStored;
 use Models\Version;
+use Models\ResponseStatus;
 use Services\SessionNoticeService;
 
 class RequestService
@@ -33,7 +34,7 @@ class RequestService
         if (!$tokenData) {
             return wp_send_json([
                 'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
-            ], 401);
+            ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
         if ($tokenData['token_environment'] == 'production') {
@@ -89,7 +90,7 @@ class RequestService
             ? $responseRemote['response']['code'] 
             : null;
 
-        if ($responseCode == 401) {
+        if ($responseCode == ResponseStatus::HTTP_UNAUTHORIZED) {
            (new SessionNoticeService())->add(
                SessionNoticeService::NOTICE_INVALID_TOKEN, 
                SessionNoticeService::NOTICE_INFO
@@ -97,7 +98,7 @@ class RequestService
             (new ClearDataStored())->clear();
         }
 
-        if ($responseCode != 200) {
+        if ($responseCode != ResponseStatus::HTTP_OK) {
             (new ClearDataStored())->clear();
         }
 
