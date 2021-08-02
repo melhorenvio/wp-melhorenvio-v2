@@ -5,6 +5,7 @@ namespace Services;
 use Services\ManageRequestService;
 use Services\ClearDataStored;
 use Models\Version;
+use Services\SessionNoticeService;
 
 class RequestService
 {
@@ -88,6 +89,14 @@ class RequestService
             ? $responseRemote['response']['code'] 
             : null;
 
+        if ($responseCode == 401) {
+           (new SessionNoticeService())->add(
+               SessionNoticeService::NOTICE_INVALID_TOKEN, 
+               SessionNoticeService::NOTICE_INFO
+            );
+            (new ClearDataStored())->clear();
+        }
+
         if ($responseCode != 200) {
             (new ClearDataStored())->clear();
         }
@@ -100,7 +109,6 @@ class RequestService
         }
 
         if (!empty($response->message) && $response->message == 'Unauthenticated.') {
-            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
             return (object) [
                 'success' => false,
                 'errors' => ['Usuário não autenticado'],

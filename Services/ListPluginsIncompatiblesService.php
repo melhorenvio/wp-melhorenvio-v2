@@ -2,8 +2,6 @@
 
 namespace Services;
 
-use Helpers\NoticeHelper;
-
 class ListPluginsIncompatiblesService
 {
     const URL_PLUGINS_INCOMPATIBLES = 'https://wordpress-plugin.s3.us-east-2.amazonaws.com/plugins-incompatible.json';
@@ -25,9 +23,9 @@ class ListPluginsIncompatiblesService
 
         foreach ($installed as $plugin) {
             if (in_array($plugin, $incompatibles)) {
-                NoticeHelper::addNotice(
+                (new NoticeFormService())->add(
                     sprintf("O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.", $plugin),
-                    NoticeHelper::NOTICE_INFO
+                    NoticeFormService::NOTICE_INFO
                 );
             }
         }
