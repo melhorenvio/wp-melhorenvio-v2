@@ -1,6 +1,9 @@
 ### Changelog
-### [2.9.12]
-- Adição do cnae nas informações das lojas
+### [2.9.14]
+- Ajustes validações payload para API do Melhor Envio
+- Ajuste no uso de valor segurado nas cotações
+- Adição de uso de CNAE para transportadoras privadas
+- Validações para CEP
 
 ### [2.9.11]
 - Validação de cep de destino para cotação
