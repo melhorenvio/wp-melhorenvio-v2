@@ -32,13 +32,13 @@ class WooCommerceBundleProductsService
      * @param array item 
      * @return array
      */
-    public function getProductsByTypeBundle($orderId, $data, $item)
+    public function getProductsByTypeBundle($data, $item)
     {   
         $products = [];
         $productService = new ProductsService();
 
         //todo: crate method isVirtual bundle.
-        if (isset($data->virtual) && $data->virtual == 'yes') {
+        if ($this->isVIrtualBundle($data)) {
             foreach ($item->get_meta_data() as $dataItem) {
                 $dataEachItem = $dataItem->get_data();
                 if ($dataEachItem['key'] == '_stamp') {
@@ -134,5 +134,14 @@ class WooCommerceBundleProductsService
         }
 
         return $products;
+    }
+
+    /**
+     * @param object $data
+     * @return bool
+     */
+    private function isVIrtualBundle($data)
+    {
+        return isset($data->virtual) && $data->virtual == 'yes';
     }
 }
