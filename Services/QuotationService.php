@@ -128,12 +128,12 @@ class QuotationService
 
         $options = (new Option())->getOptions();
 
-        //$quotation = $this->getSessionCachedQuotation($payload, $service);
+        $quotation = $this->getSessionCachedQuotation($payload, $service);
 
-        //if (!$quotation) {
+        if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);
             $this->storeQuotationSession($payload, $quotation);
-        //}
+        }
 
         return $quotation;
     }
