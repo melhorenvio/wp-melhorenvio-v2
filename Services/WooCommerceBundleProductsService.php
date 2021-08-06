@@ -37,7 +37,6 @@ class WooCommerceBundleProductsService
         $products = [];
         $productService = new ProductsService();
 
-        //todo: crate method isVirtual bundle.
         if ($this->isVIrtualBundle($data)) {
             foreach ($item->get_meta_data() as $dataItem) {
                 $dataEachItem = $dataItem->get_data();

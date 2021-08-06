@@ -106,7 +106,7 @@ class ProductsService
                     'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
                     'unitary_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
                     'insurance_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
-                    'quantity' => 1 //todo: fazer isso.
+                    'quantity' => 1
                 ];
                 continue;
             }
