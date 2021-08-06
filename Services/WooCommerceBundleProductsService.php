@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Services\ProductsService;
 
 class WooCommerceBundleProductsService
 {
@@ -31,18 +32,62 @@ class WooCommerceBundleProductsService
      * @param array item 
      * @return array
      */
-    public function getProductsByTypeBundle($data, $item)
-    {
-        if ($data->aggregate_weight) {
-            return $this->getProductExternalWithAggregateWeight($data);
+    public function getProductsByTypeBundle($orderId, $data, $item)
+    {   
+        $products = [];
+        $productService = new ProductsService();
+
+        //todo: crate method isVirtual bundle.
+        if (isset($data->virtual) && $data->virtual == 'yes') {
+            foreach ($item->get_meta_data() as $dataItem) {
+                $dataEachItem = $dataItem->get_data();
+                if ($dataEachItem['key'] == '_stamp') {
+                    if (!empty($dataEachItem['value'])) {
+                        foreach ($dataEachItem['value'] as $product) {
+                            $products[$product['product_id']] = $productService->getProduct(
+                                $product['product_id'], 
+                                $product['quantity']
+                            );
+                        }
+                    }
+                }
+            }
+
+            return $products;
         }
 
-        if (!$data->aggregate_weight && $data->layout == self::TYPE_LAYOUT_BUNDLE_DEFAULT) {
-            return $this->getOnlyProductsInternalBundle($data);
-        }  
+        $productBunblde = $data->get_data();
 
-        return $this->getProductExternalWithoutAggregateWeight($data);
+        $productExternal = [
+            "id" => $productBunblde['id'],
+            "name" => $productBunblde['name'],
+            "quantity" => 1,
+            "unitary_value" => round($productBunblde['regular_price'], 2),
+            "insurance_value" => round($productBunblde['regular_price'], 2),
+            "weight" => DimensionsHelper::convertWeightUnit($productBunblde['weight']),
+            "width" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['width']),
+            "height" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['height']),
+            "length" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['length']),
+            "is_virtual" => false
+        ];
 
+        if ($data->aggregate_weight) {
+            $weigthExtra = 0;
+            foreach ($data->get_bundled_items() as $key => $item_product) {
+                $product_id = $item_product->data->get_product_id(); 
+                if( !empty($product_id)) {
+                    $product = wc_get_product( $product_id );
+                    if (get_class($product) == self::OBJECT_PRODUCT_SIMPLE) {
+                        $weigthExtra = $weigthExtra + floatval($product->get_weight());
+                    }
+                }
+            }
+            $productExternal['weight'] = $productExternal['weight'] + $weigthExtra;
+        }
+
+        $products[] = (object)  $productExternal;
+
+        return $products;
     }
 
     /**
@@ -213,13 +258,39 @@ class WooCommerceBundleProductsService
     public static function manageProductsBundle($items)
     {
         $products = [];
-        foreach ($items as $key => $items) {
-            foreach ($items as $key2 => $item) {
-                if (in_array(get_class($item), [self::OBJECT_PRODUCT_SIMPLE, self::OBJECT_WOOCOMMERCE_BUNDLE])) {
-                    $products[] = $item;
+        $productService = new ProductsService();
+
+        foreach ($items as $key => $data) {
+            //Bundle Type: Unassembled
+            if (isset($data['bundled_by']) && isset($data['stamp'])) {
+                foreach ($data['stamp'] as $product) {
+                    $products[$product['product_id']] = $productService->getProduct(
+                        $product['product_id'], 
+                        $product['quantity']
+                    );
                 }
             }
+            
+            //Bundle Type: Assembled
+            //Assembled weight: Preserve Or Ignore
+            if (isset($data['bundled_items']) && isset($data['stamp'])) {
+                $productId = $data['data']->get_id();
+                $weight = 0;
+                foreach ($data['stamp'] as $product) {
+                    $productInternal = $productService->getProduct(
+                        $product['product_id'], 
+                        $product['quantity']
+                    );
+                    $weight = $weight + (float) $productInternal->weight;
+                }
+                
+
+                $product = $productService->getProduct($productId);
+                $product->weight = (float) $product->weight + $weight;
+                $products[$productId] = $product;
+            }
         }
+
         return $products;
     }
 }

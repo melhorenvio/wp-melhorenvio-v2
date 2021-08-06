@@ -60,9 +60,6 @@ class CalculateShippingMethodService
             $code
         );
 
-        //echo '<pre>';
-        //var_dump($result);die;
-
         if (is_array($result)) {
             $result = $this->extractOnlyQuotationByService($result, $code);
         }

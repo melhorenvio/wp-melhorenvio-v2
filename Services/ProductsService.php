@@ -8,6 +8,32 @@ use Services\WooCommerceBundleProductsService;
 class ProductsService
 {
     /**
+     * @param int $postId
+     * @param null|int $quantity
+     * @return object
+     */
+    public function getProduct(int $postId, int $quantity = null)
+    {
+        $product = wc_get_product($postId);
+
+        if (empty($quantity)) {
+            $quantity = 1;
+        }
+
+        return (object) [
+            'id' => $postId,
+            'name' => $product->get_name(),
+            'quantity' => $quantity,
+            'unitary_value' => $product->get_price(),
+            'insurance_value' => ($product->get_price() * $quantity),
+            'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
+            'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
+            'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
+            'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
+        ];
+    }
+
+    /**
      * Function to obtain the insurance value of one or more products.
      *
      * @param array|object $products

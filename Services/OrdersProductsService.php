@@ -39,7 +39,7 @@ class OrdersProductsService
             }
 
             if (get_class($_product) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE) {
-                return (new WooCommerceBundleProductsService())->getProductsByTypeBundle($_product, $item_product);
+                return (new WooCommerceBundleProductsService())->getProductsByTypeBundle($orderId, $_product, $item_product);
             }
 
             $products[] = (object) [

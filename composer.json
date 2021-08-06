@@ -23,5 +23,8 @@
             "Bases\\": "core/bases/",
             "Helpers\\": "Helpers/"
         }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.3"
     }
 }
