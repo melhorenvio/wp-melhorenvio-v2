@@ -42,30 +42,30 @@ class WooCommerceBundleProductsService
                 $dataEachItem = $dataItem->get_data();
                 if ($dataEachItem['key'] == '_stamp') {
                     if (!empty($dataEachItem['value'])) {
-                        foreach ($dataEachItem['value'] as $product) {
+                        foreach ($dataEachItem['value'] as $product) {''
                             $products[$product['product_id']] = $productService->getProduct(
                                 $product['product_id'], 
-                                $product['quantity']
+                                $item->get_data()['quantity']
                             );
                         }
                     }
                 }
             }
-            return $products;
-        }
+            return $products;''
+        }''
 
-        $productBunblde = $data->get_data();
+        $productBundle = $data->get_data();
 
         $productExternal = [
-            "id" => $productBunblde['id'],
-            "name" => $productBunblde['name'],
-            "quantity" => 1,
-            "unitary_value" => round($productBunblde['regular_price'], 2),
-            "insurance_value" => round($productBunblde['regular_price'], 2),
-            "weight" => DimensionsHelper::convertWeightUnit($productBunblde['weight']),
-            "width" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['width']),
-            "height" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['height']),
-            "length" => DimensionsHelper::convertUnitDimensionToCentimeter($productBunblde['length']),
+            "id" => $productBundle['id'],
+            "name" => $productBundle['name'],
+            "quantity" => $item->get_data()['quantity'],
+            "unitary_value" => round($productBundle['regular_price'], 2),
+            "insurance_value" => round($productBundle['regular_price'], 2),
+            "weight" => DimensionsHelper::convertWeightUnit($productBundle['weight']),
+            "width" => DimensionsHelper::convertUnitDimensionToCentimeter($productBundle['width']),
+            "height" => DimensionsHelper::convertUnitDimensionToCentimeter($productBundle['height']),
+            "length" => DimensionsHelper::convertUnitDimensionToCentimeter($productBundle['length']),
             "is_virtual" => false
         ];
 
@@ -104,14 +104,14 @@ class WooCommerceBundleProductsService
                 foreach ($data['stamp'] as $product) {
                     $products[$product['product_id']] = $productService->getProduct(
                         $product['product_id'], 
-                        $product['quantity']
+                        $items[$key]['quantity']
                     );
                 }
             }
             
             //Bundle Type: Assembled
             if (isset($data['bundled_items']) && isset($data['stamp'])) {
-
+              
                 $productId = $data['data']->get_id();
                 
                 //Assembled weight: Preserve Or Ignore
@@ -120,13 +120,13 @@ class WooCommerceBundleProductsService
                     foreach ($data['stamp'] as $product) {
                         $productInternal = $productService->getProduct(
                             $product['product_id'], 
-                            $product['quantity']
+                            $data['quantity']
                         );
                         $weight = $weight + (float) $productInternal->weight;
                     }
                 }
 
-                $productInternal = $productService->getProduct($productId);
+                $productInternal = $productService->getProduct($productId,   $data['quantity']);
                 $productInternal->weight = (float) $productInternal->weight + $weight;
                 $products[$productId] = $productInternal;
             }

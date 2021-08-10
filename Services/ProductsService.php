@@ -19,8 +19,9 @@ class ProductsService
         if (empty($quantity)) {
             $quantity = 1;
         }
-
-        return (object) [
+        
+        return $this->normalize($product, $quantity);
+        /*return (object) [
             'id' => $postId,
             'name' => $product->get_name(),
             'quantity' => $quantity,
@@ -30,7 +31,7 @@ class ProductsService
             'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
             'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
             'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-        ];
+        ];*/
     }
 
     /**
@@ -91,23 +92,11 @@ class ProductsService
     public function filter($data)
     {
         $products = [];
-
-        $noticeService = new SessionNoticeService();
         foreach ($data as $item) {
             if (!is_array($item) && (get_class($item) == 'WC_Product_Simple' || get_class($item) == 'WC_Product_Bundle')) {
                 $data = $item->get_data();
                 $product = $item;
-                $products[] = (object) [
-                    'id' =>  $product->get_id(),
-                    'name' =>  $product->get_name(),
-                    'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-                    'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-                    'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-                    'unitary_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
-                    'insurance_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
-                    'quantity' => 1
-                ];
+                $products[] = $this->normalize($product, $item['quantity']);
                 continue;
             }
 
@@ -117,23 +106,17 @@ class ProductsService
             }
 
             $product = $item['data'];
-
-            $products[] = (object) [
-                'id' =>  $product->get_id(),
-                'name' =>  $product->get_name(),
-                'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-                'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-                'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-                'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-                'unitary_value' => floatval($product->get_price()),
-                'insurance_value' => floatval($product->get_price()),
-                'quantity' => intval($item['quantity'])
-            ];
+            $products[] = $this->normalize($product, $item['quantity']);
         }
 
         return $products;
     }
 
+    /**
+     * @param WC_Product_Simple $product
+     * @param int $quantity
+     * @return object
+     */
     private function normalize($product, $quantity = 1)
     {
         return (object) [
@@ -143,10 +126,9 @@ class ProductsService
             'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
             'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
             'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-            'unitary_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
-            'insurance_value' => (!empty($data['price'])) ? floatval($data['price']) : 0,
-            'quantity' =>   $quantity,
-            'class' => get_class($item)
+            'unitary_value' => floatval($product->get_price()),
+            'insurance_value' =>  floatval($product->get_price()),
+            'quantity' =>   $quantity
         ];
     }
 
