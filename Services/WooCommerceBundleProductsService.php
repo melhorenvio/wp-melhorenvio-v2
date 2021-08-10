@@ -37,7 +37,7 @@ class WooCommerceBundleProductsService
         $products = [];
         $productService = new ProductsService();
 
-        if ($this->isVIrtualBundle($data)) {
+        if ($this->isVirtualBundle($data)) {
             foreach ($item->get_meta_data() as $dataItem) {
                 $dataEachItem = $dataItem->get_data();
                 if ($dataEachItem['key'] == '_stamp') {
@@ -139,7 +139,7 @@ class WooCommerceBundleProductsService
      * @param object $data
      * @return bool
      */
-    private function isVIrtualBundle($data)
+    private function isVirtualBundle($data)
     {
         return isset($data->virtual) && $data->virtual == 'yes';
     }
