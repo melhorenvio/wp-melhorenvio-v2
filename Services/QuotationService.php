@@ -130,7 +130,7 @@ class QuotationService
 
         $quotation = $this->getSessionCachedQuotation($payload, $service);
 
-        if (!$quotation) { //todo: remove this comment
+        if (!$quotation) {
             $quotation = $this->calculate($payload, $options->insurance_value);
             $this->storeQuotationSession($payload, $quotation);
         }
