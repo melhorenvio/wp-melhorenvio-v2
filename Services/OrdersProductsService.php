@@ -44,10 +44,6 @@ class OrdersProductsService
                         $metas,
                         $products
                     );
-                    foreach ($products as $product) {
-                        //$quantities = $this->incrementQuantity($product->id, $quantities, $product->quantity);
-                    }
-                    continue;
                 }
 
                 if ($internalOrExternal == WooCommerceBundleProductsService::BUNDLE_TYPE_EXTERNAL) {
