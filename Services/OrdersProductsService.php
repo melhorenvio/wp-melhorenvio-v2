@@ -26,7 +26,10 @@ class OrdersProductsService
 
         $products = [];
 
+        $quantities = [];
+
         $productsIgnoreBundle = [];
+
         $wooCommerceBundleProductService = new WooCommerceBundleProductsService();
 
         foreach ($order->get_items() as $key => $item_product) {    
@@ -41,6 +44,9 @@ class OrdersProductsService
                         $metas,
                         $products
                     );
+                    foreach ($products as $product) {
+                        //$quantities = $this->incrementQuantity($product->id, $quantities, $product->quantity);
+                    }
                     continue;
                 }
 
@@ -53,6 +59,7 @@ class OrdersProductsService
                         $item_product->get_data(), 
                         $metas
                     );
+                    $quantities = $this->incrementQuantity($product->id, $quantities, $product->quantity);
                     $products[$product->id] = $product;
                     continue;
                 }
@@ -86,6 +93,7 @@ class OrdersProductsService
                     "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
                     "is_virtual" => $_product->get_virtual()
                 ];
+                $quantities = $this->incrementQuantity($_product->get_id(), $quantities, $item_product->get_quantity());
             }
         }
 
@@ -96,6 +104,29 @@ class OrdersProductsService
             );
         }
 
+       foreach ($products as $key => $product) {
+            if(!empty($quantities[$product->id])) {
+                $products[$key]->quantity = $quantities[$product->id];
+            }
+       }
+
         return $products;
+    }
+
+    /**
+     * @param int $productId
+     * @param array $quantities
+     * @param int $quantity
+     * @return array
+     */
+    public function incrementQuantity($productId, $quantities, $quantity)
+    {
+        $actualQuantity = $quantities[$productId];
+        if (empty($actualQuantity)) {
+            $actualQuantity = 0;
+        }
+
+        $quantities[$productId] = $actualQuantity + $quantity;
+       return $quantities;
     }
 }

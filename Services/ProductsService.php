@@ -108,6 +108,13 @@ class ProductsService
      */
     private function normalize($product, $quantity = 1)
     {
+        $price = floatval($product->get_price());
+        if ($price == 0) {
+            $data = $product->get_data();
+            if (isset($data['price'])) {
+                $price = floatval($data['price']);
+            }
+        }
         return (object) [
             'id' =>  $product->get_id(),
             'name' =>  $product->get_name(),
@@ -115,8 +122,8 @@ class ProductsService
             'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
             'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
             'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-            'unitary_value' => floatval($product->get_price()),
-            'insurance_value' =>  floatval($product->get_price()),
+            'unitary_value' => $price,
+            'insurance_value' =>  $price,
             'quantity' =>   $quantity,
             'class' => get_class($product)
         ];
