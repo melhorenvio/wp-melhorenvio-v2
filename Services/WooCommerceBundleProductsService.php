@@ -12,6 +12,10 @@ class WooCommerceBundleProductsService
     const OBJECT_PRODUCT_SIMPLE = 'WC_Product_Simple';
 
     const TYPE_LAYOUT_BUNDLE_DEFAULT = 'default';
+
+    const BUNDLE_TYPE_EXTERNAL = 'external';
+
+    const BUNDLE_TYPE_INTERNAL = 'internal';
     
     /**
      * Function to check if a order is Bundle Product Class.
@@ -125,12 +129,16 @@ class WooCommerceBundleProductsService
     public function useExternalOrInternal($metas)
     {
         if (!empty($metas['_bundle_weight'])) {
-            return 'external';
+            return self::BUNDLE_TYPE_EXTERNAL;
         }
 
-        return 'internal';
+        return self::BUNDLE_TYPE_INTERNAL;
     }
 
+    /**
+     * @param array $stamp
+     * @return array 
+     */  
     public function getProducts($stamp)
     {
         $productService = new ProductsService();

@@ -35,7 +35,7 @@ class OrdersProductsService
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
                 $internalOrExternal = $wooCommerceBundleProductService->useExternalOrInternal($metas);
 
-                if ($internalOrExternal == 'internal') {
+                if ($internalOrExternal == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
                     $products = $wooCommerceBundleProductService->getProductsInternal(
                         $item_product->get_data(), 
                         $metas,
@@ -44,7 +44,7 @@ class OrdersProductsService
                     continue;
                 }
 
-                if ($internalOrExternal == 'external') {
+                if ($internalOrExternal == WooCommerceBundleProductsService::BUNDLE_TYPE_EXTERNAL) {
                     $productsInBundle = $wooCommerceBundleProductService->getProducts($metas['_stamp']);
                     foreach ($productsInBundle as $prod) {
                         $productsIgnoreBundle[] = $prod->id;
