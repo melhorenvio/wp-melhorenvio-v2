@@ -21,17 +21,6 @@ class ProductsService
         }
         
         return $this->normalize($product, $quantity);
-        /*return (object) [
-            'id' => $postId,
-            'name' => $product->get_name(),
-            'quantity' => $quantity,
-            'unitary_value' => $product->get_price(),
-            'insurance_value' => ($product->get_price() * $quantity),
-            'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-            'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-            'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-            'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-        ];*/
     }
 
     /**
@@ -128,7 +117,8 @@ class ProductsService
             'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
             'unitary_value' => floatval($product->get_price()),
             'insurance_value' =>  floatval($product->get_price()),
-            'quantity' =>   $quantity
+            'quantity' =>   $quantity,
+            'class' => get_class($product)
         ];
     }
 
