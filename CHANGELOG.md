@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.15]
+- Correções para o plugin se adaptar ao plugin WooCommerce Bundle Products 
+
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
 - Ajuste no uso de valor segurado nas cotações
