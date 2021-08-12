@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.15]
+- Removação da obrigatoriedade de agências para Via Brasil e Jadlog
+
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
 - Ajuste no uso de valor segurado nas cotações

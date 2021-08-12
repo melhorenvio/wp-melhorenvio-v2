@@ -250,12 +250,14 @@ class CartService
             $errors[] = 'Informar o serviço de envio.';
         }
 
-        $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
+        $calculateShippongMethodService =  new CalculateShippingMethodService();
+        $isAzulCargo = $calculateShippongMethodService->isAzulCargo($body['service']);
+        $isLatamCargo = $calculateShippongMethodService->isLatamCargo($body['service']);
 
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
-        if (!$isCorreios && empty($body['agency'])) {
+        if (($isAzulCargo || $isLatamCargo) && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
