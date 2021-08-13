@@ -32,15 +32,15 @@ class OrdersProductsService
 
         $wooCommerceBundleProductService = new WooCommerceBundleProductsService();
 
-        foreach ($order->get_items() as $key => $item_product) {    
+        foreach ($order->get_items() as $key => $itemProduct) {    
             
-            $metas = $wooCommerceBundleProductService->getMetas($item_product);
+            $metas = $wooCommerceBundleProductService->getMetas($itemProduct);
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
                 $internalOrExternal = $wooCommerceBundleProductService->getBundledItemType($metas);
 
                 if ($internalOrExternal == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
                     $products = $wooCommerceBundleProductService->getProductsInternal(
-                        $item_product->get_data(), 
+                        $itemProduct->get_data(), 
                         $metas,
                         $products
                     );
@@ -52,7 +52,7 @@ class OrdersProductsService
                         $productsIgnoreBundle[] = $prod->id;
                     }
                     $product = $wooCommerceBundleProductService->getProductExternal(
-                        $item_product->get_data(), 
+                        $itemProduct->get_data(), 
                         $metas
                     );
                     $quantities = $this->incrementQuantity($product->id, $quantities, $product->quantity);
@@ -62,10 +62,10 @@ class OrdersProductsService
                 
             }
             
-            $_product = $item_product->get_product();            
+            $_product = $itemProduct->get_product();            
             if (is_bool($_product) || get_class($_product) === CompositeProductBundleService::PRODUCT_COMPOSITE) {
 
-                $compositeBundleService = new CompositeProductBundleService($item_product);
+                $compositeBundleService = new CompositeProductBundleService($itemProduct);
 
                 $productComposite = $compositeBundleService->getProductNormalize();
 
@@ -80,7 +80,7 @@ class OrdersProductsService
                 $products[$_product->get_id()] = (object) [
                     "id" => $_product->get_id(),
                     "name" => $_product->get_name(),
-                    "quantity" => $item_product->get_quantity(),
+                    "quantity" => $itemProduct->get_quantity(),
                     "unitary_value" => round($_product->get_price(), 2),
                     "insurance_value" => round($_product->get_price(), 2),
                     "weight" => DimensionsHelper::convertWeightUnit($_product->get_weight()),
@@ -89,7 +89,7 @@ class OrdersProductsService
                     "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
                     "is_virtual" => $_product->get_virtual()
                 ];
-                $quantities = $this->incrementQuantity($_product->get_id(), $quantities, $item_product->get_quantity());
+                $quantities = $this->incrementQuantity($_product->get_id(), $quantities, $itemProduct->get_quantity());
             }
         }
 
