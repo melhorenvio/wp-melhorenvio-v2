@@ -63,9 +63,7 @@ class ListOrderService
 
             $products = $productService->getProductsOrder($postId);
 
-            if ($this->hasOnlyVirtualProducts($products)) {
-                continue;
-            }
+            $products = $this->removeVirtualProducts($products);
 
             $orders[] = [
                 'id' => $postId,
@@ -96,17 +94,16 @@ class ListOrderService
      * Function to check if the products informed are all virtual.
      * 
      * @param array $products
-     * @return bool
+     * @return array
      */
-    public function hasOnlyVirtualProducts($products)
+    public function removeVirtualProducts($products)
     {   
-        foreach ($products as $product) {
-            if($product->is_virtual) {
-                return true;
+        foreach ($products as $key => $product) {
+            if ($product->is_virtual) {
+                unset($products[$key]);
             }
         }
-        
-        return false;
+        return $products;
     }
 
     /**
