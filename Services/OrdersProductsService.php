@@ -36,7 +36,7 @@ class OrdersProductsService
             
             $metas = $wooCommerceBundleProductService->getMetas($item_product);
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
-                $internalOrExternal = $wooCommerceBundleProductService->useExternalOrInternal($metas);
+                $internalOrExternal = $wooCommerceBundleProductService->getBundledItemType($metas);
 
                 if ($internalOrExternal == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
                     $products = $wooCommerceBundleProductService->getProductsInternal(

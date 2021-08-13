@@ -77,7 +77,7 @@ class WooCommerceBundleProductsService
                     continue;
                 }
             }
-            
+
             $products[] = $productService->getProduct(
                 $data['product_id'], 
                 $data['quantity']
@@ -128,7 +128,7 @@ class WooCommerceBundleProductsService
      * @param array $meta
      * @return string
      */
-    public function useExternalOrInternal($metas)
+    public function getBundledItemType($metas)
     {
         if (!empty($metas['_bundle_weight'])) {
             return self::BUNDLE_TYPE_EXTERNAL;
