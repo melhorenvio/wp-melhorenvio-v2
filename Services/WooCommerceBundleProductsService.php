@@ -42,8 +42,7 @@ class WooCommerceBundleProductsService
 
         foreach ($items as $key => $data) {
 
-            if (isset($data['stamp'])) {
-                //Bundle Type: Unassembled
+            if ($this->shouldUseProducts($data)) {
                 if (isset($data['bundled_by'])) {
                     foreach ($data['stamp'] as $product) {
                         $products[$product['product_id']] = $productService->getProduct(
@@ -54,12 +53,8 @@ class WooCommerceBundleProductsService
                     continue;
                 }
                 
-                //Bundle Type: Assembled
-                if (isset($data['bundled_items'])) {
-                
+                if ($this->shoudUsePackage($data)) {
                     $productId = $data['data']->get_id();
-                    
-                    //Assembled weight: Preserve Or Ignore
                     $weight = 0;
                     if ($data['data']->get_aggregate_weight()) {
                         foreach ($data['stamp'] as $product) {
@@ -85,6 +80,24 @@ class WooCommerceBundleProductsService
         }
         
         return $products;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    private function shouldUseProducts($data)
+    {
+        return isset($data['bundled_by']);
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    private function shoudUsePackage($data)
+    {
+        return isset($data['bundled_items']);
     }
 
     /**
