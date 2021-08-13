@@ -8,6 +8,7 @@ use Models\Payload;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
+use Helpers\ProductVirtualHelper;
 
 class CartService
 {
@@ -86,7 +87,7 @@ class CartService
             ? $payloadSaved->products
             : $products;
 
-        $products = $this->removeVirtualProducts($products);
+        $products = ProductVirtualHelper::removeVirtuals($products);
 
         $dataBuyer = (!empty($payloadSaved->buyer))
             ? $payloadSaved->buyer
@@ -133,22 +134,6 @@ class CartService
         );
 
         return $payload;
-    }
-
-    /**
-     * 
-     * @param array $products
-     * @return array
-     */
-    private function removeVirtualProducts(&$products)
-    {
-        foreach ($products as $key => $product) {
-            if (!empty($product->is_virtual)) {
-                unset($products[$key]);
-            }
-        }
-
-        return $products;
     }
 
     /**
