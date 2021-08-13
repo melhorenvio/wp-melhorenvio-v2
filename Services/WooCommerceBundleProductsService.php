@@ -43,7 +43,7 @@ class WooCommerceBundleProductsService
         foreach ($items as $key => $data) {
 
             if (isset($data['stamp'])) {
-            //Bundle Type: Unassembled
+                //Bundle Type: Unassembled
                 if (isset($data['bundled_by'])) {
                     foreach ($data['stamp'] as $product) {
                         $products[$product['product_id']] = $productService->getProduct(
