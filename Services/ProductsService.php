@@ -124,7 +124,7 @@ class ProductsService
     private function normalize($product, $quantity = 1)
     {
         $price = floatval($product->get_price());
-        if ($price == 0) {
+        if (empty($price)) {
             $data = $product->get_data();
             if (isset($data['price'])) {
                 $price = floatval($data['price']);
