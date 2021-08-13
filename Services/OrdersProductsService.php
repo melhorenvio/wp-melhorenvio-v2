@@ -121,6 +121,7 @@ class OrdersProductsService
         }
 
         $quantities[$productId] = $actualQuantity + $quantity;
-       return $quantities;
+        
+        return $quantities;
     }
 }
