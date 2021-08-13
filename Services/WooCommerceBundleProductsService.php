@@ -42,40 +42,42 @@ class WooCommerceBundleProductsService
 
         foreach ($items as $key => $data) {
 
+            if (isset($data['stamp'])) {
             //Bundle Type: Unassembled
-            if (isset($data['bundled_by']) && isset($data['stamp'])) {
-                foreach ($data['stamp'] as $product) {
-                    $products[$product['product_id']] = $productService->getProduct(
-                        $product['product_id'], 
-                        $items[$key]['quantity']
-                    );
+                if (isset($data['bundled_by'])) {
+                    foreach ($data['stamp'] as $product) {
+                        $products[$product['product_id']] = $productService->getProduct(
+                            $product['product_id'], 
+                            $items[$key]['quantity']
+                        );
+                    }
+                    continue;
                 }
-                continue;
+                
+                //Bundle Type: Assembled
+                if (isset($data['bundled_items'])) {
+                
+                    $productId = $data['data']->get_id();
+                    
+                    //Assembled weight: Preserve Or Ignore
+                    $weight = 0;
+                    if ($data['data']->get_aggregate_weight()) {
+                        foreach ($data['stamp'] as $product) {
+                            $productInternal = $productService->getProduct(
+                                $product['product_id'], 
+                                $data['quantity']
+                            );
+                            $weight = $weight + (float) $productInternal->weight;
+                        }
+                    }
+
+                    $productInternal = $productService->getProduct($productId,   $data['quantity']);
+                    $productInternal->weight = (float) $productInternal->weight + $weight;
+                    $products[$productId] = $productInternal;
+                    continue;
+                }
             }
             
-            //Bundle Type: Assembled
-            if (isset($data['bundled_items']) && isset($data['stamp'])) {
-              
-                $productId = $data['data']->get_id();
-                
-                //Assembled weight: Preserve Or Ignore
-                $weight = 0;
-                if ($data['data']->get_aggregate_weight()) {
-                    foreach ($data['stamp'] as $product) {
-                        $productInternal = $productService->getProduct(
-                            $product['product_id'], 
-                            $data['quantity']
-                        );
-                        $weight = $weight + (float) $productInternal->weight;
-                    }
-                }
-
-                $productInternal = $productService->getProduct($productId,   $data['quantity']);
-                $productInternal->weight = (float) $productInternal->weight + $weight;
-                $products[$productId] = $productInternal;
-                continue;
-            }
-
             $products[] = $productService->getProduct(
                 $data['product_id'], 
                 $data['quantity']
