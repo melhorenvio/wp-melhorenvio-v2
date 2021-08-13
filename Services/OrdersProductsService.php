@@ -64,32 +64,30 @@ class OrdersProductsService
             
             $_product = $itemProduct->get_product();            
             if (is_bool($_product) || get_class($_product) === CompositeProductBundleService::PRODUCT_COMPOSITE) {
-
                 $compositeBundleService = new CompositeProductBundleService($itemProduct);
-
                 $productComposite = $compositeBundleService->getProductNormalize();
 
                 if (empty($productComposite)) {
                     continue;
                 }
-
                 $productsComposite[$key] = $productComposite;
             }
 
             if (!in_array($_product->get_id(), $productsIgnoreBundle)) {
-                $products[$_product->get_id()] = (object) [
-                    "id" => $_product->get_id(),
-                    "name" => $_product->get_name(),
-                    "quantity" => $itemProduct->get_quantity(),
-                    "unitary_value" => round($_product->get_price(), 2),
-                    "insurance_value" => round($_product->get_price(), 2),
-                    "weight" => DimensionsHelper::convertWeightUnit($_product->get_weight()),
-                    "width" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_width()),
-                    "height" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_height()),
-                    "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
-                    "is_virtual" => $_product->get_virtual()
-                ];
-                $quantities = $this->incrementQuantity($_product->get_id(), $quantities, $itemProduct->get_quantity());
+
+                $productId = $_product->get_id();
+                $quantity = $itemProduct->get_quantity();
+
+                $products[$productId] = $productService->normalize(
+                    $productId, 
+                    $quantity
+                );
+
+                $quantities = $this->incrementQuantity(
+                    $productId, 
+                    $quantities, 
+                    $quantity
+                );
             }
         }
 

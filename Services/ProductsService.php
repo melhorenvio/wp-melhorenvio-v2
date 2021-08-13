@@ -115,6 +115,7 @@ class ProductsService
                 $price = floatval($data['price']);
             }
         }
+
         return (object) [
             'id' =>  $product->get_id(),
             'name' =>  $product->get_name(),
@@ -125,8 +126,9 @@ class ProductsService
             'unitary_value' => $price,
             'insurance_value' =>  $price,
             'quantity' =>   $quantity,
-            'class' => get_class($product)
-        ];
+            'class' => get_class($product),
+            "is_virtual" => $product->get_virtual()
+        ];        
     }
 
     /**
