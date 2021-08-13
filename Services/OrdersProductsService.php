@@ -35,6 +35,7 @@ class OrdersProductsService
         foreach ($order->get_items() as $key => $itemProduct) {    
             
             $metas = $wooCommerceBundleProductService->getMetas($itemProduct);
+
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
                 $bundleType = $wooCommerceBundleProductService->getBundledItemType($metas);
 
@@ -44,6 +45,7 @@ class OrdersProductsService
                         $metas,
                         $products
                     );
+                    continue;
                 }
 
                 if ($bundleType == WooCommerceBundleProductsService::BUNDLE_TYPE_EXTERNAL) {
@@ -78,10 +80,18 @@ class OrdersProductsService
                 $productId = $_product->get_id();
                 $quantity = $itemProduct->get_quantity();
 
-                $products[$productId] = $productService->normalize(
-                    $productId, 
-                    $quantity
-                );
+                $products[$productId] = (object) [
+                    "id" => $_product->get_id(),
+                    "name" => $_product->get_name(),
+                    "quantity" => $itemProduct->get_quantity(),
+                    "unitary_value" => round($_product->get_price(), 2),
+                    "insurance_value" => round($_product->get_price(), 2),
+                    "weight" => DimensionsHelper::convertWeightUnit($_product->get_weight()),
+                    "width" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_width()),
+                    "height" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_height()),
+                    "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
+                    "is_virtual" => $_product->get_virtual()
+                ];
 
                 $quantities = $this->incrementQuantity(
                     $productId, 
@@ -103,7 +113,7 @@ class OrdersProductsService
                 $products[$key]->quantity = $quantities[$product->id];
             }
        }
-
+       
         return $products;
     }
 

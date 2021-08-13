@@ -35,13 +35,13 @@ class WooCommerceBundleProductsService
      * @param array $items
      * @return array
      */
-    public static function manageProductsBundle($items)
+    public function manageProductsBundle($items)
     {
         $products = [];
         $productService = new ProductsService();
 
         foreach ($items as $key => $data) {
-
+            
             if ($this->shouldUseProducts($data)) {
                 if (isset($data['bundled_by'])) {
                     foreach ($data['stamp'] as $product) {
@@ -52,31 +52,32 @@ class WooCommerceBundleProductsService
                     }
                     continue;
                 }
+            }
                 
-                if ($this->shoudUsePackage($data)) {
-                    $productId = $data['data']->get_id();
-                    $weight = 0;
-                    if ($data['data']->get_aggregate_weight()) {
-                        foreach ($data['stamp'] as $product) {
-                            $internalProduct = $productService->getProduct(
-                                $product['product_id'], 
-                                $data['quantity']
-                            );
-                            $weight = $weight + (float) $internalProduct->weight;
-                        }
+            if ($this->shoudUsePackage($data)) {
+                $productId = $data['data']->get_id();
+                $weight = 0;
+                if ($data['data']->get_aggregate_weight()) {
+                    foreach ($data['stamp'] as $product) {
+                        $internalProduct = $productService->getProduct(
+                            $product['product_id'], 
+                            $data['quantity']
+                        );
+                        $weight = $weight + (float) $internalProduct->weight;
                     }
-
-                    $internalProduct = $productService->getProduct($productId, $data['quantity']);
-                    $internalProduct->weight = (float) $internalProduct->weight + $weight;
-                    $products[$productId] = $internalProduct;
-                    continue;
                 }
+
+                $internalProduct = $productService->getProduct($productId, $data['quantity']);
+                $internalProduct->weight = (float) $internalProduct->weight + $weight;
+                $products[$productId] = $internalProduct;
+                continue;
             }
 
             $products[] = $productService->getProduct(
                 $data['product_id'], 
                 $data['quantity']
             );
+
         }
         
         return $products;

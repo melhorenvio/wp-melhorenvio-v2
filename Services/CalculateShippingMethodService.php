@@ -51,7 +51,7 @@ class CalculateShippingMethodService
             : (new CartWooCommerceService())->getProducts();
 
         if (WooCommerceBundleProductsService::isWooCommerceProductBundle($products)) {
-            $products = WooCommerceBundleProductsService::manageProductsBundle($products);
+            $products = (new WooCommerceBundleProductsService())->manageProductsBundle($products);
         }
 
         $result = (new QuotationService())->calculateQuotationByProducts(
