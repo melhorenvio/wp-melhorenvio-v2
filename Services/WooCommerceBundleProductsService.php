@@ -66,7 +66,7 @@ class WooCommerceBundleProductsService
                         }
                     }
 
-                    $productInternal = $productService->getProduct($productId,   $data['quantity']);
+                    $productInternal = $productService->getProduct($productId, $data['quantity']);
                     $productInternal->weight = (float) $productInternal->weight + $weight;
                     $products[$productId] = $productInternal;
                     continue;
