@@ -82,7 +82,7 @@ class ProductsService
     {
         $products = [];
         foreach ($data as $item) {
-            if (!is_array($item) && (get_class($item) == 'WC_Product_Simple' || get_class($item) == 'WC_Product_Bundle')) {
+            if ($this->isObjectProduct($item)) {
                 $data = $item->get_data();
                 $product = $item;
                 $products[] = $this->normalize($product, $item['quantity']);
@@ -99,6 +99,21 @@ class ProductsService
         }
 
         return $products;
+    }
+
+    /**
+     * @param object $product
+     * @return bool
+     */
+    private function isObjectProduct($item)
+    {
+        return (
+            !is_array($item) && 
+            (
+                get_class($item) == WooCommerceBundleProductsService::OBJECT_PRODUCT_SIMPLE || 
+                get_class($item) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE
+            )
+        );
     }
 
     /**
