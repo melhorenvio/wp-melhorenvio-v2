@@ -58,17 +58,17 @@ class WooCommerceBundleProductsService
                     $weight = 0;
                     if ($data['data']->get_aggregate_weight()) {
                         foreach ($data['stamp'] as $product) {
-                            $productInternal = $productService->getProduct(
+                            $internalProduct = $productService->getProduct(
                                 $product['product_id'], 
                                 $data['quantity']
                             );
-                            $weight = $weight + (float) $productInternal->weight;
+                            $weight = $weight + (float) $internalProduct->weight;
                         }
                     }
 
-                    $productInternal = $productService->getProduct($productId, $data['quantity']);
-                    $productInternal->weight = (float) $productInternal->weight + $weight;
-                    $products[$productId] = $productInternal;
+                    $internalProduct = $productService->getProduct($productId, $data['quantity']);
+                    $internalProduct->weight = (float) $internalProduct->weight + $weight;
+                    $products[$productId] = $internalProduct;
                     continue;
                 }
             }
