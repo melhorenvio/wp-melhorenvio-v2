@@ -37,6 +37,7 @@ class OrdersProductsService
             $metas = $wooCommerceBundleProductService->getMetas($itemProduct);
 
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
+                
                 $bundleType = $wooCommerceBundleProductService->getBundledItemType($metas);
 
                 if ($bundleType == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
@@ -129,9 +130,7 @@ class OrdersProductsService
         if (empty($actualQuantity)) {
             $actualQuantity = 0;
         }
-
         $quantities[$productId] = $actualQuantity + $quantity;
-        
         return $quantities;
     }
 }
