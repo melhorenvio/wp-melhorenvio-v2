@@ -250,10 +250,10 @@ class CartService
             $errors[] = 'Informar o serviço de envio.';
         }
 
-        $calculateShippongMethodService =  new CalculateShippingMethodService();
-        $isAzulCargo = $calculateShippongMethodService->isAzulCargo($body['service']);
-        $isLatamCargo = $calculateShippongMethodService->isLatamCargo($body['service']);
-        $isCorreios = $calculateShippongMethodService->isCorreios($body['service']);
+        $calculateShippingMethodService =  new CalculateShippingMethodService();
+        $isAzulCargo = $calculateShippingMethodService->isAzulCargo($body['service']);
+        $isLatamCargo = $calculateShippingMethodService->isLatamCargo($body['service']);
+        $isCorreios = $calculateShippingMethodService->isCorreios($body['service']);
 
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
@@ -268,7 +268,6 @@ class CartService
 
         if (!empty($body['products'])) {
             foreach ($body['products'] as $key => $product) {
-
                 $index = $key++;
 
                 if (empty($product['name'])) {
