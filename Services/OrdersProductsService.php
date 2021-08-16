@@ -76,18 +76,10 @@ class OrdersProductsService
                 $productId = $product->get_id();
                 $quantity = $itemProduct->get_quantity();
 
-                $products[$productId] = (object) [
-                    "id" => $product->get_id(),
-                    "name" => $product->get_name(),
-                    "quantity" => $itemProduct->get_quantity(),
-                    "unitary_value" => round($product->get_price(), 2),
-                    "insurance_value" => round($product->get_price(), 2),
-                    "weight" => DimensionsHelper::convertWeightUnit($product->get_weight()),
-                    "width" => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-                    "height" => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-                    "length" => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-                    "is_virtual" => $product->get_virtual()
-                ];
+                $products[$productId] = $productService->normalize(
+                    $product,
+                    $itemProduct->get_quantity()
+                );
 
                 $quantities = $this->incrementQuantity(
                     $productId,

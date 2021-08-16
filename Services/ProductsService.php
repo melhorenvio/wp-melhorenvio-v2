@@ -121,7 +121,7 @@ class ProductsService
      * @param int $quantity
      * @return object
      */
-    private function normalize($product, $quantity = 1)
+    public function normalize($product, $quantity = 1)
     {
         $price = floatval($product->get_price());
         if (empty($price)) {
