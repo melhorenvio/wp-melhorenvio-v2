@@ -63,9 +63,9 @@ class SessionNoticeService
                 <p><strong>Atenção usuário do Melhor Envio</strong></p>
                 <p>%s</p>
                 <p><a href="%s">Fechar</a></p>
-            </div>', 
-            $type, 
-            $text, 
+            </div>',
+            $type,
+            $text,
             get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($text)
         );
     }
@@ -73,11 +73,11 @@ class SessionNoticeService
     /**
      * Function to check whether to display and insert the search form alert on the administrative page
      */
-    public function  showNotices()
+    public function showNotices()
     {
         $notices = $this->get();
         foreach ($notices as $hash => $notice) {
-            add_action('admin_notices', function () use ($notice){
+            add_action('admin_notices', function () use ($notice) {
                 echo $notice;
             });
         }
@@ -92,7 +92,7 @@ class SessionNoticeService
      */
     public function remove($hash)
     {
-        $notices = $this->get();
+         $notices = $this->get();
         unset($notices[$hash]);
         update_option(self::ID_NOTICES_OPTIONS, $notices);
         wp_redirect($_SERVER['HTTP_REFERER']);
