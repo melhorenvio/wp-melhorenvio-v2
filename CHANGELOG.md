@@ -1,6 +1,7 @@
 ### Changelog
 ### [2.9.15]
 - Correções para o plugin se adaptar ao plugin WooCommerce Bundle Products 
+- Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
 
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
