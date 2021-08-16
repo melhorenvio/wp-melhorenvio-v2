@@ -253,6 +253,7 @@ class CartService
         $calculateShippongMethodService =  new CalculateShippingMethodService();
         $isAzulCargo = $calculateShippongMethodService->isAzulCargo($body['service']);
         $isLatamCargo = $calculateShippongMethodService->isLatamCargo($body['service']);
+        $isCorreios = $calculateShippongMethodService->isCorreios($body['service']);
 
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
