@@ -1,6 +1,7 @@
 ### Changelog
 ### [2.9.15]
 - Removação da obrigatoriedade de agências para Via Brasil e Jadlog
+- Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
 
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
