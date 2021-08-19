@@ -4,9 +4,7 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
-use Helpers\SessionHelper;
 use Services\PayloadService;
-use Services\StoreQuotationsService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
@@ -14,6 +12,8 @@ use Services\StoreQuotationsService;
 class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
+
+    const TIME_DURATION_SESSION_QUOTATION = 900;
 
     /**
      * function to calculate quotation.
@@ -267,8 +267,10 @@ class QuotationService
 
         if (!empty($dateCreated)) {
             $dbtimestamp = strtotime($dateCreated);
-            if (!time() - $dbtimestamp > 15 * 60) {
-                session_start();
+            if (!time() - $dbtimestamp > self::TIME_DURATION_SESSION_QUOTATION) {
+                if (empty(session_id())) {
+                    @session_start();
+                }
                 unset($_SESSION['quotation-melhor-envio'][$hash]);
                 session_write_close();
                 return false;
