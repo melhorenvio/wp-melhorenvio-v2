@@ -35,7 +35,7 @@ class QuotationController
             (new PayloadService())->save(($postId));
         }
 
-        unset($_SESSION['quotation']);
+        unset($_SESSION['melhor_envio_session']['quotation']);
 
         return $result;
     }

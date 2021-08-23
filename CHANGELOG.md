@@ -1,7 +1,10 @@
 ### Changelog
-### [2.9.15]
+### [2.9.16]
 - Correção do problema de warning no método de gerenciamento de dados da sessão 
 - Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
+
+### [2.9.15]
+- Correção para o problema de lentidão ao inserir um produto no carrinho de compras
 
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
