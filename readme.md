@@ -70,7 +70,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 = 2.9.15 =
-* Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
+* Correção para o problema de lentidão ao inserir um produto no carrinho de compras
 
 = 2.9.14 =
 * Ajustes validações payload para API do Melhor Envio
