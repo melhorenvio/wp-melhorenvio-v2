@@ -13,7 +13,7 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
-    const TIME_DURATION_SESSION_QUOTATION = 900;
+    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 900;
 
     /**
      * function to calculate quotation.
@@ -267,7 +267,7 @@ class QuotationService
 
         if (!empty($dateCreated)) {
             $dbtimestamp = strtotime($dateCreated);
-            if (!time() - $dbtimestamp > self::TIME_DURATION_SESSION_QUOTATION) {
+            if (!time() - $dbtimestamp > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS) {
                 if (empty(session_id())) {
                     @session_start();
                 }
