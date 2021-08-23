@@ -4,7 +4,6 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
-use Helpers\SessionHelper;
 use Services\PayloadService;
 
 /**
@@ -13,6 +12,8 @@ use Services\PayloadService;
 class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
+
+    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 900;
 
     /**
      * function to calculate quotation.
@@ -125,16 +126,35 @@ class QuotationService
             return false;
         }
 
+        $hash = $this->generateHashQuotation($payload);
+
         $options = (new Option())->getOptions();
 
-        $quotation = $this->getSessionCachedQuotation($payload, $service);
+        $quotationsCachead = $this->getSessionCachedQuotation($payload, $service);
 
-        if (!$quotation) {
-            $quotation = $this->calculate($payload, $options->insurance_value);
-            $this->storeQuotationSession($payload, $quotation);
+        if (!empty($quotationsCachead) && empty($service)) {
+            return $quotationsCachead;
         }
 
-        return $quotation;
+        if (!empty($quotationsCachead) && !empty($service)) {
+            $quotationCachead = null;
+            $quotationsCachead = $this->setKeyQuotationAsServiceid($quotationsCachead);
+            foreach ($quotationsCachead as $quotation) {
+                if ($quotation->id == $service) {
+                    $quotationCachead = $quotation;
+                }
+            }
+
+            if (!empty($quotationCachead)) {
+                return $quotationCachead;
+            }
+        }
+
+        $quotations =  $this->calculate($payload, $options->insurance_value);
+
+        $this->storeQuotationSession($payload, $quotations);
+
+        return $quotations;
     }
 
 
@@ -145,16 +165,18 @@ class QuotationService
      * @param array $quotation
      * @return void
      */
-    private function storeQuotationSession($bodyQuotation, $quotation)
+    private function storeQuotationSession($payload, $quotation)
     {
-        SessionHelper::initIfNotExists();
-
         $quotation = $this->orderingQuotationByPrice($quotation);
 
-        $hash = $this->generateHashQuotation($bodyQuotation);
+        $hash = $this->generateHashQuotation($payload);
 
-        $_SESSION['quotation'][$hash]['data'] = $quotation;
-        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+        if (empty(session_id())) {
+            @session_start();
+        }
+
+        $_SESSION['quotation-melhor-envio'][$hash]['quotations'] = $quotation;
+        $_SESSION['quotation-melhor-envio'][$hash]['created'] = date('Y-m-h H:i:s');
 
         session_write_close();
     }
@@ -225,67 +247,36 @@ class QuotationService
      * @param int $service
      * @return bool|array
      */
-    private function getSessionCachedQuotation($bodyQuotation, $service)
+    private function getSessionCachedQuotation($payload, $service)
     {
-        $hash = $this->generateHashQuotation($bodyQuotation);
+        $hash = $this->generateHashQuotation($payload);
 
-        SessionHelper::initIfNotExists();
-
-        if (!isset($_SESSION['quotation'][$hash])) {
-            unset($_SESSION['quotation']);
-            return false;
+        if (empty(session_id())) {
+            @session_start();
         }
-
-        if ($this->isSessionCachedQuotationExpired($bodyQuotation)) {
-            return false;
-        }
-
-        $quotations = array_filter(
-            (array) $_SESSION['quotation'][$hash]['data'],
-            function ($item) use ($service) {
-                if (isset($item->id) && $item->id == $service) {
-                    return $item;
-                }
-            }
-        );
-
+        $session = $_SESSION;
         session_write_close();
 
-        if (!is_array($quotations)) {
+        if (empty($session['quotation-melhor-envio'][$hash])) {
             return false;
         }
 
-        return end($quotations);
-    }
+        $quotationsCachead = $session['quotation-melhor-envio'][$hash];
+        $dateCreated = $quotationsCachead['created'];
+        $quotationsCachead = $quotationsCachead['quotations'];
 
-    /**
-     * Function to see if the session quote should expire due to the time
-     *
-     * @param array $bodyQuotation payload to make quotation on Melhor Envio api
-     * @return boolean
-     */
-    private function isSessionCachedQuotationExpired($bodyQuotation)
-    {
-        $hash = $this->generateHashQuotation($bodyQuotation);
-
-        if (isset($_SESSION['quotation'][$hash]->success) && !$_SESSION['quotation'][$hash]->success) {
-            return true;
+        if (!empty($dateCreated)) {
+            $dbtimestamp = strtotime($dateCreated);
+            if (!time() - $dbtimestamp > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS) {
+                if (empty(session_id())) {
+                    @session_start();
+                }
+                unset($_SESSION['quotation-melhor-envio'][$hash]);
+                session_write_close();
+                return false;
+            }
         }
-
-        if (empty($_SESSION['quotation'][$hash]['created'])) {
-            return true;
-        }
-
-        $created = $_SESSION['quotation'][$hash]['created'];
-
-        $dateLimit = date('Y-m-d H:i:s', strtotime('-15 minutes'));
-
-        if ($dateLimit > $created) {
-            unset($_SESSION['quotation'][$hash]);
-            return true;
-        }
-
-        return false;
+        return $quotationsCachead;
     }
 
     /**
