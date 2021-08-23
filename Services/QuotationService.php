@@ -153,8 +153,8 @@ class QuotationService
 
         $hash = $this->generateHashQuotation($bodyQuotation);
 
-        $_SESSION['quotation'][$hash]['data'] = $quotation;
-        $_SESSION['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
+        $_SESSION['melhor_envio_session']['quotation'][$hash]['data'] = $quotation;
+        $_SESSION['melhor_envio_session']['quotation'][$hash]['created'] = date('Y-m-d H:i:s');
 
         session_write_close();
     }
@@ -231,8 +231,8 @@ class QuotationService
 
         SessionHelper::initIfNotExists();
 
-        if (!isset($_SESSION['quotation'][$hash])) {
-            unset($_SESSION['quotation']);
+        if (!isset($_SESSION['melhor_envio_session']['quotation'][$hash])) {
+            unset($_SESSION['melhor_envio_session']['quotation']);
             return false;
         }
 
@@ -241,7 +241,7 @@ class QuotationService
         }
 
         $quotations = array_filter(
-            (array) $_SESSION['quotation'][$hash]['data'],
+            (array) $_SESSION['melhor_envio_session']['quotation'][$hash]['data'],
             function ($item) use ($service) {
                 if (isset($item->id) && $item->id == $service) {
                     return $item;
@@ -268,20 +268,20 @@ class QuotationService
     {
         $hash = $this->generateHashQuotation($bodyQuotation);
 
-        if (isset($_SESSION['quotation'][$hash]->success) && !$_SESSION['quotation'][$hash]->success) {
+        if (isset($_SESSION['melhor_envio_session']['quotation'][$hash]->success) && !$_SESSION['melhor_envio_session']['quotation'][$hash]->success) {
             return true;
         }
 
-        if (empty($_SESSION['quotation'][$hash]['created'])) {
+        if (empty($_SESSION['melhor_envio_session']['quotation'][$hash]['created'])) {
             return true;
         }
 
-        $created = $_SESSION['quotation'][$hash]['created'];
+        $created = $_SESSION['melhor_envio_session']['quotation'][$hash]['created'];
 
         $dateLimit = date('Y-m-d H:i:s', strtotime('-15 minutes'));
 
         if ($dateLimit > $created) {
-            unset($_SESSION['quotation'][$hash]);
+            unset($_SESSION['melhor_envio_session']['quotation'][$hash]);
             return true;
         }
 

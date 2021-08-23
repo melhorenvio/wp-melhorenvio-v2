@@ -440,8 +440,8 @@ class CartService
                             'price' => $item->get_price()
                         ];
 
-                        if (!empty($_SESSION['melhorenvio_additional'])) {
-                            foreach($_SESSION['melhorenvio_additional'] as $dataSession) {
+                        if (!empty($_SESSION['melhor_envio_session']['melhorenvio_additional'])) {
+                            foreach($_SESSION['melhor_envio_session']['melhorenvio_additional'] as $dataSession) {
                                 foreach($dataSession as $keyProduct =>$product) {
                                     $data['products'][$productId]['taxas_extras'] = $product;
                                 }
@@ -452,8 +452,8 @@ class CartService
             }
         }
 
-        if (!empty($_SESSION['melhorenvio_additional'])) {
-            $data['adicionais_extras'] = $_SESSION['melhorenvio_additional'];
+        if (!empty($_SESSION['melhor_envio_session']['melhorenvio_additional'])) {
+            $data['adicionais_extras'] = $_SESSION['melhor_envio_session']['melhorenvio_additional'];
         }
 
         return $data;

@@ -22,10 +22,10 @@ class ClearDataStored
         (new Seller())->destroy();
         (new ShippingService())->destroy();
 
-        if (!empty($_SESSION)) {
-            foreach ($_SESSION as $key => $sessionItem) {
+        if (!empty($_SESSION['melhor_envio_session'])) {
+            foreach ($_SESSION['melhor_envio_session']as $key => $sessionItem) {
                 if ($key != 'notices_melhor_envio') {
-                    unset($_SESSION[$key]);
+                    unset($_SESSION['melhor_envio_session'][$key]);
                 }
             }
         }

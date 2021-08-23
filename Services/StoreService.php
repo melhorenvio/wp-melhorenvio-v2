@@ -59,9 +59,9 @@ class StoreService
 
         $codeStore = md5(get_option('home'));
 
-        unset($_SESSION[$codeStore][self::SESSION_STORES]);
-        if (isset($_SESSION[$codeStore][self::SESSION_STORES])) {
-            return $_SESSION[$codeStore][self::SESSION_STORES];
+        unset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES]);
+        if (isset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES])) {
+            return $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES];
         }
 
         $response = (new RequestService())->request(
@@ -91,7 +91,7 @@ class StoreService
             return $store;
         }, $stores);
 
-        $_SESSION[$codeStore][self::OPTION_STORES] = $stores;
+        $_SESSION['melhor_envio_session'][$codeStore][self::OPTION_STORES] = $stores;
 
         session_write_close();
 

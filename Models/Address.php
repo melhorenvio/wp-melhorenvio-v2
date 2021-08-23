@@ -71,7 +71,7 @@ class Address
     {
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
+        $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
 
         $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
 
@@ -99,8 +99,8 @@ class Address
     {
         // Find ID on session
         $codeStore = md5(get_option('home'));
-        if (isset($_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED]) && $_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED]) {
-            return $_SESSION[$codeStore][self::SESSION_ADDRESS_SELECTED];
+        if (isset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED]) && $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED]) {
+            return $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
 
         // Find ID on database wordpress
