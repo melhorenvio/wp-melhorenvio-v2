@@ -49,15 +49,11 @@ class CalculateShippingMethodService
             ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
 
-        $startTime = microtime(true);
-
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,
             $to,
             $code
         );
-
-        $endTime = round(microtime(true) - $startTime, 2); // seconds
 
         if (is_array($result)) {
             $result = $this->extractOnlyQuotationByService($result, $code);
