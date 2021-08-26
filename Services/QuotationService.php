@@ -250,28 +250,4 @@ class QuotationService
             'products' => $products
         ]));
     }
-
-    /**
-     * Function to sort the quote by price
-     *
-     * @param array $quotation
-     * @return array
-     */
-    public function orderingQuotationByPrice($quotation)
-    {
-        if (is_null($quotation)) {
-            return $quotation;
-        }
-
-        if (!is_array($quotation)) {
-            return $quotation;
-        }
-
-        uasort($quotation, function ($a, $b) {
-            if ($a == $b) return 0;
-            if (!isset($a->price) || !isset($b->price)) return 0;
-            return ($a->price < $b->price) ? -1 : 1;
-        });
-        return $quotation;
-    }
 }
