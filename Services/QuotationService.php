@@ -224,14 +224,10 @@ class QuotationService
      */
     private function generateHashQuotation($payload)
     {
-        $hash = '';
-
         $products = [];
 
         if (!empty($payload->products)) {
             foreach ($payload->products as $product) {
-
-                $hash .= 'ID:' . $product->name . 'QTY:' . $product->quantity;
                 $products[] = [
                     'id' => $product->id,
                     'width' => $product->width,
@@ -243,9 +239,7 @@ class QuotationService
                 ];
             }
         }
-
-        return $hash;
-
+        
         return md5(json_encode([
             'from' => $payload->from->postal_code,
             'to' => $payload->to->postal_code,
