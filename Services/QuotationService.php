@@ -213,7 +213,7 @@ class QuotationService
 
     private function isOutdatedQuotation($dateQuotation)
     {
-        return TimeHelper::howSecondsInPast($dateQuotation) > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS;
+        return TimeHelper::getDiffFromNowInSeconds($dateQuotation) > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS;
     }
 
     /**

@@ -41,7 +41,7 @@ class TimeHelper
      * @param string $date
      * @return float
      */
-    public static function howSecondsInPast($date)
+    public static function getDiffFromNowInSeconds($date)
     {
         $now = date('Y-m-d H:i:s');
         $start = strtotime($now);
