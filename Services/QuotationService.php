@@ -133,33 +133,33 @@ class QuotationService
       
         $options = (new Option())->getOptions();
 
-        $quotationsCachead = $this->getSessionCachedQuotation($hash, $service);
+        $cachedQuotations = $this->getSessionCachedQuotations($hash, $service);
 
-        if (empty($quotationsCachead)) {
+        if (empty($cachedQuotations)) {
             $quotations =  $this->calculate($payload, $options->insurance_value);
             $this->storeQuotationSession($hash, $quotations);
             return $quotations;
         }
 
-        if (!empty($quotationsCachead) && empty($service)) {
-            return $quotationsCachead;
+        if (!empty($cachedQuotations) && empty($service)) {
+            return $cachedQuotations;
         }
 
-        if (!empty($quotationsCachead) && !empty($service)) {
-            $quotationCachead = null;
-            $quotationsCachead = $this->setKeyQuotationAsServiceid($quotationsCachead);
-            foreach ($quotationsCachead as $quotation) {
+        if (!empty($cachedQuotations) && !empty($service)) {
+            $cachedQuotation = null;
+            $cachedQuotations = $this->setKeyQuotationAsServiceid($cachedQuotations);
+            foreach ($cachedQuotations as $quotation) {
                 if ($quotation->id == $service) {
-                    $quotationCachead = $quotation;
+                    $cachedQuotation = $quotation;
                 }
             }
 
-            if (!empty($quotationCachead)) {
-                return $quotationCachead;
+            if (!empty($cachedQuotation)) {
+                return $cachedQuotation;
             }
         }
 
-        return $quotationsCachead;
+        return $cachedQuotations;
     }
 
 
@@ -189,7 +189,7 @@ class QuotationService
      * @param int $service
      * @return bool|array
      */
-    private function getSessionCachedQuotation($hash, $service)
+    private function getSessionCachedQuotations($hash, $service)
     {
         $session = $_SESSION;
 
@@ -197,21 +197,21 @@ class QuotationService
             return false;
         }
 
-        $quotationsCachead = $session['quotation-melhor-envio'][$hash];
-        $dateCreated = $quotationsCachead['created'];
-        $quotationsCachead = $quotationsCachead['quotations'];
+        $cachedQuotation = $session['quotation-melhor-envio'][$hash];
+        $dateCreated = $cachedQuotation['created'];
+        $cachedQuotation = $cachedQuotation['quotations'];
 
         if (!empty($dateCreated)) {
-            if ($this->isUltrapassedQuotation($dateCreated)) {
+            if ($this->isOutdatedQuotation($dateCreated)) {
                 unset($session['quotation-melhor-envio'][$hash]);
                 $_SESSION = $session;
             }
         }
 
-        return $quotationsCachead;
+        return $cachedQuotation;
     }
 
-    private function isUltrapassedQuotation($dateQuotation)
+    private function isOutdatedQuotation($dateQuotation)
     {
         return TimeHelper::howSecondsInPast($dateQuotation) > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS;
     }
@@ -239,7 +239,7 @@ class QuotationService
                 ];
             }
         }
-        
+
         return md5(json_encode([
             'from' => $payload->from->postal_code,
             'to' => $payload->to->postal_code,
