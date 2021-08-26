@@ -7,18 +7,6 @@ namespace Helpers;
  */
 class SessionHelper
 {
-    public static function start()
-    {
-        if (empty(session_id())) {
-            @session_start();
-        }
-    }
-
-    public static function close()
-    {
-        session_write_close();
-    }
-
     /**
      * Helper to start the session if it has not been started.
      *
@@ -27,7 +15,7 @@ class SessionHelper
     public static function initIfNotExists()
     {
         if (!self::exists()) {
-            session_start();
+            @session_start();
         }
     }
 
