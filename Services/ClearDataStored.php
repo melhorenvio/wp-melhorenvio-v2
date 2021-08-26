@@ -19,13 +19,13 @@ class ClearDataStored
      */
     public function clear()
     {
-        (new Seller())->destroy();
-        (new ShippingService())->destroy();
+        //(new Seller())->destroy();
+        //(new ShippingService())->destroy();
 
-        foreach ($_SESSION as $key => $sessionItem) {
-            if ($key != 'notices_melhor_envio') {
-                unset($_SESSION[$key]);
-            }
-        }
+        //foreach ($_SESSION as $key => $sessionItem) {
+        //    if ($key != 'notices_melhor_envio') {
+        //        unset($_SESSION[$key]);
+        //    }
+       // }
     }
 }

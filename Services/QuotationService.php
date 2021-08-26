@@ -4,6 +4,8 @@ namespace Services;
 
 use Models\Option;
 use Models\Payload;
+use Helpers\TimeHelper;
+use Helpers\SessionHelper;
 use Services\PayloadService;
 
 /**
@@ -13,7 +15,7 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
-    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 900;
+    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 9000;
 
     /**
      * function to calculate quotation.
@@ -132,6 +134,12 @@ class QuotationService
 
         $quotationsCachead = $this->getSessionCachedQuotation($payload, $service);
 
+        if (empty($quotationsCachead)) {
+            $quotations =  $this->calculate($payload, $options->insurance_value);
+            $this->storeQuotationSession($payload, $quotations);
+            return $quotations;
+        }
+
         if (!empty($quotationsCachead) && empty($service)) {
             return $quotationsCachead;
         }
@@ -150,11 +158,7 @@ class QuotationService
             }
         }
 
-        $quotations =  $this->calculate($payload, $options->insurance_value);
-
-        $this->storeQuotationSession($payload, $quotations);
-
-        return $quotations;
+        return $quotationsCachead;
     }
 
 
@@ -167,42 +171,71 @@ class QuotationService
      */
     private function storeQuotationSession($payload, $quotation)
     {
-        $quotation = $this->orderingQuotationByPrice($quotation);
-
-        $hash = $this->generateHashQuotation($payload);
-
-        if (empty(session_id())) {
-            @session_start();
-        }
-
+        SessionHelper::initIfNotExists();
         $_SESSION['quotation-melhor-envio'][$hash]['quotations'] = $quotation;
-        $_SESSION['quotation-melhor-envio'][$hash]['created'] = date('Y-m-h H:i:s');
+        $_SESSION['quotation-melhor-envio'][$hash]['created'] = date('Y-m-d H:i:s');
+        
+        /*SessionHelper::start();
+        $session = $_SESSION;
+        SessionHelper::close();
 
-        session_write_close();
+        $session['quotation-melhor-envio'][$hash]['quotations'] = $quotation;
+        $session['quotation-melhor-envio'][$hash]['created'] = date('Y-m-d H:i:s');
+
+        SessionHelper::start();
+        $_SESSION = $session;
+        SessionHelper::close();
+
+        SessionHelper::start();
+        dd($_SESSION);
+        SessionHelper::close();*/
     }
 
     /**
-     * Function to sort the quote by price
+     * Function to search for the quotation of a shipping service in the session,
+     * if it does not find false returns
      *
-     * @param array $quotation
-     * @return array
+     * @param array $bodyQuotation
+     * @param int $service
+     * @return bool|array
      */
-    public function orderingQuotationByPrice($quotation)
+    private function getSessionCachedQuotation($payload, $service)
     {
-        if (is_null($quotation)) {
-            return $quotation;
+        SessionHelper::initIfNotExists();
+        
+        //dd($_SESSION);
+        //SessionHelper::start();
+        //$session = $_SESSION;
+        //SessionHelper::close();
+
+        //dd($_SESSION);
+
+        if (empty($_SESSION['quotation-melhor-envio'][$hash])) {
+            return false;
         }
 
-        if (!is_array($quotation)) {
-            return $quotation;
+        $quotationsCachead = $_SESSION['quotation-melhor-envio'][$hash];
+
+        $dateCreated = $quotationsCachead['created'];
+        $quotationsCachead = $quotationsCachead['quotations'];
+
+        if (!empty($dateCreated)) {
+            //todo: inverter condicional > para <
+            if (TimeHelper::howSecondsInPast($dateCreated) < self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS) {
+                unset($_SESSION['quotation-melhor-envio'][$hash]);
+                SessionHelper::start();
+                //$_SESSION = $_SESSION;
+                SessionHelper::close();
+                return false;
+            }
         }
 
-        uasort($quotation, function ($a, $b) {
-            if ($a == $b) return 0;
-            if (!isset($a->price) || !isset($b->price)) return 0;
-            return ($a->price < $b->price) ? -1 : 1;
-        });
-        return $quotation;
+        return $quotationsCachead;
+    }
+
+    private function isUltrapassedQuotation($dateQuotation)
+    {
+        return TimeHelper::howSecondsInPast($dateQuotation) > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS;
     }
 
     /**
@@ -240,71 +273,26 @@ class QuotationService
     }
 
     /**
-     * Function to search for the quotation of a shipping service in the session,
-     * if it does not find false returns
+     * Function to sort the quote by price
      *
-     * @param array $bodyQuotation
-     * @param int $service
-     * @return bool|array
+     * @param array $quotation
+     * @return array
      */
-    private function getSessionCachedQuotation($payload, $service)
+    public function orderingQuotationByPrice($quotation)
     {
-        $hash = $this->generateHashQuotation($payload);
-
-        if (empty(session_id())) {
-            @session_start();
-        }
-        $session = $_SESSION;
-        session_write_close();
-
-        if (empty($session['quotation-melhor-envio'][$hash])) {
-            return false;
+        if (is_null($quotation)) {
+            return $quotation;
         }
 
-        $quotationsCachead = $session['quotation-melhor-envio'][$hash];
-        $dateCreated = $quotationsCachead['created'];
-        $quotationsCachead = $quotationsCachead['quotations'];
-
-        if (!empty($dateCreated)) {
-            $dbtimestamp = strtotime($dateCreated);
-            if (!time() - $dbtimestamp > self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS) {
-                if (empty(session_id())) {
-                    @session_start();
-                }
-                unset($_SESSION['quotation-melhor-envio'][$hash]);
-                session_write_close();
-                return false;
-            }
-        }
-        return $quotationsCachead;
-    }
-
-    /**
-     * Function to go through the quote and check for errors
-     * and notify the store administrator.
-     *
-     * @param array $quotations
-     * @param array $products
-     * @return void
-     */
-    private function checkIfHasErrorsProduct($quotations, $products)
-    {
-        $labelProducts = (new ProductsService())->createLabelTitleProducts($products);
-        $errors = '';
-        foreach ($quotations as $quotation) {
-            if (!empty($quotation->error)) {
-                $errors = $errors .  sprintf(
-                    "<b>%s</b> %s </br>",
-                    $quotation->name,
-                    $quotation->error
-                );
-            }
+        if (!is_array($quotation)) {
+            return $quotation;
         }
 
-        if (!empty($errors)) {
-            (new SessionNoticeService())->add(
-                sprintf("%s </br> %s", $labelProducts, $errors)
-            );
-        }
+        uasort($quotation, function ($a, $b) {
+            if ($a == $b) return 0;
+            if (!isset($a->price) || !isset($b->price)) return 0;
+            return ($a->price < $b->price) ? -1 : 1;
+        });
+        return $quotation;
     }
 }

@@ -49,11 +49,17 @@ class CalculateShippingMethodService
             ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
 
+        $startTime = microtime(true);
+
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,
             $to,
             $code
         );
+
+        $endTime = round(microtime(true) - $startTime, 2); // seconds
+
+        //dd($endTime);
 
         if (is_array($result)) {
             $result = $this->extractOnlyQuotationByService($result, $code);
@@ -68,22 +74,22 @@ class CalculateShippingMethodService
                 $additionalData = (new AdditionalQuotationService())->get();
 
                 if (!empty($additionalData[$id]['taxExtra'])) {
-                    $taxExtra = ($additionalData[$id]['taxExtra'] >= $taxExtra) 
-                        ?  $additionalData[$id]['taxExtra'] 
+                    $taxExtra = ($additionalData[$id]['taxExtra'] >= $taxExtra)
+                        ?  $additionalData[$id]['taxExtra']
                         : $taxExtra;
                 } 
 
                 if (!empty($additionalData[$id]['timeExtra'])) {
-                    $timeExtra = ($additionalData[$id]['timeExtra'] >= $timeExtra) 
-                        ?  $additionalData[$id]['timeExtra'] 
+                    $timeExtra = ($additionalData[$id]['timeExtra'] >= $timeExtra)
+                        ?  $additionalData[$id]['timeExtra']
                         : $timeExtra;
                 }
 
                 if (!empty($additionalData[$id]['percent'])) {
-                    $percent = ($additionalData[$id]['percent'] >= $percent) 
-                        ?  $additionalData[$id]['percent'] 
+                    $percent = ($additionalData[$id]['percent'] >= $percent)
+                        ?  $additionalData[$id]['percent']
                         : $percent;
-                } 
+                }
 
                 $rate = [
                     'id' => $id,
