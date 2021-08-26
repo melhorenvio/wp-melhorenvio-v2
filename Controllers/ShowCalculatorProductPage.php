@@ -36,9 +36,9 @@ class ShowCalculatorProductPage
      */
     public function enqueueCssJsFrontend()
     {
-        wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js?hash=' . rand(0,1000), 'jquery');
-        wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js?hash=' . rand(0,1000), 'jquery');
-        wp_enqueue_script('calculator', BASEPLUGIN_ASSETS . '/js/calculator.js?hash=' . rand(0,1000), 'jquery');
+        wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js?hash=' . rand(0,1000), array('jquery'));
+        wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js?hash=' . rand(0,1000), array('jquery'));
+        wp_enqueue_script('calculator', BASEPLUGIN_ASSETS . '/js/calculator.js?hash=' . rand(0,1000), array('jquery'));
     }
 
     /**
