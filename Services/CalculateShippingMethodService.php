@@ -59,8 +59,6 @@ class CalculateShippingMethodService
 
         $endTime = round(microtime(true) - $startTime, 2); // seconds
 
-        //dd($endTime);
-
         if (is_array($result)) {
             $result = $this->extractOnlyQuotationByService($result, $code);
         }

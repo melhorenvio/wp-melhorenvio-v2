@@ -84,8 +84,8 @@ class RequestService
 
         $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
 
-        $responseCode = (!empty($responseRemote['response']['code'])) 
-            ? $responseRemote['response']['code'] 
+        $responseCode = (!empty($responseRemote['response']['code']))
+            ? $responseRemote['response']['code']
             : null;
 
         if ($responseCode != 200) {

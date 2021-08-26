@@ -15,7 +15,7 @@ class QuotationService
 {
     const ROUTE_API_MELHOR_CALCULATE = '/shipment/calculate';
 
-    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 9000;
+    const TIME_DURATION_SESSION_QUOTATION_IN_SECONDS = 900;
 
     /**
      * function to calculate quotation.
@@ -39,7 +39,7 @@ class QuotationService
             true
         );
 
-        if (empty($useInsuranceValue)) {
+        if (!$useInsuranceValue) {
             $payload = (new PayloadService())->removeInsuranceValue($payload);
             $quotsWithoutValue = $requestService->request(
                 self::ROUTE_API_MELHOR_CALCULATE,
@@ -119,24 +119,25 @@ class QuotationService
         $service = null
     ) {
 
+        SessionHelper::initIfNotExists();
+
         $payload = (new PayloadService())->createPayloadByProducts(
             $postalCode,
             $products
         );
-
         if (empty($payload)) {
             return false;
         }
 
         $hash = $this->generateHashQuotation($payload);
-
+      
         $options = (new Option())->getOptions();
 
-        $quotationsCachead = $this->getSessionCachedQuotation($payload, $service);
+        $quotationsCachead = $this->getSessionCachedQuotation($hash, $service);
 
         if (empty($quotationsCachead)) {
             $quotations =  $this->calculate($payload, $options->insurance_value);
-            $this->storeQuotationSession($payload, $quotations);
+            $this->storeQuotationSession($hash, $quotations);
             return $quotations;
         }
 
@@ -169,26 +170,15 @@ class QuotationService
      * @param array $quotation
      * @return void
      */
-    private function storeQuotationSession($payload, $quotation)
+    private function storeQuotationSession($hash, $quotation)
     {
-        SessionHelper::initIfNotExists();
-        $_SESSION['quotation-melhor-envio'][$hash]['quotations'] = $quotation;
-        $_SESSION['quotation-melhor-envio'][$hash]['created'] = date('Y-m-d H:i:s');
-        
-        /*SessionHelper::start();
-        $session = $_SESSION;
-        SessionHelper::close();
+        $quotationSession[$hash]['quotations'] = $quotation;
+        $quotationSession[$hash]['created'] = date('Y-m-d H:i:s');
 
-        $session['quotation-melhor-envio'][$hash]['quotations'] = $quotation;
-        $session['quotation-melhor-envio'][$hash]['created'] = date('Y-m-d H:i:s');
-
-        SessionHelper::start();
-        $_SESSION = $session;
-        SessionHelper::close();
-
-        SessionHelper::start();
-        dd($_SESSION);
-        SessionHelper::close();*/
+        $_SESSION['quotation-melhor-envio'][$hash] = [
+            'quotations' => $quotation,
+            'created' => date('Y-m-d H:i:s')
+        ];
     }
 
     /**
@@ -199,34 +189,22 @@ class QuotationService
      * @param int $service
      * @return bool|array
      */
-    private function getSessionCachedQuotation($payload, $service)
+    private function getSessionCachedQuotation($hash, $service)
     {
-        SessionHelper::initIfNotExists();
-        
-        //dd($_SESSION);
-        //SessionHelper::start();
-        //$session = $_SESSION;
-        //SessionHelper::close();
+        $session = $_SESSION;
 
-        //dd($_SESSION);
-
-        if (empty($_SESSION['quotation-melhor-envio'][$hash])) {
+        if (empty($session['quotation-melhor-envio'][$hash])) {
             return false;
         }
 
-        $quotationsCachead = $_SESSION['quotation-melhor-envio'][$hash];
-
+        $quotationsCachead = $session['quotation-melhor-envio'][$hash];
         $dateCreated = $quotationsCachead['created'];
         $quotationsCachead = $quotationsCachead['quotations'];
 
         if (!empty($dateCreated)) {
-            //todo: inverter condicional > para <
-            if (TimeHelper::howSecondsInPast($dateCreated) < self::TIME_DURATION_SESSION_QUOTATION_IN_SECONDS) {
-                unset($_SESSION['quotation-melhor-envio'][$hash]);
-                SessionHelper::start();
-                //$_SESSION = $_SESSION;
-                SessionHelper::close();
-                return false;
+            if ($this->isUltrapassedQuotation($dateCreated)) {
+                unset($session['quotation-melhor-envio'][$hash]);
+                $_SESSION = $session;
             }
         }
 
@@ -246,10 +224,14 @@ class QuotationService
      */
     private function generateHashQuotation($payload)
     {
+        $hash = '';
+
         $products = [];
 
         if (!empty($payload->products)) {
             foreach ($payload->products as $product) {
+
+                $hash .= 'ID:' . $product->name . 'QTY:' . $product->quantity;
                 $products[] = [
                     'id' => $product->id,
                     'width' => $product->width,
@@ -261,6 +243,9 @@ class QuotationService
                 ];
             }
         }
+
+        return $hash;
+
         return md5(json_encode([
             'from' => $payload->from->postal_code,
             'to' => $payload->to->postal_code,
