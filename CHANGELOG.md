@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.16]
+- Correção para o problema de lentidão ao inserir um produto no carrinho de compras
+
 ### [2.9.14]
 - Ajustes validações payload para API do Melhor Envio
 - Ajuste no uso de valor segurado nas cotações
