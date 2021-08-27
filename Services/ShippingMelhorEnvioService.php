@@ -55,20 +55,17 @@ class ShippingMelhorEnvioService
      *
      * @return array
      */
-    public function getMethodsActivedsMelhorEnvio()
-    {
-        $methods = array();
-        $delivery_zones = \WC_Shipping_Zones::get_zones();
-        foreach ($delivery_zones as  $zone) {
-            foreach ($zone['shipping_methods'] as $method) {
-                if (!$this->isMelhorEnvioMethod($method)) {
-                    continue;
-                }
-                $methods[] = $method;
-            }
-        }
-        return $methods;
-    }
+    public static function getMethodsActivedsMelhorEnvio() {
+      	$methods   = array();
+	$shipping_methods = WC()->shipping()->get_shipping_methods();
+	foreach ( $shipping_methods as $method ) {
+      		if ( isset( $method->enabled ) && 'yes' === $method->enabled ) {
+        	$methods[] = $method;
+	      };
+	}
+
+	return $methods;
+  }
 
     /**
      * Function to check if the method is Melhor Envio.
