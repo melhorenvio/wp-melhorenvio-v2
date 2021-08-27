@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.17]
+- Adição de alerta em casos de token inválidos ou expirados
+
 ### [2.9.16]
 - Correção para o problema de lentidão ao inserir um produto no carrinho de compras
 
