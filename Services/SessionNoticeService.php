@@ -93,7 +93,7 @@ class SessionNoticeService
      */
     public function remove($hash)
     {
-         $notices = $this->get();
+        $notices = $this->get();
         unset($notices[$hash]);
         update_option(self::ID_NOTICES_OPTIONS, $notices);
         wp_redirect($_SERVER['HTTP_REFERER']);
