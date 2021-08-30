@@ -99,7 +99,7 @@ class Address
     public function getSelectedAddressId()
     {
         // Find ID on session
-        if ($this->existsAddressIdSelectedSession) {
+        if ($this->existsAddressIdSelectedSession()) {
             $codeStore = md5(get_option('home'));
             return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
