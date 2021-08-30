@@ -72,20 +72,14 @@ class RequestService
             'timeout ' => self::TIMEOUT
         );
 
-        $time_pre = microtime(true);
-
         $responseRemote = wp_remote_post($this->url . $route, $params);
-
+        
         $response = json_decode(
             wp_remote_retrieve_body($responseRemote)
         );
 
-        $time_post = microtime(true);
-
-        $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
-
-        $responseCode = (!empty($responseRemote['response']['code'])) 
-            ? $responseRemote['response']['code'] 
+        $responseCode = (!empty($responseRemote['response']['code']))
+            ? $responseRemote['response']['code']
             : null;
 
         if ($responseCode != 200) {
