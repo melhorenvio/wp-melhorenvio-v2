@@ -5,6 +5,7 @@ namespace Services;
 use Models\Order;
 use Models\Option;
 use Models\Payload;
+use Models\Session;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
@@ -430,9 +431,9 @@ class CartService
 
         $data = [];
 
-        foreach($woocommerce->cart->get_cart() as $cart) {
-            foreach($cart as $item) {
-                if (gettype($item) == 'object')  {
+        foreach ($woocommerce->cart->get_cart() as $cart) {
+            foreach ($cart as $item) {
+                if (gettype($item) == 'object') {
                     $productId = $item->get_id();
                     if (!empty($productId)) {
                         $data['products'][$productId] = [
@@ -440,9 +441,9 @@ class CartService
                             'price' => $item->get_price()
                         ];
 
-                        if (!empty($_SESSION['melhorenvio_additional'])) {
-                            foreach($_SESSION['melhorenvio_additional'] as $dataSession) {
-                                foreach($dataSession as $keyProduct =>$product) {
+                        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+                            foreach ($_SESSION[Session::ME_KEY]['melhorenvio_additional'] as $dataSession) {
+                                foreach ($dataSession as $keyProduct => $product) {
                                     $data['products'][$productId]['taxas_extras'] = $product;
                                 }
                             }
@@ -452,8 +453,8 @@ class CartService
             }
         }
 
-        if (!empty($_SESSION['melhorenvio_additional'])) {
-            $data['adicionais_extras'] = $_SESSION['melhorenvio_additional'];
+        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+            $data['adicionais_extras'] = $_SESSION[Session::ME_KEY]['melhorenvio_additional'];
         }
 
         return $data;
