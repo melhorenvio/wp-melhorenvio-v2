@@ -99,8 +99,8 @@ class Address
     public function getSelectedAddressId()
     {
         // Find ID on session
-        $codeStore = md5(get_option('home'));
-        if (isset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]) && $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]) {
+        if ($this->existsAddressIdSelectedSession) {
+            $codeStore = md5(get_option('home'));
             return $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
 
@@ -145,5 +145,16 @@ class Address
             'success' => false,
             'address' => []
         );
+    }
+
+    /**
+     * function check has in session the ID of address selected
+     * @return bool
+     */
+    private function existsAddressIdSelectedSession()
+    {
+        $codeStore = md5(get_option('home'));
+
+        return !empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]);
     }
 }
