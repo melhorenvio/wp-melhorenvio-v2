@@ -22,8 +22,8 @@ class SessionNoticeService
     {
         SessionHelper::initIfNotExists();
 
-        $notices = (!empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION]))
-            ? $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION]
+        $notices = (!empty($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]))
+            ? $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]
             : [];
 
         if (!empty($notices)) {
@@ -54,7 +54,7 @@ class SessionNoticeService
             get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
         );
 
-        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION][md5($notice)] = [
+        $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION][md5($notice)] = [
             'notice' => $html,
             'created' => date('Y-m-d H:i:s')
         ];
@@ -68,10 +68,10 @@ class SessionNoticeService
      */
     public function remove($index)
     {
-        $notices = $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION];
+        $notices = $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION];
         unset($notices[$index]);
-        unset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION]);
-        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION] = $notices;
+        unset($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]);
+        $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION] = $notices;
 
         wp_redirect($_SERVER['HTTP_REFERER']);
         exit;
@@ -86,8 +86,8 @@ class SessionNoticeService
     {
         $notices = false;
 
-        if (!empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION])) {
-            $notices = $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::ID_NOTICES_SESSION];
+        if (!empty($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION])) {
+            $notices = $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION];
         }
 
         return $notices;

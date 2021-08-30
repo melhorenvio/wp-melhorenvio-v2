@@ -88,7 +88,7 @@ class OptionsMethodShippingService
 
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore]['melhorenvio_options'] = $options;
+        $_SESSION[Session::ME_KEY][$codeStore]['melhorenvio_options'] = $options;
 
         return $options;
     }

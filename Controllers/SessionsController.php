@@ -17,7 +17,7 @@ class SessionsController
     {
         SessionHelper::initIfNotExists();
         
-        return wp_send_json($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO], 200);
+        return wp_send_json($_SESSION[Session::ME_KEY], 200);
     }
 
     /**

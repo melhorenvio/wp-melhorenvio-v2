@@ -60,9 +60,9 @@ class StoreService
 
         $codeStore = md5(get_option('home'));
 
-        unset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES]);
-        if (isset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES])) {
-            return $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES];
+        unset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES]);
+        if (isset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES])) {
+            return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES];
         }
 
         $response = (new RequestService())->request(
@@ -92,7 +92,7 @@ class StoreService
             return $store;
         }, $stores);
 
-        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::OPTION_STORES] = $stores;
+        $_SESSION[Session::ME_KEY][$codeStore][self::OPTION_STORES] = $stores;
 
         session_write_close();
 

@@ -72,7 +72,7 @@ class Address
     {
         $codeStore = md5(get_option('home'));
 
-        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
+        $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
 
         $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
 
@@ -101,7 +101,7 @@ class Address
         // Find ID on session
         if ($this->existsAddressIdSelectedSession) {
             $codeStore = md5(get_option('home'));
-            return $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED];
+            return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
 
         // Find ID on database wordpress
@@ -155,6 +155,6 @@ class Address
     {
         $codeStore = md5(get_option('home'));
 
-        return !empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]);
+        return !empty($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED]);
     }
 }
