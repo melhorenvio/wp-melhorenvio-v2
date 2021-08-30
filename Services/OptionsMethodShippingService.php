@@ -3,6 +3,7 @@
 namespace Services;
 
 use Models\Method;
+use Models\Session;
 
 /**
  * Class responsible for managing the shipping method options service
@@ -87,7 +88,7 @@ class OptionsMethodShippingService
 
         $codeStore = md5(get_option('home'));
 
-        $_SESSION['melhor_envio_session'][$codeStore]['melhorenvio_options'] = $options;
+        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore]['melhorenvio_options'] = $options;
 
         return $options;
     }

@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Agency;
+use Models\Session;
 use Controllers\TokenController;
 use Services\RequestService;
 
@@ -71,7 +72,7 @@ class Address
     {
         $codeStore = md5(get_option('home'));
 
-        $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
+        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
 
         $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
 
@@ -99,8 +100,8 @@ class Address
     {
         // Find ID on session
         $codeStore = md5(get_option('home'));
-        if (isset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED]) && $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED]) {
-            return $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_ADDRESS_SELECTED];
+        if (isset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]) && $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED]) {
+            return $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
 
         // Find ID on database wordpress
@@ -123,7 +124,6 @@ class Address
         }
 
         foreach ($addresses['addresses'] as $item) {
-
             if ($item['id'] == floatval($idAddressSelected)) {
                 return array(
                     'success' => true,
@@ -134,7 +134,6 @@ class Address
         }
 
         if (!empty($addresses['addresses'])) {
-
             return array(
                 'success' => true,
                 'origin'  => 'database',

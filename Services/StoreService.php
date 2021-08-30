@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\SessionHelper;
+use Models\Session;
 
 class StoreService
 {
@@ -49,7 +50,7 @@ class StoreService
     }
 
     /**
-     * Function to retrieve stores. 
+     * Function to retrieve stores.
      *
      * @return bool|array
      */
@@ -59,9 +60,9 @@ class StoreService
 
         $codeStore = md5(get_option('home'));
 
-        unset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES]);
-        if (isset($_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES])) {
-            return $_SESSION['melhor_envio_session'][$codeStore][self::SESSION_STORES];
+        unset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES]);
+        if (isset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES])) {
+            return $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::SESSION_STORES];
         }
 
         $response = (new RequestService())->request(
@@ -91,7 +92,7 @@ class StoreService
             return $store;
         }, $stores);
 
-        $_SESSION['melhor_envio_session'][$codeStore][self::OPTION_STORES] = $stores;
+        $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][$codeStore][self::OPTION_STORES] = $stores;
 
         session_write_close();
 

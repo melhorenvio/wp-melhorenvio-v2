@@ -5,6 +5,7 @@ namespace Controllers;
 use Services\PayloadService;
 use Services\QuotationService;
 use Services\QuotationProductPageService;
+use Models\Session;
 
 /**
  * Class responsible for the quotation controller
@@ -35,7 +36,7 @@ class QuotationController
             (new PayloadService())->save(($postId));
         }
 
-        unset($_SESSION['melhor_envio_session']['quotation']);
+        unset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO]['quotation']);
 
         return $result;
     }

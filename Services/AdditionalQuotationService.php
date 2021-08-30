@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\SessionHelper;
+use Models\Session;
 
 /**
  * Class AdditionalQuotationService
@@ -29,7 +30,7 @@ class AdditionalQuotationService
         global $woocommerce;
 
         if (empty($woocommerce->cart->cart_contents)) {
-            $_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL] = null;
+            $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL] = null;
             return false;
         }
 
@@ -42,8 +43,8 @@ class AdditionalQuotationService
 
             $hashCart = $cart['key'];
 
-            if (!empty($_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
-                foreach ($_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart] as $productId => $instances) {
+            if (!empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
+                foreach ($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart] as $productId => $instances) {
                     foreach ($instances as $instanceId => $data) {
                         $tax =  (!empty($data['taxExtra'])) ? floatval($data['taxExtra']) : 0;
                         $time = (!empty($data['timeExtra'])) ? floatval($data['timeExtra']) : 0;
@@ -84,15 +85,15 @@ class AdditionalQuotationService
         global $woocommerce;
 
         if (empty($woocommerce->cart->get_cart_contents_count() )) {
-            $_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL] = null;
+            $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL] = null;
             return false;
         }
 
-        foreach($woocommerce->cart->get_cart() as $cart) {
+        foreach ($woocommerce->cart->get_cart() as $cart) {
             $hashCart = $cart['key'];
 
-            if (empty($_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
-                $_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
+            if (empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
+                $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
                     'taxExtra' => $taxExtra,
                     'timeExtra' => $timeExtra,
                     'percent' => $percent
@@ -102,7 +103,7 @@ class AdditionalQuotationService
                 return true;
             }
 
-            $dataCachedAdditional = $_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart];
+            $dataCachedAdditional = $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart];
 
             $dataCachedAdditional = array_merge(
                 $dataCachedAdditional, [
@@ -112,7 +113,7 @@ class AdditionalQuotationService
                 ]
             );
 
-            $_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
+            $_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
                 'taxExtra' => ($taxExtra > $dataCachedAdditional['taxExtra'])
                     ? $taxExtra
                     : $dataCachedAdditional['taxExtra'],
@@ -139,14 +140,14 @@ class AdditionalQuotationService
     {
         SessionHelper::initIfNotExists();
 
-        if (empty(['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL] )) {
+        if (empty($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL] )) {
             return false;
         }
 
-        foreach ($_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL] as $key => $cart) {
+        foreach ($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL] as $key => $cart) {
             foreach ($cart as $key2 => $item) {
                 if ($key2 == $productId) {
-                    unset($_SESSION['melhor_envio_session'][self::SESSION_KEY_ADDITIONAL][$key][$key2]);
+                    unset($_SESSION[Session::KEY_SESSION_MELHOR_ENVIO][self::SESSION_KEY_ADDITIONAL][$key][$key2]);
                 }
             }
         }
