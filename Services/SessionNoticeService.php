@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\SessionHelper;
+use Models\Session;
 
 /**
  * Service responsible for managing the data stored in the session
@@ -44,7 +45,13 @@ class SessionNoticeService
 
         $hash = md5($text);
 
+<<<<<<< HEAD
         $notices[$hash] = $this->formatHtml($text, $type);
+=======
+        $notices = (!empty($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]))
+            ? $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]
+            : [];
+>>>>>>> develop
 
         if (!empty($notices)) {
             return update_option(self::ID_NOTICES_OPTIONS, $notices);
@@ -70,6 +77,7 @@ class SessionNoticeService
         );
     }
 
+<<<<<<< HEAD
     /**
      * Function to check whether to display and insert the search form alert on the administrative page
      */
@@ -81,6 +89,12 @@ class SessionNoticeService
                 echo $notice;
             });
         }
+=======
+        $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION][md5($notice)] = [
+            'notice' => $html,
+            'created' => date('Y-m-d H:i:s')
+        ];
+>>>>>>> develop
     }
 
 
@@ -92,9 +106,17 @@ class SessionNoticeService
      */
     public function remove($hash)
     {
+<<<<<<< HEAD
          $notices = $this->get();
         unset($notices[$hash]);
         update_option(self::ID_NOTICES_OPTIONS, $notices);
+=======
+        $notices = $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION];
+        unset($notices[$index]);
+        unset($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION]);
+        $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION] = $notices;
+
+>>>>>>> develop
         wp_redirect($_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -121,6 +143,16 @@ class SessionNoticeService
      */
     public function get()
     {
+<<<<<<< HEAD
         return get_option(self::ID_NOTICES_OPTIONS, []);
+=======
+        $notices = false;
+
+        if (!empty($_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION])) {
+            $notices = $_SESSION[Session::ME_KEY][self::ID_NOTICES_SESSION];
+        }
+
+        return $notices;
+>>>>>>> develop
     }
 }

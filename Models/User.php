@@ -3,6 +3,7 @@
 namespace Models;
 
 use Services\RequestService;
+use Models\Session;
 
 class User
 {
@@ -31,7 +32,7 @@ class User
 
         $data = get_object_vars($response);
 
-        $_SESSION[$codeStore][self::SESSION_USER_INFO] = $data;
+        $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_USER_INFO] = $data;
 
         add_option(self::OPTION_USER_INFO, $data);
 
@@ -53,6 +54,6 @@ class User
 
         delete_option(self::OPTION_USER_INFO, true);
 
-        unset($_SESSION[$codeStore][self::SESSION_USER_INFO]);
+        unset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_USER_INFO]);
     }
 }
