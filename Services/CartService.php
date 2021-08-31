@@ -251,15 +251,11 @@ class CartService
             $errors[] = 'Informar o serviço de envio.';
         }
 
-        $calculateShippingMethodService =  new CalculateShippingMethodService();
-        $isAzulCargo = $calculateShippingMethodService->isAzulCargo($body['service']);
-        $isLatamCargo = $calculateShippingMethodService->isLatamCargo($body['service']);
-        $isCorreios = $calculateShippingMethodService->isCorreios($body['service']);
-
+        $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
-        if (($isAzulCargo || $isLatamCargo) && empty($body['agency'])) {
+        if ($this->isUnitNecessary($body['service']) && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
@@ -328,8 +324,22 @@ class CartService
     }
 
     /**
+     * @param int $service
+     * @return bool
+     */
+    private function isUnitNecessary($service)
+    {
+        $calculateShippingMethodService =  new CalculateShippingMethodService();
+
+        $isAzulCargo = $calculateShippingMethodService->isAzulCargo($service);
+
+        $isLatamCargo = $calculateShippingMethodService->isLatamCargo($service);
+
+        return ($isAzulCargo || $isLatamCargo);
+    }
+
+    /**
      * Function to validate volume
-     * 
      * @param array $volume
      * @param array $errors
      * @return array
@@ -359,7 +369,6 @@ class CartService
 
     /**
      * Function to validate date address createPayloadToCart
-     * 
      * @param string $key
      * @param string $user
      * @param array $body
@@ -371,7 +380,7 @@ class CartService
         $errors = [];
     
         if (empty($body[$key])) {
-            $errors[] = "Informar o {$user} o pedido.";            
+            $errors[] = "Informar o {$user} o pedido."; 
         }
 
         if (!empty($body[$key]) && empty($body[$key]->name)) {
@@ -418,11 +427,10 @@ class CartService
         }
 
         return $errors;
-      }
+    }
 
-    /** 
+    /**
      * Function to get data and information about items in the shopping cart
-     * 
      * @return array
      */
     public function getInfoCart()
