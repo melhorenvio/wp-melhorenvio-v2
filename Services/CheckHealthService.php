@@ -2,8 +2,6 @@
 
 namespace Services;
 
-use Helpers\NoticeHelper;
-
 /**
  * Health service class
  */
@@ -13,7 +11,6 @@ class CheckHealthService
     {
         $this->hasShippingMethodsMelhorEnvio();
         $this->hasToken();
-        $this->noticesSessions();
     }
 
     /**
@@ -34,9 +31,9 @@ class CheckHealthService
                         <p>%s</p>
                     </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
 
-                NoticeHelper::addNotice(
+                (new SessionNoticeService())->addNotice(
                     $message,
-                    NoticeHelper::NOTICE_INFO
+                    SessionNoticeService::NOTICE_INFO
                 );
             }
         });
@@ -52,7 +49,7 @@ class CheckHealthService
         $token = (new TokenService())->get();
         if (!$token) {
             $message = 'Atenção! você não possui um token Melhor Envio cadastrado, acesse a plataforma do <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">Melhor Envio</a> e gere seu token de acesso';
-            NoticeHelper::addNotice($message, NoticeHelper::NOTICE_INFO);
+            (new SessionNoticeService())->add($message, SessionNoticeService::NOTICE_INFO);
         }
     }
 
@@ -83,9 +80,10 @@ class CheckHealthService
             $errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
         }
 
+        $sessionNoticeService = new SessionNoticeService();
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                NoticeHelper::addNotice($err, NoticeHelper::NOTICE_INFO);
+                $sessionNoticeService->add($err, SessionNoticeService::NOTICE_INFO);
             }
         }
 
@@ -93,34 +91,5 @@ class CheckHealthService
             'errors' => $errors,
             'errorsPath' => $errorsPath
         ];
-    }
-
-    /**
-     * function to check has notices in sessions.
-     *
-     * @return void
-     */
-    public function noticesSessions()
-    {
-        $notices = (new SessionNoticeService())->get();
-
-        if (empty($notices)) {
-            return false;
-        }
-
-        $notices = array_map(function ($notice) {
-            return $notice['notice'];
-        }, $notices);
-
-        $notices = array_unique($notices);
-
-        if (!empty($notices)) {
-            foreach ($notices as $notice) {
-                NoticeHelper::addNotice(
-                    $notice,
-                    NoticeHelper::NOTICE_INFO
-                );
-            }
-        }
     }
 }

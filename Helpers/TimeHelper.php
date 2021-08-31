@@ -8,7 +8,6 @@ class TimeHelper
 {
     /**
      * Function to define custom delivery time
-     * 
      * @param array $data
      * @param object $extra
      *
@@ -16,7 +15,6 @@ class TimeHelper
      */
     public static function label($data, $extra)
     {
-
         $min = intval($data->min) + intval($extra);
         $max = intval($data->max) + intval($extra);
 
@@ -37,5 +35,17 @@ class TimeHelper
         }
 
         return sprintf(" (%s dias úteis)", $max);
+    }
+
+    /**
+     * @param string $date
+     * @return float
+     */
+    public static function getDiffFromNowInSeconds($date)
+    {
+        $now = date('Y-m-d H:i:s');
+        $start = strtotime($now);
+        $end = strtotime($date);
+        return $start - $end;
     }
 }

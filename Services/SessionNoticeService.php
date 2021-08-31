@@ -3,92 +3,125 @@
 namespace Services;
 
 use Helpers\SessionHelper;
+use Models\Session;
 
 /**
  * Service responsible for managing the data stored in the session
  */
 class SessionNoticeService
 {
-    const ID_NOTICES_SESSION = 'notices_melhor_envio';
+    const ID_NOTICES_OPTIONS = 'wp_option_notices_melhor_envio';
+
+    const TYPE_NOTICE_DEFAULT = 'notice-error';
+
+    const NOTICE_INFO = 'notice-info';
+
+    const TYPES_NOTICE = [
+        'notice-error',
+        'notice-warning',
+        'notice-success',
+        'notice-info'
+    ];
+
+    const NOTICE_INVALID_TOKEN = 'Verificar seu token Melhor Envio, por favor gerar um novo token';
 
     /**
-     * function to save notice in session
+     * notice-error – error message displayed with a red border
+     * notice-warning – warning message displayed with a yellow border
+     * notice-success – success message displayed with a green border
+     * notice-info - – info message displayed with a blue border
      *
-     * @param string $notice
-     * @return void
+     * @param text $message
+     * @param string $type
+     * @return bool
      */
-    public function add($notice)
+    public function add(string $text, string $type)
     {
-        SessionHelper::initIfNotExists();
+        $type = (in_array($type, self::TYPES_NOTICE))
+            ? $type
+            : self::TYPE_NOTICE_DEFAULT;
 
-        $notices = (!empty($_SESSION[self::ID_NOTICES_SESSION]))
-            ? $_SESSION[self::ID_NOTICES_SESSION]
-            : [];
+        $notices = $this->get();
+
+        $hash = md5($text);
+
+        $notices[$hash] = $this->formatHtml($text, $type);
 
         if (!empty($notices)) {
-            $key = array_search($notice, array_column($notices, 'notice'));
-            if (!$key) {
-                $this->insertSession($notice);
-            }
-            return;
+            return update_option(self::ID_NOTICES_OPTIONS, $notices);
         }
 
-        $this->insertSession($notice);
-
-        session_write_close();
+        return add_option(self::ID_NOTICES_OPTIONS, $notices);
     }
 
     /**
-     * function to insert notice insession.
-     *
-     * @param string $notice
-     * @return void
+     * @param string $text
+     * @param string $type
      */
-    private function insertSession($notice)
+    private function formatHtml(string $text, string $type)
     {
-        $html = sprintf(
-            '<p>%s <a href="%s"></br>
-            <small>Não exibir mais</small></a></p>',
-            $notice,
-            get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($notice)
+        return sprintf('<div class="notice %s is-dismissible"> 
+                <p><strong>Atenção usuário do Melhor Envio</strong></p>
+                <p>%s</p>
+                <p><a href="%s">Fechar</a></p>
+            </div>',
+            $type,
+            $text,
+            get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($text)
         );
-
-        $_SESSION[self::ID_NOTICES_SESSION][md5($notice)] = [
-            'notice' => $html,
-            'created' => date('Y-m-d H:i:s')
-        ];
     }
+
+    /**
+     * Function to check whether to display and insert the search form alert on the administrative page
+     */
+    public function showNotices()
+    {
+        $notices = $this->get();
+        foreach ($notices as $hash => $notice) {
+            add_action('admin_notices', function () use ($notice) {
+                echo $notice;
+            });
+        }
+    }
+
 
     /**
      * function to remove notice in session by key.
      *
-     * @param int $index
+     * @param string $hash
      * @return void
      */
-    public function remove($index)
+    public function remove($hash)
     {
-        $notices = $_SESSION[self::ID_NOTICES_SESSION];
-        unset($notices[$index]);
-        unset($_SESSION[self::ID_NOTICES_SESSION]);
-        $_SESSION[self::ID_NOTICES_SESSION] = $notices;
-
+        $notices = $this->get();
+        unset($notices[$hash]);
+        update_option(self::ID_NOTICES_OPTIONS, $notices);
         wp_redirect($_SERVER['HTTP_REFERER']);
         exit;
     }
 
     /**
-     * function to list all notices in session.
+     * @return bool
+     */
+    public function clear()
+    {
+        return update_option(self::ID_NOTICES_OPTIONS, []);
+    }
+
+    public function removeNoticeTokenInvalid()
+    {
+        $notices = $this->get();
+        unset($notices[md5(self::NOTICE_INVALID_TOKEN)]);
+        return update_option(self::ID_NOTICES_OPTIONS, $notices);
+    }
+
+    /**
+     * function to list all notices
      *
      * @return bool|array
      */
     public function get()
     {
-        $notices = false;
-
-        if (!empty($_SESSION[self::ID_NOTICES_SESSION])) {
-            $notices = $_SESSION[self::ID_NOTICES_SESSION];
-        }
-
-        return $notices;
+        return get_option(self::ID_NOTICES_OPTIONS, []);
     }
 }
