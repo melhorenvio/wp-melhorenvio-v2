@@ -1,7 +1,6 @@
 ### Changelog
 ### [2.9.17]
-- Correção do problema de warning no método de gerenciamento de dados da sessão 
-- Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
+- Adição de alerta em casos de token inválidos ou expirados
 
 ### [2.9.16]
 - Correção para o problema de lentidão ao inserir um produto no carrinho de compras

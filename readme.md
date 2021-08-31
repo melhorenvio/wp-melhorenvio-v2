@@ -69,8 +69,8 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
-
 = 2.9.17 =
+* Adição de alerta em casos de token inválidos ou expirados
 * Correção do problema de warning no método de gerenciamento de dados da sessão 
 * Remover mensagem de "aguardando postagem" na aba de "meus pedidos" para pedidos cancelados. 
 

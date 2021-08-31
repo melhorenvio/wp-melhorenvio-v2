@@ -1,7 +1,5 @@
 <?php
 
-use Helpers\NoticeHelper;
-
 require __DIR__ . '/vendor/autoload.php';
 
 /*
@@ -52,15 +50,6 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
 
-if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
-    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
-    NoticeHelper::addNotice(
-        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
-        'notice-error'
-    );
-    return false;
-}
-
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Models\Version;
@@ -72,8 +61,17 @@ use Services\ShortCodeService;
 use Services\TrackingService;
 use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
-use Services\NoticeFormService;
+use Services\SessionNoticeService;
 use Helpers\SessionHelper;
+
+if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
+    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
+    (new SessionNoticeService())->add(
+        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
+        'notice-error'
+    );
+    return false;
+}
 
 /**
  * Base_Plugin class
@@ -125,6 +123,7 @@ final class Base_Plugin
      */
     public static function init()
     {
+
         static $instance = false;
 
         if (!$instance) {
@@ -191,6 +190,8 @@ final class Base_Plugin
         if (!$pathPlugins) {
             $pathPlugins = ABSPATH . 'wp-content/plugins';
         }
+
+        (new SessionNoticeService())->showNotices();
 
         $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
         if (!empty($result['errors'])) {
