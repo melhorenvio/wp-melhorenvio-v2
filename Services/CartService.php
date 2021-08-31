@@ -255,7 +255,7 @@ class CartService
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
-        if ($this->isUnitNecessary($body['service']) && empty($body['agency'])) {
+        if ($this->isAgencyNecessary($body['service']) && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
@@ -327,7 +327,7 @@ class CartService
      * @param int $service
      * @return bool
      */
-    private function isUnitNecessary($service)
+    private function isAgencyNecessary($service)
     {
         $calculateShippingMethodService =  new CalculateShippingMethodService();
 
