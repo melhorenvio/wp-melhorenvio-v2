@@ -31,7 +31,7 @@ class CheckHealthService
                         <p>%s</p>
                     </div>', 'Por favor, verificar os métodos de envios do Melhor Envio na tela de <a href="/wp-admin/admin.php?page=wc-settings&tab=shipping">configurações de áreas de entregas do WooCommerce</a> após a instalação da versão <b>2.8.0</b>. Devido a nova funcionalidade de classes de entrega, é necessário selecionar novamente os métodos de envios do Melhor Envio.');
 
-                (new SessionNoticeService())->addNotice(
+                (new SessionNoticeService())->add(
                     $message,
                     SessionNoticeService::NOTICE_INFO
                 );

@@ -1,7 +1,9 @@
 ### Changelog
-
-### [2.9.18]
+### [2.9.20]
 - Removação da obrigatoriedade de agências para Via Brasil e Jadlog
+
+### [2.9.19]
+- Correção do erro fatal da versão 2.9.17
 
 ### [2.9.17]
 - Adição de alerta em casos de token inválidos ou expirados
