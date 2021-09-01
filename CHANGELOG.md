@@ -1,4 +1,7 @@
 ### Changelog
+### [2.9.18]
+- Correção error fatal da versçao 2.9.17
+
 ### [2.9.17]
 - Adição de alerta em casos de token inválidos ou expirados
 
