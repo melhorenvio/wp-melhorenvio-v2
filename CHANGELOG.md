@@ -1,6 +1,6 @@
 ### Changelog
 ### [2.9.20]
-- Removação da obrigatoriedade de agências para Via Brasil e Jadlog
+- Remoção da obrigatoriedade de agências para Via Brasil e Jadlog
 
 ### [2.9.19]
 - Correção do erro fatal da versão 2.9.17
