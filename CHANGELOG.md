@@ -1,6 +1,6 @@
 ### Changelog
 ### [2.9.19]
-- Correção error fatal da versão 2.9.17
+- Correção do erro fatal da versão 2.9.17
 
 ### [2.9.17]
 - Adição de alerta em casos de token inválidos ou expirados
