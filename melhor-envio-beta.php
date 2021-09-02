@@ -110,8 +110,6 @@ final class Base_Plugin
 
         register_activation_hook(__FILE__, array($this, 'activate'));
 
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
     }
 
