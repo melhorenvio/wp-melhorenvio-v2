@@ -1,4 +1,8 @@
 ### Changelog
+
+### [2.9.20]
+- Correção do erro de produtos sem medidas
+
 ### [2.9.19]
 - Correção do erro fatal da versão 2.9.17
 
