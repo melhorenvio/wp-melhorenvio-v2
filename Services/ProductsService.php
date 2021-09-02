@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Services\SessionNoticeService;
 
 class ProductsService
 {
@@ -79,7 +80,7 @@ class ProductsService
                         get_edit_post_link($product->get_id()),
                         $product->get_name()
                     );
-                    $noticeService->add($message);
+                    $noticeService->add($message, SessionNoticeService::NOTICE_INFO);
                 }
 
                 $products[] = (object) [

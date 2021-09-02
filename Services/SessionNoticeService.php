@@ -35,7 +35,7 @@ class SessionNoticeService
      * @param string $type
      * @return bool
      */
-    public function add(string $text, string $type)
+    public function add($text, $type)
     {
         $type = (in_array($type, self::TYPES_NOTICE))
             ? $type
@@ -58,7 +58,7 @@ class SessionNoticeService
      * @param string $text
      * @param string $type
      */
-    private function formatHtml(string $text, string $type)
+    private function formatHtml($text, $type)
     {
         return sprintf('<div class="notice %s is-dismissible"> 
                 <p><strong>Atenção usuário do Melhor Envio</strong></p>
