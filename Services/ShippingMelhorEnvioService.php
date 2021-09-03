@@ -61,7 +61,7 @@ class ShippingMelhorEnvioService
 	foreach ( $shipping_methods as $method ) {
       		if ( isset( $method->enabled ) && 'yes' === $method->enabled ) {
         	$methods[] = $method;
-	      };
+	      }
 	}
 
 	return $methods;
