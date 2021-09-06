@@ -176,7 +176,7 @@ class WooCommerceBundleProductsService
      * @param array $products
      * @return array
      */
-    public function getProductsInternal($product, $metas, $products)
+    public function getInternalProducts($product, $metas, $products)
     {
         if (empty($metas['_stamp'])) {
             return false;

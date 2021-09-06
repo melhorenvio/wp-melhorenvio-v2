@@ -38,7 +38,7 @@ class OrdersProductsService
             if ($wooCommerceBundleProductService->isBundledItem($metas)) {
                 $bundleType = $wooCommerceBundleProductService->getBundledItemType($metas);
                 if ($bundleType == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
-                    $products = $wooCommerceBundleProductService->getProductsInternal(
+                    $products = $wooCommerceBundleProductService->getInternalProducts(
                         $itemProduct->get_data(),
                         $metas,
                         $products
