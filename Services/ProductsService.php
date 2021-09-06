@@ -3,10 +3,27 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Services\WooCommerceBundleProductsService;
 use Services\SessionNoticeService;
 
 class ProductsService
 {
+    /**
+     * @param int $postId
+     * @param null|int $quantity
+     * @return object
+     */
+    public function getProduct(int $postId, int $quantity = null)
+    {
+        $product = wc_get_product($postId);
+
+        if (empty($quantity)) {
+            $quantity = 1;
+        }
+        
+        return $this->normalize($product, $quantity);
+    }
+
     /**
      * Function to obtain the insurance value of one or more products.
      *
@@ -65,39 +82,69 @@ class ProductsService
     public function filter($data)
     {
         $products = [];
-
-        $noticeService = new SessionNoticeService();
-
         foreach ($data as $item) {
-            if (empty($item['data'])) {
-                $products[] = (object) $item;
-            } else {
-                $product = $item['data'];
-
-                if (!$this->hasAllDimensions(($product))) {
-                    $message = sprintf(
-                        "Verificar as medidas do produto  <a href='%s'>%s</a>",
-                        get_edit_post_link($product->get_id()),
-                        $product->get_name()
-                    );
-                    $noticeService->add($message, SessionNoticeService::NOTICE_INFO);
-                }
-
-                $products[] = (object) [
-                    'id' =>  $product->get_id(),
-                    'name' =>  $product->get_name(),
-                    'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-                    'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-                    'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-                    'unitary_value' => $product->get_price(),
-                    'insurance_value' => $product->get_price(),
-                    'quantity' =>   $item['quantity']
-                ];
+            if ($this->isObjectProduct($item)) {
+                $data = $item->get_data();
+                $product = $item;
+                $products[] = $this->normalize($product, $item['quantity']);
+                continue;
             }
+
+            if (!empty($item->name) && !empty($item->id)) {
+                $products[] = $item;
+                continue;
+            }
+
+            $product = $item['data'];
+            $products[] = $this->normalize($product, $item['quantity']);
         }
 
         return $products;
+    }
+
+    /**
+     * @param object $product
+     * @return bool
+     */
+    private function isObjectProduct($item)
+    {
+        return (
+            !is_array($item) &&
+            (
+                get_class($item) == WooCommerceBundleProductsService::OBJECT_PRODUCT_SIMPLE ||
+                get_class($item) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE
+            )
+        );
+    }
+
+    /**
+     * @param WC_Product_Simple $product
+     * @param int $quantity
+     * @return object
+     */
+    public function normalize($product, $quantity = 1)
+    {
+        $price = floatval($product->get_price());
+        if (empty($price)) {
+            $data = $product->get_data();
+            if (isset($data['price'])) {
+                $price = floatval($data['price']);
+            }
+        }
+
+        return (object) [
+            'id' =>  $product->get_id(),
+            'name' =>  $product->get_name(),
+            'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
+            'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
+            'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
+            'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
+            'unitary_value' => $price,
+            'insurance_value' =>  $price,
+            'quantity' =>   $quantity,
+            'class' => get_class($product),
+            "is_virtual" => $product->get_virtual()
+        ];
     }
 
     /**

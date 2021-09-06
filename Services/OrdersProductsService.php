@@ -3,6 +3,8 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Services\WooCommerceBundleProductsService;
+use Services\ProductsService;
 
 class OrdersProductsService
 {
@@ -20,44 +22,101 @@ class OrdersProductsService
 
         $productsComposite = [];
 
-        foreach ($order->get_items() as $key => $item_product) {
+        $productService = new ProductsService();
 
-            $_product = $item_product->get_product();
+        $products = [];
 
-            if (is_bool($_product) || get_class($_product) === CompositeProductBundleService::PRODUCT_COMPOSITE) {
+        $quantities = [];
 
-                $compositeBundleService = new CompositeProductBundleService($item_product);
+        $productsIgnoreBundle = [];
 
+        $wooCommerceBundleProductService = new WooCommerceBundleProductsService();
+
+        foreach ($order->get_items() as $key => $itemProduct) {
+            $metas = $wooCommerceBundleProductService->getMetas($itemProduct);
+
+            if ($wooCommerceBundleProductService->isBundledItem($metas)) {
+                $bundleType = $wooCommerceBundleProductService->getBundledItemType($metas);
+                if ($bundleType == WooCommerceBundleProductsService::BUNDLE_TYPE_INTERNAL) {
+                    $products = $wooCommerceBundleProductService->getInternalProducts(
+                        $itemProduct->get_data(),
+                        $metas,
+                        $products
+                    );
+                    continue;
+                }
+
+                if ($bundleType == WooCommerceBundleProductsService::BUNDLE_TYPE_EXTERNAL) {
+                    $productsInBundle = $wooCommerceBundleProductService->getProducts($metas['_stamp']);
+                    foreach ($productsInBundle as $prod) {
+                        $productsIgnoreBundle[] = $prod->id;
+                    }
+                    $product = $wooCommerceBundleProductService->getExternalProducts(
+                        $itemProduct->get_data(),
+                        $metas
+                    );
+                    $quantities = $this->incrementQuantity($product->id, $quantities, $product->quantity);
+                    $products[$product->id] = $product;
+                    continue;
+                }
+            }
+            
+            $product = $itemProduct->get_product();
+            if (is_bool($product) || get_class($product) === CompositeProductBundleService::PRODUCT_COMPOSITE) {
+                $compositeBundleService = new CompositeProductBundleService($itemProduct);
                 $productComposite = $compositeBundleService->getProductNormalize();
 
                 if (empty($productComposite)) {
                     continue;
                 }
-
                 $productsComposite[$key] = $productComposite;
             }
 
-            $products[$key] = [
-                "id" => $_product->get_id(),
-                "name" => $_product->get_name(),
-                "quantity" => $item_product->get_quantity(),
-                "unitary_value" => round($_product->get_price(), 2),
-                "insurance_value" => round($_product->get_price(), 2),
-                "weight" => DimensionsHelper::convertWeightUnit($_product->get_weight()),
-                "width" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_width()),
-                "height" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_height()),
-                "length" => DimensionsHelper::convertUnitDimensionToCentimeter($_product->get_length()),
-                "is_virtual" => $_product->get_virtual()
-            ];
+            if (!in_array($product->get_id(), $productsIgnoreBundle)) {
+                $productId = $product->get_id();
+                $quantity = $itemProduct->get_quantity();
+
+                $products[$productId] = $productService->normalize(
+                    $product,
+                    $itemProduct->get_quantity()
+                );
+
+                $quantities = $this->incrementQuantity(
+                    $productId,
+                    $quantities,
+                    $quantity
+                );
+            }
         }
 
         if (isset($compositeBundleService)) {
             return $compositeBundleService->selectProductsToReturnByTypeComposite(
-                $productsComposite, 
+                $productsComposite,
                 $products
             );
         }
 
+        foreach ($products as $key => $product) {
+            if (!empty($quantities[$product->id])) {
+                $products[$key]->quantity = $quantities[$product->id];
+            }
+        }
         return $products;
+    }
+
+    /**
+     * @param int $productId
+     * @param array $quantities
+     * @param int $quantity
+     * @return array
+     */
+    public function incrementQuantity($productId, $quantities, $quantity)
+    {
+        $actualQuantity = $quantities[$productId];
+        if (empty($actualQuantity)) {
+            $actualQuantity = 0;
+        }
+        $quantities[$productId] = $actualQuantity + $quantity;
+        return $quantities;
     }
 }

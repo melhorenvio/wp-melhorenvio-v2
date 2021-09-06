@@ -9,6 +9,7 @@ use Models\Session;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
+use Helpers\ProductVirtualHelper;
 
 class CartService
 {
@@ -87,7 +88,7 @@ class CartService
             ? $payloadSaved->products
             : $products;
 
-        $products = $this->removeVirtualProducts($products);
+        $products = ProductVirtualHelper::removeVirtuals($products);
 
         $dataBuyer = (!empty($payloadSaved->buyer))
             ? $payloadSaved->buyer
@@ -134,22 +135,6 @@ class CartService
         );
 
         return $payload;
-    }
-
-    /**
-     * 
-     * @param array $products
-     * @return array
-     */
-    private function removeVirtualProducts(&$products)
-    {
-        foreach ($products as $key => $product) {
-            if (!empty($product['is_virtual'])) {
-                unset($products[$key]);
-            }
-        }
-
-        return $products;
     }
 
     /**
@@ -267,31 +252,31 @@ class CartService
             foreach ($body['products'] as $key => $product) {
                 $index = $key++;
 
-                if (empty($product['name'])) {
+                if (empty($product->name)) {
                     $errors[] = sprintf("Infomar o nome do produto %d", $index);
                 }
 
-                if (empty($product['quantity'])) {
+                if (empty($product->quantity)) {
                     $errors[] = sprintf("Infomar a quantidade do produto %d", $index);
                 }
 
-                if (empty($product['unitary_value'])) {
+                if (empty($product->unitary_value)) {
                     $errors[] = sprintf("Infomar o valor unitário do produto %d", $index);
                 }
 
-                if (empty($product['weight'])) {
+                if (empty($product->weight)) {
                     $errors[] = sprintf("Infomar o peso do produto %d", $index);
                 }
 
-                if (empty($product['width'])) {
+                if (empty($product->width)) {
                     $errors[] = sprintf("Infomar a largura do produto %d", $index);
                 }
 
-                if (empty($product['height'])) {
+                if (empty($product->height)) {
                     $errors[] = sprintf("Infomar a altura do produto %d", $index);
                 }
 
-                if (empty($product['length'])) {
+                if (empty($product->length)) {
                     $errors[] = sprintf("Infomar o comprimento do produto %d", $index);
                 }
             }

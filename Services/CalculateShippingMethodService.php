@@ -6,6 +6,7 @@ use Helpers\MoneyHelper;
 use Helpers\TimeHelper;
 use Models\ShippingService;
 use Helpers\PostalCodeHelper;
+use Services\WooCommerceBundleProductsService;
 
 class CalculateShippingMethodService
 {
@@ -48,6 +49,10 @@ class CalculateShippingMethodService
         $products = (isset($package['contents']))
             ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
+
+        if (WooCommerceBundleProductsService::isWooCommerceProductBundle($products)) {
+            $products = (new WooCommerceBundleProductsService())->manageProductsBundle($products);
+        }
 
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,

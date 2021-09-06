@@ -85,9 +85,9 @@ class RequestService
             : null;
 
         if ($responseCode == ResponseStatus::HTTP_UNAUTHORIZED) {
-           (new SessionNoticeService())->add(
-               SessionNoticeService::NOTICE_INVALID_TOKEN, 
-               SessionNoticeService::NOTICE_INFO
+            (new SessionNoticeService())->add(
+                SessionNoticeService::NOTICE_INVALID_TOKEN,
+                SessionNoticeService::NOTICE_INFO
             );
             (new ClearDataStored())->clear();
         }
@@ -97,6 +97,7 @@ class RequestService
         }
 
         if (empty($response)) {
+            (new ClearDataStored())->clear();
             return (object) [
                 'success' => false,
                 'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],
