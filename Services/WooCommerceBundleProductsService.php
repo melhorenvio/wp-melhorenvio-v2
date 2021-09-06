@@ -199,7 +199,7 @@ class WooCommerceBundleProductsService
      * @param array $metas
      * @return object
      */
-    public function getProductExternal($product, $metas)
+    public function getExternalProducts($product, $metas)
     {
         $productService = new ProductsService();
 

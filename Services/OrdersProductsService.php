@@ -51,7 +51,7 @@ class OrdersProductsService
                     foreach ($productsInBundle as $prod) {
                         $productsIgnoreBundle[] = $prod->id;
                     }
-                    $product = $wooCommerceBundleProductService->getProductExternal(
+                    $product = $wooCommerceBundleProductService->getExternalProducts(
                         $itemProduct->get_data(),
                         $metas
                     );
