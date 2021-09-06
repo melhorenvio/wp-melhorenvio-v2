@@ -107,7 +107,11 @@ class WooCommerceBundleProductsService
      */
     private function isVirtualBundle($data)
     {
-        return isset($data->virtual) && $data->virtual == 'yes';
+        if (!isset($data->virtual)) {
+            return false;
+        }
+
+        return $data->virtual == 'yes';
     }
 
     /**
