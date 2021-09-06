@@ -196,8 +196,10 @@ class CalculateShippingMethodService
         $quotationByService = array_filter(
             $quotations,
             function ($item) use ($service) {
-                if ($item->id == $service) {
-                    return $item;
+                if (isset($item->id)) {
+                    if ($item->id == $service) {
+                        return $item;
+                    }
                 }
             }
         );

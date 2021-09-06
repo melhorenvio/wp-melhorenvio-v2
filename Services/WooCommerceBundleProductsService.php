@@ -19,7 +19,6 @@ class WooCommerceBundleProductsService
     
     /**
      * Function to check if a order is Bundle Product Class.
-     * 
      * @param array $data
      * @return bool
      */
@@ -31,7 +30,6 @@ class WooCommerceBundleProductsService
 
     /**
      * Function to manage products by bundle
-     * 
      * @param array $items
      * @return array
      */
@@ -41,12 +39,11 @@ class WooCommerceBundleProductsService
         $productService = new ProductsService();
 
         foreach ($items as $key => $data) {
-            
             if ($this->shouldUseProducts($data)) {
                 if (isset($data['bundled_by'])) {
                     foreach ($data['stamp'] as $product) {
                         $products[$product['product_id']] = $productService->getProduct(
-                            $product['product_id'], 
+                            $product['product_id'],
                             $items[$key]['quantity']
                         );
                     }
@@ -60,7 +57,7 @@ class WooCommerceBundleProductsService
                 if ($data['data']->get_aggregate_weight()) {
                     foreach ($data['stamp'] as $product) {
                         $internalProduct = $productService->getProduct(
-                            $product['product_id'], 
+                            $product['product_id'],
                             $data['quantity']
                         );
                         $weight = $weight + (float) $internalProduct->weight;
@@ -74,10 +71,9 @@ class WooCommerceBundleProductsService
             }
 
             $products[] = $productService->getProduct(
-                $data['product_id'], 
+                $data['product_id'],
                 $data['quantity']
             );
-
         }
         
         return $products;
@@ -157,8 +153,8 @@ class WooCommerceBundleProductsService
 
     /**
      * @param array $stamp
-     * @return array 
-     */  
+     * @return array
+     */
     public function getProducts($stamp)
     {
         $productService = new ProductsService();
@@ -208,7 +204,7 @@ class WooCommerceBundleProductsService
         $productService = new ProductsService();
 
         $product = $productService->getProduct(
-            $product['product_id'], 
+            $product['product_id'],
             $product['quantity']
         );
 
