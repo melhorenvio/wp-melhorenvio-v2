@@ -4,6 +4,7 @@ namespace Services;
 
 use Helpers\DimensionsHelper;
 use Services\WooCommerceBundleProductsService;
+use Services\SessionNoticeService;
 
 class ProductsService
 {
@@ -90,8 +91,8 @@ class ProductsService
             }
 
             if (!empty($item->name) && !empty($item->id)) {
-               $products[] = $item;
-               continue;
+                $products[] = $item;
+                continue;
             }
 
             $product = $item['data'];
@@ -108,9 +109,9 @@ class ProductsService
     private function isObjectProduct($item)
     {
         return (
-            !is_array($item) && 
+            !is_array($item) &&
             (
-                get_class($item) == WooCommerceBundleProductsService::OBJECT_PRODUCT_SIMPLE || 
+                get_class($item) == WooCommerceBundleProductsService::OBJECT_PRODUCT_SIMPLE ||
                 get_class($item) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE
             )
         );
@@ -143,7 +144,7 @@ class ProductsService
             'quantity' =>   $quantity,
             'class' => get_class($product),
             "is_virtual" => $product->get_virtual()
-        ];        
+        ];
     }
 
     /**

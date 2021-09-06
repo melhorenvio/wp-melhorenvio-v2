@@ -5,6 +5,7 @@ namespace Services;
 use Models\Order;
 use Models\Option;
 use Models\Payload;
+use Models\Session;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
@@ -236,11 +237,10 @@ class CartService
         }
 
         $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
-
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
-        if (!$isCorreios && empty($body['agency'])) {
+        if ($this->isAgencyNecessary($body['service']) && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
@@ -250,7 +250,6 @@ class CartService
 
         if (!empty($body['products'])) {
             foreach ($body['products'] as $key => $product) {
-
                 $index = $key++;
 
                 if (empty($product->name)) {
@@ -310,8 +309,22 @@ class CartService
     }
 
     /**
+     * @param int $service
+     * @return bool
+     */
+    private function isAgencyNecessary($service)
+    {
+        $calculateShippingMethodService =  new CalculateShippingMethodService();
+
+        $isAzulCargo = $calculateShippingMethodService->isAzulCargo($service);
+
+        $isLatamCargo = $calculateShippingMethodService->isLatamCargo($service);
+
+        return ($isAzulCargo || $isLatamCargo);
+    }
+
+    /**
      * Function to validate volume
-     * 
      * @param array $volume
      * @param array $errors
      * @return array
@@ -341,7 +354,6 @@ class CartService
 
     /**
      * Function to validate date address createPayloadToCart
-     * 
      * @param string $key
      * @param string $user
      * @param array $body
@@ -353,7 +365,7 @@ class CartService
         $errors = [];
     
         if (empty($body[$key])) {
-            $errors[] = "Informar o {$user} o pedido.";            
+            $errors[] = "Informar o {$user} o pedido."; 
         }
 
         if (!empty($body[$key]) && empty($body[$key]->name)) {
@@ -400,11 +412,10 @@ class CartService
         }
 
         return $errors;
-      }
+    }
 
-    /** 
+    /**
      * Function to get data and information about items in the shopping cart
-     * 
      * @return array
      */
     public function getInfoCart()
@@ -415,9 +426,9 @@ class CartService
 
         $data = [];
 
-        foreach($woocommerce->cart->get_cart() as $cart) {
-            foreach($cart as $item) {
-                if (gettype($item) == 'object')  {
+        foreach ($woocommerce->cart->get_cart() as $cart) {
+            foreach ($cart as $item) {
+                if (gettype($item) == 'object') {
                     $productId = $item->get_id();
                     if (!empty($productId)) {
                         $data['products'][$productId] = [
@@ -425,9 +436,9 @@ class CartService
                             'price' => $item->get_price()
                         ];
 
-                        if (!empty($_SESSION['melhorenvio_additional'])) {
-                            foreach($_SESSION['melhorenvio_additional'] as $dataSession) {
-                                foreach($dataSession as $keyProduct =>$product) {
+                        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+                            foreach ($_SESSION[Session::ME_KEY]['melhorenvio_additional'] as $dataSession) {
+                                foreach ($dataSession as $keyProduct => $product) {
                                     $data['products'][$productId]['taxas_extras'] = $product;
                                 }
                             }
@@ -437,8 +448,8 @@ class CartService
             }
         }
 
-        if (!empty($_SESSION['melhorenvio_additional'])) {
-            $data['adicionais_extras'] = $_SESSION['melhorenvio_additional'];
+        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+            $data['adicionais_extras'] = $_SESSION[Session::ME_KEY]['melhorenvio_additional'];
         }
 
         return $data;

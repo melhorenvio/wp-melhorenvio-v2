@@ -5,6 +5,8 @@ namespace Services;
 use Services\ManageRequestService;
 use Services\ClearDataStored;
 use Models\Version;
+use Models\ResponseStatus;
+use Services\SessionNoticeService;
 
 class RequestService
 {
@@ -32,7 +34,7 @@ class RequestService
         if (!$tokenData) {
             return wp_send_json([
                 'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
-            ], 401);
+            ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
         if ($tokenData['token_environment'] == 'production') {
@@ -72,13 +74,27 @@ class RequestService
             'timeout ' => self::TIMEOUT
         );
 
-        $time_pre = microtime(true);
-
         $responseRemote = wp_remote_post($this->url . $route, $params);
-
+        
         $response = json_decode(
             wp_remote_retrieve_body($responseRemote)
         );
+
+        $responseCode = (!empty($responseRemote['response']['code']))
+            ? $responseRemote['response']['code']
+            : null;
+
+        if ($responseCode == ResponseStatus::HTTP_UNAUTHORIZED) {
+            (new SessionNoticeService())->add(
+                SessionNoticeService::NOTICE_INVALID_TOKEN,
+                SessionNoticeService::NOTICE_INFO
+            );
+            (new ClearDataStored())->clear();
+        }
+
+        if ($responseCode != ResponseStatus::HTTP_OK) {
+            (new ClearDataStored())->clear();
+        }
 
         if (empty($response)) {
             (new ClearDataStored())->clear();
@@ -89,7 +105,6 @@ class RequestService
         }
 
         if (!empty($response->message) && $response->message == 'Unauthenticated.') {
-            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
             return (object) [
                 'success' => false,
                 'errors' => ['Usuário não autenticado'],
