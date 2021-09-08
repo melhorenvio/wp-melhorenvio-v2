@@ -112,11 +112,10 @@ class OrdersProductsService
      */
     public function incrementQuantity($productId, $quantities, $quantity)
     {
-        $actualQuantity = $quantities[$productId];
-        if (empty($actualQuantity)) {
-            $actualQuantity = 0;
-        }
+        $actualQuantity = (!empty($quantities[$productId])) ? $quantities[$productId] : 0;
+
         $quantities[$productId] = $actualQuantity + $quantity;
+        
         return $quantities;
     }
 }

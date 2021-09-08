@@ -68,7 +68,9 @@ class QuotationService
     {
         $response = [];
         foreach ($quotations as $quotation) {
-            $response[$quotation->id] = $quotation;
+            if (isset($quotation->id)) {
+                $response[$quotation->id] = $quotation;
+            }
         }
         return $response;
     }
@@ -150,7 +152,7 @@ class QuotationService
             $cachedQuotation = null;
             $cachedQuotations = $this->setKeyQuotationAsServiceid($cachedQuotations);
             foreach ($cachedQuotations as $quotation) {
-                if ($quotation->id == $service) {
+                if (isset($quotation->id) && $quotation->id == $service) {
                     $cachedQuotation = $quotation;
                 }
             }

@@ -47,7 +47,6 @@ class PayloadService
 
     /**
      * Function to view payload to add item cart.
-     * 
      * @param int $postId
      * @param int $methodId
      * @return array
@@ -59,9 +58,9 @@ class PayloadService
         $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
 
         $payload =  (new CartService())->createPayloadToCart(
-            $postId, 
-            $products, 
-            $buyer, 
+            $postId,
+            $products,
+            $buyer,
             $methodId
         );
 
@@ -80,7 +79,7 @@ class PayloadService
      */
     public function createPayloadCheckoutOrder($postId)
     {
-        $order = new \WC_Order( $postId );
+        $order = new \WC_Order($postId);
         $products = (new OrdersProductsService())->getProductsOrder($postId);
         $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
         $seller = (new SellerService())->getData();
@@ -89,7 +88,7 @@ class PayloadService
         $productsFilter = $productService->filter($products);
         $serviceId = (new Method($postId))->getMethodShipmentSelected($postId);
 
-        $paylod = (object) [
+        $payload = (object) [
             'from' => (object) [
                 'postal_code' => $seller->postal_code,
             ],
@@ -183,7 +182,6 @@ class PayloadService
 
     /**
      * Function to validate payload.
-     * 
      * @param object $payload
      * @return bool
      */
@@ -215,7 +213,7 @@ class PayloadService
             return false;
         }
 
-        if (!empty($payload->products)) {    
+        if (!empty($payload->products)) {
             foreach ($payload->products as $product) {
                 if (!empty($product->is_virtual)) {
                     continue;
@@ -224,7 +222,7 @@ class PayloadService
                 if (!$this->isProductValid($product)) {
                     return false;
                 }
-           }
+            }
         }
 
         return true;
@@ -232,7 +230,6 @@ class PayloadService
 
     /**
      * validates if the payload product is valid.
-     * 
      * @param object $product
      * @return bool
      */
