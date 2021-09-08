@@ -9,7 +9,7 @@ if (class_exists('WC_Melhor_Envio_Shipping')) {
 
         const METHOD_TITLE = "Buslog Rodoviário (Melhor Envio)";
 
-        public $code = 9;
+        public $code = 22;
 
         public $company = 'Buslog';
 
