@@ -34,6 +34,10 @@ class ShippingService
 
     const LATAM_JUNTOS = 12;
 
+    const BUSLOG_RODOVIARIO = 22;
+
+    const SERVICES_BUSLOG = [22];
+
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
     /**
@@ -48,7 +52,8 @@ class ShippingService
             self::SERVICES_JADLOG,
             self::SERVICES_AZUL,
             self::SERVICES_VIA_BRASIL,
-            self::SERVICES_LATAM
+            self::SERVICES_LATAM,
+            self::SERVICES_BUSLOG
         );
     }
 
@@ -61,28 +66,30 @@ class ShippingService
     public static function getCodeByMethodId($methodId)
     {
         switch ($methodId) {
-        case "melhorenvio_correios_pac":
-            return self::CORREIOS_PAC;
-        case "melhorenvio_correios_sedex":
-            return self::CORREIOS_SEDEX;
-        case "melhorenvio_jadlog_package":
-            return self::JADLOG_PACKAGE;
-        case "melhorenvio_jadlog_com":
-            return self::JADLOG_COM;
-        case "melhorenvio_via_brasil_aereo":
-            return self::VIA_BRASIL_AEREO;
-        case "melhorenvio_via_brasil_rodoviario":
-            return self::VIA_BRASIL_RODOVIARIO;
-        case "melhorenvio_azul_amanha":
-            return self::AZUL_AMANHA;
-        case "melhorenvio_azul_ecommerce":
-            return self::AZUL_ECOMMERCE;
-        case "melhorenvio_correios_mini":
-            return self::CORREIOS_MINI;
-        case "melhorenvio_latam_juntos":
-            return self::LATAM_JUNTOS;
-        default:
-            return null;
+            case "melhorenvio_correios_pac":
+                return self::CORREIOS_PAC;
+            case "melhorenvio_correios_sedex":
+                return self::CORREIOS_SEDEX;
+            case "melhorenvio_jadlog_package":
+                return self::JADLOG_PACKAGE;
+            case "melhorenvio_jadlog_com":
+                return self::JADLOG_COM;
+            case "melhorenvio_via_brasil_aereo":
+                return self::VIA_BRASIL_AEREO;
+            case "melhorenvio_via_brasil_rodoviario":
+                return self::VIA_BRASIL_RODOVIARIO;
+            case "melhorenvio_azul_amanha":
+                return self::AZUL_AMANHA;
+            case "melhorenvio_azul_ecommerce":
+                return self::AZUL_ECOMMERCE;
+            case "melhorenvio_correios_mini":
+                return self::CORREIOS_MINI;
+            case "melhorenvio_latam_juntos":
+                return self::LATAM_JUNTOS;
+            case "melhorenvio_buslog_rodoviario":
+                return self::BUSLOG_RODOVIARIO;
+            default:
+                return null;
         }
     }
 
