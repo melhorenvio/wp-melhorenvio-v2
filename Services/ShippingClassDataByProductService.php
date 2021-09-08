@@ -12,9 +12,9 @@ class ShippingClassDataByProductService
      */
     public function get($productId)
     {
-        $product = wc_get_product( $productId );
+        $product = wc_get_product($productId);
         $product_class_id = $product->get_shipping_class_id();
-        $zone_ids = array_keys( array('') + \WC_Shipping_Zones::get_zones() );
+        $zone_ids = array_keys(array('') + \WC_Shipping_Zones::get_zones());
 
         $settings = [
             'additional_tax' => 0,

@@ -152,10 +152,8 @@ class QuotationService
             $cachedQuotation = null;
             $cachedQuotations = $this->setKeyQuotationAsServiceid($cachedQuotations);
             foreach ($cachedQuotations as $quotation) {
-                if (isset($quotation->id)) {
-                    if ($quotation->id == $service) {
-                        $cachedQuotation = $quotation;
-                    }
+                if (isset($quotation->id) && $quotation->id == $service) {
+                    $cachedQuotation = $quotation;
                 }
             }
 
