@@ -187,24 +187,22 @@
               <br />
 
               <span>Telefone</span>
-              <input v-model="label.phone" data-cy="input-path" type="text" />
-              <br />
-              <br />
-
-              <span>Documento</span>
-              <input
-                v-model="label.document"
-                data-cy="input-path"
-                type="text"
+              <the-mask
+                v-model="label.phone"
+                :mask="['(##) ####-####', '(##) #####-####']"
               />
               <br />
               <br />
 
+              <span>Documento</span>
+              <the-mask v-model="label.document" :mask="['###.###.###-##']" />
+              <br />
+              <br />
+
               <span>CNPJ</span>
-              <input
+              <the-mask
                 v-model="label.company_document"
-                data-cy="input-path"
-                type="text"
+                :mask="['##.###.###/####-##']"
               />
               <br />
               <br />
@@ -590,9 +588,11 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
+import { TheMask } from "vue-the-mask";
+
 export default {
   name: "Configuracoes",
-  components: { Money },
+  components: { Money, TheMask },
   data() {
     return {
       error_message: null,
