@@ -22,6 +22,7 @@ class SellerService
         $label = $configurationService->getLabel($origin);
 
         if (!empty($label)) {
+            $label['state_abbr'] = $label['state'];
             return (object) $label;
         }
 

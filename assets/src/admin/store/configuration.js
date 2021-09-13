@@ -250,7 +250,7 @@ const configuration = {
                     form.append('label[number]', data.label.number)
                     form.append('label[district]', data.label.district)
                     form.append('label[city]', data.label.city)
-                    form.append('label[state_abbr]', data.label.state_abbr)
+                    form.append('label[state]', data.label.state)
                     form.append('label[postal_code]', data.label.postal_code)
                 }
 

@@ -256,7 +256,7 @@ class ConfigurationsService
                         "number" => $store->address->number,
                         "district" => $store->address->district,
                         "city" => $store->address->city->city,
-                        "state_abbr" => $store->address->city->state->state_abbr,
+                        "state" => $store->address->city->state->state_abbr,
                         "country" => "BR"
                     ],
                     "selected" => ($store->address->id == $addressSelectedId)
@@ -275,7 +275,7 @@ class ConfigurationsService
     {
         $labelOption = get_option('melhor_envio_option_label');
         if (!empty($labelOption)) {
-            return $labelOption;
+            //return $this->checkDataSeller($labelOption);
         }
 
         $label = null;
@@ -292,11 +292,26 @@ class ConfigurationsService
                 $label["number"] = $address['number'];
                 $label["district"]  = $address['district'];
                 $label["city"]  = $address['city'];
-                $label["state_abbr"]  = $address['state_abbr'];
+                $label["state"]  = $address['state'];
                 $label["country_id"]  = $address['country_id'];
                 $label["postal_code"]  = $address['postal_code'];
             }
         }
-        return $label;
+
+        return $this->checkDataSeller($label);
+    }
+
+    /**
+     * @param array $seller
+     * @return array
+     */
+    private function checkDataSeller($seller)
+    {
+        foreach ($seller as $key => $value) {
+            if ($value == "undefined" || empty($value)) {
+                unset($seller[$key]);
+            }
+        }
+        return $seller;
     }
 }
