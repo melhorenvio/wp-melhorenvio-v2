@@ -96,7 +96,6 @@
     <template v-if="originData.length > 0">
       <div class="wpme_config">
         <h2>Seleciona a origem dos envios</h2>
-        <p>A opção selecionada será exibida na etiqueta de envio</p>
         <div class="wpme_flex">
           <ul class="wpme_address">
             <li
@@ -172,21 +171,24 @@
     <template>
       <div class="wpme_config" style="width: 50%">
         <h2>Informações da etiqueta</h2>
-        <p>Aqui a explicação desses campos</p>
+        <p>
+          As informações abaixo serão exibidas na etiqueta impressa do Melhor
+          Envio
+        </p>
         <div class="wpme_flex">
           <ul class="wpme_address">
             <li>
-              <span>Nome</span>
+              <span>Nome</span></br>
               <input v-model="label.name" data-cy="input-path" type="text" />
               <br />
               <br />
 
-              <span>E-mail</span>
+              <span>E-mail</span></br>
               <input v-model="label.email" data-cy="input-path" type="text" />
               <br />
               <br />
 
-              <span>Telefone</span>
+              <span>Telefone</span></br>
               <the-mask
                 v-model="label.phone"
                 :mask="['(##) ####-####', '(##) #####-####']"
@@ -194,12 +196,12 @@
               <br />
               <br />
 
-              <span>Documento</span>
+              <span>Documento</span></br>
               <the-mask v-model="label.document" :mask="['###.###.###-##']" />
               <br />
               <br />
 
-              <span>CNPJ</span>
+              <span>CNPJ</span></br>
               <the-mask
                 v-model="label.company_document"
                 :mask="['##.###.###/####-##']"
@@ -207,7 +209,7 @@
               <br />
               <br />
 
-              <span>Inscrição estadual</span>
+              <span>Inscrição estadual</span></br>
               <input
                 v-model="label.state_register"
                 data-cy="input-path"
@@ -216,7 +218,7 @@
               <br />
               <br />
 
-              <span>CNAE</span>
+              <span>CNAE</span></br>
               <input
                 v-model="label.economic_activity_code"
                 data-cy="input-path"
