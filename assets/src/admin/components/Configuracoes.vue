@@ -117,7 +117,8 @@
                       showJadlogAgencies({
                         city: option.address.city,
                         state: option.address.state,
-                      })
+                      }),
+                        setOrigin(option.id)
                     "
                   />
                   <h2>{{ option.name }}</h2>
@@ -226,30 +227,33 @@
               <br />
               <br />
 
-              {{ label }}
-              <input v-if="label.address" v-model="label.address" type="text" />
+              <input
+                v-if="label.address"
+                v-model="label.address"
+                type="hidden"
+              />
               <input
                 v-if="label.complement"
                 v-model="label.complement"
-                type="text"
+                type="hidden"
               />
-              <input v-if="label.number" v-model="label.number" type="text" />
+              <input v-if="label.number" v-model="label.number" type="hidden" />
               <input
                 v-if="label.district"
                 v-model="label.district"
-                type="text"
+                type="hidden"
               />
-              <input v-if="label.city" v-model="label.city" type="text" />
-              <input v-if="label.state" v-model="label.state" type="text" />
+              <input v-if="label.city" v-model="label.city" type="hidden" />
+              <input v-if="label.state" v-model="label.state" type="hidden" />
               <input
                 v-if="label.country_id"
                 v-model="label.country_id"
-                type="text"
+                type="hidden"
               />
               <input
                 v-if="label.postal_code"
                 v-model="label.postal_code"
-                type="text"
+                type="hidden"
               />
             </li>
           </ul>
@@ -745,6 +749,29 @@ export default {
       this.showAzulAgencies(data);
       this.showALatamAgencies(data);
     },
+    setOrigin(id) {
+      if (this.originData.length > 0) {
+        this.originData.filter((item) => {
+          if (item.id == id) {
+            this.label.address = item.address.address;
+            this.label.complement = item.address.complement;
+            this.label.number = item.address.number;
+            this.label.district = item.address.district;
+            this.label.city = item.address.city;
+            this.label.state = item.address.state;
+            this.label.country_id = item.address.country_id;
+            this.label.postal_code = item.address.postal_code;
+            this.label.name = item.name;
+            this.label.email = item.email;
+            this.label.phone = item.phone;
+            this.label.document = item.document;
+            this.label.company_document = item.company_document;
+            this.label.state_register = item.state_register;
+            this.label.economic_activity_code = item.economic_activity_code;
+          }
+        });
+      }
+    },
     showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
@@ -917,29 +944,6 @@ export default {
         this.originData.filter((item) => {
           if (item.selected) {
             this.origin = item.id;
-          }
-        });
-      }
-    },
-    origin(e) {
-      if (this.originData.length > 0) {
-        this.originData.filter((item) => {
-          if (item.id == e) {
-            this.label.address = item.address.address;
-            this.label.complement = item.address.complement;
-            this.label.number = item.address.number;
-            this.label.district = item.address.district;
-            this.label.city = item.address.city;
-            this.label.state = item.address.state;
-            this.label.country_id = item.address.country_id;
-            this.label.postal_code = item.address.postal_code;
-            this.label.name = item.name;
-            this.label.email = item.email;
-            this.label.phone = item.phone;
-            this.label.document = item.document;
-            this.label.company_document = item.company_document;
-            this.label.state_register = item.state_register;
-            this.label.economic_activity_code = item.economic_activity_code;
           }
         });
       }

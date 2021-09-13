@@ -275,7 +275,7 @@ class ConfigurationsService
     {
         $labelOption = get_option('melhor_envio_option_label');
         if (!empty($labelOption)) {
-            //return $this->checkDataSeller($labelOption);
+            return $this->checkDataSeller($labelOption);
         }
 
         $label = null;
