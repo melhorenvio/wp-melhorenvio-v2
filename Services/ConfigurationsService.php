@@ -23,14 +23,10 @@ class ConfigurationsService
 
         (new ClearDataStored())->clear();
 
-        if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping(
-                $data['address']
+        if (isset($data['origin'])) {
+            $response['origin'] = (new Address())->setAddressShopping(
+                $data['origin']
             );
-        }
-
-        if (isset($data['store'])) {
-            $response['store'] = (new StoreService())->setStore($data['store']);
         }
 
         if (isset($data['agency'])) {
@@ -69,6 +65,12 @@ class ConfigurationsService
             );
         }
 
+        if (isset($data['label'])) {
+            $response['label'] = $this->setLabel(
+                $data['label']
+            );
+        }
+
         return $response;
     }
 
@@ -83,13 +85,11 @@ class ConfigurationsService
         $agenciesAzul = (new AgenciesAzulService());
         $agenciesLatam = (new AgenciesLatamService());
         $token = (new TokenService())->get();
-        $addresses =  (!empty((new Address())->getAddressesShopping()['addresses'])) 
-            ? (new Address())->getAddressesShopping()['addresses'] 
-            :  [];
+        $origin =  $this->getAddresses();
 
         return [
-            'addresses' => $addresses,
-            'stores' => (new StoreService())->getStores(),
+            'origin' => $origin,
+            'label' => $this->getLabel($origin),
             'agencies' => $agenciesJadlog->get(),
             'agencySelected' => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
             'agenciesAzul'  => $agenciesAzul->get(),
@@ -120,6 +120,18 @@ class ConfigurationsService
         return [
             'success' => true,
             'option' => $option
+        ];
+    }
+
+
+    public function setLabel($label)
+    {
+        delete_option('melhor_envio_option_label');
+        add_option('melhor_envio_option_label', $label);
+
+        return [
+            'success' => true,
+            'option' => $label
         ];
     }
 
@@ -188,5 +200,103 @@ class ConfigurationsService
         }
 
         return $path;
+    }
+
+    public function getAddresses()
+    {
+        $addressSelectedId = (new Address())->getSelectedAddressId();
+
+        $addresses =  (new Address())->getAddressesShopping();
+
+        $addresses = (!empty($addresses['addresses']))
+            ? $addresses['addresses']
+            : [];
+
+        $stores = (new StoreService())->getStores();
+
+        $sellerData = (new SellerService())->getDataApiMelhorEnvio();
+
+        $response = [];
+
+        if (!empty($addresses)) {
+            foreach ($addresses as $address) {
+                $response[] = [
+                    "id" => $address['id'],
+                    "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
+                    "email" => $sellerData->email,
+                    "phone" => $sellerData->phone->phone,
+                    "document" => $sellerData->document,
+                    "company_document" => $sellerData->company_document,
+                    "state_register" => $sellerData->state_register,
+                    "economic_activity_code" => null,
+                    "type" => "address",
+                    "address" => $address,
+                    "selected" => ($address['id'] == $addressSelectedId)
+                ];
+            }
+        }
+
+        if (!empty($stores)) {
+            foreach ($stores as $store) {
+                $response[] = [
+                    "id" => $store->address->id,
+                    "name" => $store->address->label,
+                    "email" => $store->email,
+                    "phone" => $sellerData->phone->phone,
+                    "company_document" => $store->document,
+                    "state_register" => $store->state_register,
+                    "economic_activity_code" => $store->economic_activity_code,
+                    "type" => "store",
+                    "address" => [
+                        "id" => $store->address->id,
+                        "address" => $store->address->address,
+                        "complement" => $store->address->complement,
+                        "label" => $store->address->label,
+                        "postal_code" => $store->address->postal_code,
+                        "number" => $store->address->number,
+                        "district" => $store->address->district,
+                        "city" => $store->address->city->city,
+                        "state_abbr" => $store->address->city->state->state_abbr,
+                        "country" => "BR"
+                    ],
+                    "selected" => ($store->address->id == $addressSelectedId)
+                ];
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array $origin
+     * @return array
+     */
+    public function getLabel($origin)
+    {
+        $labelOption = get_option('melhor_envio_option_label');
+        if (!empty($labelOption)) {
+            return $labelOption;
+        }
+
+        $label = null;
+        foreach ($origin as $item) {
+            if ($item['selected']) {
+                $address = $item['address'];
+                unset($item['address']);
+                unset($item['selected']);
+                unset($item['type']);
+                $label = $item;
+                $label["id"] = $address['id'];
+                $label["address"] = $address['address'];
+                $label["complement"] = $address['complement'];
+                $label["number"] = $address['number'];
+                $label["district"]  = $address['district'];
+                $label["city"]  = $address['city'];
+                $label["state_abbr"]  = $address['state_abbr'];
+                $label["country_id"]  = $address['country_id'];
+                $label["postal_code"]  = $address['postal_code'];
+            }
+        }
+        return $label;
     }
 }

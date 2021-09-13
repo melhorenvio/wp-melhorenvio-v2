@@ -6,8 +6,18 @@ import _ from 'lodash'
 const configuration = {
     namespaced: true,
     state: {
-        addresses: [],
-        stores: [],
+        addresses: [], //todo: remover
+        stores: [], //todo: remover
+        origin: [],
+        label: {
+            name: "",
+            email: "",
+            phone: "",
+            document: "",
+            company_document: "",
+            state_register: "",
+            economic_activity_code: ""
+        },
         agencies: [],
         agenciesAzul: [],
         agenciesLatam: [],
@@ -39,8 +49,14 @@ const configuration = {
         setStyleCalculator: (state, data) => {
             state.styleCalculator = data;
         },
-        setAddress: (state, data) => {
+        setAddress: (state, data) => { //todo: remover
             state.addresses = data
+        },
+        setOrigin: (state, data) => {
+            state.origin = data
+        },
+        setLabel: (state, data) => {
+            state.label = data
         },
         setStore: (state, data) => {
             state.stores = data
@@ -98,8 +114,8 @@ const configuration = {
         }
     },
     getters: {
-        getAddress: state => state.addresses,
-        getStores: state => state.stores,
+        getOrigin: state => state.origin,
+        getLabel: state => state.label,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
         getAgenciesLatam: state => state.agenciesLatam,
@@ -128,9 +144,20 @@ const configuration = {
                     params: content
                 }).then(function (response) {
                     if (response && response.status === 200) {
+
+                        //todo: remover
                         if (response.data.addresses && !_.isEmpty(response.data.addresses)) {
                             commit('setAddress', response.data.addresses);
                         }
+
+                        if (response.data.origin && !_.isEmpty(response.data.origin)) {
+                            commit('setOrigin', response.data.origin);
+                        }
+
+                        if (response.data.label && !_.isEmpty(response.data.label)) {
+                            commit('setLabel', response.data.label);
+                        }
+
                         if (response.data.agencies && !_.isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
                             commit('setAllAgency', response.data.allAgencies);
@@ -163,7 +190,6 @@ const configuration = {
                         resolve(true)
                     }
                 }).catch((error) => {
-                    console.log(error)
                 })
             })
         },
@@ -204,17 +230,28 @@ const configuration = {
             })
         },
         saveAll: ({ commit }, data) => {
-
             return new Promise((resolve, reject) => {
-
                 const form = new FormData();
-
-                if (data.address != null) {
-                    form.append('address', data.address);
+                if (data.origin != null) {
+                    form.append('origin', data.origin)
                 }
 
-                if (data.store != null) {
-                    form.append('store', data.store);
+                if (data.label != null) {
+                    form.append('label[id]', data.label.id)
+                    form.append('label[name]', data.label.name)
+                    form.append('label[email]', data.label.email)
+                    form.append('label[phone]', data.label.phone)
+                    form.append('label[document]', data.label.document)
+                    form.append('label[company_document]', data.label.company_document)
+                    form.append('label[state_register]', data.label.state_register)
+                    form.append('label[economic_activity_code]', data.label.economic_activity_code)
+                    form.append('label[id]', data.label.id)
+                    form.append('label[address]', data.label.address)
+                    form.append('label[number]', data.label.number)
+                    form.append('label[district]', data.label.district)
+                    form.append('label[city]', data.label.city)
+                    form.append('label[state_abbr]', data.label.state_abbr)
+                    form.append('label[postal_code]', data.label.postal_code)
                 }
 
                 if (data.agency != null) {

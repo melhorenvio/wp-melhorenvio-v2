@@ -17,6 +17,16 @@ class SellerService
      */
     public function getData()
     {
+        $configurationService = new ConfigurationsService();
+        $origin = $configurationService->getAddresses();
+        $label = $configurationService->getLabel($origin);
+
+        if (!empty($label)) {
+            return (object) $label;
+        }
+
+        //todo: checar isso.
+
         $seller = new Seller();
 
         $data = $seller->get();
@@ -33,16 +43,28 @@ class SellerService
 
         if (!empty($address['address']['id'])) {
             $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
-            $data->address->complement = (!empty($address['address']['complement'])) ? $address['address']['complement'] : null;
-            $data->address->number = (!empty($address['address']['number'])) ? $address['address']['number'] : null;
-            $data->address->district = (!empty($address['address']['district'])) ? $address['address']['district'] : null;
+            $data->address->complement = (!empty($address['address']['complement']))
+                ? $address['address']['complement']
+                : null;
+            $data->address->number = (!empty($address['address']['number']))
+                ? $address['address']['number']
+                : null;
+            $data->address->district = (!empty($address['address']['district']))
+                ? $address['address']['district']
+                : null;
             $data->address->city->city = (!empty($address['address']['city'])) ? $address['address']['city'] : null;
-            $data->address->city->state->state_abbr = (!empty($address['address']['state'])) ? $address['address']['state'] : null;
-            $data->address->postal_code = (!empty($address['address']['postal_code'])) ? $address['address']['postal_code'] : null;
+            $data->address->city->state->state_abbr = (!empty($address['address']['state']))
+                ? $address['address']['state']
+                : null;
+            $data->address->postal_code = (!empty($address['address']['postal_code']))
+                ? $address['address']['postal_code']
+                : null;
         }
 
         $data = (object) [
-            "name" => (!empty($store->name)) ? $store->name :  sprintf("%s %s", $data->firstname, $data->lastname),
+            "name" => (!empty($store->name))
+                ? $store->name
+                :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => (!empty($data->phone->phone)) ? $data->phone->phone : null,
             "email" => (!empty($store->email)) ? $store->email :  $data->email,
             "document" => (!empty($store->document)) ? null : $data->document,
@@ -68,7 +90,7 @@ class SellerService
      *
      * @return object $data
      */
-    private function getDataApiMelhorEnvio()
+    public function getDataApiMelhorEnvio()
     {
         $data = (new RequestService())->request('', 'GET', [], false);
 
