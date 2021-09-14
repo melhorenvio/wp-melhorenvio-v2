@@ -47,9 +47,6 @@ const configuration = {
         setStyleCalculator: (state, data) => {
             state.styleCalculator = data;
         },
-        setAddress: (state, data) => { //todo: remover
-            state.addresses = data
-        },
         setOrigin: (state, data) => {
             state.origin = data
         },
