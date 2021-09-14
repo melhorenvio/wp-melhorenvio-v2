@@ -26,8 +26,6 @@ class SellerService
             return (object) $label;
         }
 
-        //todo: checar isso.
-
         $seller = new Seller();
 
         $data = $seller->get();

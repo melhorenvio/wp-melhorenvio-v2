@@ -6,8 +6,6 @@ import _ from 'lodash'
 const configuration = {
     namespaced: true,
     state: {
-        addresses: [], //todo: remover
-        stores: [], //todo: remover
         origin: [],
         label: {
             name: "",
@@ -144,11 +142,6 @@ const configuration = {
                     params: content
                 }).then(function (response) {
                     if (response && response.status === 200) {
-
-                        //todo: remover
-                        if (response.data.addresses && !_.isEmpty(response.data.addresses)) {
-                            commit('setAddress', response.data.addresses);
-                        }
 
                         if (response.data.origin && !_.isEmpty(response.data.origin)) {
                             commit('setOrigin', response.data.origin);
