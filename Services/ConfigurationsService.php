@@ -225,10 +225,18 @@ class ConfigurationsService
                     "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
                     "email" => $sellerData->email,
                     "phone" => $sellerData->phone->phone,
-                    "document" => $sellerData->document,
-                    "company_document" => $sellerData->company_document,
-                    "state_register" => $sellerData->state_register,
-                    "economic_activity_code" => null,
+                    "document" => (!empty($sellerData->document))
+                        ? $sellerData->document
+                        : '',
+                    "company_document" => (!empty($sellerData->company_document))
+                        ? $sellerData->company_document
+                        : '',
+                    "state_register" => (!empty($sellerData->state_register))
+                        ? $sellerData->state_register
+                        : '',
+                    "economic_activity_code" => (!empty($sellerData->economic_activity_code))
+                        ? $sellerData->economic_activity_code
+                        : '',
                     "type" => "address",
                     "address" => $address,
                     "selected" => ($address['id'] == $addressSelectedId)
@@ -243,9 +251,15 @@ class ConfigurationsService
                     "name" => $store->address->label,
                     "email" => $store->email,
                     "phone" => $sellerData->phone->phone,
-                    "company_document" => $store->document,
-                    "state_register" => $store->state_register,
-                    "economic_activity_code" => $store->economic_activity_code,
+                    "company_document" => (!empty($store->company_document))
+                        ? $store->company_document
+                        : '',
+                    "state_register" => (!empty($store->state_register))
+                        ? $store->state_register
+                        : '',
+                    "economic_activity_code" => (!empty($store->economic_activity_code))
+                        ? $store->economic_activity_code
+                        : '',
                     "type" => "store",
                     "address" => [
                         "id" => $store->address->id,

@@ -125,7 +125,7 @@
                 <div class="wpme_address-body">
                   <ul>
                     <li v-if="option.document">
-                      <b>Documento:</b>
+                      <b>CPF:</b>
                       {{ `${option.document}` }}
                     </li>
                     <li v-if="option.company_document">
