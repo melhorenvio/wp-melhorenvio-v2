@@ -196,7 +196,7 @@
               <br />
               <br />
 
-              <span>Documento</span></br>
+              <span>CPF</span></br>
               <the-mask v-model="label.document" :mask="['###.###.###-##']" />
               <br />
               <br />
