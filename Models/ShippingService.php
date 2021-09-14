@@ -30,13 +30,13 @@ class ShippingService
 
     const CORREIOS_MINI = 17;
 
-    const SERVICES_LATAM = [12];
+    const SERVICES_LATAM = [self::LATAM_JUNTOS];
 
     const LATAM_JUNTOS = 12;
 
     const BUSLOG_RODOVIARIO = 22;
 
-    const SERVICES_BUSLOG = [22];
+    const SERVICES_BUSLOG = [self::BUSLOG_RODOVIARIO];
 
     const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 

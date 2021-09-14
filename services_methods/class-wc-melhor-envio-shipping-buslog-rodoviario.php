@@ -1,5 +1,7 @@
 <?php
 
+use Models\ShippingService;
+
 if (class_exists('WC_Melhor_Envio_Shipping')) {
     class WC_Melhor_Envio_Shipping_Buslog_Rodoviario extends WC_Melhor_Envio_Shipping
     {
@@ -9,7 +11,7 @@ if (class_exists('WC_Melhor_Envio_Shipping')) {
 
         const METHOD_TITLE = "Buslog Rodoviário (Melhor Envio)";
 
-        public $code = 22;
+        public $code = ShippingService::BUSLOG_RODOVIARIO;
 
         public $company = 'Buslog';
 
