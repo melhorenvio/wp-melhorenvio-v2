@@ -6,13 +6,13 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.9.23
+Version: 2.9.24
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 2.9.23
+Tested up to: 2.9.24
 Requires PHP: 5.6
 WC requires at least: 4.0
 WC tested up to: 5.7.2
@@ -103,8 +103,6 @@ final class Base_Plugin
     public function __construct()
     {
         $this->version = Version::VERSION;
-
-        SessionHelper::initIfNotExists();
 
         $this->define_constants();
 
@@ -288,6 +286,7 @@ final class Base_Plugin
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
             $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+            $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
             return $methods;
         });
 
