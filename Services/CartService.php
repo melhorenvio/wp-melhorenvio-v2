@@ -388,7 +388,7 @@ class CartService
             $errors[] = "Informar o endereço do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->number)) {
+        if (!empty($body[$key]) && (!isset($body[$key]->number) || $body[$key] == "")) {
             $errors[] = "Informar o número do endereço do {$user} do pedido.";
         }
 
