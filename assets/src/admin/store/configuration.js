@@ -180,6 +180,7 @@ const configuration = {
                         resolve(true)
                     }
                 }).catch((error) => {
+                    alert('Aconteceu um erro ao obter os dados de configuração');
                 })
             })
         },
@@ -235,7 +236,6 @@ const configuration = {
                     form.append('label[company_document]', data.label.company_document)
                     form.append('label[state_register]', data.label.state_register)
                     form.append('label[economic_activity_code]', data.label.economic_activity_code)
-                    form.append('label[id]', data.label.id)
                     form.append('label[address]', data.label.address)
                     form.append('label[number]', data.label.number)
                     form.append('label[district]', data.label.district)
