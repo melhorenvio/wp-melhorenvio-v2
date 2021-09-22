@@ -223,52 +223,41 @@ const configuration = {
         saveAll: ({ commit }, data) => {
             return new Promise((resolve, reject) => {
                 const form = new FormData();
-                if (data.origin != null) {
+                if (data.origin) {
                     form.append('origin', data.origin)
                 }
-
-                if (data.label != null) {
-                    form.append('label[id]', data.label.id)
-                    form.append('label[name]', data.label.name)
-                    form.append('label[email]', data.label.email)
-                    form.append('label[phone]', data.label.phone)
-                    form.append('label[document]', data.label.document)
-                    form.append('label[company_document]', data.label.company_document)
-                    form.append('label[state_register]', data.label.state_register)
-                    form.append('label[economic_activity_code]', data.label.economic_activity_code)
-                    form.append('label[address]', data.label.address)
-                    form.append('label[number]', data.label.number)
-                    form.append('label[district]', data.label.district)
-                    form.append('label[city]', data.label.city)
-                    form.append('label[state]', data.label.state)
-                    form.append('label[postal_code]', data.label.postal_code)
+                if (data.label) {
+                    const labels = Object.entries(data.label);
+                    labels.map((item) => {
+                        form.append(`label[${item[0]}]`, item[1]);
+                    })
                 }
 
-                if (data.agency != null) {
+                if (data.agency) {
                     form.append('agency', data.agency);
                 }
 
-                if (data.agency_azul != null) {
+                if (data.agency_azul) {
                     form.append('agency_azul', data.agency_azul);
                 }
 
-                if (data.agency_latam != null) {
+                if (data.agency_latam) {
                     form.append('agency_latam', data.agency_latam);
                 }
 
-                if (data.show_calculator != null) {
+                if (data.show_calculator) {
                     form.append('show_calculator', data.show_calculator);
                 }
 
-                if (data.show_all_agencies_jadlog != null) {
+                if (data.show_all_agencies_jadlog) {
                     form.append('show_all_agencies_jadlog', data.show_all_agencies_jadlog);
                 }
 
-                if (data.where_calculator != null) {
+                if (data.where_calculator) {
                     form.append('where_calculator', data.where_calculator);
                 }
 
-                if (data.path_plugins != null) {
+                if (data.path_plugins) {
                     form.append('path_plugins', data.path_plugins);
                 }
 

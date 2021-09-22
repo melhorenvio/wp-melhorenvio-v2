@@ -232,6 +232,11 @@
                 v-model="label.address"
                 type="hidden"
               />
+                <input
+                v-if="label.complement"
+                v-model="label.complement"
+                type="hidden"
+              />
               <input
                 v-if="label.complement"
                 v-model="label.complement"
