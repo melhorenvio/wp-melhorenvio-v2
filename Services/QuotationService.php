@@ -48,7 +48,6 @@ class QuotationService
                 $payload,
                 true
             );
-
             if (is_array($quotations) && is_array($quotsWithoutValue)) {
                 $quotations = array_merge($quotations, $quotsWithoutValue);
                 $quotations = $this->setKeyQuotationAsServiceid($quotations);
@@ -83,16 +82,12 @@ class QuotationService
      */
     public function calculateQuotationByPostId($postId)
     {
-        $payload  = (new Payload())->get($postId);
-
-        if (empty($payload)) {
-            $products = (new OrdersProductsService())->getProductsOrder($postId);
-            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
-            $payload = (new PayloadService())->createPayloadByProducts(
-                $buyer->postal_code,
-                $products
-            );
-        }
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+        $payload = (new PayloadService())->createPayloadByProducts(
+            $buyer->postal_code,
+            $products
+        );
 
         if (!(new PayloadService())->validatePayload($payload)) {
             return false;

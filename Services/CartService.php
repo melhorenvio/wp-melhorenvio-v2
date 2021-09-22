@@ -82,17 +82,7 @@ class CartService
      */
     public function createPayloadToCart($orderId, $products, $dataBuyer, $shippingMethodId)
     {
-        $payloadSaved = (new Payload())->get($orderId);
-
-        $products = (!empty($payloadSaved->products))
-            ? $payloadSaved->products
-            : $products;
-
         $products = ProductVirtualHelper::removeVirtuals($products);
-
-        $dataBuyer = (!empty($payloadSaved->buyer))
-            ? $payloadSaved->buyer
-            : $dataBuyer;
 
         $dataFrom =  (new SellerService())->getData();
 
@@ -102,9 +92,7 @@ class CartService
 
         $methodService = new CalculateShippingMethodService();
 
-        $options = (!empty($payloadSaved->options))
-            ? $payloadSaved->options
-            : (new Option())->getOptions();
+        $options = (new Option())->getOptions();
 
         $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
             ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
@@ -388,7 +376,7 @@ class CartService
             $errors[] = "Informar o endereço do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->number)) {
+        if (!empty($body[$key]) && (!isset($body[$key]->number) || $body[$key] == "")) {
             $errors[] = "Informar o número do endereço do {$user} do pedido.";
         }
 
