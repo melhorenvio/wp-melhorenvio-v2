@@ -11,6 +11,18 @@ use Models\CalculatorShow;
 
 class ConfigurationsService
 {
+    const FIELDS_ADDRESS = [
+        "id",
+        "address",
+        "complement",
+        "number",
+        "district",
+        "city",
+        "state",
+        "country_id",
+        "postal_code"
+    ];
+
     /**
      * Function to save the salesperson's settings.
      *
@@ -300,15 +312,9 @@ class ConfigurationsService
                 unset($item['selected']);
                 unset($item['type']);
                 $label = $item;
-                $label["id"] = $address['id'];
-                $label["address"] = $address['address'];
-                $label["complement"] = $address['complement'];
-                $label["number"] = $address['number'];
-                $label["district"]  = $address['district'];
-                $label["city"]  = $address['city'];
-                $label["state"]  = $address['state'];
-                $label["country_id"]  = $address['country_id'];
-                $label["postal_code"]  = $address['postal_code'];
+                foreach (self::FIELDS_ADDRESS as $field) {
+                    $label[$field] = $address[$field];
+                }
             }
         }
 
