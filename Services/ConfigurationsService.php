@@ -323,7 +323,7 @@ class ConfigurationsService
     {
         $labelOption = get_option('melhor_envio_option_label');
         if (!empty($labelOption)) {
-            return $this->checkDataSeller($labelOption);
+            return $this->normalizeDataSeller($labelOption);
         }
 
         $label = null;
@@ -340,14 +340,14 @@ class ConfigurationsService
             }
         }
 
-        return $this->checkDataSeller($label);
+        return $this->normalizeDataSeller($label);
     }
 
     /**
      * @param array $seller
      * @return array
      */
-    private function checkDataSeller($seller)
+    private function normalizeDataSeller($seller)
     {
         if (is_array(($seller))) {
             foreach ($seller as $key => $value) {
