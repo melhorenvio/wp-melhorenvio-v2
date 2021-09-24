@@ -232,65 +232,87 @@ class ConfigurationsService
 
         if (!empty($addresses)) {
             foreach ($addresses as $address) {
-                $response[] = [
-                    "id" => $address['id'],
-                    "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
-                    "email" => $sellerData->email,
-                    "phone" => $sellerData->phone->phone,
-                    "document" => (!empty($sellerData->document))
-                        ? $sellerData->document
-                        : '',
-                    "company_document" => (!empty($sellerData->company_document))
-                        ? $sellerData->company_document
-                        : '',
-                    "state_register" => (!empty($sellerData->state_register))
-                        ? $sellerData->state_register
-                        : '',
-                    "economic_activity_code" => (!empty($sellerData->economic_activity_code))
-                        ? $sellerData->economic_activity_code
-                        : '',
-                    "type" => "address",
-                    "address" => $address,
-                    "selected" => ($address['id'] == $addressSelectedId)
-                ];
+                $response[] = $this->nrormalizeAddressPersonal($address, $sellerData, $addressSelectedId);
             }
         }
 
         if (!empty($stores)) {
             foreach ($stores as $store) {
-                $response[] = [
-                    "id" => $store->address->id,
-                    "name" => $store->address->label,
-                    "email" => $store->email,
-                    "phone" => $sellerData->phone->phone,
-                    "company_document" => (!empty($store->company_document))
-                        ? $store->company_document
-                        : '',
-                    "state_register" => (!empty($store->state_register))
-                        ? $store->state_register
-                        : '',
-                    "economic_activity_code" => (!empty($store->economic_activity_code))
-                        ? $store->economic_activity_code
-                        : '',
-                    "type" => "store",
-                    "address" => [
-                        "id" => $store->address->id,
-                        "address" => $store->address->address,
-                        "complement" => $store->address->complement,
-                        "label" => $store->address->label,
-                        "postal_code" => $store->address->postal_code,
-                        "number" => $store->address->number,
-                        "district" => $store->address->district,
-                        "city" => $store->address->city->city,
-                        "state" => $store->address->city->state->state_abbr,
-                        "country" => "BR"
-                    ],
-                    "selected" => ($store->address->id == $addressSelectedId)
-                ];
+                $response[] = $this->nrormalizeAddressStore($store, $sellerData, $addressSelectedId);
             }
         }
 
         return $response;
+    }
+
+    /**
+     * @param array $address
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function nrormalizeAddressPersonal($address, $sellerData, $addressSelectedId)
+    {
+        return [
+            "id" => $address['id'],
+            "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
+            "email" => $sellerData->email,
+            "phone" => $sellerData->phone->phone,
+            "document" => (!empty($sellerData->document))
+                ? $sellerData->document
+                : '',
+            "company_document" => (!empty($sellerData->company_document))
+                ? $sellerData->company_document
+                : '',
+            "state_register" => (!empty($sellerData->state_register))
+                ? $sellerData->state_register
+                : '',
+            "economic_activity_code" => (!empty($sellerData->economic_activity_code))
+                ? $sellerData->economic_activity_code
+                : '',
+            "type" => "address",
+            "address" => $address,
+            "selected" => ($address['id'] == $addressSelectedId)
+        ];
+    }
+
+    /**
+     * @param object $store
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function nrormalizeAddressStore($store, $sellerData, $addressSelectedId)
+    {
+        return  [
+            "id" => $store->address->id,
+            "name" => $store->address->label,
+            "email" => $store->email,
+            "phone" => $sellerData->phone->phone,
+            "company_document" => (!empty($store->company_document))
+                ? $store->company_document
+                : '',
+            "state_register" => (!empty($store->state_register))
+                ? $store->state_register
+                : '',
+            "economic_activity_code" => (!empty($store->economic_activity_code))
+                ? $store->economic_activity_code
+                : '',
+            "type" => "store",
+            "address" => [
+                "id" => $store->address->id,
+                "address" => $store->address->address,
+                "complement" => $store->address->complement,
+                "label" => $store->address->label,
+                "postal_code" => $store->address->postal_code,
+                "number" => $store->address->number,
+                "district" => $store->address->district,
+                "city" => $store->address->city->city,
+                "state" => $store->address->city->state->state_abbr,
+                "country" => "BR"
+            ],
+            "selected" => ($store->address->id == $addressSelectedId)
+        ];
     }
 
     /**
