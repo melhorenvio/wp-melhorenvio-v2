@@ -232,13 +232,13 @@ class ConfigurationsService
 
         if (!empty($addresses)) {
             foreach ($addresses as $address) {
-                $response[] = $this->nrormalizeAddressPersonal($address, $sellerData, $addressSelectedId);
+                $response[] = $this->getPersonalAddress($address, $sellerData, $addressSelectedId);
             }
         }
 
         if (!empty($stores)) {
             foreach ($stores as $store) {
-                $response[] = $this->nrormalizeAddressStore($store, $sellerData, $addressSelectedId);
+                $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
             }
         }
 
@@ -251,7 +251,7 @@ class ConfigurationsService
      * @param int $addressSelectedId
      * @return array
      */
-    private function nrormalizeAddressPersonal($address, $sellerData, $addressSelectedId)
+    private function getPersonalAddress($address, $sellerData, $addressSelectedId)
     {
         return [
             "id" => $address['id'],
@@ -282,7 +282,7 @@ class ConfigurationsService
      * @param int $addressSelectedId
      * @return array
      */
-    private function nrormalizeAddressStore($store, $sellerData, $addressSelectedId)
+    private function getStoreAddress($store, $sellerData, $addressSelectedId)
     {
         return  [
             "id" => $store->address->id,
