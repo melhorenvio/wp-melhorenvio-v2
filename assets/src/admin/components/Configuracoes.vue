@@ -232,7 +232,7 @@
                 v-model="label.address"
                 type="hidden"
               />
-                <input
+             <input
                 v-if="label.complement"
                 v-model="label.complement"
                 type="hidden"
