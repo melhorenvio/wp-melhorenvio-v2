@@ -105,7 +105,15 @@ class ShowCalculatorProductPage
                 <div class='row'>
                     <div class='col-75'>
                         <p>Simulação de frete</p>
-                        <input type='text' maxlength='9' class='iptCep calculatorRow' placeholder='Informe seu cep' onkeydown='%s'>
+                        <input 
+                            style='width: 300px !important'
+                            type='text' 
+                            maxlength='9' 
+                            class='iptCep calculatorRow' 
+                            id='inputCep' 
+                            placeholder='Informe seu cep' 
+                            onkeyup='%s'
+                        >
                     </div>
                 </div>
                 <div id='calcular-frete-loader'>
@@ -130,7 +138,7 @@ class ShowCalculatorProductPage
             $this->weight,
             $this->price,
             $this->id,
-            'return mascara(this, "#####-###")'
+            'return usePostalCodeMask()'
         );
     }
 }
