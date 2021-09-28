@@ -179,12 +179,12 @@
           <ul class="wpme_address">
             <li>
               <span>Nome</span></br>
-              <input v-model="label.name" data-cy="input-path" type="text" />
+              <input v-model="label.name" data-cy="input-name" type="text" />
               <br />
               <br />
 
               <span>E-mail</span></br>
-              <input v-model="label.email" data-cy="input-path" type="text" />
+              <input v-model="label.email" data-cy="input-email" type="text" />
               <br />
               <br />
 
@@ -212,7 +212,7 @@
               <span>Inscrição estadual</span></br>
               <input
                 v-model="label.state_register"
-                data-cy="input-path"
+                data-cy="input-state_register"
                 type="text"
               />
               <br />
@@ -221,7 +221,7 @@
               <span>CNAE</span></br>
               <input
                 v-model="label.economic_activity_code"
-                data-cy="input-path"
+                data-cy="input-economic_activity_code"
                 type="text"
               />
               <br />
