@@ -351,8 +351,8 @@ class ConfigurationsService
     {
         if (is_array(($seller))) {
             foreach ($seller as $key => $value) {
-                if ($value == "undefined" || empty($value) || $value == "null") {
-                    $seller[$key] = "";
+                if ($value == 'undefined' || empty($value) || $value == 'null') {
+                    $seller[$key] = '';
                 }
             }
         }
