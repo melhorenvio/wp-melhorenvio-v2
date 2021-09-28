@@ -71,7 +71,7 @@ function numberMask(content) {
  */
 function usePostalCodeMask() { 
     const input = document.querySelector('#inputCep');
-    let content = input.value;
+    const content = input.value;
 
     postalCodeMask(content, input);
 }
