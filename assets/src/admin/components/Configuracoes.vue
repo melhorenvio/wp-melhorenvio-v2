@@ -423,6 +423,39 @@
     <hr />
 
     <div class="wpme_config">
+      <h2>Embalagem padrão</h2>
+      <p>
+        Configure uma embalagem padrão para quando o seu produto não possuir alguma das dimensões ou peso.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+              <span>Largura</span></br>
+              <input v-model="dimension.width" data-cy="input-width-default" type="number" />
+              <br />
+              <br />
+
+              <span>Altura</span></br>
+              <input v-model="dimension.height" data-cy="input-heigt-default" type="number" />
+              <br />
+              <br />
+
+              <span>Comprimento</span></br>
+              <input v-model="dimension.length" data-cy="input-length-default" type="number" />
+              <br />
+              <br />
+
+              <span>Peso</span></br>
+              <input v-model="dimension.weight" data-cy="input-weight-default" type="number" />
+              <br />
+              <br />
+          </li>
+        </ul>
+      </div>
+      <hr />
+    </div>
+
+    <div class="wpme_config">
       <h2>Calculadora</h2>
       <p>
         Ao habilitar essa opção, será exibida a calculadora de fretes com
@@ -683,6 +716,7 @@ export default {
     ...mapGetters("configuration", {
       originData: "getOrigin",
       label: "getLabel",
+      dimension: "getDimension",
       agencySelected_: "getAgencySelected",
       agencyAzulSelected_: "getAgencyAzulSelected",
       agencyLatamSelected_: "getAgencyLatamSelected",
@@ -735,6 +769,7 @@ export default {
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
+      data["dimension_default"] = this.dimension;
 
       let respSave = this.saveAll(data);
 
