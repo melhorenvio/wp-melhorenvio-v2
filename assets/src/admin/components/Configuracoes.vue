@@ -284,9 +284,7 @@
                 v-model="show_all_agencies_jadlog"
                 @change="showJadlogAgenciesState()"
               />
-              <label for="show-all-agencies"
-                >Desejo visualizar todas as agencias do meu estado</label
-              >
+              <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
             </div>
             <br />
             <template>
