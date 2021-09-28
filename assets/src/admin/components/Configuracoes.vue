@@ -101,8 +101,7 @@
             <li
               v-for="option in originData"
               v-bind:value="option.id"
-              :key="option.id"
-            >
+              :key="option.id">
               <label :for="option.id">
                 <div class="wpme_address-top">
                   <input
