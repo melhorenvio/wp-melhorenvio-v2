@@ -133,18 +133,9 @@ class CartService
      */
     private function getAgencyToInsertCart($shippingMethodId)
     {
-        $shippingMethodService = new CalculateShippingMethodService();
-
-        if ($shippingMethodService->isJadlog($shippingMethodId)) {
-            return (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
-            return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isLatamCargo($shippingMethodId)) {
-            return (new AgenciesLatamService())->getSelectedAgencyOrAnyByCityUser();
+        $agenciesSelecteds = (new AgenciesSelectedService())->get();
+        if (!empty($agenciesSelecteds[$shippingMethodId])) {
+            return $agenciesSelecteds[$shippingMethodId];
         }
 
         return null;
