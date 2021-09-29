@@ -10,5 +10,5 @@ class ShippingCompany
 
     const LATAM_CARGO = 6;
 
-    const AZUL_CARGP = 9;
+    const AZUL_CARGO = 9;
 }
