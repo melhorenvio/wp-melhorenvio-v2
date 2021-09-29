@@ -106,7 +106,6 @@ class ShowCalculatorProductPage
                     <div class='col-75'>
                         <p>Simulação de frete</p>
                         <input 
-                            style='width: 300px !important'
                             type='text' 
                             maxlength='9' 
                             class='iptCep calculatorRow' 

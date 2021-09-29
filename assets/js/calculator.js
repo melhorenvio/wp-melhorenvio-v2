@@ -32,7 +32,7 @@ function getDimension() {
 }
 
 /**
- *  mask to replace number for empty value 
+ *  mask to replace non number 
  * @param {string} content - number to format
  * @returns {string}
  * @example
