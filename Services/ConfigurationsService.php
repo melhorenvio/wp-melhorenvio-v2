@@ -4,10 +4,9 @@ namespace Services;
 
 use Models\Address;
 use Models\Agency;
-use Models\AgencyAzul;
-use Models\AgencyLatam;
 use Models\Option;
 use Models\CalculatorShow;
+use Models\ShippingCompany;
 
 class ConfigurationsService
 {
@@ -48,15 +47,19 @@ class ConfigurationsService
         }
 
         if (isset($data['agency'])) {
-            $response['agency'] = (new Agency())->setAgency($data['agency']);
+            $response['agency'][ShippingCompany::JADLOG] = $data['agency'];
         }
 
         if (isset($data['agency_azul'])) {
-            $response['agency_azul'] = (new AgencyAzul())->setAgency($data['agency_azul']);
+            $response['agency'][ShippingCompany::AZUL_CARGO] =$data['agency_azul'];
         }
 
         if (isset($data['agency_latam'])) {
-            $response['agency_latam'] = (new AgencyLatam())->setAgency($data['agency_latam']);
+            $response['agency'][ShippingCompany::LATAM_CARGO] = $data['agency_latam'];
+        }
+
+        if (!empty($response['agency'])) {
+            (new AgenciesSelectedService())->set($response['agency']);
         }
 
         if (isset($data['show_calculator'])) {
@@ -99,21 +102,43 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $agenciesJadlog = (new AgenciesJadlogService());
-        $agenciesAzul = (new AgenciesAzulService());
-        $agenciesLatam = (new AgenciesLatamService());
         $token = (new TokenService())->get();
+
         $origin =  $this->getAddresses();
+
+        $originselected = $this->getOriginSelected($origin);
+
+        $agencies = [];
+        $agenciesSelecteds = [];
+        if (!empty($originselected)) {
+            $address = [
+                'state' => $originselected['address']['state'],
+                'city' => $origin['address']['city'],
+                'company' => null
+            ];
+            $agencies = (new AgenciesService($address))->get();
+            $agenciesSelecteds = (new AgenciesSelectedService())->get();
+        }
 
         return [
             'origin' => $origin,
             'label' => $this->getLabel($origin),
-            'agencies' => $agenciesJadlog->get(),
-            'agencySelected' => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesAzul'  => $agenciesAzul->get(),
-            'agencyAzulSelected'  => $agenciesAzul->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesLatam'  => $agenciesLatam->get(),
-            'agencyLatamSelected' => $agenciesLatam->getSelectedAgencyOrAnyByCityUser(),
+            'agencies' => (isset($agencies[ShippingCompany::JADLOG])) ? $agencies[ShippingCompany::JADLOG] : [],
+            'agencySelected' => (isset($agenciesSelecteds[ShippingCompany::JADLOG]))
+                ? $agenciesSelecteds[ShippingCompany::JADLOG]
+                : null,
+            'agenciesAzul'  => (isset($agencies[ShippingCompany::AZUL_CARGO]))
+                ? $agencies[ShippingCompany::AZUL_CARGO]
+                : [],
+            'agencyAzulSelected'  =>  (isset($agenciesSelecteds[ShippingCompany::AZUL_CARGO]))
+                ? $agenciesSelecteds[ShippingCompany::AZUL_CARGO] :
+                null,
+            'agenciesLatam'  => (isset($agencies[ShippingCompany::LATAM_CARGO]))
+                ? $agencies[ShippingCompany::LATAM_CARGO]
+                : [],
+            'agencyLatamSelected' =>  (isset($agenciesSelecteds[ShippingCompany::LATAM_CARGO]))
+                ? $agenciesSelecteds[ShippingCompany::LATAM_CARGO]
+                : null,
             'calculator' => (new CalculatorShow())->get(),
             'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
@@ -124,6 +149,24 @@ class ConfigurationsService
             'dimension_default' => $this->getDimensionDefault()
         ];
     }
+
+    /**
+     * @param array $origin
+     * @return array
+     */
+    private function getOriginSelected($origin)
+    {
+        $originselected = null;
+        foreach ($origin as $item) {
+            if ($item['selected']) {
+                $originselected = $item;
+            }
+        }
+        return $originselected;
+    }
+
+
+
 
     /**
      * Function to save the moment that will be called the product calculator

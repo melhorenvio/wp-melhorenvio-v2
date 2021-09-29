@@ -275,17 +275,6 @@
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <div class="wpme_address-top" style="border-bottom: none">
-              <input
-                type="checkbox"
-                class="show-all-agencies"
-                id="show-all-agencies"
-                v-model="show_all_agencies_jadlog"
-                @change="showJadlogAgenciesState()"
-              />
-              <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
-            </div>
-            <br />
             <template>
               <select
                 name="agencies"
@@ -818,17 +807,17 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgencies = response.data.agencies;
+              responseAgencies = response.data;
               resolve(true);
             }
           })
           .catch((error) => {
+            console.log(error);
             responseAgencies = [];
-            alert(error.response.data.message);
           })
           .finally(() => {
             this.setLoader(false);
@@ -847,11 +836,11 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agency_azul&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgenciesAzul = response.data.agencies;
+              responseAgenciesAzul = response.data;
               resolve(true);
             }
           })
@@ -875,11 +864,11 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agency_latam&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgenciesLatam = response.data.agencies;
+              responseAgenciesLatam = response.data;
               resolve(true);
             }
           })
@@ -960,21 +949,6 @@ export default {
           this.$router.push("Token");
         }
       });
-    },
-    showJadlogAgenciesState() {
-      this.setLoader(true);
-      this.agency = "";
-      this.$http
-        .post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
-        .then((response) => {
-          this.setAgencies(response.data.agencies);
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
-        })
-        .finally(() => {
-          this.setLoader(false);
-        });
     },
   },
   watch: {

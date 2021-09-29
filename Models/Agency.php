@@ -4,28 +4,26 @@ namespace Models;
 
 class Agency
 {
-    const AGENCY_SELECTED = 'melhorenvio_agency_jadlog_v2';
+    const AGENCY_SELECTED = 'melhorenvio_option_agency';
 
     /**
      * function to get the id of agency Jadlog selected.
      *
-     * @return bool|int
+     * @return array
      */
-    public function getSelected()
+    public function get()
     {
-        $id = get_option(self::AGENCY_SELECTED, false);
-
-        return (empty($id)) ? false : intval($id);
+        return get_option(self::AGENCY_SELECTED, []);
     }
 
     /**
-     * @param string $id
+     * @param array $dara
      * @return bool
      */
-    public function setAgency($id)
+    public function set($data)
     {
         delete_option(self::AGENCY_SELECTED);
-        if (!add_option(self::AGENCY_SELECTED, $id)) {
+        if (!add_option(self::AGENCY_SELECTED, $data)) {
             return false;
         }
 

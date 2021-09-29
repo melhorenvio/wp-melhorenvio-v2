@@ -2,9 +2,10 @@
 
 namespace Services;
 
-use Controllers\AgenciesAzulController;
-use Controllers\AgenciesJadlogController;
-use Controllers\AgenciesLatamController;
+//use Controllers\AgenciesAzulController;
+//use Controllers\AgenciesJadlogController;
+//use Controllers\AgenciesLatamController;
+use Controllers\AgenciesController;
 use Controllers\ConfigurationController;
 use Controllers\LocationsController;
 use Controllers\OrdersController;
@@ -44,6 +45,7 @@ class RouterService
         $this->loadRouteCart();
         $this->loadRouteForm();
         $this->loadRequestController();
+        $this->loadRoutesAgencies();
     }
 
     /**
@@ -105,40 +107,6 @@ class RouterService
     private function loadRoutesConfigurations()
     {
         $configurationsController = new ConfigurationController();
-        $agenciesJadlogController = new AgenciesJadlogController();
-        $agenciesAzulController = new AgenciesAzulController();
-        $agenciesLatamController = new AgenciesLatamController();
-
-        add_action('wp_ajax_get_agency_jadlog', function () use ($agenciesJadlogController) {
-            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
-                return $agenciesJadlogController->get();
-            }
-            if (!empty($_GET['my-state'])) {
-                return $agenciesJadlogController->getByStateUser();
-            }
-            return $agenciesJadlogController->getByAddress($_GET['city'], $_GET['state']);
-        });
-
-        add_action('wp_ajax_get_agency_azul', function () use ($agenciesAzulController) {
-            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
-                return $agenciesAzulController->get();
-            }
-            if (!empty($_GET['my-state'])) {
-                return $agenciesAzulController->getByStateUser();
-            }
-            return $agenciesAzulController->getByAddress($_GET['city'], $_GET['state']);
-        });
-
-        add_action('wp_ajax_get_agency_latam', function () use ($agenciesLatamController) {
-            if (empty($_GET['city']) && empty($_GET['state']) && empty($_GET['my-state'])) {
-                return $agenciesLatamController->get();
-            }
-            if (!empty($_GET['my-state'])) {
-                return $agenciesLatamController->getByStateUser();
-            }
-            return $agenciesLatamController->getByAddress($_GET['city'], $_GET['state']);
-        });
-
         add_action('wp_ajax_get_configuracoes', [$configurationsController, 'getConfigurations']);
         add_action('wp_ajax_get_metodos', [$configurationsController, 'getMethodsEnables']);
         add_action('wp_ajax_save_configuracoes', [$configurationsController, 'saveAll']);
@@ -274,7 +242,7 @@ class RouterService
             return $payloadsController->destroy($_GET['post_id']);
         });
 
-        add_action('wp_ajax_get_payload_cart', function() use ($payloadsController) {
+        add_action('wp_ajax_get_payload_cart', function () use ($payloadsController) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
@@ -393,6 +361,19 @@ class RouterService
 
         add_action('wp_ajax_delete_logs_requests', function () use ($requestsController) {
             return $requestsController->deleteLogs();
-         });
+        });
+    }
+
+    /*
+     * function to start agencies routes
+     *
+     * @return json
+     */
+    public function loadRoutesAgencies()
+    {
+        $agenciesController = new AgenciesController();
+        add_action('wp_ajax_get_agencies', function () use ($agenciesController) {
+            return $agenciesController->get($_GET);
+        });
     }
 }
