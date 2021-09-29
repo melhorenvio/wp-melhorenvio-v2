@@ -11,6 +11,18 @@ use Models\CalculatorShow;
 
 class ConfigurationsService
 {
+    const FIELDS_ADDRESS = [
+        "id",
+        "address",
+        "complement",
+        "number",
+        "district",
+        "city",
+        "state",
+        "country_id",
+        "postal_code"
+    ];
+
     /**
      * Function to save the salesperson's settings.
      *
@@ -23,14 +35,10 @@ class ConfigurationsService
 
         (new ClearDataStored())->clear();
 
-        if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping(
-                $data['address']
+        if (isset($data['origin'])) {
+            $response['origin'] = (new Address())->setAddressShopping(
+                $data['origin']
             );
-        }
-
-        if (isset($data['store'])) {
-            $response['store'] = (new StoreService())->setStore($data['store']);
         }
 
         if (isset($data['agency'])) {
@@ -69,6 +77,12 @@ class ConfigurationsService
             );
         }
 
+        if (isset($data['label'])) {
+            $response['label'] = $this->setLabel(
+                $data['label']
+            );
+        }
+
         return $response;
     }
 
@@ -83,13 +97,11 @@ class ConfigurationsService
         $agenciesAzul = (new AgenciesAzulService());
         $agenciesLatam = (new AgenciesLatamService());
         $token = (new TokenService())->get();
-        $addresses =  (!empty((new Address())->getAddressesShopping()['addresses'])) 
-            ? (new Address())->getAddressesShopping()['addresses'] 
-            :  [];
+        $origin =  $this->getAddresses();
 
         return [
-            'addresses' => $addresses,
-            'stores' => (new StoreService())->getStores(),
+            'origin' => $origin,
+            'label' => $this->getLabel($origin),
             'agencies' => $agenciesJadlog->get(),
             'agencySelected' => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
             'agenciesAzul'  => $agenciesAzul->get(),
@@ -120,6 +132,18 @@ class ConfigurationsService
         return [
             'success' => true,
             'option' => $option
+        ];
+    }
+
+
+    public function setLabel($label)
+    {
+        delete_option('melhor_envio_option_label');
+        add_option('melhor_envio_option_label', $label);
+
+        return [
+            'success' => true,
+            'option' => $label
         ];
     }
 
@@ -188,5 +212,150 @@ class ConfigurationsService
         }
 
         return $path;
+    }
+
+    public function getAddresses()
+    {
+        $addressSelectedId = (new Address())->getSelectedAddressId();
+
+        $addresses =  (new Address())->getAddressesShopping();
+
+        $addresses = (!empty($addresses['addresses']))
+            ? $addresses['addresses']
+            : [];
+
+        $stores = (new StoreService())->getStores();
+
+        $sellerData = (new SellerService())->getDataApiMelhorEnvio();
+
+        $response = [];
+
+        if (!empty($addresses)) {
+            foreach ($addresses as $address) {
+                $response[] = $this->getPersonalAddress($address, $sellerData, $addressSelectedId);
+            }
+        }
+
+        if (!empty($stores)) {
+            foreach ($stores as $store) {
+                $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array $address
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function getPersonalAddress($address, $sellerData, $addressSelectedId)
+    {
+        return [
+            "id" => $address['id'],
+            "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
+            "email" => $sellerData->email,
+            "phone" => $sellerData->phone->phone,
+            "document" => (!empty($sellerData->document))
+                ? $sellerData->document
+                : '',
+            "company_document" => (!empty($sellerData->company_document))
+                ? $sellerData->company_document
+                : '',
+            "state_register" => (!empty($sellerData->state_register))
+                ? $sellerData->state_register
+                : '',
+            "economic_activity_code" => (!empty($sellerData->economic_activity_code))
+                ? $sellerData->economic_activity_code
+                : '',
+            "type" => "address",
+            "address" => $address,
+            "selected" => ($address['id'] == $addressSelectedId)
+        ];
+    }
+
+    /**
+     * @param object $store
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function getStoreAddress($store, $sellerData, $addressSelectedId)
+    {
+        return  [
+            "id" => $store->address->id,
+            "name" => $store->address->label,
+            "email" => $store->email,
+            "phone" => $sellerData->phone->phone,
+            "company_document" => (!empty($store->company_document))
+                ? $store->company_document
+                : '',
+            "state_register" => (!empty($store->state_register))
+                ? $store->state_register
+                : '',
+            "economic_activity_code" => (!empty($store->economic_activity_code))
+                ? $store->economic_activity_code
+                : '',
+            "type" => "store",
+            "address" => [
+                "id" => $store->address->id,
+                "address" => $store->address->address,
+                "complement" => $store->address->complement,
+                "label" => $store->address->label,
+                "postal_code" => $store->address->postal_code,
+                "number" => $store->address->number,
+                "district" => $store->address->district,
+                "city" => $store->address->city->city,
+                "state" => $store->address->city->state->state_abbr,
+                "country" => "BR"
+            ],
+            "selected" => ($store->address->id == $addressSelectedId)
+        ];
+    }
+
+    /**
+     * @param array $origin
+     * @return array
+     */
+    public function getLabel($origin)
+    {
+        $labelOption = get_option('melhor_envio_option_label');
+        if (!empty($labelOption)) {
+            return $this->normalizeDataSeller($labelOption);
+        }
+
+        $label = null;
+        foreach ($origin as $item) {
+            if ($item['selected']) {
+                $address = $item['address'];
+                unset($item['address']);
+                unset($item['selected']);
+                unset($item['type']);
+                $label = $item;
+                foreach (self::FIELDS_ADDRESS as $field) {
+                    $label[$field] = $address[$field];
+                }
+            }
+        }
+
+        return $this->normalizeDataSeller($label);
+    }
+
+    /**
+     * @param array $seller
+     * @return array
+     */
+    private function normalizeDataSeller($seller)
+    {
+        if (is_array(($seller))) {
+            foreach ($seller as $key => $value) {
+                if ($value == 'undefined' || empty($value) || $value == 'null') {
+                    $seller[$key] = '';
+                }
+            }
+        }
+        return $seller;
     }
 }
