@@ -71,6 +71,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.10.1 =
 * Ajuste para não exibir lojas sem endereços cadastrados
+* Ajuste para exibir o nome da loja na etiqueta
 
 = 2.10.0 =
 * Reformulação da forma de selecionar origem da etiquetas com edição dos dados da etiqueta
