@@ -291,8 +291,8 @@ class ConfigurationsService
             "name" => $store->name,
             "email" => $store->email,
             "phone" => $sellerData->phone->phone,
-            "company_document" => (!empty($store->company_document))
-                ? $store->company_document
+            "company_document" => (!empty($store->document))
+                ? $store->document
                 : '',
             "state_register" => (!empty($store->state_register))
                 ? $store->state_register
