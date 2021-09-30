@@ -132,7 +132,7 @@ class ProductsService
             }
         }
 
-        $this->hasAllDimensions($product);
+        $this->setDimensions($product);
 
         return  (object) [
             'id' =>  $product->get_id(),
@@ -153,9 +153,8 @@ class ProductsService
      * function to check if prouct has all dimensions.
      *
      * @param object $product
-     * @return boolean
      */
-    private function hasAllDimensions($product)
+    private function setDimensions($product)
     {
         $dimensionDefault = [];
         if (empty($product->get_width())) {
