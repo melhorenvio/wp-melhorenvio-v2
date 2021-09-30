@@ -238,7 +238,9 @@ class ConfigurationsService
 
         if (!empty($stores)) {
             foreach ($stores as $store) {
-                $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                if (!empty($store->address)) {
+                    $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                }
             }
         }
 
