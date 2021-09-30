@@ -156,30 +156,21 @@ class ProductsService
      */
     private function setDimensions($product)
     {
-        $dimensionDefault = [];
+        $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
+        
         if (empty($product->get_width())) {
-            $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
             $product->set_width($dimensionDefault['width']);
         }
 
         if (empty($product->get_height())) {
-            if (empty($dimensionDefault)) {
-                $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
-            }
             $product->set_height($dimensionDefault['height']);
         }
 
         if (empty($product->get_length())) {
-            if (empty($dimensionDefault)) {
-                $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
-            }
             $product->set_length($dimensionDefault['length']);
         }
         
         if (empty($product->get_weight())) {
-            if (empty($dimensionDefault)) {
-                $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
-            }
             $product->set_weight($dimensionDefault['weight']);
         }
     }
