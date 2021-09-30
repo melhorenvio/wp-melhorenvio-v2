@@ -288,7 +288,7 @@ class ConfigurationsService
     {
         return  [
             "id" => $store->address->id,
-            "name" => $store->address->label,
+            "name" => $store->name,
             "email" => $store->email,
             "phone" => $sellerData->phone->phone,
             "company_document" => (!empty($store->company_document))
