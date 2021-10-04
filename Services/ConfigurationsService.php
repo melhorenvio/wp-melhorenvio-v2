@@ -11,6 +11,15 @@ use Models\CalculatorShow;
 
 class ConfigurationsService
 {
+    const WIDTH_DEFAULT = 10;
+
+    const HEIGHT_DEFAULT = 10;
+    
+    const LENGTH_DEFAULT = 10;
+    
+    const WEIGHT_DEFAULT = 11;
+
+
     const FIELDS_ADDRESS = [
         "id",
         "address",
@@ -38,6 +47,12 @@ class ConfigurationsService
         if (isset($data['origin'])) {
             $response['origin'] = (new Address())->setAddressShopping(
                 $data['origin']
+            );
+        }
+
+        if (isset($data['dimension_default'])) {
+            $response['dimension_default'] = $this->setDimensionDefault(
+                $data['dimension_default']
             );
         }
 
@@ -114,7 +129,8 @@ class ConfigurationsService
                 : get_option('melhor_envio_option_where_show_calculator'),
             'path_plugins'  => $this->getPathPluginsArray(),
             'options_calculator' => $this->getOptionsCalculator(),
-            'token_environment'  => $token['token_environment']
+            'token_environment'  => $token['token_environment'],
+            'dimension_default' => $this->getDimensionDefault()
         ];
     }
 
@@ -135,7 +151,10 @@ class ConfigurationsService
         ];
     }
 
-
+    /**
+     * @param array $label
+     * @return array
+     */
     public function setLabel($label)
     {
         delete_option('melhor_envio_option_label');
@@ -144,6 +163,21 @@ class ConfigurationsService
         return [
             'success' => true,
             'option' => $label
+        ];
+    }
+
+    /**
+     * @param array $dimension
+     * @return array
+     */
+    public function setDimensionDefault($dimension)
+    {
+        delete_option('melhor_envio_option_dimension_default');
+        add_option('melhor_envio_option_dimension_default', $dimension);
+
+        return [
+            'success' => true,
+            'option' => $dimension
         ];
     }
 
@@ -321,9 +355,28 @@ class ConfigurationsService
      * @param array $origin
      * @return array
      */
-    public function getLabel($origin)
+    public function getDimensionDefault()
+    {
+        $dimension = get_option('melhor_envio_option_dimension_default');
+        if (empty($dimension)) {
+            return [
+                "width" => self::WIDTH_DEFAULT,
+                "height" => self::HEIGHT_DEFAULT,
+                "length" => self::LENGTH_DEFAULT,
+                "weight" => self::WEIGHT_DEFAULT
+            ];
+        }
+
+        return $dimension;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLabel()
     {
         $labelOption = get_option('melhor_envio_option_label');
+
         if (!empty($labelOption)) {
             return $this->normalizeDataSeller($labelOption);
         }

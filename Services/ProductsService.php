@@ -132,7 +132,9 @@ class ProductsService
             }
         }
 
-        return (object) [
+        $this->setDimensions($product);
+
+        return  (object) [
             'id' =>  $product->get_id(),
             'name' =>  $product->get_name(),
             'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
@@ -151,14 +153,26 @@ class ProductsService
      * function to check if prouct has all dimensions.
      *
      * @param object $product
-     * @return boolean
      */
-    private function hasAllDimensions($product)
+    private function setDimensions($product)
     {
-        return (!empty($product->get_width()) &&
-            !empty($product->get_height()) &&
-            !empty($product->get_length()) &&
-            !empty($product->get_weight()));
+        $dimensionDefault = (new ConfigurationsService())->getDimensionDefault();
+        
+        if (empty($product->get_width())) {
+            $product->set_width($dimensionDefault['width']);
+        }
+
+        if (empty($product->get_height())) {
+            $product->set_height($dimensionDefault['height']);
+        }
+
+        if (empty($product->get_length())) {
+            $product->set_length($dimensionDefault['length']);
+        }
+        
+        if (empty($product->get_weight())) {
+            $product->set_weight($dimensionDefault['weight']);
+        }
     }
 
     /**

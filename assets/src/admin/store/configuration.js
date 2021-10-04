@@ -16,6 +16,12 @@ const configuration = {
             state_register: "",
             economic_activity_code: ""
         },
+        dimension: {
+            width: 10,
+            height: 10,
+            length: 10,
+            weight: 1
+        },
         agencies: [],
         agenciesAzul: [],
         agenciesLatam: [],
@@ -52,6 +58,9 @@ const configuration = {
         },
         setLabel: (state, data) => {
             state.label = data
+        },
+        setDimension: (state, data) => {
+            state.dimension = data
         },
         setStore: (state, data) => {
             state.stores = data
@@ -111,6 +120,7 @@ const configuration = {
     getters: {
         getOrigin: state => state.origin,
         getLabel: state => state.label,
+        getDimension: state => state.dimension,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
         getAgenciesLatam: state => state.agenciesLatam,
@@ -151,6 +161,10 @@ const configuration = {
                         if (response.data.agencies && !_.isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
                             commit('setAllAgency', response.data.allAgencies);
+                        }
+
+                        if (response.data.dimension_default && !_.isNull(response.data.dimension_default)) {
+                            commit('setDimension', response.data.dimension_default);
                         }
 
                         if (response.data.agenciesAzul && !_.isNull(response.data.agenciesAzul)) {
@@ -229,8 +243,17 @@ const configuration = {
                 if (data.label) {
                     const labels = Object.entries(data.label);
                     labels.forEach((item) => {
+                        console.log(item[0]);
+                        console.log(item[1]);
                         form.append(`label[${item[0]}]`, item[1]);
                     })
+                }
+
+                if (data.dimension_default) {
+                    form.append('dimension_default[width]', data.dimension_default.width);   
+                    form.append('dimension_default[height]', data.dimension_default.height);   
+                    form.append('dimension_default[length]', data.dimension_default.length);   
+                    form.append('dimension_default[weight]', data.dimension_default.weight);   
                 }
 
                 if (data.agency) {
