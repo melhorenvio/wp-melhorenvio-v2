@@ -370,7 +370,7 @@ class RouterService
     {
         $agenciesController = new AgenciesController();
         add_action('wp_ajax_get_agencies', function () use ($agenciesController) {
-            return $agenciesController->get($_GET);
+            return $agenciesController->get();
         });
     }
 }
