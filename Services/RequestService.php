@@ -16,6 +16,8 @@ class RequestService
 
     const TIMEOUT = 10;
 
+    const WP_ERROR = 'WP_Error';
+
     /**
      * constant with the timeout for an http request, if you pass this value, a log should be generated with that request
      */
@@ -75,7 +77,11 @@ class RequestService
         );
 
         $responseRemote = wp_remote_post($this->url . $route, $params);
-        
+
+        if (get_class($responseRemote) === self::WP_ERROR) {
+            return (object) [];
+        }
+
         $response = json_decode(
             wp_remote_retrieve_body($responseRemote)
         );
