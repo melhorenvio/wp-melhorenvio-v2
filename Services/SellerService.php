@@ -18,8 +18,14 @@ class SellerService
     public function getData()
     {
         $configurationService = new ConfigurationsService();
+
+        $label = $configurationService->getLabel();
+
+        if (!empty($label)) {
+            return $label;
+        }
+
         $origin = $configurationService->getAddresses();
-        $label = $configurationService->getLabel($origin);
 
         if (!empty($label)) {
             $label['state_abbr'] = $label['state'];
@@ -39,7 +45,7 @@ class SellerService
         $address = (new Address())->getAddressFrom();
 
         $store = (new StoreService())->getStoreSelected();
-
+        
         if (!empty($address['address']['id'])) {
             $data->address->address = (!empty($address['address']['address'])) ? $address['address']['address'] : null;
             $data->address->complement = (!empty($address['address']['complement']))

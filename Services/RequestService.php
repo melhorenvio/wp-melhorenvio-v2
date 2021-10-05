@@ -16,9 +16,6 @@ class RequestService
 
     const TIMEOUT = 10;
 
-    /**
-     * constant with the timeout for an http request, if you pass this value, a log should be generated with that request
-     */
     const TIME_LIMIT_LOG_REQUEST = 1000;
 
     protected $token;
