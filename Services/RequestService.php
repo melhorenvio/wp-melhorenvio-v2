@@ -78,7 +78,7 @@ class RequestService
 
         $responseRemote = wp_remote_post($this->url . $route, $params);
 
-        if (!is_arry($responseRemote)) {
+        if (!is_array($responseRemote)) {
             if (get_class($responseRemote) === self::WP_ERROR) {
                 return (object) [];
             }
