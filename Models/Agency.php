@@ -17,7 +17,7 @@ class Agency
     }
 
     /**
-     * @param array $dara
+     * @param array $data
      * @return bool
      */
     public function set($data)
