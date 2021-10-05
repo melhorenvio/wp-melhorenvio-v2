@@ -132,22 +132,30 @@ class ConfigurationsService
         return [
             'origin' => $origin,
             'label' => $this->getLabel($origin),
-            'agencies' => (isset($agencies[ShippingCompany::JADLOG])) ? $agencies[ShippingCompany::JADLOG] : [],
-            'agencySelected' => (isset($agenciesSelecteds[ShippingCompany::JADLOG]))
-                ? $agenciesSelecteds[ShippingCompany::JADLOG]
-                : null,
-            'agenciesAzul'  => (isset($agencies[ShippingCompany::AZUL_CARGO]))
-                ? $agencies[ShippingCompany::AZUL_CARGO]
-                : [],
-            'agencyAzulSelected'  =>  (isset($agenciesSelecteds[ShippingCompany::AZUL_CARGO]))
-                ? $agenciesSelecteds[ShippingCompany::AZUL_CARGO] :
-                null,
-            'agenciesLatam'  => (isset($agencies[ShippingCompany::LATAM_CARGO]))
-                ? $agencies[ShippingCompany::LATAM_CARGO]
-                : [],
-            'agencyLatamSelected' =>  (isset($agenciesSelecteds[ShippingCompany::LATAM_CARGO]))
-                ? $agenciesSelecteds[ShippingCompany::LATAM_CARGO]
-                : null,
+            'agencies' => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::JADLOG
+            ),
+            'agencySelected' => $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::JADLOG
+            ),
+            'agenciesAzul'  => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::AZUL_CARGO
+            ),
+            'agencyAzulSelected'  =>   $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::AZUL_CARGO
+            ),
+            'agenciesLatam'  => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::LATAM_CARGO
+            ),
+            'agencyLatamSelected' =>  $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::LATAM_CARGO
+            ),
             'calculator' => (new CalculatorShow())->get(),
             'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
@@ -157,6 +165,30 @@ class ConfigurationsService
             'token_environment'  => $token['token_environment'],
             'dimension_default' => $this->getDimensionDefault()
         ];
+    }
+
+    /**
+     * @param array $agencies
+     * @param int $companyId
+     * @return array
+     */
+    private function filterAgenciesByCompany($agencies, $companyId)
+    {
+        return (isset($agencies[$companyId]))
+            ? $agencies[$companyId]
+            : [];
+    }
+
+    /**
+     * @param array $agenciesSelecteds
+     * @param int $companyId
+     * @return array
+     */
+    private function filterAgencySelectedByCompany($agenciesSelecteds, $companyId)
+    {
+        return (isset($agenciesSelecteds[$companyId]))
+            ? $agenciesSelecteds[$companyId]
+            : null;
     }
 
     /**
