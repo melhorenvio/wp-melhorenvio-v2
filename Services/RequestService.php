@@ -78,8 +78,10 @@ class RequestService
 
         $responseRemote = wp_remote_post($this->url . $route, $params);
 
-        if (get_class($responseRemote) === self::WP_ERROR) {
-            return (object) [];
+        if (!is_arry($responseRemote)) {
+            if (get_class($responseRemote) === self::WP_ERROR) {
+                return (object) [];
+            }
         }
 
         $response = json_decode(
