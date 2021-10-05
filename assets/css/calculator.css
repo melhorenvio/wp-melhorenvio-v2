@@ -1,7 +1,7 @@
     /* Style inputs, select elements and textareas */
 
     .containerCalculator .calculatorRow {
-        width: 300px !important;
+        width: 100%!important;
     }
 
     #calcular-frete-loader {

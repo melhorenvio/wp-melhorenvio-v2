@@ -113,7 +113,7 @@ class StoreService
             [],
             false
         );
-
+        
         if (empty($addresses->data)) {
             return [];
         }

@@ -10,6 +10,15 @@ use Models\ShippingCompany;
 
 class ConfigurationsService
 {
+    const WIDTH_DEFAULT = 10;
+
+    const HEIGHT_DEFAULT = 10;
+    
+    const LENGTH_DEFAULT = 10;
+    
+    const WEIGHT_DEFAULT = 11;
+
+
     const FIELDS_ADDRESS = [
         "id",
         "address",
@@ -306,7 +315,9 @@ class ConfigurationsService
 
         if (!empty($stores)) {
             foreach ($stores as $store) {
-                $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                if (!empty($store->address)) {
+                    $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                }
             }
         }
 
@@ -354,11 +365,11 @@ class ConfigurationsService
     {
         return  [
             "id" => $store->address->id,
-            "name" => $store->address->label,
+            "name" => $store->name,
             "email" => $store->email,
             "phone" => $sellerData->phone->phone,
-            "company_document" => (!empty($store->company_document))
-                ? $store->company_document
+            "company_document" => (!empty($store->document))
+                ? $store->document
                 : '',
             "state_register" => (!empty($store->state_register))
                 ? $store->state_register
@@ -392,10 +403,10 @@ class ConfigurationsService
         $dimension = get_option('melhor_envio_option_dimension_default');
         if (empty($dimension)) {
             return [
-                "width" => 10,
-                "height" => 10,
-                "length" => 10,
-                "weight" => 1
+                "width" => self::WIDTH_DEFAULT,
+                "height" => self::HEIGHT_DEFAULT,
+                "length" => self::LENGTH_DEFAULT,
+                "weight" => self::WEIGHT_DEFAULT
             ];
         }
 
