@@ -112,7 +112,7 @@
                     v-model="origin"
                     data-cy="address-input"
                     @click="
-                      showJadlogAgencies({
+                      refreshAgencies({
                         city: option.address.city,
                         state: option.address.state,
                       }),
