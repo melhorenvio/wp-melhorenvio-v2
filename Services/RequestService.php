@@ -16,7 +16,7 @@ class RequestService
 
     const TIMEOUT = 10;
 
-    const TIME_LIMIT_LOG_REQUEST = 1000;
+    const WP_ERROR = 'WP_Error';
 
     protected $token;
 
@@ -72,7 +72,13 @@ class RequestService
         );
 
         $responseRemote = wp_remote_post($this->url . $route, $params);
-        
+
+        if (!is_array($responseRemote)) {
+            if (get_class($responseRemote) === self::WP_ERROR) {
+                return (object) [];
+            }
+        }
+
         $response = json_decode(
             wp_remote_retrieve_body($responseRemote)
         );
