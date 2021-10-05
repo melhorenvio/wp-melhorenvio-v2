@@ -51,7 +51,7 @@ class ConfigurationsService
         }
 
         if (isset($data['agency_azul'])) {
-            $response['agency'][ShippingCompany::AZUL_CARGO] =$data['agency_azul'];
+            $response['agency'][ShippingCompany::AZUL_CARGO] = $data['agency_azul'];
         }
 
         if (isset($data['agency_latam'])) {
