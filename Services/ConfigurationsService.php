@@ -122,7 +122,7 @@ class ConfigurationsService
         if (!empty($originselected)) {
             $address = [
                 'state' => $originselected['address']['state'],
-                'city' => $origin['address']['city'],
+                'city' => $originselected['address']['city'],
                 'company' => null
             ];
             $agencies = (new AgenciesService($address))->get();
