@@ -6,6 +6,7 @@ use Models\Order;
 use Models\Option;
 use Models\Payload;
 use Models\Session;
+use Models\ShippingCompany;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
@@ -133,18 +134,10 @@ class CartService
      */
     private function getAgencyToInsertCart($shippingMethodId)
     {
-        $shippingMethodService = new CalculateShippingMethodService();
-
-        if ($shippingMethodService->isJadlog($shippingMethodId)) {
-            return (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
-            return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isLatamCargo($shippingMethodId)) {
-            return (new AgenciesLatamService())->getSelectedAgencyOrAnyByCityUser();
+        $companyId = ShippingCompany::getCompanyIdByService($shippingMethodId);
+        $agenciesSelecteds = (new AgenciesSelectedService())->get();
+        if (!empty($agenciesSelecteds[$companyId])) {
+            return $agenciesSelecteds[$companyId];
         }
 
         return null;
