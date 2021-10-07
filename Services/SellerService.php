@@ -22,7 +22,7 @@ class SellerService
         $label = $configurationService->getLabel();
 
         if (!empty($label)) {
-            return $label;
+            return (object) $label;
         }
 
         $origin = $configurationService->getAddresses();

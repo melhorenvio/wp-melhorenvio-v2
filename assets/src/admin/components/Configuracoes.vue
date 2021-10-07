@@ -455,16 +455,8 @@
           <li>
             <label for="41352">
               <div class="wpme_address-top" style="border-bottom: none">
-                <input
-                  type="checkbox"
-                  value="exibir"
-                  v-model="show_calculator"
-                  data-cy="input-show-calculator"
-                />
                 <label for="two">exibir a calculadora na tela do produto</label>
               </div>
-              <br />
-
               <select
                 v-show="show_calculator"
                 data-cy="input-where-calculator"
@@ -654,6 +646,10 @@ export default {
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
       where_calculator_collect: [
+        {
+          id: "none",
+          name: "Não exibir calculadora",
+        },
         {
           id: "woocommerce_before_single_product",
           name: "Antes do titulo do produto (Depende do tema do projeto)",

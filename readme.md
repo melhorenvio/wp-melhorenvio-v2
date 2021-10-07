@@ -71,6 +71,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.2 =
 * Ajustes para melhorar o desempenho na busca de dados do vendedor.
+* Ajustes na opção de remover a calculadora do Melhor Envio da tela do produto.
 
 = 2.11.1 =
 * Ajustes no método de busca de agências, melhorando o desempenho da busca.
