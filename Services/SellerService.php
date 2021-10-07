@@ -22,15 +22,11 @@ class SellerService
         $label = $configurationService->getLabel();
 
         if (!empty($label)) {
+            $label['state_abbr'] = $label['state'];
             return (object) $label;
         }
 
         $origin = $configurationService->getAddresses();
-
-        if (!empty($label)) {
-            $label['state_abbr'] = $label['state'];
-            return (object) $label;
-        }
 
         $seller = new Seller();
 
