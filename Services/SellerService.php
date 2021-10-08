@@ -68,7 +68,7 @@ class SellerService
                 :  sprintf("%s %s", $data->firstname, $data->lastname),
             "phone" => !empty($data->phone->phone) ? $data->phone->phone : null,
             "email" => !empty($store->email) ? $store->email :  $data->email,
-            "document" => (!empty($store->document)) ? null : $data->document,
+            "document" => !empty($store->document) ? null : $data->document,
             "company_document" => !empty($store->document) ? $store->document : null,
             "economic_activity_code" => !empty($store->economic_activity_code)
                 ? $store->economic_activity_code
