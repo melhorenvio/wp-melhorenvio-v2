@@ -400,13 +400,13 @@ class ConfigurationsService
             "name" => $store->name,
             "email" => $store->email,
             "phone" => $sellerData->phone->phone,
-            "company_document" => (!empty($store->document))
+            "company_document" => !empty($store->document)
                 ? $store->document
                 : '',
-            "state_register" => (!empty($store->state_register))
+            "state_register" => !empty($store->state_register)
                 ? $store->state_register
                 : '',
-            "economic_activity_code" => (!empty($store->economic_activity_code))
+            "economic_activity_code" => !empty($store->economic_activity_code)
                 ? $store->economic_activity_code
                 : '',
             "type" => "store",
