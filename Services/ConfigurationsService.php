@@ -400,13 +400,13 @@ class ConfigurationsService
             "name" => $store->name,
             "email" => $store->email,
             "phone" => $sellerData->phone->phone,
-            "company_document" => (!empty($store->document))
+            "company_document" => !empty($store->document)
                 ? $store->document
                 : '',
-            "state_register" => (!empty($store->state_register))
+            "state_register" => !empty($store->state_register)
                 ? $store->state_register
                 : '',
-            "economic_activity_code" => (!empty($store->economic_activity_code))
+            "economic_activity_code" => !empty($store->economic_activity_code)
                 ? $store->economic_activity_code
                 : '',
             "type" => "store",
@@ -448,7 +448,7 @@ class ConfigurationsService
     /**
      * @return array
      */
-    public function getLabel()
+    public function getLabel($origin = null)
     {
         $labelOption = get_option('melhor_envio_option_label');
 
@@ -457,15 +457,19 @@ class ConfigurationsService
         }
 
         $label = null;
-        foreach ($origin as $item) {
-            if ($item['selected']) {
-                $address = $item['address'];
-                unset($item['address']);
-                unset($item['selected']);
-                unset($item['type']);
-                $label = $item;
-                foreach (self::FIELDS_ADDRESS as $field) {
-                    $label[$field] = $address[$field];
+        if (!empty($origin)) {
+            foreach ($origin as $item) {
+                if ($item['selected']) {
+                    $address = $item['address'];
+                    unset($item['address']);
+                    unset($item['selected']);
+                    unset($item['type']);
+                    $label = $item;
+                    foreach (self::FIELDS_ADDRESS as $field) {
+                        if (isset($address[$field])) {
+                            $label[$field] = $address[$field];
+                        }
+                    }
                 }
             }
         }
