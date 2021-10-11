@@ -13,7 +13,7 @@ class NoticeFormService
     /**
      * Function to check whether to display and insert the search form alert on the administrative page
      */
-    public function  insertForm()
+    public function insertForm()
     {
         $showForm = $this->getVisibilityForm();
         $show = self::SHOW;
@@ -21,7 +21,11 @@ class NoticeFormService
             add_action('admin_notices', function () {
                 echo '<div class="notice info is-dismissible"> 
                     <p><strong>Como podemos melhorar?</strong></p>
-                    <p>Gostaríamos de saber mais sobre a sua experiência com o plugin do Melhor Envio para que possamos aprimorá-lo. <a href="/wp-admin/admin-ajax.php?action=open_form_melhor_envio">Clique aqui</a> e nos ajude respondendo a pesquisa.</p>
+                    <p>Gostaríamos de saber mais sobre a sua experiência com o plugin do Melhor Envio 
+                    para que possamos aprimorá-lo. 
+                    <a href="/wp-admin/admin-ajax.php?action=open_form_melhor_envio">Clique aqui</a> 
+                    e nos ajude respondendo a pesquisa.
+                    </p>
                 </div>';
             });
         }

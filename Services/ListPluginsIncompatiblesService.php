@@ -23,9 +23,9 @@ class ListPluginsIncompatiblesService
 
         foreach ($installed as $plugin) {
             if (in_array($plugin, $incompatibles)) {
-                (new NoticeFormService())->add(
+                (new SessionNoticeService())->add(
                     sprintf("O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.", $plugin),
-                    NoticeFormService::NOTICE_INFO
+                    SessionNoticeService::NOTICE_INFO
                 );
             }
         }
@@ -46,7 +46,6 @@ class ListPluginsIncompatiblesService
 
     /**
      * Function to retrive a list with plugins incompatibles.
-     * 
      * @return array
      */
     public function getListPluginsIncompatibles()
