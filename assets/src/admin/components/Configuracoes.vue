@@ -458,7 +458,6 @@
                 <label for="two">exibir a calculadora na tela do produto</label>
               </div>
               <select
-                v-show="show_calculator"
                 data-cy="input-where-calculator"
                 name="agencies"
                 id="agencies"
