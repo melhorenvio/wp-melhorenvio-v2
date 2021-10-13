@@ -26,8 +26,8 @@ class ShippingClassDataByProductService
         ];
 
         foreach ($zones as $zone) {
-            $shipping_zone = new \WC_Shipping_Zone($zone['id']);
-            $methods = $shipping_zone->get_shipping_methods(true, 'values');
+            $shippingZone = new \WC_Shipping_Zone($zone['id']);
+            $methods = $shippingZone->get_shipping_methods(true, 'values');
             foreach ($methods as $method) {
                 if ($productClassId == $method->instance_settings['shipping_class_id']) {
                     $settings = [
