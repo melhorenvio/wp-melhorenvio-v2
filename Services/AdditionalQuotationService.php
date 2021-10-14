@@ -39,8 +39,7 @@ class AdditionalQuotationService
         $maxPercent = 0;
         $responseFees = [];
 
-        foreach($woocommerce->cart->get_cart() as $cart) {
-
+        foreach ($woocommerce->cart->get_cart() as $cart) {
             $hashCart = $cart['key'];
 
             if (!empty($_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
@@ -54,7 +53,7 @@ class AdditionalQuotationService
                         $maxTime = ($time > $maxTime) ? $time : $maxTime;
                         $maxPercent = ($percent > $maxPercent) ? $percent : $maxPercent;
 
-                        $responseFees[$instanceId] = [
+                        $responseFees = [
                             'taxExtra' => $maxTax,
                             'timeExtra' => $maxTime,
                             'percentExtra' => $maxPercent
@@ -84,14 +83,13 @@ class AdditionalQuotationService
 
         global $woocommerce;
 
-        if (empty($woocommerce->cart->get_cart_contents_count() )) {
+        if (empty($woocommerce->cart->get_cart_contents_count())) {
             $_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL] = null;
             return false;
         }
 
         foreach ($woocommerce->cart->get_cart() as $cart) {
             $hashCart = $cart['key'];
-
             if (empty($_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL][$hashCart])) {
                 $_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL][$hashCart][$product_id][$instanceId] = [
                     'taxExtra' => $taxExtra,
@@ -106,7 +104,8 @@ class AdditionalQuotationService
             $dataCachedAdditional = $_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL][$hashCart];
 
             $dataCachedAdditional = array_merge(
-                $dataCachedAdditional, [
+                $dataCachedAdditional,
+                [
                     'taxExtra' => 0,
                     'timeExtra' => 0,
                     'percent' => 0
@@ -140,7 +139,7 @@ class AdditionalQuotationService
     {
         SessionHelper::initIfNotExists();
 
-        if (empty($_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL] )) {
+        if (empty($_SESSION[Session::ME_KEY][self::SESSION_KEY_ADDITIONAL])) {
             return false;
         }
 

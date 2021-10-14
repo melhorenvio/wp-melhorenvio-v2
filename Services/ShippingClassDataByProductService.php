@@ -5,37 +5,42 @@ namespace Services;
 class ShippingClassDataByProductService
 {
     /**
-     *
-     *
      * @param $productId
      * @return array
      */
     public function get($productId)
     {
         $product = wc_get_product($productId);
-        $product_class_id = $product->get_shipping_class_id();
-        $zone_ids = array_keys(array('') + \WC_Shipping_Zones::get_zones());
 
-        $settings = [
+        $productClassId = $product->get_shipping_class_id();
+
+        $zones = \WC_Shipping_Zones::get_zones();
+        
+        $settings = [];
+
+        $settingsDefault = [
+            'instance_id' => null,
             'additional_tax' => 0,
             'additional_time' => 0,
             'percent_tax' => 0
         ];
 
-        foreach ( $zone_ids as $zone_id ) {
-            $shipping_zone = new \WC_Shipping_Zone($zone_id);
-            $shipping_methods = $shipping_zone->get_shipping_methods( true, 'values' );
-            foreach ( $shipping_methods as $instance_id => $shipping_method ) {
-                $dataShippingMethod[$shipping_method->instance_id] = $shipping_method->instance_settings;
-                if (isset($dataShippingMethod[$shipping_method->instance_id]['shipping_class_id']) && $product_class_id == $dataShippingMethod[$shipping_method->instance_id] ['shipping_class_id']) {
-                    unset($dataShippingMethod[$shipping_method->instance_id]['shipping_class_id']);
-                    unset($dataShippingMethod[$shipping_method->instance_id]['title']);
-                    $settings = $dataShippingMethod;
+        foreach ($zones as $zone) {
+            $shippingZone = new \WC_Shipping_Zone($zone['id']);
+            $methods = $shippingZone->get_shipping_methods(true, 'values');
+            foreach ($methods as $method) {
+                if ($productClassId == $method->instance_settings['shipping_class_id']) {
+                    $settings = [
+                        'instance_id' => $method->instance_settings['shipping_class_id'],
+                        'additional_tax' => floatval($method->instance_settings['additional_tax']),
+                        'additional_time' => floatval($method->instance_settings['additional_time']),
+                        'percent_tax' => floatval($method->instance_settings['percent_tax'])
+                    ];
+                    break;
                 }
             }
         }
 
-        return $settings;
+        return array_merge($settingsDefault, $settings);
     }
-
 }
