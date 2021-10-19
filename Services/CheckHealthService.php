@@ -14,7 +14,7 @@ class CheckHealthService
     }
 
     /**
-     * Function to display message to the user if he does not 
+     * Function to display message to the user if he does not
      * have selected shipping methods
      *
      * @return void

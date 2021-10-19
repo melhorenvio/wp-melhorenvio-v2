@@ -36,7 +36,9 @@ class QuotationController
             (new PayloadService())->save(($postId));
         }
 
-        unset($_SESSION[Session::ME_KEY]['quotation']);
+        if (!empty($_SESSION[Session::ME_KEY]['quotation'])) {
+            unset($_SESSION[Session::ME_KEY]['quotation']);
+        }
 
         return $result;
     }

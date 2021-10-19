@@ -10,8 +10,24 @@ class ProcessAdditionalTaxService
 {
     public function init()
     {
-        add_action('woocommerce_add_to_cart', [$this, 'addCart']);
-        add_action('woocommerce_remove_cart_item', [$this, 'removeCart'], 10, 2);
+        $shipping_classes = $this->wcGetShippingClasses();
+        if (!empty($shipping_classes)) {
+            $shipping_classes = end($shipping_classes);
+            if ($shipping_classes->total > 0) {
+                add_action('woocommerce_add_to_cart', [$this, 'addCart']);
+                add_action('woocommerce_remove_cart_item', [$this, 'removeCart'], 10, 2);
+            }
+        }
+    }
+
+    public function wcGetShippingClasses()
+    {
+        global $wpdb;
+        return $wpdb->get_results("
+            SELECT count(*) as total FROM {$wpdb->prefix}terms as t
+            INNER JOIN {$wpdb->prefix}term_taxonomy as tt ON t.term_id = tt.term_id
+            WHERE tt.taxonomy LIKE 'product_shipping_class LIMIT 1'
+        ");
     }
 
     /**
