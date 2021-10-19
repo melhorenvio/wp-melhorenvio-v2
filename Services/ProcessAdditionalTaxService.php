@@ -26,7 +26,7 @@ class ProcessAdditionalTaxService
         return $wpdb->get_results("
             SELECT count(*) as total FROM {$wpdb->prefix}terms as t
             INNER JOIN {$wpdb->prefix}term_taxonomy as tt ON t.term_id = tt.term_id
-            WHERE tt.taxonomy LIKE 'product_shipping_class LIMIT 1'
+            WHERE tt.taxonomy LIKE 'product_shipping_class' LIMIT 1
         ");
     }
 
