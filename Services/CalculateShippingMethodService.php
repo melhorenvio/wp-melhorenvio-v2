@@ -70,8 +70,8 @@ class CalculateShippingMethodService
                     return false;
                 }
 
-                $additionalData = (new AdditionalQuotationService())->get();
-
+                $additionalData  = (new ShippingClassService())->getExtasOnCart();
+                
                 if (!empty($additionalData['taxExtra'])) {
                     $taxExtra = ($additionalData['taxExtra'] >= $taxExtra)
                         ? $additionalData['taxExtra']

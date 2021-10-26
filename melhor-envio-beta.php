@@ -59,7 +59,6 @@ use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
-use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
 use Services\SessionNoticeService;
 use Helpers\SessionHelper;
@@ -303,8 +302,6 @@ final class Base_Plugin
         add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
-
-        (new ProcessAdditionalTaxService())->init();
 
         if (is_admin()) {
             (new ListPluginsIncompatiblesService())->init();
