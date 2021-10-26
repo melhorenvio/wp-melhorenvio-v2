@@ -37,10 +37,14 @@ class ShippingClassService
     {
         global $woocommerce;
 
-        foreach ($woocommerce->cart->get_cart() as $cart) {
-            if (!empty($cart['data']->shipping_class_id)) {
-                $shippingClassId = $cart['data']->shipping_class_id;
-                $this->shippingClassesId[] = $shippingClassId;
+        $dataCart = $woocommerce->cart->get_cart();
+
+        if (!empty($dataCart)) {
+            foreach ($dataCart as $cart) {
+                if (!empty($cart['data']->shipping_class_id)) {
+                    $shippingClassId = $cart['data']->shipping_class_id;
+                    $this->shippingClassesId[] = $shippingClassId;
+                }
             }
         }
     }
