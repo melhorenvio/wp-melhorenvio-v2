@@ -15,41 +15,42 @@ class ShippingClassService
     protected $shippingClasses = [];
 
     /**
+     * @param object $package
     * @return array
     */
     public function getExtasOnCart()
     {
+        $this->getShippingClassesId();
+
+        if (empty($this->shippingClassesId)) {
+            return $this->normalizeArray();
+        }
+
+        $this->getExtraTax();
+
+        $this->filterMaxValue();
+
+        return $this->normalizeArray();
+    }
+
+    private function getShippingClassesId()
+    {
         global $woocommerce;
 
-        $this->shippingClassesId = [];
-        
         foreach ($woocommerce->cart->get_cart() as $cart) {
             if (!empty($cart['data']->shipping_class_id)) {
                 $shippingClassId = $cart['data']->shipping_class_id;
                 $this->shippingClassesId[] = $shippingClassId;
             }
         }
-
-        if (empty($this->shippingClassesId)) {
-            return [
-                'taxExtra' => 0,
-                'timeExtra' => 0,
-                'percent' =>  0
-            ];
-        }
-
-        $this->getExtraTax();
-
-        return $this->getMaxData();
     }
 
-    /**
-     *
-     */
     public function getExtraTax()
     {
         $shippingExtraData = [];
-        $deliveryZones = \WC_Shipping_Zones::get_zones();
+
+        $deliveryZones =  \WC_Shipping_Zones::get_zones();
+
         foreach ((array) $deliveryZones as $key => $zone) {
             foreach ($zone['shipping_methods'] as $method) {
                 if ($this->isValidToAdd($method)) {
@@ -76,7 +77,7 @@ class ShippingClassService
     /**
      * @return array
      */
-    public function getMaxData()
+    public function filterMaxValue()
     {
         foreach ($this->shippingClasses as $data) {
             if ($data['additional_tax'] > $this->maxTaxExtra) {
@@ -91,11 +92,17 @@ class ShippingClassService
                 $this->maxPercentExtra = $data['percent_tax'];
             }
         }
+    }
 
+    /**
+     * @return array
+     */
+    private function normalizeArray()
+    {
         return [
-            'taxExtra' =>  $this->maxTaxExtra,
-            'timeExtra' => $this->maxTimeExtra,
-            'percent' =>  $this->maxPercentExtra
+            'taxExtra' => $this->maxTaxExtra,
+            'timeExtra' =>$this->maxTimeExtra,
+            'percent' =>  $this->maxTimeExtra
         ];
     }
 }
