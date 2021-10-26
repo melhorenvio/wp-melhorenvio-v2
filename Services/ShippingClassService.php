@@ -47,12 +47,16 @@ class ShippingClassService
 
     public function getExtraTax()
     {
-        $shippingExtraData = [];
+        global $woocommerce;
 
-        $deliveryZones =  \WC_Shipping_Zones::get_zones();
+        $shipping_packages =  $woocommerce->cart->get_shipping_packages();
 
-        foreach ((array) $deliveryZones as $key => $zone) {
-            foreach ($zone['shipping_methods'] as $method) {
+        $deliveryZones = wc_get_shipping_zone(reset($shipping_packages));
+
+        $methods = $deliveryZones->get_shipping_methods();
+
+        if (!empty($methods)) {
+            foreach ($methods as $method) {
                 if ($this->isValidToAdd($method)) {
                     $this->shippingClasses[$method->instance_settings['shipping_class_id']] = [
                         'additional_tax' => floatval($method->instance_settings['additional_tax']),
