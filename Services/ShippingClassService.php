@@ -20,20 +20,20 @@ class ShippingClassService
     */
     public function getExtasOnCart()
     {
-        $this->getShippingClassesId();
+        $this->setShippingClassesId();
 
         if (empty($this->shippingClassesId)) {
             return $this->normalizeArray();
         }
 
-        $this->getExtraTax();
+        $this->setExtraTax();
 
         $this->filterMaxValue();
 
         return $this->normalizeArray();
     }
 
-    private function getShippingClassesId()
+    private function setShippingClassesId()
     {
         global $woocommerce;
 
@@ -49,7 +49,7 @@ class ShippingClassService
         }
     }
 
-    public function getExtraTax()
+    public function setExtraTax()
     {
         global $woocommerce;
 
