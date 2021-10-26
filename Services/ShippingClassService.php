@@ -20,6 +20,12 @@ class ShippingClassService
     */
     public function getExtasOnCart()
     {
+        $totalShippingClasses = $this->getCountShippingClasses();
+
+        if ($totalShippingClasses == 0) {
+            return $this->normalizeArray();
+        }
+
         $this->setShippingClassesId();
 
         if (empty($this->shippingClassesId)) {
@@ -47,6 +53,22 @@ class ShippingClassService
                 }
             }
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountShippingClasses()
+    {
+        global $wpdb;
+
+        $result = $wpdb->get_results("
+            SELECT count(*) as total FROM {$wpdb->prefix}terms as t
+            INNER JOIN {$wpdb->prefix}term_taxonomy as tt ON t.term_id = tt.term_id
+            WHERE tt.taxonomy LIKE 'product_shipping_class' LIMIT 1
+        ");
+
+        return end($result)->total;
     }
 
     public function setExtraTax()
