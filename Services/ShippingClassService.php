@@ -83,17 +83,19 @@ class ShippingClassService
      */
     public function filterMaxValue()
     {
-        foreach ($this->shippingClasses as $data) {
-            if ($data['additional_tax'] > $this->maxTaxExtra) {
-                $this->maxTaxExtra = $data['additional_tax'];
-            }
+        if (!empty($this->shippingClasses)) {
+            foreach ($this->shippingClasses as $data) {
+                if ($data['additional_tax'] > $this->maxTaxExtra) {
+                    $this->maxTaxExtra = $data['additional_tax'];
+                }
 
-            if ($data['additional_time'] > $this->maxTimeExtra) {
-                $this->maxTimeExtra = $data['additional_time'];
-            }
+                if ($data['additional_time'] > $this->maxTimeExtra) {
+                    $this->maxTimeExtra = $data['additional_time'];
+                }
 
-            if ($data['percent_tax'] > $this->maxPercentExtra) {
-                $this->maxPercentExtra = $data['percent_tax'];
+                if ($data['percent_tax'] > $this->maxPercentExtra) {
+                    $this->maxPercentExtra = $data['percent_tax'];
+                }
             }
         }
     }
