@@ -10,7 +10,6 @@ class CheckHealthService
     public function init()
     {
         $this->hasShippingMethodsMelhorEnvio();
-        $this->hasToken();
     }
 
     /**
@@ -37,20 +36,6 @@ class CheckHealthService
                 );
             }
         });
-    }
-
-    /**
-     * Function to display alert to the user if there is no saved token
-     *
-     * @return void
-     */
-    public function hasToken()
-    {
-        $token = (new TokenService())->get();
-        if (!$token) {
-            $message = 'Atenção! você não possui um token Melhor Envio cadastrado, acesse a plataforma do <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">Melhor Envio</a> e gere seu token de acesso';
-            (new SessionNoticeService())->add($message, SessionNoticeService::NOTICE_INFO);
-        }
     }
 
     /**
