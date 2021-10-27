@@ -18,7 +18,7 @@ class ShippingClassService
      * @param object $package
     * @return array
     */
-    public function getExtasOnCart()
+    public function getExtrasOnCart()
     {
         $totalShippingClasses = $this->getCountShippingClasses();
 
