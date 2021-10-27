@@ -46,9 +46,9 @@ class ShippingClassService
         $dataCart = $woocommerce->cart->get_cart();
 
         if (!empty($dataCart)) {
-            foreach ($dataCart as $cart) {
-                if (!empty($cart['data']->shipping_class_id)) {
-                    $shippingClassId = $cart['data']->shipping_class_id;
+            foreach ($dataCart as $itemCart) {
+                if (!empty($itemCart['data']->shipping_class_id)) {
+                    $shippingClassId = $itemCart['data']->shipping_class_id;
                     $this->shippingClassesId[] = $shippingClassId;
                 }
             }
