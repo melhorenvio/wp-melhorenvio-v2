@@ -187,11 +187,12 @@ final class Base_Plugin
             $pathPlugins = ABSPATH . 'wp-content/plugins';
         }
 
-        (new SessionNoticeService())->showNotices();
-
-        $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
-        if (!empty($result['errors'])) {
-            return false;
+        if (is_admin()) {
+            (new SessionNoticeService())->showNotices();
+            $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
+            if (!empty($result['errors'])) {
+                return false;
+            }
         }
 
         if (empty($result['errorsPath'])) {
@@ -257,23 +258,25 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        (new CheckHealthService())->init();
-        (new TrackingService())->createTrackingColumnOrdersClient();
-
-        $hideCalculator = (new CalculatorShow)->get();
-        if ($hideCalculator) {
-            (new ShowCalculatorProductPage())->insertCalculator();
+        if (is_admin()) {
+            (new CheckHealthService())->init();
+            (new RolesService())->init();
         }
 
         add_action('init', array($this, 'init_classes'));
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
-        (new RolesService())->init();
-
+        
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
             require_once $filename;
+        }
+
+        (new TrackingService())->createTrackingColumnOrdersClient();
+        $hideCalculator = (new CalculatorShow)->get();
+        if ($hideCalculator) {
+            (new ShowCalculatorProductPage())->insertCalculator();
         }
 
         add_filter('woocommerce_shipping_methods', function ($methods) {

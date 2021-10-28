@@ -4,8 +4,6 @@ namespace Services;
 
 class ListPluginsIncompatiblesService
 {
-    const URL_PLUGINS_INCOMPATIBLES = 'https://wordpress-plugin.s3.us-east-2.amazonaws.com/plugins-incompatible.json';
-
     /**
      * Function to init a seach by plugins incompatibles.
      *
@@ -50,12 +48,8 @@ class ListPluginsIncompatiblesService
      */
     public function getListPluginsIncompatibles()
     {
-        return json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_get(
-                    self::URL_PLUGINS_INCOMPATIBLES
-                )
-            )
-        );
+        return [
+            "wpc-composite-products/wpc-composite-products.php"
+        ];
     }
 }
