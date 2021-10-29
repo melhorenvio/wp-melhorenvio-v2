@@ -4,6 +4,7 @@ namespace Services;
 
 use Helpers\MoneyHelper;
 use Helpers\PostalCodeHelper;
+use Services\WooCommerceBundleProductsService;
 
 class QuotationProductPageService
 {
@@ -100,6 +101,13 @@ class QuotationProductPageService
      */
     public function getRatesShipping()
     {
+        if (get_class($this->product) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE) {
+            return [
+                'success' => false,
+                'error' => "Cotação disponível apenas nos próximos passos"
+            ];
+        }
+
         if (empty($this->product)) {
             return [
                 'success' => false,

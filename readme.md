@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.9.14
+Version: 2.11.5
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
 Tested up to: 5.7.2
-Stable tag: 2.9.14
+Stable tag: 2.11.5
 Requires PHP: 5.6+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -69,6 +69,56 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.11.5 =
+* Correção para permitir apenas token de sandbox nas configurações.
+* Melhorias no desempenho.
+* Ajustes no método de adição de percentual extra sobre o valor final da cotação.
+
+= 2.11.4 =
+* Correção de erro crítico ao ativar o plugin em algumas lojas.
+
+= 2.11.3 =
+* Ajustes para melhorar o desempenho na busca de dados do vendedor.
+* Ajustes na opção de remover a calculadora do Melhor Envio da tela do produto.
+
+= 2.11.1 =
+* Ajustes no método de busca de agências, melhorando o desempenho da busca.
+
+= 2.11.0 =
+* Criação da configuração para embalagem padrão para casos de produtos sem dimensões cadastradas
+
+= 2.10.1 =
+* Ajuste para não exibir lojas sem endereços cadastrados
+* Ajuste para exibir o nome da loja na etiqueta
+
+= 2.10.0 =
+* Reformulação da forma de selecionar origem da etiquetas com edição dos dados da etiqueta
+
+= 2.9.24 = 
+* Ajuste para aceitar endereço com número 0 (zero)
+* Ajuste para poder editar informações do pedido (woocommerce)
+
+= 2.9.23 =
+* Adiciona o serviço Rodoviário de Buslog 
+
+= 2.9.22 =
+* Correções para o plugin se adaptar ao plugin WooCommerce Bundle Products 
+
+= 2.9.21 =
+* Remoção da obrigatoriedade de agências para Via Brasil e Jadlog.
+
+= 2.9.20 =
+* Correção do erro de produtos sem medidas
+
+= 2.9.19 =
+*  Correção do erro fatal da versão 2.9.17
+
+= 2.9.17 =
+* Adição de alerta em casos de token inválidos ou expirados
+
+= 2.9.16 =
+* Correção para o problema de lentidão ao inserir um produto no carrinho de compras
+
 = 2.9.14 =
 * Ajustes validações payload para API do Melhor Envio
 * Ajuste no uso de valor segurado nas cotações

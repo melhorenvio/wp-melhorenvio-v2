@@ -61,7 +61,7 @@ class OrdersController
             $service
         );
 
-        if (empty($result['success']) && $result['errors'] == 'validation.nfe') {
+        if (empty($result['success']) && isset($result['errors']) && $result['errors'] == 'validation.nfe') {
             $result['errors'] = "A chave e a nota fiscal estão incorretas, por favor verificar as mesmas";
         }
 

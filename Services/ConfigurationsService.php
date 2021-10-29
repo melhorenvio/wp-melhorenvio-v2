@@ -4,13 +4,33 @@ namespace Services;
 
 use Models\Address;
 use Models\Agency;
-use Models\AgencyAzul;
-use Models\AgencyLatam;
 use Models\Option;
 use Models\CalculatorShow;
+use Models\ShippingCompany;
 
 class ConfigurationsService
 {
+    const WIDTH_DEFAULT = 10;
+
+    const HEIGHT_DEFAULT = 10;
+    
+    const LENGTH_DEFAULT = 10;
+    
+    const WEIGHT_DEFAULT = 11;
+
+
+    const FIELDS_ADDRESS = [
+        "id",
+        "address",
+        "complement",
+        "number",
+        "district",
+        "city",
+        "state",
+        "country_id",
+        "postal_code"
+    ];
+
     /**
      * Function to save the salesperson's settings.
      *
@@ -23,26 +43,32 @@ class ConfigurationsService
 
         (new ClearDataStored())->clear();
 
-        if (isset($data['address'])) {
-            $response['address'] = (new Address())->setAddressShopping(
-                $data['address']
+        if (isset($data['origin'])) {
+            $response['origin'] = (new Address())->setAddressShopping(
+                $data['origin']
             );
         }
 
-        if (isset($data['store'])) {
-            $response['store'] = (new StoreService())->setStore($data['store']);
+        if (isset($data['dimension_default'])) {
+            $response['dimension_default'] = $this->setDimensionDefault(
+                $data['dimension_default']
+            );
         }
 
         if (isset($data['agency'])) {
-            $response['agency'] = (new Agency())->setAgency($data['agency']);
+            $response['agency'][ShippingCompany::JADLOG] = $data['agency'];
         }
 
         if (isset($data['agency_azul'])) {
-            $response['agency_azul'] = (new AgencyAzul())->setAgency($data['agency_azul']);
+            $response['agency'][ShippingCompany::AZUL_CARGO] = $data['agency_azul'];
         }
 
         if (isset($data['agency_latam'])) {
-            $response['agency_latam'] = (new AgencyLatam())->setAgency($data['agency_latam']);
+            $response['agency'][ShippingCompany::LATAM_CARGO] = $data['agency_latam'];
+        }
+
+        if (!empty($response['agency'])) {
+            (new AgenciesSelectedService())->set($response['agency']);
         }
 
         if (isset($data['show_calculator'])) {
@@ -69,6 +95,12 @@ class ConfigurationsService
             );
         }
 
+        if (isset($data['label'])) {
+            $response['label'] = $this->setLabel(
+                $data['label']
+            );
+        }
+
         return $response;
     }
 
@@ -79,32 +111,103 @@ class ConfigurationsService
      */
     public function getConfigurations()
     {
-        $agenciesJadlog = (new AgenciesJadlogService());
-        $agenciesAzul = (new AgenciesAzulService());
-        $agenciesLatam = (new AgenciesLatamService());
         $token = (new TokenService())->get();
-        $addresses =  (!empty((new Address())->getAddressesShopping()['addresses'])) 
-            ? (new Address())->getAddressesShopping()['addresses'] 
-            :  [];
+
+        $origin =  $this->getAddresses();
+
+        $originselected = $this->getOriginSelected($origin);
+
+        $agencies = [];
+        $agenciesSelecteds = [];
+        if (!empty($originselected)) {
+            $address = [
+                'state' => $originselected['address']['state'],
+                'city' => $originselected['address']['city'],
+                'company' => null
+            ];
+            $agencies = (new AgenciesService($address))->get();
+            $agenciesSelecteds = (new AgenciesSelectedService())->get();
+        }
 
         return [
-            'addresses' => $addresses,
-            'stores' => (new StoreService())->getStores(),
-            'agencies' => $agenciesJadlog->get(),
-            'agencySelected' => $agenciesJadlog->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesAzul'  => $agenciesAzul->get(),
-            'agencyAzulSelected'  => $agenciesAzul->getSelectedAgencyOrAnyByCityUser(),
-            'agenciesLatam'  => $agenciesLatam->get(),
-            'agencyLatamSelected' => $agenciesLatam->getSelectedAgencyOrAnyByCityUser(),
+            'origin' => $origin,
+            'label' => $this->getLabel($origin),
+            'agencies' => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::JADLOG
+            ),
+            'agencySelected' => $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::JADLOG
+            ),
+            'agenciesAzul'  => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::AZUL_CARGO
+            ),
+            'agencyAzulSelected'  =>   $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::AZUL_CARGO
+            ),
+            'agenciesLatam'  => $this->filterAgenciesByCompany(
+                $agencies,
+                ShippingCompany::LATAM_CARGO
+            ),
+            'agencyLatamSelected' =>  $this->filterAgencySelectedByCompany(
+                $agenciesSelecteds,
+                ShippingCompany::LATAM_CARGO
+            ),
             'calculator' => (new CalculatorShow())->get(),
             'where_calculator' => (!get_option('melhor_envio_option_where_show_calculator'))
                 ? 'woocommerce_before_add_to_cart_button'
                 : get_option('melhor_envio_option_where_show_calculator'),
             'path_plugins'  => $this->getPathPluginsArray(),
             'options_calculator' => $this->getOptionsCalculator(),
-            'token_environment'  => $token['token_environment']
+            'token_environment'  => $token['token_environment'],
+            'dimension_default' => $this->getDimensionDefault()
         ];
     }
+
+    /**
+     * @param array $agencies
+     * @param int $companyId
+     * @return array
+     */
+    private function filterAgenciesByCompany($agencies, $companyId)
+    {
+        return (isset($agencies[$companyId]))
+            ? $agencies[$companyId]
+            : [];
+    }
+
+    /**
+     * @param array $agenciesSelecteds
+     * @param int $companyId
+     * @return array
+     */
+    private function filterAgencySelectedByCompany($agenciesSelecteds, $companyId)
+    {
+        return (isset($agenciesSelecteds[$companyId]))
+            ? $agenciesSelecteds[$companyId]
+            : null;
+    }
+
+    /**
+     * @param array $origin
+     * @return array
+     */
+    private function getOriginSelected($origin)
+    {
+        $originselected = null;
+        foreach ($origin as $item) {
+            if ($item['selected']) {
+                $originselected = $item;
+            }
+        }
+        return $originselected;
+    }
+
+
+
 
     /**
      * Function to save the moment that will be called the product calculator
@@ -120,6 +223,36 @@ class ConfigurationsService
         return [
             'success' => true,
             'option' => $option
+        ];
+    }
+
+    /**
+     * @param array $label
+     * @return array
+     */
+    public function setLabel($label)
+    {
+        delete_option('melhor_envio_option_label');
+        add_option('melhor_envio_option_label', $label);
+
+        return [
+            'success' => true,
+            'option' => $label
+        ];
+    }
+
+    /**
+     * @param array $dimension
+     * @return array
+     */
+    public function setDimensionDefault($dimension)
+    {
+        delete_option('melhor_envio_option_dimension_default');
+        add_option('melhor_envio_option_dimension_default', $dimension);
+
+        return [
+            'success' => true,
+            'option' => $dimension
         ];
     }
 
@@ -188,5 +321,178 @@ class ConfigurationsService
         }
 
         return $path;
+    }
+
+    public function getAddresses()
+    {
+        $addressSelectedId = (new Address())->getSelectedAddressId();
+
+        $addresses =  (new Address())->getAddressesShopping();
+
+        $addresses = (!empty($addresses['addresses']))
+            ? $addresses['addresses']
+            : [];
+
+        $stores = (new StoreService())->getStores();
+
+        $sellerData = (new SellerService())->getDataApiMelhorEnvio();
+
+        $response = [];
+
+        if (!empty($addresses)) {
+            foreach ($addresses as $address) {
+                $response[] = $this->getPersonalAddress($address, $sellerData, $addressSelectedId);
+            }
+        }
+
+        if (!empty($stores)) {
+            foreach ($stores as $store) {
+                if (!empty($store->address)) {
+                    $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array $address
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function getPersonalAddress($address, $sellerData, $addressSelectedId)
+    {
+        return [
+            "id" => $address['id'],
+            "name" => sprintf("%s %s", $sellerData->firstname, $sellerData->lastname),
+            "email" => $sellerData->email,
+            "phone" => $sellerData->phone->phone,
+            "document" => (!empty($sellerData->document))
+                ? $sellerData->document
+                : '',
+            "company_document" => (!empty($sellerData->company_document))
+                ? $sellerData->company_document
+                : '',
+            "state_register" => (!empty($sellerData->state_register))
+                ? $sellerData->state_register
+                : '',
+            "economic_activity_code" => (!empty($sellerData->economic_activity_code))
+                ? $sellerData->economic_activity_code
+                : '',
+            "type" => "address",
+            "address" => $address,
+            "selected" => ($address['id'] == $addressSelectedId)
+        ];
+    }
+
+    /**
+     * @param object $store
+     * @param object $sellerData
+     * @param int $addressSelectedId
+     * @return array
+     */
+    private function getStoreAddress($store, $sellerData, $addressSelectedId)
+    {
+        return  [
+            "id" => $store->address->id,
+            "name" => $store->name,
+            "email" => $store->email,
+            "phone" => $sellerData->phone->phone,
+            "company_document" => !empty($store->document)
+                ? $store->document
+                : '',
+            "state_register" => !empty($store->state_register)
+                ? $store->state_register
+                : '',
+            "economic_activity_code" => !empty($store->economic_activity_code)
+                ? $store->economic_activity_code
+                : '',
+            "type" => "store",
+            "address" => [
+                "id" => $store->address->id,
+                "address" => $store->address->address,
+                "complement" => $store->address->complement,
+                "label" => $store->address->label,
+                "postal_code" => $store->address->postal_code,
+                "number" => $store->address->number,
+                "district" => $store->address->district,
+                "city" => $store->address->city->city,
+                "state" => $store->address->city->state->state_abbr,
+                "country" => "BR"
+            ],
+            "selected" => ($store->address->id == $addressSelectedId)
+        ];
+    }
+
+    /**
+     * @param array $origin
+     * @return array
+     */
+    public function getDimensionDefault()
+    {
+        $dimension = get_option('melhor_envio_option_dimension_default');
+        if (empty($dimension)) {
+            return [
+                "width" => self::WIDTH_DEFAULT,
+                "height" => self::HEIGHT_DEFAULT,
+                "length" => self::LENGTH_DEFAULT,
+                "weight" => self::WEIGHT_DEFAULT
+            ];
+        }
+
+        return $dimension;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLabel($origin = null)
+    {
+        $labelOption = get_option('melhor_envio_option_label');
+
+        if (!empty($labelOption)) {
+            return $this->normalizeDataSeller($labelOption);
+        }
+
+        $label = null;
+        if (!empty($origin)) {
+            foreach ($origin as $item) {
+                if ($item['selected']) {
+                    $address = $item['address'];
+                    unset($item['address']);
+                    unset($item['selected']);
+                    unset($item['type']);
+                    $label = $item;
+                    foreach (self::FIELDS_ADDRESS as $field) {
+                        if (isset($address[$field])) {
+                            $label[$field] = $address[$field];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->normalizeDataSeller($label);
+    }
+
+    /**
+     * @param array $seller
+     * @return array
+     */
+    private function normalizeDataSeller($seller)
+    {
+        if (is_array(($seller))) {
+            foreach ($seller as $key => $value) {
+                if (is_int($key)) {
+                    unset($seller[$key]);
+                }
+                if ($value == 'undefined' || empty($value) || $value == 'null') {
+                    $seller[$key] = '';
+                }
+            }
+        }
+        return $seller;
     }
 }

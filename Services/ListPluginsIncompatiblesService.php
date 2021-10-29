@@ -2,12 +2,8 @@
 
 namespace Services;
 
-use Helpers\NoticeHelper;
-
 class ListPluginsIncompatiblesService
 {
-    const URL_PLUGINS_INCOMPATIBLES = 'https://wordpress-plugin.s3.us-east-2.amazonaws.com/plugins-incompatible.json';
-
     /**
      * Function to init a seach by plugins incompatibles.
      *
@@ -25,9 +21,9 @@ class ListPluginsIncompatiblesService
 
         foreach ($installed as $plugin) {
             if (in_array($plugin, $incompatibles)) {
-                NoticeHelper::addNotice(
+                (new SessionNoticeService())->add(
                     sprintf("O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.", $plugin),
-                    NoticeHelper::NOTICE_INFO
+                    SessionNoticeService::NOTICE_INFO
                 );
             }
         }
@@ -48,17 +44,12 @@ class ListPluginsIncompatiblesService
 
     /**
      * Function to retrive a list with plugins incompatibles.
-     * 
      * @return array
      */
     public function getListPluginsIncompatibles()
     {
-        return json_decode(
-            wp_remote_retrieve_body(
-                wp_remote_get(
-                    self::URL_PLUGINS_INCOMPATIBLES
-                )
-            )
-        );
+        return [
+            "wpc-composite-products/wpc-composite-products.php"
+        ];
     }
 }

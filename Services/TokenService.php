@@ -35,6 +35,7 @@ class TokenService
         $result = (new Token())->save($token, $tokenSandbox, $tokenEnvironment);
 
         (new ClearDataStored())->clear();
+        (new SessionNoticeService())->removeNoticeTokenInvalid();
 
         return (!empty($result['token']) && !empty($result['token_environment']));
     }

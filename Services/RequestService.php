@@ -5,6 +5,8 @@ namespace Services;
 use Services\ManageRequestService;
 use Services\ClearDataStored;
 use Models\Version;
+use Models\ResponseStatus;
+use Services\SessionNoticeService;
 
 class RequestService
 {
@@ -14,10 +16,7 @@ class RequestService
 
     const TIMEOUT = 10;
 
-    /**
-     * constant with the timeout for an http request, if you pass this value, a log should be generated with that request
-     */
-    const TIME_LIMIT_LOG_REQUEST = 1000;
+    const WP_ERROR = 'WP_Error';
 
     protected $token;
 
@@ -32,7 +31,7 @@ class RequestService
         if (!$tokenData) {
             return wp_send_json([
                 'message' => 'Usuário não autorizado, verificar token do Melhor Envio'
-            ], 401);
+            ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
         if ($tokenData['token_environment'] == 'production') {
@@ -72,27 +71,36 @@ class RequestService
             'timeout ' => self::TIMEOUT
         );
 
-        $time_pre = microtime(true);
-
         $responseRemote = wp_remote_post($this->url . $route, $params);
+
+        if (!is_array($responseRemote)) {
+            if (get_class($responseRemote) === self::WP_ERROR) {
+                return (object) [];
+            }
+        }
 
         $response = json_decode(
             wp_remote_retrieve_body($responseRemote)
         );
 
-        $time_post = microtime(true);
-
-        $exec_time = round(($time_post - $time_pre)  * 1000); //Converting and leasing for milliseconds
-
-        $responseCode = (!empty($responseRemote['response']['code'])) 
-            ? $responseRemote['response']['code'] 
+        $responseCode = (!empty($responseRemote['response']['code']))
+            ? $responseRemote['response']['code']
             : null;
 
-        if ($responseCode != 200) {
+        if ($responseCode == ResponseStatus::HTTP_UNAUTHORIZED) {
+            (new SessionNoticeService())->add(
+                SessionNoticeService::NOTICE_INVALID_TOKEN,
+                SessionNoticeService::NOTICE_INFO
+            );
+            (new ClearDataStored())->clear();
+        }
+
+        if ($responseCode != ResponseStatus::HTTP_OK) {
             (new ClearDataStored())->clear();
         }
 
         if (empty($response)) {
+            (new ClearDataStored())->clear();
             return (object) [
                 'success' => false,
                 'errors' => ['Ocorreu um erro ao se conectar com a API do Melhor Envio'],
@@ -100,7 +108,6 @@ class RequestService
         }
 
         if (!empty($response->message) && $response->message == 'Unauthenticated.') {
-            (new SessionNoticeService())->add('Verificar seu token Melhor Envio');
             return (object) [
                 'success' => false,
                 'errors' => ['Usuário não autenticado'],
