@@ -10,8 +10,24 @@ class ProcessAdditionalTaxService
 {
     public function init()
     {
-        add_action('woocommerce_add_to_cart', [$this, 'addCart']);
-        add_action('woocommerce_remove_cart_item', [$this, 'removeCart'], 10, 2 );
+        $shipping_classes = $this->wcGetShippingClasses();
+        if (!empty($shipping_classes)) {
+            $shipping_classes = end($shipping_classes);
+            if ($shipping_classes->total > 0) {
+                add_action('woocommerce_add_to_cart', [$this, 'addCart']);
+                add_action('woocommerce_remove_cart_item', [$this, 'removeCart'], 10, 2);
+            }
+        }
+    }
+
+    public function wcGetShippingClasses()
+    {
+        global $wpdb;
+        return $wpdb->get_results("
+            SELECT count(*) as total FROM {$wpdb->prefix}terms as t
+            INNER JOIN {$wpdb->prefix}term_taxonomy as tt ON t.term_id = tt.term_id
+            WHERE tt.taxonomy LIKE 'product_shipping_class' LIMIT 1
+        ");
     }
 
     /**
@@ -22,34 +38,37 @@ class ProcessAdditionalTaxService
      */
     public function addCart()
     {
-        if(empty($_POST['product_id']) && empty($_POST['add-to-cart'])) {
+        $productId = $this->getProductId();
+
+        if (empty($productId)) {
             return false;
         }
 
-        $productId = (!empty($_POST['product_id']))
-            ? $_POST['product_id']
-            : $_POST['add-to-cart'];
+        $dataShipping = (new ShippingClassDataByProductService())->get($productId);
 
-        $dataShipping = (new ShippingClassDataByProductService())
-            ->get($productId);    
-
-        $additionQuotationService = new AdditionalQuotationService();
-        
-        foreach ($dataShipping as $instanceId => $item) {
-            if (!isset($item['additional_tax']) ||
-                !isset($item['additional_time']) ||
-                !isset($item['percent_tax'])) {
-                continue;
-            }
-
-            $additionQuotationService->register(
+        if (!empty($dataShipping['instance_id'])) {
+            (new AdditionalQuotationService())->register(
                 $productId,
-                $instanceId,
-                $item['additional_tax'],
-                $item['additional_time'],
-                $item['percent_tax']
+                $dataShipping['instance_id'],
+                $dataShipping['additional_tax'],
+                $dataShipping['additional_time'],
+                $dataShipping['percent_tax']
             );
         }
+    }
+
+    /**
+     * @return int|null
+     */
+    private function getProductId()
+    {
+        if (empty($_POST['product_id']) && empty($_POST['add-to-cart'])) {
+            return false;
+        }
+
+        return (!empty($_POST['product_id']))
+            ? $_POST['product_id']
+            : $_POST['add-to-cart'];
     }
 
     /**
@@ -61,7 +80,7 @@ class ProcessAdditionalTaxService
      */
     public function removeCart($cart_item_key, $cart)
     {
-        foreach($cart->cart_contents as $key => $item) {
+        foreach ($cart->cart_contents as $key => $item) {
             if ($key === $cart_item_key) {
                 (new AdditionalQuotationService())
                     ->removeItem($item['product_id']);

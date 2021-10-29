@@ -1,20 +1,18 @@
 <?php
 
-use Helpers\NoticeHelper;
-
 require __DIR__ . '/vendor/autoload.php';
 
 /*
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.9.14
+Version: 2.11.5
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 2.9.14
+Tested up to: 2.11.5
 Requires PHP: 5.6
 WC requires at least: 4.0
 WC tested up to: 5.7.2
@@ -52,15 +50,6 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
 
-if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
-    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
-    NoticeHelper::addNotice(
-        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
-        'notice-error'
-    );
-    return false;
-}
-
 use Controllers\ShowCalculatorProductPage;
 use Models\CalculatorShow;
 use Models\Version;
@@ -70,10 +59,18 @@ use Services\RolesService;
 use Services\RouterService;
 use Services\ShortCodeService;
 use Services\TrackingService;
-use Services\ProcessAdditionalTaxService;
 use Services\ListPluginsIncompatiblesService;
-use Services\NoticeFormService;
+use Services\SessionNoticeService;
 use Helpers\SessionHelper;
+
+if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
+    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
+    (new SessionNoticeService())->add(
+        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
+        'notice-error'
+    );
+    return false;
+}
 
 /**
  * Base_Plugin class
@@ -110,8 +107,6 @@ final class Base_Plugin
 
         register_activation_hook(__FILE__, array($this, 'activate'));
 
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
     }
 
@@ -123,6 +118,7 @@ final class Base_Plugin
      */
     public static function init()
     {
+
         static $instance = false;
 
         if (!$instance) {
@@ -190,9 +186,12 @@ final class Base_Plugin
             $pathPlugins = ABSPATH . 'wp-content/plugins';
         }
 
-        $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
-        if (!empty($result['errors'])) {
-            return false;
+        if (is_admin()) {
+            (new SessionNoticeService())->showNotices();
+            $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
+            if (!empty($result['errors'])) {
+                return false;
+            }
         }
 
         if (empty($result['errorsPath'])) {
@@ -258,23 +257,25 @@ final class Base_Plugin
      */
     public function init_hooks()
     {
-        (new CheckHealthService())->init();
-        (new TrackingService())->createTrackingColumnOrdersClient();
-
-        $hideCalculator = (new CalculatorShow)->get();
-        if ($hideCalculator) {
-            (new ShowCalculatorProductPage())->insertCalculator();
+        if (is_admin()) {
+            (new CheckHealthService())->init();
+            (new RolesService())->init();
         }
 
         add_action('init', array($this, 'init_classes'));
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
-        (new RolesService())->init();
-
+        
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
             require_once $filename;
+        }
+
+        (new TrackingService())->createTrackingColumnOrdersClient();
+        $hideCalculator = (new CalculatorShow)->get();
+        if ($hideCalculator) {
+            (new ShowCalculatorProductPage())->insertCalculator();
         }
 
         add_filter('woocommerce_shipping_methods', function ($methods) {
@@ -287,6 +288,7 @@ final class Base_Plugin
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
             $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+            $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
             return $methods;
         });
 
@@ -303,8 +305,6 @@ final class Base_Plugin
         add_action('upgrader_process_complete', function () {
             (new ClearDataStored())->clear();
         });
-
-        (new ProcessAdditionalTaxService())->init();
 
         if (is_admin()) {
             (new ListPluginsIncompatiblesService())->init();

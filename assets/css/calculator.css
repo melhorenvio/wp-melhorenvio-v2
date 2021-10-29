@@ -1,8 +1,7 @@
-<style>
     /* Style inputs, select elements and textareas */
 
     .containerCalculator .calculatorRow {
-        width: 100%;
+        width: 100%!important;
     }
 
     #calcular-frete-loader {
@@ -85,4 +84,3 @@
             margin-top: 10;
         }
     }
-</style>

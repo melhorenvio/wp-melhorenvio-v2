@@ -31,21 +31,49 @@ function getDimension() {
     return dimensions;
 }
 
-function mascara(t, mask) { 
-    var i = t.value.length;
-    var carac = mask.substring(i, i+1);
-    var prox_char = mask.substring(i+1, i+2);
-    if(i == 0 && carac != '#'){
-        insereCaracter(t, carac);
-        if(prox_char != '#')insereCaracter(t, prox_char);
+/**
+ *  mask to replace non number 
+ * @param {string} content - number to format
+ * @returns {string}
+ * @example
+ * const valueToFormat = '12345678'
+ * numberMask(valueToFormat);
+ */
+function numberMask(content) {
+    return content.replace(/[^0-9-]+/g, "");
+}
+
+/**
+ *  mask to format postal code 
+ * @param {string} content - postal code number
+ * @returns {string}
+ * @example
+ * const valueToFormat = '12345678'
+ * postalCodeMask(valueToFormat);
+ */
+ function postalCodeMask(content, input) {
+    let value = content;
+    let formatedValue = '';
+
+    if(isNaN(content)) {
+        input.value = numberMask(content);
+        
+        return;
     }
-    else if(carac != '#'){
-        insereCaracter(t, carac);
-        if(prox_char != '#')insereCaracter(t, prox_char);
-    }
-    function insereCaracter(t, char){
-        t.value += char;
-    }
+    
+    //regex to add " - " in position 5 of cep: EX:123456-78
+    formatedValue = value.replace(/(\d{5})(\d{1,2})$/, "$1-$2"); 
+    input.value = formatedValue;
+}
+
+/**
+ *  this function is used to apply the postal code mask in the input to calculate the quotation
+ */
+function usePostalCodeMask() { 
+    const input = document.querySelector('#inputCep');
+    const content = input.value;
+
+    postalCodeMask(content, input);
 }
 
 function validateNumber(event) {

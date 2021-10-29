@@ -6,6 +6,7 @@ use Helpers\MoneyHelper;
 use Helpers\TimeHelper;
 use Models\ShippingService;
 use Helpers\PostalCodeHelper;
+use Services\WooCommerceBundleProductsService;
 
 class CalculateShippingMethodService
 {
@@ -49,6 +50,10 @@ class CalculateShippingMethodService
             ? $package['contents']
             : (new CartWooCommerceService())->getProducts();
 
+        if (WooCommerceBundleProductsService::isWooCommerceProductBundle($products)) {
+            $products = (new WooCommerceBundleProductsService())->manageProductsBundle($products);
+        }
+
         $result = (new QuotationService())->calculateQuotationByProducts(
             $products,
             $to,
@@ -65,25 +70,25 @@ class CalculateShippingMethodService
                     return false;
                 }
 
-                $additionalData = (new AdditionalQuotationService())->get();
-
-                if (!empty($additionalData[$id]['taxExtra'])) {
-                    $taxExtra = ($additionalData[$id]['taxExtra'] >= $taxExtra) 
-                        ?  $additionalData[$id]['taxExtra'] 
+                $additionalData  = (new ShippingClassService())->getExtrasOnCart();
+                
+                if (!empty($additionalData['taxExtra'])) {
+                    $taxExtra = ($additionalData['taxExtra'] >= $taxExtra)
+                        ? $additionalData['taxExtra']
                         : $taxExtra;
-                } 
+                }
 
-                if (!empty($additionalData[$id]['timeExtra'])) {
-                    $timeExtra = ($additionalData[$id]['timeExtra'] >= $timeExtra) 
-                        ?  $additionalData[$id]['timeExtra'] 
+                if (!empty($additionalData['timeExtra'])) {
+                    $timeExtra = ($additionalData['timeExtra'] >= $timeExtra)
+                        ? $additionalData['timeExtra']
                         : $timeExtra;
                 }
 
-                if (!empty($additionalData[$id]['percent'])) {
-                    $percent = ($additionalData[$id]['percent'] >= $percent) 
-                        ?  $additionalData[$id]['percent'] 
+                if (!empty($additionalData['percent'])) {
+                    $percent = ($additionalData['percent'] >= $percent)
+                        ? $additionalData['percent']
                         : $percent;
-                } 
+                }
 
                 $rate = [
                     'id' => $id,
@@ -191,7 +196,7 @@ class CalculateShippingMethodService
         $quotationByService = array_filter(
             $quotations,
             function ($item) use ($service) {
-                if ($item->id == $service) {
+                if (isset($item->id)  && $item->id == $service) {
                     return $item;
                 }
             }

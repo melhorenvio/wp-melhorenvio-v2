@@ -5,9 +5,12 @@ namespace Services;
 use Models\Order;
 use Models\Option;
 use Models\Payload;
+use Models\Session;
+use Models\ShippingCompany;
 use Helpers\SessionHelper;
 use Helpers\PostalCodeHelper;
 use Helpers\CpfHelper;
+use Helpers\ProductVirtualHelper;
 
 class CartService
 {
@@ -80,17 +83,7 @@ class CartService
      */
     public function createPayloadToCart($orderId, $products, $dataBuyer, $shippingMethodId)
     {
-        $payloadSaved = (new Payload())->get($orderId);
-
-        $products = (!empty($payloadSaved->products))
-            ? $payloadSaved->products
-            : $products;
-
-        $products = $this->removeVirtualProducts($products);
-
-        $dataBuyer = (!empty($payloadSaved->buyer))
-            ? $payloadSaved->buyer
-            : $dataBuyer;
+        $products = ProductVirtualHelper::removeVirtuals($products);
 
         $dataFrom =  (new SellerService())->getData();
 
@@ -100,9 +93,7 @@ class CartService
 
         $methodService = new CalculateShippingMethodService();
 
-        $options = (!empty($payloadSaved->options))
-            ? $payloadSaved->options
-            : (new Option())->getOptions();
+        $options = (new Option())->getOptions();
 
         $insuranceRequired = ($methodService->isCorreios($shippingMethodId))
             ? $methodService->insuranceValueIsRequired($options->insurance_value, $shippingMethodId)
@@ -136,22 +127,6 @@ class CartService
     }
 
     /**
-     * 
-     * @param array $products
-     * @return array
-     */
-    private function removeVirtualProducts(&$products)
-    {
-        foreach ($products as $key => $product) {
-            if (!empty($product['is_virtual'])) {
-                unset($products[$key]);
-            }
-        }
-
-        return $products;
-    }
-
-    /**
      * function to get agency selected by service_Id
      *
      * @param string $shippingMethodId
@@ -159,18 +134,10 @@ class CartService
      */
     private function getAgencyToInsertCart($shippingMethodId)
     {
-        $shippingMethodService = new CalculateShippingMethodService();
-
-        if ($shippingMethodService->isJadlog($shippingMethodId)) {
-            return (new AgenciesJadlogService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isAzulCargo($shippingMethodId)) {
-            return (new AgenciesAzulService())->getSelectedAgencyOrAnyByCityUser();
-        }
-
-        if ($shippingMethodService->isLatamCargo($shippingMethodId)) {
-            return (new AgenciesLatamService())->getSelectedAgencyOrAnyByCityUser();
+        $companyId = ShippingCompany::getCompanyIdByService($shippingMethodId);
+        $agenciesSelecteds = (new AgenciesSelectedService())->get();
+        if (!empty($agenciesSelecteds[$companyId])) {
+            return $agenciesSelecteds[$companyId];
         }
 
         return null;
@@ -251,11 +218,10 @@ class CartService
         }
 
         $isCorreios = (new CalculateShippingMethodService())->isCorreios($body['service']);
-
         $errors = array_merge($errors, $this->validateAddress('from', 'remetente', $body, $isCorreios));
         $errors = array_merge($errors, $this->validateAddress('to', 'destinatario', $body, $isCorreios));
 
-        if (!$isCorreios && empty($body['agency'])) {
+        if ($this->isAgencyNecessary($body['service']) && empty($body['agency'])) {
             $errors[] = 'É necessário informar a agência de postagem para esse serviço de envio';
         }
 
@@ -265,34 +231,33 @@ class CartService
 
         if (!empty($body['products'])) {
             foreach ($body['products'] as $key => $product) {
-
                 $index = $key++;
 
-                if (empty($product['name'])) {
+                if (empty($product->name)) {
                     $errors[] = sprintf("Infomar o nome do produto %d", $index);
                 }
 
-                if (empty($product['quantity'])) {
+                if (empty($product->quantity)) {
                     $errors[] = sprintf("Infomar a quantidade do produto %d", $index);
                 }
 
-                if (empty($product['unitary_value'])) {
+                if (empty($product->unitary_value)) {
                     $errors[] = sprintf("Infomar o valor unitário do produto %d", $index);
                 }
 
-                if (empty($product['weight'])) {
+                if (empty($product->weight)) {
                     $errors[] = sprintf("Infomar o peso do produto %d", $index);
                 }
 
-                if (empty($product['width'])) {
+                if (empty($product->width)) {
                     $errors[] = sprintf("Infomar a largura do produto %d", $index);
                 }
 
-                if (empty($product['height'])) {
+                if (empty($product->height)) {
                     $errors[] = sprintf("Infomar a altura do produto %d", $index);
                 }
 
-                if (empty($product['length'])) {
+                if (empty($product->length)) {
                     $errors[] = sprintf("Infomar o comprimento do produto %d", $index);
                 }
             }
@@ -325,8 +290,22 @@ class CartService
     }
 
     /**
+     * @param int $service
+     * @return bool
+     */
+    private function isAgencyNecessary($service)
+    {
+        $calculateShippingMethodService =  new CalculateShippingMethodService();
+
+        $isAzulCargo = $calculateShippingMethodService->isAzulCargo($service);
+
+        $isLatamCargo = $calculateShippingMethodService->isLatamCargo($service);
+
+        return ($isAzulCargo || $isLatamCargo);
+    }
+
+    /**
      * Function to validate volume
-     * 
      * @param array $volume
      * @param array $errors
      * @return array
@@ -356,7 +335,6 @@ class CartService
 
     /**
      * Function to validate date address createPayloadToCart
-     * 
      * @param string $key
      * @param string $user
      * @param array $body
@@ -368,7 +346,7 @@ class CartService
         $errors = [];
     
         if (empty($body[$key])) {
-            $errors[] = "Informar o {$user} o pedido.";            
+            $errors[] = "Informar o {$user} o pedido."; 
         }
 
         if (!empty($body[$key]) && empty($body[$key]->name)) {
@@ -391,7 +369,7 @@ class CartService
             $errors[] = "Informar o endereço do {$user} do pedido.";
         }
 
-        if (!empty($body[$key]) && empty($body[$key]->number)) {
+        if (!empty($body[$key]) && (!isset($body[$key]->number) || $body[$key] == "")) {
             $errors[] = "Informar o número do endereço do {$user} do pedido.";
         }
 
@@ -415,11 +393,10 @@ class CartService
         }
 
         return $errors;
-      }
+    }
 
-    /** 
+    /**
      * Function to get data and information about items in the shopping cart
-     * 
      * @return array
      */
     public function getInfoCart()
@@ -430,9 +407,9 @@ class CartService
 
         $data = [];
 
-        foreach($woocommerce->cart->get_cart() as $cart) {
-            foreach($cart as $item) {
-                if (gettype($item) == 'object')  {
+        foreach ($woocommerce->cart->get_cart() as $cart) {
+            foreach ($cart as $item) {
+                if (gettype($item) == 'object') {
                     $productId = $item->get_id();
                     if (!empty($productId)) {
                         $data['products'][$productId] = [
@@ -440,9 +417,9 @@ class CartService
                             'price' => $item->get_price()
                         ];
 
-                        if (!empty($_SESSION['melhorenvio_additional'])) {
-                            foreach($_SESSION['melhorenvio_additional'] as $dataSession) {
-                                foreach($dataSession as $keyProduct =>$product) {
+                        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+                            foreach ($_SESSION[Session::ME_KEY]['melhorenvio_additional'] as $dataSession) {
+                                foreach ($dataSession as $keyProduct => $product) {
                                     $data['products'][$productId]['taxas_extras'] = $product;
                                 }
                             }
@@ -452,8 +429,8 @@ class CartService
             }
         }
 
-        if (!empty($_SESSION['melhorenvio_additional'])) {
-            $data['adicionais_extras'] = $_SESSION['melhorenvio_additional'];
+        if (!empty($_SESSION[Session::ME_KEY]['melhorenvio_additional'])) {
+            $data['adicionais_extras'] = $_SESSION[Session::ME_KEY]['melhorenvio_additional'];
         }
 
         return $data;
