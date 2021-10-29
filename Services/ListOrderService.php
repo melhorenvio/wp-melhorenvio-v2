@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\TranslateStatusHelper;
+use Helpers\ProductVirtualHelper;
 
 class ListOrderService
 {
@@ -63,9 +64,7 @@ class ListOrderService
 
             $products = $productService->getProductsOrder($postId);
 
-            if ($this->hasOnlyVirtualProducts($products)) {
-                continue;
-            }
+            $products = ProductVirtualHelper::removeVirtuals($products);
 
             $orders[] = [
                 'id' => $postId,
@@ -90,23 +89,6 @@ class ListOrderService
         }
 
         return $orders;
-    }
-
-    /**
-     * Function to check if the products informed are all virtual.
-     * 
-     * @param array $products
-     * @return bool
-     */
-    public function hasOnlyVirtualProducts($products)
-    {   
-        foreach ($products as $product) {
-            if(!$product['is_virtual']) {
-                return false;
-            }
-        }
-        
-        return true;
     }
 
     /**

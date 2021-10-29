@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Services\ClearDataStored;
 use Helpers\SessionHelper;
+use Models\Session;
 
 class SessionsController
 {
@@ -16,7 +17,7 @@ class SessionsController
     {
         SessionHelper::initIfNotExists();
         
-        return wp_send_json($_SESSION, 200);
+        return wp_send_json($_SESSION[Session::ME_KEY], 200);
     }
 
     /**

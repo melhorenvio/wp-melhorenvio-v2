@@ -5,6 +5,7 @@ namespace Controllers;
 use Services\PayloadService;
 use Services\QuotationService;
 use Services\QuotationProductPageService;
+use Models\Session;
 
 /**
  * Class responsible for the quotation controller
@@ -35,7 +36,9 @@ class QuotationController
             (new PayloadService())->save(($postId));
         }
 
-        unset($_SESSION['quotation']);
+        if (!empty($_SESSION[Session::ME_KEY]['quotation'])) {
+            unset($_SESSION[Session::ME_KEY]['quotation']);
+        }
 
         return $result;
     }

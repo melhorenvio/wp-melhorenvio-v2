@@ -6,8 +6,22 @@ import _ from 'lodash'
 const configuration = {
     namespaced: true,
     state: {
-        addresses: [],
-        stores: [],
+        origin: [],
+        label: {
+            name: "",
+            email: "",
+            phone: "",
+            document: "",
+            company_document: "",
+            state_register: "",
+            economic_activity_code: ""
+        },
+        dimension: {
+            width: 10,
+            height: 10,
+            length: 10,
+            weight: 1
+        },
         agencies: [],
         agenciesAzul: [],
         agenciesLatam: [],
@@ -39,8 +53,14 @@ const configuration = {
         setStyleCalculator: (state, data) => {
             state.styleCalculator = data;
         },
-        setAddress: (state, data) => {
-            state.addresses = data
+        setOrigin: (state, data) => {
+            state.origin = data
+        },
+        setLabel: (state, data) => {
+            state.label = data
+        },
+        setDimension: (state, data) => {
+            state.dimension = data
         },
         setStore: (state, data) => {
             state.stores = data
@@ -98,8 +118,9 @@ const configuration = {
         }
     },
     getters: {
-        getAddress: state => state.addresses,
-        getStores: state => state.stores,
+        getOrigin: state => state.origin,
+        getLabel: state => state.label,
+        getDimension: state => state.dimension,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
         getAgenciesLatam: state => state.agenciesLatam,
@@ -128,12 +149,22 @@ const configuration = {
                     params: content
                 }).then(function (response) {
                     if (response && response.status === 200) {
-                        if (response.data.addresses && !_.isEmpty(response.data.addresses)) {
-                            commit('setAddress', response.data.addresses);
+
+                        if (response.data.origin && !_.isEmpty(response.data.origin)) {
+                            commit('setOrigin', response.data.origin);
                         }
+
+                        if (response.data.label && !_.isEmpty(response.data.label)) {
+                            commit('setLabel', response.data.label);
+                        }
+
                         if (response.data.agencies && !_.isNull(response.data.agencies)) {
                             commit('setAgency', response.data.agencies);
                             commit('setAllAgency', response.data.allAgencies);
+                        }
+
+                        if (response.data.dimension_default && !_.isNull(response.data.dimension_default)) {
+                            commit('setDimension', response.data.dimension_default);
                         }
 
                         if (response.data.agenciesAzul && !_.isNull(response.data.agenciesAzul)) {
@@ -163,7 +194,7 @@ const configuration = {
                         resolve(true)
                     }
                 }).catch((error) => {
-                    console.log(error)
+                    alert('Aconteceu um erro ao obter os dados de configuração');
                 })
             })
         },
@@ -204,44 +235,52 @@ const configuration = {
             })
         },
         saveAll: ({ commit }, data) => {
-
             return new Promise((resolve, reject) => {
-
                 const form = new FormData();
-
-                if (data.address != null) {
-                    form.append('address', data.address);
+                if (data.origin) {
+                    form.append('origin', data.origin)
+                }
+                if (data.label) {
+                    const labels = Object.entries(data.label);
+                    labels.forEach((item) => {
+                        console.log(item[0]);
+                        console.log(item[1]);
+                        form.append(`label[${item[0]}]`, item[1]);
+                    })
                 }
 
-                if (data.store != null) {
-                    form.append('store', data.store);
+                if (data.dimension_default) {
+                    form.append('dimension_default[width]', data.dimension_default.width);   
+                    form.append('dimension_default[height]', data.dimension_default.height);   
+                    form.append('dimension_default[length]', data.dimension_default.length);   
+                    form.append('dimension_default[weight]', data.dimension_default.weight);   
                 }
 
-                if (data.agency != null) {
+                if (data.agency) {
                     form.append('agency', data.agency);
                 }
 
-                if (data.agency_azul != null) {
+                if (data.agency_azul) {
                     form.append('agency_azul', data.agency_azul);
                 }
 
-                if (data.agency_latam != null) {
+                if (data.agency_latam) {
                     form.append('agency_latam', data.agency_latam);
                 }
 
-                if (data.show_calculator != null) {
+                if (data.show_calculator) {
                     form.append('show_calculator', data.show_calculator);
                 }
 
-                if (data.show_all_agencies_jadlog != null) {
+                if (data.show_all_agencies_jadlog) {
                     form.append('show_all_agencies_jadlog', data.show_all_agencies_jadlog);
                 }
 
-                if (data.where_calculator != null) {
+                if (data.where_calculator) {
                     form.append('where_calculator', data.where_calculator);
                 }
 
-                if (data.path_plugins != null) {
+                if (data.path_plugins) {
                     form.append('path_plugins', data.path_plugins);
                 }
 
