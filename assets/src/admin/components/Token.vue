@@ -3,10 +3,22 @@
     <h1>Meu Token</h1>
     <span>Insira o token gerado no Melhor Envio</span>
     <br />
-    <textarea data-cy="token-production" rows="20" cols="100" v-model="token" placeholder="Token"></textarea>
+    <textarea
+      data-cy="token-production"
+      rows="20"
+      cols="100"
+      v-model="token"
+      placeholder="Token"
+    ></textarea>
     <br />
     <p>
-      <input data-cy="environment-token" type="checkbox" v-model="environment" true-value="sandbox" false-value="production" />
+      <input
+        data-cy="environment-token"
+        type="checkbox"
+        v-model="environment"
+        true-value="sandbox"
+        false-value="production"
+      />
       Utilizar ambiente Sandbox
     </p>
 
@@ -24,16 +36,24 @@
 
     <p>
       Para gerar seu token, acesse o
-      <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a>
+      <a
+        target="_blank"
+        href="https://melhorenvio.com.br/painel/gerenciar/tokens"
+        >link</a
+      >
     </p>
     <p v-if="environment == 'sandbox'">
       Para gerar seu token em sandbox, acesse o
-      <a target="_blank" href="https://sandbox.melhorenvio.com.br/painel/gerenciar/tokens">link</a>
+      <a
+        target="_blank"
+        href="https://sandbox.melhorenvio.com.br/painel/gerenciar/tokens"
+        >link</a
+      >
     </p>
 
     <div class="me-modal" v-show="show_loader">
       <svg
-        style="float:left; margin-top:10%; margin-left:50%;"
+        style="float: left; margin-top: 10%; margin-left: 50%"
         class="ico"
         width="88"
         height="88"
@@ -101,22 +121,27 @@ export default {
       token: "",
       token_sandbox: "",
       environment: "production",
-      show_loader: true
+      show_loader: true,
     };
   },
   methods: {
     getToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
+      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
         this.token = response.data.token;
-        this.token_sandbox = response.data.token_sandbox;
-        this.environment = response.data.token_environment;
+        this.token_sandbox = response.data.token_sandbox
+          ? response.data.token_sandbox
+          : "";
+        this.environment = response.data.token_environment
+          ? response.data.token_environment
+          : "";
         this.show_loader = false;
       });
     },
     getUrlToConfiguration() {
       let fullUrl = window.location.href;
-      let splitUrl = fullUrl.split('wp-admin/');
-      let urlRedirect = splitUrl[0] + 'wp-admin/admin.php?page=melhor-envio#/configuracoes';
+      let splitUrl = fullUrl.split("wp-admin/");
+      let urlRedirect =
+        splitUrl[0] + "wp-admin/admin.php?page=melhor-envio#/configuracoes";
       return urlRedirect;
     },
     saveToken() {
@@ -124,22 +149,25 @@ export default {
       bodyFormData.append("token", this.token);
       bodyFormData.append("token_sandbox", this.token_sandbox);
       bodyFormData.append("environment", this.environment);
-      if (this.token && this.token.length > 0) {
+      if (
+        (this.token && this.token.length > 0) ||
+        (this.token_sandbox && this.token_sandbox.length > 0)
+      ) {
         axios({
           url: `${ajaxurl}?action=save_token`,
           data: bodyFormData,
-          method: "POST"
+          method: "POST",
         })
-          .then(response => {
+          .then((response) => {
             window.location.href = this.getUrlToConfiguration();
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
       }
-    }
+    },
   },
   mounted() {
     this.getToken();
-  }
+  },
 };
 </script>
 

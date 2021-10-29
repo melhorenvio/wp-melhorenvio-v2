@@ -70,7 +70,9 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 = 2.11.5 =
+* Correção para permitir apenas token de sandbox nas configurações.
 * Melhorias no desempenho.
+* Ajustes no método de adição de percentual extra sobre o valor final da cotação.
 
 = 2.11.4 =
 * Correção de erro crítico ao ativar o plugin em algumas lojas.
