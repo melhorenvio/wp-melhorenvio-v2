@@ -50,7 +50,7 @@ class ShippingMelhorEnvioService
     }
 
     /**
-     * Function to return the "Melhor Envio" shipping methods used 
+     * Function to return the "Melhor Envio" shipping methods used
      * in the delivery zones
      *
      * @return array
@@ -59,9 +59,9 @@ class ShippingMelhorEnvioService
     {
         $methods = array();
         $delivery_zones = \WC_Shipping_Zones::get_zones();
-        foreach ($delivery_zones as  $zone) {
+        foreach ($delivery_zones as $zone) {
             foreach ($zone['shipping_methods'] as $method) {
-                if (!$this->isMelhorEnvioMethod($method)) {
+                if (!$this->isMelhorEnvioMethod($method) && 'yes' != $method->enabled) {
                     continue;
                 }
                 $methods[] = $method;
