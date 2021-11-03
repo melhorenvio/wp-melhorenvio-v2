@@ -47,8 +47,8 @@ class ShippingClassService
 
         if (!empty($dataCart)) {
             foreach ($dataCart as $itemCart) {
-                if (!empty($itemCart['data']->shipping_class_id)) {
-                    $shippingClassId = $itemCart['data']->shipping_class_id;
+                $shippingClassId = $itemCart['data']->get_shipping_class_id();
+                if (!empty($shippingClassId)) {
                     $this->shippingClassesId[] = $shippingClassId;
                 }
             }
@@ -100,6 +100,10 @@ class ShippingClassService
      */
     private function isValidToAdd($method)
     {
+        if (!isset($method->instance_settings['shipping_class_id'])) {
+            return false;
+        }
+
         return in_array($method->instance_settings['shipping_class_id'], $this->shippingClassesId) &&
         $method->instance_settings['shipping_class_id'] != CalculateShippingMethodService::ANY_DELIVERY;
     }
