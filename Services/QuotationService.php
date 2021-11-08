@@ -189,6 +189,8 @@ class QuotationService
      */
     private function getSessionCachedQuotations($hash, $service)
     {
+        SessionHelper::initIfNotExists();
+        
         $session = $_SESSION;
 
         if (empty($session['quotation-melhor-envio'][$hash])) {
