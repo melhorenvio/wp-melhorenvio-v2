@@ -138,7 +138,7 @@ class ShippingClassService
         return [
             'taxExtra' => $this->maxTaxExtra,
             'timeExtra' =>$this->maxTimeExtra,
-            'percent' =>  $this->maxTimeExtra
+            'percent' =>  $this->maxPercentExtra
         ];
     }
 }
