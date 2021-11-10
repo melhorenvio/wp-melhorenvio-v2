@@ -35,7 +35,7 @@ class AgenciesService
      */
     public function get()
     {
-        $route = $this->getRoute();
+        $route = $this->getRoute(true);
 
         $agencies = (new RequestService())->request(
             $route,
@@ -44,11 +44,23 @@ class AgenciesService
             false
         );
 
-        if (empty($agencies)) {
-            return (object) [
-                'success' => false,
-                'message' => 'Ocorreu um erro ao obter agências'
-            ];
+        if (!empty($agencies->errors)) {
+            $route = $this->getRoute(false);
+            $agencies = (new RequestService())->request(
+                $route,
+                'GET',
+                [],
+                false
+            );
+
+            if (empty($agencies)) {
+                return (object) [
+                    'success' => false,
+                    'message' => 'Ocorreu um erro ao obter agências'
+                ];
+            }
+
+            return $this->normalize($agencies);
         }
 
         if (!empty($agencies->errors)) {
@@ -59,9 +71,10 @@ class AgenciesService
     }
 
     /**
+     * @param bool $useCity
      * @return string $route
      */
-    private function getRoute()
+    private function getRoute($useCity)
     {
         $data['country'] = 'BR';
 
@@ -69,10 +82,10 @@ class AgenciesService
             $data['state'] = $this->state;
         }
 
-        if (!empty($this->city)) {
+        if (!empty($this->city) && $useCity) {
             $data['city'] = $this->city;
         }
-
+        
         if (!empty($this->company)) {
             $data['company'] = $this->company;
         }
