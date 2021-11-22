@@ -23,7 +23,9 @@ class SellerService
 
         if (!empty($label)) {
             $label = (array) $label;
-            $label['state_abbr'] = $label['state'];
+            if (!empty($label['state'])) {
+                $label['state_abbr'] = $label['state'];
+            }
             return (object) $label;
         }
 
