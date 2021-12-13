@@ -69,7 +69,7 @@
     </a>
     </br>
 
-    <p v-if="needShowValidationDocument(item)"  style="font-size: 8px; color: red">O documento do destinatário é obrigatório para essa transportadora</p>
+    <p v-if="needShowValidationDocument(item)"  class="warning-document ">O documento do destinatário é obrigatório para essa transportadora</p>
 
     <a
       v-if="buttonBuy(item)"
