@@ -287,6 +287,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
   data: () => {
     return {};
@@ -413,10 +414,9 @@ export default {
       return false;
     },
     needShowValidationDocument(item) {
-      let servicesNeedDocuments = [1, 2, 13, 14];
       if (
         item.to.document.length == 0 &&
-        servicesNeedDocuments.includes(item.quotation.choose_method)
+        ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
       ) {
         return true;
       }
