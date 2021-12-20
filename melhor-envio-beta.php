@@ -6,13 +6,13 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio v2
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.11.5
+Version: 2.11.6
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
-Tested up to: 2.11.5
+Tested up to: 2.11.6
 Requires PHP: 5.6
 WC requires at least: 4.0
 WC tested up to: 5.7.2
@@ -195,9 +195,17 @@ final class Base_Plugin
         }
 
         if (empty($result['errorsPath'])) {
-            @include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
-            include_once $pathPlugins . '/woocommerce/woocommerce.php';
-            include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+            if (file_exists($pathPlugins . '/woocommerce/includes/class-woocommerce.php')) {
+                include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
+            }
+
+            if (file_exists($pathPlugins . '/woocommerce/woocommerce.php')) {
+                include_once $pathPlugins . '/woocommerce/woocommerce.php';
+            }
+
+            if (file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
+                include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
+            }
         }
     }
 
