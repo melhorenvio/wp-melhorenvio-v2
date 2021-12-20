@@ -71,6 +71,8 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.6 =
 * Correção do problema de lentidão ao inserir um produto no carrinho de compras.
+* Correção de filtro de busca de agências por estado.
+* Pequenas correções na estrutura do plugin.
 
 = 2.11.5 =
 * Correção para permitir apenas token de sandbox nas configurações.
