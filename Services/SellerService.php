@@ -22,7 +22,10 @@ class SellerService
         $label = $configurationService->getLabel();
 
         if (!empty($label)) {
-            $label['state_abbr'] = $label['state'];
+            $label = (array) $label;
+            if (!empty($label['state'])) {
+                $label['state_abbr'] = $label['state'];
+            }
             return (object) $label;
         }
 
@@ -33,6 +36,7 @@ class SellerService
         $data = $seller->get();
 
         if (!empty($data)) {
+            $configurationService->setLabel($data);
             return $data;
         }
 
@@ -62,7 +66,7 @@ class SellerService
                 : null;
         }
 
-        $data = (object) [
+        $data = [
             "name" => !empty($store->name)
                 ? $store->name
                 :  sprintf("%s %s", $data->firstname, $data->lastname),
@@ -90,8 +94,9 @@ class SellerService
         ];
 
         $seller->save($data);
+        $configurationService->setLabel($data);
 
-        return $data;
+        return (object) $data;
     }
 
     /**
