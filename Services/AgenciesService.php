@@ -18,10 +18,6 @@ class AgenciesService
             $this->state = $data['state'];
         }
 
-        if (!empty($data['city'])) {
-            $this->city = $data['city'];
-        }
-
         if (!empty($data['company'])) {
             $this->company = $data['company'];
         }
@@ -51,10 +47,6 @@ class AgenciesService
             ];
         }
 
-        if (!empty($agencies->errors)) {
-            return [];
-        }
-
         return $this->normalize($agencies);
     }
 
@@ -68,11 +60,7 @@ class AgenciesService
         if (!empty($this->state)) {
             $data['state'] = $this->state;
         }
-
-        if (!empty($this->city)) {
-            $data['city'] = $this->city;
-        }
-
+        
         if (!empty($this->company)) {
             $data['company'] = $this->company;
         }
