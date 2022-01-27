@@ -378,6 +378,7 @@ export default {
           return true;
         }
       }
+      return true;
     },
     buttonBuy(item) {
       if (!item.service_id) {
