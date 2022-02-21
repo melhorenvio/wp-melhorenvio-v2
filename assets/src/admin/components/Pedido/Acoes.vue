@@ -357,27 +357,6 @@ export default {
       ) {
         return false;
       }
-      if (
-        item.quotation.choose_method == 1 ||
-        item.quotation.choose_method == 2 ||
-        (item.quotation.choose_method == 17 &&
-          (item.status == null ||
-            item.status == statusMelhorEnvio.STATUS_CANCELED))
-      ) {
-        return true;
-      }
-      if (
-        item.quotation.choose_method >= 3 &&
-        (item.status == null ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED)
-      ) {
-        if (item.non_commercial) {
-          return true;
-        }
-        if (item.invoice.number != null && item.invoice.key != null) {
-          return true;
-        }
-      }
       return true;
     },
     buttonBuy(item) {
