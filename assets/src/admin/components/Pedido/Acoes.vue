@@ -67,6 +67,9 @@
         />
       </svg>
     </a>
+    </br>
+
+    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do destinatário é obrigatório para essa transportadora</p>
 
     <a
       v-if="buttonBuy(item)"
@@ -284,6 +287,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
   data: () => {
     return {};
@@ -348,6 +352,10 @@ export default {
         });
     },
     buttonCart(item) {
+      if (this.needShowValidationDocument(item)) {
+        return false;
+      }
+
       if (typeof item.quotation.choose_method === "undefined") {
         return false;
       }
@@ -363,7 +371,6 @@ export default {
       if (!item.service_id) {
         return false;
       }
-
       if (
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
@@ -381,6 +388,15 @@ export default {
         item.status == statusMelhorEnvio.STATUS_POSTED ||
         item.status == statusMelhorEnvio.STATUS_GENERATED ||
         item.status == statusMelhorEnvio.STATUS_RELEASED
+      ) {
+        return true;
+      }
+      return false;
+    },
+    needShowValidationDocument(item) {
+      if (
+        item.to.document.length == 0 &&
+        ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
       ) {
         return true;
       }
