@@ -114,6 +114,8 @@
 
 <script>
 import axios from "axios";
+import Router from "vue-router";
+
 export default {
   name: "Token",
   data() {
@@ -137,13 +139,6 @@ export default {
         this.show_loader = false;
       });
     },
-    getUrlToConfiguration() {
-      let fullUrl = window.location.href;
-      let splitUrl = fullUrl.split("wp-admin/");
-      let urlRedirect =
-        splitUrl[0] + "wp-admin/admin.php?page=melhor-envio#/configuracoes";
-      return urlRedirect;
-    },
     saveToken() {
       let bodyFormData = new FormData();
       bodyFormData.append("token", this.token);
@@ -159,7 +154,9 @@ export default {
           method: "POST",
         })
           .then((response) => {
-            window.location.href = this.getUrlToConfiguration();
+            var router = new Router();
+            router.push("/configuracoes");
+            router.go();
           })
           .catch((err) => console.log(err));
       }
