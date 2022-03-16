@@ -71,6 +71,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.8 =
 * Ajuste para permitir desconto nos métodos de envio.
+* Correção de vulnerabilidade no redirect para tela de configurações
 
 = 2.11.7 =
 * Correção do problema de inserção de pediddos no carrinho de compras.
