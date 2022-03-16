@@ -67,6 +67,9 @@
         />
       </svg>
     </a>
+    </br>
+
+    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do destinatário é obrigatório para essa transportadora</p>
 
     <a
       v-if="buttonBuy(item)"
@@ -284,6 +287,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
   data: () => {
     return {};
@@ -348,6 +352,10 @@ export default {
         });
     },
     buttonCart(item) {
+      if (this.needShowValidationDocument(item)) {
+        return false;
+      }
+
       if (typeof item.quotation.choose_method === "undefined") {
         return false;
       }
@@ -357,33 +365,12 @@ export default {
       ) {
         return false;
       }
-      if (
-        item.quotation.choose_method == 1 ||
-        item.quotation.choose_method == 2 ||
-        (item.quotation.choose_method == 17 &&
-          (item.status == null ||
-            item.status == statusMelhorEnvio.STATUS_CANCELED))
-      ) {
-        return true;
-      }
-      if (
-        item.quotation.choose_method >= 3 &&
-        (item.status == null ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED)
-      ) {
-        if (item.non_commercial) {
-          return true;
-        }
-        if (item.invoice.number != null && item.invoice.key != null) {
-          return true;
-        }
-      }
+      return true;
     },
     buttonBuy(item) {
       if (!item.service_id) {
         return false;
       }
-
       if (
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
@@ -401,6 +388,15 @@ export default {
         item.status == statusMelhorEnvio.STATUS_POSTED ||
         item.status == statusMelhorEnvio.STATUS_GENERATED ||
         item.status == statusMelhorEnvio.STATUS_RELEASED
+      ) {
+        return true;
+      }
+      return false;
+    },
+    needShowValidationDocument(item) {
+      if (
+        item.to.document.length == 0 &&
+        ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
       ) {
         return true;
       }
