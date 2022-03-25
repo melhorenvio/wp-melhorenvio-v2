@@ -56,12 +56,10 @@ class MoneyHelper
     }
 
     /**
-     * Function to converter price to floatval
-     *
      * @param string $price
      * @return float
      */
-    public static function converterPriceToFloat($value)
+    public static function filter($value)
     {
         $isDiscount = ($value < 0);
 

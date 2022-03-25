@@ -122,9 +122,9 @@ if (class_exists('WC_Shipping_Method')) {
                 $this->instance_id,
                 $this->company,
                 $this->title,
-                MoneyHelper::converterPriceToFloat($this->additional_tax),
+                MoneyHelper::filter($this->additional_tax),
                 intval($this->additional_time),
-                MoneyHelper::converterPriceToFloat($this->percent_tax)
+                MoneyHelper::filter($this->percent_tax)
             );
 
             if ($rate) {
