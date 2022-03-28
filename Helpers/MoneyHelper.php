@@ -52,7 +52,9 @@ class MoneyHelper
     {
         $percentExtra = ($value / 100) * $percent;
 
-        return $value + $percentExtra + $extra;
+        $finalValue =  $value + $percentExtra + $extra;
+
+        return ($finalValue > 0) ? $finalValue : 0;
     }
 
     /**
