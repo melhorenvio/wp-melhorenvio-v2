@@ -59,7 +59,7 @@ class MoneyHelper
      * @param string $value
      * @return float
      */
-    public static function filterValue($value)
+    public static function floatConverter($value)
     {
         if (is_string($value)) {
             $value = preg_replace("/[^0-9,.]/", "", $value);
