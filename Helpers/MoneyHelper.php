@@ -56,7 +56,7 @@ class MoneyHelper
     }
 
     /**
-     * @param string $price
+     * @param string $value
      * @return float
      */
     public static function filterValue($value)
@@ -77,6 +77,10 @@ class MoneyHelper
         return $value;
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function isDiscount($value)
     {
         return  $value < 0;
