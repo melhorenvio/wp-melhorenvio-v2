@@ -59,13 +59,10 @@ class MoneyHelper
      * @param string $price
      * @return float
      */
-    public static function filter($value)
+    public static function filterValue($value)
     {
-        $isDiscount = ($value < 0);
-
         if (is_string($value)) {
             $value = preg_replace("/[^0-9,.]/", "", $value);
-            
             $value = trim($value);
 
             if (preg_match('/^\d*\.\d+\,\d+/', $value)) {
@@ -73,12 +70,15 @@ class MoneyHelper
             } elseif (preg_match('/^\d*\,\d+\.\d+/', $value)) {
                 $value = str_replace(',', '', $value);
             }
-
-            $value = ($isDiscount) ? 0 - $value : $value;
     
             return (float) str_replace(',', '.', $value);
         }
 
-        return ($isDiscount) ? 0 - $value : $value;
+        return $value;
+    }
+
+    public function isDiscount($value)
+    {
+        return  $value < 0;
     }
 }
