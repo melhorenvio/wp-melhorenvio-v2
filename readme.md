@@ -69,6 +69,8 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.11.8 =
+* Ajuste para permitir desconto nos métodos de envio.
 * Correção de vulnerabilidade no redirect para tela de configurações
 
 = 2.11.7 =

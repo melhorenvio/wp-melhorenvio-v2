@@ -52,23 +52,21 @@ class MoneyHelper
     {
         $percentExtra = ($value / 100) * $percent;
 
-        return $value + $percentExtra + $extra;
+        $finalValue =  $value + $percentExtra + $extra;
+
+        return ($finalValue > 0) ? $finalValue : 0;
     }
 
     /**
-     * Function to converter price to floatval
-     * 
-     * @param string $price
+     * @param string $value
      * @return float
      */
-    public static function converterPriceToFloat($value)
+    public static function floatConverter($value)
     {
         if (is_string($value)) {
-
             $value = preg_replace("/[^0-9,.]/", "", $value);
-            
             $value = trim($value);
-    
+
             if (preg_match('/^\d*\.\d+\,\d+/', $value)) {
                 $value = str_replace('.', '', $value);
             } elseif (preg_match('/^\d*\,\d+\.\d+/', $value)) {
@@ -77,7 +75,16 @@ class MoneyHelper
     
             return (float) str_replace(',', '.', $value);
         }
-    
+
         return $value;
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    public function isDiscount($value)
+    {
+        return  $value < 0;
     }
 }
