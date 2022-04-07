@@ -83,7 +83,7 @@ class MoneyHelper
      * @param string $value
      * @return bool
      */
-    public function isDiscount($value)
+    public static function isDiscount($value)
     {
         return  $value < 0;
     }

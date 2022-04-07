@@ -122,13 +122,9 @@ if (class_exists('WC_Shipping_Method')) {
                 $this->instance_id,
                 $this->company,
                 $this->title,
-                (MoneyHelper::isDiscount($this->additional_tax))
-                    ? 0 - MoneyHelper::floatConverter($this->additional_tax)
-                    : MoneyHelper::floatConverter($this->additional_tax),
+                (MoneyHelper::isDiscount($this->additional_tax)) ? 0 - MoneyHelper::floatConverter($this->additional_tax) : MoneyHelper::floatConverter($this->additional_tax),
                 intval($this->additional_time),
-                (MoneyHelper::isDiscount($this->percent_tax))
-                    ? 0 - MoneyHelper::floatConverter($this->percent_tax)
-                    : MoneyHelper::floatConverter($this->percent_tax),
+                (MoneyHelper::isDiscount($this->percent_tax)) ? 0 - MoneyHelper::floatConverter($this->percent_tax) : MoneyHelper::floatConverter($this->percent_tax)
             );
 
             if ($rate) {
