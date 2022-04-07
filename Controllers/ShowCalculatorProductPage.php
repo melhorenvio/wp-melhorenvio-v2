@@ -36,9 +36,9 @@ class ShowCalculatorProductPage
      */
     public function enqueueCssJsFrontend()
     {
-        wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js?hash=' . rand(0,1000), array('jquery'));
-        wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js?hash=' . rand(0,1000), array('jquery'));
-        wp_enqueue_script('calculator', BASEPLUGIN_ASSETS . '/js/calculator.js?hash=' . rand(0,1000), array('jquery'));
+        wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', array('jquery'));
+        wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js', array('jquery'));
+        wp_enqueue_script('calculator', BASEPLUGIN_ASSETS . '/js/calculator.js', array('jquery'));
     }
 
     /**
@@ -89,7 +89,7 @@ class ShowCalculatorProductPage
     public function addCalculateShipping()
     {
         wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
-        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js?hash=' . rand(0,1000));
+        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
         echo sprintf(
             "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
