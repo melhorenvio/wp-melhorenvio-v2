@@ -78,7 +78,21 @@ class AgenciesService
     {
         $agencies = [];
         foreach ($data as $agency) {
-            $agencies[$agency->company_id][] = $agency;
+            $companyId = null;
+
+            if (isset($agency->company_id)) {
+                $companyId = $agency->company_id;
+            }
+
+            if (isset($agency->companies[0]->id)) {
+                $companyId = $agency->companies[0]->id;
+            }
+
+            if (empty($companyId)) {
+                continue;
+            }
+
+            $agencies[$companyId][] = $agency;
         }
 
         if (!empty($this->company)) {
