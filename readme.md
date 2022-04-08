@@ -70,7 +70,6 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 = 2.11.9 =
-* Pequenos ajustes nas chamadas de arquivos JS.
 * Ajuste para resolver o problema de alteração de endereços.
 
 = 2.11.8 =
