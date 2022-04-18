@@ -401,15 +401,7 @@ export default {
       return false;
     },
     needShowValidationDocument(item) {
-      if (
-        !ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
-      ) {
-        return false;
-      }
-      if (!item.to.document && !item.to.company_document) {
-        return true;
-      }
-      return false;
+      return !item.to.document && !item.to.company_document;
     },
   },
 };
