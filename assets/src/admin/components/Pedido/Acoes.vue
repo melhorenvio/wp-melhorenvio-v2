@@ -68,8 +68,7 @@
       </svg>
     </a>
     </br>
-
-    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do destinatário é obrigatório para essa transportadora</p>
+    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do remetente e/ou destinatário é obrigatório</p>
 
     <a
       v-if="buttonBuy(item)"
@@ -394,13 +393,12 @@ export default {
       return false;
     },
     needShowValidationDocument(item) {
-      if (
-        item.to.document.length == 0 &&
-        ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
-      ) {
-        return true;
-      }
-      return false;
+      return (
+        !item.to.document &&
+        !item.to.company_document &&
+        !item.from.document &&
+        !item.from.company_document
+      );
     },
   },
 };
