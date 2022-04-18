@@ -361,7 +361,8 @@ export default {
       }
       if (
         item.status == statusMelhorEnvio.STATUS_PENDING ||
-        item.status == statusMelhorEnvio.STATUS_RELEASED
+        item.status == statusMelhorEnvio.STATUS_RELEASED ||
+        item.status == statusMelhorEnvio.STATUS_DELIVERED
       ) {
         return false;
       }
@@ -371,11 +372,17 @@ export default {
       if (!item.service_id) {
         return false;
       }
+
+      if (!item.status) {
+        return false;
+      }
+
       if (
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
           item.status == statusMelhorEnvio.STATUS_RELEASED ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED
+          item.status == statusMelhorEnvio.STATUS_CANCELED ||
+          item.status == statusMelhorEnvio.STATUS_DELIVERED
         )
       ) {
         return true;
@@ -395,9 +402,11 @@ export default {
     },
     needShowValidationDocument(item) {
       if (
-        item.to.document.length == 0 &&
-        ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
+        !ShippingServiceDocumentsRequired.includes(item.quotation.choose_method)
       ) {
+        return false;
+      }
+      if (!item.to.document && !item.to.company_document) {
         return true;
       }
       return false;
