@@ -48,6 +48,8 @@ class BuyerService
             ? sprintf("%s %s", $order->get_shipping_first_name(), $order->get_shipping_last_name())
             : sprintf("%s %s", $order->get_billing_first_name(), $order->get_billing_last_name());
 
+        $district =  (!empty($dataShipping->district)) ? $dataShipping->district : $dataBilling->district;
+
         $body = (object) [
             "name" => ($typePerson == self::COMPANY)
                 ? $order->get_billing_company()
@@ -65,9 +67,7 @@ class BuyerService
             "number" => (!empty($dataShipping->number))
                 ? $dataShipping->number
                 : $dataBilling->number,
-            "district" => (!empty($dataShipping->district))
-                ? $dataShipping->district
-                : $dataBilling->district,
+            "district" => (!empty($district)) ? $district : 'N/I',
             "city" => (!empty($dataShipping->city))
                 ? $dataShipping->city
                 : $dataBilling->city,
@@ -102,11 +102,13 @@ class BuyerService
     {
         $orderId = $order->get_id();
 
+        $district = get_post_meta($orderId, '_billing_neighborhood', true);
+
         return (object) [
             "address" => $order->get_billing_address_1(),
             "complement" => $order->get_billing_address_2(),
             "number" => get_post_meta($orderId, '_billing_number', true),
-            "district" => get_post_meta($orderId, '_billing_neighborhood', true),
+            "district" => (!empty($district)) ? $district : 'N/I',
             "city" => $order->get_billing_city(),
             "state_abbr" => $order->get_billing_state(),
             "country_id" => 'BR',
