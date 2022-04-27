@@ -6,11 +6,11 @@
             jQuery('.observation-shipping-free').hide();
             resetarTabela();
             if ($(this).val().length === 9) {
-                if ($(e.target).is('a#cfpp_credits')) { return; }
-
                 var url = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #calculo_frete_endpoint_url').val();
                 var cep = $('.iptCep').val();
                 var id_produto = $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto #id_produto').val();
+
+                if ($(e.target).is('a#cfpp_credits')) { return; }
 
                 var errors = [];
                 if (errors.length > 0) {
