@@ -189,6 +189,7 @@ final class Base_Plugin
         if (is_admin()) {
             (new SessionNoticeService())->showNotices();
             $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
+
             if (!empty($result['errors'])) {
                 return false;
             }

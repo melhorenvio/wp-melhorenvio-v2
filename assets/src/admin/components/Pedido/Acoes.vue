@@ -360,7 +360,8 @@ export default {
       }
       if (
         item.status == statusMelhorEnvio.STATUS_PENDING ||
-        item.status == statusMelhorEnvio.STATUS_RELEASED
+        item.status == statusMelhorEnvio.STATUS_RELEASED ||
+        item.status == statusMelhorEnvio.STATUS_DELIVERED
       ) {
         return false;
       }
@@ -370,11 +371,17 @@ export default {
       if (!item.service_id) {
         return false;
       }
+
+      if (!item.status) {
+        return false;
+      }
+
       if (
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
           item.status == statusMelhorEnvio.STATUS_RELEASED ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED
+          item.status == statusMelhorEnvio.STATUS_CANCELED ||
+          item.status == statusMelhorEnvio.STATUS_DELIVERED
         )
       ) {
         return true;

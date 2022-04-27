@@ -5,6 +5,7 @@ const STATUS_GENERATED = 'generated';
 const STATUS_POSTED = 'posted';
 const STATUS_PRINTED = 'printed';
 const STATUS_PAID = 'paid';
+const STATUS_DELIVERED = 'delivered';
 
 export default {
     STATUS_CANCELED,
@@ -14,4 +15,5 @@ export default {
     STATUS_POSTED,
     STATUS_PRINTED,
     STATUS_PAID,
+    STATUS_DELIVERED,
 };
