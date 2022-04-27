@@ -71,6 +71,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.12 =
 * Ajuste para comprar pedidos de clientes com CNPJ
+* Ajustes na listgem de endereços de lojas.
 
 = 2.11.11 =
 * Correções de seguranças.
