@@ -118,8 +118,7 @@ class StoreService
             return [];
         }
 
-
-        return end($addresses->data);
+        return $addresses->data;
     }
 
     /**

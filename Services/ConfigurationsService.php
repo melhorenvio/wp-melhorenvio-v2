@@ -341,19 +341,22 @@ class ConfigurationsService
 
         if (!empty($addresses)) {
             foreach ($addresses as $address) {
-                $response[] = $this->getPersonalAddress($address, $sellerData, $addressSelectedId);
+                $response[$address['id']] = $this->getPersonalAddress($address, $sellerData, $addressSelectedId);
             }
         }
-
+        
         if (!empty($stores)) {
             foreach ($stores as $store) {
                 if (!empty($store->address)) {
-                    $response[] = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                    $storeAddress = $this->getStoreAddress($store, $sellerData, $addressSelectedId);
+                    foreach ($storeAddress as $item) {
+                        $response[$item['id']] = $item;
+                    }
                 }
             }
         }
 
-        return $response;
+        return array_values($response);
     }
 
     /**
@@ -395,35 +398,42 @@ class ConfigurationsService
      */
     private function getStoreAddress($store, $sellerData, $addressSelectedId)
     {
-        return  [
-            "id" => $store->address->id,
-            "name" => $store->name,
-            "email" => $store->email,
-            "phone" => $sellerData->phone->phone,
-            "company_document" => !empty($store->document)
-                ? $store->document
-                : '',
-            "state_register" => !empty($store->state_register)
-                ? $store->state_register
-                : '',
-            "economic_activity_code" => !empty($store->economic_activity_code)
-                ? $store->economic_activity_code
-                : '',
-            "type" => "store",
-            "address" => [
-                "id" => $store->address->id,
-                "address" => $store->address->address,
-                "complement" => $store->address->complement,
-                "label" => $store->address->label,
-                "postal_code" => $store->address->postal_code,
-                "number" => $store->address->number,
-                "district" => $store->address->district,
-                "city" => $store->address->city->city,
-                "state" => $store->address->city->state->state_abbr,
-                "country" => "BR"
-            ],
-            "selected" => ($store->address->id == $addressSelectedId)
-        ];
+        $addresses = [];
+        if (!empty($store->address)) {
+            foreach ($store->address as $address) {
+                $addresses[] = [
+                    "id" => $address->id,
+                    "name" => $store->name,
+                    "email" => $store->email,
+                    "phone" => $sellerData->phone->phone,
+                    "company_document" => !empty($store->document)
+                        ? $store->document
+                        : '',
+                    "state_register" => !empty($store->state_register)
+                        ? $store->state_register
+                        : '',
+                    "economic_activity_code" => !empty($store->economic_activity_code)
+                        ? $store->economic_activity_code
+                        : '',
+                    "type" => "store",
+                    "address" => [
+                        "id" => $address->id,
+                        "address" => $address->address,
+                        "complement" => $address->complement,
+                        "label" => $address->label,
+                        "postal_code" => $address->postal_code,
+                        "number" => $address->number,
+                        "district" => $address->district,
+                        "city" => $address->city->city,
+                        "state" => $address->city->state->state_abbr,
+                        "country" => "BR"
+                    ],
+                    "selected" => $address->id == $addressSelectedId
+                ];
+            }
+        }
+
+        return $addresses;
     }
 
     /**
