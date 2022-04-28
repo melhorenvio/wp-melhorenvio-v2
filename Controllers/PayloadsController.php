@@ -7,6 +7,10 @@ use Services\PayloadService;
 
 class PayloadsController
 {
+    const PAYLOAD_NOT_FOUND = 'Payload não encontrado para o post id ';
+
+    const PAYLOAD_ERROR = 'Ocorreu um erro ao obter o payload';
+
     /**
      * controller to show payload by order
      *
@@ -20,14 +24,14 @@ class PayloadsController
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => 'Payload não encontrado para o post id ' . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $postId
                 ], 404);
             }
 
             return wp_send_json($payload, 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'message' => 'Ocorreu um erro ao obter o payload'
+                'message' => self::PAYLOAD_ERROR
             ], 400);
         }
     }
@@ -45,14 +49,14 @@ class PayloadsController
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => 'Payload não encontrado para o post id ' . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $postId
                 ], 404);
             }
 
             return wp_send_json($payload, 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'message' => 'Ocorreu um erro ao obter o payload'
+                'message' => self::PAYLOAD_ERROR
             ], 400);
         }
     }
@@ -97,14 +101,14 @@ class PayloadsController
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => 'Payload não encontrado para o post id ' . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $postId
                 ], 404);
             }
 
             return wp_send_json($payload, 200);
         } catch (\Exception $exception) {
             return wp_send_json([
-                'message' => 'Ocorreu um erro ao obter o payload'
+                'message' => self::PAYLOAD_ERROR
             ], 400);
         }
     }

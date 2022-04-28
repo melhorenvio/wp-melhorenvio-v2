@@ -23,6 +23,9 @@ use Models\Version;
  */
 class RouterService
 {
+
+    const MESSAGE_ERROR_NOT_POST_ID = self::MESSAGE_ERROR_NOT_POST_ID;
+
     public function handler()
     {
         $this->loadRoutesOrders();
@@ -180,7 +183,7 @@ class RouterService
                 if (empty($_GET['postal_code'])) {
                     return wp_send_json([
                         'error' => true,
-                        'message' => 'Informar o campo "postal_code"'
+                        'message' => self::MESSAGE_ERROR_NOT_POST_ID
                     ], 400);
                 }
                 return $locationController->getAddressByPostalCode($_GET['postal_code']);
@@ -213,7 +216,7 @@ class RouterService
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
-                    'message' => 'Informar o campo "post_id"'
+                    'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
             return $payloadsController->show($_GET['post_id']);
@@ -223,7 +226,7 @@ class RouterService
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
-                    'message' => 'Informar o campo "post_id"'
+                    'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
             return $payloadsController->showLogged($_GET['post_id']);
@@ -233,7 +236,7 @@ class RouterService
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
-                    'message' => 'Informar o campo "post_id"'
+                    'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
             return $payloadsController->destroy($_GET['post_id']);
@@ -243,7 +246,7 @@ class RouterService
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
-                    'message' => 'Informar o campo "post_id"'
+                    'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
 
