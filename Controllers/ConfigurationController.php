@@ -138,21 +138,26 @@ class ConfigurationController
                 continue;
             }
             if (in_array($method->id, $enableds)) {
-                $methods[] = [
-                    'code' => $method->code,
-                    'title' => str_replace(' (Melhor Envio)', '', $method->method_title),
-                    'name' => (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "") ? $options[$method->code]['name'] : str_replace(' (Melhor Envio)', '', $method->method_title),
-                    'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
-                    'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
-                    'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
-                    'receipt' => (isset($options[$method->code]['receipt']) && $options[$method->code]['receipt'] == "true"),
-                    'own_hand' => (isset($options[$method->code]['own_hand']) && $options[$method->code]['own_hand'] == "true"),
-                    'insurance_value' => (isset($options[$method->code]['insurance_value']) && $options[$method->code]['insurance_value'] == "true")
-                ];
+                $methods[] = $this->filterMethod($method, $options);
             }
         }
 
         return wp_send_json($methods, 200);
+    }
+
+    public function filterMethod($method, $options)
+    {
+        return [
+            'code' => $method->code,
+            'title' => str_replace(' (Melhor Envio)', '', $method->method_title),
+            'name' => (isset($options[$method->code]['name']) && $options[$method->code]['name'] != "undefined" && $options[$method->code]['name'] != "") ? $options[$method->code]['name'] : str_replace(' (Melhor Envio)', '', $method->method_title),
+            'tax' => (isset($options[$method->code]['tax'])) ? floatval($options[$method->code]['tax']) : 0,
+            'time' => (isset($options[$method->code]['time'])) ? floatval($options[$method->code]['time']) : 0,
+            'perc' => (isset($options[$method->code]['perc'])) ? floatval($options[$method->code]['perc']) : 0,
+            'receipt' => (isset($options[$method->code]['receipt']) && $options[$method->code]['receipt'] == "true"),
+            'own_hand' => (isset($options[$method->code]['own_hand']) && $options[$method->code]['own_hand'] == "true"),
+            'insurance_value' => (isset($options[$method->code]['insurance_value']) && $options[$method->code]['insurance_value'] == "true")
+        ];
     }
 
     public function savePathPlugins()
