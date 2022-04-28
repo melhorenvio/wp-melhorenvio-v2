@@ -119,11 +119,11 @@ class ListOrderService
             $args['post_status'] = 'publish';
         }
 
-        if (isset($$status) && $$status != 'all') {
+        if (isset($status) && $status != 'all') {
             $args['meta_query'] = [
                 [
                     'key' => 'melhorenvio_status_v2',
-                    'value' => sprintf(':"%s";', $$status),
+                    'value' => sprintf(':"%s";', $status),
                     'compare' => 'LIKE'
                 ]
             ];
