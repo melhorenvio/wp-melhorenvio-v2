@@ -17,6 +17,7 @@
 
                     errors.map(item => {
                         row += `<tr><td colspan="3">${item}</td></tr>`;
+                        return row;
                     });
 
                     $('#melhor-envio-shortcode .resultado-frete table tbody').append(row);

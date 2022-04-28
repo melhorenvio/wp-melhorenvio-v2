@@ -60,9 +60,10 @@
         let selected = 0;
         if (jQuery('.variations select').length == attribbutes.length) {
             variations.map(function (variant, index) {
-                attribbutes.map(function (attr) {
+                return attribbutes.map(function (attr) {
                     if (variant.attributes[attr.key] == attr.value) {
                         selected = index;
+                        return selected;
                     }
                 });
             });
