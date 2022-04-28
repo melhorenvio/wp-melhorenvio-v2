@@ -402,9 +402,7 @@ export default {
     needShowValidationDocument(item) {
       return (
         !item.to.document &&
-        !item.to.company_document &&
-        !item.from.document &&
-        !item.from.company_document
+        !item.to.company_document
       );
     },
   },
