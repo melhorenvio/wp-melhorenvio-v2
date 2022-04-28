@@ -33,6 +33,8 @@ class QuotationProductPageService
      */
     const FREE_SHIPPING_COUPON_OR_MIN_AMOUNT = 'coupon';
 
+    const DELIVERY_FORECAST = '_delivery_forecast';
+
     /**
      * A woocommerce product
      *
@@ -254,10 +256,10 @@ class QuotationProductPageService
                         $delivery_time = $meta_data['delivery_time'];
                     }
 
-                    if (!empty($meta_data['_delivery_forecast'])) {
-                        $delivery_time = ($meta_data['_delivery_forecast'] == 1)
+                    if (!empty($meta_data[self::DELIVERY_FORECAST])) {
+                        $delivery_time = ($meta_data[self::DELIVERY_FORECAST] == 1)
                             ? "(1 dia útil)"
-                            : sprintf("(%s dias úteis)", $meta_data['_delivery_forecast']);
+                            : sprintf("(%s dias úteis)", $meta_data[self::DELIVERY_FORECAST]);
                     }
                 }
 
