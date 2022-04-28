@@ -47,7 +47,8 @@ class LogsController
         }
 
         global $wpdb;
-        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_id = %s', $wpdb->prefix, $_GET['meta_id']);
+
+        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_id = %s', $wpdb->prefix, sanitize_text_field($_GET['meta_id']));
         $row = end($wpdb->get_results($sql));
 
         $data = unserialize($row->meta_value);
@@ -79,7 +80,7 @@ class LogsController
         }
 
         global $wpdb;
-        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_id = %s', $wpdb->prefix, $_GET['meta_id']);
+        $sql = sprintf('SELECT * FROM %spostmeta WHERE meta_id = %s', $wpdb->prefix, sanitize_text_field($_GET['meta_id']));
         $row = end($wpdb->get_results($sql));
 
         $data = unserialize($row->meta_value);
