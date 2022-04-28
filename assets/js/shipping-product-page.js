@@ -18,6 +18,7 @@
                     row = '<tr><td colspan="3">Ocorreu um erro ao obter informações sobre o valor do frete</td></tr>';
                     errors.map(item => {
                         row += `<tr><td colspan="3">${item}</td></tr>`;
+                        return row;
                     });
                     $('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto .resultado-frete table tbody').append(row);
                     esconderLoader();
