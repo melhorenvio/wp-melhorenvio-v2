@@ -24,7 +24,7 @@ use Models\Version;
 class RouterService
 {
 
-    const MESSAGE_ERROR_NOT_POST_ID = self::MESSAGE_ERROR_NOT_POST_ID;
+    const MESSAGE_ERROR_NOT_POST_ID = 'Informar o campo "post_id"';
 
     public function handler()
     {
