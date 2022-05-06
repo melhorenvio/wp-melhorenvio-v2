@@ -24,7 +24,7 @@ class OrderService
 
     const ROUTE_MELHOR_ENVIO_PRINT_LABEL = '/shipment/print';
 
-    const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/search?q=';
+    const ROUTE_MELHOR_ENVIO_SEARCH = '/orders/';
 
     const DEFAULT_METHOD_ID = 'melhorenvio_correios_sedex';
 
@@ -398,10 +398,8 @@ class OrderService
             }
 
             $dataOrder = $this->getInfoOrder($data['order_id']);
-
-            $info = end($dataOrder);
-
-            if (!is_object($info) && $info[0] == 'Not Found') {
+            
+            if (!isset($dataOrder->id)) {
                 $response[$post->ID] = [
                     'order_id' => null,
                     'status' => null,
@@ -414,16 +412,16 @@ class OrderService
 
             $response[$post->ID] = [
                 'order_id' => $data['order_id'],
-                'status' => $info->status,
-                'protocol' => $info->protocol,
-                'tracking' => $info->tracking,
+                'status' => $dataOrder->status,
+                'protocol' => $dataOrder->protocol,
+                'tracking' => $dataOrder->tracking,
                 'service_id' => (!empty($data['choose_method'])) ? $data['choose_method'] : null
             ];
 
-            if (!is_null($info->tracking)) {
+            if (!is_null($dataOrder->tracking)) {
                 (new TrackingService())->addTrackingOrder(
                     $post->ID,
-                    $info->tracking
+                    $dataOrder->tracking
                 );
             }
         }
