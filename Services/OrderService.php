@@ -398,11 +398,8 @@ class OrderService
             }
 
             $dataOrder = $this->getInfoOrder($data['order_id']);
-            if (is_array($dataOrder)) {
-                $dataOrder = end($dataOrder);
-            }
-
-            if (!is_object($dataOrder) && $dataOrder[0] == 'Not Found') {
+            
+            if (!isset($dataOrder->id)) {
                 $response[$post->ID] = [
                     'order_id' => null,
                     'status' => null,
