@@ -8,113 +8,111 @@ use Models\Seller;
 /**
  * Class responsible for the service of managing the store salesperson
  */
-class SellerService
-{
-    /**
-     * Get data user on API Melhor Envio
-     *
-     * @return object $dataSeller
-     */
-    public function getData()
-    {
-        $configurationService = new ConfigurationsService();
+class SellerService {
 
-        $label = $configurationService->getLabel();
+	/**
+	 * Get data user on API Melhor Envio
+	 *
+	 * @return object $dataSeller
+	 */
+	public function getData() {
+		$configurationService = new ConfigurationsService();
 
-        if (!empty($label)) {
-            $label = (array) $label;
-            if (!empty($label['state'])) {
-                $label['state_abbr'] = $label['state'];
-            }
-            return (object) $label;
-        }
+		$label = $configurationService->getLabel();
 
-        $origin = $configurationService->getAddresses();
+		if ( ! empty( $label ) ) {
+			$label = (array) $label;
+			if ( ! empty( $label['state'] ) ) {
+				$label['state_abbr'] = $label['state'];
+			}
+			return (object) $label;
+		}
 
-        $seller = new Seller();
+		$origin = $configurationService->getAddresses();
 
-        $data = $seller->get();
+		$seller = new Seller();
 
-        if (!empty($data)) {
-            $configurationService->setLabel($data);
-            return $data;
-        }
+		$data = $seller->get();
 
-        $data = $this->getDataApiMelhorEnvio();
+		if ( ! empty( $data ) ) {
+			$configurationService->setLabel( $data );
+			return $data;
+		}
 
-        $address = (new Address())->getAddressFrom();
+		$data = $this->getDataApiMelhorEnvio();
 
-        $store = (new StoreService())->getStoreSelected();
-        
-        if (!empty($address['address']['id'])) {
-            $data->address->address = !empty($address['address']['address']) ? $address['address']['address'] : null;
-            $data->address->complement = !empty($address['address']['complement'])
-                ? $address['address']['complement']
-                : null;
-            $data->address->number = !empty($address['address']['number'])
-                ? $address['address']['number']
-                : null;
-            $data->address->district = !empty($address['address']['district'])
-                ? $address['address']['district']
-                : null;
-            $data->address->city->city = !empty($address['address']['city']) ? $address['address']['city'] : null;
-            $data->address->city->state->state_abbr = !empty($address['address']['state'])
-                ? $address['address']['state']
-                : null;
-            $data->address->postal_code = !empty($address['address']['postal_code'])
-                ? $address['address']['postal_code']
-                : null;
-        }
+		$address = ( new Address() )->getAddressFrom();
 
-        $data = [
-            "name" => !empty($store->name)
-                ? $store->name
-                :  sprintf("%s %s", $data->firstname, $data->lastname),
-            "phone" => !empty($data->phone->phone) ? $data->phone->phone : null,
-            "email" => !empty($store->email) ? $store->email :  $data->email,
-            "document" => !empty($store->document) ? null : $data->document,
-            "company_document" => !empty($store->document) ? $store->document : null,
-            "economic_activity_code" => !empty($store->economic_activity_code)
-                ? $store->economic_activity_code
-                : null,
-            "address" => !empty($store->address->address) ? $store->address->address : $data->address->address,
-            "complement" => !empty($store->address->complement)
-                ? $store->address->complement
-                : $data->address->complement,
-            "number" => !empty($store->address->number) ? $store->address->number : $data->address->number,
-            "district" => !empty($store->address->district) ? $store->address->district : $data->address->district,
-            "city" => !empty($store->address->city->city) ? $store->address->city->city : $data->address->city->city,
-            "state_abbr" => !empty($store->address->city->state->state_abbr)
-                ? $store->address->city->state->state_abbr
-                : $data->address->city->state->state_abbr,
-            "country_id" => 'BR',
-            "postal_code" => !empty($store->address->postal_code)
-                ? $store->address->postal_code
-                : $data->address->postal_code,
-        ];
+		$store = ( new StoreService() )->getStoreSelected();
 
-        $seller->save($data);
-        $configurationService->setLabel($data);
+		if ( ! empty( $address['address']['id'] ) ) {
+			$data->address->address                 = ! empty( $address['address']['address'] ) ? $address['address']['address'] : null;
+			$data->address->complement              = ! empty( $address['address']['complement'] )
+				? $address['address']['complement']
+				: null;
+			$data->address->number                  = ! empty( $address['address']['number'] )
+				? $address['address']['number']
+				: null;
+			$data->address->district                = ! empty( $address['address']['district'] )
+				? $address['address']['district']
+				: null;
+			$data->address->city->city              = ! empty( $address['address']['city'] ) ? $address['address']['city'] : null;
+			$data->address->city->state->state_abbr = ! empty( $address['address']['state'] )
+				? $address['address']['state']
+				: null;
+			$data->address->postal_code             = ! empty( $address['address']['postal_code'] )
+				? $address['address']['postal_code']
+				: null;
+		}
 
-        return (object) $data;
-    }
+		$data = array(
+			'name'                   => ! empty( $store->name )
+				? $store->name
+				: sprintf( '%s %s', $data->firstname, $data->lastname ),
+			'phone'                  => ! empty( $data->phone->phone ) ? $data->phone->phone : null,
+			'email'                  => ! empty( $store->email ) ? $store->email : $data->email,
+			'document'               => ! empty( $store->document ) ? null : $data->document,
+			'company_document'       => ! empty( $store->document ) ? $store->document : null,
+			'economic_activity_code' => ! empty( $store->economic_activity_code )
+				? $store->economic_activity_code
+				: null,
+			'address'                => ! empty( $store->address->address ) ? $store->address->address : $data->address->address,
+			'complement'             => ! empty( $store->address->complement )
+				? $store->address->complement
+				: $data->address->complement,
+			'number'                 => ! empty( $store->address->number ) ? $store->address->number : $data->address->number,
+			'district'               => ! empty( $store->address->district ) ? $store->address->district : $data->address->district,
+			'city'                   => ! empty( $store->address->city->city ) ? $store->address->city->city : $data->address->city->city,
+			'state_abbr'             => ! empty( $store->address->city->state->state_abbr )
+				? $store->address->city->state->state_abbr
+				: $data->address->city->state->state_abbr,
+			'country_id'             => 'BR',
+			'postal_code'            => ! empty( $store->address->postal_code )
+				? $store->address->postal_code
+				: $data->address->postal_code,
+		);
 
-    /**
-     * Get data user on API Melhor Envio
-     *
-     * @return object $data
-     */
-    public function getDataApiMelhorEnvio()
-    {
-        $data = (new RequestService())->request('', 'GET', [], false);
+		$seller->save( $data );
+		$configurationService->setLabel( $data );
 
-        if (!isset($data->id)) {
-            return [
-                'success' => false,
-                'message' => 'Usuário não encontrado no Melhor Envio'
-            ];
-        }
+		return (object) $data;
+	}
 
-        return $data;
-    }
+	/**
+	 * Get data user on API Melhor Envio
+	 *
+	 * @return object $data
+	 */
+	public function getDataApiMelhorEnvio() {
+		$data = ( new RequestService() )->request( '', 'GET', array(), false );
+
+		if ( ! isset( $data->id ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Usuário não encontrado no Melhor Envio',
+			);
+		}
+
+		return $data;
+	}
 }
