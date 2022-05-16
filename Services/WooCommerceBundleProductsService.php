@@ -5,211 +5,202 @@ namespace Services;
 use Helpers\DimensionsHelper;
 use Services\ProductsService;
 
-class WooCommerceBundleProductsService
-{
-    const OBJECT_WOOCOMMERCE_BUNDLE = 'WC_Product_Bundle';
+class WooCommerceBundleProductsService {
 
-    const OBJECT_PRODUCT_SIMPLE = 'WC_Product_Simple';
+	const OBJECT_WOOCOMMERCE_BUNDLE = 'WC_Product_Bundle';
 
-    const TYPE_LAYOUT_BUNDLE_DEFAULT = 'default';
+	const OBJECT_PRODUCT_SIMPLE = 'WC_Product_Simple';
 
-    const BUNDLE_TYPE_EXTERNAL = 'external';
+	const TYPE_LAYOUT_BUNDLE_DEFAULT = 'default';
 
-    const BUNDLE_TYPE_INTERNAL = 'internal';
-    
-    /**
-     * Function to check if a order is Bundle Product Class.
-     * @param array $data
-     * @return bool
-     */
-    public static function isWooCommerceProductBundle($data)
-    {
-        $item = end($data);
-        return ((!empty($item['bundled_by']) || !empty($item['bundled_items'])) && !empty($item['stamp']));
-    }
+	const BUNDLE_TYPE_EXTERNAL = 'external';
 
-    /**
-     * Function to manage products by bundle
-     * @param array $items
-     * @return array
-     */
-    public function manageProductsBundle($items)
-    {
-        $products = [];
-        $productService = new ProductsService();
+	const BUNDLE_TYPE_INTERNAL = 'internal';
 
-        foreach ($items as $key => $data) {
-            if ($this->shouldUseProducts($data)) {
-                if (isset($data['bundled_by'])) {
-                    foreach ($data['stamp'] as $product) {
-                        $products[$product['product_id']] = $productService->getProduct(
-                            $product['product_id'],
-                            $items[$key]['quantity']
-                        );
-                    }
-                    continue;
-                }
-            }
-                
-            if ($this->shoudUsePackage($data)) {
-                $productId = $data['data']->get_id();
-                $weight = 0;
-                if ($data['data']->get_aggregate_weight()) {
-                    foreach ($data['stamp'] as $product) {
-                        $internalProduct = $productService->getProduct(
-                            $product['product_id'],
-                            $data['quantity']
-                        );
-                        $weight = $weight + (float) $internalProduct->weight;
-                    }
-                }
+	/**
+	 * Function to check if a order is Bundle Product Class.
+	 *
+	 * @param array $data
+	 * @return bool
+	 */
+	public static function isWooCommerceProductBundle( $data ) {
+		$item = end( $data );
+		return ( ( ! empty( $item['bundled_by'] ) || ! empty( $item['bundled_items'] ) ) && ! empty( $item['stamp'] ) );
+	}
 
-                $internalProduct = $productService->getProduct($productId, $data['quantity']);
-                $internalProduct->weight = (float) $internalProduct->weight + $weight;
-                $products[$productId] = $internalProduct;
-                continue;
-            }
+	/**
+	 * Function to manage products by bundle
+	 *
+	 * @param array $items
+	 * @return array
+	 */
+	public function manageProductsBundle( $items ) {
+		$products       = array();
+		$productService = new ProductsService();
 
-            $products[] = $productService->getProduct(
-                $data['product_id'],
-                $data['quantity']
-            );
-        }
-        
-        return $products;
-    }
+		foreach ( $items as $key => $data ) {
+			if ( $this->shouldUseProducts( $data ) ) {
+				if ( isset( $data['bundled_by'] ) ) {
+					foreach ( $data['stamp'] as $product ) {
+						$products[ $product['product_id'] ] = $productService->getProduct(
+							$product['product_id'],
+							$items[ $key ]['quantity']
+						);
+					}
+					continue;
+				}
+			}
 
-    /**
-     * @param array $data
-     * @return bool
-     */
-    private function shouldUseProducts($data)
-    {
-        return isset($data['bundled_by']);
-    }
+			if ( $this->shoudUsePackage( $data ) ) {
+				$productId = $data['data']->get_id();
+				$weight    = 0;
+				if ( $data['data']->get_aggregate_weight() ) {
+					foreach ( $data['stamp'] as $product ) {
+						$internalProduct = $productService->getProduct(
+							$product['product_id'],
+							$data['quantity']
+						);
+						$weight          = $weight + (float) $internalProduct->weight;
+					}
+				}
 
-    /**
-     * @param array $data
-     * @return bool
-     */
-    private function shoudUsePackage($data)
-    {
-        return isset($data['bundled_items']);
-    }
+				$internalProduct         = $productService->getProduct( $productId, $data['quantity'] );
+				$internalProduct->weight = (float) $internalProduct->weight + $weight;
+				$products[ $productId ]  = $internalProduct;
+				continue;
+			}
 
-    /**
-     * @param object $data
-     * @return bool
-     */
-    private function isVirtualBundle($data)
-    {
-        if (!isset($data->virtual)) {
-            return false;
-        }
+			$products[] = $productService->getProduct(
+				$data['product_id'],
+				$data['quantity']
+			);
+		}
 
-        return $data->virtual == 'yes';
-    }
+		return $products;
+	}
 
-    /**
-     * @param array $iemOrder
-     * @return array
-     */
-    public function getMetas($itemOrder)
-    {
-        $metas = [];
-        foreach ($itemOrder->get_meta_data() as $key => $item) {
-            $data = $item->get_data();
-            $metas[$data['key']] = $data['value'];
-        }
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	private function shouldUseProducts( $data ) {
+		return isset( $data['bundled_by'] );
+	}
 
-        if (empty($metas['_bundled_items'])) {
-            return [];
-        }
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	private function shoudUsePackage( $data ) {
+		return isset( $data['bundled_items'] );
+	}
 
-        return $metas;
-    }
+	/**
+	 * @param object $data
+	 * @return bool
+	 */
+	private function isVirtualBundle( $data ) {
+		if ( ! isset( $data->virtual ) ) {
+			return false;
+		}
 
-    /**
-     * @param array $meta
-     * @return bool
-     */
-    public function isBundledItem($metas)
-    {
-        return !empty($metas);
-    }
+		return $data->virtual == 'yes';
+	}
 
-    /**
-     * @param array $meta
-     * @return string
-     */
-    public function getBundledItemType($metas)
-    {
-        if (!empty($metas['_bundle_weight'])) {
-            return self::BUNDLE_TYPE_EXTERNAL;
-        }
+	/**
+	 * @param array $iemOrder
+	 * @return array
+	 */
+	public function getMetas( $itemOrder ) {
+		$metas = array();
+		foreach ( $itemOrder->get_meta_data() as $key => $item ) {
+			$data                  = $item->get_data();
+			$metas[ $data['key'] ] = $data['value'];
+		}
 
-        return self::BUNDLE_TYPE_INTERNAL;
-    }
+		if ( empty( $metas['_bundled_items'] ) ) {
+			return array();
+		}
 
-    /**
-     * @param array $stamp
-     * @return array
-     */
-    public function getProducts($stamp)
-    {
-        $productService = new ProductsService();
+		return $metas;
+	}
 
-        $products = [];
-        foreach ($stamp as $product) {
-            $products[$product['product_id']] = $productService->getProduct(
-                $product['product_id'],
-                $product['quantity']
-            );
-        }
+	/**
+	 * @param array $meta
+	 * @return bool
+	 */
+	public function isBundledItem( $metas ) {
+		return ! empty( $metas );
+	}
 
-        return $products;
-    }
+	/**
+	 * @param array $meta
+	 * @return string
+	 */
+	public function getBundledItemType( $metas ) {
+		if ( ! empty( $metas['_bundle_weight'] ) ) {
+			return self::BUNDLE_TYPE_EXTERNAL;
+		}
 
-    /**
-     * @param array $product
-     * @param array $metas
-     * @param array $products
-     * @return array
-     */
-    public function getInternalProducts($product, $metas, $products)
-    {
-        if (empty($metas['_stamp'])) {
-            return false;
-        }
-        $productsBundle = $this->getProducts($metas['_stamp']);
+		return self::BUNDLE_TYPE_INTERNAL;
+	}
 
-        if (empty($productsBundle)) {
-            return $products;
-        }
+	/**
+	 * @param array $stamp
+	 * @return array
+	 */
+	public function getProducts( $stamp ) {
+		$productService = new ProductsService();
 
-        if (empty($products)) {
-            return $productsBundle;
-        }
- 
-        return $products;
-    }
+		$products = array();
+		foreach ( $stamp as $product ) {
+			$products[ $product['product_id'] ] = $productService->getProduct(
+				$product['product_id'],
+				$product['quantity']
+			);
+		}
 
-    /**
-     * @param array $product
-     * @param array $metas
-     * @return object
-     */
-    public function getExternalProducts($product, $metas)
-    {
-        $productService = new ProductsService();
+		return $products;
+	}
 
-        $product = $productService->getProduct(
-            $product['product_id'],
-            $product['quantity']
-        );
+	/**
+	 * @param array $product
+	 * @param array $metas
+	 * @param array $products
+	 * @return array
+	 */
+	public function getInternalProducts( $product, $metas, $products ) {
+		if ( empty( $metas['_stamp'] ) ) {
+			return false;
+		}
+		$productsBundle = $this->getProducts( $metas['_stamp'] );
 
-        $product->weight = $metas['_bundle_weight'];
+		if ( empty( $productsBundle ) ) {
+			return $products;
+		}
 
-        return $product;
-    }
+		if ( empty( $products ) ) {
+			return $productsBundle;
+		}
+
+		return $products;
+	}
+
+	/**
+	 * @param array $product
+	 * @param array $metas
+	 * @return object
+	 */
+	public function getExternalProducts( $product, $metas ) {
+		$productService = new ProductsService();
+
+		$product = $productService->getProduct(
+			$product['product_id'],
+			$product['quantity']
+		);
+
+		$product->weight = $metas['_bundle_weight'];
+
+		return $product;
+	}
 }

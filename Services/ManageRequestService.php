@@ -5,96 +5,95 @@ namespace Services;
 /**
  * Service responsible for managing request logs
  */
-class ManageRequestService
-{
-    /**
-     * Constant for wp_options where request logs will be stored
-     */
-    const WP_OPTIONS_REQUEST_LOGS = 'melhorenvio_requests_logs';
+class ManageRequestService {
 
-    /**
-     * Function to store the log of a request
-     * 
-     * @param string $route
-     * @param int $statusCode
-     * @param string $type
-     * @param array $params
-     * @param array $response
-     * @param float $time
-     * @return void
-     */
-    public function register($route, $statusCode, $type, $params, $response, $time)
-    {
-        $requestLogs = get_option(self::WP_OPTIONS_REQUEST_LOGS, []);
+	/**
+	 * Constant for wp_options where request logs will be stored
+	 */
+	const WP_OPTIONS_REQUEST_LOGS = 'melhorenvio_requests_logs';
 
-        $requestLogs[] = [
-            'route' => $route,
-            'type' => $type,
-            'status_code' => $statusCode,
-            'time' => $time,
-            'params' => $params,
-            'response' => $response,
-            'date' => date('Y-m-d H:i:s')
-        ];
+	/**
+	 * Function to store the log of a request
+	 *
+	 * @param string $route
+	 * @param int    $statusCode
+	 * @param string $type
+	 * @param array  $params
+	 * @param array  $response
+	 * @param float  $time
+	 * @return void
+	 */
+	public function register( $route, $statusCode, $type, $params, $response, $time ) {
+		$requestLogs = get_option( self::WP_OPTIONS_REQUEST_LOGS, array() );
 
-        update_option(self::WP_OPTIONS_REQUEST_LOGS, $requestLogs);
-    }
+		$requestLogs[] = array(
+			'route'       => $route,
+			'type'        => $type,
+			'status_code' => $statusCode,
+			'time'        => $time,
+			'params'      => $params,
+			'response'    => $response,
+			'date'        => date( 'Y-m-d H:i:s' ),
+		);
 
-    /**
-     * Function to fetch all request logs
-     * 
-     * @param string $ordering
-     * @return array
-     */
-    public function get($ordering)
-    {
-        if (empty($ordering))  {
-            $ordering = 'time';
-        }
+		update_option( self::WP_OPTIONS_REQUEST_LOGS, $requestLogs );
+	}
 
-        return $this->filterRegisters(get_option(self::WP_OPTIONS_REQUEST_LOGS, []), $ordering);
-    }
+	/**
+	 * Function to fetch all request logs
+	 *
+	 * @param string $ordering
+	 * @return array
+	 */
+	public function get( $ordering ) {
+		if ( empty( $ordering ) ) {
+			$ordering = 'time';
+		}
 
-     /**
-     * Function to delete all request logs
-     * 
-     * @return bool
-     */
-    public function deleteAll()
-    {
-        return  delete_option(self::WP_OPTIONS_REQUEST_LOGS);
-    }
+		return $this->filterRegisters( get_option( self::WP_OPTIONS_REQUEST_LOGS, array() ), $ordering );
+	}
 
-    /**
-     * Function to filter the request logs
-     * 
-     * @param array $requests
-     * @param string $ordering
-     * @return array
-     */
-    public function filterRegisters($requests, $ordering)
-    {   
-        if (empty($requests)) {
-            return $requests;
-        }
+	 /**
+	  * Function to delete all request logs
+	  *
+	  * @return bool
+	  */
+	public function deleteAll() {
+		return delete_option( self::WP_OPTIONS_REQUEST_LOGS );
+	}
 
-        $dateLimit = date('Y-m-d',strtotime('-1 months'));
+	/**
+	 * Function to filter the request logs
+	 *
+	 * @param array  $requests
+	 * @param string $ordering
+	 * @return array
+	 */
+	public function filterRegisters( $requests, $ordering ) {
+		if ( empty( $requests ) ) {
+			return $requests;
+		}
 
-        foreach ($requests as $key => $request) {
-            $dateLog = date('Y-m-d', strtotime($request['date']));
-            if ($dateLog < $dateLimit) {
-                unset($requests[$key]);
-            }            
-        }
+		$dateLimit = date( 'Y-m-d', strtotime( '-1 months' ) );
 
-        update_option(self::WP_OPTIONS_REQUEST_LOGS, $requests);
+		foreach ( $requests as $key => $request ) {
+			$dateLog = date( 'Y-m-d', strtotime( $request['date'] ) );
+			if ( $dateLog < $dateLimit ) {
+				unset( $requests[ $key ] );
+			}
+		}
 
-        usort($requests, function($a, $b) use ($ordering) {
-            return $a[$ordering] > $b[$ordering];
-        });
+		update_option( self::WP_OPTIONS_REQUEST_LOGS, $requests );
 
-        return $requests;
+		usort(
+			$requests,
+			function( $a, $b ) use ( $ordering ) {
+				return $a[ $ordering ] > $b[ $ordering ];
+			}
+		);
 
-    }
+		return $requests;
+
+	}
 
 }

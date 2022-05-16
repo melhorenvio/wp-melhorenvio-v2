@@ -10,109 +10,117 @@ use Models\Session;
 /**
  * Class responsible for the quotation controller
  */
-class QuotationController
-{
-    /**
-     * Construct of CotationController
-     */
-    public function __construct()
-    {
-        add_action('woocommerce_checkout_order_processed', array(
-            $this, 'makeCotationOrder'
-        ));
-    }
+class QuotationController {
 
-    /**
-     * Function to make a quotation by order woocommerce
-     *
-     * @param int $postId
-     * @return void
-     */
-    public function makeCotationOrder($postId)
-    {
-        $result = (new QuotationService())->calculateQuotationByPostId($postId);
+	/**
+	 * Construct of CotationController
+	 */
+	public function __construct() {
+		add_action(
+			'woocommerce_checkout_order_processed',
+			array(
+				$this,
+				'makeCotationOrder',
+			)
+		);
+	}
 
-        if ($result) {
-            (new PayloadService())->save(($postId));
-        }
+	/**
+	 * Function to make a quotation by order woocommerce
+	 *
+	 * @param int $postId
+	 * @return void
+	 */
+	public function makeCotationOrder( $postId ) {
+		$result = ( new QuotationService() )->calculateQuotationByPostId( $postId );
 
-        if (!empty($_SESSION[Session::ME_KEY]['quotation'])) {
-            unset($_SESSION[Session::ME_KEY]['quotation']);
-        }
+		if ( $result ) {
+			( new PayloadService() )->save( ( $postId ) );
+		}
 
-        return $result;
-    }
+		if ( ! empty( $_SESSION[ Session::ME_KEY ]['quotation'] ) ) {
+			unset( $_SESSION[ Session::ME_KEY ]['quotation'] );
+		}
 
-    /**
-     * Function to refresh quotation
-     *
-     * @return json
-     */
-    public function refreshCotation()
-    {
-        $results = $this->makeCotationOrder($_GET['id']);
-        return wp_send_json(
-            $results,
-            200
-        );
-    }
+		return $result;
+	}
 
-    /**
-     * Function to perform the quotation on the product calculator
-     *
-     * @return json
-     */
-    public function cotationProductPage()
-    {
-        $data = $_POST['data'];
+	/**
+	 * Function to refresh quotation
+	 *
+	 * @return json
+	 */
+	public function refreshCotation() {
+		$results = $this->makeCotationOrder( $_GET['id'] );
+		return wp_send_json(
+			$results,
+			200
+		);
+	}
 
-        $this->isValidRequest($data);
+	/**
+	 * Function to perform the quotation on the product calculator
+	 *
+	 * @return json
+	 */
+	public function cotationProductPage() {
+		$data = $_POST['data'];
 
-        $rates = (new QuotationProductPageService(
-            intval($data['id_produto']),
-            $data['cep_origem'],
-            $data['quantity']
-        ))->getRatesShipping();
+		$this->isValidRequest( $data );
 
-        if (!empty($rates['error'])) {
-            return wp_send_json([
-                'success' => false,
-                'error' => $rates['error']
-            ], 500);
-        }
+		$rates = ( new QuotationProductPageService(
+			intval( $data['id_produto'] ),
+			$data['cep_origem'],
+			$data['quantity']
+		) )->getRatesShipping();
 
-        return wp_send_json([
-            'success' => true,
-            'data' => $rates
-        ], 200);
-    }
+		if ( ! empty( $rates['error'] ) ) {
+			return wp_send_json(
+				array(
+					'success' => false,
+					'error'   => $rates['error'],
+				),
+				500
+			);
+		}
 
-    /**
-     * Function to validate request in screen product
-     *
-     * @param array $data
-     * @return json
-     */
-    private function isValidRequest($data)
-    {
-        if (!isset($data['cep_origem'])) {
-            return wp_send_json([
-                'success' => false, 'message' => 'Infomar CEP de origem'
-            ], 400);
-        }
-    }
+		return wp_send_json(
+			array(
+				'success' => true,
+				'data'    => $rates,
+			),
+			200
+		);
+	}
 
-    /**
-     * @param [type] $package
-     * @param [type] $services
-     * @param [type] $to
-     * @param array $options
-     * @return void
-     */
-    public function makeCotationPackage($package, $services, $to, $options = [])
-    {
-        return $this->makeCotation($to, $services, [], $package, $options, false);
-    }
+	/**
+	 * Function to validate request in screen product
+	 *
+	 * @param array $data
+	 * @return json
+	 */
+	private function isValidRequest( $data ) {
+		if ( ! isset( $data['cep_origem'] ) ) {
+			return wp_send_json(
+				array(
+					'success' => false,
+					'message' => 'Infomar CEP de origem',
+				),
+				400
+			);
+		}
+	}
+
+	/**
+	 * @param [type] $package
+	 * @param [type] $services
+	 * @param [type] $to
+	 * @param array  $options
+	 * @return void
+	 */
+	public function makeCotationPackage( $package, $services, $to, $options = array() ) {
+		return $this->makeCotation( $to, $services, array(), $package, $options, false );
+	}
 }
 
 $quotationController = new QuotationController();

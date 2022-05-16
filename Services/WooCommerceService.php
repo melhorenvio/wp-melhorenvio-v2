@@ -2,37 +2,36 @@
 
 namespace Services;
 
-class WooCommerceService
-{
-    public function hasFreeShippingMethod()
-    {
-        $totalCart = 0;
+class WooCommerceService {
 
-        $freeShiping = false;
+	public function hasFreeShippingMethod() {
+		$totalCart = 0;
 
-        foreach (WC()->cart->cart_contents as $cart) {
-            $totalCart += $cart['line_subtotal'];
-        }
+		$freeShiping = false;
 
-        foreach (WC()->cart->get_coupons() as $cp) {
-            if ($cp->get_free_shipping() && $totalCart >= $cp->amount) {
-                $freeShiping = true;
-            }
-        }
+		foreach ( WC()->cart->cart_contents as $cart ) {
+			$totalCart += $cart['line_subtotal'];
+		}
 
-        if ($freeShiping) {
-            return array(
-                'id' => 'free_shipping',
-                'label' => 'Frete grátis',
-                'cost' => 0,
-                'calc_tax' => 'per_item',
-                'meta_data' => array(
-                    'delivery_time' => '',
-                    'company' => ''
-                )
-            );
-        }
+		foreach ( WC()->cart->get_coupons() as $cp ) {
+			if ( $cp->get_free_shipping() && $totalCart >= $cp->amount ) {
+				$freeShiping = true;
+			}
+		}
 
-        return false;
-    }
+		if ( $freeShiping ) {
+			return array(
+				'id'        => 'free_shipping',
+				'label'     => 'Frete grátis',
+				'cost'      => 0,
+				'calc_tax'  => 'per_item',
+				'meta_data' => array(
+					'delivery_time' => '',
+					'company'       => '',
+				),
+			);
+		}
+
+		return false;
+	}
 }

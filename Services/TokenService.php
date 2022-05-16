@@ -4,78 +4,74 @@ namespace Services;
 
 use Models\Token;
 
-class TokenService
-{
-    /**
-     * Get token Melhor Envio.
-     *
-     * @return string $token
-     */
-    public function get()
-    {
-        $tokenData = (new Token())->get();
+class TokenService {
 
-        if (!$this->isValid($tokenData)) {
-            return false;
-        }
+	/**
+	 * Get token Melhor Envio.
+	 *
+	 * @return string $token
+	 */
+	public function get() {
+		$tokenData = ( new Token() )->get();
 
-        return $tokenData;
-    }
+		if ( ! $this->isValid( $tokenData ) ) {
+			return false;
+		}
 
-    /**
-     * Service to save token Melhor Envio.
-     *
-     * @param string $token
-     * @param string $tokenSandbox
-     * @param string $tokenEnvironment
-     * @return bool
-     */
-    public function save($token, $tokenSandbox, $tokenEnvironment)
-    {
-        $result = (new Token())->save($token, $tokenSandbox, $tokenEnvironment);
+		return $tokenData;
+	}
 
-        (new ClearDataStored())->clear();
-        (new SessionNoticeService())->removeNoticeTokenInvalid();
+	/**
+	 * Service to save token Melhor Envio.
+	 *
+	 * @param string $token
+	 * @param string $tokenSandbox
+	 * @param string $tokenEnvironment
+	 * @return bool
+	 */
+	public function save( $token, $tokenSandbox, $tokenEnvironment ) {
+		$result = ( new Token() )->save( $token, $tokenSandbox, $tokenEnvironment );
 
-        return (!empty($result['token']) && !empty($result['token_environment']));
-    }
+		( new ClearDataStored() )->clear();
+		( new SessionNoticeService() )->removeNoticeTokenInvalid();
 
-    /**
-     * function used in test to verify if has tokens.
-     *
-     * @return array
-     */
-    public function check()
-    {
-        $dataToken = $this->get();
+		return ( ! empty( $result['token'] ) && ! empty( $result['token_environment'] ) );
+	}
 
-        return [
-            'environment' => $dataToken['token_environment'],
-            'production' => substr($dataToken['token'], 0, 30) . '...',
-            'sandbox' => substr($dataToken['token_sandbox'], 0, 30) . '...'
-        ];
-    }
+	/**
+	 * function used in test to verify if has tokens.
+	 *
+	 * @return array
+	 */
+	public function check() {
+		$dataToken = $this->get();
 
-    /**
-     * function to check if user has token valid
-     *
-     * @param array $dataToken
-     * @return boolean
-     */
-    public function isValid($dataToken)
-    {
-        if (empty($dataToken)) {
-            return false;
-        }
+		return array(
+			'environment' => $dataToken['token_environment'],
+			'production'  => substr( $dataToken['token'], 0, 30 ) . '...',
+			'sandbox'     => substr( $dataToken['token_sandbox'], 0, 30 ) . '...',
+		);
+	}
 
-        $token = ($dataToken['token_environment'] == Token::SANDBOX)
-            ? $dataToken['token_sandbox']
-            : $dataToken['token'];
+	/**
+	 * function to check if user has token valid
+	 *
+	 * @param array $dataToken
+	 * @return boolean
+	 */
+	public function isValid( $dataToken ) {
+		if ( empty( $dataToken ) ) {
+			return false;
+		}
 
-        if (empty($token)) {
-            return false;
-        }
+		$token = ( $dataToken['token_environment'] == Token::SANDBOX )
+			? $dataToken['token_sandbox']
+			: $dataToken['token'];
 
-        return true;
-    }
+		if ( empty( $token ) ) {
+			return false;
+		}
+
+		return true;
+	}
 }

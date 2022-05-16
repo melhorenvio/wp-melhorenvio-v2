@@ -2,34 +2,32 @@
 
 namespace Models;
 
-class Log 
-{
-    /**
-     * @return void
-     */
-    public function register($id, $type, $body, $response) 
-    {
-        $log = array(
-            'id'       => $id,
-            'date'     => date('Y-m-d h:i:s'),
-            'type'     => $type,
-            'body'     => $body,
-            'response' => $response
-        );
+class Log {
 
-        add_post_meta($id, 'melhor_envio_log_order', $log);
-    }
+	/**
+	 * @return void
+	 */
+	public function register( $id, $type, $body, $response ) {
+		$log = array(
+			'id'       => $id,
+			'date'     => date( 'Y-m-d h:i:s' ),
+			'type'     => $type,
+			'body'     => $body,
+			'response' => $response,
+		);
 
-    public function getRegister($id)
-    {
-        $logs = get_post_meta($id, 'melhor_envio_log_order');
+		add_post_meta( $id, 'melhor_envio_log_order', $log );
+	}
 
-        $response = array();
+	public function getRegister( $id ) {
+		$logs = get_post_meta( $id, 'melhor_envio_log_order' );
 
-        foreach ($logs as $log) {
-            $response[] = $log;
-        }
+		$response = array();
 
-        return $response;
-    }
+		foreach ( $logs as $log ) {
+			$response[] = $log;
+		}
+
+		return $response;
+	}
 }

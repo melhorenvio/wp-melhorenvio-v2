@@ -4,82 +4,81 @@ namespace Models;
 
 use Services\OrderQuotationService;
 
-class Order
-{
-    // Não confundir esses status com os status utlizados no Melhor Envio.
+class Order {
 
-    const STATUS_GENERATED = 'generated';
+	// Não confundir esses status com os status utlizados no Melhor Envio.
 
-    const STATUS_RELEASED = 'released';
+	const STATUS_GENERATED = 'generated';
 
-    const STATUS_PAID = 'paid';
+	const STATUS_RELEASED = 'released';
 
-    const STATUS_PENDING = 'pending';
+	const STATUS_PAID = 'paid';
 
-    private $id;
+	const STATUS_PENDING = 'pending';
 
-    /**
-     * @param int $id
-     */
-    public function __construct($id = null)
-    {
-        try {
+	private $id;
 
-            $orderWc = new \WC_Order($id);
+	/**
+	 * @param int $id
+	 */
+	public function __construct( $id = null ) {
+		try {
 
-            $data = $orderWc->get_data();
+			$orderWc = new \WC_Order( $id );
 
-            $this->id = $id;
+			$data = $orderWc->get_data();
 
-            $this->address = $data['shipping'];
+			$this->id = $id;
 
-            $this->products = $this->getProducts();
+			$this->address = $data['shipping'];
 
-            $this->total = 0;
+			$this->products = $this->getProducts();
 
-            $this->shipping_total = 0;
+			$this->total = 0;
 
-            $this->to = $data['billing'];
+			$this->shipping_total = 0;
 
-            $this->cotation = (array) $this->getCotation();
-        } catch (\Exception $e) {
-        }
-    }
+			$this->to = $data['billing'];
 
-    /**
-     * Retrieve all products in Order.
-     *
-     * @param int $id
-     * @return object
-     */
-    protected function getProducts()
-    {
-        $orderWc = new \WC_Order($this->id);
-        $order_items = $orderWc->get_items();
-        $products = [];
-        foreach ($order_items as $product) {
-            $data = $product->get_data();
-            $products[] = (object) [
-                'id' => $data['product_id'],
-                'variation_id' => $data['variation_id'],
-                'name' => $data['name'],
-                'quantity' => $data['quantity'],
-                'total' => $data['total']
-            ];
-        }
-        return $products;
-    }
+			$this->cotation = (array) $this->getCotation();
+		} catch ( \Exception $e ) {
+		}
+	}
 
-    /**
-     * Retrieve cotation.
-     *
-     * @param int $id
-     * @return object
-     */
-    public function getCotation($id = null)
-    {
-        if ($id) $this->id = $id;
+	/**
+	 * Retrieve all products in Order.
+	 *
+	 * @param int $id
+	 * @return object
+	 */
+	protected function getProducts() {
+		$orderWc     = new \WC_Order( $this->id );
+		$order_items = $orderWc->get_items();
+		$products    = array();
+		foreach ( $order_items as $product ) {
+			$data       = $product->get_data();
+			$products[] = (object) array(
+				'id'           => $data['product_id'],
+				'variation_id' => $data['variation_id'],
+				'name'         => $data['name'],
+				'quantity'     => $data['quantity'],
+				'total'        => $data['total'],
+			);
+		}
+		return $products;
+	}
 
-        return (new OrderQuotationService())->getQuotation($this->id);
-    }
+	/**
+	 * Retrieve cotation.
+	 *
+	 * @param int $id
+	 * @return object
+	 */
+	public function getCotation( $id = null ) {
+		if ( $id ) {
+			$this->id = $id;
+		}
+
+		return ( new OrderQuotationService() )->getQuotation( $this->id );
+	}
 }

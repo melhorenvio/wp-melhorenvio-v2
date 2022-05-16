@@ -2,67 +2,64 @@
 
 namespace Models;
 
-class Option
-{
-    const OPTION_RECEIPT = 'melhorenvio_ar';
+class Option {
 
-    const OPTION_OWN_HAND = 'melhorenvio_mp';
+	const OPTION_RECEIPT = 'melhorenvio_ar';
 
-    const OPTION_INSURANCE_VALUE = 'melhorenvio_vs';
+	const OPTION_OWN_HAND = 'melhorenvio_mp';
 
-    /**
-     * @return void
-     */
-    public function get()
-    {
-        $options = get_option('melhorenvio_options');
+	const OPTION_INSURANCE_VALUE = 'melhorenvio_vs';
 
-        if (!$options) {
-            return [
-                'tax' => 0,
-                'time' => 0
-            ];
-        }
+	/**
+	 * @return void
+	 */
+	public function get() {
+		$options = get_option( 'melhorenvio_options' );
 
-        return $options;
-    }
+		if ( ! $options ) {
+			return array(
+				'tax'  => 0,
+				'time' => 0,
+			);
+		}
 
-    /**
-     * Function for receiving quote options (AR and MP)
-     *
-     * @return object
-     */
-    public function getOptions()
-    {
-        $receipt = get_option(self::OPTION_RECEIPT);
-        $ownHand = get_option(self::OPTION_OWN_HAND);
-        $insuranceValue = get_option(self::OPTION_INSURANCE_VALUE);
+		return $options;
+	}
 
-        return (object) array(
-            'receipt' => filter_var($receipt, FILTER_VALIDATE_BOOLEAN),
-            'own_hand' => filter_var($ownHand, FILTER_VALIDATE_BOOLEAN),
-            'insurance_value' => filter_var($insuranceValue, FILTER_VALIDATE_BOOLEAN)
-        );
-    }
+	/**
+	 * Function for receiving quote options (AR and MP)
+	 *
+	 * @return object
+	 */
+	public function getOptions() {
+		$receipt        = get_option( self::OPTION_RECEIPT );
+		$ownHand        = get_option( self::OPTION_OWN_HAND );
+		$insuranceValue = get_option( self::OPTION_INSURANCE_VALUE );
 
-    /**
-     * @param array $options
-     * @return void
-     */
-    public function save($options)
-    {
-        $data = [
-            'tax' => floatval($options['tax']),
-            'time' => intval($options['time'])
-        ];
+		return (object) array(
+			'receipt'         => filter_var( $receipt, FILTER_VALIDATE_BOOLEAN ),
+			'own_hand'        => filter_var( $ownHand, FILTER_VALIDATE_BOOLEAN ),
+			'insurance_value' => filter_var( $insuranceValue, FILTER_VALIDATE_BOOLEAN ),
+		);
+	}
 
-        delete_option('melhorenvio_options');
-        add_option('melhorenvio_options', $data);
+	/**
+	 * @param array $options
+	 * @return void
+	 */
+	public function save( $options ) {
+		$data = array(
+			'tax'  => floatval( $options['tax'] ),
+			'time' => intval( $options['time'] ),
+		);
 
-        return [
-            'success' => true,
-            'tax' => $data['tax'],
-            'time' => $data['time']
-        ];
-    }
+		delete_option( 'melhorenvio_options' );
+		add_option( 'melhorenvio_options', $data );
+
+		return array(
+			'success' => true,
+			'tax'     => $data['tax'],
+			'time'    => $data['time'],
+		);
+	}
 }

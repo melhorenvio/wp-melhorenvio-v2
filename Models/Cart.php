@@ -4,47 +4,46 @@ namespace Models;
 
 use Helpers\DimensionsHelper;
 
-class Cart
-{
-    /**
-     * Function to get products inserted in the shopping cart.
-     *
-     * @return array
-     */
-    public function getProductsOnCart()
-    {
-        global $woocommerce;
+class Cart {
 
-        $items = $woocommerce->cart->get_cart();
+	/**
+	 * Function to get products inserted in the shopping cart.
+	 *
+	 * @return array
+	 */
+	public function getProductsOnCart() {
+		global $woocommerce;
 
-        $products = array();
+		$items = $woocommerce->cart->get_cart();
 
-        foreach ($items as $itemProduct) {
-            $productId = ($itemProduct['variation_id'] != 0)
-                ? $itemProduct['variation_id']
-                : $itemProduct['product_id'];
+		$products = array();
 
-            $productInfo = wc_get_product($productId);
+		foreach ( $items as $itemProduct ) {
+			$productId = ( $itemProduct['variation_id'] != 0 )
+				? $itemProduct['variation_id']
+				: $itemProduct['product_id'];
 
-            if (empty($productInfo)) {
-                continue;
-            }
+			$productInfo = wc_get_product( $productId );
 
-            $data = $productInfo->get_data();
+			if ( empty( $productInfo ) ) {
+				continue;
+			}
 
-            $products[] = (object) array(
-                'id'           => $itemProduct['product_id'],
-                'variation_id' => $itemProduct['variation_id'],
-                'name'         => $data['name'],
-                'price'        => $productInfo->get_price(),
-                'height'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_height()),
-                'width'        => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_width()),
-                'length'       => DimensionsHelper::convertUnitDimensionToCentimeter($productInfo->get_length()),
-                'weight'       => DimensionsHelper::convertWeightUnit($productInfo->get_weight()),
-                'quantity'     => (isset($itemProduct['quantity'])) ? intval($itemProduct['quantity']) : 1,
-            );
-        }
+			$data = $productInfo->get_data();
 
-        return (object) $products;
-    }
+			$products[] = (object) array(
+				'id'           => $itemProduct['product_id'],
+				'variation_id' => $itemProduct['variation_id'],
+				'name'         => $data['name'],
+				'price'        => $productInfo->get_price(),
+				'height'       => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_height() ),
+				'width'        => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_width() ),
+				'length'       => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_length() ),
+				'weight'       => DimensionsHelper::convertWeightUnit( $productInfo->get_weight() ),
+				'quantity'     => ( isset( $itemProduct['quantity'] ) ) ? intval( $itemProduct['quantity'] ) : 1,
+			);
+		}
+
+		return (object) $products;
+	}
 }

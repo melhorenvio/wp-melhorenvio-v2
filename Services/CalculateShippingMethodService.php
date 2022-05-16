@@ -8,303 +8,292 @@ use Models\ShippingService;
 use Helpers\PostalCodeHelper;
 use Services\WooCommerceBundleProductsService;
 
-class CalculateShippingMethodService
-{
-    /**
-     * Constant for delivery class of any class
-     */
-    const ANY_DELIVERY = -1;
+class CalculateShippingMethodService {
 
-    /**
-     * Constant for no delivery class
-     */
+	/**
+	 * Constant for delivery class of any class
+	 */
+	const ANY_DELIVERY = -1;
 
-    const WITHOUT_DELIVERY = 0;
+	/**
+	 * Constant for no delivery class
+	 */
 
-    /**
-     * Constant that defines the quantity of items in a shipment that it considers to have multiple volumes
-     */
-    const QUANTITY_DEFINE_VOLUME = 2;
+	const WITHOUT_DELIVERY = 0;
 
-    /**
-     * Function to carry out the freight quote in the Melhor Envio api.
-     *
-     * @param array $package
-     * @param int $code
-     * @param int $id
-     * @param string $company
-     * @param string $title
-     * @param float $taxExtra
-     * @param int $timeExtra
-     * @param int $percent
-     * @return bool
-     */
-    public function calculateShipping($package = [], $code, $id, $company, $title, $taxExtra, $timeExtra, $percent)
-    {
-        $to = PostalCodeHelper::postalcode($package['destination']['postcode']);
-        if (strlen($to) != PostalCodeHelper::SIZE_POSTAL_CODE) {
-            return false;
-        }
+	/**
+	 * Constant that defines the quantity of items in a shipment that it considers to have multiple volumes
+	 */
+	const QUANTITY_DEFINE_VOLUME = 2;
 
-        $products = (isset($package['contents']))
-            ? $package['contents']
-            : (new CartWooCommerceService())->getProducts();
+	/**
+	 * Function to carry out the freight quote in the Melhor Envio api.
+	 *
+	 * @param array  $package
+	 * @param int    $code
+	 * @param int    $id
+	 * @param string $company
+	 * @param string $title
+	 * @param float  $taxExtra
+	 * @param int    $timeExtra
+	 * @param int    $percent
+	 * @return bool
+	 */
+	public function calculateShipping( $package = array(), $code, $id, $company, $title, $taxExtra, $timeExtra, $percent ) {
+		$to = PostalCodeHelper::postalcode( $package['destination']['postcode'] );
+		if ( strlen( $to ) != PostalCodeHelper::SIZE_POSTAL_CODE ) {
+			return false;
+		}
 
-        if (WooCommerceBundleProductsService::isWooCommerceProductBundle($products)) {
-            $products = (new WooCommerceBundleProductsService())->manageProductsBundle($products);
-        }
+		$products = ( isset( $package['contents'] ) )
+			? $package['contents']
+			: ( new CartWooCommerceService() )->getProducts();
 
-        $result = (new QuotationService())->calculateQuotationByProducts(
-            $products,
-            $to,
-            $code
-        );
+		if ( WooCommerceBundleProductsService::isWooCommerceProductBundle( $products ) ) {
+			$products = ( new WooCommerceBundleProductsService() )->manageProductsBundle( $products );
+		}
 
-        if (is_array($result)) {
-            $result = $this->extractOnlyQuotationByService($result, $code);
-        }
+		$result = ( new QuotationService() )->calculateQuotationByProducts(
+			$products,
+			$to,
+			$code
+		);
 
-        if ($result) {
-            if (isset($result->price) && isset($result->name)) {
-                if ($this->isCorreios($code) && $this->hasMultipleVolumes($result)) {
-                    return false;
-                }
+		if ( is_array( $result ) ) {
+			$result = $this->extractOnlyQuotationByService( $result, $code );
+		}
 
-                $additionalData  = (new ShippingClassService())->getExtrasOnCart();
-                
-                if (!empty($additionalData['taxExtra'])) {
-                    $taxExtra = ($additionalData['taxExtra'] >= $taxExtra)
-                        ? $additionalData['taxExtra']
-                        : $taxExtra;
-                }
+		if ( $result ) {
+			if ( isset( $result->price ) && isset( $result->name ) ) {
+				if ( $this->isCorreios( $code ) && $this->hasMultipleVolumes( $result ) ) {
+					return false;
+				}
 
-                if (!empty($additionalData['timeExtra'])) {
-                    $timeExtra = ($additionalData['timeExtra'] >= $timeExtra)
-                        ? $additionalData['timeExtra']
-                        : $timeExtra;
-                }
+				$additionalData = ( new ShippingClassService() )->getExtrasOnCart();
 
-                if (!empty($additionalData['percent'])) {
-                    $percent = ($additionalData['percent'] >= $percent)
-                        ? $additionalData['percent']
-                        : $percent;
-                }
+				if ( ! empty( $additionalData['taxExtra'] ) ) {
+					$taxExtra = ( $additionalData['taxExtra'] >= $taxExtra )
+						? $additionalData['taxExtra']
+						: $taxExtra;
+				}
 
-                $rate = [
-                    'id' => $id,
-                    'label' => $title . TimeHelper::label(
-                        $result->delivery_range,
-                        $timeExtra
-                    ),
-                    'cost' => MoneyHelper::cost(
-                        $result->price,
-                        $taxExtra,
-                        $percent
-                    ),
-                    'calc_tax' => 'per_item',
-                    'meta_data' => [
-                        'delivery_time' => TimeHelper::label(
-                            $result->delivery_range,
-                            $timeExtra
-                        ),
-                        'price' => MoneyHelper::price(
-                            $result->price,
-                            $taxExtra,
-                            $percent
-                        ),
-                        'company' => $company
-                    ]
-                ];
-            }
+				if ( ! empty( $additionalData['timeExtra'] ) ) {
+					$timeExtra = ( $additionalData['timeExtra'] >= $timeExtra )
+						? $additionalData['timeExtra']
+						: $timeExtra;
+				}
 
-            if (!empty($rate)) {
-                return $rate;
-            }
-        }
+				if ( ! empty( $additionalData['percent'] ) ) {
+					$percent = ( $additionalData['percent'] >= $percent )
+						? $additionalData['percent']
+						: $percent;
+				}
 
-        return false;
-    }
+				$rate = array(
+					'id'        => $id,
+					'label'     => $title . TimeHelper::label(
+						$result->delivery_range,
+						$timeExtra
+					),
+					'cost'      => MoneyHelper::cost(
+						$result->price,
+						$taxExtra,
+						$percent
+					),
+					'calc_tax'  => 'per_item',
+					'meta_data' => array(
+						'delivery_time' => TimeHelper::label(
+							$result->delivery_range,
+							$timeExtra
+						),
+						'price'         => MoneyHelper::price(
+							$result->price,
+							$taxExtra,
+							$percent
+						),
+						'company'       => $company,
+					),
+				);
+			}
 
-    /**
-     * Check if it has more than one volume
-     *
-     * @param stdClass $quotation
-     * @return boolean
-     */
-    public function hasMultipleVolumes($quotation)
-    {
-        if (!isset($quotation->packages)) {
-            return false;
-        }
+			if ( ! empty( $rate ) ) {
+				return $rate;
+			}
+		}
 
-        return count($quotation->packages) >= self::QUANTITY_DEFINE_VOLUME;
-    }
+		return false;
+	}
 
-    /**
-     * Check if it is "Correios"
-     *
-     * @param int $code
-     * @return boolean
-     */
-    public function isCorreios($code)
-    {
-        return in_array($code, ShippingService::SERVICES_CORREIOS);
-    }
+	/**
+	 * Check if it has more than one volume
+	 *
+	 * @param stdClass $quotation
+	 * @return boolean
+	 */
+	public function hasMultipleVolumes( $quotation ) {
+		if ( ! isset( $quotation->packages ) ) {
+			return false;
+		}
 
-    /**
-     * Check if it is "Jadlog"
-     *
-     * @param int $code
-     * @return boolean
-     */
-    public function isJadlog($code)
-    {
-        return in_array($code, ShippingService::SERVICES_JADLOG);
-    }
+		return count( $quotation->packages ) >= self::QUANTITY_DEFINE_VOLUME;
+	}
 
-    /**
-     * Check if it is "Azul Cargo"
-     *
-     * @param int $code
-     * @return boolean
-     */
-    public function isAzulCargo($code)
-    {
-        return in_array($code, ShippingService::SERVICES_AZUL);
-    }
+	/**
+	 * Check if it is "Correios"
+	 *
+	 * @param int $code
+	 * @return boolean
+	 */
+	public function isCorreios( $code ) {
+		return in_array( $code, ShippingService::SERVICES_CORREIOS );
+	}
 
-    /**
-     * Check if it is "LATAM Cargo"
-     *
-     * @param int $code
-     * @return boolean
-     */
-    public function isLatamCargo($code)
-    {
-        return in_array($code, ShippingService::SERVICES_LATAM);
-    }
+	/**
+	 * Check if it is "Jadlog"
+	 *
+	 * @param int $code
+	 * @return boolean
+	 */
+	public function isJadlog( $code ) {
+		return in_array( $code, ShippingService::SERVICES_JADLOG );
+	}
 
-    /**
-     * Function to extract the quotation by the shipping method
-     *
-     * @param array $quotations
-     * @param int $service
-     * @return object
-     */
-    public function extractOnlyQuotationByService($quotations, $service)
-    {
-        $quotationByService = array_filter(
-            $quotations,
-            function ($item) use ($service) {
-                if (isset($item->id)  && $item->id == $service) {
-                    return $item;
-                }
-            }
-        );
+	/**
+	 * Check if it is "Azul Cargo"
+	 *
+	 * @param int $code
+	 * @return boolean
+	 */
+	public function isAzulCargo( $code ) {
+		return in_array( $code, ShippingService::SERVICES_AZUL );
+	}
 
-        if (!is_array($quotationByService)) {
-            return false;
-        }
+	/**
+	 * Check if it is "LATAM Cargo"
+	 *
+	 * @param int $code
+	 * @return boolean
+	 */
+	public function isLatamCargo( $code ) {
+		return in_array( $code, ShippingService::SERVICES_LATAM );
+	}
 
-        return end($quotationByService);
-    }
+	/**
+	 * Function to extract the quotation by the shipping method
+	 *
+	 * @param array $quotations
+	 * @param int   $service
+	 * @return object
+	 */
+	public function extractOnlyQuotationByService( $quotations, $service ) {
+		$quotationByService = array_filter(
+			$quotations,
+			function ( $item ) use ( $service ) {
+				if ( isset( $item->id ) && $item->id == $service ) {
+					return $item;
+				}
+			}
+		);
 
-    /**
-     * Get shipping classes options.
-     *
-     * @return array
-     */
-    public function getShippingClassesOptions()
-    {
-        $shippingClasses = WC()->shipping->get_shipping_classes();
-        $options = array(
-            self::WITHOUT_DELIVERY  => 'Sem classe de entrega',
-        );
+		if ( ! is_array( $quotationByService ) ) {
+			return false;
+		}
 
-        if (!empty($shippingClasses)) {
-            $options += wp_list_pluck($shippingClasses, 'name', 'term_id');
-        }
+		return end( $quotationByService );
+	}
 
-        return $options;
-    }
+	/**
+	 * Get shipping classes options.
+	 *
+	 * @return array
+	 */
+	public function getShippingClassesOptions() {
+		$shippingClasses = WC()->shipping->get_shipping_classes();
+		$options         = array(
+			self::WITHOUT_DELIVERY => 'Sem classe de entrega',
+		);
 
-    /**
-     * Check if package uses only the selected shipping class.
-     *
-     * @param  array $package Cart package.
-     * @param int $shippingClassId
-     * @return bool
-     */
-    public function needShowShippginMethod($package, $shippingClassId)
-    {
-        $show = false;
+		if ( ! empty( $shippingClasses ) ) {
+			$options += wp_list_pluck( $shippingClasses, 'name', 'term_id' );
+		}
 
-        if (!empty($package['cotationProduct'])) {
-            foreach ($package['cotationProduct'] as $product) {
+		return $options;
+	}
 
-                if ($this->isProductWithouShippingClass($product->shipping_class_id, $shippingClassId)) {
-                    $show = true;
-                    break;
-                }
+	/**
+	 * Check if package uses only the selected shipping class.
+	 *
+	 * @param  array $package Cart package.
+	 * @param int   $shippingClassId
+	 * @return bool
+	 */
+	public function needShowShippginMethod( $package, $shippingClassId ) {
+		$show = false;
 
-                $show = ($product->shipping_class_id == $shippingClassId);
-            }
-            return $show;
-        }
+		if ( ! empty( $package['cotationProduct'] ) ) {
+			foreach ( $package['cotationProduct'] as $product ) {
 
-        foreach ($package['contents'] as $values) {
-            $product = $values['data'];
-            $qty     = $values['quantity'];
-            if ($qty > 0 && $product->needs_shipping()) {
-                if ($this->isProductWithouShippingClass($product->get_shipping_class_id(), $shippingClassId)) {
-                    $show = true;
-                    break;
-                }
-                $show = ($product->get_shipping_class_id() == $shippingClassId);
-            }
-        }
+				if ( $this->isProductWithouShippingClass( $product->shipping_class_id, $shippingClassId ) ) {
+					$show = true;
+					break;
+				}
 
-        return $show;
-    }
+				$show = ( $product->shipping_class_id == $shippingClassId );
+			}
+			return $show;
+		}
 
-    /**
-     * Function to check if product not has shipping class.
-     *
-     * @param int $productShippingClassId
-     * @param int $shippingClassId
-     * @return boolean
-     */
-    private function isProductWithouShippingClass($productShippingClassId, $shippingClassId)
-    {
-        $shippingsMehodsWithoutClass = [
-            self::ANY_DELIVERY,
-            self::WITHOUT_DELIVERY
-        ];
+		foreach ( $package['contents'] as $values ) {
+			$product = $values['data'];
+			$qty     = $values['quantity'];
+			if ( $qty > 0 && $product->needs_shipping() ) {
+				if ( $this->isProductWithouShippingClass( $product->get_shipping_class_id(), $shippingClassId ) ) {
+					$show = true;
+					break;
+				}
+				$show = ( $product->get_shipping_class_id() == $shippingClassId );
+			}
+		}
 
-        return (in_array($productShippingClassId, $shippingsMehodsWithoutClass) && in_array($shippingClassId, $shippingsMehodsWithoutClass));
-    }
+		return $show;
+	}
 
-    /**
-     * Function to check if the insured amount is mandatory
-     *
-     * @param bool $optionalInsuredAmount
-     * @param string $serviceId
-     * @return bool
-     */
-    public function insuranceValueIsRequired($optionalInsuredAmount, $serviceId)
-    {
-        if ($optionalInsuredAmount && is_null($serviceId)) {
-            return true;
-        }
+	/**
+	 * Function to check if product not has shipping class.
+	 *
+	 * @param int $productShippingClassId
+	 * @param int $shippingClassId
+	 * @return boolean
+	 */
+	private function isProductWithouShippingClass( $productShippingClassId, $shippingClassId ) {
+		$shippingsMehodsWithoutClass = array(
+			self::ANY_DELIVERY,
+			self::WITHOUT_DELIVERY,
+		);
 
-        if (!$this->isCorreios($serviceId)) {
-            return true;
-        }
+		return ( in_array( $productShippingClassId, $shippingsMehodsWithoutClass ) && in_array( $shippingClassId, $shippingsMehodsWithoutClass ) );
+	}
 
-        if (is_null($optionalInsuredAmount)) {
-            return true;
-        }
+	/**
+	 * Function to check if the insured amount is mandatory
+	 *
+	 * @param bool   $optionalInsuredAmount
+	 * @param string $serviceId
+	 * @return bool
+	 */
+	public function insuranceValueIsRequired( $optionalInsuredAmount, $serviceId ) {
+		if ( $optionalInsuredAmount && is_null( $serviceId ) ) {
+			return true;
+		}
 
-        return $optionalInsuredAmount;
-    }
+		if ( ! $this->isCorreios( $serviceId ) ) {
+			return true;
+		}
+
+		if ( is_null( $optionalInsuredAmount ) ) {
+			return true;
+		}
+
+		return $optionalInsuredAmount;
+	}
 }
