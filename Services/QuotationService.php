@@ -233,7 +233,8 @@ class QuotationService {
 			}
 		}
 
-		return md5(
+		return hash(
+			'512',
 			json_encode(
 				array(
 					'from'     => $payload->from->postal_code,
