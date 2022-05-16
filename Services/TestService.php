@@ -26,7 +26,7 @@ class TestService
             ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
-        if (sha1(SanitizeHelper::apply($_GET['hash'])) != '1a42c124c2816b70838292a7705e5b8ae78821a1') {
+        if (hash("sha512", SanitizeHelper::apply($_GET['hash'])) != 'd4ccf2fcc3a14764698d9b2fea940c9d42c5dfe6002f20df995b09590b39f83f1ec1712d506d51ca47648f77d0ae1caf25c85c042275422582fe067622e6d208') {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
             ], ResponseStatus::HTTP_UNAUTHORIZED);
