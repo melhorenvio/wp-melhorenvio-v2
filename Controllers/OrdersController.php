@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Services\OrdersProductsService;
 use Services\BuyerService;
 use Services\CartService;
@@ -22,7 +23,7 @@ class OrdersController
     public function getOrders()
     {
         unset($_GET['action']);
-        $orders = (new ListOrderService())->getList($_GET);
+        $orders = (new ListOrderService())->getList(SanitizeHelper::apply($_GET));
         return wp_send_json($orders, 200);
     }
 
@@ -48,9 +49,9 @@ class OrdersController
      */
     public function addCart()
     {
-        $postId = $_GET['post_id'];
+        $postId = SanitizeHelper::apply($_GET['post_id']);
 
-        $service = $_GET['service'];
+        $service = SanitizeHelper::apply($_GET['service']);
 
         $products = (new OrdersProductsService())->getProductsOrder($postId);
 
@@ -100,11 +101,11 @@ class OrdersController
             ], 412);
         }
 
-        $postId = $_GET['post_id'];
+        $postId = SanitizeHelper::apply($_GET['post_id']);
 
         $orderId = null;
 
-        $serviceId = $_GET['service_id'];
+        $serviceId = SanitizeHelper::apply($_GET['service_id']);
 
         $status = null;
 
@@ -202,7 +203,7 @@ class OrdersController
             ], 400);
         }
 
-        if (!(new CartService())->remove($_GET['id'], $_GET['order_id'])) {
+        if (!(new CartService())->remove(SanitizeHelper::apply($_GET['id']), SanitizeHelper::apply($_GET['order_id']))) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao remove o pedido do carrinho'
@@ -230,7 +231,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->cancel($_GET['post_id']);
+        $result = (new OrderService())->cancel(SanitizeHelper::apply($_GET['post_id']));
 
         if (empty(end($result)->canceled)) {
             return wp_send_json([
@@ -243,7 +244,7 @@ class OrdersController
             'success' => true,
             'message' => [sprintf(
                 "Pedido %s cancelado com sucesso",
-                $_GET['post_id']
+                SanitizeHelper::apply($_GET['post_id'])
             )]
         ], 200);
     }
@@ -256,7 +257,7 @@ class OrdersController
      */
     public function payTicket()
     {
-        $posts = explode(',', $_GET['id']);
+        $posts = explode(',', SanitizeHelper::apply($_GET['id']));
 
         $result = (new OrderService())->pay($posts);
 
@@ -282,7 +283,7 @@ class OrdersController
      */
     public function createTicket()
     {
-        $result = (new OrderService())->createLabel($_GET['id']);
+        $result = (new OrderService())->createLabel(SanitizeHelper::apply($_GET['id']));
 
         if (empty($result['order_id'])) {
             return wp_send_json([
@@ -306,7 +307,7 @@ class OrdersController
      */
     public function printTicket()
     {
-        $result = (new OrderService())->printLabel($_GET['id']);
+        $result = (new OrderService())->printLabel(SanitizeHelper::apply($_GET['id']));
 
         if (empty($result->url)) {
             return wp_send_json([
@@ -337,7 +338,7 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->buyOnClick($_GET['ids']);
+        $result = (new OrderService())->buyOnClick(SanitizeHelper::apply($_GET['ids']));
 
         if (isset($result['url'])) {
             return wp_send_json([
@@ -373,9 +374,9 @@ class OrdersController
         }
 
         $result = (new OrderInvoicesService())->insertInvoiceOrder(
-            $_GET['id'],
-            $_GET['key'],
-            $_GET['number']
+            SanitizeHelper::apply($_GET['id']),
+            SanitizeHelper::apply($_GET['key']),
+            SanitizeHelper::apply($_GET['number'])
         );
 
         if (!$result) {
@@ -385,7 +386,7 @@ class OrdersController
         }
 
         return wp_send_json([
-            'message' => (array) sprintf("Documentos do pedido %d atualizados", $_GET['id'])
+            'message' => (array) sprintf("Documentos do pedido %d atualizados", SanitizeHelper::apply($_GET['id']))
         ], 200);
     }
 }

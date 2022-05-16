@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Services\AgenciesService;
 
 class AgenciesController
@@ -21,7 +22,7 @@ class AgenciesController
             }
 
             return wp_send_json(
-                (new AgenciesService($_GET))->get(),
+                (new AgenciesService(SanitizeHelper::apply($_GET)))->get(),
                 200
             );
         } catch (\Exception $exception) {

@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Services\PayloadService;
 use Services\QuotationService;
 use Services\QuotationProductPageService;
@@ -50,7 +51,7 @@ class QuotationController
      */
     public function refreshCotation()
     {
-        $results = $this->makeCotationOrder($_GET['id']);
+        $results = $this->makeCotationOrder(SanitizeHelper::apply($_GET['id']));
         return wp_send_json(
             $results,
             200
@@ -64,7 +65,7 @@ class QuotationController
      */
     public function cotationProductPage()
     {
-        $data = $_POST['data'];
+        $data = SanitizeHelper::apply($_POST['data']);
 
         $this->isValidRequest($data);
 

@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Helpers\SanitizeHelper;
 use Models\Option;
 use Models\ResponseStatus;
 
@@ -25,7 +26,7 @@ class TestService
             ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
-        if (md5($_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
+        if (md5(SanitizeHelper::apply($_GET['hash'])) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
             ], ResponseStatus::HTTP_UNAUTHORIZED);
@@ -47,7 +48,7 @@ class TestService
             $product[] = $this->getProductToTest();
             $quotation = (new QuotationService())->calculateQuotationByProducts(
                 $product,
-                $_GET['postalcode'],
+                SanitizeHelper::apply($_GET['postalcode']),
                 null
             );
 
@@ -148,7 +149,7 @@ class TestService
     private function getProductToTest()
     {
         if (!empty($_GET['product'])) {
-            $_product = wc_get_product($_GET['product']);
+            $_product = wc_get_product(SanitizeHelper::apply($_GET['product']));
         }
 
         if (empty($_product)) {
@@ -159,7 +160,7 @@ class TestService
         $options = (new Option())->getOptions();
 
         $quantity = (!empty($_GET['quantity']))
-            ? intval($_GET['quantity'])
+            ? intval(SanitizeHelper::apply($_GET['quantity']))
             : self::DEFAULT_QUANTITY_PRODUCT;
 
         return [

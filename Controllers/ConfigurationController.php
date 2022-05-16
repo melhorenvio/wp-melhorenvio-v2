@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Models\Address;
 use Models\Agency;
 use Models\Store;
@@ -73,7 +74,7 @@ class ConfigurationController
         }
 
 
-        if (!(new Agency())->setAgency($_GET['id'])) {
+        if (!(new Agency())->setAgency(SanitizeHelper::apply($_GET['id']))) {
             return wp_send_json([
                 'success' => false,
                 'message' => 'Ocorreu um erro ao atualizar a agência selecionada'
@@ -114,7 +115,7 @@ class ConfigurationController
         }
 
         return wp_send_json(
-            (new Store())->setStore($_GET['id']),
+            (new Store())->setStore(SanitizeHelper::apply($_GET['id'])),
             200
         );
     }
@@ -168,7 +169,7 @@ class ConfigurationController
         }
 
         delete_option('melhor_envio_path_plugins');
-        add_option('melhor_envio_path_plugins', $_GET['path']);
+        add_option('melhor_envio_path_plugins', SanitizeHelper::apply($_GET['path']));
     }
 
     public function getPathPlugins()
@@ -200,7 +201,7 @@ class ConfigurationController
     }
 
     /**
-     * Function to obtain which hook the calculator will 
+     * Function to obtain which hook the calculator will
      * be displayed on the product screen
      *
      * @return string
@@ -258,8 +259,7 @@ class ConfigurationController
      */
     public function saveAll()
     {
-        $response = (new ConfigurationsService())->saveConfigurations($_POST);
-
+        $response = (new ConfigurationsService())->saveConfigurations(SanitizeHelper::apply($_POST));
         return wp_send_json($response, 200);
     }
 }

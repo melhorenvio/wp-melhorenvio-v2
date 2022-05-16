@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Services\TokenService;
 
 class TokenController
@@ -43,9 +44,9 @@ class TokenController
         }
 
         $result = (new TokenService())->save(
-            $_POST['token'],
-            $_POST['token_sandbox'],
-            $_POST['environment']
+            SanitizeHelper::apply($_POST['token']),
+            SanitizeHelper::apply($_POST['token_sandbox']),
+            SanitizeHelper::apply($_POST['environment'])
         );
 
         if ($result) {

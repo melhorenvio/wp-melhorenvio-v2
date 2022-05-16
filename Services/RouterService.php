@@ -16,6 +16,7 @@ use Controllers\PayloadsController;
 use Controllers\CartController;
 use Controllers\NoticeFormController;
 use Controllers\RequestsController;
+use Helpers\SanitizeHelper;
 use Models\Version;
 
 /**
@@ -186,7 +187,7 @@ class RouterService
                         'message' => self::MESSAGE_ERROR_NOT_POST_ID
                     ], 400);
                 }
-                return $locationController->getAddressByPostalCode($_GET['postal_code']);
+                return $locationController->getAddressByPostalCode(SanitizeHelper::apply($_GET['postal_code']));
             });
         }
     }
@@ -219,7 +220,7 @@ class RouterService
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->show($_GET['post_id']);
+            return $payloadsController->show(SanitizeHelper::apply($_GET['post_id']));
         });
 
         add_action('wp_ajax_get_payload', function () use ($payloadsController) {
@@ -229,7 +230,7 @@ class RouterService
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->showLogged($_GET['post_id']);
+            return $payloadsController->showLogged(SanitizeHelper::apply($_GET['post_id']));
         });
 
         add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
@@ -239,7 +240,7 @@ class RouterService
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->destroy($_GET['post_id']);
+            return $payloadsController->destroy(SanitizeHelper::apply($_GET['post_id']));
         });
 
         add_action('wp_ajax_get_payload_cart', function () use ($payloadsController) {
@@ -257,7 +258,10 @@ class RouterService
                 ], 400);
             }
             
-            return $payloadsController->showPayloadCart($_GET['post_id'], $_GET['service']);
+            return $payloadsController->showPayloadCart(
+                SanitizeHelper::apply($_GET['post_id']),
+                SanitizeHelper::apply($_GET['service'])
+            );
         });
     }
 
@@ -273,7 +277,7 @@ class RouterService
         });
 
         add_action('wp_ajax_remove_notices', function () {
-            (new SessionNoticeService())->remove($_GET['id']);
+            (new SessionNoticeService())->remove(SanitizeHelper::apply($_GET['id']));
         });
     }
 
@@ -289,7 +293,7 @@ class RouterService
                 ]);
             }
 
-            $address = $locationService->getAddressByPostalCode($_GET['postcode']);
+            $address = $locationService->getAddressByPostalCode(SanitizeHelper::apply($_GET['postcode']));
 
             $userData = (new UserWooCommerceDataService())->set($address, true);
 

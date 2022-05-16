@@ -2,20 +2,21 @@
 
 namespace Controllers;
 
+use Helpers\SanitizeHelper;
 use Services\ManageRequestService;
 
-class RequestsController 
+class RequestsController
 {
     /**
      * Controller function to get items in log requests
-     * 
+     *
      * @return array
      */
     public function getLogs()
     {
         $ordering = 'time';
         if (isset($_GET['ordering']) && in_array($_GET['ordering'], ['time', 'status_code', 'type', 'date'])) {
-            $ordering = $_GET['ordering'];
+            $ordering = SanitizeHelper::apply($_GET['ordering']);
         }
 
         return wp_send_json([
@@ -25,7 +26,7 @@ class RequestsController
 
     /**
      * Controller function to delte all  items in log requests
-     * 
+     *
      * @return array
      */
     public function deleteLogs()
