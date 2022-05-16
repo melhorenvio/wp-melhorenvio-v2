@@ -245,7 +245,7 @@ class RouterService
             return $payloadsController->destroy($post_id);
         });
 
-        add_action('wp_ajax_get_payload_cart', function () use ($payloadsController, $post_id) {
+        add_action('wp_ajax_get_payload_cart', function () use ($payloadsController) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
