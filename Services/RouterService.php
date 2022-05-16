@@ -213,37 +213,39 @@ class RouterService
     {
         $payloadsController = new PayloadsController();
 
-        add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController) {
+        $post_id = SanitizeHelper::apply($_GET['post_id']);
+
+        add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController, $post_id) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->show(SanitizeHelper::apply($_GET['post_id']));
+            return $payloadsController->show($post_id);
         });
 
-        add_action('wp_ajax_get_payload', function () use ($payloadsController) {
+        add_action('wp_ajax_get_payload', function () use ($payloadsController, $post_id) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->showLogged(SanitizeHelper::apply($_GET['post_id']));
+            return $payloadsController->showLogged($post_id);
         });
 
-        add_action('wp_ajax_destroy_payload', function () use ($payloadsController) {
+        add_action('wp_ajax_destroy_payload', function () use ($payloadsController, $post_id) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,
                     'message' => self::MESSAGE_ERROR_NOT_POST_ID
                 ], 400);
             }
-            return $payloadsController->destroy(SanitizeHelper::apply($_GET['post_id']));
+            return $payloadsController->destroy($post_id);
         });
 
-        add_action('wp_ajax_get_payload_cart', function () use ($payloadsController) {
+        add_action('wp_ajax_get_payload_cart', function () use ($payloadsController, $post_id) {
             if (empty($_GET['post_id'])) {
                 return wp_send_json([
                     'error' => true,

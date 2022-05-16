@@ -231,7 +231,9 @@ class OrdersController
             ], 400);
         }
 
-        $result = (new OrderService())->cancel(SanitizeHelper::apply($_GET['post_id']));
+        $post_id = SanitizeHelper::apply($_GET['post_id']);
+
+        $result = (new OrderService())->cancel($post_id);
 
         if (empty(end($result)->canceled)) {
             return wp_send_json([
@@ -244,7 +246,7 @@ class OrdersController
             'success' => true,
             'message' => [sprintf(
                 "Pedido %s cancelado com sucesso",
-                SanitizeHelper::apply($_GET['post_id'])
+                $post_id
             )]
         ], 200);
     }
@@ -373,8 +375,10 @@ class OrdersController
             ], 400);
         }
 
+        $id = SanitizeHelper::apply($_GET['id']);
+
         $result = (new OrderInvoicesService())->insertInvoiceOrder(
-            SanitizeHelper::apply($_GET['id']),
+            $id,
             SanitizeHelper::apply($_GET['key']),
             SanitizeHelper::apply($_GET['number'])
         );
@@ -386,7 +390,7 @@ class OrdersController
         }
 
         return wp_send_json([
-            'message' => (array) sprintf("Documentos do pedido %d atualizados", SanitizeHelper::apply($_GET['id']))
+            'message' => (array) sprintf("Documentos do pedido %d atualizados", $id)
         ], 200);
     }
 }
