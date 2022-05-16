@@ -217,6 +217,7 @@ class QuotationService {
 	 * @return string
 	 */
 	private function generateHashQuotation( $payload ) {
+        
 		$products = array();
 
 		if ( ! empty( $payload->products ) ) {
