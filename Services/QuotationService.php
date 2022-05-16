@@ -131,7 +131,7 @@ class QuotationService
       
         $options = (new Option())->getOptions();
 
-        $cachedQuotations = $this->getSessionCachedQuotations($hash, $service);
+        $cachedQuotations = $this->getSessionCachedQuotations($hash);
 
         if (empty($cachedQuotations)) {
             $quotations =  $this->calculate($payload, $options->insurance_value);
@@ -184,10 +184,9 @@ class QuotationService
      * if it does not find false returns
      *
      * @param array $bodyQuotation
-     * @param int $service
      * @return bool|array
      */
-    private function getSessionCachedQuotations($hash, $service)
+    private function getSessionCachedQuotations($hash)
     {
         SessionHelper::initIfNotExists();
         
