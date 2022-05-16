@@ -25,7 +25,7 @@ class PackageService
             }
 
             if (isset($item->packages)) {
-                foreach ($item->packages as $key => $package) {
+                foreach ($item->packages as $package) {
                     $response[$item->id] = (object) [
                         'largura' => DimensionsHelper::convertUnitDimensionToCentimeter(
                             $package->dimensions->width
@@ -40,7 +40,7 @@ class PackageService
                     ];
                 }
             } elseif (isset($item->volumes)) {
-                foreach ($item->volumes as $key => $volume) {
+                foreach ($item->volumes as $volume) {
                     $response[$item->id] = (object) [
                         'largura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->width),
                         'altura' => DimensionsHelper::convertUnitDimensionToCentimeter($volume->height),
