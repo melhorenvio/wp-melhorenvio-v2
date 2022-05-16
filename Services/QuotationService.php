@@ -217,7 +217,6 @@ class QuotationService {
 	 * @return string
 	 */
 	private function generateHashQuotation( $payload ) {
-        
 		$products = array();
 
 		if ( ! empty( $payload->products ) ) {
@@ -234,7 +233,8 @@ class QuotationService {
 			}
 		}
 
-		return md5(
+		return hash(
+            'sha512',
 			json_encode(
 				array(
 					'from'     => $payload->from->postal_code,
