@@ -24,7 +24,7 @@ class NoticeFormController
      */
     public function hideForm()
     {
-        $data =  (new FormService())->hideForm();
+        $data =  (new NoticeFormService())->hideForm();
         return wp_send_json([
             'result' => $data
         ]);
