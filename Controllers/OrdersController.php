@@ -150,8 +150,6 @@ class OrdersController
             }
 
             $orderId = $cartResult['order_id'];
-
-            $status = $cartResult['status'];
         }
 
         $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
@@ -174,8 +172,6 @@ class OrdersController
                 'message' => (array) 'Ocorreu um erro ao pagar o pedido no Melhor Envio.',
                 'result' => $paymentResult
             ], 400);
-
-            $status = $paymentResult['status'];
         }
 
         $labelResult = (new OrderService())->createLabel($postId);
