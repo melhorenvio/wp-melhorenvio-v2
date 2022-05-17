@@ -31,12 +31,12 @@ class OrderService
     /**
      * Function to cancel order on api Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $response
      */
-    public function cancel($postId)
+    public function cancel($post_id)
     {
-        $orderId = $this->getOrderIdByPostId($postId);
+        $orderId = $this->getOrderIdByPostId($post_id);
 
         if (is_null($orderId)) {
             return [
@@ -51,7 +51,7 @@ class OrderService
             'description' => 'Cancelado pelo usuário'
         ];
 
-        (new OrderQuotationService())->removeDataQuotation($postId);
+        (new OrderQuotationService())->removeDataQuotation($post_id);
 
         return (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_CANCEL,
@@ -67,9 +67,9 @@ class OrderService
      * @param int $orderId
      * @return array $response
      */
-    public function info($postId)
+    public function info($post_id)
     {
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         if (!$data) {
             return [
@@ -90,12 +90,12 @@ class OrderService
     /**
      * Function to get details about order in api Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $response
      */
-    public function detail($postId)
+    public function detail($post_id)
     {
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         if (empty($data['order_id'])) {
             return [
@@ -134,8 +134,8 @@ class OrderService
         $wallet = 0;
         $orders = [];
 
-        foreach ($postsId as $postId) {
-            $orderId = $this->getOrderIdByPostId($postId);
+        foreach ($postsId as $post_id) {
+            $orderId = $this->getOrderIdByPostId($post_id);
 
             if (is_null($orderId)) {
                 continue;
@@ -183,11 +183,11 @@ class OrderService
     /**
      * Function to create a label on Melhor Envio.
      *
-     * @param array $postId
+     * @param array $post_id
      * @param $orderId
      * @return array $response
      */
-    public function payByOrderId($postId, $orderId)
+    public function payByOrderId($post_id, $orderId)
     {
         $wallet = 0;
         $orders = [];
@@ -224,7 +224,7 @@ class OrderService
         }
 
         $response = (new OrderQuotationService())->updateDataQuotation(
-            $postId,
+            $post_id,
             end($result->purchase->orders)->id,
             end($result->purchase->orders)->protocol,
             $result->purchase->status,
@@ -240,19 +240,19 @@ class OrderService
     /**
      * Function to create a label printble on melhor envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return void
      */
-    public function createLabel($postId)
+    public function createLabel($post_id)
     {
-        $orderId = $this->getOrderIdByPostId($postId);
+        $orderId = $this->getOrderIdByPostId($post_id);
 
         $body = [
             'orders' => (array) $orderId,
             'mode' => 'public'
         ];
 
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         if ($data['status'] == Order::STATUS_GENERATED) {
             return $data;
@@ -272,10 +272,10 @@ class OrderService
             ];
         }
 
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         $data = (new OrderQuotationService())->updateDataQuotation(
-            $postId,
+            $post_id,
             $data['order_id'],
             $data['protocol'],
             Order::STATUS_GENERATED,
@@ -287,9 +287,9 @@ class OrderService
         return $data;
     }
 
-    public function printLabel($postId)
+    public function printLabel($post_id)
     {
-        $orderId = $this->getOrderIdByPostId($postId);
+        $orderId = $this->getOrderIdByPostId($post_id);
 
         $body = [
             'orders' => (array) $orderId
@@ -309,10 +309,10 @@ class OrderService
             ];
         }
 
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         $data = (new OrderQuotationService())->updateDataQuotation(
-            $postId,
+            $post_id,
             $data['order_id'],
             $data['protocol'],
             Order::STATUS_RELEASED,
@@ -359,12 +359,12 @@ class OrderService
     /**
      * Function to get order_id by post_id.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return string $order_id
      */
-    public function getOrderIdByPostId($postId)
+    public function getOrderIdByPostId($post_id)
     {
-        $data = (new OrderQuotationService())->getData($postId);
+        $data = (new OrderQuotationService())->getData($post_id);
 
         if (!isset($data['order_id'])) {
             return null;
@@ -441,51 +441,51 @@ class OrderService
 
         $errors = [];
 
-        foreach ($posts as $postId) {
-            $data = (new OrderQuotationService())->getData($postId);
+        foreach ($posts as $post_id) {
+            $data = (new OrderQuotationService())->getData($post_id);
 
             if (empty($data) || is_null($data['order_id'])) {
-                $products = (new OrdersProductsService())->getProductsOrder($postId);
+                $products = (new OrdersProductsService())->getProductsOrder($post_id);
 
-                $to = (new BuyerService())->getDataBuyerByOrderId($postId);
+                $to = (new BuyerService())->getDataBuyerByOrderId($post_id);
 
-                $chooseMethod = (new Method())->getMethodShipmentSelected($postId);
+                $chooseMethod = (new Method())->getMethodShipmentSelected($post_id);
 
-                $data = (new cartService())->add($postId, $products, $to, $chooseMethod);
+                $data = (new cartService())->add($post_id, $products, $to, $chooseMethod);
 
                 if (isset($data['message'])) {
-                    $errors[$postId][] = $data['message'];
+                    $errors[$post_id][] = $data['message'];
                 }
             }
 
             if ($data['status'] == Order::STATUS_PENDING) {
-                $data = $this->payByOrderId($postId, $data['order_id']);
+                $data = $this->payByOrderId($post_id, $data['order_id']);
 
                 if (isset($data['message'])) {
-                    $errors[$postId][] = $data['message'];
+                    $errors[$post_id][] = $data['message'];
                 }
             }
 
             if ($data['status'] == Order::STATUS_PAID) {
-                $data = $this->createLabel($postId);
+                $data = $this->createLabel($post_id);
 
                 if (isset($data['message'])) {
-                    $errors[$postId][] = $data['message'];
+                    $errors[$post_id][] = $data['message'];
                 }
 
                 if (isset($data['message'])) {
-                    $errors[$postId][] = $data['message'];
+                    $errors[$post_id][] = $data['message'];
                 }
 
-                $orders[$postId] = $data['order_id'];
+                $orders[$post_id] = $data['order_id'];
             }
 
             if ($data['status'] == Order::STATUS_GENERATED || $data['status'] == Order::STATUS_RELEASED) {
                 if (isset($data['message'])) {
-                    $errors[$postId][] = $data['message'];
+                    $errors[$post_id][] = $data['message'];
                 }
 
-                $orders[$postId] = $data['order_id'];
+                $orders[$post_id] = $data['order_id'];
             }
         }
 
@@ -511,12 +511,12 @@ class OrderService
     /**
      * Function to get method_id selected by postId
      *
-     * @param $postId
+     * @param $post_id
      * @return int|bool
      */
-    public function getMethodIdSelected($postId)
+    public function getMethodIdSelected($post_id)
     {
-        $order = wc_get_order( $postId );
+        $order = wc_get_order( $post_id );
         $items = $order->get_items( 'shipping' );
         if (empty($items)) {
            return false;

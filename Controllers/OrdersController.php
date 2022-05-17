@@ -49,16 +49,16 @@ class OrdersController
      */
     public function addCart()
     {
-        $postId = SanitizeHelper::apply($_GET['post_id']);
+        $post_id = SanitizeHelper::apply($_GET['post_id']);
 
         $service = SanitizeHelper::apply($_GET['service']);
 
-        $products = (new OrdersProductsService())->getProductsOrder($postId);
+        $products = (new OrdersProductsService())->getProductsOrder($post_id);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
 
         $result = (new CartService())->add(
-            $postId,
+            $post_id,
             $products,
             $buyer,
             $service
@@ -101,7 +101,7 @@ class OrdersController
             ], 412);
         }
 
-        $postId = SanitizeHelper::apply($_GET['post_id']);
+        $post_id = SanitizeHelper::apply($_GET['post_id']);
 
         $orderId = null;
 
@@ -111,7 +111,7 @@ class OrdersController
 
         $orderQuotationService = new OrderQuotationService();
 
-        $dataOrder = $orderQuotationService->getData($postId);
+        $dataOrder = $orderQuotationService->getData($post_id);
 
         if (!empty($dataOrder['order_id'])) {
             $orderId = $dataOrder['order_id'];
@@ -122,12 +122,12 @@ class OrdersController
         }
 
         if (empty($status) && empty($orderId)) {
-            $products = (new OrdersProductsService())->getProductsOrder($postId);
+            $products = (new OrdersProductsService())->getProductsOrder($post_id);
 
-            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+            $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
 
             $cartResult = (new CartService())->add(
-                $postId,
+                $post_id,
                 $products,
                 $buyer,
                 $serviceId
@@ -135,7 +135,7 @@ class OrdersController
 
 
             if (empty($cartResult['order_id'])) {
-                $orderQuotationService->removeDataQuotation($postId);
+                $orderQuotationService->removeDataQuotation($post_id);
 
                 if (isset($cartResult['errors'])) {
                     return wp_send_json([
@@ -155,13 +155,13 @@ class OrdersController
             $status = $cartResult['status'];
         }
 
-        $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
+        $paymentResult = (new OrderService())->payByOrderId($post_id, $orderId);
 
         if (empty($paymentResult['order_id'])) {
 
-            (new OrderQuotationService())->removeDataQuotation($postId);
+            (new OrderQuotationService())->removeDataQuotation($post_id);
 
-            (new CartService())->remove($postId, $cartResult['order_id']);
+            (new CartService())->remove($post_id, $cartResult['order_id']);
 
             if (isset($paymentResult['errors'])) {
                 return wp_send_json([
@@ -179,7 +179,7 @@ class OrdersController
             $status = $paymentResult['status'];
         }
 
-        $labelResult = (new OrderService())->createLabel($postId);
+        $labelResult = (new OrderService())->createLabel($post_id);
 
         return wp_send_json([
             'success' => true,

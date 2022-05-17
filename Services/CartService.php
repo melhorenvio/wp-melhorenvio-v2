@@ -87,7 +87,7 @@ class CartService
 
         $dataFrom =  (new SellerService())->getData();
 
-        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
+        $quotation = (new QuotationService())->calculateQuotationBypost_id($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
 
@@ -146,13 +146,13 @@ class CartService
     /**
      * Function to remove order in cart by Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @param string $orderId
      * @return bool
      */
-    public function remove($postId, $orderId)
+    public function remove($post_id, $orderId)
     {
-        (new OrderQuotationService())->removeDataQuotation($postId);
+        (new OrderQuotationService())->removeDataQuotation($post_id);
 
         (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $orderId,

@@ -14,17 +14,17 @@ class PayloadsController
     /**
      * controller to show payload by order
      *
-     * @param int $postId
+     * @param int $post_id
      * @return json
      */
-    public function show($postId)
+    public function show($post_id)
     {
         try {
-            $payload = (new PayloadService())->getPayloadHideImportantData($postId);
+            $payload = (new PayloadService())->getPayloadHideImportantData($post_id);
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => self::PAYLOAD_NOT_FOUND . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $post_id
                 ], 404);
             }
 
@@ -39,17 +39,17 @@ class PayloadsController
     /**
      * controller to show payload by order
      *
-     * @param int $postId
+     * @param int $post_id
      * @return json
      */
-    public function showLogged($postId)
+    public function showLogged($post_id)
     {
         try {
-            $payload = (new Payload())->get($postId);
+            $payload = (new Payload())->get($post_id);
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => self::PAYLOAD_NOT_FOUND . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $post_id
                 ], 404);
             }
 
@@ -64,13 +64,13 @@ class PayloadsController
     /**
      * function to destroy payload by post id.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return json
      */
-    public function destroy($postId)
+    public function destroy($post_id)
     {
         try {
-            if ((new Payload())->destroy($postId)) {
+            if ((new Payload())->destroy($post_id)) {
                 return wp_send_json([
                     'success' => true
                 ], 200);
@@ -91,17 +91,17 @@ class PayloadsController
     /**
      * function to retrieve payload to insert item cart.
      * 
-     * @param int $postId
+     * @param int $post_id
      * @return json
      */
-    public function showPayloadCart($postId, $service)
+    public function showPayloadCart($post_id, $service)
     {
         try {
-            $payload = (new PayloadService())->getPayloadToCart($postId, $service);
+            $payload = (new PayloadService())->getPayloadToCart($post_id, $service);
 
             if (empty($payload)) {
                 return wp_send_json([
-                    'message' => self::PAYLOAD_NOT_FOUND . $postId
+                    'message' => self::PAYLOAD_NOT_FOUND . $post_id
                 ], 404);
             }
 

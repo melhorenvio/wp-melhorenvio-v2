@@ -77,13 +77,13 @@ class QuotationService
     /**
      * Function to calculate a quotation by post_id.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $quotation
      */
-    public function calculateQuotationByPostId($postId)
+    public function calculateQuotationByPostId($post_id)
     {
-        $products = (new OrdersProductsService())->getProductsOrder($postId);
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+        $products = (new OrdersProductsService())->getProductsOrder($post_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
         $payload = (new PayloadService())->createPayloadByProducts(
             $buyer->postal_code,
             $products
@@ -100,7 +100,7 @@ class QuotationService
                 : false
         );
 
-        return (new OrderQuotationService())->saveQuotation($postId, $quotations);
+        return (new OrderQuotationService())->saveQuotation($post_id, $quotations);
     }
 
     /**

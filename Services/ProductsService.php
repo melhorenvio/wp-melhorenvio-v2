@@ -9,13 +9,13 @@ use Services\SessionNoticeService;
 class ProductsService
 {
     /**
-     * @param int $postId
+     * @param int $post_id
      * @param null|int $quantity
      * @return object
      */
-    public function getProduct(int $postId, int $quantity = null)
+    public function getProduct(int $post_id, int $quantity = null)
     {
-        $product = wc_get_product($postId);
+        $product = wc_get_product($post_id);
 
         if (empty($quantity)) {
             $quantity = 1;

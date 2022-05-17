@@ -26,15 +26,15 @@ class QuotationController
     /**
      * Function to make a quotation by order woocommerce
      *
-     * @param int $postId
+     * @param int $post_id
      * @return void
      */
-    public function makeCotationOrder($postId)
+    public function makeCotationOrder($post_id)
     {
-        $result = (new QuotationService())->calculateQuotationByPostId($postId);
+        $result = (new QuotationService())->calculateQuotationBypost_id($post_id);
 
         if ($result) {
-            (new PayloadService())->save(($postId));
+            (new PayloadService())->save(($post_id));
         }
 
         if (!empty($_SESSION[Session::ME_KEY]['quotation'])) {
