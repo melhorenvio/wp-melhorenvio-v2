@@ -2,7 +2,7 @@
   <div class="container">
     <a
       v-if="item.log"
-      :href="item.log"
+      v-bind:href="item.log"
       class="action-button container__link"
     ></a>
 
@@ -400,10 +400,7 @@ export default {
       return false;
     },
     needShowValidationDocument(item) {
-      return (
-        !item.to.document &&
-        !item.to.company_document
-      );
+      return !item.to.document && !item.to.company_document;
     },
   },
 };
