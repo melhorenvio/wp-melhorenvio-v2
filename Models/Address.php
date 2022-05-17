@@ -70,7 +70,7 @@ class Address
 
     public function setAddressShopping($addressId)
     {
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
 
@@ -100,7 +100,7 @@ class Address
     {
         // Find ID on session
         if ($this->existsAddressIdSelectedSession()) {
-            $codeStore = md5(get_option('home'));
+            $codeStore = hash('sha512', get_option('home'));
             return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED];
         }
 
@@ -153,7 +153,7 @@ class Address
      */
     private function existsAddressIdSelectedSession()
     {
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         return !empty($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED]);
     }

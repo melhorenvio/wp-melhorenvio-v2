@@ -19,7 +19,7 @@ class User
     public function get()
     {
         // Get info on session
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         $response = (new RequestService())->request('', 'GET', [], false);
 
@@ -50,7 +50,7 @@ class User
      */
     public function resetData()
     {
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         delete_option(self::OPTION_USER_INFO, true);
 

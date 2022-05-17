@@ -86,7 +86,7 @@ class OptionsMethodShippingService
             }
         }, $results);
 
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         $_SESSION[Session::ME_KEY][$codeStore]['melhorenvio_options'] = $options;
 
