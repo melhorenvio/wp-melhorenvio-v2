@@ -1,12 +1,6 @@
 <template>
   <div class="container">
     <a
-      v-if="item.log"
-      v-bind:href="item.log"
-      class="action-button container__link"
-    ></a>
-
-    <a
       class="action-button container__link"
       v-if="buttonCart(item)"
       data-cy="input-add-cart"
