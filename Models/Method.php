@@ -71,8 +71,4 @@ class Method
 
         return $enableds;
     }
-
-    public function getShippingMethodsMelhorEnvioActiveds()
-    {
-    }
 }
