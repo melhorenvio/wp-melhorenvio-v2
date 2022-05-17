@@ -19,34 +19,6 @@ class Order
     private $id;
 
     /**
-     * @param int $id
-     */
-    public function __construct($id = null)
-    {
-        try {
-
-            $orderWc = new \WC_Order($id);
-
-            $data = $orderWc->get_data();
-
-            $this->id = $id;
-
-            $this->address = $data['shipping'];
-
-            $this->products = $this->getProducts();
-
-            $this->total = 0;
-
-            $this->shipping_total = 0;
-
-            $this->to = $data['billing'];
-
-            $this->cotation = (array) $this->getCotation();
-        } catch (\Exception $e) {
-        }
-    }
-
-    /**
      * Retrieve all products in Order.
      *
      * @param int $id
@@ -68,18 +40,5 @@ class Order
             ];
         }
         return $products;
-    }
-
-    /**
-     * Retrieve cotation.
-     *
-     * @param int $id
-     * @return object
-     */
-    public function getCotation($id = null)
-    {
-        if ($id) $this->id = $id;
-
-        return (new OrderQuotationService())->getQuotation($this->id);
     }
 }

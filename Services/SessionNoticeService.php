@@ -43,7 +43,7 @@ class SessionNoticeService
 
         $notices = $this->get();
 
-        $hash = md5($text);
+        $hash = hash('sha512', $text);
 
         $notices[$hash] = $this->formatHtml($text, $type);
 
@@ -67,7 +67,7 @@ class SessionNoticeService
             </div>',
             $type,
             $text,
-            get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . md5($text)
+            get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . hash('sha512', $text)
         );
     }
 
@@ -111,7 +111,7 @@ class SessionNoticeService
     public function removeNoticeTokenInvalid()
     {
         $notices = $this->get();
-        unset($notices[md5(self::NOTICE_INVALID_TOKEN)]);
+        unset($notices[hash('sha512', self::NOTICE_INVALID_TOKEN)]);
         return update_option(self::ID_NOTICES_OPTIONS, $notices);
     }
 

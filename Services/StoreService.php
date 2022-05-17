@@ -58,7 +58,7 @@ class StoreService
     {
         SessionHelper::initIfNotExists();
 
-        $codeStore = md5(get_option('home'));
+        $codeStore = hash('sha512', get_option('home'));
 
         unset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES]);
         if (isset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES])) {

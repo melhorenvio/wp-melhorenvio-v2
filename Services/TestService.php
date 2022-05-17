@@ -65,21 +65,21 @@ class TestService
                             'peso' => $package->weight
                         ];
                     }
-                }
 
-                $response['quotation'][$item->id] = [
-                    'Serviço' => $item->name,
-                    'Valor' => isset($item->price) ? $item->price : null,
-                    'Erro' => isset($item->error) ? $item->error : null,
-                    'Entrega' => (isset($item->delivery_range))
-                        ? sprintf(
-                            '%d a %d dias',
-                            $item->delivery_range->min,
-                            $item->delivery_range->max
-                        )
-                        : null,
-                    'Pacotes' => $packages
-                ];
+                    $response['quotation'][$item->id] = [
+                        'Serviço' => $item->name,
+                        'Valor' => isset($item->price) ? $item->price : null,
+                        'Erro' => isset($item->error) ? $item->error : null,
+                        'Entrega' => (isset($item->delivery_range))
+                            ? sprintf(
+                                '%d a %d dias',
+                                $item->delivery_range->min,
+                                $item->delivery_range->max
+                            )
+                            : null,
+                        'Pacotes' => $packages
+                    ];
+                }
             }
         }
 
@@ -148,34 +148,11 @@ class TestService
      */
     private function getProductToTest()
     {
-        if (!empty($_GET['product'])) {
-            $_product = wc_get_product(SanitizeHelper::apply($_GET['product']));
+        if (empty($_GET['product'])) {
+            return false;
         }
-
-        if (empty($_product)) {
-            $products = wc_get_products([]);
-            $_product = $products[rand(0, (count($products) - 1))];
-        }
-
-        $options = (new Option())->getOptions();
-
-        $quantity = (!empty($_GET['quantity']))
-            ? intval(SanitizeHelper::apply($_GET['quantity']))
-            : self::DEFAULT_QUANTITY_PRODUCT;
-
-        return [
-            "id"              => $_product->get_id(),
-            "name"            => $_product->get_name(),
-            "quantity"        => $quantity,
-            "unitary_value"   => round($_product->get_price(), 2),
-            "insurance_value" => (!empty($options->insurance_value))
-                ? (round($_product->get_price(), 2) * $quantity)
-                : 0,
-            "weight"          => DimensionsHelper::convertWeightUnit($_product->weight),
-            "width"           => DimensionsHelper::convertUnitDimensionToCentimeter($_product->width),
-            "height"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->height),
-            "length"          => DimensionsHelper::convertUnitDimensionToCentimeter($_product->length)
-        ];
+        
+        return  wc_get_product($_GET['product']);
     }
 
     /**

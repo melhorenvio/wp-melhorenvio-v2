@@ -14,35 +14,42 @@
           <td>
             <p>
               <b>Dimensões:</b>
-              {{volume.dimensions.height}}cm A x
-              {{volume.dimensions.width}}cm L x
-              {{volume.dimensions.length}}cm C -
-              {{volume.weight}}Kg
+              {{ volume.dimensions.height }}cm A x
+              {{ volume.dimensions.width }}cm L x
+              {{ volume.dimensions.length }}cm C - {{ volume.weight }}Kg
             </p>
           </td>
           <td>
             <ul class="body-list">
               <li class="product">
                 <template v-for="prod in products">
-                  <a v-bind:href="'/wp-admin/post.php?post=37&action=edit'">LINK</a>
                   <p>
                     <b>Produto:</b>
-                    {{prod.quantity}}X - {{prod.name}}
+                    {{ prod.quantity }}X - {{ prod.name }}
                     <br />
                     <b>Valor:</b>
-                    R${{prod.total}}
+                    R${{ prod.total }}
                   </p>
                 </template>
                 <template v-if="item.quotation != false && item.status == null">
                   <div class="me-form">
                     <div class="formBox">
                       <template
-                        v-if="item.quotation && item.quotation[item.quotation.choose_method]"
+                        v-if="
+                          item.quotation &&
+                          item.quotation[item.quotation.choose_method]
+                        "
                       >
                         <fieldset class="selectLine">
                           <div class="inputBox">
                             <select
-                              v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')"
+                              v-if="
+                                !(
+                                  item.status == 'paid' ||
+                                  item.status == 'printed' ||
+                                  item.status == 'generated'
+                                )
+                              "
                               v-model="item.quotation.choose_method"
                             >
                               <option
@@ -50,7 +57,10 @@
                                 v-for="option in item.quotation"
                                 v-bind:value="option.id"
                                 :key="option.id"
-                              >{{ option.company.name }} {{ option.name }} (R${{ option.price }})</option>
+                              >
+                                {{ option.company.name }}
+                                {{ option.name }} (R${{ option.price }})
+                              </option>
                             </select>
                           </div>
                         </fieldset>
@@ -71,13 +81,13 @@ export default {
   props: {
     volume: {
       type: Object,
-      default: {}
+      default: {},
     },
     products: {
       type: Object,
-      default: {}
-    }
-  }
+      default: {},
+    },
+  },
 };
 </script>
 

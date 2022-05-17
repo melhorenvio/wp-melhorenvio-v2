@@ -240,7 +240,7 @@ class QuotationService
             }
         }
 
-        return md5(json_encode([
+        return hash('sha512', json_encode([
             'from' => $payload->from->postal_code,
             'to' => $payload->to->postal_code,
             'options' => [
