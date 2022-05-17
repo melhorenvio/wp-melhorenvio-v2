@@ -38,49 +38,6 @@ class PackageController
     }
 
     /**
-     * Function to store the quote in wordpress after completing the purchase 
-     *
-     * @param int $orderId
-     * @return void
-     */
-    public function getPackageOrderAfterCotation($orderId)
-    {
-        $data = get_post_meta($orderId, 'melhorenvio_cotation_v2');
-
-        $data = end($data);
-
-        $packages = [];
-
-        if (is_array($data)) {
-            foreach ($data as $item) {
-                if (isset($item->volumes) && !empty($item->volumes)) {
-                    $v = 1;
-                    foreach ($item->volumes as $package) {
-                        $quantity = (isset($package->products[0]->quantity)) ? $package->products[0]->quantity : 1;
-                        $weight = (isset($package->weight)) ? $package->weight : null;
-
-                        $packages[$item->id][] = [
-                            'volume' => $v,
-                            'width'  => (isset($package->width)) ? $package->width : null,
-                            'height' => (isset($package->height)) ? $package->height : null,
-                            'length' => (isset($package->length)) ? $package->length : null,
-                            'weight' => $weight,
-                            'quantity' => $quantity,
-                            'insurance_value' => (isset($package->price) ? $package->price : 1.0),
-                            'insurance' => $package->insurance,
-                            'products' => isset($package->products) ? $package->products : []
-                        ];
-
-                        $v++;
-                    }
-                }
-            }
-        }
-
-        return $packages;
-    }
-
-    /**
      * Function to fetch an order package
      *
      * @param int $orderId
