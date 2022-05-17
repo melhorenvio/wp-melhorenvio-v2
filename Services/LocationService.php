@@ -27,7 +27,9 @@ class LocationService
     {
         $postalCode = $this->formatPostalCode($postalCode);
 
-        if (empty($postalCode)) return null;
+        if (empty($postalCode)) {
+            return null;
+        }
 
         $address = $this->getAddressByPostalCodeLocationMelhorEnvio($postalCode);
 
