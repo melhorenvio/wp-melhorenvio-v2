@@ -153,7 +153,9 @@ class TestService
 
         if (empty($_product)) {
             $products = wc_get_products([]);
-            $_product = $products[rand(0, (count($products) - 1))];
+            $countProducts = count($products);
+            $maxCount = $countProducts - 1;
+            $_product = $products[rand(0, $maxCount)];
         }
 
         $options = (new Option())->getOptions();
