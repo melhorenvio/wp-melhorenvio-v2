@@ -25,7 +25,7 @@ class TestService
             ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
-        if (md5($_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
+        if (hash('sha512', $_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
             ], ResponseStatus::HTTP_UNAUTHORIZED);
