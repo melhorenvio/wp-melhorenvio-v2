@@ -30,7 +30,7 @@ class UsersController
     }
 
     /**
-     * Function to fetch data about the origin of the label 
+     * Function to fetch data about the origin of the label
      *
      * @return null|object
      */
@@ -50,22 +50,12 @@ class UsersController
                 return false;
             }
 
-            $email = null;
-
-            if (isset($company->email)) {
-                $email = $company->email;
-            }
-
-            if (isset($info->data['email'])) {
-                $email = $info->data['email'];
-            }
-
             return (object) [
                 "name" => (isset($company->name))
                     ? $company->name
                     : $info->data['firstname'] . ' ' . $info->data['lastname'],
                 "phone" => (isset($info->data['phone']->phone)) ? $info->data['phone']->phone : null,
-                "email" => $email,
+                "email" => $this->handlerEmail($info, $company),
                 "document" => $info->data['document'],
                 "company_document" => (isset($company->document)) ? $company->document : null,
                 "state_register" => (isset($company->state_register)) ? $company->state_register : null,
@@ -81,6 +71,17 @@ class UsersController
         }
 
         return false;
+    }
+
+    public function handlerEmail($info, $company)
+    {
+        $email = (isset($info->data['email'])) ? $info->data['email'] : null;
+
+        if (empty($email)) {
+            $email =  (isset($company->email)) ? $company->email : null;
+        }
+
+        return $email;
     }
 
     /**
