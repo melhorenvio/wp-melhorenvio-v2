@@ -42,7 +42,7 @@ class OrdersController
     /**
      * Function to add the order to the shopping cart
      *
-     * @param int $postId
+     * @param int $post_id
      * @param int $service
      * @param bool $nonCommercial
      * @return json
@@ -81,7 +81,7 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @param int $service_id
      * @return json $results
      */
@@ -214,7 +214,7 @@ class OrdersController
     /**
      * Function to cancel orderm on api Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $response
      */
     public function cancelOrder()
@@ -275,7 +275,7 @@ class OrdersController
     /**
      * Function to create a label on Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $response
      */
     public function createTicket()
@@ -299,7 +299,7 @@ class OrdersController
     /**
      * Function to print a label on Melhor Envio.
      *
-     * @param int $postId
+     * @param int $post_id
      * @return array $response
      */
     public function printTicket()
