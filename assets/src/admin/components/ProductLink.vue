@@ -1,15 +1,17 @@
 <template>
-  <a target="_blank" rel="noreferrer noopener" :href="sanitizeLink">{{
-    name
-  }}</a>
+  <div v-safe-html="linkProduct" />
 </template>
 <script>
-import { sanitizeUrl } from "@braintree/sanitize-url/dist";
+import Vue from "vue";
+import VueSafeHTML from "vue-safe-html";
+
+Vue.use(VueSafeHTML);
+
 export default {
   computed: {
-    sanitizeLink() {
-      const linkProduct = `/wp-admin/post.php?post=${this.id}&action=edit`;
-      return sanitizeUrl(linkProduct);
+    linkProduct() {
+      const link = `/wp-admin/post.php?post=${this.id}&action=edit`;
+      return `<a target="_blank" rel="noreferrer noopener" href="${link}">${this.name}</a>`;
     },
   },
   props: {
