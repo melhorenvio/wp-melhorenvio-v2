@@ -87,7 +87,7 @@ class CartService
 
         $dataFrom =  (new SellerService())->getData();
 
-        $quotation = (new QuotationService())->calculateQuotationBypostId($orderId);
+        $quotation = (new QuotationService())->calculateQuotationByPostId($orderId);
 
         $orderInvoiceService = new OrderInvoicesService();
 
