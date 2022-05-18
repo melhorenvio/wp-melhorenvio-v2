@@ -302,8 +302,6 @@
 </template>
 
 <script>
-import Vue from "vue";
-import VueSafeHTML from "vue-safe-html";
 import { mapActions, mapGetters } from "vuex";
 import Id from "./Pedido/Id.vue";
 import Destino from "./Pedido/Destino.vue";
@@ -312,8 +310,6 @@ import Documentos from "./Pedido/Documentos.vue";
 import Acoes from "./Pedido/Acoes.vue";
 import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
-
-Vue.use(VueSafeHTML);
 
 export default {
   name: "Pedidos",
@@ -358,10 +354,6 @@ export default {
     ...mapGetters("balance", ["getBalance"]),
   },
   methods: {
-    linkProductSafe(product) {
-      console.log(product);
-      return ` <a target="_blank" href="'/wp-admin/post.php?post=product.id&action=edit'">product.name</a>`;
-    },
     ...mapActions("orders", [
       "retrieveMany",
       "loadMore",
