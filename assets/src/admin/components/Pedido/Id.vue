@@ -6,6 +6,11 @@
   </span>
 </template>
 <script>
+import Vue from "vue";
+import VueSanitize from "vue-sanitize";
+
+Vue.use(VueSanitize);
+
 export default {
   props: {
     item: {
@@ -13,6 +18,8 @@ export default {
       default: () => ({}),
     },
   },
-  mounted() {},
+  mounted() {
+    Vue.use(VueSanitize, this.item);
+  },
 };
 </script>
