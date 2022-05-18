@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     linkIdSafe() {
-      return `<a target="_blank" href="${this.item.link}" >${this.item.id}</a>`;
+      return `<a rel="noreferrer noopener" target="_blank" href="${this.item.link}" >${this.item.id}</a>`;
     },
   },
   methods: {},
