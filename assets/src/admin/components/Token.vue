@@ -38,6 +38,7 @@
       Para gerar seu token, acesse o
       <a
         target="_blank"
+        rel="noreferrer noopener"
         href="https://melhorenvio.com.br/painel/gerenciar/tokens"
         >link</a
       >
@@ -46,6 +47,7 @@
       Para gerar seu token em sandbox, acesse o
       <a
         target="_blank"
+        rel="noreferrer noopener"
         href="https://sandbox.melhorenvio.com.br/painel/gerenciar/tokens"
         >link</a
       >
