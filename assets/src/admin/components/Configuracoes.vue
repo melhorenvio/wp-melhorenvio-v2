@@ -892,14 +892,6 @@ export default {
           });
       });
     },
-    formatNumber(value) {
-      let val = (value / 1).toFixed(2).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    formatPercent(value) {
-      let val = value / 1;
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
     showTimeWithDay(value) {
       let val = value == 1 ? value + " dia" : value + " dias";
       return val;
