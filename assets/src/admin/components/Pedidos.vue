@@ -180,9 +180,7 @@
                   </p>
                   <p v-if="item.tracking != null">
                     Rastreio:
-                    <a :href="item.link_tracking" target="_blank">{{
-                      item.tracking
-                    }}</a>
+                    <ProductLink :definedLink="item.link_tracking" :name="item.tracking" />                    
                   </p>
                 </template>
               </li>
