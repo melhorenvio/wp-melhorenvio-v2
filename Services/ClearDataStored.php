@@ -24,7 +24,7 @@ class ClearDataStored
         (new ShippingService())->destroy();
 
         if (!empty($_SESSION[Session::ME_KEY])) {
-            foreach ($_SESSION[Session::ME_KEY] as $key => $sessionItem) {
+            foreach ($_SESSION[Session::ME_KEY] as $key) {
                 if ($key != 'notices_melhor_envio') {
                     unset($_SESSION[Session::ME_KEY][$key]);
                 }
