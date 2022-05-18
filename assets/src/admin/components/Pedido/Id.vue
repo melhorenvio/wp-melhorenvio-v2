@@ -1,15 +1,13 @@
 <template>
   <span>
-    <a target="_blank" v-bind:href="sanitize(item.link)"
-      ><strong>{{ sanitize(item.id) }}</strong></a
-    >
+    <div v-safe-html="linkIdSafe"></div>
   </span>
 </template>
 <script>
 import Vue from "vue";
-import VueSanitize from "vue-sanitize";
+import VueSafeHTML from "vue-safe-html";
 
-Vue.use(VueSanitize);
+Vue.use(VueSafeHTML);
 
 export default {
   props: {
@@ -18,11 +16,12 @@ export default {
       default: () => ({}),
     },
   },
-  methods: {
-    sanitize(value) {
-      return this.$sanitize(value);
+  computed: {
+    linkIdSafe() {
+      return `<a target="_blank" href="${this.item.link}" >${this.item.id}</a>`;
     },
   },
+  methods: {},
   mounted() {},
 };
 </script>
