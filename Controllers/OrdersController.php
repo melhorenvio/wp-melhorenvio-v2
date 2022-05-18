@@ -151,14 +151,11 @@ class OrdersController
             }
 
             $orderId = $cartResult['order_id'];
-
-            $status = $cartResult['status'];
         }
 
         $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
 
         if (empty($paymentResult['order_id'])) {
-
             (new OrderQuotationService())->removeDataQuotation($postId);
 
             (new CartService())->remove($postId, $cartResult['order_id']);
