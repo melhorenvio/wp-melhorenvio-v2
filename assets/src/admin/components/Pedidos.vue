@@ -168,15 +168,7 @@
                   <div class="scrollBox">
                     <p v-for="product in item.products">
                       {{ product.quantity }}x
-                      <a
-                        target="_blank"
-                        v-bind:href="
-                          '/wp-admin/post.php?post=' +
-                          product.id +
-                          '&action=edit'
-                        "
-                        >{{ product.name }}</a
-                      >
+                      <ProductLink :id="product.id" :name="product.name" />
                     </p>
                   </div>
                 </template>
@@ -316,6 +308,7 @@ import Destino from "./Pedido/Destino.vue";
 import Cotacao from "./Pedido/Cotacao.vue";
 import Documentos from "./Pedido/Documentos.vue";
 import Acoes from "./Pedido/Acoes.vue";
+import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
 
 export default {
@@ -347,6 +340,7 @@ export default {
     Documentos,
     Acoes,
     Informacoes,
+    ProductLink,
   },
   computed: {
     ...mapGetters("orders", {
