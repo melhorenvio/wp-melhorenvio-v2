@@ -26,15 +26,15 @@ class OrderQuotationService
     /**
      * Function to get a quotation by order in postmetas by wordpress.
      *
-     * @param integer $post_id
+     * @param integer $postId
      * @return object $quotation
      */
-    public function getQuotation($post_id)
+    public function getQuotation($postId)
     {
-        $quotation = get_post_meta($post_id, self::POST_META_ORDER_QUOTATION);
+        $quotation = get_post_meta($postId, self::POST_META_ORDER_QUOTATION);
 
         if (!$quotation || $this->isUltrapassedQuotation($quotation)) {
-            $quotation = (new QuotationService())->calculateQuotationByPostId($post_id);
+            $quotation = (new QuotationService())->calculateQuotationByPostId($postId);
         }
 
         $quotation = $this->checkHasCorreiosWithVolumes($quotation);

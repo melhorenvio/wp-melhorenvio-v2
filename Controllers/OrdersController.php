@@ -42,23 +42,23 @@ class OrdersController
     /**
      * Function to add the order to the shopping cart
      *
-     * @param int $post_id
+     * @param int $postId
      * @param int $service
      * @param bool $nonCommercial
      * @return json
      */
     public function addCart()
     {
-        $post_id = SanitizeHelper::apply($_GET['post_id']);
+        $postId = SanitizeHelper::apply($_GET['post_id']);
 
         $service = SanitizeHelper::apply($_GET['service']);
 
-        $products = (new OrdersProductsService())->getProductsOrder($post_id);
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
 
         $result = (new CartService())->add(
-            $post_id,
+            $postId,
             $products,
             $buyer,
             $service
@@ -81,7 +81,7 @@ class OrdersController
     /**
      * Function to add order in cart Melhor Envio.
      *
-     * @param int $post_id
+     * @param int $postId
      * @param int $service_id
      * @return json $results
      */
@@ -101,7 +101,7 @@ class OrdersController
             ], 412);
         }
 
-        $post_id = SanitizeHelper::apply($_GET['post_id']);
+        $postId = SanitizeHelper::apply($_GET['post_id']);
 
         $orderId = null;
 
@@ -111,7 +111,7 @@ class OrdersController
 
         $orderQuotationService = new OrderQuotationService();
 
-        $dataOrder = $orderQuotationService->getData($post_id);
+        $dataOrder = $orderQuotationService->getData($postId);
 
         if (!empty($dataOrder['order_id'])) {
             $orderId = $dataOrder['order_id'];
@@ -122,12 +122,12 @@ class OrdersController
         }
 
         if (empty($status) && empty($orderId)) {
-            $products = (new OrdersProductsService())->getProductsOrder($post_id);
+            $products = (new OrdersProductsService())->getProductsOrder($postId);
 
-            $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
+            $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
 
             $cartResult = (new CartService())->add(
-                $post_id,
+                $postId,
                 $products,
                 $buyer,
                 $serviceId
@@ -135,7 +135,7 @@ class OrdersController
 
 
             if (empty($cartResult['order_id'])) {
-                $orderQuotationService->removeDataQuotation($post_id);
+                $orderQuotationService->removeDataQuotation($postId);
 
                 if (isset($cartResult['errors'])) {
                     return wp_send_json([
@@ -155,13 +155,13 @@ class OrdersController
             $status = $cartResult['status'];
         }
 
-        $paymentResult = (new OrderService())->payByOrderId($post_id, $orderId);
+        $paymentResult = (new OrderService())->payByOrderId($postId, $orderId);
 
         if (empty($paymentResult['order_id'])) {
 
-            (new OrderQuotationService())->removeDataQuotation($post_id);
+            (new OrderQuotationService())->removeDataQuotation($postId);
 
-            (new CartService())->remove($post_id, $cartResult['order_id']);
+            (new CartService())->remove($postId, $cartResult['order_id']);
 
             if (isset($paymentResult['errors'])) {
                 return wp_send_json([
@@ -179,7 +179,7 @@ class OrdersController
             $status = $paymentResult['status'];
         }
 
-        $labelResult = (new OrderService())->createLabel($post_id);
+        $labelResult = (new OrderService())->createLabel($postId);
 
         return wp_send_json([
             'success' => true,
@@ -219,7 +219,7 @@ class OrdersController
     /**
      * Function to cancel orderm on api Melhor Envio.
      *
-     * @param int $post_id
+     * @param int $postId
      * @return array $response
      */
     public function cancelOrder()
@@ -231,9 +231,9 @@ class OrdersController
             ], 400);
         }
 
-        $post_id = SanitizeHelper::apply($_GET['post_id']);
+        $postId = SanitizeHelper::apply($_GET['post_id']);
 
-        $result = (new OrderService())->cancel($post_id);
+        $result = (new OrderService())->cancel($postId);
 
         if (empty(end($result)->canceled)) {
             return wp_send_json([
@@ -246,7 +246,7 @@ class OrdersController
             'success' => true,
             'message' => [sprintf(
                 "Pedido %s cancelado com sucesso",
-                $post_id
+                $postId
             )]
         ], 200);
     }
@@ -280,7 +280,7 @@ class OrdersController
     /**
      * Function to create a label on Melhor Envio.
      *
-     * @param int $post_id
+     * @param int $postId
      * @return array $response
      */
     public function createTicket()
@@ -304,7 +304,7 @@ class OrdersController
     /**
      * Function to print a label on Melhor Envio.
      *
-     * @param int $post_id
+     * @param int $postId
      * @return array $response
      */
     public function printTicket()

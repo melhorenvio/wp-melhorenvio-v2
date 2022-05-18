@@ -9,12 +9,12 @@ class InvoiceService
     /**
      * Function to search invoice for an order
      *
-     * @param int $post_id
+     * @param int $postId
      * @return array $invoice
      */
-    public function getInvoice($post_id)
+    public function getInvoice($postId)
     {
-        $invoice = get_post_meta($post_id, self::POST_META_INVOICE);
+        $invoice = get_post_meta($postId, self::POST_META_INVOICE);
 
         if (count($invoice) > 0) {
             return end($invoice);

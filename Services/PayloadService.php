@@ -13,27 +13,27 @@ class PayloadService
     /**
      * Function to save payload
      *
-     * @param int $post_id
+     * @param int $postId
      * @return void
      */
-    public function save($post_id)
+    public function save($postId)
     {
-        $payload = $this->createPayloadCheckoutOrder($post_id);
+        $payload = $this->createPayloadCheckoutOrder($postId);
 
         if (!empty($payload)) {
-            (new Payload())->save($post_id, $payload);
+            (new Payload())->save($postId, $payload);
         }
     }
 
     /**
      * Function to return the payload data of the quote hiding customer data
      *
-     * @param int $post_id
+     * @param int $postId
      * @return object
      */
-    public function getPayloadHideImportantData($post_id)
+    public function getPayloadHideImportantData($postId)
     {
-        $payload = (new Payload())->get($post_id);
+        $payload = (new Payload())->get($postId);
 
         unset($payload->seller);
         unset($payload->buyer);
@@ -47,18 +47,18 @@ class PayloadService
 
     /**
      * Function to view payload to add item cart.
-     * @param int $post_id
+     * @param int $postId
      * @param int $methodId
      * @return array
      */
-    public function getPayloadToCart($post_id, $methodId)
+    public function getPayloadToCart($postId, $methodId)
     {
-        $products = (new OrdersProductsService())->getProductsOrder($post_id);
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
 
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
 
         $payload =  (new CartService())->createPayloadToCart(
-            $post_id,
+            $postId,
             $products,
             $buyer,
             $methodId
@@ -74,19 +74,19 @@ class PayloadService
     /**
      * function to payload after finishied order in woocommerce.
      *
-     * @param int $post_id
+     * @param int $postId
      * @return object
      */
-    public function createPayloadCheckoutOrder($post_id)
+    public function createPayloadCheckoutOrder($postId)
     {
-        $order = new \WC_Order($post_id);
-        $products = (new OrdersProductsService())->getProductsOrder($post_id);
-        $buyer = (new BuyerService())->getDataBuyerByOrderId($post_id);
+        $order = new \WC_Order($postId);
+        $products = (new OrdersProductsService())->getProductsOrder($postId);
+        $buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
         $seller = (new SellerService())->getData();
         $options = (new Option())->getOptions();
         $productService = new ProductsService();
         $productsFilter = $productService->filter($products);
-        $serviceId = (new Method($post_id))->getMethodShipmentSelected($post_id);
+        $serviceId = (new Method($postId))->getMethodShipmentSelected($postId);
 
         $payload = (object) [
             'from' => (object) [

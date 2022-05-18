@@ -146,13 +146,13 @@ class CartService
     /**
      * Function to remove order in cart by Melhor Envio.
      *
-     * @param int $post_id
+     * @param int $postId
      * @param string $orderId
      * @return bool
      */
-    public function remove($post_id, $orderId)
+    public function remove($postId, $orderId)
     {
-        (new OrderQuotationService())->removeDataQuotation($post_id);
+        (new OrderQuotationService())->removeDataQuotation($postId);
 
         (new RequestService())->request(
             self::ROUTE_MELHOR_ENVIO_ADD_CART . '/' . $orderId,

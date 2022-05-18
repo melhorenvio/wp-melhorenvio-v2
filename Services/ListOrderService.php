@@ -59,35 +59,35 @@ class ListOrderService
         $productService = new OrdersProductsService();
 
         foreach ($posts as $post) {
-            $post_id = $post->ID;
+            $postId = $post->ID;
 
-            $invoice = (new InvoiceService())->getInvoice($post_id);
+            $invoice = (new InvoiceService())->getInvoice($postId);
 
-            $products = $productService->getProductsOrder($post_id);
+            $products = $productService->getProductsOrder($postId);
 
             $products = ProductVirtualHelper::removeVirtuals($products);
 
             $orders[] = [
-                'id' => $post_id,
-                'tracking' => $statusMelhorEnvio[$post_id]['tracking'],
-                'link_tracking' => (!is_null($statusMelhorEnvio[$post_id]['tracking']))
-                    ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$post_id]['tracking'])
+                'id' => $postId,
+                'tracking' => $statusMelhorEnvio[$postId]['tracking'],
+                'link_tracking' => (!is_null($statusMelhorEnvio[$postId]['tracking']))
+                    ? sprintf("https://www.melhorrastreio.com.br/rastreio/%s", $statusMelhorEnvio[$postId]['tracking'])
                     : null,
-                'to' => $buyerService->getDataBuyerByOrderId($post_id),
-                'status' => $statusMelhorEnvio[$post_id]['status'],
+                'to' => $buyerService->getDataBuyerByOrderId($postId),
+                'status' => $statusMelhorEnvio[$postId]['status'],
                 'status_texto' => $translateHelper->translateNameStatus(
-                    $statusMelhorEnvio[$post_id]['status']
+                    $statusMelhorEnvio[$postId]['status']
                 ),
-                'order_id' => $statusMelhorEnvio[$post_id]['order_id'],
-                'service_id' =>  (!empty($statusMelhorEnvio[$post_id]['service_id']))
-                    ? $statusMelhorEnvio[$post_id]['service_id']
+                'order_id' => $statusMelhorEnvio[$postId]['order_id'],
+                'service_id' =>  (!empty($statusMelhorEnvio[$postId]['service_id']))
+                    ? $statusMelhorEnvio[$postId]['service_id']
                     : ShippingService::CORREIOS_SEDEX,
-                'protocol' => $statusMelhorEnvio[$post_id]['protocol'],
+                'protocol' => $statusMelhorEnvio[$postId]['protocol'],
                 'non_commercial' => is_null($invoice['number']) || is_null($invoice['key']),
                 'invoice'        => $invoice,
                 'products' => $products,
-                'quotation' => $quotationService->calculateQuotationByPostId($post_id),
-                'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $post_id)
+                'quotation' => $quotationService->calculateQuotationByPostId($postId),
+                'link' => admin_url() . sprintf('post.php?post=%d&action=edit', $postId)
             ];
         }
 

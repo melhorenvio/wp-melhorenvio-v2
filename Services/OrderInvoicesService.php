@@ -9,14 +9,14 @@ class OrderInvoicesService
     /**
      * Function to save invoice by order.
      *
-     * @param int $post_id
+     * @param int $postId
      * @param numeric $key
      * @param numeric $number
      * @return array
      */
-    public function insertInvoiceOrder($post_id, $key, $number)
+    public function insertInvoiceOrder($postId, $key, $number)
     {
-        delete_post_meta($post_id, self::POST_META_INVOICE);
+        delete_post_meta($postId, self::POST_META_INVOICE);
 
         $invoice = [
             'key' => $key,
@@ -24,7 +24,7 @@ class OrderInvoicesService
         ];
 
         $result = add_post_meta(
-            $post_id,
+            $postId,
             self::POST_META_INVOICE,
             $invoice,
             true
@@ -43,12 +43,12 @@ class OrderInvoicesService
     /**
      * Function to retrieve invoice by order. 
      *
-     * @param int $post_id
+     * @param int $postId
      * @return array $invoice
      */
-    public function getInvoiceOrder($post_id)
+    public function getInvoiceOrder($postId)
     {
-        $invoice = get_post_meta($post_id, self::POST_META_INVOICE, true);
+        $invoice = get_post_meta($postId, self::POST_META_INVOICE, true);
 
         if (!$invoice) {
             return [
@@ -63,12 +63,12 @@ class OrderInvoicesService
     /**
      * Function to check order is non commercial
      *
-     * @param int $post_id
+     * @param int $postId
      * @return boolean
      */
-    public function isNonCommercial($post_id)
+    public function isNonCommercial($postId)
     {
-        $invoice = get_post_meta($post_id, self::POST_META_INVOICE, true);
+        $invoice = get_post_meta($postId, self::POST_META_INVOICE, true);
 
         return (!isset($invoice['key']) || !isset($invoice['number']));
     }
