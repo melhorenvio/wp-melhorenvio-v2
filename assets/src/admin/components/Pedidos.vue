@@ -168,7 +168,7 @@
                   <div class="scrollBox">
                     <p v-for="product in item.products">
                       {{ product.quantity }}x
-                      <ProductLink :link="product.link" :name="product.name" />
+                      <ProductLink :id="product.id" :name="product.name" />
                     </p>
                   </div>
                 </template>

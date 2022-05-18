@@ -1,12 +1,20 @@
 <template>
-  <a target="_blank" rel="noreferrer noopener" :href="link">{{ name }}</a>
+  <a target="_blank" rel="noreferrer noopener" :href="sanitizeLink">{{
+    name
+  }}</a>
 </template>
 <script>
+import { sanitizeUrl } from "@braintree/sanitize-url/dist";
 export default {
+  computed: {
+    sanitizeLink() {
+      const linkProduct = `/wp-admin/post.php?post=${this.id}&action=edit`;
+      return sanitizeUrl(linkProduct);
+    },
+  },
   props: {
-    link: {
-      type: String,
-      default: () => "",
+    id: {
+      type: Number,
     },
     name: {
       type: String,
