@@ -1,7 +1,7 @@
 <template>
   <span>
-    <a target="_blank" v-bind:href="item.link"
-      ><strong>{{ item.id }}</strong></a
+    <a target="_blank" v-bind:href="sanitize(item.link)"
+      ><strong>{{ sanitize(item.id) }}</strong></a
     >
   </span>
 </template>
@@ -18,8 +18,11 @@ export default {
       default: () => ({}),
     },
   },
-  mounted() {
-    Vue.use(VueSanitize, this.item);
+  methods: {
+    sanitize(value) {
+      return this.$sanitize(value);
+    },
   },
+  mounted() {},
 };
 </script>
