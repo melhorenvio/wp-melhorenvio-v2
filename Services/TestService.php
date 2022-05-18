@@ -3,6 +3,7 @@
 namespace Services;
 
 use Helpers\DimensionsHelper;
+use Helpers\SanitizeHelper;
 use Models\Option;
 use Models\ResponseStatus;
 
@@ -25,7 +26,7 @@ class TestService
             ], ResponseStatus::HTTP_UNAUTHORIZED);
         }
 
-        if (hash('sha512', $_GET['hash']) != '22b0e1b5ac96f76652c82b13bb01e3c9') {
+        if (hash("sha512", SanitizeHelper::apply($_GET['hash'])) != 'd4ccf2fcc3a14764698d9b2fea940c9d42c5dfe6002f20df995b09590b39f83f1ec1712d506d51ca47648f77d0ae1caf25c85c042275422582fe067622e6d208') {
             return wp_send_json([
                 'message' => 'Acesso não autorizado'
             ], ResponseStatus::HTTP_UNAUTHORIZED);
@@ -44,28 +45,25 @@ class TestService
         ];
 
         if (isset($_GET['postalcode'])) {
-            $productTest = $this->getProductToTest();
+            $product[] = $this->getProductToTest();
+            $quotation = (new QuotationService())->calculateQuotationByProducts(
+                $product,
+                SanitizeHelper::apply($_GET['postalcode']),
+                null
+            );
 
-            if (!empty($productTest)) {
-                $quotation = (new QuotationService())->calculateQuotationByProducts(
-                    $productTest,
-                    $_GET['postalcode'],
-                    null
-                );
+            $response['product'] = $product;
 
-                $response['product'] = $productTest;
-
-                foreach ($quotation as $item) {
-                    $packages = [];
-                    if (!empty($item->packages)) {
-                        foreach ($item->packages as $package) {
-                            $packages[] = [
-                                'largura' => $package->dimensions->width,
-                                'altura' => $package->dimensions->height,
-                                'comprimento' => $package->dimensions->length,
-                                'peso' => $package->weight
-                            ];
-                        }
+            foreach ($quotation as $item) {
+                $packages = [];
+                if (!empty($item->packages)) {
+                    foreach ($item->packages as $package) {
+                        $packages[] = [
+                            'largura' => $package->dimensions->width,
+                            'altura' => $package->dimensions->height,
+                            'comprimento' => $package->dimensions->length,
+                            'peso' => $package->weight
+                        ];
                     }
 
                     $response['quotation'][$item->id] = [

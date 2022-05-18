@@ -2,6 +2,8 @@
 
 namespace Services;
 
+use Helpers\SanitizeHelper;
+
 /**
  * Class ProcessAdditionalTaxService
  * @package Services
@@ -67,8 +69,8 @@ class ProcessAdditionalTaxService
         }
 
         return (!empty($_POST['product_id']))
-            ? $_POST['product_id']
-            : $_POST['add-to-cart'];
+            ? SanitizeHelper::apply($_POST['product_id'])
+            : SanitizeHelper::apply($_POST['add-to-cart']);
     }
 
     /**

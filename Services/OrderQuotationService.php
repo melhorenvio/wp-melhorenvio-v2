@@ -14,6 +14,8 @@ class OrderQuotationService
 
     const OPTION_TOKEN_ENVIRONMENT = 'wpmelhorenvio_token_environment';
 
+    const DEFAULT_STRUCTURE_DATE = 'Y-m-d H:i:d';
+
     protected $env;
 
     public function __construct()
@@ -41,7 +43,7 @@ class OrderQuotationService
     }
 
     /**
-     * Function to check the quote object and check if there are any 
+     * Function to check the quote object and check if there are any
      * Correios methods that contain volumes and remove that method.
      *
      * @param object $quotation
@@ -146,7 +148,7 @@ class OrderQuotationService
 
     /**
      * Function to update data quotation by order.
-     * 
+     *
      * @param int $orderId
      * @param string $orderMelhorEnvioId
      * @param string $protocol
@@ -169,7 +171,7 @@ class OrderQuotationService
             'protocol' => $protocol,
             'purchase_id' => $purcahseId,
             'status' => $status,
-            'created' => date('Y-m-d H:i:s')
+            'created' => date(self::DEFAULT_STRUCTURE_DATE)
         ];
 
         add_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env, $data);
@@ -178,7 +180,7 @@ class OrderQuotationService
     }
     /**
      * Function to update data quotation by order.
-     * 
+     *
      * @param int $orderId
      * @param string $order_melhor_envio_id
      * @param string $protocol
@@ -202,7 +204,7 @@ class OrderQuotationService
             'purchase_id' => $purcahseId,
             'status' => $status,
             'tracking' => $tracking,
-            'created' => date('Y-m-d H:i:s')
+            'created' => date(self::DEFAULT_STRUCTURE_DATE)
         ];
 
         delete_post_meta($orderId, self::POST_META_ORDER_DATA . $this->env);
