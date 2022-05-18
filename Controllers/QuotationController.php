@@ -31,7 +31,7 @@ class QuotationController
      */
     public function makeCotationOrder($postId)
     {
-        $result = (new QuotationService())->calculateQuotationBypostId($postId);
+        $result = (new QuotationService())->calculateQuotationByPostId($postId);
 
         if ($result) {
             (new PayloadService())->save($postId);
