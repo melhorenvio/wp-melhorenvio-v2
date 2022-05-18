@@ -213,6 +213,10 @@ class RouterService
     {
         $payloadsController = new PayloadsController();
 
+        if (empty($_GET['post_id'])) {
+            return false;
+        }
+
         $postId = SanitizeHelper::apply($_GET['post_id']);
 
         add_action('wp_ajax_nopriv_get_payload', function () use ($payloadsController, $postId) {
