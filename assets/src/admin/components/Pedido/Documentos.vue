@@ -69,6 +69,7 @@
           <span v-if="item.status == status.STATUS_POSTED"
             >Etiqueta postada</span
           >
+          <span v-if="item.status == status.STATUS_DELIVERED">Entregue</span>
         </b>
       </p>
     </template>
