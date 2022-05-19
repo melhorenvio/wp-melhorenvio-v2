@@ -89,7 +89,7 @@ if ( isProduction() ) {
     }));
 
     plugins.push(new webpack.DefinePlugin({
-        'process.env': env
+        'process.env.WEBPACK_ENV': env
     }));
 
     appName = '[name].min.js';
