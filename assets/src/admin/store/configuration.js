@@ -243,8 +243,6 @@ const configuration = {
                 if (data.label) {
                     const labels = Object.entries(data.label);
                     labels.forEach((item) => {
-                        console.log(item[0]);
-                        console.log(item[1]);
                         form.append(`label[${item[0]}]`, item[1]);
                     })
                 }
