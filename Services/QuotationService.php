@@ -190,7 +190,7 @@ class QuotationService
     {
         SessionHelper::initIfNotExists();
         
-        $session = $_SESSION;
+        @$session = $_SESSION;
 
         if (empty($session['quotation-melhor-envio'][$hash])) {
             return false;

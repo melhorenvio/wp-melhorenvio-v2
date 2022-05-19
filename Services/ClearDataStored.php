@@ -26,7 +26,9 @@ class ClearDataStored
         if (!empty($_SESSION[Session::ME_KEY])) {
             foreach ($_SESSION[Session::ME_KEY] as $key) {
                 if ($key != 'notices_melhor_envio') {
-                    unset($_SESSION[Session::ME_KEY][$key]);
+                    if (@isset($_SESSION[Session::ME_KEY][$key])) {
+                        unset($_SESSION[Session::ME_KEY][$key]);
+                    }
                 }
             }
         }
