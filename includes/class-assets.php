@@ -74,16 +74,16 @@ class Assets
 
         $scripts = [
             'baseplugin-vendor' => [
-                'src'       => BASEPLUGIN_ASSETS . '/js/vendor.js',
+                'src'       => BASEPLUGIN_ASSETS . '/js/vendor.min.js',
                 'in_footer' => true
             ],
             'baseplugin-frontend' => [
-                'src'       => BASEPLUGIN_ASSETS . '/js/frontend.js',
+                'src'       => BASEPLUGIN_ASSETS . '/js/frontend.min.js',
                 'deps'      => ['jquery', 'baseplugin-vendor'],
                 'in_footer' => true
             ],
             'baseplugin-admin' => [
-                'src'       => BASEPLUGIN_ASSETS . '/js/admin.js',
+                'src'       => BASEPLUGIN_ASSETS . '/js/admin.min.js',
                 'deps'      => ['jquery', 'baseplugin-vendor'],
                 'in_footer' => true
             ]
