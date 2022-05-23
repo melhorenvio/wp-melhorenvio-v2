@@ -1,4 +1,4 @@
-<style>
+<style lang="css">
 .boxBanner {
   float: left;
   width: 100%;
