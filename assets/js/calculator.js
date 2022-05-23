@@ -70,10 +70,19 @@ function numberMask(content) {
  *  this function is used to apply the postal code mask in the input to calculate the quotation
  */
 function usePostalCodeMask() { 
-    const input = document.querySelector('#inputCep');
-    const content = input.value;
+    const inputDefault = document.querySelector('#inputCep');
+    const inputShortcode = document.querySelector('.iptCepShortcode');
+    
 
-    postalCodeMask(content, input);
+    if(inputDefault) {
+        const content = inputDefault.value;
+        postalCodeMask(content, inputDefault);
+    }
+
+    if(inputShortcode) {
+        const content = inputShortcode.value;
+        postalCodeMask(content, inputShortcode);
+    }
 }
 
 function validateNumber(event) {

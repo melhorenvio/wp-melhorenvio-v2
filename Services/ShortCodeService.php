@@ -76,7 +76,7 @@ class ShortCodeService
             </div> ",
             $this->product->get_id(),
             admin_url('admin-ajax.php'),
-            'return mascara(this, "#####-###")'
+            'return usePostalCodeMask()'
         );
     }
 }
