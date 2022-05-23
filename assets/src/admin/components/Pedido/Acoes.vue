@@ -278,19 +278,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
-import ShippingServiceDocumentsRequired from "../../utils/shipping-service-documents-required";
 export default {
-  data: () => {
-    return {};
-  },
   props: {
     item: {
       type: Object,
     },
   },
-  mounted() {},
   methods: {
     ...mapActions("orders", [
       "addCart",

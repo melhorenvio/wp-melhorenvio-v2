@@ -21,6 +21,5 @@ export default {
       default: () => ({}),
     },
   },
-  mounted() {},
 };
 </script>

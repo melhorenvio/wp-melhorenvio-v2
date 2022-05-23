@@ -76,7 +76,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
 import shippingServices from "../../utils/shipping-services";
 export default {
@@ -95,6 +95,5 @@ export default {
   methods: {
     ...mapActions("orders", ["insertInvoice"]),
   },
-  mounted() {},
 };
 </script>
