@@ -44,20 +44,7 @@ const browserSyncPlugin = new BrowserSyncPlugin({
 });
 
 // Differ settings based on production flag
-<<<<<<< HEAD
 if (env === ENV_TYPES.PRODUCTION) {
-=======
-if ( isProduction() ) {
-
-    plugins.push(new UglifyJsPlugin({
-        sourceMap: true,
-    }));
-
-    plugins.push(new webpack.DefinePlugin({
-        'process.env.WEBPACK_ENV': env
-    }));
-
->>>>>>> 4205c0e4c65032e9f5fcb7d6f4b10aad8186359d
     appName = '[name].min.js';
 }
 
