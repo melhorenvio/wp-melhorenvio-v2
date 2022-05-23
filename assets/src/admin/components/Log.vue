@@ -136,13 +136,6 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
     name: 'Logs',
-    data: () => {
-        return {
-            /**
-             * Descartado.
-             */
-        }
-    },
     computed: {
         /**
          * log => state.log // traz os logs salvos em state
@@ -157,9 +150,6 @@ export default {
          * state.logs = data < na mutation
          */
         ...mapActions('log', ['retrieveLogs'])
-    },
-    watch: {
-
     },
     created () {
         /**

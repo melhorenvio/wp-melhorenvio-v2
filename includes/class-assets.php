@@ -73,18 +73,9 @@ class Assets
         $prefix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '.min' : '';
 
         $scripts = [
-            'baseplugin-vendor' => [
-                'src'       => BASEPLUGIN_ASSETS . '/js/vendor.min.js',
-                'in_footer' => true
-            ],
-            'baseplugin-frontend' => [
-                'src'       => BASEPLUGIN_ASSETS . '/js/frontend.min.js',
-                'deps'      => ['jquery', 'baseplugin-vendor'],
-                'in_footer' => true
-            ],
             'baseplugin-admin' => [
                 'src'       => BASEPLUGIN_ASSETS . '/js/admin.min.js',
-                'deps'      => ['jquery', 'baseplugin-vendor'],
+                'deps'      => ['jquery'],
                 'in_footer' => true
             ]
         ];
@@ -103,9 +94,6 @@ class Assets
         $styles = [
             'baseplugin-style' => [
                 'src' =>  BASEPLUGIN_ASSETS . '/css/style.css'
-            ],
-            'baseplugin-frontend' => [
-                'src' =>  BASEPLUGIN_ASSETS . '/css/frontend.css'
             ],
             'baseplugin-admin' => [
                 'src' =>  BASEPLUGIN_ASSETS . '/css/admin.css'

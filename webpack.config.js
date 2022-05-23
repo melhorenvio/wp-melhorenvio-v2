@@ -1,46 +1,38 @@
-const webpack = require('webpack');
 const path = require('path');
-const packageJson = require('./package.json');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BrowserSyncPlugin = require( 'browser-sync-webpack-plugin' );
+const { VueLoaderPlugin } = require('vue-loader');
 
 const config = require( './config.json' );
 
-// Naming and path settings
-var appName = 'app';
-var entryPoint = {
-    frontend: './assets/src/frontend/main.js',
-    admin: './assets/src/admin/main.js',
-    vendor: Object.keys(packageJson.dependencies),
-    style: './assets/stylus/index.styl',
-};
-
-var exportPath = path.resolve(__dirname, './assets/js');
-
-// Enviroment flag
-var plugins = [];
-var env = process.env.WEBPACK_ENV;
-
-function isProduction() {
-    return process.env.WEBPACK_ENV === 'production';
+const ENV_TYPES = {
+    DEVELOPMENT: 'development',
+    PRODUCTION: 'production'
 }
 
+// Enviroment flag
+const plugins = [];
+const env = process.env.WEBPACK_ENV;
+
+// Naming and path settings
+let appName = '[name].js';
+const entryPoint = {    
+    admin: './assets/src/admin/main.js',    
+    style: './assets/stylus/index.styl',    
+};
+
+const exportPath = path.resolve(__dirname, './assets/js');
+
+const vueLoaderPlugin = new VueLoaderPlugin();
+
 // extract css into its own file
-const extractCss = new ExtractTextPlugin({
+const extractCss = new MiniCssExtractPlugin({
     filename: "../css/[name].css",
 });
 
-plugins.push( extractCss );
-
-// Extract all 3rd party modules into a separate 'vendor' chunk
-plugins.push(new webpack.optimize.CommonsChunkPlugin({
-    name: 'vendor',
-    minChunks: ({ resource }) => /node_modules/.test(resource),
-}));
-
-plugins.push(new BrowserSyncPlugin( {
+const browserSyncPlugin = new BrowserSyncPlugin({
     proxy: {
         target: config.proxyURL
     },
@@ -49,88 +41,53 @@ plugins.push(new BrowserSyncPlugin( {
     ],
     cors: true,
     reloadDelay: 0
-} ));
-
-plugins.push(new webpack.LoaderOptionsPlugin({
-    options: {
-        context: path.resolve(__dirname, '../src'),
-        stylus: {
-            use: [
-                require('jeet')(),
-                require('rupture')()
-            ],
-            import: [
-                path.resolve(__dirname, 'assets/stylus/index.styl')
-            ]
-            }
-        }
-    })
-);
-
-// Generate a 'manifest' chunk to be inlined in the HTML template
-// plugins.push(new webpack.optimize.CommonsChunkPlugin('manifest'));
-
-// Compress extracted CSS. We are using this plugin so that possible
-// duplicated CSS from different components can be deduped.
-plugins.push(new OptimizeCSSPlugin({
-    cssProcessorOptions: {
-        safe: true,
-        map: {
-            inline: false
-        }
-    }
-}));
+});
 
 // Differ settings based on production flag
-if ( isProduction() ) {
-
-    plugins.push(new UglifyJsPlugin({
-        sourceMap: true,
-    }));
-
-    plugins.push(new webpack.DefinePlugin({
-        'process.env.WEBPACK_ENV': env
-    }));
-
+if (env === ENV_TYPES.PRODUCTION) {
     appName = '[name].min.js';
-} else {
-    appName = '[name].js';
 }
 
+// Query all plugins instantiated
+plugins.push(vueLoaderPlugin);
+plugins.push(extractCss);
+plugins.push(browserSyncPlugin);
+
 module.exports = {
-    entry: entryPoint,
+    mode: env,    
+    entry: entryPoint,    
     output: {
         path: exportPath,
-        filename: appName,
-        chunkFilename: 'chunks/[chunkhash].js',
-        jsonpFunction: 'pluginWebpack'
+        filename: appName,        
     },
-
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                test: /\.js(\?.*)?$/i
+            }),
+            new CssMinimizerPlugin()
+        ],
+    },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js',
+            'vue': 'vue/dist/vue.js',
             '@': path.resolve('./assets/src/'),
             'frontend': path.resolve('./assets/src/frontend/'),
             'admin': path.resolve('./assets/src/admin/'),
-            'me': path.resolve('./assets/styl/me-bootstrap')
+            'me': path.resolve('./assets/stylus/me-bootstrap')
         },
         modules: [
             path.resolve('./node_modules'),
-            path.resolve(path.join(__dirname, 'assets/src/')),
-        ]
+            path.resolve(path.join(__dirname, 'assets/src/index.styl')),
+        ],
+        fallback: {
+            path: require.resolve("path-browserify")
+        }
     },
-
     plugins,
-        module: {
+    module: {
         rules: [
-            {
-                test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
-            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -139,13 +96,38 @@ module.exports = {
                 }
             },
             {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                          ['@babel/preset-env', { targets: "defaults" }]
+                        ],
+                        plugins: ['@babel/plugin-proposal-object-rest-spread']
+                    }
+                },
+            },            
+            {
                 test: /\.styl$/,
-                use: [ 'css-loader', 'stylus-loader' ]
+                use: [
+                    MiniCssExtractPlugin.loader, 
+                    'css-loader', 
+                    {
+                        loader: 'stylus-loader',
+                        options: {
+                            stylusOptions: {
+                                use: ['jeet', 'rupture'],                                
+                                include: [path.join(__dirname, "assets/stylus")]
+                            }
+                        }
+                    }
+                ],                
             },
             {
                 test: /\.css$/,
-                use: [ 'style-loader', 'css-loader' ]
-            }
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
+            },
         ]
     },
 }
