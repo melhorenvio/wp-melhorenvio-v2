@@ -251,9 +251,9 @@ final class Base_Plugin
             }
         } catch (\Exception $e) {
             add_action('admin_notices', function () {
-                echo sprintf('<div class="error">
+                echo esc_html(sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()));
             });
             return false;
         }
@@ -275,7 +275,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
-        
+
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
             require_once $filename;
@@ -348,9 +348,9 @@ final class Base_Plugin
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {
             add_action('admin_notices', function () use ($e) {
-                echo sprintf('<div class="error">
+                echo esc_html(sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()));
             });
 
             return false;

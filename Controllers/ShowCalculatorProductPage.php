@@ -92,7 +92,7 @@ class ShowCalculatorProductPage
 		wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
 		wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
-		echo sprintf(
+		echo esc_html(sprintf(
 			"<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
             <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
             <input type='hidden' id='calculo_frete_endpoint_url' value='%s'>
@@ -139,6 +139,6 @@ class ShowCalculatorProductPage
 			$this->price,
 			$this->id,
 			'return usePostalCodeMask()'
-		);
+		));
 	}
 }

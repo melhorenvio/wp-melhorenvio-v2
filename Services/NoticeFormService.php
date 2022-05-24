@@ -2,7 +2,8 @@
 
 namespace Services;
 
-class NoticeFormService {
+class NoticeFormService
+{
 
 	const SHOW = 'show_form_melhor_envio';
 
@@ -13,21 +14,22 @@ class NoticeFormService {
 	/**
 	 * Function to check whether to display and insert the search form alert on the administrative page
 	 */
-	public function insertForm() {
+	public function insertForm()
+	{
 		$showForm = $this->getVisibilityForm();
 		$show     = self::SHOW;
-		if ( $showForm == $show ) {
+		if ($showForm == $show) {
 			add_action(
 				'admin_notices',
 				function () {
-					echo '<div class="notice info is-dismissible"> 
+					echo esc_html('<div class="notice info is-dismissible"> 
                     <p><strong>Como podemos melhorar?</strong></p>
                     <p>Gostaríamos de saber mais sobre a sua experiência com o plugin do Melhor Envio 
                     para que possamos aprimorá-lo. 
                     <a href="/wp-admin/admin-ajax.php?action=open_form_melhor_envio">Clique aqui</a> 
                     e nos ajude respondendo a pesquisa.
                     </p>
-                </div>';
+                </div>');
 				}
 			);
 		}
@@ -38,8 +40,9 @@ class NoticeFormService {
 	 *
 	 * @return string
 	 */
-	public function getVisibilityForm() {
-		return get_option( self::OPTION_SHOW_FORM, self::SHOW );
+	public function getVisibilityForm()
+	{
+		return get_option(self::OPTION_SHOW_FORM, self::SHOW);
 	}
 
 	/**
@@ -47,9 +50,10 @@ class NoticeFormService {
 	 *
 	 * @return bool
 	 */
-	public function hideForm() {
-		delete_option( self::OPTION_SHOW_FORM );
-		return add_option( self::OPTION_SHOW_FORM, self::HIDE, true );
+	public function hideForm()
+	{
+		delete_option(self::OPTION_SHOW_FORM);
+		return add_option(self::OPTION_SHOW_FORM, self::HIDE, true);
 	}
 
 	/**
@@ -57,8 +61,9 @@ class NoticeFormService {
 	 *
 	 * @return bool
 	 */
-	public function showForm() {
-		delete_option( self::OPTION_SHOW_FORM );
-		return add_option( self::OPTION_SHOW_FORM, self::SHOW, true );
+	public function showForm()
+	{
+		delete_option(self::OPTION_SHOW_FORM);
+		return add_option(self::OPTION_SHOW_FORM, self::SHOW, true);
 	}
 }

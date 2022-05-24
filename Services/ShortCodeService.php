@@ -35,7 +35,7 @@ class ShortCodeService
         wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
         wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
-        echo sprintf(
+        echo esc_html(sprintf(
             "
             <style>
                 #melhor-envio-shortcode .border-none,
@@ -78,6 +78,10 @@ class ShortCodeService
             $this->product->get_id(),
             admin_url('admin-ajax.php'),
             'return usePostalCodeMask()'
+<<<<<<< HEAD
         );
+=======
+        ));
+>>>>>>> 1eaaa6704b74f483764c9f22d08a59d09114d847
     }
 }
