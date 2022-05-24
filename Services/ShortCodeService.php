@@ -60,7 +60,7 @@ class ShortCodeService
                     </div>
                 </form>
                 <div id='calcular-frete-loader' style='display:none;'>
-                    <img src='" . BASEPLUGIN_ASSETS . "/assets/loader.gif' />
+                    <img src='" . BASEPLUGIN_ASSETS . "/images/loader.gif' />
                 </div>
                 <div class='resultado-frete' style='display:none;'>
                     <table>
