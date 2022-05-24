@@ -92,7 +92,9 @@ class AgenciesService {
 		}
 
 		if ( ! empty( $this->company ) ) {
-			return $agencies[ $this->company ];
+			if ( ! empty( $agencies[ $this->company ] ) ) {
+				return $agencies[ $this->company ];
+			}
 		}
 
 		return $agencies;
