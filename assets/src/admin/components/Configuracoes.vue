@@ -74,7 +74,7 @@
   <div>
     <div class="boxBanner">
       <img
-        src="../../../images/banner-admin.png"
+        src="@images/banner-admin.jpeg"
       />
     </div>
 
