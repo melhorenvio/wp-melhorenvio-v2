@@ -2,34 +2,33 @@
 
 namespace Models;
 
-class ShippingCompany
-{
-    const CORREIOS = 1;
+class ShippingCompany {
 
-    const JADLOG = 2;
+	const CORREIOS = 1;
 
-    const LATAM_CARGO = 6;
+	const JADLOG = 2;
 
-    const AZUL_CARGO = 9;
+	const LATAM_CARGO = 6;
 
-    /**
-     * @param int $serviceId
-     * @return int
-     */
-    public static function getCompanyIdByService($serviceId)
-    {
-        if (in_array($serviceId, ShippingService::SERVICES_JADLOG)) {
-            return self::JADLOG;
-        }
+	const AZUL_CARGO = 9;
 
-        if (in_array($serviceId, ShippingService::SERVICES_LATAM)) {
-            return self::LATAM_CARGO;
-        }
+	/**
+	 * @param int $serviceId
+	 * @return int
+	 */
+	public static function getCompanyIdByService( $serviceId ) {
+		if ( in_array( $serviceId, ShippingService::SERVICES_JADLOG ) ) {
+			return self::JADLOG;
+		}
 
-        if (in_array($serviceId, ShippingService::SERVICES_AZUL)) {
-            return self::AZUL_CARGO;
-        }
+		if ( in_array( $serviceId, ShippingService::SERVICES_LATAM ) ) {
+			return self::LATAM_CARGO;
+		}
 
-        return null;
-    }
+		if ( in_array( $serviceId, ShippingService::SERVICES_AZUL ) ) {
+			return self::AZUL_CARGO;
+		}
+
+		return null;
+	}
 }

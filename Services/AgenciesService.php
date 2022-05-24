@@ -2,103 +2,101 @@
 
 namespace Services;
 
-class AgenciesService
-{
-    const ROUTE_GET_AGENCIES = '/shipment/agencies';
+class AgenciesService {
 
-    protected $state = null;
+	const ROUTE_GET_AGENCIES = '/shipment/agencies';
 
-    protected $city = null;
+	protected $state = null;
 
-    protected $company = null;
+	protected $city = null;
 
-    public function __construct($data)
-    {
-        if (!empty($data['state'])) {
-            $this->state = $data['state'];
-        }
+	protected $company = null;
 
-        if (!empty($data['company'])) {
-            $this->company = $data['company'];
-        }
-    }
+	public function __construct( $data ) {
+		if ( ! empty( $data['state'] ) ) {
+			$this->state = $data['state'];
+		}
 
-    /**
-     * function to get  agencies on Melhor Envio API.
-     *
-     * @param array $data
-     * @return array
-     */
-    public function get()
-    {
-        $route = $this->getRoute();
+		if ( ! empty( $data['company'] ) ) {
+			$this->company = $data['company'];
+		}
+	}
 
-        $agencies = (new RequestService())->request(
-            $route,
-            'GET',
-            [],
-            false
-        );
+	/**
+	 * function to get  agencies on Melhor Envio API.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function get() {
+		$route = $this->getRoute();
 
-        if (empty($agencies)) {
-            return (object) [
-                'success' => false,
-                'message' => 'Ocorreu um erro ao obter agências'
-            ];
-        }
+		$agencies = ( new RequestService() )->request(
+			$route,
+			'GET',
+			array(),
+			false
+		);
 
-        return $this->normalize($agencies);
-    }
+		if ( empty( $agencies ) ) {
+			return (object) array(
+				'success' => false,
+				'message' => 'Ocorreu um erro ao obter agências',
+			);
+		}
 
-    /**
-     * @return string $route
-     */
-    private function getRoute()
-    {
-        $data['country'] = 'BR';
+		return $this->normalize( $agencies );
+	}
 
-        if (!empty($this->state)) {
-            $data['state'] = $this->state;
-        }
-        
-        if (!empty($this->company)) {
-            $data['company'] = $this->company;
-        }
+	/**
+	 * @return string $route
+	 */
+	private function getRoute() {
+		$data['country'] = 'BR';
 
-        $query =  http_build_query($data);
+		if ( ! empty( $this->state ) ) {
+			$data['state'] = $this->state;
+		}
 
-        return self::ROUTE_GET_AGENCIES . '?' . $query;
-    }
+		if ( ! empty( $this->company ) ) {
+			$data['company'] = $this->company;
+		}
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    private function normalize($data)
-    {
-        $agencies = [];
-        foreach ($data as $agency) {
-            $companyId = null;
+		$query = http_build_query( $data );
 
-            if (isset($agency->company_id)) {
-                $companyId = $agency->company_id;
-            }
+		return self::ROUTE_GET_AGENCIES . '?' . $query;
+	}
 
-            if (isset($agency->companies[0]->id)) {
-                $companyId = $agency->companies[0]->id;
-            }
+	/**
+	 * @param array $data
+	 * @return array
+	 */
+	private function normalize( $data ) {
+		$agencies = array();
+		foreach ( $data as $agency ) {
+			$companyId = null;
 
-            if (empty($companyId)) {
-                continue;
-            }
+			if ( isset( $agency->company_id ) ) {
+				$companyId = $agency->company_id;
+			}
 
-            $agencies[$companyId][] = $agency;
-        }
+			if ( isset( $agency->companies[0]->id ) ) {
+				$companyId = $agency->companies[0]->id;
+			}
 
-        if (!empty($this->company)) {
-            return $agencies[$this->company];
-        }
+			if ( empty( $companyId ) ) {
+				continue;
+			}
 
-        return $agencies;
-    }
+			$agencies[ $companyId ][] = $agency;
+		}
+
+		if ( ! empty( $this->company ) ) {
+			if ( ! empty( $agencies[ $this->company ] ) ) {
+				return $agencies[ $this->company ];
+			}
+		}
+
+		return $agencies;
+	}
 }

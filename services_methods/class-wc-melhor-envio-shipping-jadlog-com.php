@@ -1,28 +1,27 @@
 <?php
 
-if (class_exists('WC_Melhor_Envio_Shipping')) {
-    class WC_Melhor_Envio_Shipping_Jadlog_Com extends WC_Melhor_Envio_Shipping
-    {
-        const ID = 'melhorenvio_jadlog_com';
+if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
+	class WC_Melhor_Envio_Shipping_Jadlog_Com extends WC_Melhor_Envio_Shipping {
 
-        const TITLE = 'Jadlog .Com';
+		const ID = 'melhorenvio_jadlog_com';
 
-        const METHOD_TITLE = "Jadlog .Com (Melhor Envio)";
+		const TITLE = 'Jadlog .Com';
 
-        public $code = 4;
+		const METHOD_TITLE = 'Jadlog .Com (Melhor Envio)';
 
-        public $company = 'Jadlog';
+		public $code = 4;
 
-        /**
-         * Initialize Jadlog .COm.
-         *
-         * @param int $instance_id Shipping zone instance.
-         */
-        public function __construct($instance_id = 0)
-        {
-            $this->id = self::ID;
-            $this->method_title = self::METHOD_TITLE;
-            parent::__construct($instance_id);
-        }
-    }
+		public $company = 'Jadlog';
+
+		/**
+		 * Initialize Jadlog .COm.
+		 *
+		 * @param int $instance_id Shipping zone instance.
+		 */
+		public function __construct( $instance_id = 0 ) {
+			$this->id           = self::ID;
+			$this->method_title = self::METHOD_TITLE;
+			parent::__construct( $instance_id );
+		}
+	}
 }

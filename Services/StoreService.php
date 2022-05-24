@@ -5,141 +5,142 @@ namespace Services;
 use Helpers\SessionHelper;
 use Models\Session;
 
-class StoreService
-{
-    const URL = 'https://api.melhorenvio.com';
+class StoreService {
 
-    const OPTION_STORES = 'melhorenvio_stores';
+	const URL = 'https://api.melhorenvio.com';
 
-    const OPTION_STORE_SELECTED = 'melhorenvio_store_v2';
+	const OPTION_STORES = 'melhorenvio_stores';
 
-    const SESSION_STORES = 'melhorenvio_stores';
+	const OPTION_STORE_SELECTED = 'melhorenvio_store_v2';
 
-    const SESSION_STORE_SELECTED = 'melhorenvio_store_v2';
+	const SESSION_STORES = 'melhorenvio_stores';
 
-    const ROUTE_MELHOR_ENVIO_COMPANIES = '/companies';
+	const SESSION_STORE_SELECTED = 'melhorenvio_store_v2';
 
-    public $store = null;
+	const ROUTE_MELHOR_ENVIO_COMPANIES = '/companies';
 
-    /**
-     * Function to get store selected by seller.
-     *
-     * @return bool|object
-     */
-    public function getStoreSelected()
-    {
-        $stores = $this->getStores();
+	public $store = null;
 
-        if (empty($stores)) {
-            return false;
-        }
+	/**
+	 * Function to get store selected by seller.
+	 *
+	 * @return bool|object
+	 */
+	public function getStoreSelected() {
+		$stores = $this->getStores();
 
-        $storesSelected = array_filter($stores, function ($store) {
-            return !empty($store->selected);
-        });
+		if ( empty( $stores ) ) {
+			return false;
+		}
 
-        $storeSelected = end($storesSelected);
+		$storesSelected = array_filter(
+			$stores,
+			function ( $store ) {
+				return ! empty( $store->selected );
+			}
+		);
 
-        if (empty($storeSelected->name)) {
-            return false;
-        }
+		$storeSelected = end( $storesSelected );
 
-        $storeSelected->address = $this->getAddressStore($storeSelected);
+		if ( empty( $storeSelected->name ) ) {
+			return false;
+		}
 
-        return $storeSelected;
-    }
+		$storeSelected->address = $this->getAddressStore( $storeSelected );
 
-    /**
-     * Function to retrieve stores.
-     *
-     * @return bool|array
-     */
-    public function getStores()
-    {
-        SessionHelper::initIfNotExists();
+		return $storeSelected;
+	}
 
-        $codeStore = hash('sha512', get_option('home'));
+	/**
+	 * Function to retrieve stores.
+	 *
+	 * @return bool|array
+	 */
+	public function getStores() {
+		SessionHelper::initIfNotExists();
 
-        unset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES]);
-        if (isset($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES])) {
-            return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_STORES];
-        }
+		$codeStore = hash( 'sha512', get_option( 'home' ) );
 
-        $response = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_COMPANIES,
-            'GET',
-            [],
-            false
-        );
+		unset( $_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_STORES ] );
+		if ( isset( $_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_STORES ] ) ) {
+			return $_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_STORES ];
+		}
 
-        $stores = [];
+		$response = ( new RequestService() )->request(
+			self::ROUTE_MELHOR_ENVIO_COMPANIES,
+			'GET',
+			array(),
+			false
+		);
 
-        if (!isset($response->data)) {
-            return false;
-        }
+		$stores = array();
 
-        $stores = $response->data;
+		if ( ! isset( $response->data ) ) {
+			return false;
+		}
 
-        $storeSelected = $this->getSelectedStoreId();
+		$stores = $response->data;
 
-        $stores = array_map(function ($store) use ($storeSelected) {
-            if ($store->id == $storeSelected) {
-                $store->selected = true;
-            }
+		$storeSelected = $this->getSelectedStoreId();
 
-            $store->address = $this->getAddressStore($store);
+		$stores = array_map(
+			function ( $store ) use ( $storeSelected ) {
+				if ( $store->id == $storeSelected ) {
+					$store->selected = true;
+				}
 
-            return $store;
-        }, $stores);
+				$store->address = $this->getAddressStore( $store );
 
-        $_SESSION[Session::ME_KEY][$codeStore][self::OPTION_STORES] = $stores;
+				return $store;
+			},
+			$stores
+		);
 
-        session_write_close();
+		$_SESSION[ Session::ME_KEY ][ $codeStore ][ self::OPTION_STORES ] = $stores;
 
-        return $stores;
-    }
+		session_write_close();
 
-    /**
-     * Function to get the address of a store
-     *
-     * @param object $store
-     * @return object
-     */
-    public function getAddressStore($store)
-    {
-        $addresses = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $store->id . '/addresses',
-            'GET',
-            [],
-            false
-        );
-        
-        if (empty($addresses->data)) {
-            return [];
-        }
+		return $stores;
+	}
 
-        return $addresses->data;
-    }
+	/**
+	 * Function to get the address of a store
+	 *
+	 * @param object $store
+	 * @return object
+	 */
+	public function getAddressStore( $store ) {
+		$addresses = ( new RequestService() )->request(
+			self::ROUTE_MELHOR_ENVIO_COMPANIES . '/' . $store->id . '/addresses',
+			'GET',
+			array(),
+			false
+		);
 
-    /**
-     * Return ID of store selected by user
-     *
-     * @return null|string
-     */
-    public function getSelectedStoreId()
-    {
-        return get_option(self::OPTION_STORE_SELECTED, true);
-    }
+		if ( empty( $addresses->data ) ) {
+			return array();
+		}
 
-    /**
-     * Function to save store selected on wordpress.
-     *
-     * @param string $idStoreSelected
-     * @return bool
-     */
-    public function setStore($idStoreSelected)
-    {
-        delete_option(self::OPTION_STORE_SELECTED);
-        return add_option(self::OPTION_STORE_SELECTED, $idStoreSelected);
-    }
+		return $addresses->data;
+	}
+
+	/**
+	 * Return ID of store selected by user
+	 *
+	 * @return null|string
+	 */
+	public function getSelectedStoreId() {
+		return get_option( self::OPTION_STORE_SELECTED, true );
+	}
+
+	/**
+	 * Function to save store selected on WordPress.
+	 *
+	 * @param string $idStoreSelected
+	 * @return bool
+	 */
+	public function setStore( $idStoreSelected ) {
+		delete_option( self::OPTION_STORE_SELECTED );
+		return add_option( self::OPTION_STORE_SELECTED, $idStoreSelected );
+	}
 }

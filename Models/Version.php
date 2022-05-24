@@ -2,7 +2,7 @@
 
 namespace Models;
 
-class Version
-{
-    const VERSION = '2.11.14';
+class Version {
+
+	const VERSION = '2.11.15';
 }

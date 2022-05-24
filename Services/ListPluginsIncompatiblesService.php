@@ -2,54 +2,52 @@
 
 namespace Services;
 
-class ListPluginsIncompatiblesService
-{
-    /**
-     * Function to init a seach by plugins incompatibles.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $installed = $this->getListPluginsInstalled();
+class ListPluginsIncompatiblesService {
 
-        $incompatibles = $this->getListPluginsIncompatibles();
+	/**
+	 * Function to init a seach by plugins incompatibles.
+	 *
+	 * @return void
+	 */
+	public function init() {
+		$installed = $this->getListPluginsInstalled();
 
-        if (empty($installed) || empty($incompatibles)) {
-            return false;
-        }
+		$incompatibles = $this->getListPluginsIncompatibles();
 
-        foreach ($installed as $plugin) {
-            if (in_array($plugin, $incompatibles)) {
-                (new SessionNoticeService())->add(
-                    sprintf("O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.", $plugin),
-                    SessionNoticeService::NOTICE_INFO
-                );
-            }
-        }
-    }
+		if ( empty( $installed ) || empty( $incompatibles ) ) {
+			return false;
+		}
 
-    /**
-     * Function to return a list with plugins installed in WP.
-     *
-     * @return array
-     */
-    public function getListPluginsInstalled()
-    {
-        return apply_filters(
-            'network_admin_active_plugins',
-            get_option('active_plugins')
-        );
-    }
+		foreach ( $installed as $plugin ) {
+			if ( in_array( $plugin, $incompatibles ) ) {
+				( new SessionNoticeService() )->add(
+					sprintf( 'O plugin <b>%s</b> pode ser incompatível com o plugin do Melhor Envio.', $plugin ),
+					SessionNoticeService::NOTICE_INFO
+				);
+			}
+		}
+	}
 
-    /**
-     * Function to retrive a list with plugins incompatibles.
-     * @return array
-     */
-    public function getListPluginsIncompatibles()
-    {
-        return [
-            "wpc-composite-products/wpc-composite-products.php"
-        ];
-    }
+	/**
+	 * Function to return a list with plugins installed in WP.
+	 *
+	 * @return array
+	 */
+	public function getListPluginsInstalled() {
+		return apply_filters(
+			'network_admin_active_plugins',
+			get_option( 'active_plugins' )
+		);
+	}
+
+	/**
+	 * Function to retrive a list with plugins incompatibles.
+	 *
+	 * @return array
+	 */
+	public function getListPluginsIncompatibles() {
+		return array(
+			'wpc-composite-products/wpc-composite-products.php',
+		);
+	}
 }

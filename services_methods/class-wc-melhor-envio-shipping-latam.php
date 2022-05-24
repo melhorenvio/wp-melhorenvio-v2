@@ -1,28 +1,27 @@
 <?php
 
-if (class_exists('WC_Melhor_Envio_Shipping')) {
-    class WC_Melhor_Envio_Shipping_Latam extends WC_Melhor_Envio_Shipping
-    {
-        const ID = 'melhorenvio_latam';
+if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
+	class WC_Melhor_Envio_Shipping_Latam extends WC_Melhor_Envio_Shipping {
 
-        const TITLE = 'Latam';
+		const ID = 'melhorenvio_latam';
 
-        const METHOD_TITLE = "Latam (Melhor Envio)";
+		const TITLE = 'Latam';
 
-        public $code = 10;
+		const METHOD_TITLE = 'Latam (Melhor Envio)';
 
-        public $company = 'LATAM Cargo';
+		public $code = 10;
 
-        /**
-         * Initialize Latam.
-         *
-         * @param int $instance_id Shipping zone instance.
-         */
-        public function __construct($instance_id = 0)
-        {
-            $this->id = self::ID;
-            $this->method_title = self::METHOD_TITLE;
-            parent::__construct($instance_id);
-        }
-    }
+		public $company = 'LATAM Cargo';
+
+		/**
+		 * Initialize Latam.
+		 *
+		 * @param int $instance_id Shipping zone instance.
+		 */
+		public function __construct( $instance_id = 0 ) {
+			$this->id           = self::ID;
+			$this->method_title = self::METHOD_TITLE;
+			parent::__construct( $instance_id );
+		}
+	}
 }

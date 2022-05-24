@@ -1,28 +1,27 @@
 <?php
 
-if (class_exists('WC_Melhor_Envio_Shipping')) {
-    class WC_Melhor_Envio_Shipping_Correios_Pac extends WC_Melhor_Envio_Shipping
-    {
-        const ID = 'melhorenvio_correios_pac';
+if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
+	class WC_Melhor_Envio_Shipping_Correios_Pac extends WC_Melhor_Envio_Shipping {
 
-        const TITLE = 'Correios Pac';
+		const ID = 'melhorenvio_correios_pac';
 
-        const METHOD_TITLE = "Correios Pac (Melhor Envio)";
+		const TITLE = 'Correios Pac';
 
-        public $code = 1;
+		const METHOD_TITLE = 'Correios Pac (Melhor Envio)';
 
-        public $company = 'Correios';
+		public $code = 1;
 
-        /**
-         * Initialize Correios Pac.
-         *
-         * @param int $instance_id Shipping zone instance.
-         */
-        public function __construct($instance_id = 0)
-        {
-            $this->id = self::ID;
-            $this->method_title = self::METHOD_TITLE;
-            parent::__construct($instance_id);
-        }
-    }
+		public $company = 'Correios';
+
+		/**
+		 * Initialize Correios Pac.
+		 *
+		 * @param int $instance_id Shipping zone instance.
+		 */
+		public function __construct( $instance_id = 0 ) {
+			$this->id           = self::ID;
+			$this->method_title = self::METHOD_TITLE;
+			parent::__construct( $instance_id );
+		}
+	}
 }

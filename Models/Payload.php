@@ -2,59 +2,56 @@
 
 namespace Models;
 
-class Payload
-{
-    /**
-     * Identification key for the payload option in Wordpress.
-     */
-    const POST_META_PAYLOAD = 'wp_melhor_envio_payload';
+class Payload {
 
-    /**
-     * function to get payload by post_id
-     *
-     * @param int $postId
-     * @return object
-     */
-    public function get($postId)
-    {
-        $payload = get_post_meta($postId, self::POST_META_PAYLOAD, true);
+	/**
+	 * Identification key for the payload option in WordPress.
+	 */
+	const POST_META_PAYLOAD = 'wp_melhor_envio_payload';
 
-        if (!empty($payload)) {
-            return json_decode($payload);
-        }
+	/**
+	 * function to get payload by post_id
+	 *
+	 * @param int $postId
+	 * @return object
+	 */
+	public function get( $postId ) {
+		$payload = get_post_meta( $postId, self::POST_META_PAYLOAD, true );
 
-        return false;
-    }
+		if ( ! empty( $payload ) ) {
+			return json_decode( $payload );
+		}
 
-    /**
-     * Function to save the payload data in Wordpress options.
-     *
-     * @param int $postId
-     * @param object $payload
-     * @return bool
-     */
-    public function save($postId, $payload)
-    {
-        if (!empty($this->get($postId))) {
-            $this->destroy($postId);
-        }
+		return false;
+	}
 
-        return add_post_meta(
-            $postId,
-            self::POST_META_PAYLOAD,
-            json_encode($payload, JSON_UNESCAPED_UNICODE),
-            true
-        );
-    }
+	/**
+	 * Function to save the payload data in WordPress options.
+	 *
+	 * @param int    $postId
+	 * @param object $payload
+	 * @return bool
+	 */
+	public function save( $postId, $payload ) {
+		if ( ! empty( $this->get( $postId ) ) ) {
+			$this->destroy( $postId );
+		}
 
-    /**
-     * Function to destroy the seller data in Wordpress options.
-     *
-     * @param int $postId
-     * @return bool
-     */
-    public function destroy($postId)
-    {
-        return delete_post_meta($postId, self::POST_META_PAYLOAD);
-    }
+		return add_post_meta(
+			$postId,
+			self::POST_META_PAYLOAD,
+			json_encode( $payload, JSON_UNESCAPED_UNICODE ),
+			true
+		);
+	}
+
+	/**
+	 * Function to destroy the seller data in WordPress options.
+	 *
+	 * @param int $postId
+	 * @return bool
+	 */
+	public function destroy( $postId ) {
+		return delete_post_meta( $postId, self::POST_META_PAYLOAD );
+	}
 }
