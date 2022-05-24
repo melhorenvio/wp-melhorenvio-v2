@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Services\OptionsMethodShippingService;
+use MelhorEnvio\Services\OptionsMethodShippingService;
 
 class Method {
 

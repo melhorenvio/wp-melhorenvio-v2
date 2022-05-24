@@ -1,12 +1,12 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Services\ManageRequestService;
-use Services\ClearDataStored;
-use Models\Version;
-use Models\ResponseStatus;
-use Services\SessionNoticeService;
+use MelhorEnvio\Services\ManageRequestService;
+use MelhorEnvio\Services\ClearDataStored;
+use MelhorEnvio\Models\Version;
+use MelhorEnvio\Models\ResponseStatus;
+use MelhorEnvio\Services\SessionNoticeService;
 
 class RequestService {
 

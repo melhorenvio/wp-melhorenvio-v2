@@ -1,6 +1,6 @@
 <?php
 
-namespace Helpers;
+namespace MelhorEnvio\Helpers;
 
 /**
  * Session helper class

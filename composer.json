@@ -12,15 +12,14 @@
             "role": "Developer"
         }
     ],
-    "require": {},
     "autoload": {
         "psr-4": {
-            "Controllers\\": "Controllers/",
-            "Models\\": "Models/",
-            "Interfaces\\": "core/interfaces/",
-            "Services\\": "Services/",
-            "Bases\\": "core/bases/",
-            "Helpers\\": "Helpers/"
+            "MelhorEnvio\\Controllers\\": "Controllers/",
+            "MelhorEnvio\\Models\\": "Models/",
+            "MelhorEnvio\\Interfaces\\": "core/interfaces/",
+            "MelhorEnvio\\Services\\": "Services/",
+            "MelhorEnvio\\Bases\\": "core/bases/",
+            "MelhorEnvio\\Helpers\\": "Helpers/"
         }
     },
     "require-dev": {

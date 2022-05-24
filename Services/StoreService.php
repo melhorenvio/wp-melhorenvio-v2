@@ -1,9 +1,9 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\SessionHelper;
-use Models\Session;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Models\Session;
 
 class StoreService {
 

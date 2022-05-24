@@ -1,10 +1,10 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\ShippingService;
-use Helpers\TranslateStatusHelper;
-use Helpers\ProductVirtualHelper;
+use MelhorEnvio\Models\ShippingService;
+use MelhorEnvio\Helpers\TranslateStatusHelper;
+use MelhorEnvio\Helpers\ProductVirtualHelper;
 
 class ListOrderService {
 

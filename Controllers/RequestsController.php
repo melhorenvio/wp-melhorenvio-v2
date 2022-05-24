@@ -1,9 +1,9 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\SanitizeHelper;
-use Services\ManageRequestService;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Services\ManageRequestService;
 
 class RequestsController {
 

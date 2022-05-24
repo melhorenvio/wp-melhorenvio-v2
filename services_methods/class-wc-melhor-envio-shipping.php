@@ -1,7 +1,7 @@
 <?php
 
-use Services\CalculateShippingMethodService;
-use Helpers\MoneyHelper;
+use MelhorEnvio\Services\CalculateShippingMethodService;
+use MelhorEnvio\Helpers\MoneyHelper;
 
 /**
  * Default Melhor Envio shipping method abstract class.

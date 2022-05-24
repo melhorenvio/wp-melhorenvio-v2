@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Helpers\DimensionsHelper;
+use MelhorEnvio\Helpers\DimensionsHelper;
 
 class Cart {
 

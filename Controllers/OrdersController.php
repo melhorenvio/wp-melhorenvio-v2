@@ -1,15 +1,15 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\SanitizeHelper;
-use Services\OrdersProductsService;
-use Services\BuyerService;
-use Services\CartService;
-use Services\OrderService;
-use Services\OrderQuotationService;
-use Services\ListOrderService;
-use Services\OrderInvoicesService;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Services\OrdersProductsService;
+use MelhorEnvio\Services\BuyerService;
+use MelhorEnvio\Services\CartService;
+use MelhorEnvio\Services\OrderService;
+use MelhorEnvio\Services\OrderQuotationService;
+use MelhorEnvio\Services\ListOrderService;
+use MelhorEnvio\Services\OrderInvoicesService;
 
 class OrdersController {
 

@@ -1,23 +1,23 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Controllers\AgenciesController;
-use Controllers\ConfigurationController;
-use Controllers\LocationsController;
-use Controllers\OrdersController;
-use Controllers\QuotationController;
-use Controllers\SessionsController;
-use Controllers\StatusController;
-use Controllers\TokenController;
-use Controllers\UsersController;
-use Controllers\PathController;
-use Controllers\PayloadsController;
-use Controllers\CartController;
-use Controllers\NoticeFormController;
-use Controllers\RequestsController;
-use Helpers\SanitizeHelper;
-use Models\Version;
+use MelhorEnvio\Controllers\AgenciesController;
+use MelhorEnvio\Controllers\ConfigurationController;
+use MelhorEnvio\Controllers\LocationsController;
+use MelhorEnvio\Controllers\OrdersController;
+use MelhorEnvio\Controllers\QuotationController;
+use MelhorEnvio\Controllers\SessionsController;
+use MelhorEnvio\Controllers\StatusController;
+use MelhorEnvio\Controllers\TokenController;
+use MelhorEnvio\Controllers\UsersController;
+use MelhorEnvio\Controllers\PathController;
+use MelhorEnvio\Controllers\PayloadsController;
+use MelhorEnvio\Controllers\CartController;
+use MelhorEnvio\Controllers\NoticeFormController;
+use MelhorEnvio\ Controllers\RequestsController;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Models\Version;
 
 /**
  * Class responsible for managing the routes of the plugin
