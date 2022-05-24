@@ -1,8 +1,8 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\DimensionsHelper;
+use MelhorEnvio\Helpers\DimensionsHelper;
 
  /**
   * Aqui é verificado se o produto é da classe do plugin Composite Product,

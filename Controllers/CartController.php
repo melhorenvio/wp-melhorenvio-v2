@@ -1,8 +1,8 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Services\CartService;
+use MelhorEnvio\Services\CartService;
 
 class CartController {
 

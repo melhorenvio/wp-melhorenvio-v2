@@ -1,6 +1,6 @@
 <?php
 
-use Models\ShippingService;
+use MelhorEnvio\Models\ShippingService;
 
 if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 	class WC_Melhor_Envio_Shipping_Buslog_Rodoviario extends WC_Melhor_Envio_Shipping {

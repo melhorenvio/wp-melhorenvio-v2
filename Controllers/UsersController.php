@@ -1,13 +1,13 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Models\Address;
-use Models\Store;
-use Models\User;
-use Services\BalanceService;
-use Services\OrderQuotationService;
-use Services\StoreService;
+use MelhorEnvio\Models\Address;
+use MelhorEnvio\Models\Store;
+use MelhorEnvio\Models\User;
+use MelhorEnvio\Services\BalanceService;
+use MelhorEnvio\Services\OrderQuotationService;
+use MelhorEnvio\Services\StoreService;
 
 class UsersController {
 

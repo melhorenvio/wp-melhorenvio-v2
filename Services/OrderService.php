@@ -1,10 +1,10 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Order;
-use Models\Method;
-use Models\ShippingService;
+use MelhorEnvio\Models\Order;
+use MelhorEnvio\Models\Method;
+use MelhorEnvio\Models\ShippingService;
 
 class OrderService {
 

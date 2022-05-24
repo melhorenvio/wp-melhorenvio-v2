@@ -1,11 +1,11 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\DimensionsHelper;
-use Helpers\SanitizeHelper;
-use Models\Option;
-use Models\ResponseStatus;
+use MelhorEnvio\Helpers\DimensionsHelper;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Models\ResponseStatus;
 
 class TestService {
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Method;
-use Models\Session;
+use MelhorEnvio\Models\Method;
+use MelhorEnvio\Models\Session;
 
 /**
  * Class responsible for managing the shipping method options service

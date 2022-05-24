@@ -1,10 +1,10 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Services\ClearDataStored;
-use Helpers\SessionHelper;
-use Models\Session;
+use MelhorEnvio\Services\ClearDataStored;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Models\Session;
 
 class SessionsController {
 

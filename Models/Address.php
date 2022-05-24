@@ -1,11 +1,11 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Models\Agency;
-use Models\Session;
-use Controllers\TokenController;
-use Services\RequestService;
+use MelhorEnvio\Models\Agency;
+use MelhorEnvio\Models\Session;
+use MelhorEnvio\Controllers\TokenController;
+use MelhorEnvio\Services\RequestService;
 
 class Address {
 

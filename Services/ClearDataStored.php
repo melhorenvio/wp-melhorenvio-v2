@@ -1,11 +1,11 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Seller;
-use Models\Session;
-use Models\ShippingService;
-use Helpers\SessionHelper;
+use MelhorEnvio\Models\Seller;
+use MelhorEnvio\Models\Session;
+use MelhorEnvio\Models\ShippingService;
+use MelhorEnvio\Helpers\SessionHelper;
 
 class ClearDataStored {
 

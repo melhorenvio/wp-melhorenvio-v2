@@ -1,8 +1,8 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\DimensionsHelper;
+use MelhorEnvio\Helpers\DimensionsHelper;
 
 class PackageController {
 
