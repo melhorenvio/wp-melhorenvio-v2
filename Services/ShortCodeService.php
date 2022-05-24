@@ -5,8 +5,8 @@ namespace Services;
 /**
  * Class responsible for the shortcode service
  */
-class ShortCodeService
-{
+class ShortCodeService {
+
 
 
 	public $product;
@@ -16,25 +16,25 @@ class ShortCodeService
 	 *
 	 * @param int $productId
 	 */
-public function __construct( $product ) {
-	$this->product = $product;
-}
+	public function __construct( $product ) {
+		$this->product = $product;
+	}
 
-public function shortcode() {
-	$this->addCalculoDeFrete();
-}
+	public function shortcode() {
+		$this->addCalculoDeFrete();
+	}
 
 	/**
 	 * Adiciona o HTML do cálculo de frete na página do produto
 	 */
-public function addCalculoDeFrete()
-	{
+	public function addCalculoDeFrete() {
 		wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery' );
 		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
 		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
 
-		echo esc_html(sprintf(
-			"
+		echo esc_html(
+			sprintf(
+				"
             <style>
                 #melhor-envio-shortcode .border-none,
                 tr,
@@ -73,13 +73,10 @@ public function addCalculoDeFrete()
                     <small class='observation-shipping-free-shortcode'></small>
                 </div>
             </div> ",
-			$this->product->get_id(),
-			admin_url( 'admin-ajax.php' ),
-			'return usePostalCodeMask()'
-<< << <<< HEAD
-        );
-=======
-        ));
->>>>>>> 1eaaa6704b74f483764c9f22d08a59d09114d847
-    }
+				$this->product->get_id(),
+				admin_url( 'admin-ajax.php' ),
+				'return usePostalCodeMask()'
+			)
+		);
+	}
 }
