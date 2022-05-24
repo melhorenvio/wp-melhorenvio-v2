@@ -1,8 +1,8 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\SanitizeHelper;
 
 /**
  * Class ProcessAdditionalTaxService

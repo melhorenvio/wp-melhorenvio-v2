@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
 /**
  * Controller to manage the product's paged calculator

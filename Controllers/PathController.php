@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
 class PathController {
 

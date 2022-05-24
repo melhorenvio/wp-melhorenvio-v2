@@ -1,13 +1,13 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Option;
-use Models\Payload;
-use Helpers\TimeHelper;
-use Helpers\SessionHelper;
-use Services\PayloadService;
-use Services\WooCommerceBundleProductsService;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Models\Payload;
+use MelhorEnvio\Helpers\TimeHelper;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Services\PayloadService;
+use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
 class RolesService {
 

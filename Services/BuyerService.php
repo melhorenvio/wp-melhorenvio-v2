@@ -1,8 +1,8 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\FormaterHelper;
+use MelhorEnvio\Helpers\FormaterHelper;
 
 class BuyerService {
 

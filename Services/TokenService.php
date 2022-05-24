@@ -1,8 +1,8 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Token;
+use MelhorEnvio\Models\Token;
 
 class TokenService {
 

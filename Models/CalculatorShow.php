@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Models\Address;
+use MelhorEnvio\Models\Address;
 
 class CalculatorShow {
 

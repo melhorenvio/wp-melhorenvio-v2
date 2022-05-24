@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
 /**
  * Health service class

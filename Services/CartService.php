@@ -1,16 +1,16 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Order;
-use Models\Option;
-use Models\Payload;
-use Models\Session;
-use Models\ShippingCompany;
-use Helpers\SessionHelper;
-use Helpers\PostalCodeHelper;
-use Helpers\CpfHelper;
-use Helpers\ProductVirtualHelper;
+use MelhorEnvio\Models\Order;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Models\Payload;
+use MelhorEnvio\Models\Session;
+use MelhorEnvio\Models\ShippingCompany;
+use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\PostalCodeHelper;
+use MelhorEnvio\Helpers\CpfHelper;
+use MelhorEnvio\Helpers\ProductVirtualHelper;
 
 class CartService {
 

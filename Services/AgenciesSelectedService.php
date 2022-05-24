@@ -1,8 +1,8 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Agency;
+use MelhorEnvio\Models\Agency;
 
 class AgenciesSelectedService {
 

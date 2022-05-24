@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Services\OrderQuotationService;
+use MelhorEnvio\Services\OrderQuotationService;
 
 class Order {
 

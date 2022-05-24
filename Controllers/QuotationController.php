@@ -1,12 +1,12 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\SanitizeHelper;
-use Services\PayloadService;
-use Services\QuotationService;
-use Services\QuotationProductPageService;
-use Models\Session;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Services\PayloadService;
+use MelhorEnvio\Services\QuotationService;
+use MelhorEnvio\Services\QuotationProductPageService;
+use MelhorEnvio\Models\Session;
 
 /**
  * Class responsible for the quotation controller

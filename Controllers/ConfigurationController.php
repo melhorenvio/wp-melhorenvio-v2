@@ -1,15 +1,15 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\SanitizeHelper;
-use Models\Address;
-use Models\Agency;
-use Models\Store;
-use Models\Method;
-use Models\Option;
-use Services\ConfigurationsService;
-use Services\OptionsMethodShippingService;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Models\Address;
+use MelhorEnvio\Models\Agency;
+use MelhorEnvio\Models\Store;
+use MelhorEnvio\Models\Method;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Services\ConfigurationsService;
+use MelhorEnvio\Services\OptionsMethodShippingService;
 
 /**
  * Class responsible for the configuration controller

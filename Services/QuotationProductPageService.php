@@ -1,10 +1,10 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\MoneyHelper;
-use Helpers\PostalCodeHelper;
-use Services\WooCommerceBundleProductsService;
+use MelhorEnvio\Helpers\MoneyHelper;
+use MelhorEnvio\Helpers\PostalCodeHelper;
+use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 class QuotationProductPageService {
 
