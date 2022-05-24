@@ -74,7 +74,7 @@
   <div>
     <div class="boxBanner">
       <img
-        src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png"
+        src="../../../images/banner-admin.png"
       />
     </div>
 
