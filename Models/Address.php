@@ -7,154 +7,150 @@ use Models\Session;
 use Controllers\TokenController;
 use Services\RequestService;
 
-class Address
-{
-    const URL = 'https://api.melhorenvio.com';
+class Address {
 
-    const OPTION_ADDRESS = 'melhorenvio_address';
+	const URL = 'https://api.melhorenvio.com';
 
-    const OPTION_ADDRESSES = 'melhorenvio_addresses';
+	const OPTION_ADDRESS = 'melhorenvio_address';
 
-    const OPTION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
+	const OPTION_ADDRESSES = 'melhorenvio_addresses';
 
-    const SESSION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
+	const OPTION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
 
-    const ROUTE_MELHOR_ENVIO_ADDRESS = '/addresses';
+	const SESSION_ADDRESS_SELECTED = 'melhorenvio_address_selected_v2';
 
-    /**
-     *
-     * @return void
-     */
-    public function getAddressesShopping()
-    {
-        $response = (new RequestService())->request(
-            self::ROUTE_MELHOR_ENVIO_ADDRESS,
-            'GET',
-            [],
-            false
-        );
+	const ROUTE_MELHOR_ENVIO_ADDRESS = '/addresses';
 
-        if (empty($response->data)) {
-            return [
-                'success' => false,
-                'message' => 'Não foi possível obter endereços da API do Melhor Envio'
-            ];
-        }
+	/**
+	 *
+	 * @return void
+	 */
+	public function getAddressesShopping() {
+		$response = ( new RequestService() )->request(
+			self::ROUTE_MELHOR_ENVIO_ADDRESS,
+			'GET',
+			array(),
+			false
+		);
 
-        $selectedAddress = get_option(self::OPTION_ADDRESS_SELECTED);
+		if ( empty( $response->data ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Não foi possível obter endereços da API do Melhor Envio',
+			);
+		}
 
-        $addresses = array();
+		$selectedAddress = get_option( self::OPTION_ADDRESS_SELECTED );
 
-        foreach ($response->data as $address) {
-            $addresses[] = array(
-                'id'          => $address->id,
-                'address'     => $address->address,
-                'complement'  => $address->complement,
-                'label'       => $address->label,
-                'postal_code' => str_pad($address->postal_code, 8, 0, STR_PAD_LEFT),
-                'number'      => $address->number,
-                'district'    => $address->district,
-                'city'        => $address->city->city,
-                'state'       => $address->city->state->state_abbr,
-                'country'     => $address->city->state->country->id,
-                'selected'    => ($selectedAddress == $address->id)
-            );
-        }
+		$addresses = array();
 
-        return array(
-            'success' => true,
-            'origin' => 'api',
-            'addresses' => $addresses
-        );
-    }
+		foreach ( $response->data as $address ) {
+			$addresses[] = array(
+				'id'          => $address->id,
+				'address'     => $address->address,
+				'complement'  => $address->complement,
+				'label'       => $address->label,
+				'postal_code' => str_pad( $address->postal_code, 8, 0, STR_PAD_LEFT ),
+				'number'      => $address->number,
+				'district'    => $address->district,
+				'city'        => $address->city->city,
+				'state'       => $address->city->state->state_abbr,
+				'country'     => $address->city->state->country->id,
+				'selected'    => ( $selectedAddress == $address->id ),
+			);
+		}
 
-    public function setAddressShopping($addressId)
-    {
-        $codeStore = hash('sha512', get_option('home'));
+		return array(
+			'success'   => true,
+			'origin'    => 'api',
+			'addresses' => $addresses,
+		);
+	}
 
-        $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED] = $addressId;
+	public function setAddressShopping( $addressId ) {
+		$codeStore = hash( 'sha512', get_option( 'home' ) );
 
-        $addressDefault = get_option(self::OPTION_ADDRESS_SELECTED);
+		$_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_ADDRESS_SELECTED ] = $addressId;
 
-        if (empty($addressDefault)) {
-            add_option(self::OPTION_ADDRESS_SELECTED, $addressId);
-            return array(
-                'success' => true,
-                'id' => $addressId
-            );
-        }
+		$addressDefault = get_option( self::OPTION_ADDRESS_SELECTED );
 
-        update_option(self::OPTION_ADDRESS_SELECTED, $addressId);
-        return array(
-            'success' => true,
-            'id' => $addressId
-        );
-    }
+		if ( empty( $addressDefault ) ) {
+			add_option( self::OPTION_ADDRESS_SELECTED, $addressId );
+			return array(
+				'success' => true,
+				'id'      => $addressId,
+			);
+		}
 
-    /**
-     * Return ID of address selected by user
-     *
-     * @return int
-     */
-    public function getSelectedAddressId()
-    {
-        // Find ID on session
-        if ($this->existsAddressIdSelectedSession()) {
-            $codeStore = hash('sha512', get_option('home'));
-            return $_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED];
-        }
+		update_option( self::OPTION_ADDRESS_SELECTED, $addressId );
+		return array(
+			'success' => true,
+			'id'      => $addressId,
+		);
+	}
 
-        // Find ID on database wordpress
-        $idSelected = get_option(self::OPTION_ADDRESS_SELECTED, true);
-        if (!is_bool($idSelected)) {
-            return $idSelected;
-        }
+	/**
+	 * Return ID of address selected by user
+	 *
+	 * @return int
+	 */
+	public function getSelectedAddressId() {
+		// Find ID on session
+		if ( $this->existsAddressIdSelectedSession() ) {
+			$codeStore = hash( 'sha512', get_option( 'home' ) );
+			return $_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_ADDRESS_SELECTED ];
+		}
 
-        return null;
-    }
+		// Find ID on database WordPress
+		$idSelected = get_option( self::OPTION_ADDRESS_SELECTED, true );
+		if ( ! is_bool( $idSelected ) ) {
+			return $idSelected;
+		}
 
-    public function getAddressFrom()
-    {
-        $addresses = $this->getAddressesShopping();
+		return null;
+	}
 
-        $idAddressSelected = $this->getSelectedAddressId();
+	public function getAddressFrom() {
+		$addresses = $this->getAddressesShopping();
 
-        if (is_null($addresses['addresses'])) {
-            return null;
-        }
+		$idAddressSelected = $this->getSelectedAddressId();
 
-        foreach ($addresses['addresses'] as $item) {
-            if ($item['id'] == floatval($idAddressSelected)) {
-                return array(
-                    'success' => true,
-                    'origin'  => 'session/database',
-                    'address' => $item
-                );
-            }
-        }
+		if ( is_null( $addresses['addresses'] ) ) {
+			return null;
+		}
 
-        if (!empty($addresses['addresses'])) {
-            return array(
-                'success' => true,
-                'origin'  => 'database',
-                'address' => end($addresses['addresses'])
-            );
-        }
+		foreach ( $addresses['addresses'] as $item ) {
+			if ( $item['id'] == floatval( $idAddressSelected ) ) {
+				return array(
+					'success' => true,
+					'origin'  => 'session/database',
+					'address' => $item,
+				);
+			}
+		}
 
-        return array(
-            'success' => false,
-            'address' => []
-        );
-    }
+		if ( ! empty( $addresses['addresses'] ) ) {
+			return array(
+				'success' => true,
+				'origin'  => 'database',
+				'address' => end( $addresses['addresses'] ),
+			);
+		}
 
-    /**
-     * function check has in session the ID of address selected
-     * @return bool
-     */
-    private function existsAddressIdSelectedSession()
-    {
-        $codeStore = hash('sha512', get_option('home'));
+		return array(
+			'success' => false,
+			'address' => array(),
+		);
+	}
 
-        return !empty($_SESSION[Session::ME_KEY][$codeStore][self::SESSION_ADDRESS_SELECTED]);
-    }
+	/**
+	 * function check has in session the ID of address selected
+	 *
+	 * @return bool
+	 */
+	private function existsAddressIdSelectedSession() {
+		$codeStore = hash( 'sha512', get_option( 'home' ) );
+
+		return ! empty( $_SESSION[ Session::ME_KEY ][ $codeStore ][ self::SESSION_ADDRESS_SELECTED ] );
+	}
 }

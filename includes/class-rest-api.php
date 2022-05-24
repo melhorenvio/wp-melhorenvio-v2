@@ -6,7 +6,7 @@ namespace App;
  */
 class REST_API {
 
-    public function __construct() {
-        # code...
-    }
+	public function __construct() {
+		// code...
+	}
 }

@@ -2,74 +2,71 @@
 
 namespace Services;
 
-class OrderInvoicesService
-{
-    const POST_META_INVOICE = 'melhorenvio_invoice_v2';
+class OrderInvoicesService {
 
-    /**
-     * Function to save invoice by order.
-     *
-     * @param int $postId
-     * @param numeric $key
-     * @param numeric $number
-     * @return array
-     */
-    public function insertInvoiceOrder($postId, $key, $number)
-    {
-        delete_post_meta($postId, self::POST_META_INVOICE);
+	const POST_META_INVOICE = 'melhorenvio_invoice_v2';
 
-        $invoice = [
-            'key' => $key,
-            'number' => $number
-        ];
+	/**
+	 * Function to save invoice by order.
+	 *
+	 * @param int     $postId
+	 * @param numeric $key
+	 * @param numeric $number
+	 * @return array
+	 */
+	public function insertInvoiceOrder( $postId, $key, $number ) {
+		delete_post_meta( $postId, self::POST_META_INVOICE );
 
-        $result = add_post_meta(
-            $postId,
-            self::POST_META_INVOICE,
-            $invoice,
-            true
-        );
+		$invoice = array(
+			'key'    => $key,
+			'number' => $number,
+		);
 
-        if (!$result) {
-            return [
-                'key' => null,
-                'number' => null
-            ];
-        }
+		$result = add_post_meta(
+			$postId,
+			self::POST_META_INVOICE,
+			$invoice,
+			true
+		);
 
-        return $invoice;
-    }
+		if ( ! $result ) {
+			return array(
+				'key'    => null,
+				'number' => null,
+			);
+		}
 
-    /**
-     * Function to retrieve invoice by order. 
-     *
-     * @param int $postId
-     * @return array $invoice
-     */
-    public function getInvoiceOrder($postId)
-    {
-        $invoice = get_post_meta($postId, self::POST_META_INVOICE, true);
+		return $invoice;
+	}
 
-        if (!$invoice) {
-            return [
-                'key' => null,
-                'number' => null
-            ];
-        }
+	/**
+	 * Function to retrieve invoice by order.
+	 *
+	 * @param int $postId
+	 * @return array $invoice
+	 */
+	public function getInvoiceOrder( $postId ) {
+		$invoice = get_post_meta( $postId, self::POST_META_INVOICE, true );
 
-        return $invoice;
-    }
+		if ( ! $invoice ) {
+			return array(
+				'key'    => null,
+				'number' => null,
+			);
+		}
 
-    /**
-     * Function to check order is non commercial
-     *
-     * @param int $postId
-     * @return boolean
-     */
-    public function isNonCommercial($postId)
-    {
-        $invoice = get_post_meta($postId, self::POST_META_INVOICE, true);
+		return $invoice;
+	}
 
-        return (!isset($invoice['key']) || !isset($invoice['number']));
-    }
+	/**
+	 * Function to check order is non commercial
+	 *
+	 * @param int $postId
+	 * @return boolean
+	 */
+	public function isNonCommercial( $postId ) {
+		$invoice = get_post_meta( $postId, self::POST_META_INVOICE, true );
+
+		return ( ! isset( $invoice['key'] ) || ! isset( $invoice['number'] ) );
+	}
 }

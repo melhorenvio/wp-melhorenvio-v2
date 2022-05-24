@@ -2,6 +2,6 @@
 
 namespace Models;
 
-class Store
-{
+class Store {
+
 }

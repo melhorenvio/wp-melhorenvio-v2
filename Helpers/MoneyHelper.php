@@ -2,89 +2,84 @@
 
 namespace Helpers;
 
-class MoneyHelper
-{
-    /**
-     * Function to define the customized price
-     *
-     * @param string $value
-     * @param string $extra
-     * @param string $percent
-     * @return string
-     */
-    public static function price($value, $extra, $percent)
-    {
-        $value = floatval($value);
-        $extra = floatval($extra);
-        $percent = floatval($percent);
+class MoneyHelper {
 
-        $value = self::calculateFinalValue($value, $extra, $percent);
+	/**
+	 * Function to define the customized price
+	 *
+	 * @param string $value
+	 * @param string $extra
+	 * @param string $percent
+	 * @return string
+	 */
+	public static function price( $value, $extra, $percent ) {
+		$value   = floatval( $value );
+		$extra   = floatval( $extra );
+		$percent = floatval( $percent );
 
-        return 'R$' . number_format($value, 2, ',', '.');
-    }
+		$value = self::calculateFinalValue( $value, $extra, $percent );
 
-    /**
-     * Function to define the price
-     *
-     * @param string $value
-     * @param string $extra
-     * @param string $percent
-     * @return float
-     */
-    public static function cost($value, $extra, $percent)
-    {
-        $value = floatval($value);
-        $extra = floatval($extra);
-        $percent = floatval($percent);
+		return 'R$' . number_format( $value, 2, ',', '.' );
+	}
 
-        return self::calculateFinalValue($value, $extra, $percent);
-    }
+	/**
+	 * Function to define the price
+	 *
+	 * @param string $value
+	 * @param string $extra
+	 * @param string $percent
+	 * @return float
+	 */
+	public static function cost( $value, $extra, $percent ) {
+		$value   = floatval( $value );
+		$extra   = floatval( $extra );
+		$percent = floatval( $percent );
 
-    /**
-     * Function to calculate final value
-     *
-     * @param float $value
-     * @param float $extra
-     * @param float $percent
-     * @return string
-     */
-    public static function calculateFinalValue($value, $extra, $percent)
-    {
-        $percentExtra = ($value / 100) * $percent;
+		return self::calculateFinalValue( $value, $extra, $percent );
+	}
 
-        $finalValue =  $value + $percentExtra + $extra;
+	/**
+	 * Function to calculate final value
+	 *
+	 * @param float $value
+	 * @param float $extra
+	 * @param float $percent
+	 * @return string
+	 */
+	public static function calculateFinalValue( $value, $extra, $percent ) {
+		$percentExtra = ( $value / 100 ) * $percent;
 
-        return ($finalValue > 0) ? $finalValue : 0;
-    }
+		$finalValue = $value + $percentExtra + $extra;
 
-    /**
-     * @param string $value
-     * @return float
-     */
-    public static function floatConverter($value)
-    {
-        if (is_string($value)) {
-            $value = preg_replace("/[^0-9,.]/", "", $value);
-            $value = trim($value);
+		return ( $finalValue > 0 ) ? $finalValue : 0;
+	}
 
-            if (preg_match('/^\d*\.\d+\,\d+/', $value)) {
-                $value = str_replace('.', '', $value);
-            } elseif (preg_match('/^\d*\,\d+\.\d+/', $value)) {
-                $value = str_replace(',', '', $value);
-            }
-    
-            return (float) str_replace(',', '.', $value);
-        }
+	/**
+	 * @param string $value
+	 * @return float
+	 */
+	public static function floatConverter( $value ) {
+		if ( is_string( $value ) ) {
+			$value = preg_replace( '/[^0-9,.]/', '', $value );
+			$value = trim( $value );
 
-        return $value;
-    }
+			if ( preg_match( '/^\d*\.\d+\,\d+/', $value ) ) {
+				$value = str_replace( '.', '', $value );
+			} elseif ( preg_match( '/^\d*\,\d+\.\d+/', $value ) ) {
+				$value = str_replace( ',', '', $value );
+			}
 
-    /**
-     * @param string $value
-     * @return bool
-     */
-    public static function isDiscount($value)
-    {
-        return  $value < 0;
-    }
+			return (float) str_replace( ',', '.', $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @param string $value
+	 * @return bool
+	 */
+	public static function isDiscount( $value ) {
+		return $value < 0;
+	}
 }

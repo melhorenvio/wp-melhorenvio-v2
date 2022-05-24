@@ -5,73 +5,68 @@ namespace App;
 /**
  * Admin Pages Handler
  */
-class Admin
-{
+class Admin {
 
-    public function __construct()
-    {
-        add_action('admin_menu', [$this, 'admin_menu']);
-    }
 
-    /**
-     * Register our menu page
-     *
-     * @return void
-     */
-    public function admin_menu()
-    {
-        global $submenu;
+	public function __construct() {
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	}
 
-        $capability = 'manage_woocommerce';
-        $slug       = 'melhor-envio';
+	/**
+	 * Register our menu page
+	 *
+	 * @return void
+	 */
+	public function admin_menu() {
+		global $submenu;
 
-        $hook = add_menu_page(
-            __('Melhor Envio', 'textdomain'),
-            __('Melhor Envio', 'textdomain'),
-            $capability,
-            $slug,
-            [$this, 'plugin_page'],
-            'dashicons-thumbs-up'
-        );
+		$capability = 'manage_woocommerce';
+		$slug       = 'melhor-envio';
 
-        if (current_user_can($capability)) {
-            $submenu[$slug][] = array(__('Meus pedidos', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/pedidos');
-            $submenu[$slug][] = array(__('Configurações', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/configuracoes');
-            $submenu[$slug][] = array(__('Token', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/token');
-        }
+		$hook = add_menu_page(
+			__( 'Melhor Envio', 'textdomain' ),
+			__( 'Melhor Envio', 'textdomain' ),
+			$capability,
+			$slug,
+			array( $this, 'plugin_page' ),
+			'dashicons-thumbs-up'
+		);
 
-        add_action('load-' . $hook, [$this, 'init_hooks']);
-    }
+		if ( current_user_can( $capability ) ) {
+			$submenu[ $slug ][] = array( __( 'Meus pedidos', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/pedidos' );
+			$submenu[ $slug ][] = array( __( 'Configurações', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/configuracoes' );
+			$submenu[ $slug ][] = array( __( 'Token', 'textdomain' ), $capability, 'admin.php?page=' . $slug . '#/token' );
+		}
 
-    /**
-     * Initialize our hooks for the admin page
-     *
-     * @return void
-     */
-    public function init_hooks()
-    {
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
-    }
+		add_action( 'load-' . $hook, array( $this, 'init_hooks' ) );
+	}
 
-    /**
-     * Load scripts and styles for the app
-     *
-     * @return void
-     */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('baseplugin-style');
-        wp_enqueue_style('baseplugin-admin');
-        wp_enqueue_script('baseplugin-admin');
-    }
+	/**
+	 * Initialize our hooks for the admin page
+	 *
+	 * @return void
+	 */
+	public function init_hooks() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
 
-    /**
-     * Render our admin page
-     *
-     * @return void
-     */
-    public function plugin_page()
-    {
-        echo '<div class="wrap"><div id="vue-admin-app"></div></div>';
-    }
+	/**
+	 * Load scripts and styles for the app
+	 *
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_style( 'baseplugin-style' );
+		wp_enqueue_style( 'baseplugin-admin' );
+		wp_enqueue_script( 'baseplugin-admin' );
+	}
+
+	/**
+	 * Render our admin page
+	 *
+	 * @return void
+	 */
+	public function plugin_page() {
+		echo '<div class="wrap"><div id="vue-admin-app"></div></div>';
+	}
 }
