@@ -11,7 +11,7 @@
     </template>
 
     <template v-if="item.status == null && item.quotation.length == 0">
-      <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif" />
+      <img src="@images/loader.gif" />
     </template>
 
     <template v-if="item.quotation != false && item.status == null">

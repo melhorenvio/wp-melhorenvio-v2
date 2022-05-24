@@ -5,7 +5,8 @@ namespace Controllers;
 /**
  * Controller to manage the product's paged calculator
  */
-class ShowCalculatorProductPage {
+class ShowCalculatorProductPage
+{
 
 	protected $product;
 	protected $height;
@@ -18,14 +19,15 @@ class ShowCalculatorProductPage {
 	protected $baseUrl;
 	protected $whereShowCalculator;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->basePath            = __DIR__;
-		$this->baseUrl             = plugin_dir_url( __FILE__ );
-		$this->whereShowCalculator = ( new ConfigurationController() )->getWhereCalculatorValue();
+		$this->baseUrl             = plugin_dir_url(__FILE__);
+		$this->whereShowCalculator = (new ConfigurationController())->getWhereCalculatorValue();
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueueCssJsFrontend' ) );
-		add_action( 'wp_ajax_escutar_solicitacoes_de_frete', array( $this, 'escutar_solicitacoes_de_frete' ) );
-		add_action( 'wp_ajax_nopriv_escutar_solicitacoes_de_frete', array( $this, 'escutar_solicitacoes_de_frete' ) );
+		add_action('wp_enqueue_scripts', array($this, 'enqueueCssJsFrontend'));
+		add_action('wp_ajax_escutar_solicitacoes_de_frete', array($this, 'escutar_solicitacoes_de_frete'));
+		add_action('wp_ajax_nopriv_escutar_solicitacoes_de_frete', array($this, 'escutar_solicitacoes_de_frete'));
 	}
 
 	/**
@@ -33,10 +35,11 @@ class ShowCalculatorProductPage {
 	 *
 	 * @return void
 	 */
-	public function enqueueCssJsFrontend() {
-		wp_enqueue_script( 'produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', array( 'jquery' ) );
-		wp_enqueue_script( 'produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js', array( 'jquery' ) );
-		wp_enqueue_script( 'calculator', BASEPLUGIN_ASSETS . '/js/calculator.js', array( 'jquery' ) );
+	public function enqueueCssJsFrontend()
+	{
+		wp_enqueue_script('produto', BASEPLUGIN_ASSETS . '/js/shipping-product-page.js', array('jquery'));
+		wp_enqueue_script('produto-variacao', BASEPLUGIN_ASSETS . '/js/shipping-product-page-variacao.js', array('jquery'));
+		wp_enqueue_script('calculator', BASEPLUGIN_ASSETS . '/js/calculator.js', array('jquery'));
 	}
 
 	/**
@@ -45,8 +48,9 @@ class ShowCalculatorProductPage {
 	 *
 	 * @return void
 	 */
-	public function insertCalculator() {
-		add_action( $this->whereShowCalculator, array( $this, 'isProductSingle' ) );
+	public function insertCalculator()
+	{
+		add_action($this->whereShowCalculator, array($this, 'isProductSingle'));
 	}
 
 	/**
@@ -54,11 +58,12 @@ class ShowCalculatorProductPage {
 	 *
 	 * @return void
 	 */
-	public function isProductSingle() {
+	public function isProductSingle()
+	{
 		global $product;
-		if ( is_product() && ! $product->is_virtual( 'yes' ) ) {
-			$this->prepareProduct( $product );
-			add_action( $this->whereShowCalculator, array( $this, 'addCalculateShipping' ), 11 );
+		if (is_product() && !$product->is_virtual('yes')) {
+			$this->prepareProduct($product);
+			add_action($this->whereShowCalculator, array($this, 'addCalculateShipping'), 11);
 		}
 	}
 
@@ -68,7 +73,8 @@ class ShowCalculatorProductPage {
 	 * @param object $product
 	 * @return void
 	 */
-	public function prepareProduct( $product ) {
+	public function prepareProduct($product)
+	{
 		$this->product = $product;
 		$this->height  = $product->get_height();
 		$this->width   = $product->get_width();
@@ -81,9 +87,10 @@ class ShowCalculatorProductPage {
 	/**
 	 * Adiciona o HTML do cálculo de frete na página do produto
 	 */
-	public function addCalculateShipping() {
-		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
-		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
+	public function addCalculateShipping()
+	{
+		wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
+		wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
 		echo sprintf(
 			"<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
@@ -110,7 +117,7 @@ class ShowCalculatorProductPage {
                     </div>
                 </div>
                 <div id='calcular-frete-loader'>
-                    <img src='https://s3.amazonaws.com/wordpress-v2-assets/img/loader.gif' />
+                    <img src='" . BASEPLUGIN_ASSETS . "/images/loader.gif' />
                 </div>
                 <div class=resultado-frete tableResult>
                     <table>
@@ -124,7 +131,7 @@ class ShowCalculatorProductPage {
                 </div>
             </div>
         </div>",
-			admin_url( 'admin-ajax.php' ),
+			admin_url('admin-ajax.php'),
 			$this->height,
 			$this->width,
 			$this->length,

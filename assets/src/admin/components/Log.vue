@@ -1,23 +1,18 @@
 <style>
-    .boxBanner {
-        float: left;
-        width: 100%;
-        margin-bottom: 1%;
-    }
+.boxBanner {
+  float: left;
+  width: 100%;
+  margin-bottom: 1%;
+}
 
-    .boxBanner img {
-        float: left;
-        width: 100%;
-    }
+.boxBanner img {
+  float: left;
+  width: 100%;
+}
 </style>
 
 <template>
     <div class="app-pedidos">
-
-        <div class="boxBanner">
-            <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
-        </div>
-
         <template>
             <div>
                 <div class="grid">
@@ -132,39 +127,39 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters } from "vuex";
 
 export default {
-    name: 'Logs',
-    computed: {
-        /**
-         * log => state.log // traz os logs salvos em state
-         */
-        ...mapGetters('log', ['logs'])
-    },
-    methods: {
-        /**
-         * Map actions retrieveLogs()
-         * Realiza um http pra api, recupera os logs.
-         * commit('retrieveLogs', response.data) < mutation de mesmo nome.
-         * state.logs = data < na mutation
-         */
-        ...mapActions('log', ['retrieveLogs'])
-    },
-    created () {
-        /**
-         * Call this.retrieveLogs()
-         * carrega todos os logs ao criar componente.
-         * talvez um botão para atualizar?
-         */
-        let id = this.$route.params.id
+  name: "Logs",
+  computed: {
+    /**
+     * log => state.log // traz os logs salvos em state
+     */
+    ...mapGetters("log", ["logs"]),
+  },
+  methods: {
+    /**
+     * Map actions retrieveLogs()
+     * Realiza um http pra api, recupera os logs.
+     * commit('retrieveLogs', response.data) < mutation de mesmo nome.
+     * state.logs = data < na mutation
+     */
+    ...mapActions("log", ["retrieveLogs"]),
+  },
+  created() {
+    /**
+     * Call this.retrieveLogs()
+     * carrega todos os logs ao criar componente.
+     * talvez um botão para atualizar?
+     */
+    let id = this.$route.params.id;
 
-        if (!id) {
-            this.$router.push('/pedidos');
-        }
-        this.retrieveLogs(id)
+    if (!id) {
+      this.$router.push("/pedidos");
     }
-}
+    this.retrieveLogs(id);
+  },
+};
 </script>
 
 <style lang="css" scoped>
