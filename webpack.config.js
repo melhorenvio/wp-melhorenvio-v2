@@ -74,7 +74,8 @@ module.exports = {
             'vue': 'vue/dist/vue.js',
             '@': path.resolve('./assets/src/'),
             'frontend': path.resolve('./assets/src/frontend/'),
-            'admin': path.resolve('./assets/src/admin/'),
+            'admin': path.resolve('./assets/src/admin/'),    
+            '@images': path.resolve('./assets/images/'),
             'me': path.resolve('./assets/stylus/me-bootstrap')
         },
         modules: [
@@ -94,6 +95,10 @@ module.exports = {
                 options: {
                     extractCSS: true
                 }
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
             },
             {
                 test: /\.js$/,
