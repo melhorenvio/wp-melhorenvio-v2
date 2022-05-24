@@ -1,12 +1,12 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Address;
-use Models\Agency;
-use Models\Option;
-use Models\CalculatorShow;
-use Models\ShippingCompany;
+use MelhorEnvio\Models\Address;
+use MelhorEnvio\Models\Agency;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Models\CalculatorShow;
+use MelhorEnvio\Models\ShippingCompany;
 
 class ConfigurationsService {
 

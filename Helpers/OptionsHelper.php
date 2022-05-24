@@ -1,8 +1,8 @@
 <?php
 
-namespace Helpers;
+namespace MelhorEnvio\Helpers;
 
-use Models\Option;
+use MelhorEnvio\Models\Option;
 
 class OptionsHelper {
 

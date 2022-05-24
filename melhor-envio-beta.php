@@ -50,18 +50,18 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
 
-use Controllers\ShowCalculatorProductPage;
-use Models\CalculatorShow;
-use Models\Version;
-use Services\CheckHealthService;
-use Services\ClearDataStored;
-use Services\RolesService;
-use Services\RouterService;
-use Services\ShortCodeService;
-use Services\TrackingService;
-use Services\ListPluginsIncompatiblesService;
-use Services\SessionNoticeService;
-use Helpers\SessionHelper;
+use MelhorEnvio\Controllers\ShowCalculatorProductPage;
+use MelhorEnvio\Models\CalculatorShow;
+use MelhorEnvio\Models\Version;
+use MelhorEnvio\Services\CheckHealthService;
+use MelhorEnvio\Services\ClearDataStored;
+use MelhorEnvio\Services\RolesService;
+use MelhorEnvio\Services\RouterService;
+use MelhorEnvio\Services\ShortCodeService;
+use MelhorEnvio\Services\TrackingService;
+use MelhorEnvio\Services\ListPluginsIncompatiblesService;
+use MelhorEnvio\Services\SessionNoticeService;
+use MelhorEnvio\Helpers\SessionHelper;
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';

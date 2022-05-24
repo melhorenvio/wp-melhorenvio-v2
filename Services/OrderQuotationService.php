@@ -1,10 +1,10 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Method;
-use Models\ShippingService;
-use Services\QuotationService;
+use MelhorEnvio\Models\Method;
+use MelhorEnvio\Models\ShippingService;
+use MelhorEnvio\Services\QuotationService;
 
 class OrderQuotationService {
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\MoneyHelper;
-use Helpers\TimeHelper;
-use Models\ShippingService;
-use Helpers\PostalCodeHelper;
-use Services\WooCommerceBundleProductsService;
+use MelhorEnvio\Helpers\MoneyHelper;
+use MelhorEnvio\Helpers\TimeHelper;
+use MelhorEnvio\Models\ShippingService;
+use MelhorEnvio\Helpers\PostalCodeHelper;
+use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 class CalculateShippingMethodService {
 

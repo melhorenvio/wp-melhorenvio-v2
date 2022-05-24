@@ -1,9 +1,9 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Helpers\SanitizeHelper;
-use Services\AgenciesService;
+use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Services\AgenciesService;
 
 class AgenciesController {
 

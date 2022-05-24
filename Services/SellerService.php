@@ -1,9 +1,9 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Address;
-use Models\Seller;
+use MelhorEnvio\Models\Address;
+use MelhorEnvio\Models\Seller;
 
 /**
  * Class responsible for the service of managing the store salesperson

@@ -1,8 +1,8 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Services\NoticeFormService;
+use MelhorEnvio\Services\NoticeFormService;
 
 class NoticeFormController {
 

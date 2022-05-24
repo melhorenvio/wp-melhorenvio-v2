@@ -1,8 +1,8 @@
 <?php
 
-namespace Helpers;
+namespace MelhorEnvio\Helpers;
 
-use Services\OptionsMethodShippingService;
+use MelhorEnvio\Services\OptionsMethodShippingService;
 
 class TimeHelper {
 

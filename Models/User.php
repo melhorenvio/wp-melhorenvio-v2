@@ -1,9 +1,9 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-use Services\RequestService;
-use Models\Session;
+use MelhorEnvio\Services\RequestService;
+use MelhorEnvio\Models\Session;
 
 class User {
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Helpers\DimensionsHelper;
-use Services\WooCommerceBundleProductsService;
-use Services\ProductsService;
+use MelhorEnvio\Helpers\DimensionsHelper;
+use MelhorEnvio\Services\WooCommerceBundleProductsService;
+use MelhorEnvio\Services\ProductsService;
 
 class OrdersProductsService {
 

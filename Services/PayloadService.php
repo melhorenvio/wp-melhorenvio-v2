@@ -1,12 +1,12 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
-use Models\Method;
-use Models\Option;
-use Models\Payload;
-use Models\ShippingService;
-use Helpers\PostalCodeHelper;
+use MelhorEnvio\Models\Method;
+use MelhorEnvio\Models\Option;
+use MelhorEnvio\Models\Payload;
+use MelhorEnvio\Models\ShippingService;
+use MelhorEnvio\Helpers\PostalCodeHelper;
 
 class PayloadService {
 

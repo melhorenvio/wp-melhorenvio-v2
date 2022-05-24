@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace MelhorEnvio\Services;
 
 /**
  * Class responsible for the shortcode service

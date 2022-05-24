@@ -1,9 +1,9 @@
 <?php
 
-namespace Controllers;
+namespace MelhorEnvio\Controllers;
 
-use Models\Payload;
-use Services\PayloadService;
+use MelhorEnvio\Models\Payload;
+use MelhorEnvio\Services\PayloadService;
 
 class PayloadsController {
 
