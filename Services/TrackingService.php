@@ -2,7 +2,8 @@
 
 namespace Services;
 
-class TrackingService {
+class TrackingService
+{
 
 	const TRACKING_MELHOR_ENVIO = 'melhorenvio_tracking';
 
@@ -13,8 +14,9 @@ class TrackingService {
 	 * @param string $tracking
 	 * @return void
 	 */
-	public function addTrackingOrder( $orderId, $tracking ) {
-		add_post_meta( $orderId, self::TRACKING_MELHOR_ENVIO, $tracking, true );
+	public function addTrackingOrder($orderId, $tracking)
+	{
+		add_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, $tracking, true);
 	}
 
 	/**
@@ -23,41 +25,42 @@ class TrackingService {
 	 * @param int $orderId
 	 * @return string $tracking
 	 */
-	public function getTrackingOrder( $orderId ) {
-		$data = get_post_meta( $orderId, self::TRACKING_MELHOR_ENVIO, true );
+	public function getTrackingOrder($orderId)
+	{
+		$data = get_post_meta($orderId, self::TRACKING_MELHOR_ENVIO, true);
 
-		if ( ! empty( $data ) ) {
+		if (!empty($data)) {
 			return $data;
 		}
 
-		$data = ( new OrderQuotationService() )->getData( $orderId );
+		$data = (new OrderQuotationService())->getData($orderId);
 
-		if ( empty( $data ) || empty( $data['order_id'] ) ) {
+		if (empty($data) || empty($data['order_id'])) {
 			return null;
 		}
 
-		if ( ! empty( $data['tracking'] ) ) {
+		if (!empty($data['tracking'])) {
 			return $data['tracking'];
 		}
 
-		$data = ( new OrderService() )->getInfoOrder( $data['order_id'] );
+		$data = (new OrderService())->getInfoOrder($data['order_id']);
 
-		if ( empty( $data ) ) {
+		if (empty($data)) {
 			return null;
 		}
 
-		if ( is_array( $data ) ) {
-			$data = end( $data );
+		if (is_array($data)) {
+			$data = end($data);
 		}
 
-		$tracking = ( ! empty( $data->tracking ) ) ? $data->tracking : null;
+		$tracking = (!empty($data->tracking)) ? $data->tracking : null;
 
-		if ( empty( $tracking ) ) {
-			$tracking = ( ! empty( $data->self_tracking ) ) ? $data->self_tracking : null;
+		if (empty($tracking)) {
+			$tracking = (!empty($data->self_tracking)) ? $data->self_tracking : null;
 		}
 
-		if ( ! empty( $tracking ) ) {
-			$this->addTrackingOrder( $orderId, $tracking );
+		if (!empty($tracking)) {
+			$this->addTrackingOrder($orderId, $tracking);
 			return $tracking;
 		}
 
@@ -67,15 +70,16 @@ class TrackingService {
 	/**
 	 * Adds a new column to the "My Orders" table in the account.
 	 */
-	public function createTrackingColumnOrdersClient() {
+	public function createTrackingColumnOrdersClient()
+	{
 		add_filter(
 			'woocommerce_my_account_my_orders_columns',
-			function ( $columns ) {
+			function ($columns) {
 				$newColumns = array();
-				foreach ( $columns as $key => $name ) {
-					$newColumns[ $key ] = $name;
-					if ( 'order-status' === $key ) {
-						$newColumns['tracking'] = __( 'Rastreio', 'textdomain' );
+				foreach ($columns as $key => $name) {
+					$newColumns[$key] = $name;
+					if ('order-status' === $key) {
+						$newColumns['tracking'] = __('Rastreio', 'textdomain');
 					}
 				}
 				return $newColumns;
@@ -88,20 +92,21 @@ class TrackingService {
 	/**
 	 * Adds data to the custom "tracking to" column in "My Account > Orders".
 	 */
-	private function addTrackingToOrderClients() {
+	private function addTrackingToOrderClients()
+	{
 		add_action(
 			'woocommerce_my_account_my_orders_column_tracking',
-			function ( $order ) {
+			function ($order) {
 
 				$text = 'Não disponível';
-				if ( $this->isWaitingToBePosted( $order ) ) {
+				if ($this->isWaitingToBePosted($order)) {
 					$text = 'Aguardando postagem';
-					$data = ( new TrackingService() )->getTrackingOrder( $order->get_id() );
+					$data = (new TrackingService())->getTrackingOrder($order->get_id());
 				}
 
-				echo ( ! empty( $data ) )
-				? sprintf( "<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data )
-				: $text;
+				echo esc_html((!empty($data))
+					? sprintf("<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data)
+					: $text);
 			}
 		);
 	}
@@ -110,7 +115,8 @@ class TrackingService {
 	 * @param $order
 	 * @return bool
 	 */
-	private function isWaitingToBePosted( $order ) {
-		return in_array( $order->get_status(), array( 'processing', 'completed' ) );
+	private function isWaitingToBePosted($order)
+	{
+		return in_array($order->get_status(), array('processing', 'completed'));
 	}
 }
