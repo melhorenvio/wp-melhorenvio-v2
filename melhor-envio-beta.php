@@ -62,6 +62,7 @@ use MelhorEnvio\Services\TrackingService;
 use MelhorEnvio\Services\ListPluginsIncompatiblesService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
@@ -251,9 +252,9 @@ final class Base_Plugin
             }
         } catch (\Exception $e) {
             add_action('admin_notices', function () {
-                echo esc_html(sprintf('<div class="error">
+                echo wp_kses(sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage()));
+                </div>', $e->getMessage()), EscapeAllowedTags::allow_tags(["div", "p"]));
             });
             return false;
         }
@@ -348,9 +349,12 @@ final class Base_Plugin
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {
             add_action('admin_notices', function () use ($e) {
-                echo esc_html(sprintf('<div class="error">
+                echo wp_kses(
+                    sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage()));
+                </div>', $e->getMessage()),
+                    EscapeAllowedTags::allow_tags(["div", "p"])
+                );
             });
 
             return false;

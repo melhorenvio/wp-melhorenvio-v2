@@ -2,6 +2,8 @@
 
 namespace App;
 
+use MelhorEnvio\Helpers\EscapeAllowedTags;
+
 /**
  * Admin Pages Handler
  */
@@ -73,6 +75,9 @@ class Admin
 	 */
 	public function plugin_page()
 	{
-		echo esc_html('<div class="wrap"><div id="vue-admin-app"></div></div>');
+		echo wp_kses(
+			'<div class="wrap"><div id="vue-admin-app"></div></div>',
+			EscapeAllowedTags::allow_tags(["div"])
+		);
 	}
 }

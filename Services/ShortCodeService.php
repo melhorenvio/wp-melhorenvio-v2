@@ -2,39 +2,45 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Helpers\EscapeAllowedTags;
+
 /**
  * Class responsible for the shortcode service
  */
-class ShortCodeService {
+class ShortCodeService
+{
 
 
 
-	public $product;
+    public $product;
 
-	/**
-	 * Constructor
-	 *
-	 * @param int $productId
-	 */
-	public function __construct( $product ) {
-		$this->product = $product;
-	}
+    /**
+     * Constructor
+     *
+     * @param int $productId
+     */
+    public function __construct($product)
+    {
+        $this->product = $product;
+    }
 
-	public function shortcode() {
-		$this->addCalculoDeFrete();
-	}
+    public function shortcode()
+    {
+        $this->addCalculoDeFrete();
+    }
 
-	/**
-	 * Adiciona o HTML do cálculo de frete na página do produto
-	 */
-	public function addCalculoDeFrete() {
-		wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery' );
-		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
-		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
+    /**
+     * Adiciona o HTML do cálculo de frete na página do produto
+     */
+    public function addCalculoDeFrete()
+    {
+        wp_enqueue_script('produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
+        wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
+        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
 
-		echo esc_html(
-			sprintf(
-				"
+        echo
+        wp_kses(sprintf(
+            "
             <style>
                 #melhor-envio-shortcode .border-none,
                 tr,
@@ -58,7 +64,7 @@ class ShortCodeService {
                     </div>
                 </form>
                 <div id='calcular-frete-loader' style='display:none;'>
-                    <img src='" . BASEPLUGIN_ASSETS . "/images/loader.gif' />
+                    <img src='%s/images/loader.gif' />
                 </div>
                 <div class='resultado-frete' style='display:none;'>
                     <table>
@@ -72,11 +78,13 @@ class ShortCodeService {
                     </table>
                     <small class='observation-shipping-free-shortcode'></small>
                 </div>
-            </div> ",
-				$this->product->get_id(),
-				admin_url( 'admin-ajax.php' ),
-				'return usePostalCodeMask()'
-			)
-		);
-	}
+            </div>",
+            $this->product->get_id(),
+            admin_url('admin-ajax.php'),
+            'return usePostalCodeMask()',
+            BASEPLUGIN_ASSETS
+        ), EscapeAllowedTags::allow_tags(
+            ["form", "div", "p", "input", "table", "thead", "tbody", "tr", "td", "small", "img", "style"]
+        ));
+    }
 }
