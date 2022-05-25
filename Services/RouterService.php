@@ -15,7 +15,6 @@ use MelhorEnvio\Controllers\PathController;
 use MelhorEnvio\Controllers\PayloadsController;
 use MelhorEnvio\Controllers\CartController;
 use MelhorEnvio\Controllers\NoticeFormController;
-use MelhorEnvio\ Controllers\RequestsController;
 use MelhorEnvio\Helpers\SanitizeHelper;
 use MelhorEnvio\Models\Version;
 
@@ -44,7 +43,6 @@ class RouterService {
 		$this->loadRouteDataUser();
 		$this->loadRouteCart();
 		$this->loadRouteForm();
-		$this->loadRequestController();
 		$this->loadRoutesAgencies();
 	}
 
@@ -407,29 +405,6 @@ class RouterService {
 			'wp_ajax_hide_form_melhor_envio',
 			function () use ( $formController ) {
 				return wp_send_json( $formController->hideForm() );
-			}
-		);
-	}
-
-	/*
-	 * function to start requests routes
-	 *
-	 * @return void
-	 */
-	public function loadRequestController() {
-		$requestsController = new RequestsController();
-
-		add_action(
-			'wp_ajax_logs_requests',
-			function () use ( $requestsController ) {
-				return $requestsController->getLogs();
-			}
-		);
-
-		add_action(
-			'wp_ajax_delete_logs_requests',
-			function () use ( $requestsController ) {
-				return $requestsController->deleteLogs();
 			}
 		);
 	}
