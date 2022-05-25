@@ -288,6 +288,11 @@ final class Base_Plugin
             (new ShowCalculatorProductPage())->insertCalculator();
         }
 
+        add_filter( 'safe_style_css', function( $styles ) {
+            $styles[] = 'display';
+            return $styles;
+        } );        
+
         add_filter('woocommerce_shipping_methods', function ($methods) {
             $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
             $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
