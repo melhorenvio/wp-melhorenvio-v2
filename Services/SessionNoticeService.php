@@ -9,8 +9,8 @@ use MelhorEnvio\Models\Session;
 /**
  * Service responsible for managing the data stored in the session
  */
-class SessionNoticeService
-{
+class SessionNoticeService {
+
 
 
 	const ID_NOTICES_OPTIONS = 'wp_option_notices_melhor_envio';
@@ -38,31 +38,29 @@ class SessionNoticeService
 	 * @param string $type
 	 * @return bool
 	 */
-	public function add($text, $type)
-	{
-		$type = (in_array($type, self::TYPES_NOTICE))
+	public function add( $text, $type ) {
+		$type = ( in_array( $type, self::TYPES_NOTICE ) )
 			? $type
 			: self::TYPE_NOTICE_DEFAULT;
 
 		$notices = $this->get();
 
-		$hash = hash('sha512', $text);
+		$hash = hash( 'sha512', $text );
 
-		$notices[$hash] = $this->formatHtml($text, $type);
+		$notices[ $hash ] = $this->formatHtml( $text, $type );
 
-		if (!empty($notices)) {
-			return update_option(self::ID_NOTICES_OPTIONS, $notices);
+		if ( ! empty( $notices ) ) {
+			return update_option( self::ID_NOTICES_OPTIONS, $notices );
 		}
 
-		return add_option(self::ID_NOTICES_OPTIONS, $notices);
+		return add_option( self::ID_NOTICES_OPTIONS, $notices );
 	}
 
 	/**
 	 * @param string $text
 	 * @param string $type
 	 */
-	private function formatHtml($text, $type)
-	{
+	private function formatHtml( $text, $type ) {
 		return sprintf(
 			'<div class="notice %s is-dismissible"> 
                 <p><strong>Atenção usuário do Melhor Envio</strong></p>
@@ -71,21 +69,20 @@ class SessionNoticeService
             </div>',
 			$type,
 			$text,
-			get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . hash('sha512', $text)
+			get_admin_url() . 'admin-ajax.php?action=remove_notices&id=' . hash( 'sha512', $text )
 		);
 	}
 
 	/**
 	 * Function to check whether to display and insert the search form alert on the administrative page
 	 */
-	public function showNotices()
-	{
-		$notices = $this->get();
-		foreach ($notices as $hash => $notice) {
+	public function showNotices() {
+		 $notices = $this->get();
+		foreach ( $notices as $hash => $notice ) {
 			add_action(
 				'admin_notices',
-				function () use ($notice) {
-					echo wp_kses($notice, EscapeAllowedTags::allow_tags(["div", "p", "a"]));
+				function () use ( $notice ) {
+					echo wp_kses( $notice, EscapeAllowedTags::allow_tags( array( 'div', 'p', 'a' ) ) );
 				}
 			);
 		}
@@ -98,28 +95,25 @@ class SessionNoticeService
 	 * @param string $hash
 	 * @return void
 	 */
-	public function remove($hash)
-	{
+	public function remove( $hash ) {
 		$notices = $this->get();
-		unset($notices[$hash]);
-		update_option(self::ID_NOTICES_OPTIONS, $notices);
-		wp_redirect($_SERVER['HTTP_REFERER']);
+		unset( $notices[ $hash ] );
+		update_option( self::ID_NOTICES_OPTIONS, $notices );
+		wp_redirect( $_SERVER['HTTP_REFERER'] );
 		exit;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function clear()
-	{
-		return update_option(self::ID_NOTICES_OPTIONS, array());
+	public function clear() {
+		return update_option( self::ID_NOTICES_OPTIONS, array() );
 	}
 
-	public function removeNoticeTokenInvalid()
-	{
+	public function removeNoticeTokenInvalid() {
 		$notices = $this->get();
-		unset($notices[hash('sha512', self::NOTICE_INVALID_TOKEN)]);
-		return update_option(self::ID_NOTICES_OPTIONS, $notices);
+		unset( $notices[ hash( 'sha512', self::NOTICE_INVALID_TOKEN ) ] );
+		return update_option( self::ID_NOTICES_OPTIONS, $notices );
 	}
 
 	/**
@@ -127,8 +121,7 @@ class SessionNoticeService
 	 *
 	 * @return bool|array
 	 */
-	public function get()
-	{
-		return get_option(self::ID_NOTICES_OPTIONS, array());
+	public function get() {
+		 return get_option( self::ID_NOTICES_OPTIONS, array() );
 	}
 }

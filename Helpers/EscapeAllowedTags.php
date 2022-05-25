@@ -2,62 +2,61 @@
 
 namespace MelhorEnvio\Helpers;
 
-class EscapeAllowedTags
-{
+class EscapeAllowedTags {
 
-  private const TAGS_AND_ATTRIBUTES = [
-    "div" => [
-      "id" => [],
-      "class" => [],
-      "style" => []
-    ],
-    "input" => [
-      "type" => [],
-      "id" => [],
-      "value" => [],
-      "maxlength" => [],
-      "class" => [],
-      "placeholder" => [],
-      "onkeyup" => [],
-    ],
-    "p" => [],
-    "img" => [
-      "src" => []
-    ],
-    "table" => [
-      "class" => []
-    ],
-    "thead" => [],
-    "tbody" => [],
-    "small" => [
-      "id" => [],
-      "class" => []
-    ],
-    "tr" => [],
-    "td" => [],
-    "strong" => [],
-    "style" => [],
-    "form" => [],
-    "a" => [
-      "href" => [],
-      "rel" => [],
-      "target" => []
-    ]
-  ];
 
-  /**
-   * @param array $value
-   */
-  public static function allow_tags($tags)
-  {
+	private const TAGS_AND_ATTRIBUTES = array(
+		'div'    => array(
+			'id'    => array(),
+			'class' => array(),
+			'style' => array(),
+		),
+		'input'  => array(
+			'type'        => array(),
+			'id'          => array(),
+			'value'       => array(),
+			'maxlength'   => array(),
+			'class'       => array(),
+			'placeholder' => array(),
+			'onkeyup'     => array(),
+		),
+		'p'      => array(),
+		'img'    => array(
+			'src' => array(),
+		),
+		'table'  => array(
+			'class' => array(),
+		),
+		'thead'  => array(),
+		'tbody'  => array(),
+		'small'  => array(
+			'id'    => array(),
+			'class' => array(),
+		),
+		'tr'     => array(),
+		'td'     => array(),
+		'strong' => array(),
+		'style'  => array(),
+		'form'   => array(),
+		'a'      => array(
+			'href'   => array(),
+			'rel'    => array(),
+			'target' => array(),
+		),
+	);
 
-    $allowed_tags_attr = [];
-    foreach ($tags as $tag) {
-      if (isset(self::TAGS_AND_ATTRIBUTES[$tag])) {
-        $allowed_tags_attr[$tag] = self::TAGS_AND_ATTRIBUTES[$tag];
-      }
-    }
+	/**
+	 * @param array $value
+	 */
+	public static function allow_tags( $tags ) {
 
-    return $allowed_tags_attr;
-  }
+		$allowed_tags_attr = array();
+		foreach ( $tags as $tag ) {
+			if ( isset( self::TAGS_AND_ATTRIBUTES[ $tag ] ) ) {
+				$allowed_tags_attr[ $tag ] = self::TAGS_AND_ATTRIBUTES[ $tag ];
+			}
+		}
+
+		return $allowed_tags_attr;
+	}
 }

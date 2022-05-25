@@ -7,40 +7,37 @@ use MelhorEnvio\Helpers\EscapeAllowedTags;
 /**
  * Class responsible for the shortcode service
  */
-class ShortCodeService
-{
+class ShortCodeService {
 
 
 
-    public $product;
 
-    /**
-     * Constructor
-     *
-     * @param int $productId
-     */
-    public function __construct($product)
-    {
-        $this->product = $product;
-    }
+	public $product;
 
-    public function shortcode()
-    {
-        $this->addCalculoDeFrete();
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param int $productId
+	 */
+	public function __construct( $product ) {
+		$this->product = $product;
+	}
 
-    /**
-     * Adiciona o HTML do cálculo de frete na página do produto
-     */
-    public function addCalculoDeFrete()
-    {
-        wp_enqueue_script('produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery');
-        wp_enqueue_style('calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css');
-        wp_enqueue_script('calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js');
+	public function shortcode() {
+		$this->addCalculoDeFrete();
+	}
 
-        echo
-        wp_kses(sprintf(
-            "
+	/**
+	 * Adiciona o HTML do cálculo de frete na página do produto
+	 */
+	public function addCalculoDeFrete() {
+		wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery' );
+		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
+		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
+
+		echo wp_kses(
+			sprintf(
+				"
             <style>
                 #melhor-envio-shortcode .border-none,
                 tr,
@@ -79,12 +76,14 @@ class ShortCodeService
                     <small class='observation-shipping-free-shortcode'></small>
                 </div>
             </div>",
-            $this->product->get_id(),
-            admin_url('admin-ajax.php'),
-            'return usePostalCodeMask()',
-            BASEPLUGIN_ASSETS
-        ), EscapeAllowedTags::allow_tags(
-            ["form", "div", "p", "input", "table", "thead", "tbody", "tr", "td", "small", "img", "style"]
-        ));
-    }
+				$this->product->get_id(),
+				admin_url( 'admin-ajax.php' ),
+				'return usePostalCodeMask()',
+				BASEPLUGIN_ASSETS
+			),
+			EscapeAllowedTags::allow_tags(
+				array( 'form', 'div', 'p', 'input', 'table', 'thead', 'tbody', 'tr', 'td', 'small', 'img', 'style' )
+			)
+		);
+	}
 }
