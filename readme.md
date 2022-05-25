@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.11.17
+Version: 2.11.18
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
-Tested up to: 5.9.3
-Stable tag: 2.11.17
+Tested up to: 5.9
+Stable tag: 2.11.18
 Requires PHP: 5.6+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -47,7 +47,6 @@ Para entrar em contato com o suporte desse plugin, enviar e-mail para dev@melhor
 
 == Installation ==
 A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar novo" no seu painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
-<img src="https://wordpress-screenshots.s3.us-east-2.amazonaws.com/Instalar-plugins-%E2%80%B9-My-Blog-%E2%80%94-WordPress.png" alt="Buscando o plugin do Melhor Envio" />
 
 Ou se preferir basta fazer o download do plugin na página oficial do plugin no portal do Wordpress e mover o arquivo .Zip para o diretório wp-content/plugins. O próximo passo, é acessar todos os plugins pelo menu Plugins -> Plugins instalados, encontrar o plugin "Melhor Envio" e clicar em "Ativar".
 
@@ -55,21 +54,17 @@ Você também vai precisar do plugin <a href"https://wordpress.org/plugins/wooco
 
 O próximo passo para utilizar o plugin é gerar um token na plataforma da Melhor Envio. Para isso, você precisa acessar o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a> e clicar em "Novo token", inserir um nome para o token, selecionar as permissões e clicar em "Salvar". Você deve copiar o token gerado, e colar o mesmo no painel do Wordpress, acessando o menu Melhor Envio -> Token.
 painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
-<img src="https://wordpress-screenshots.s3.us-east-2.amazonaws.com/Melhor-Envio.png" alt="Gerando token no Melhor Envio" />
  
 Agora que sua conta Melhor Envio está vinculada com nosso plugin, basta selecionar os métodos de envios, acessando o Menu WooCommerce -> Configurações -> Entrega. Agora você precisa escolher as áreas que deseja enviar seus produtos utilizando a Melhor Envio. Por padrão, existe a opção "Em toda parte", que seria a área geral do Brasil. Basta clicar em "Editar" logo abaixo do nome da área e selecionar os métodos de envio e para finalizar clicar em "Salvar".
 
-<img src="https://wordpress-screenshots.s3.us-east-2.amazonaws.com/Configura%C3%A7%C3%B5es-do-WooCommerce-%E2%80%B9-My-Blog-%E2%80%94-WordPress+(2).png" alt="Áreas de entregas" />
-
 Não esqueça de cadastrar de forma correta as medidas do produto na aba de entrega de cada produto cadastrado.
-<img src="https://wordpress-screenshots.s3.us-east-2.amazonaws.com/Editar-produto-%E2%80%B9-My-Blog-%E2%80%94-WordPress.png" alt="Configuração de entrega de cada produto" />
 
 Observação: Atenção com as medidas de unidades utilizadas, cuidado se você está utilizando gramas ou quilos, metros ou centímetros, isso vai aplicar no valor da cotação e no bom funcionamento da calculadora de fretes do Melhor Envio.
  
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
-= 2.11.17 =
+= 2.11.18 =
 * Ajustes de segurança.
 
 = 2.11.13 =
