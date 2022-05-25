@@ -19,7 +19,7 @@ class EscapeAllowedTags {
 			'class'       => array(),
 			'placeholder' => array(),
 			'onkeyup'     => array(),
-      'onkeydown' => array(),
+			'onkeydown'   => array(),
 		),
 		'p'      => array(),
 		'img'    => array(
