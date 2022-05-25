@@ -2,7 +2,11 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Helpers\EscapeAllowedTags;
+
 class TrackingService {
+
+
 
 	const TRACKING_MELHOR_ENVIO = 'melhorenvio_tracking';
 
@@ -99,9 +103,12 @@ class TrackingService {
 					$data = ( new TrackingService() )->getTrackingOrder( $order->get_id() );
 				}
 
-				echo ( ! empty( $data ) )
-				? sprintf( "<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data )
-				: $text;
+				echo wp_kses(
+					( ! empty( $data ) )
+						? sprintf( "<a target='_blank' href='https://melhorrastreio.com.br/rastreio/%s'>%s</a>", $data, $data )
+						: $text,
+					EscapeAllowedTags::allow_tags( array( 'div', 'a' ) )
+				);
 			}
 		);
 	}

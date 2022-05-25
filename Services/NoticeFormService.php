@@ -2,7 +2,11 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Helpers\EscapeAllowedTags;
+
 class NoticeFormService {
+
+
 
 	const SHOW = 'show_form_melhor_envio';
 
@@ -20,14 +24,17 @@ class NoticeFormService {
 			add_action(
 				'admin_notices',
 				function () {
-					echo '<div class="notice info is-dismissible"> 
+					echo wp_kses(
+						'<div class="notice info is-dismissible"> 
                     <p><strong>Como podemos melhorar?</strong></p>
                     <p>Gostaríamos de saber mais sobre a sua experiência com o plugin do Melhor Envio 
                     para que possamos aprimorá-lo. 
                     <a href="/wp-admin/admin-ajax.php?action=open_form_melhor_envio">Clique aqui</a> 
                     e nos ajude respondendo a pesquisa.
                     </p>
-                </div>';
+                </div>',
+						EscapeAllowedTags::allow_tags( array( 'div', 'p', 'a' ) )
+					);
 				}
 			);
 		}

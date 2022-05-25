@@ -3,12 +3,15 @@
 namespace MelhorEnvio\Services;
 
 use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\EscapeAllowedTags;
 use MelhorEnvio\Models\Session;
 
 /**
  * Service responsible for managing the data stored in the session
  */
 class SessionNoticeService {
+
+
 
 	const ID_NOTICES_OPTIONS = 'wp_option_notices_melhor_envio';
 
@@ -74,12 +77,12 @@ class SessionNoticeService {
 	 * Function to check whether to display and insert the search form alert on the administrative page
 	 */
 	public function showNotices() {
-		$notices = $this->get();
+		 $notices = $this->get();
 		foreach ( $notices as $hash => $notice ) {
 			add_action(
 				'admin_notices',
 				function () use ( $notice ) {
-					echo $notice;
+					echo wp_kses( $notice, EscapeAllowedTags::allow_tags( array( 'div', 'p', 'a' ) ) );
 				}
 			);
 		}
@@ -119,6 +122,6 @@ class SessionNoticeService {
 	 * @return bool|array
 	 */
 	public function get() {
-		return get_option( self::ID_NOTICES_OPTIONS, array() );
+		 return get_option( self::ID_NOTICES_OPTIONS, array() );
 	}
 }

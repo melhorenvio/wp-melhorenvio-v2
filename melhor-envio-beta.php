@@ -62,6 +62,7 @@ use MelhorEnvio\Services\TrackingService;
 use MelhorEnvio\Services\ListPluginsIncompatiblesService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
     $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
@@ -250,10 +251,10 @@ final class Base_Plugin
                 require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
             }
         } catch (\Exception $e) {
-            add_action('admin_notices', function () {
-                echo sprintf('<div class="error">
+            add_action('admin_notices', function ($e) {
+                echo wp_kses(sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()), EscapeAllowedTags::allow_tags(["div", "p"]));
             });
             return false;
         }
@@ -275,7 +276,7 @@ final class Base_Plugin
         add_action('init', array($this, 'localization_setup'));
 
         (new RouterService())->handler();
-        
+
         require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
         foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
             require_once $filename;
@@ -286,6 +287,11 @@ final class Base_Plugin
         if ($hideCalculator) {
             (new ShowCalculatorProductPage())->insertCalculator();
         }
+
+        add_filter( 'safe_style_css', function( $styles ) {
+            $styles[] = 'display';
+            return $styles;
+        } );        
 
         add_filter('woocommerce_shipping_methods', function ($methods) {
             $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
@@ -348,9 +354,12 @@ final class Base_Plugin
             $this->container['assets'] = new App\Assets();
         } catch (\Exception $e) {
             add_action('admin_notices', function () use ($e) {
-                echo sprintf('<div class="error">
+                echo wp_kses(
+                    sprintf('<div class="error">
                     <p>%s</p>
-                </div>', $e->getMessage());
+                </div>', $e->getMessage()),
+                    EscapeAllowedTags::allow_tags(["div", "p"])
+                );
             });
 
             return false;
