@@ -184,7 +184,7 @@ final class Base_Plugin
 
         $pathPlugins = get_option('melhor_envio_path_plugins');
         if (!$pathPlugins) {
-            $pathPlugins = ABSPATH . 'wp-content/plugins';
+            $pathPlugins =  WP_PLUGIN_DIR;
         }
 
         if (is_admin()) {
@@ -193,20 +193,6 @@ final class Base_Plugin
 
             if (!empty($result['errors'])) {
                 return false;
-            }
-        }
-
-        if (empty($result['errorsPath'])) {
-            if (file_exists($pathPlugins . '/woocommerce/includes/class-woocommerce.php')) {
-                include_once $pathPlugins . '/woocommerce/includes/class-woocommerce.php';
-            }
-
-            if (file_exists($pathPlugins . '/woocommerce/woocommerce.php')) {
-                include_once $pathPlugins . '/woocommerce/woocommerce.php';
-            }
-
-            if (file_exists($pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php')) {
-                include_once $pathPlugins . '/woocommerce/includes/abstracts/abstract-wc-shipping-method.php';
             }
         }
     }
