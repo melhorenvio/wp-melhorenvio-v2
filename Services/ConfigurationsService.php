@@ -304,7 +304,7 @@ class ConfigurationsService {
 		$path = get_option( 'melhor_envio_path_plugins' );
 
 		if ( ! $path ) {
-			$path = ABSPATH . 'wp-content/plugins';
+			$path = WP_PLUGIN_DIR;
 		}
 
 		return $path;
