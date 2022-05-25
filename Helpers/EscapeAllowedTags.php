@@ -52,7 +52,7 @@ class EscapeAllowedTags
   {
 
     $allowed_tags_attr = [];
-    foreach ($tags as $key => $tag) {
+    foreach ($tags as $tag) {
       if (isset(self::TAGS_AND_ATTRIBUTES[$tag])) {
         $allowed_tags_attr[$tag] = self::TAGS_AND_ATTRIBUTES[$tag];
       }
