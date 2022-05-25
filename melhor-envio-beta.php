@@ -251,7 +251,7 @@ final class Base_Plugin
                 require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
             }
         } catch (\Exception $e) {
-            add_action('admin_notices', function () {
+            add_action('admin_notices', function ($e) {
                 echo wp_kses(sprintf('<div class="error">
                     <p>%s</p>
                 </div>', $e->getMessage()), EscapeAllowedTags::allow_tags(["div", "p"]));
