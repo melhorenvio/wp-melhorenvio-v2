@@ -7,6 +7,7 @@ import isNull from 'lodash/isNull'
 const configuration = {
     namespaced: true,
     state: {
+        wp_nonce: null,
         origin: [],
         label: {
             name: "",
@@ -56,6 +57,9 @@ const configuration = {
         },
         setOrigin: (state, data) => {
             state.origin = data
+        },
+        setWpNonce: (state, data) => {
+            state.wp_nonce = data
         },
         setLabel: (state, data) => {
             state.label = data
@@ -138,7 +142,8 @@ const configuration = {
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
         getOptionsCalculator: state => state.options_calculator,
-        getEnvironment: state => state.token_enviroment
+        getEnvironment: state => state.token_enviroment,
+        getWpNonce: state => state.wp_nonce,
     },
     actions: {
         getConfigs: ({ commit }, data) => {
@@ -150,6 +155,10 @@ const configuration = {
                     params: content
                 }).then(function (response) {
                     if (response && response.status === 200) {
+
+                        if (response.data.wp_nonce && !isEmpty(response.data.wp_nonce)) {
+                            commit('setWpNonce', response.data.wp_nonce);
+                        }
 
                         if (response.data.origin && !isEmpty(response.data.origin)) {
                             commit('setOrigin', response.data.origin);
@@ -236,8 +245,12 @@ const configuration = {
             })
         },
         saveAll: ({ commit }, data) => {
+
             return new Promise((resolve, reject) => {
                 const form = new FormData();
+
+                form.append('_wpnonce', data.wp_nonce);   
+
                 if (data.origin) {
                     form.append('origin', data.origin)
                 }

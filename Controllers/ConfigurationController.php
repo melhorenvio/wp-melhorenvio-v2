@@ -49,6 +49,10 @@ class ConfigurationController {
 	 * @return json
 	 */
 	public function saveAll() {
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$response = ( new ConfigurationsService() )->saveConfigurations( SanitizeHelper::apply( $_POST ) );
 		return wp_send_json( $response, 200 );
 	}

@@ -128,6 +128,7 @@ class ConfigurationsService {
 		}
 
 		return array(
+			'wp_nonce'            => wp_create_nonce( 'save_configurations' ),
 			'origin'              => $origin,
 			'label'               => $this->getLabel( $origin ),
 			'agencies'            => $this->filterAgenciesByCompany(

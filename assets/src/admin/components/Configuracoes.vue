@@ -718,6 +718,7 @@ export default {
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
+      wp_nonce: "getWpNonce",
     }),
   },
   methods: {
@@ -754,6 +755,7 @@ export default {
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
       data["dimension_default"] = this.dimension;
+      data["wp_nonce"] = this.wp_nonce;
 
       let respSave = this.saveAll(data);
 
