@@ -607,7 +607,7 @@ import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
 import { TheMask } from "vue-the-mask";
 import {where_calculator_collect} from 'admin/utils/where-calculator_collect';
-import {verifyToken, getToken} from 'admin/utils/token-utils';
+import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
 import deleteSession from 'admin/utils/delete-session';
 
 
@@ -871,26 +871,6 @@ export default {
           this.validateToken();
         });
     },
-    isDateTokenExpired(token) {    
-      // JWT Token Decode
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const tokenDecoded = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map(function (c) {
-            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join("")
-      );
-
-      const tokenFinal = JSON.parse(tokenDecoded);
-      const dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-      const currentTime = new Date();
-
-      return dateExp < currentTime
-
-    },
     validateToken() {
       this.$http
         .get(
@@ -898,7 +878,7 @@ export default {
         )
         .then((response) => {
           if (response.data.token) {            
-            if (this.isDateTokenExpired(response.data.token)) {
+            if (isDateTokenExpired(response.data.token)) {
               this.error_message =
                 "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
             } else {
