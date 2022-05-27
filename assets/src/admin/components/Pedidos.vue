@@ -309,6 +309,7 @@ import Documentos from "./Pedido/Documentos.vue";
 import Acoes from "./Pedido/Acoes.vue";
 import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
+import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
 
 export default {
   name: "Pedidos",
@@ -355,8 +356,7 @@ export default {
   methods: {
     ...mapActions("orders", [
       "retrieveMany",
-      "loadMore",
-      ,
+      "loadMore",      
       "closeModal",
       "getStatusWooCommerce",
       "printMultiples",
@@ -374,7 +374,7 @@ export default {
     getToken() {
       this.$http
         .get(
-          `${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+          verifyToken()
         )
         .then((response) => {
           if (!response.data.exists_token) {
@@ -532,29 +532,11 @@ export default {
     validateToken() {
       this.$http
         .get(
-          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+          getToken()
         )
         .then((response) => {
           if (response.data.token) {
-            var token = response.data.token;
-
-            // JWT Token Decode
-            var base64Url = token.split(".")[1];
-            var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-            var tokenDecoded = decodeURIComponent(
-              atob(base64)
-                .split("")
-                .map(function (c) {
-                  return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-                })
-                .join("")
-            );
-
-            var tokenFinal = JSON.parse(tokenDecoded);
-            var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-            var currentTime = new Date();
-
-            if (dateExp < currentTime) {
+            if (isDateTokenExpired(response.data.token)) {
               this.error_message =
                 "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
             } else {
