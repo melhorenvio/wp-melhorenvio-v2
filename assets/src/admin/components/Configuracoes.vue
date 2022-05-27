@@ -607,7 +607,7 @@ import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
 import { TheMask } from "vue-the-mask";
 import {where_calculator_collect} from 'admin/utils/where-calculator_collect';
-import verifyToken from 'admin/utils/verify-token';
+import {verifyToken, getToken} from 'admin/utils/token-utils';
 import deleteSession from 'admin/utils/delete-session';
 
 
@@ -894,7 +894,7 @@ export default {
     validateToken() {
       this.$http
         .get(
-          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+          getToken()          
         )
         .then((response) => {
           if (response.data.token) {            
