@@ -718,7 +718,6 @@ export default {
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
-      wp_nonce: "getWpNonce",
     }),
   },
   methods: {
@@ -804,7 +803,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -833,7 +832,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -861,7 +860,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}`
+            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -888,7 +887,9 @@ export default {
     clearSession() {
       return new Promise((resolve, reject) => {
         this.$http
-          .get(`${ajaxurl}?action=delete_melhor_envio_session`)
+          .get(
+            `${ajaxurl}?action=delete_melhor_envio_session&_wpnonce=${wpApiSettings.nonce}`
+          )
           .then((response) => {
             resolve(true);
           });
@@ -899,45 +900,49 @@ export default {
       return val;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then((response) => {
-        if (!response.data.exists_token) {
-          this.$router.push("Token");
-        }
+      this.$http
+        .get(`${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce}`)
+        .then((response) => {
+          if (!response.data.exists_token) {
+            this.$router.push("Token");
+          }
 
-        this.validateToken();
-      });
+          this.validateToken();
+        });
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
-        if (response.data.token) {
-          var token = response.data.token;
+      this.$http
+        .get(`${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce}`)
+        .then((response) => {
+          if (response.data.token) {
+            var token = response.data.token;
 
-          // JWT Token Decode
-          var base64Url = token.split(".")[1];
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          var tokenDecoded = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map(function (c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-              })
-              .join("")
-          );
+            // JWT Token Decode
+            var base64Url = token.split(".")[1];
+            var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+            var tokenDecoded = decodeURIComponent(
+              atob(base64)
+                .split("")
+                .map(function (c) {
+                  return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+                })
+                .join("")
+            );
 
-          var tokenFinal = JSON.parse(tokenDecoded);
-          var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-          var currentTime = new Date();
+            var tokenFinal = JSON.parse(tokenDecoded);
+            var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
+            var currentTime = new Date();
 
-          if (dateExp < currentTime) {
-            this.error_message =
-              "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+            if (dateExp < currentTime) {
+              this.error_message =
+                "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+            } else {
+              this.error_message = "";
+            }
           } else {
-            this.error_message = "";
+            this.$router.push("Token");
           }
-        } else {
-          this.$router.push("Token");
-        }
-      });
+        });
     },
   },
   watch: {

@@ -22,6 +22,11 @@ class ConfigurationController {
 	 * @return json
 	 */
 	public function getConfigurations() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		return wp_send_json(
 			( new ConfigurationsService() )->getConfigurations(),
 			200

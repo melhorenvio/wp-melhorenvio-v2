@@ -21,6 +21,11 @@ class OrdersController {
 	 * @return json
 	 */
 	public function getOrders() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		unset( $_GET['action'] );
 		$orders = ( new ListOrderService() )->getList( SanitizeHelper::apply( $_GET ) );
 		return wp_send_json( $orders, 200 );
@@ -46,6 +51,11 @@ class OrdersController {
 	 * @return json
 	 */
 	public function addCart() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$postId = SanitizeHelper::apply( $_GET['post_id'] );
 
 		$service = SanitizeHelper::apply( $_GET['service'] );
@@ -86,6 +96,11 @@ class OrdersController {
 	 * @return json $results
 	 */
 	public function sendOrder() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		if ( empty( $_GET['post_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -209,6 +224,11 @@ class OrdersController {
 	 * @return json $response
 	 */
 	public function removeOrder() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		if ( ! isset( $_GET['order_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -245,6 +265,11 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function cancelOrder() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		if ( ! isset( $_GET['post_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -350,6 +375,11 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function printTicket() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$result = ( new OrderService() )->printLabel( SanitizeHelper::apply( $_GET['id'] ) );
 
 		if ( empty( $result->url ) ) {
@@ -420,6 +450,11 @@ class OrdersController {
 	 * @return json
 	 */
 	public function insertInvoiceOrder() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		unset( $_GET['action'] );
 
 		if ( ! isset( $_GET['id'] ) || ! isset( $_GET['number'] ) || ! isset( $_GET['key'] ) ) {

@@ -123,6 +123,11 @@ class UsersController {
 	 * @return json
 	 */
 	public function getBalance() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$balance = ( new BalanceService() )->get();
 
 		if ( empty( $balance['success'] ) ) {
@@ -138,6 +143,11 @@ class UsersController {
 	 * @return object
 	 */
 	public function getMe() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$data = (array) $this->getInfo();
 
 		$data['data']['environment'] = ( ( new OrderQuotationService() )->getEnvironmentToSave() == '_sandbox' )

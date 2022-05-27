@@ -25,6 +25,9 @@ class SessionsController {
 	 * @return json
 	 */
 	public function deleteSession() {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
 		( new ClearDataStored() )->clear();
 	}
 }

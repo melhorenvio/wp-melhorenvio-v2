@@ -14,7 +14,7 @@ class PathController {
 		return wp_send_json(
 			array(
 				'custom' => get_option( 'melhor_envio_path_plugins', false ),
-				'native' =>  WP_PLUGIN_DIR
+				'native' => WP_PLUGIN_DIR,
 			)
 		);
 	}

@@ -13,6 +13,11 @@ class TokenController {
 	 * @return json
 	 */
 	public function get() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		$tokenData = ( new TokenService() )->get();
 		return wp_send_json( $tokenData, 200 );
 	}
@@ -27,6 +32,11 @@ class TokenController {
 	 * @return json
 	 */
 	public function save() {
+
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		if ( ! isset( $_POST['token'] ) ) {
 			return wp_send_json(
 				array(
@@ -78,6 +88,11 @@ class TokenController {
 	 * @return json
 	 */
 	public function verifyToken() {
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+			return wp_send_json( array(), 403 );
+		}
+
 		if ( ! get_option( 'wpmelhorenvio_token' ) ) {
 			return wp_send_json(
 				array(

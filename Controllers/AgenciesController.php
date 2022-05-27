@@ -14,6 +14,11 @@ class AgenciesController {
 	 */
 	public function get() {
 		try {
+
+			if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+				return wp_send_json( array(), 403 );
+			}
+
 			if ( empty( $_GET['state'] ) ) {
 				return wp_send_json(
 					array(
