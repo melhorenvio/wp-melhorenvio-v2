@@ -33,7 +33,7 @@ class TokenController {
 	 */
 	public function save() {
 
-		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
+		WpNonceValidatorHelper::check( $_POST[ self::WP_NONCE ], 'tokens' );
 
 		if ( ! isset( $_POST['token'] ) ) {
 			return wp_send_json(
