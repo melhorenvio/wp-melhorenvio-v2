@@ -7,6 +7,7 @@ import isNull from 'lodash/isNull'
 const configuration = {
     namespaced: true,
     state: {
+        wp_nonce: null,
         origin: [],
         label: {
             name: "",
@@ -138,12 +139,13 @@ const configuration = {
         getWhereCalculator: state => state.where_calculator,
         getConfigs: state => state.configs,
         getOptionsCalculator: state => state.options_calculator,
-        getEnvironment: state => state.token_enviroment
+        getEnvironment: state => state.token_enviroment,
     },
     actions: {
         getConfigs: ({ commit }, data) => {
             let content = {
-                action: 'get_configuracoes'
+                action: 'get_configuracoes',
+                _wpnonce: wpApiSettings.nonce_configs
             }
             return new Promise((resolve, reject) => {
                 Axios.get(`${ajaxurl}`, {
@@ -236,8 +238,12 @@ const configuration = {
             })
         },
         saveAll: ({ commit }, data) => {
+
             return new Promise((resolve, reject) => {
                 const form = new FormData();
+
+                form.append('_wpnonce', wpApiSettings.nonce_configs);   
+
                 if (data.origin) {
                     form.append('origin', data.origin)
                 }

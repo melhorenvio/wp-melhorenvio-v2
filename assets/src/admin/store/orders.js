@@ -211,7 +211,8 @@ const orders = {
                 limit: 5,
                 skip: 0,
                 status: (data.status) ? data.status : null,
-                wpstatus: (data.wpstatus) ? data.wpstatus : null
+                wpstatus: (data.wpstatus) ? data.wpstatus : null,
+                _wpnonce: wpApiSettings.nonce_orders
             }
 
             Axios.get(`${ajaxurl}`, {
@@ -256,6 +257,7 @@ const orders = {
             commit('toggleLoader', true)
             let data = {
                 action: 'get_orders',
+                _wpnonce: wpApiSettings.nonce_orders
             }
             state.filters.status = status.status
             state.filters.wpstatus = status.wpstatus
@@ -286,7 +288,7 @@ const orders = {
         },
         insertInvoice: ({ commit }, data) => {
             commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}`).then(response => {
+            Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}&_wpnonce=${wpApiSettings.nonce_orders}`).then(response => {
                 commit('updateInvoice', data);
                 commit('setMsgModal', response.data.message)
                 commit('toggleLoader', false)
@@ -316,7 +318,7 @@ const orders = {
                     reject();
                 }
                 if (data.id && data.service_id) {
-                    Axios.post(`${ajaxurl}?action=add_cart&post_id=${data.id}&service=${data.service_id}&non_commercial=${data.non_commercial}`, data)
+                    Axios.post(`${ajaxurl}?action=add_cart&post_id=${data.id}&service=${data.service_id}&non_commercial=${data.non_commercial}&_wpnonce=${wpApiSettings.nonce_orders}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
                             commit('addCartSimple', {
@@ -341,7 +343,7 @@ const orders = {
 
                 if (data.id && data.service_id) {
 
-                    Axios.post(`${ajaxurl}?action=add_order&post_id=${data.id}&service_id=${data.service_id}&non_commercial=${data.non_commercial}`, data)
+                    Axios.post(`${ajaxurl}?action=add_order&post_id=${data.id}&service_id=${data.service_id}&non_commercial=${data.non_commercial}&_wpnonce=${wpApiSettings.nonce_orders}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
                             if (!response.data.success) {
@@ -376,8 +378,7 @@ const orders = {
         },
         removeCart: (context, data) => {
             context.commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
-
+            Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}&_wpnonce=${wpApiSettings.nonce_orders}`, data).then(response => {
                 if (!response.data.success) {
                     context.commit('setMsgModal', response.data.message)
                     context.commit('toggleLoader', false)
@@ -401,7 +402,7 @@ const orders = {
         },
         cancelOrder: (context, data) => {
             context.commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}`, data).then(response => {
+            Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}&_wpnonce=${wpApiSettings.nonce_orders}`, data).then(response => {
                 context.commit('setMsgModal', response.data.message)
                 context.commit('toggleModal', true)
                 context.commit('cancelCart', data.post_id)
@@ -437,7 +438,7 @@ const orders = {
         },
         createTicket: ({ commit }, data) => {
             commit('toggleLoader', true)
-            Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
+            Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}&_wpnonce=${wpApiSettings.nonce_orders}`, data).then(response => {
                 if (!response.data.success) {
                     commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
@@ -455,7 +456,7 @@ const orders = {
             });
         },
         getStatusWooCommerce: ({ commit }) => {
-            Axios.get(`${ajaxurl}?action=get_status_woocommerce`).then(response => {
+            Axios.get(`${ajaxurl}?action=get_status_woocommerce&_wpnonce=${wpApiSettings.nonce_orders}`).then(response => {
                 commit('setStatusWc', response.data.statusWc)
             });
         },

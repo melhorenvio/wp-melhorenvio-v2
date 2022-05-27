@@ -23,7 +23,7 @@ const balance = {
     },
     actions: {
         setBalance: ({commit}, data) => {        
-            Axios.get(`${ajaxurl}?action=get_balance`, data).then(response => {
+            Axios.get(`${ajaxurl}?action=get_balance&_wpnonce=${wpApiSettings.nonce_users}`, data).then(response => {
                 commit('setBalance', response.data.balance)
             })
             

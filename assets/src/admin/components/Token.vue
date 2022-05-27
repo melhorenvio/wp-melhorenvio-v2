@@ -130,22 +130,27 @@ export default {
   },
   methods: {
     getToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
-        this.token = response.data.token;
-        this.token_sandbox = response.data.token_sandbox
-          ? response.data.token_sandbox
-          : "";
-        this.environment = response.data.token_environment
-          ? response.data.token_environment
-          : "";
-        this.show_loader = false;
-      });
+      this.$http
+        .get(
+          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+        )
+        .then((response) => {
+          this.token = response.data.token;
+          this.token_sandbox = response.data.token_sandbox
+            ? response.data.token_sandbox
+            : "";
+          this.environment = response.data.token_environment
+            ? response.data.token_environment
+            : "";
+          this.show_loader = false;
+        });
     },
     saveToken() {
       let bodyFormData = new FormData();
       bodyFormData.append("token", this.token);
       bodyFormData.append("token_sandbox", this.token_sandbox);
       bodyFormData.append("environment", this.environment);
+      bodyFormData.append("_wpnonce", wpApiSettings.nonce_tokens);
       if (
         (this.token && this.token.length > 0) ||
         (this.token_sandbox && this.token_sandbox.length > 0)

@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Services\AgenciesService;
 
 class AgenciesController {
@@ -14,6 +15,9 @@ class AgenciesController {
 	 */
 	public function get() {
 		try {
+
+			WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
+
 			if ( empty( $_GET['state'] ) ) {
 				return wp_send_json(
 					array(

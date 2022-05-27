@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Services\OrdersProductsService;
 use MelhorEnvio\Services\BuyerService;
 use MelhorEnvio\Services\CartService;
@@ -15,12 +16,17 @@ class OrdersController {
 
 	const NOT_FOUND_ORDER_ID = 'Informar o ID do pedido';
 
+	const WP_NONCE = '_wpnonce';
+
 	/**
 	 * Function to search for orders in the order panel
 	 *
 	 * @return json
 	 */
 	public function getOrders() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		unset( $_GET['action'] );
 		$orders = ( new ListOrderService() )->getList( SanitizeHelper::apply( $_GET ) );
 		return wp_send_json( $orders, 200 );
@@ -46,6 +52,9 @@ class OrdersController {
 	 * @return json
 	 */
 	public function addCart() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		$postId = SanitizeHelper::apply( $_GET['post_id'] );
 
 		$service = SanitizeHelper::apply( $_GET['service'] );
@@ -86,6 +95,9 @@ class OrdersController {
 	 * @return json $results
 	 */
 	public function sendOrder() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		if ( empty( $_GET['post_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -209,6 +221,9 @@ class OrdersController {
 	 * @return json $response
 	 */
 	public function removeOrder() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		if ( ! isset( $_GET['order_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -245,6 +260,9 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function cancelOrder() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		if ( ! isset( $_GET['post_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -350,6 +368,9 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function printTicket() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		$result = ( new OrderService() )->printLabel( SanitizeHelper::apply( $_GET['id'] ) );
 
 		if ( empty( $result->url ) ) {
@@ -420,6 +441,9 @@ class OrdersController {
 	 * @return json
 	 */
 	public function insertInvoiceOrder() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
 		unset( $_GET['action'] );
 
 		if ( ! isset( $_GET['id'] ) || ! isset( $_GET['number'] ) || ! isset( $_GET['key'] ) ) {

@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Controllers;
 
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Models\Address;
 use MelhorEnvio\Models\Store;
 use MelhorEnvio\Models\User;
@@ -123,6 +124,9 @@ class UsersController {
 	 * @return json
 	 */
 	public function getBalance() {
+
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
+
 		$balance = ( new BalanceService() )->get();
 
 		if ( empty( $balance['success'] ) ) {
@@ -138,6 +142,9 @@ class UsersController {
 	 * @return object
 	 */
 	public function getMe() {
+
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
+
 		$data = (array) $this->getInfo();
 
 		$data['data']['environment'] = ( ( new OrderQuotationService() )->getEnvironmentToSave() == '_sandbox' )

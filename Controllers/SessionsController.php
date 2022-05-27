@@ -4,6 +4,7 @@ namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Services\ClearDataStored;
 use MelhorEnvio\Helpers\SessionHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Models\Session;
 
 class SessionsController {
@@ -25,6 +26,7 @@ class SessionsController {
 	 * @return json
 	 */
 	public function deleteSession() {
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
 		( new ClearDataStored() )->clear();
 	}
 }

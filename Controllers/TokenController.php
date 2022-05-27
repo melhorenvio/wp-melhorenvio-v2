@@ -3,16 +3,21 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Services\TokenService;
 
 class TokenController {
 
+	const WP_NONCE = '_wpnonce';
 	/**
 	 * Function to return data of user token.
 	 *
 	 * @return json
 	 */
 	public function get() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
+
 		$tokenData = ( new TokenService() )->get();
 		return wp_send_json( $tokenData, 200 );
 	}
@@ -27,6 +32,9 @@ class TokenController {
 	 * @return json
 	 */
 	public function save() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
+
 		if ( ! isset( $_POST['token'] ) ) {
 			return wp_send_json(
 				array(
@@ -78,6 +86,9 @@ class TokenController {
 	 * @return json
 	 */
 	public function verifyToken() {
+
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
+
 		if ( ! get_option( 'wpmelhorenvio_token' ) ) {
 			return wp_send_json(
 				array(
