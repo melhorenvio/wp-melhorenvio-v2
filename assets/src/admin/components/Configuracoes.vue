@@ -464,11 +464,11 @@
                 v-model="where_calculator"
               >
                 <option
-                  v-for="option in where_calculator_collect"
-                  :value="option.id"
-                  :key="option.id"
+                  v-for="option in keysWhereCalculatorCollect"
+                  :value="option"
+                  :key="option"
                 >
-                  <strong>{{ option.name }}</strong>
+                  <strong>{{ where_calculator_collect[option] }}</strong>
                 </option>
               </select>
             </label>
@@ -606,10 +606,13 @@
 import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
 import { TheMask } from "vue-the-mask";
-import {where_calculator_collect} from 'admin/utils/where-calculator_collect';
-import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
-import deleteSession from 'admin/utils/delete-session';
-
+import { where_calculator_collect } from "admin/utils/where-calculator_collect";
+import {
+  verifyToken,
+  getToken,
+  isDateTokenExpired,
+} from "admin/utils/token-utils";
+import deleteSession from "admin/utils/delete-session";
 
 export default {
   name: "Configuracoes",
@@ -648,7 +651,7 @@ export default {
         masked: false,
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
-      where_calculator_collect
+      where_calculator_collect,
     };
   },
   computed: {
@@ -674,6 +677,9 @@ export default {
       token_environment: "getEnvironment",
       configs: "getConfigs",
     }),
+    keysWhereCalculatorCollect() {
+      return Object.keys(this.where_calculator_collect);
+    },
   },
   methods: {
     ...mapActions("configuration", [
@@ -751,9 +757,8 @@ export default {
       }
     },
     createAjaxUrl(agencyId, data) {
-      const {city, state} = data;
+      const { city, state } = data;
       return `${ajaxUrl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettings.nonce_configs}`;
-
     },
     showJadlogAgencies(data) {
       this.setLoader(true);
@@ -761,9 +766,7 @@ export default {
       var responseAgencies = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            this.createAjaxUrl(2, data)
-          )
+          .post(this.createAjaxUrl(2, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgencies = response.data;
@@ -790,9 +793,7 @@ export default {
       var responseAgenciesAzul = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            this.createAjaxUrl(9, data)            
-          )
+          .post(this.createAjaxUrl(9, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesAzul = response.data;
@@ -818,9 +819,7 @@ export default {
       var responseAgenciesLatam = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            this.createAjaxUrl(6, data)
-          )
+          .post(this.createAjaxUrl(6, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesLatam = response.data;
@@ -845,13 +844,9 @@ export default {
     },
     clearSession() {
       return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            deleteSession()
-          )
-          .then((response) => {
-            resolve(true);
-          });
+        this.$http.get(deleteSession()).then((response) => {
+          resolve(true);
+        });
       });
     },
     showTimeWithDay(value) {
@@ -859,35 +854,27 @@ export default {
       return val;
     },
     getToken() {
-      this.$http
-        .get(
-          verifyToken()          
-        )
-        .then((response) => {
-          if (!response.data.exists_token) {
-            this.$router.push("Token");
-          }
+      this.$http.get(verifyToken()).then((response) => {
+        if (!response.data.exists_token) {
+          this.$router.push("Token");
+        }
 
-          this.validateToken();
-        });
+        this.validateToken();
+      });
     },
     validateToken() {
-      this.$http
-        .get(
-          getToken()          
-        )
-        .then((response) => {
-          if (response.data.token) {            
-            if (isDateTokenExpired(response.data.token)) {
-              this.error_message =
-                "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
-            } else {
-              this.error_message = "";
-            }
+      this.$http.get(getToken()).then((response) => {
+        if (response.data.token) {
+          if (isDateTokenExpired(response.data.token)) {
+            this.error_message =
+              "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
           } else {
-            this.$router.push("Token");
+            this.error_message = "";
           }
-        });
+        } else {
+          this.$router.push("Token");
+        }
+      });
     },
   },
   watch: {
