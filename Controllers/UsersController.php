@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Controllers;
 
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Models\Address;
 use MelhorEnvio\Models\Store;
 use MelhorEnvio\Models\User;
@@ -124,9 +125,7 @@ class UsersController {
 	 */
 	public function getBalance() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'users' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
 
 		$balance = ( new BalanceService() )->get();
 
@@ -144,9 +143,7 @@ class UsersController {
 	 */
 	public function getMe() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'users' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
 
 		$data = (array) $this->getInfo();
 

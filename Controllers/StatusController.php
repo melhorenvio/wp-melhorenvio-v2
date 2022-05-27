@@ -2,6 +2,8 @@
 
 namespace MelhorEnvio\Controllers;
 
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
+
 class StatusController {
 
 	/**
@@ -11,9 +13,7 @@ class StatusController {
 	 */
 	public function getStatus() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'orders' );
 
 		$status = wc_get_order_statuses();
 		return wp_send_json( array( 'statusWc' => $status ), 200 );

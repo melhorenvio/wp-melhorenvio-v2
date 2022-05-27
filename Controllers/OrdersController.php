@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Services\OrdersProductsService;
 use MelhorEnvio\Services\BuyerService;
 use MelhorEnvio\Services\CartService;
@@ -15,7 +16,7 @@ class OrdersController {
 
 	const NOT_FOUND_ORDER_ID = 'Informar o ID do pedido';
 
-    const WP_NONCE = '_wpnonce';
+	const WP_NONCE = '_wpnonce';
 
 	/**
 	 * Function to search for orders in the order panel
@@ -24,9 +25,7 @@ class OrdersController {
 	 */
 	public function getOrders() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		unset( $_GET['action'] );
 		$orders = ( new ListOrderService() )->getList( SanitizeHelper::apply( $_GET ) );
@@ -54,9 +53,7 @@ class OrdersController {
 	 */
 	public function addCart() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		$postId = SanitizeHelper::apply( $_GET['post_id'] );
 
@@ -99,9 +96,7 @@ class OrdersController {
 	 */
 	public function sendOrder() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		if ( empty( $_GET['post_id'] ) ) {
 			return wp_send_json(
@@ -227,9 +222,7 @@ class OrdersController {
 	 */
 	public function removeOrder() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		if ( ! isset( $_GET['order_id'] ) ) {
 			return wp_send_json(
@@ -268,9 +261,7 @@ class OrdersController {
 	 */
 	public function cancelOrder() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		if ( ! isset( $_GET['post_id'] ) ) {
 			return wp_send_json(
@@ -378,9 +369,7 @@ class OrdersController {
 	 */
 	public function printTicket() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		$result = ( new OrderService() )->printLabel( SanitizeHelper::apply( $_GET['id'] ) );
 
@@ -453,9 +442,7 @@ class OrdersController {
 	 */
 	public function insertInvoiceOrder() {
 
-		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'orders' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
 		unset( $_GET['action'] );
 

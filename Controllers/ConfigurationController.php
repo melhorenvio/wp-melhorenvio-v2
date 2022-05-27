@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
+use MelhorEnvio\Helpers\WpNonceValidatorHelper;
 use MelhorEnvio\Models\Address;
 use MelhorEnvio\Models\Agency;
 use MelhorEnvio\Models\Store;
@@ -23,9 +24,7 @@ class ConfigurationController {
 	 */
 	public function getConfigurations() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
 
 		return wp_send_json(
 			( new ConfigurationsService() )->getConfigurations(),
@@ -54,9 +53,8 @@ class ConfigurationController {
 	 * @return json
 	 */
 	public function saveAll() {
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'save_configurations' ) ) {
-			return wp_send_json( array(), 403 );
-		}
+
+		WpNonceValidatorHelper::check( $_POST['_wpnonce'], 'save_configurations' );
 
 		$response = ( new ConfigurationsService() )->saveConfigurations( SanitizeHelper::apply( $_POST ) );
 		return wp_send_json( $response, 200 );
