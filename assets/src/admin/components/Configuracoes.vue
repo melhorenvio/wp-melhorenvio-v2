@@ -607,6 +607,8 @@ import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
 import { TheMask } from "vue-the-mask";
 import {where_calculator_collect} from 'admin/utils/where-calculator_collect';
+import verifyToken from 'admin/utils/verify-token';
+import deleteSession from 'admin/utils/delete-session';
 
 
 export default {
@@ -845,7 +847,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http
           .get(
-            `${ajaxurl}?action=delete_melhor_envio_session&_wpnonce=${wpApiSettings.nonce_configs}`
+            deleteSession()
           )
           .then((response) => {
             resolve(true);
@@ -859,7 +861,7 @@ export default {
     getToken() {
       this.$http
         .get(
-          `${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+          verifyToken()          
         )
         .then((response) => {
           if (!response.data.exists_token) {
