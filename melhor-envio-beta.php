@@ -15,7 +15,7 @@ Text Domain: baseplugin
 Tested up to: 2.11.20
 Requires PHP: 5.6
 WC requires at least: 4.0
-WC tested up to: 5.7.2
+WC tested up to: 6.2
 Domain Path: /languages
 */
 
