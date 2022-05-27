@@ -748,14 +748,19 @@ export default {
         });
       }
     },
+    createAjaxUrl(agencyId, data) {
+      const {city, state} = data;
+      return `${ajaxUrl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettings.nonce_configs}`;
+
+    },
     showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
       var responseAgencies = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
+            this.createAjaxUrl(2, data)
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -781,10 +786,10 @@ export default {
       this.setLoader(true);
       this.agency_azul = "";
       var responseAgenciesAzul = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
+            this.createAjaxUrl(9, data)            
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -809,10 +814,10 @@ export default {
       this.setLoader(true);
       this.agency_latam = "";
       var responseAgenciesLatam = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
+            this.createAjaxUrl(6, data)
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -864,32 +869,34 @@ export default {
           this.validateToken();
         });
     },
+    isDateTokenExpired(token) {    
+      // JWT Token Decode
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const tokenDecoded = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      const tokenFinal = JSON.parse(tokenDecoded);
+      const dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
+      const currentTime = new Date();
+
+      return dateExp < currentTime
+
+    },
     validateToken() {
       this.$http
         .get(
           `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
         )
         .then((response) => {
-          if (response.data.token) {
-            var token = response.data.token;
-
-            // JWT Token Decode
-            var base64Url = token.split(".")[1];
-            var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-            var tokenDecoded = decodeURIComponent(
-              atob(base64)
-                .split("")
-                .map(function (c) {
-                  return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-                })
-                .join("")
-            );
-
-            var tokenFinal = JSON.parse(tokenDecoded);
-            var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-            var currentTime = new Date();
-
-            if (dateExp < currentTime) {
+          if (response.data.token) {            
+            if (this.isDateTokenExpired(response.data.token)) {
               this.error_message =
                 "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
             } else {
