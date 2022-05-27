@@ -843,8 +843,8 @@ export default {
       this.show_modal = false;
     },
     clearSession() {
-      return new Promise((resolve, reject) => {
-        this.$http.get(deleteSession()).then((response) => {
+      return new Promise((resolve, _reject) => {
+        this.$http.get(deleteSession()).then((_response) => {
           resolve(true);
         });
       });
