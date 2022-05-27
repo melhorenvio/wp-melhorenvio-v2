@@ -7,6 +7,7 @@ use MelhorEnvio\Services\TokenService;
 
 class TokenController {
 
+    const WP_NONCE = '_wpnonce';
 	/**
 	 * Function to return data of user token.
 	 *
@@ -14,7 +15,7 @@ class TokenController {
 	 */
 	public function get() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tokens' ) ) {
+		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -33,7 +34,7 @@ class TokenController {
 	 */
 	public function save() {
 
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'tokens' ) ) {
+		if ( ! wp_verify_nonce( $_POST[self::WP_NONCE], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -89,7 +90,7 @@ class TokenController {
 	 */
 	public function verifyToken() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tokens' ) ) {
+		if ( ! wp_verify_nonce( $_GET[self::WP_NONCE], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
