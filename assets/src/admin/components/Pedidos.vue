@@ -373,7 +373,9 @@ export default {
     },
     getToken() {
       this.$http
-        .get(`${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce}`)
+        .get(
+          `${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+        )
         .then((response) => {
           if (!response.data.exists_token) {
             this.$router.push("Token");
@@ -512,7 +514,7 @@ export default {
     },
     getMe() {
       this.$http
-        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettings.nonce}`)
+        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettings.nonce_users}`)
         .then((response) => {
           if (response.data.id) {
             this.name = response.data.firstname + " " + response.data.lastname;
@@ -529,7 +531,9 @@ export default {
     },
     validateToken() {
       this.$http
-        .get(`${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce}`)
+        .get(
+          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+        )
         .then((response) => {
           if (response.data.token) {
             var token = response.data.token;

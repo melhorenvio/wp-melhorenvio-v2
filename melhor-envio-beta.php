@@ -314,7 +314,10 @@ final class Base_Plugin
         function load_var_nonce()
         {
             $wpApiSettings = json_encode( array( 
-                'nonce' => wp_create_nonce( 'save_configurations' )
+                'nonce_configs' => wp_create_nonce( 'save_configurations' ),
+                'nonce_orders' => wp_create_nonce( 'orders' ),
+                'nonce_tokens' => wp_create_nonce( 'tokens' ),
+                'nonce_users' => wp_create_nonce( 'users' ),
             ) );
 
             $wpApiSettings = "var wpApiSettings = ${wpApiSettings};";

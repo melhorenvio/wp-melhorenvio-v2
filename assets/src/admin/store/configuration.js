@@ -145,7 +145,7 @@ const configuration = {
         getConfigs: ({ commit }, data) => {
             let content = {
                 action: 'get_configuracoes',
-                _wpnonce: wpApiSettings.nonce
+                _wpnonce: wpApiSettings.nonce_configs
             }
             return new Promise((resolve, reject) => {
                 Axios.get(`${ajaxurl}`, {
@@ -242,7 +242,7 @@ const configuration = {
             return new Promise((resolve, reject) => {
                 const form = new FormData();
 
-                form.append('_wpnonce', wpApiSettings.nonce);   
+                form.append('_wpnonce', wpApiSettings.nonce_configs);   
 
                 if (data.origin) {
                     form.append('origin', data.origin)

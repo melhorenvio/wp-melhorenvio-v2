@@ -14,7 +14,7 @@ class TokenController {
 	 */
 	public function get() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -33,7 +33,7 @@ class TokenController {
 	 */
 	public function save() {
 
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -89,7 +89,7 @@ class TokenController {
 	 */
 	public function verifyToken() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'tokens' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 

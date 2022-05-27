@@ -124,7 +124,7 @@ class UsersController {
 	 */
 	public function getBalance() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'users' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -144,7 +144,7 @@ class UsersController {
 	 */
 	public function getMe() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'users' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 

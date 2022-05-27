@@ -11,7 +11,7 @@ class StatusController {
 	 */
 	public function getStatus() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 

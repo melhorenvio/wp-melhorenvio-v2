@@ -754,7 +754,6 @@ export default {
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
       data["dimension_default"] = this.dimension;
-      data["wp_nonce"] = this.wp_nonce;
 
       let respSave = this.saveAll(data);
 
@@ -803,7 +802,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
+            `${ajaxurl}?action=get_agencies&company=2&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -832,7 +831,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
+            `${ajaxurl}?action=get_agencies&company=9&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -860,7 +859,7 @@ export default {
       var promiseAgencies = new Promise((resolve, reject) => {
         this.$http
           .post(
-            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce}`
+            `${ajaxurl}?action=get_agencies&company=6&city=${data.city}&state=${data.state}&_wpnonce=${wpApiSettings.nonce_configs}`
           )
           .then(function (response) {
             if (response && response.status === 200) {
@@ -888,7 +887,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http
           .get(
-            `${ajaxurl}?action=delete_melhor_envio_session&_wpnonce=${wpApiSettings.nonce}`
+            `${ajaxurl}?action=delete_melhor_envio_session&_wpnonce=${wpApiSettings.nonce_configs}`
           )
           .then((response) => {
             resolve(true);
@@ -901,7 +900,9 @@ export default {
     },
     getToken() {
       this.$http
-        .get(`${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce}`)
+        .get(
+          `${ajaxurl}?action=verify_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+        )
         .then((response) => {
           if (!response.data.exists_token) {
             this.$router.push("Token");
@@ -912,7 +913,9 @@ export default {
     },
     validateToken() {
       this.$http
-        .get(`${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce}`)
+        .get(
+          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+        )
         .then((response) => {
           if (response.data.token) {
             var token = response.data.token;

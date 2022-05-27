@@ -22,7 +22,7 @@ class OrdersController {
 	 */
 	public function getOrders() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -52,7 +52,7 @@ class OrdersController {
 	 */
 	public function addCart() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -97,7 +97,7 @@ class OrdersController {
 	 */
 	public function sendOrder() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -225,7 +225,7 @@ class OrdersController {
 	 */
 	public function removeOrder() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -266,7 +266,7 @@ class OrdersController {
 	 */
 	public function cancelOrder() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -376,7 +376,7 @@ class OrdersController {
 	 */
 	public function printTicket() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
@@ -451,7 +451,7 @@ class OrdersController {
 	 */
 	public function insertInvoiceOrder() {
 
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'save_configurations' ) ) {
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'orders' ) ) {
 			return wp_send_json( array(), 403 );
 		}
 
