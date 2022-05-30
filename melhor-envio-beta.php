@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.11.21
+Version: 2.11.22
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -322,7 +322,7 @@ final class Base_Plugin
             
             wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
             wp_enqueue_script( 'wp-nonce-melhor-evio-wp-api' );
-            wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettings = ${wpApiSettings};" );
+            wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = ${wpApiSettings};" );
         }
 
         add_action( 'admin_enqueue_scripts', 'load_var_nonce');

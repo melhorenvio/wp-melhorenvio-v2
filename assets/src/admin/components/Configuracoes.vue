@@ -758,7 +758,7 @@ export default {
     },
     createAjaxUrl(agencyId, data) {
       const { city, state } = data;
-      return `${ajaxurl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettings.nonce_configs}`;
+      return `${ajaxurl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
     },
     showJadlogAgencies(data) {
       this.setLoader(true);

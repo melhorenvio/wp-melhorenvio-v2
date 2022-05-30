@@ -132,7 +132,7 @@ export default {
     getToken() {
       this.$http
         .get(
-          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettings.nonce_tokens}`
+          `${ajaxurl}?action=get_token&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_tokens}`
         )
         .then((response) => {
           this.token = response.data.token;
@@ -150,7 +150,7 @@ export default {
       bodyFormData.append("token", this.token);
       bodyFormData.append("token_sandbox", this.token_sandbox);
       bodyFormData.append("environment", this.environment);
-      bodyFormData.append("_wpnonce", wpApiSettings.nonce_tokens);
+      bodyFormData.append("_wpnonce", wpApiSettingsMelhorEnvio.nonce_tokens);
       if (
         (this.token && this.token.length > 0) ||
         (this.token_sandbox && this.token_sandbox.length > 0)
