@@ -514,7 +514,7 @@ export default {
     },
     getMe() {
       this.$http
-        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettings.nonce_users}`)
+        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_users}`)
         .then((response) => {
           if (response.data.id) {
             this.name = response.data.firstname + " " + response.data.lastname;
