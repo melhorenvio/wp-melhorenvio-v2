@@ -97,7 +97,25 @@ class QuotationService {
 				: false
 		);
 
+		$quotations = $this->removeItemNotHasPrice( $quotations );
+
 		return ( new OrderQuotationService() )->saveQuotation( $postId, $quotations );
+	}
+
+	/**
+	 * Function to remove quotes without price, that is, unavailable
+	 *
+	 * @param array $quotations
+	 * @return array
+	 */
+	private function removeItemNotHasPrice( $quotations ) {
+		foreach ( $quotations as $key => $quotation ) {
+			if ( empty( $quotation->price ) ) {
+				unset( $quotations[ $key ] );
+			}
+		}
+
+		return $quotations;
 	}
 
 	/**
