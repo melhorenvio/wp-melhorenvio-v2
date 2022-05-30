@@ -9,7 +9,7 @@
         "node" : ">=14.18.0"
     },
     "scripts": {
-        "dev": "cross-env WEBPACK_ENV=development webpack --progress --colors --watch --hide-modules",
+        "dev": "cross-env WEBPACK_ENV=development webpack --progress --color --watch",
         "dev-build": "cross-env WEBPACK_ENV=development webpack",
         "build": "cross-env WEBPACK_ENV=production webpack"
     },
