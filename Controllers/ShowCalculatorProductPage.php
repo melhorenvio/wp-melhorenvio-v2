@@ -86,11 +86,13 @@ class ShowCalculatorProductPage {
 		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
 		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
 
+        $allowedTags = EscapeAllowedTags::allow_tags(
+            array( 'div', 'p', 'input', 'table', 'thead', 'tbody', 'small', 'img' )
+        );
+
 		echo wp_kses(
 			$this->getTemplateCalculator(),
-			EscapeAllowedTags::allow_tags(
-				array( 'div', 'p', 'input', 'table', 'thead', 'tbody', 'small', 'img' )
-			)
+			$allowedTags
 		);
 	}
 
