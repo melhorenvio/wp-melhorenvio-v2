@@ -71,12 +71,12 @@ class ShowCalculatorProductPage {
 	 */
 	public function prepareProduct( $product ) {
 		$this->product = $product;
-		$this->height  = $product->get_height();
-		$this->width   = $product->get_width();
-		$this->length  = $product->get_length();
-		$this->weight  = $product->get_weight();
-		$this->price   = $product->get_price();
-		$this->id      = $product->get_id();
+		$this->height  =  floatval($product->get_height());
+		$this->width   = floatval($product->get_width());
+		$this->length  = floatval($product->get_length());
+		$this->weight  = floatval($product->get_weight());
+		$this->price   = floatval($product->get_price());
+		$this->id      = intval($product->get_id());
 	}
 
 	/**
