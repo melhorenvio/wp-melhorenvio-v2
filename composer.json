@@ -21,8 +21,5 @@
             "MelhorEnvio\\Bases\\": "core/bases/",
             "MelhorEnvio\\Helpers\\": "Helpers/"
         }
-    },
-    "require-dev": {
-        "symfony/var-dumper": "^5.3"
     }
 }
