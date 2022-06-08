@@ -5,9 +5,9 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const ID = 'melhorenvio_latam_juntos';
 
-		const TITLE = 'LATAM Cargo Juntos';
+		const TITLE = 'LATAM Cargo éFácil';
 
-		const METHOD_TITLE = 'LATAM Cargo Juntos (Melhor Envio)';
+		const METHOD_TITLE = 'LATAM Cargo éFácil (Melhor Envio)';
 
 		public $code = 12;
 
