@@ -8,9 +8,6 @@ use MelhorEnvio\Helpers\EscapeAllowedTags;
  * Controller to manage the product's paged calculator
  */
 class ShowCalculatorProductPage {
-
-
-
 	protected $product;
 	protected $height;
 	protected $width;
@@ -74,12 +71,12 @@ class ShowCalculatorProductPage {
 	 */
 	public function prepareProduct( $product ) {
 		$this->product = $product;
-		$this->height  = $product->get_height();
-		$this->width   = $product->get_width();
-		$this->length  = $product->get_length();
-		$this->weight  = $product->get_weight();
-		$this->price   = $product->get_price();
-		$this->id      = $product->get_id();
+		$this->height  =  floatval($product->get_height());
+		$this->width   = floatval($product->get_width());
+		$this->length  = floatval($product->get_length());
+		$this->weight  = floatval($product->get_weight());
+		$this->price   = floatval($product->get_price());
+		$this->id      = intval($product->get_id());
 	}
 
 	/**
@@ -89,59 +86,20 @@ class ShowCalculatorProductPage {
 		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
 		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
 
+        $allowedTags = EscapeAllowedTags::allow_tags(
+            array( 'div', 'p', 'input', 'table', 'thead', 'tbody', 'small', 'img' )
+        );
+
 		echo wp_kses(
-			sprintf(
-				"<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'>
-            <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?>
-            <input type='hidden' id='calculo_frete_endpoint_url' value='%s'>
-            <input type='hidden' id='calculo_frete_produto_altura' value='%f'>
-            <input type='hidden' id='calculo_frete_produto_largura' value='%f'>
-            <input type='hidden' id='calculo_frete_produto_comprimento' value='%f'>
-            <input type='hidden' id='calculo_frete_produto_peso' value='%f'>
-            <input type='hidden' id='calculo_frete_produto_preco' value='%f'>
-            <input type='hidden' id='id_produto' value='%d'>
-            <div class='calculatorRow'>
-                <div class='row'>
-                    <div class='col-75'>
-                        <p>Simulação de frete</p>
-                        <input 
-                            type='text' 
-                            maxlength='9' 
-                            class='iptCep calculatorRow' 
-                            id='inputCep' 
-                            placeholder='Informe seu cep' 
-                            onkeyup='%s'
-                        >
-                    </div>
-                </div>
-                <div id='calcular-frete-loader'>
-                    <img src='%s/images/loader.gif' />
-                </div>
-                <div class=resultado-frete tableResult>
-                    <table>
-                        <thead>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <small id='destiny-shipping-mehor-envio'></small></br>
-                    <small class='observation-shipping-free'></small>
-                </div>
-            </div>
-        </div>",
-				admin_url( 'admin-ajax.php' ),
-				$this->height,
-				$this->width,
-				$this->length,
-				$this->weight,
-				$this->price,
-				$this->id,
-				'return usePostalCodeMask()',
-				BASEPLUGIN_ASSETS,
-			),
-			EscapeAllowedTags::allow_tags(
-				array( 'div', 'p', 'input', 'table', 'thead', 'tbody', 'small', 'img' )
-			)
+			$this->getTemplateCalculator(),
+			$allowedTags
 		);
+	}
+
+	/**
+	 * @return string
+	 */
+	private function getTemplateCalculator() {
+		return "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'> <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?> <input type='hidden' id='calculo_frete_endpoint_url' value='".admin_url( 'admin-ajax.php' )."'> <input type='hidden' id='calculo_frete_produto_altura' value='".$this->height."'> <input type='hidden' id='calculo_frete_produto_largura' value='".$this->width."'> <input type='hidden' id='calculo_frete_produto_comprimento' value='".$this->length."'> <input type='hidden' id='calculo_frete_produto_peso' value='".$this->weight."'> <input type='hidden' id='calculo_frete_produto_preco' value='".$this->price."'> <input type='hidden' id='id_produto' value='".$this->id."'> <div class='calculatorRow'> <div class='row'> <div class='col-75'> <p>Simulação de frete</p> <input type='text' maxlength='9' class='iptCep calculatorRow' id='inputCep' placeholder='Informe seu cep' onkeyup='return usePostalCodeMask()' > </div> </div> <div id='calcular-frete-loader'> <img src='".BASEPLUGIN_ASSETS."/images/loader.gif' /> </div> <div class=resultado-frete tableResult> <table> <thead> </thead> <tbody> </tbody> </table> <small id='destiny-shipping-mehor-envio'></small></br> <small class='observation-shipping-free'></small> </div> </div> </div>";
 	}
 }
