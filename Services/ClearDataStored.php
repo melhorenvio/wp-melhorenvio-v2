@@ -22,11 +22,21 @@ class ClearDataStored {
 		( new ShippingService() )->destroy();
 
 		if ( ! empty( $_SESSION[ Session::ME_KEY ] ) ) {
-			foreach ( $_SESSION[ Session::ME_KEY ] as $key ) {
-				if ( $key != 'notices_melhor_envio' ) {
-					if ( @isset( $_SESSION[ Session::ME_KEY ][ $key ] ) ) {
-						unset( $_SESSION[ Session::ME_KEY ][ $key ] );
-					}
+			foreach ( $_SESSION[ Session::ME_KEY ] as $hash => $item) {
+				if ( $hash != 'notices_melhor_envio' ) {
+                    if (empty($_SESSION)) {
+                        continue;
+                    }
+
+                    if (empty($_SESSION[ Session::ME_KEY ])) {
+                        continue;
+                    }
+
+                    if (empty($_SESSION[ Session::ME_KEY ][ $hash ] )) {
+                        continue;
+                    }
+                    
+					unset( $_SESSION[ Session::ME_KEY ][ $hash ] );
 				}
 			}
 		}
