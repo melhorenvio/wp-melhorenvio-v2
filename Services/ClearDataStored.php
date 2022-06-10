@@ -21,24 +21,40 @@ class ClearDataStored {
 		( new Seller() )->destroy();
 		( new ShippingService() )->destroy();
 
-		if ( ! empty( $_SESSION[ Session::ME_KEY ] ) ) {
-			foreach ( $_SESSION[ Session::ME_KEY ] as $hash => $item) {
-				if ( $hash != 'notices_melhor_envio' ) {
-                    if (empty($_SESSION)) {
-                        continue;
-                    }
+		if (  empty( $_SESSION[ Session::ME_KEY ] ) ) {
+            return false;
+        }
 
-                    if (empty($_SESSION[ Session::ME_KEY ])) {
-                        continue;
-                    }
+        foreach ( $_SESSION[ Session::ME_KEY ] as $hash => $item) {
 
-                    if (empty($_SESSION[ Session::ME_KEY ][ $hash ] )) {
-                        continue;
-                    }
-                    
-					unset( $_SESSION[ Session::ME_KEY ][ $hash ] );
-				}
-			}
-		}
+            if ( $hash != 'notices_melhor_envio' ) {
+                
+                if (!$this->hasDataOnSession()) {
+                    continue;
+                }
+
+                unset( $_SESSION[ Session::ME_KEY ][ $hash ] );
+            }
+        }
 	}
+
+    /**
+     * @return bool
+     */
+    private function hasDataOnSession()
+    {
+        if (empty($_SESSION)) {
+            return false;
+        }
+
+        if (empty($_SESSION[ Session::ME_KEY ])) {
+            return false;
+        }
+
+        if (empty($_SESSION[ Session::ME_KEY ][ $hash ])) {
+            return false;
+        }
+
+        return true;
+    }
 }
