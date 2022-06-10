@@ -44,18 +44,19 @@ class ClearDataStored {
      */
     private function hasDataOnSession($hash)
     {
+        $hasData = true;
         if (empty($_SESSION)) {
-            return false;
+            $hasData = false;
         }
 
         if (empty($_SESSION[ Session::ME_KEY ])) {
-            return false;
+            $hasData = false;
         }
 
         if (empty($_SESSION[ Session::ME_KEY ][ $hash ])) {
-            return false;
+            $hasData = false;
         }
 
-        return true;
+        return $hasData;
     }
 }
