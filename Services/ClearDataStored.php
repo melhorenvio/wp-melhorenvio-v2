@@ -29,7 +29,7 @@ class ClearDataStored {
 
             if ( $hash != 'notices_melhor_envio' ) {
                 
-                if (!$this->hasDataOnSession()) {
+                if (!$this->hasDataOnSession($hash)) {
                     continue;
                 }
 
@@ -39,9 +39,10 @@ class ClearDataStored {
 	}
 
     /**
+     * @param string $hash
      * @return bool
      */
-    private function hasDataOnSession()
+    private function hasDataOnSession($hash)
     {
         if (empty($_SESSION)) {
             return false;
