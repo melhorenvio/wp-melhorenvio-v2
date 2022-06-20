@@ -12,6 +12,7 @@ jobs:
     - name: Build
       run: |
         composer install --optimize-autoloader --no-dev
+        yarn
         yarn build
     - name: WordPress Plugin Deploy
       id: deploy
