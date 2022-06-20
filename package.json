@@ -5,8 +5,8 @@
     "author": "Tareq Hasan <tareq@wedevs.com>",
     "license": "GPLv2",
     "private": true,
-    "engines" : {         
-        "node" : ">=14.18.0"
+    "engines": {
+        "node": ">=14.18.0"
     },
     "scripts": {
         "dev": "cross-env WEBPACK_ENV=development webpack --progress --colors --watch --hide-modules",
@@ -23,6 +23,7 @@
         "vue-router": "^3.1.6",
         "vue-safe-html": "^2.0.0",
         "vue-the-mask": "^0.11.1",
+        "cross-env": "^5.2.1",
         "vuex": "^3.3.0"
     },
     "devDependencies": {
@@ -39,7 +40,6 @@
         "babel-runtime": "^6.26.0",
         "browser-sync": "^2.26.7",
         "browser-sync-webpack-plugin": "^2.2.2",
-        "cross-env": "^5.2.1",
         "css-loader": "^5.2.7",
         "css-minimizer-webpack-plugin": "^4.0.0",
         "file-loader": "^6.2.0",
