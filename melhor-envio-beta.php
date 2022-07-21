@@ -13,7 +13,7 @@ License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: baseplugin
 Tested up to: 6.0
-Requires PHP: 5.6
+Requires PHP: 7.2
 WC requires at least: 4.0
 WC tested up to: 6.2
 Domain Path: /languages
