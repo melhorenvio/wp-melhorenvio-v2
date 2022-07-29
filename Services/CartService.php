@@ -28,6 +28,7 @@ class CartService {
 	 * @return array
 	 */
 	public function add( $orderId, $products, $dataBuyer, $shippingMethodId ) {
+
 		$body = $this->createPayloadToCart( $orderId, $products, $dataBuyer, $shippingMethodId );
 
 		$errors = $this->validatePayloadBeforeAddCart( $body, $orderId );
@@ -347,7 +348,7 @@ class CartService {
 		}
 
 		if ( ! empty( $body[ $key ] ) && empty( $body[ $key ]->phone ) && ! $isCorreios ) {
-			$errors[] = "Informar o nome do {$user} do pedido.";
+			$errors[] = "Informar o telefone do {$user} do pedido.";
 		}
 
 		if ( ! empty( $body[ $key ] ) && empty( $body[ $key ]->email ) && ! $isCorreios ) {

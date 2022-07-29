@@ -4,7 +4,7 @@ Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam
 Requires at least: 4.7
 Tested up to: 6.0
 Stable tag: 2.11.29
-Requires PHP: 5.6+
+Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
 License: GPLv2 or later
@@ -66,6 +66,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.29 =
 * Correção do bug não enviar o CEP de origem na calculadora da tela de produto (Erro apenas em alguns temas)
+* Correção na validação de nome e telefone para transportadoras
 
 = 2.11.28 =
 * Adicioando fluxo automatizado de deploy
