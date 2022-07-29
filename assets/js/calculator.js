@@ -69,8 +69,8 @@ function numberMask(content) {
 /**
  *  this function is used to apply the postal code mask in the input to calculate the quotation
  */
-function usePostalCodeMask() { 
-    const inputDefault = document.querySelector('#inputCep');
+function usePostalCodeMask(evt='') { 
+    const inputDefault = evt ? evt.target : evt;
     const inputShortcode = document.querySelector('.iptCepShortcode');
     
 
