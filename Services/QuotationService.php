@@ -111,7 +111,9 @@ class QuotationService {
 	private function removeItemNotHasPrice( $quotations ) {
 		foreach ( $quotations as $key => $quotation ) {
 			if ( empty( $quotation->price ) ) {
-				unset( $quotations[ $key ] );
+				if (is_array($quotations)) {
+					unset( $quotations[ $key ] );
+				}
 			}
 		}
 
