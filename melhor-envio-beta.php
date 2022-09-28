@@ -45,6 +45,16 @@ Domain Path: /languages
 // don't call the file directly
 if (!defined('ABSPATH')) exit;
 
+// check if the composer packages are installed
+if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+    add_action( 'admin_notices', function () {
+        $class = 'notice notice-error';
+        $message = 'Erro ao ativar o plugin da Melhor Envio: a pasta <code>vendor</code> não foi localizada no plugin.';
+        printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+    } );
+    return false;
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use MelhorEnvio\Controllers\ShowCalculatorProductPage;
@@ -60,15 +70,6 @@ use MelhorEnvio\Services\ListPluginsIncompatiblesService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
-
-if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
-    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
-    (new SessionNoticeService())->add(
-        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
-        'notice-error'
-    );
-    return false;
-}
 
 /**
  * Base_Plugin class
