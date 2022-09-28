@@ -1,7 +1,4 @@
 <?php
-
-require __DIR__ . '/vendor/autoload.php';
-
 /*
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
@@ -49,6 +46,8 @@ Domain Path: /languages
 if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__FILE__));
 }
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 use MelhorEnvio\Controllers\ShowCalculatorProductPage;
 use MelhorEnvio\Models\CalculatorShow;
@@ -277,7 +276,7 @@ final class Base_Plugin
         add_filter( 'safe_style_css', function( $styles ) {
             $styles[] = 'display';
             return $styles;
-        } );        
+        } );
 
         add_filter('woocommerce_shipping_methods', function ($methods) {
             $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
@@ -313,13 +312,13 @@ final class Base_Plugin
 
         function load_var_nonce()
         {
-            $wpApiSettings = json_encode( array( 
+            $wpApiSettings = json_encode( array(
                 'nonce_configs' => wp_create_nonce( 'save_configurations' ),
                 'nonce_orders' => wp_create_nonce( 'orders' ),
                 'nonce_tokens' => wp_create_nonce( 'tokens' ),
                 'nonce_users' => wp_create_nonce( 'users' ),
             ) );
-            
+
             wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
             wp_enqueue_script( 'wp-nonce-melhor-evio-wp-api' );
             wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = ${wpApiSettings};" );
