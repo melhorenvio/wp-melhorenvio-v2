@@ -63,9 +63,9 @@ class Admin
 	 */
 	public function enqueue_scripts()
 	{
-		wp_enqueue_style('baseplugin-style');
-		wp_enqueue_style('baseplugin-admin');
-		wp_enqueue_script('baseplugin-admin');
+		wp_enqueue_style('melhorenvio-style');
+		wp_enqueue_style('melhorenvio-admin');
+		wp_enqueue_script('melhorenvio-admin');
 	}
 
 	/**

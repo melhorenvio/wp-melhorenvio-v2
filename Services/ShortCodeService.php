@@ -31,9 +31,9 @@ class ShortCodeService {
 	 * Adiciona o HTML do cálculo de frete na página do produto
 	 */
 	public function addCalculoDeFrete() {
-		wp_enqueue_script( 'produto-shortcode', BASEPLUGIN_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery' );
-		wp_enqueue_style( 'calculator-style', BASEPLUGIN_ASSETS . '/css/calculator.css' );
-		wp_enqueue_script( 'calculator-script', BASEPLUGIN_ASSETS . '/js/calculator.js' );
+		wp_enqueue_script( 'produto-shortcode', MELHORENVIO_ASSETS . '/js/shipping-product-page-shortcode.js', 'jquery' );
+		wp_enqueue_style( 'calculator-style', MELHORENVIO_ASSETS . '/css/calculator.css' );
+		wp_enqueue_script( 'calculator-script', MELHORENVIO_ASSETS . '/js/calculator.js' );
 
 		echo wp_kses(
 			sprintf(
@@ -79,7 +79,7 @@ class ShortCodeService {
 				$this->product->get_id(),
 				admin_url( 'admin-ajax.php' ),
 				'return usePostalCodeMask()',
-				BASEPLUGIN_ASSETS
+				MELHORENVIO_ASSETS
 			),
 			EscapeAllowedTags::allow_tags(
 				array( 'form', 'div', 'p', 'input', 'table', 'thead', 'tbody', 'tr', 'td', 'small', 'img', 'style' )
