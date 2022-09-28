@@ -43,9 +43,7 @@ Domain Path: /languages
  */
 
 // don't call the file directly
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(__FILE__));
-}
+if (!defined('ABSPATH')) exit;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
