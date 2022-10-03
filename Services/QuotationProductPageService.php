@@ -116,10 +116,7 @@ class QuotationProductPageService {
 		}
 
 		if ( ! is_int( $this->quantity ) || $this->quantity == 0 ) {
-			return array(
-				'success' => false,
-				'error'   => 'É necessário informar uma quantidade válida',
-			);
+			$this->quantity = 1;
 		}
 
 		if ( ! empty( $this->destination ) ) {
