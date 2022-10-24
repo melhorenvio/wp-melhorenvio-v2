@@ -66,6 +66,8 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.11.30 =
 * Correção do bug de listagem de pedidos em algumas lojas.
+* Correção no load de Namespace do Plugin
+* Ajuste no problema de quantidade de produtos na tela do produto em alguns temas.
 
 = 2.11.29 =
 * Correção do bug não enviar o CEP de origem na calculadora da tela de produto (Erro apenas em alguns temas)
