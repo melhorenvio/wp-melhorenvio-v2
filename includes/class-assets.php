@@ -38,7 +38,7 @@ class Assets {
 		foreach ( $scripts as $handle => $script ) {
 			$deps      = isset( $script['deps'] ) ? $script['deps'] : false;
 			$in_footer = isset( $script['in_footer'] ) ? $script['in_footer'] : false;
-			$version   = isset( $script['version'] ) ? $script['version'] : BASEPLUGIN_VERSION;
+			$version   = isset( $script['version'] ) ? $script['version'] : MELHORENVIO_VERSION;
 
 			wp_register_script( $handle, $script['src'], $deps, $version, $in_footer );
 		}
@@ -55,7 +55,7 @@ class Assets {
 		foreach ( $styles as $handle => $style ) {
 			$deps = isset( $style['deps'] ) ? $style['deps'] : false;
 
-			wp_register_style( $handle, $style['src'], $deps, BASEPLUGIN_VERSION );
+			wp_register_style( $handle, $style['src'], $deps, MELHORENVIO_VERSION );
 		}
 	}
 
@@ -68,8 +68,8 @@ class Assets {
 		$prefix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.min' : '';
 
 		$scripts = array(
-			'baseplugin-admin' => array(
-				'src'       => BASEPLUGIN_ASSETS . '/js/admin.min.js',
+			'melhorenvio-admin' => array(
+				'src'       => MELHORENVIO_ASSETS . '/js/admin.min.js',
 				'deps'      => array( 'jquery' ),
 				'in_footer' => true,
 			),
@@ -86,11 +86,11 @@ class Assets {
 	public function get_styles() {
 
 		$styles = array(
-			'baseplugin-style' => array(
-				'src' => BASEPLUGIN_ASSETS . '/css/style.css',
+			'melhorenvio-style' => array(
+				'src' => MELHORENVIO_ASSETS . '/css/style.css',
 			),
-			'baseplugin-admin' => array(
-				'src' => BASEPLUGIN_ASSETS . '/css/admin.css',
+			'melhorenvio-admin' => array(
+				'src' => MELHORENVIO_ASSETS . '/css/admin.css',
 			),
 		);
 

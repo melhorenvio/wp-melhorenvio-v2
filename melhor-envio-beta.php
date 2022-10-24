@@ -1,7 +1,4 @@
 <?php
-
-require __DIR__ . '/vendor/autoload.php';
-
 /*
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
@@ -11,7 +8,7 @@ Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: baseplugin
+Text Domain: melhor-envio
 Tested up to: 6.0
 Requires PHP: 7.2
 WC requires at least: 4.0
@@ -20,7 +17,7 @@ Domain Path: /languages
 */
 
 /**
- * Copyright (c) YEAR Your Name (email: Email). All rights reserved.
+ * Copyright (c) 2022 Melhor Envio. All rights reserved.
  *
  * Released under the GPL license
  * http://www.opensource.org/licenses/gpl-license.php
@@ -46,9 +43,19 @@ Domain Path: /languages
  */
 
 // don't call the file directly
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(__FILE__));
+if (!defined('ABSPATH')) exit;
+
+// check if the composer packages are installed
+if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+    add_action( 'admin_notices', function () {
+        $class = 'notice notice-error';
+        $message = 'Erro ao ativar o plugin da Melhor Envio: a pasta <code>vendor</code> não foi localizada no plugin.';
+        printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+    } );
+    return false;
 }
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 use MelhorEnvio\Controllers\ShowCalculatorProductPage;
 use MelhorEnvio\Models\CalculatorShow;
@@ -64,21 +71,12 @@ use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
 
-if (!file_exists(plugin_dir_path(__FILE__) . '/vendor/autoload.php')) {
-    $message = 'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin';
-    (new SessionNoticeService())->add(
-        'Erro ao ativar o plugin da Melhor Envio, não localizada a vendor do plugin',
-        'notice-error'
-    );
-    return false;
-}
-
 /**
- * Base_Plugin class
+ * Melhor_Envio_Plugin class
  *
- * @class Base_Plugin The class that holds the entire Base_Plugin plugin
+ * @class Melhor_Envio_Plugin The class that starts the plugin
  */
-final class Base_Plugin
+final class Melhor_Envio_Plugin
 {
     /**
      * Plugin version
@@ -95,7 +93,7 @@ final class Base_Plugin
     private $container = array();
 
     /**
-     * Constructor for the Base_Plugin class
+     * Constructor for the Melhor_Envio_Plugin class
      *
      * Sets up all the appropriate hooks and actions
      * within our plugin.
@@ -112,9 +110,9 @@ final class Base_Plugin
     }
 
     /**
-     * Initializes the Base_Plugin() class
+     * Initializes the Melhor_Envio_Plugin() class
      *
-     * Checks for an existing Base_Plugin() instance
+     * Checks for an existing Melhor_Envio_Plugin() instance
      * and if it doesn't find one, creates it.
      */
     public static function init()
@@ -123,7 +121,7 @@ final class Base_Plugin
         static $instance = false;
 
         if (!$instance) {
-            $instance = new Base_Plugin();
+            $instance = new self();
         }
 
         return $instance;
@@ -164,12 +162,12 @@ final class Base_Plugin
      */
     public function define_constants()
     {
-        define('BASEPLUGIN_VERSION', $this->version);
-        define('BASEPLUGIN_FILE', __FILE__);
-        define('BASEPLUGIN_PATH', dirname(BASEPLUGIN_FILE));
-        define('BASEPLUGIN_INCLUDES', BASEPLUGIN_PATH . '/includes');
-        define('BASEPLUGIN_URL', plugins_url('', BASEPLUGIN_FILE));
-        define('BASEPLUGIN_ASSETS', BASEPLUGIN_URL . '/assets');
+        define('MELHORENVIO_VERSION', $this->version);
+        define('MELHORENVIO_FILE', __FILE__);
+        define('MELHORENVIO_PATH', dirname(MELHORENVIO_FILE));
+        define('MELHORENVIO_INCLUDES', MELHORENVIO_PATH . '/includes');
+        define('MELHORENVIO_URL', plugins_url('', MELHORENVIO_FILE));
+        define('MELHORENVIO_ASSETS', MELHORENVIO_URL . '/assets');
     }
 
     /**
@@ -204,13 +202,13 @@ final class Base_Plugin
      */
     public function activate()
     {
-        $installed = get_option('baseplugin_installed');
+        $installed = get_option('melhorenvio_installed');
 
         if (!$installed) {
-            update_option('baseplugin_installed', time());
+            update_option('melhorenvio_installed', time());
         }
 
-        update_option('baseplugin_version', BASEPLUGIN_VERSION);
+        update_option('melhorenvio_version', MELHORENVIO_VERSION);
 
         (new ClearDataStored())->clear();
     }
@@ -223,18 +221,18 @@ final class Base_Plugin
     public function includes()
     {
         try {
-            require_once BASEPLUGIN_INCLUDES . '/class-assets.php';
+            require_once MELHORENVIO_INCLUDES . '/class-assets.php';
 
             if ($this->is_request('admin')) {
-                require_once BASEPLUGIN_INCLUDES . '/class-admin.php';
+                require_once MELHORENVIO_INCLUDES . '/class-admin.php';
             }
 
             if ($this->is_request('frontend')) {
-                require_once BASEPLUGIN_INCLUDES . '/class-frontend.php';
+                require_once MELHORENVIO_INCLUDES . '/class-frontend.php';
             }
 
             if ($this->is_request('rest')) {
-                require_once BASEPLUGIN_INCLUDES . '/class-rest-api.php';
+                require_once MELHORENVIO_INCLUDES . '/class-rest-api.php';
             }
         } catch (\Exception $e) {
             add_action('admin_notices', function ($e) {
@@ -277,7 +275,7 @@ final class Base_Plugin
         add_filter( 'safe_style_css', function( $styles ) {
             $styles[] = 'display';
             return $styles;
-        } );        
+        } );
 
         add_filter('woocommerce_shipping_methods', function ($methods) {
             $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
@@ -313,13 +311,13 @@ final class Base_Plugin
 
         function load_var_nonce()
         {
-            $wpApiSettings = json_encode( array( 
+            $wpApiSettings = json_encode( array(
                 'nonce_configs' => wp_create_nonce( 'save_configurations' ),
                 'nonce_orders' => wp_create_nonce( 'orders' ),
                 'nonce_tokens' => wp_create_nonce( 'tokens' ),
                 'nonce_users' => wp_create_nonce( 'users' ),
             ) );
-            
+
             wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
             wp_enqueue_script( 'wp-nonce-melhor-evio-wp-api' );
             wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = ${wpApiSettings};" );
@@ -376,7 +374,7 @@ final class Base_Plugin
      */
     public function localization_setup()
     {
-        load_plugin_textdomain('baseplugin', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        load_plugin_textdomain('melhor-envio', false, dirname(plugin_basename(__FILE__)) . '/languages/');
     }
 
     /**
@@ -405,6 +403,6 @@ final class Base_Plugin
                 return (!is_admin() || defined('DOING_AJAX')) && !defined('DOING_CRON');
         }
     }
-} // Base_Plugin
+} // Melhor_Envio_Plugin
 
-$baseplugin = Base_Plugin::init();
+Melhor_Envio_Plugin::init();
