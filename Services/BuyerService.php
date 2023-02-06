@@ -51,7 +51,7 @@ class BuyerService {
 			? sprintf( '%s %s', $order->get_shipping_first_name(), $order->get_shipping_last_name() )
 			: sprintf( '%s %s', $order->get_billing_first_name(), $order->get_billing_last_name() );
 
-		$district = ( ! empty( $dataShipping->district ) ) ? $dataShipping->district : $dataBilling->district;
+		$district = $dataShipping->district;
 
 		$body = (object) array(
 			'name'           => ( $typePerson == self::COMPANY )
@@ -61,26 +61,14 @@ class BuyerService {
 			'phoneMasked'    => $phone,
 			'email'          => $order->get_billing_email(),
 			'state_register' => null,
-			'address'        => ( ! empty( $dataShipping->address ) )
-				? $dataShipping->address
-				: $dataBilling->address,
-			'complement'     => ( ! empty( $dataShipping->complement ) )
-				? $dataShipping->complement
-				: $dataBilling->complement,
-			'number'         => ( ! empty( $dataShipping->number ) )
-				? $dataShipping->number
-				: $dataBilling->number,
+			'address'        => $dataShipping->address,
+			'complement'     => $dataShipping->complement,
+			'number'         => $dataShipping->number,
 			'district'       => ( ! empty( $district ) ) ? $district : 'N/I',
-			'city'           => ( ! empty( $dataShipping->city ) )
-				? $dataShipping->city
-				: $dataBilling->city,
-			'state_abbr'     => ( ! empty( $dataShipping->state_abbr ) )
-				? $dataShipping->state_abbr
-				: $dataBilling->state_abbr,
+			'city'           => $dataShipping->city,
+			'state_abbr'     => $dataShipping->state_abbr,
 			'country_id'     => 'BR',
-			'postal_code'    => ( ! empty( $dataShipping->postal_code ) )
-				? $dataShipping->postal_code
-				: $dataBilling->postal_code,
+			'postal_code'    => $dataShipping->postal_code
 		);
 
 		if ( $typePerson == self::PERSONAL ) {
