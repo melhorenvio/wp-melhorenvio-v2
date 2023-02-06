@@ -65,7 +65,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 = 2.11.32 =
-* Correção do bug na interferencia do complemento de endereço de entrega e cobrança do cliente final.
+* Correção do bug na interferência do complemento de endereço de entrega e cobrança do cliente final.
 
 = 2.11.31 =
 * Correção do bug de listagem de pedidos em algumas lojas.
