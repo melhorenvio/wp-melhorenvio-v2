@@ -80,6 +80,11 @@ class BuyerService {
 			unset( $body->document );
 		}
 
+		if (empty($body->document) && !empty($cnpj)) {
+			$body->company_document = $cnpj;
+			unset($body->company);
+		}
+
 		return $body;
 	}
 
