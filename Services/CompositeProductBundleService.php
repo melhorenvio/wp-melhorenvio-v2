@@ -94,7 +94,10 @@ class CompositeProductBundleService {
 	 */
 	public function selectProductsToReturnByTypeComposite( $productsComposite, $products ) {
 
-		if ( is_null( @array_values( $productsComposite )[0]['shipping_fee'] ) || is_null( array_values( $productsComposite )[0]['pricing'] ) ) {
+		if ( 
+			is_null( @array_values( $productsComposite )[0]['shipping_fee'] ) ||
+			is_null( array_values( $productsComposite )[0]['pricing'] )
+		) {
 			return $products;
 		}
 
