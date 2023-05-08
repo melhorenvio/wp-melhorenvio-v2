@@ -83,8 +83,7 @@ class OrdersProductsService {
 
 				$price = (float) $itemProduct->get_data()['total'] / $itemProduct->get_data()['quantity'];
 				$products[$productId]->insurance_value = $price;
-				$products[$productId]->unitary_value = $price;	
-
+				$products[$productId]->unitary_value = $price;
 				$quantities = $this->incrementQuantity(
 					$productId,
 					$quantities,
