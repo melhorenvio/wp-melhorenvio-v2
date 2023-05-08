@@ -94,9 +94,7 @@ class CompositeProductBundleService {
 	 */
 	public function selectProductsToReturnByTypeComposite( $productsComposite, $products ) {
 
-		if (is_null(@array_values($productsComposite)[0]['shipping_fee']) ||
-			is_null(array_values($productsComposite)[0]['pricing'])
-		) {
+		if ($this->checkProductBundleHasShippingFee($productsComposite)) {
 			return $products;
 		}
 
@@ -132,6 +130,12 @@ class CompositeProductBundleService {
 		}
 
 		return $products;
+	}
+
+	private function checkProductBundleHasShippingFee()
+	{
+		return is_null(@array_values($productsComposite)[0]['shipping_fee']) ||
+			is_null(array_values($productsComposite)[0]['pricing']);
 	}
 
 	/**
