@@ -144,11 +144,9 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndOnly( $productsComposite, $shipping_fee, $pricing ) {
-		return (
-			! empty( $productsComposite ) &&
+		return !empty( $productsComposite ) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
-			$pricing == self::PRODUCT_COMPOSITE_PRICING_ONLY
-		);
+			$pricing == self::PRODUCT_COMPOSITE_PRICING_ONLY;
 	}
 
 	/**
@@ -160,11 +158,9 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndInclude( $productsComposite, $shipping_fee, $pricing ) {
-		return (
-			! empty( $productsComposite ) &&
+		return !empty( $productsComposite ) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
-			$pricing == self::PRODUCT_COMPOSITE_PRICING_INCLUDE
-		);
+			$pricing == self::PRODUCT_COMPOSITE_PRICING_INCLUDE;
 	}
 
 	/**
@@ -176,11 +172,9 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndExclude( $productsComposite, $shipping_fee, $pricing ) {
-		return (
-			! empty( $productsComposite ) &&
+		return !empty( $productsComposite ) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
-			$pricing == self::PRODUCT_COMPOSITE_PRICING_EXCLUDE
-		);
+			$pricing == self::PRODUCT_COMPOSITE_PRICING_EXCLUDE;
 	}
 
 	/**
