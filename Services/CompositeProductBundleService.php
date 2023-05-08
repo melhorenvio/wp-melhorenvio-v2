@@ -94,7 +94,7 @@ class CompositeProductBundleService {
 	 */
 	public function selectProductsToReturnByTypeComposite( $productsComposite, $products ) {
 
-		if (is_null( @array_values($productsComposite)[0]['shipping_fee']) ||
+		if (is_null(@array_values($productsComposite)[0]['shipping_fee']) ||
 			is_null(array_values($productsComposite)[0]['pricing'])
 		) {
 			return $products;
@@ -123,7 +123,7 @@ class CompositeProductBundleService {
 
 		if ( self::isCompositeWholeAndExclude( $productsComposite, $shipping_fee, $pricing ) ) {
 			foreach ( $productsComposite as $key => $product ) {
-				if ( ! empty( $_product ) ) {
+				if (!empty( $_product)) {
 					$productsComposite[ $key ]['unitary_value']   = $_product->get_price();
 					$productsComposite[ $key ]['insurance_value'] = $_product->get_price();
 				}
@@ -143,7 +143,7 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndOnly( $productsComposite, $shipping_fee, $pricing ) {
-		return !empty( $productsComposite ) &&
+		return !empty($productsComposite) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
 			$pricing == self::PRODUCT_COMPOSITE_PRICING_ONLY;
 	}
@@ -157,7 +157,7 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndInclude( $productsComposite, $shipping_fee, $pricing ) {
-		return !empty( $productsComposite ) &&
+		return !empty($productsComposite) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
 			$pricing == self::PRODUCT_COMPOSITE_PRICING_INCLUDE;
 	}
@@ -171,7 +171,7 @@ class CompositeProductBundleService {
 	 * @return bool
 	 */
 	public static function isCompositeWholeAndExclude( $productsComposite, $shipping_fee, $pricing ) {
-		return !empty( $productsComposite ) &&
+		return !empty($productsComposite) &&
 			$shipping_fee == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
 			$pricing == self::PRODUCT_COMPOSITE_PRICING_EXCLUDE;
 	}
