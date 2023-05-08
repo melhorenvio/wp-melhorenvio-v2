@@ -132,7 +132,7 @@ class CompositeProductBundleService {
 		return $products;
 	}
 
-	private function checkProductBundleHasShippingFee()
+	private function checkProductBundleHasShippingFee($productsComposite)
 	{
 		return is_null(@array_values($productsComposite)[0]['shipping_fee']) ||
 			is_null(array_values($productsComposite)[0]['pricing']);
