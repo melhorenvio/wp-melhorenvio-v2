@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.11.33
+Version: 2.11.34
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
 Tested up to: 6.0
-Stable tag: 2.11.33
+Stable tag: 2.11.34
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -64,6 +64,9 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.11.34 =
+* Correção para utilizar o valor do produto com cupom de desconto aplicado no campo de valor segurado.
+
 = 2.11.33 =
 * Correção do bug para buscar o CNPJ do comprador durante a geração de pedido.
 

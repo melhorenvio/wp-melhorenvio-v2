@@ -32,6 +32,7 @@ class OrdersProductsService {
 		$wooCommerceBundleProductService = new WooCommerceBundleProductsService();
 
 		foreach ( $order->get_items() as $key => $itemProduct ) {
+
 			$metas = $wooCommerceBundleProductService->getMetas( $itemProduct );
 
 			if ( $wooCommerceBundleProductService->isBundledItem( $metas ) ) {
@@ -80,6 +81,10 @@ class OrdersProductsService {
 					$itemProduct->get_quantity()
 				);
 
+				$price = (float) $itemProduct->get_data()['total'] / $itemProduct->get_data()['quantity'];
+				$products[$productId]->insurance_value = $price;
+				$products[$productId]->unitary_value = $price;	
+
 				$quantities = $this->incrementQuantity(
 					$productId,
 					$quantities,
@@ -100,6 +105,7 @@ class OrdersProductsService {
 				$products[ $key ]->quantity = $quantities[ $product->id ];
 			}
 		}
+
 		return $products;
 	}
 
