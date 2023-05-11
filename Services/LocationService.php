@@ -10,7 +10,7 @@ class LocationService {
 	/**
 	 * Melhor Envio location api URL
 	 */
-	const URL = 'https://location.melhorenvio.com.br/';
+	const URL = 'http://location.melhorenvio.com/';
 
 	/**
 	 * Via CEP location api URL
