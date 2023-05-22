@@ -62,10 +62,9 @@ class OrdersProductsService {
 			}
 
 			$product = $itemProduct->get_product();
-			if ( is_bool( $product ) || get_class( $product ) === CompositeProductBundleService::PRODUCT_COMPOSITE || get_class( $product ) === CompositeProductBundleService::PRODUCT_COMBO_OFFICER ) {
+			if ($this->isComboProduct($product)) {
 				$compositeBundleService = new CompositeProductBundleService( $itemProduct );
-				$productComposite       = $compositeBundleService->getProductNormalize();
-
+				$productComposite = $compositeBundleService->getProductNormalize();
 				if ( empty( $productComposite ) ) {
 					continue;
 				}
@@ -115,6 +114,13 @@ class OrdersProductsService {
 		}
 
 		return $products;
+	}
+
+	public function isComboProduct($product)
+	{
+		return is_bool( $product ) ||
+			get_class( $product ) === CompositeProductBundleService::PRODUCT_COMPOSITE ||
+			get_class( $product ) === CompositeProductBundleService::PRODUCT_COMBO_OFFICER;
 	}
 
 	/**
