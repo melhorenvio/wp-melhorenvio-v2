@@ -118,9 +118,9 @@ class OrdersProductsService {
 
 	public function isComboProduct($product)
 	{
-		return is_bool( $product ) ||
-			get_class( $product ) === CompositeProductBundleService::PRODUCT_COMPOSITE ||
-			get_class( $product ) === CompositeProductBundleService::PRODUCT_COMBO_OFFICER;
+		return is_bool($product) ||
+			get_class($product) === CompositeProductBundleService::PRODUCT_COMPOSITE ||
+			get_class($product) === CompositeProductBundleService::PRODUCT_COMBO_OFFICER;
 	}
 
 	/**
