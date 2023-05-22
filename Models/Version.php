@@ -4,5 +4,5 @@ namespace MelhorEnvio\Models;
 
 class Version {
 
-	const VERSION = '2.11.34';
+	const VERSION = '2.11.35';
 }

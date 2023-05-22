@@ -62,7 +62,7 @@ class OrdersProductsService {
 			}
 
 			$product = $itemProduct->get_product();
-			if ( is_bool( $product ) || get_class( $product ) === CompositeProductBundleService::PRODUCT_COMPOSITE ) {
+			if ( is_bool( $product ) || get_class( $product ) === CompositeProductBundleService::PRODUCT_COMPOSITE || get_class( $product ) === CompositeProductBundleService::PRODUCT_COMBO_OFFICER ) {
 				$compositeBundleService = new CompositeProductBundleService( $itemProduct );
 				$productComposite       = $compositeBundleService->getProductNormalize();
 
@@ -81,7 +81,16 @@ class OrdersProductsService {
 					$itemProduct->get_quantity()
 				);
 
-				$price = (float) $itemProduct->get_data()['total'] / $itemProduct->get_data()['quantity'];
+				$quantityInsiderItem = 1;
+				if (isset($itemProduct->get_data()['quantity'])) {
+					$quantityInsiderItem = $itemProduct->get_data()['quantity'];
+				}
+				
+				$price = (float) $itemProduct->get_data()['total'] / $quantityInsiderItem;
+				if ($price == 0) {
+					continue;
+				}
+
 				$products[$productId]->insurance_value = $price;
 				$products[$productId]->unitary_value = $price;
 				$quantities = $this->incrementQuantity(

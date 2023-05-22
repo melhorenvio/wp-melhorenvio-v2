@@ -23,6 +23,8 @@ class CompositeProductBundleService {
 
 	const PRODUCT_COMPOSITE = 'WC_Product_Composite';
 
+	const PRODUCT_COMBO_OFFICER = 'WC_Product_Wooco';
+
 	const PRODUCT_COMPOSITE_SHIPPING_FEE = 'wooco_shipping_fee';
 
 	const PRODUCT_COMPOSITE_PRICING = 'wooco_pricing';
