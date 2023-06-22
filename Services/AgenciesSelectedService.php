@@ -50,7 +50,6 @@ class AgenciesSelectedService {
 	 * @return bool
 	 */
 	public function setJadlogCentralized( $data ) {
-		var_dump($data);
 		if ( empty( $data ) ) {
 			return true;
 		}
