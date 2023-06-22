@@ -299,6 +299,72 @@
     </div>
     <hr />
 
+    <div class="wpme_config" v-show="agenciesCorreiosCentralized.length > 0">
+      <h2>Correios Centralizado</h2>
+      <p>
+        Escolha a agência correios centralizado de sua preferência para realizar o envio dos
+        seus produtos.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <template>  
+              <select
+                name="agency_correios_centralized"
+                id="agency_correios_centralized"
+                v-model="agency_correios_centralized"
+                data-cy="input-agency-correios-centralized"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesCorreiosCentralized"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div class="wpme_config" v-show="agenciesJadlogCentralized.length > 0">
+      <h2>Jadlog Centralizado</h2>
+      <p>
+        Escolha a agência Jadlog centralizado de sua preferência para realizar o envio dos
+        seus produtos.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <template>
+              <select
+                name="agency_jadlog_centralized"
+                id="agency_jadlog_centralized"
+                v-model="agency_jadlog_centralized"
+                data-cy="input-agency-jadlog-centralized"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesJadlogCentralized"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
     <div
       v-show="token_environment == 'production' && agenciesAzul.length > 0"
       class="wpme_config"
@@ -623,6 +689,8 @@ export default {
       canUpdate: true,
       origin: null,
       agency: null,
+      agency_correios_centralized: null,
+      agency_jadlog_centralized: null,
       agency_azul: null,
       agency_latam: null,
       show_modal: false,
@@ -630,6 +698,8 @@ export default {
       show_calculator: false,
       show_all_agencies_jadlog: false,
       show_all_agencies_azul: false,
+      show_all_agencies_correios_centralized: false,
+      show_all_agencies_jadlog_centralized: false,
       options_calculator: {
         receipt: false,
         own_hand: true,
@@ -660,9 +730,13 @@ export default {
       label: "getLabel",
       dimension: "getDimension",
       agencySelected_: "getAgencySelected",
+      agencyCorreiosCentralizedSelected_: "getAgencyCorreiosCentralizedSelected",
+      agencyJadlogCentralizedSelected_: "getAgencyJadlogCentralizedSelected",
       agencyAzulSelected_: "getAgencyAzulSelected",
       agencyLatamSelected_: "getAgencyLatamSelected",
       agencies: "getAgencies",
+      agenciesJadlogCentralized: "getAgenciesJadlogCentralized",
+      agenciesCorreiosCentralized: "getAgenciesCorreiosCentralized",
       agenciesAzul: "getAgenciesAzul",
       agenciesLatam: "getAgenciesLatam",
       allAgencies: "getAllAgencies",
@@ -686,6 +760,8 @@ export default {
       "getConfigs",
       "setLoader",
       "setAgenciesAzul",
+      "setAgenciesCorreiosCentralized",
+      "setAgenciesJadlogCentralized",
       "setAgenciesLatam",
       "setAgencies",
       "saveAll",
@@ -708,6 +784,8 @@ export default {
       data["label"] = this.label;
       data["agency"] = this.agency;
       data["agency_azul"] = this.agency_azul;
+      data["agency_correios_centralized"] = this.agency_correios_centralized;
+      data["agency_jadlog_centralized"] = this.agency_jadlog_centralized;
       data["agency_latam"] = this.agency_latam;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
@@ -731,6 +809,8 @@ export default {
     refreshAgencies(data) {
       this.showJadlogAgencies(data);
       this.showAzulAgencies(data);
+      this.showCorreiosCentralizedAgencies(data);
+      this.showJadlogCentralizedAgencies(data);
       this.showALatamAgencies(data);
     },
     setOrigin(id) {
@@ -756,9 +836,9 @@ export default {
         });
       }
     },
-    createAjaxUrl(agencyId, data) {
+    createAjaxUrl(companyId, data, serviceId) {
       const { city, state } = data;
-      return `${ajaxurl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
+      return `${ajaxurl}?action=get_agencies&company=${companyId}&city=${city}&state=${state}&serviceId=${serviceId}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
     },
     showJadlogAgencies(data) {
       this.setLoader(true);
@@ -766,7 +846,7 @@ export default {
       var responseAgencies = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(2, data))
+          .post(this.createAjaxUrl(2, data, null))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgencies = response.data;
@@ -793,7 +873,7 @@ export default {
       var responseAgenciesAzul = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(9, data))
+          .post(this.createAjaxUrl(9, data, null))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesAzul = response.data;
@@ -813,13 +893,66 @@ export default {
         this.setLoader(false);
       });
     },
+    showCorreiosCentralizedAgencies(data) {
+      this.setLoader(true);
+      this.agency_correios_centralized = "";
+      var responseAgenciesCorreiosCentralized = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
+        this.$http
+          .post(this.createAjaxUrl(1, data, 28))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgenciesCorreiosCentralized = response.data;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            this.setAgenciesCorreiosCentralized([]);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesCorreiosCentralized(responseAgenciesCorreiosCentralized);
+        this.setLoader(false);
+      });
+    },
+    showJadlogCentralizedAgencies(data) {
+      this.setLoader(true);
+      this.agency_jadlog_cetralized = "";
+      var responseAgenciesJadlogCentralized = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
+        console.log('URL', this.createAjaxUrl(2, data, 27));
+        this.$http
+          .post(this.createAjaxUrl(2, data, 27))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgenciesJadlogCentralized = response.data;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            this.setAgenciesjadlogCentralized([]);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        //this.setAgenciesjadlogCentralized(responseAgenciesjadlogCentralized);
+        this.setLoader(false);
+      });
+    },
     showALatamAgencies(data) {
       this.setLoader(true);
       this.agency_latam = "";
       var responseAgenciesLatam = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(6, data))
+          .post(this.createAjaxUrl(6, data, null))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesLatam = response.data;
@@ -909,6 +1042,28 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesCorreiosCentralized() {
+      this.setLoader(true);
+      if (this.agenciesCorreiosCentralized.length > 0) {
+        this.agenciesCorreiosCentralized.filter((item) => {
+          if (item.selected) {
+            this.agency_correios_centralized = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
+    agenciesJadlogCentralized() {
+      this.setLoader(true);
+      if (this.agenciesJadlogCentralized.length > 0) {
+        this.agenciesJadlogCentralized.filter((item) => {
+          if (item.selected) {
+            this.agency_jadlog_centralized = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
     agenciesLatam() {
       this.setLoader(true);
       if (this.agenciesLatam.length > 0) {
@@ -925,6 +1080,12 @@ export default {
     },
     agencyAzulSelected_(e) {
       this.agency_azul = e;
+    },
+    agencyCorreiosCentralizedSelected_(e) {
+      this.agency_correios_centralized = e;
+    },
+    agencyJadlogCentralizedSelected_(e) {
+      this.agency_jadlog_centralized = e;
     },
     agencyLatamSelected_(e) {
       this.agency_latam = e;

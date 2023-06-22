@@ -7,10 +7,12 @@ use MelhorEnvio\Models\Option;
 use MelhorEnvio\Models\Payload;
 use MelhorEnvio\Models\Session;
 use MelhorEnvio\Models\ShippingCompany;
+use MelhorEnvio\Models\ShippingService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\PostalCodeHelper;
 use MelhorEnvio\Helpers\CpfHelper;
 use MelhorEnvio\Helpers\ProductVirtualHelper;
+use MelhorEnvio\Services\AgenciesSelectedService;
 
 class CartService {
 
@@ -105,7 +107,7 @@ class CartService {
 		$payload = array(
 			'from'     => $dataFrom,
 			'to'       => $dataBuyer,
-			'agency'   => $this->getAgencyToInsertCart( $shippingMethodId ),
+			'agency'   => $this->getAgencyToInsertCart( $shippingMethodId),
 			'service'  => $shippingMethodId,
 			'products' => $products,
 			'volumes'  => $this->getVolumes( $quotation, $shippingMethodId ),
@@ -132,10 +134,25 @@ class CartService {
 	 * @return int|null
 	 */
 	private function getAgencyToInsertCart( $shippingMethodId ) {
-		$companyId         = ShippingCompany::getCompanyIdByService( $shippingMethodId );
+		$companyId = ShippingCompany::getCompanyIdByService( $shippingMethodId );
+
 		$agenciesSelecteds = ( new AgenciesSelectedService() )->get();
-		if ( ! empty( $agenciesSelecteds[ $companyId ] ) ) {
+		if ( ! empty( $agenciesSelecteds[ $companyId ] )  && (int) $shippingMethodId !== ShippingService::JADLOG_PACKAGE_CENTRALIZED ) {
 			return $agenciesSelecteds[ $companyId ];
+		}
+
+		$agenciesSelectedService = new AgenciesSelectedService();
+
+		if (in_array($shippingMethodId, [
+			ShippingService::CORREIOS_SEDEX_CENTRALIZED,
+			ShippingService::CORREIOS_PAC_CENTRALIZED,
+			ShippingService::CORREIOS_MINI_CENTRALIZED])
+		) {
+			return $agenciesSelectedService->getCorreiosCentralized();
+		}
+
+		if ((int) $shippingMethodId === ShippingService::JADLOG_PACKAGE_CENTRALIZED) {
+			return $agenciesSelectedService->getJadlogCentralized();
 		}
 
 		return null;

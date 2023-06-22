@@ -25,9 +25,13 @@ const configuration = {
             weight: 1
         },
         agencies: [],
+        agenciesCorreiosCentralized: [],
+        agenciesJadlogCentralized: [],
         agenciesAzul: [],
         agenciesLatam: [],
         allAgencies: [],
+        allAgenciesCorreiosCentralized: [],
+        allAgenciesJadlogCentralized: [],
         allAgenciesAzul: [],
         allAgenciesLatam: [],
         styleCalculator: [],
@@ -41,6 +45,8 @@ const configuration = {
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
+        agencyCorreiosCentralizedSelected: null,
+        agencyJadlogCentralizedSelected: null,
         agencyAzulSelected: null,
         agencyLatamSelected: null,
         token_enviroment: 'production',
@@ -73,6 +79,12 @@ const configuration = {
         setAgencyAzul: (state, data) => {
             state.agenciesAzul = data
         },
+        setAgencyCorreiosCentralized: (state, data) => {
+            state.agenciesCorreiosCentralized = data
+        },
+        setAgencyJadlogCentralized: (state, data) => {
+            state.agenciesJadlogCentralized = data
+        },
         setAgencyLatam: (state, data) => {
             state.agenciesLatam = data
         },
@@ -82,6 +94,12 @@ const configuration = {
         setAgencyAzulSelected: (state, data) => {
             state.agencyAzulSelected = data
         },
+        setAgencyCorreiosCentralizedSelected: (state, data) => {
+            state.agencyCorreiosCentralizedSelected = data
+        },
+        setAgencyJadlogCentralizedSelected: (state, data) => {
+            state.agencyJadlogCentralizedSelected = data
+        },
         setAgencyLatamSelected: (state, data) => {
             state.agencyLatamSelected = data
         },
@@ -90,6 +108,12 @@ const configuration = {
         },
         setAllAgencyAzul: (state, data) => {
             state.allAgenciesAzul = data
+        },
+        setAllAgencyCorreiosCentralized: (state, data) => {
+            state.allAgenciesCorreiosCentralized = data
+        },
+        setAllAgencyJadlogCentralized: (state, data) => {
+            state.allAgenciesJadlogCentralized = data
         },
         setAllAgencyLatam: (state, data) => {
             state.allAgenciesLatam = data
@@ -125,10 +149,14 @@ const configuration = {
         getDimension: state => state.dimension,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
+        getAgenciesCorreiosCentralized: state => state.agenciesCorreiosCentralized,
+        getAgenciesJadlogCentralized: state => state.agenciesJadlogCentralized,
         getAgenciesLatam: state => state.agenciesLatam,
         getAllAgencies: state => state.allAgencies,
         getAgencySelected: state => state.agencySelected,
         getAgencyAzulSelected: state => state.agencyAzulSelected,
+        getAgencyCorreiosCentralizedSelected: state => state.agencyCorreiosCentralizedSelected,
+        getAgencyJadlogCentralizedSelected: state => state.agencyJadlogCentralizedSelected,
         getAgencyLatamSelected: state => state.agencyLatamSelected,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
@@ -175,6 +203,16 @@ const configuration = {
                             commit('setAllAgencyAzul', response.data.allAgenciesAzul);
                         }
 
+                        if (response.data.agenciesCorreiosCentralized && !isNull(response.data.agenciesCorreiosCentralized)) {
+                            commit('setAgencyCorreiosCentralized', response.data.agenciesCorreiosCentralized);
+                            commit('setAllAgencyCorreiosCentralized', response.data.allAgenciesCorreiosCentralized);
+                        }
+
+                        if (response.data.agenciesJadlogCentralized && !isNull(response.data.agenciesJadlogCentralized)) {
+                            commit('setAgencyJadlogCentralized', response.data.agenciesJadlogCentralized);
+                            commit('setAllAgencyJadlogCentralized', response.data.allAgenciesJadlogCentralized);
+                        }
+
                         if (response.data.agenciesLatam && !isNull(response.data.agenciesLatam)) {
                             commit('setAgencyLatam', response.data.agenciesLatam);
                             commit('setAllAgencyLatam', response.data.allAgenciesLatam);
@@ -185,6 +223,8 @@ const configuration = {
                         }
                         commit('setAgencySelected', response.data.agencySelected)
                         commit('setAgencyAzulSelected', response.data.agencyAzulSelected)
+                        commit('setAgencyCorreiosCentralizedSelected', response.data.agencyCorreiosCentralizedSelected)
+                        commit('setAgencyJadlogCentralizedSelected', response.data.agencyJadlogCentralizedSelected)
                         commit('setAgencyLatamSelected', response.data.agencyLatamSelected)
                         commit('setStyleCalculator', response.data.style_calculator)
                         commit('setPathPlugins', response.data.path_plugins)
@@ -216,6 +256,24 @@ const configuration = {
                 commit('toggleLoader', false);
                 if (response && response.status === 200) {
                     commit('setAgencyAzul', response.data.agencies);
+                }
+            })
+        },
+        getAgenciesCorreiosCentralized: ({ commit }, data) => {
+            commit('toggleLoader', true);
+            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=${28}&company=1`).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAgencyCorreiosCentralized', response.data.agencies);
+                }
+            })
+        },
+        getAgenciesJadlogCentralized: ({ commit }, data) => {
+            commit('toggleLoader', true);
+            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=${27}&company=2`).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAgencyJadlogCentralized', response.data.agencies);
                 }
             })
         },
@@ -265,6 +323,14 @@ const configuration = {
                     form.append('agency', data.agency);
                 }
 
+                if (data.agency_correios_centralized) {
+                    form.append('agency_correios_centralized', data.agency_correios_centralized);
+                }
+
+                if (data.agency_jadlog_centralized) {
+                    form.append('agency_jadlog_centralized', data.agency_jadlog_centralized);
+                }
+
                 if (data.agency_azul) {
                     form.append('agency_azul', data.agency_azul);
                 }
@@ -308,6 +374,12 @@ const configuration = {
         },
         setAgenciesAzul: ({ commit }, data) => {
             commit('setAgencyAzul', data)
+        },
+        setAgenciesCorreiosCentralized: ({ commit }, data) => {
+            commit('setAgencyCorreiosCentralized', data)
+        },
+        setAgenciesJadlogCentralized: ({ commit }, data) => {
+            commit('setAgencyJadlogCentralized', data)
         },
         setAgenciesLatam: ({ commit }, data) => {
             commit('setAgencyLatam', data)

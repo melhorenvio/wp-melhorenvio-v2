@@ -6,6 +6,8 @@ class AgenciesService {
 
 	const ROUTE_GET_AGENCIES = '/shipment/agencies';
 
+	protected $serviceId = null;
+
 	protected $state = null;
 
 	protected $city = null;
@@ -13,12 +15,17 @@ class AgenciesService {
 	protected $company = null;
 
 	public function __construct( $data ) {
+
 		if ( ! empty( $data['state'] ) ) {
 			$this->state = $data['state'];
 		}
 
 		if ( ! empty( $data['company'] ) ) {
 			$this->company = $data['company'];
+		}
+
+		if ( ! empty( $data['serviceId'] ) ) {
+			$this->service = $data['serviceId'];
 		}
 	}
 
@@ -30,7 +37,6 @@ class AgenciesService {
 	 */
 	public function get() {
 		$route = $this->getRoute();
-
 		$agencies = ( new RequestService() )->request(
 			$route,
 			'GET',
@@ -60,6 +66,10 @@ class AgenciesService {
 
 		if ( ! empty( $this->company ) ) {
 			$data['company'] = $this->company;
+		}
+
+		if ( ! empty( $this->service ) ) {
+			$data['serviceId'] = $this->service;
 		}
 
 		$query = http_build_query( $data );

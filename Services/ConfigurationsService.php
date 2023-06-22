@@ -7,6 +7,7 @@ use MelhorEnvio\Models\Agency;
 use MelhorEnvio\Models\Option;
 use MelhorEnvio\Models\CalculatorShow;
 use MelhorEnvio\Models\ShippingCompany;
+use MelhorEnvio\Models\ShippingService;
 
 class ConfigurationsService {
 
@@ -38,6 +39,7 @@ class ConfigurationsService {
 	 * @return array
 	 */
 	public function saveConfigurations( $data ) {
+
 		$response = array();
 
 		( new ClearDataStored() )->clear();
@@ -66,8 +68,16 @@ class ConfigurationsService {
 			$response['agency'][ ShippingCompany::LATAM_CARGO ] = $data['agency_latam'];
 		}
 
-		if ( ! empty( $response['agency'] ) ) {
+		if ( ! empty( $data['agency'] ) ) {
 			( new AgenciesSelectedService() )->set( $response['agency'] );
+		}
+
+		if ( ! empty( $data['agency_correios_centralized'] ) ) {
+			( new AgenciesSelectedService() )->setCorreiosCentralized( $data['agency_correios_centralized'] );
+		}
+
+		if ( ! empty( $data['agency_jadlog_centralized'] ) ) {
+			( new AgenciesSelectedService() )->setJadlogCentralized( $data['agency_jadlog_centralized'] );
 		}
 
 		if ( isset( $data['show_calculator'] ) ) {
@@ -115,53 +125,76 @@ class ConfigurationsService {
 
 		$originselected = $this->getOriginSelected( $origin );
 
-		$agencies          = array();
+		$agencies = array();
+
+		$agenciesCentralizedsJadlog = array();
+
+		$agenciesCentralizedsCorreios = array();
+
 		$agenciesSelecteds = array();
+
 		if ( ! empty( $originselected ) ) {
 			$address           = array(
-				'state'   => $originselected['address']['state'],
-				'city'    => $originselected['address']['city'],
+				'state' => $originselected['address']['state'],
+				'city' => $originselected['address']['city'],
 				'company' => null,
 			);
-			$agencies          = ( new AgenciesService( $address ) )->get();
-			$agenciesSelecteds = ( new AgenciesSelectedService() )->get();
+			$agencies = ( new AgenciesService( $address ) )->get();
+
+			$address['serviceId'] = ShippingService::JADLOG_PACKAGE_CENTRALIZED;
+			$address['company'] = ShippingCompany::JADLOG;
+			$agenciesCentralizedsJadlog = ( new AgenciesService($address))->get();
+
+			$address['serviceId'] = ShippingService::CORREIOS_SEDEX_CENTRALIZED;
+			$address['company'] = ShippingCompany::CORREIOS;
+			$agenciesCentralizedsCorreios = ( new AgenciesService($address))->get();
 		}
 
+		$agenciesSelectedService = new AgenciesSelectedService();
+
+		$agenciesSelecteds = $agenciesSelectedService->get();
+		$agencyCorreiosCentralizedSelected = $agenciesSelectedService->getCorreiosCentralized();
+		$agencyJadlogCentralizedSelected = $agenciesSelectedService->getJadlogCentralized();
+
 		return array(
-			'origin'              => $origin,
-			'label'               => $this->getLabel( $origin ),
-			'agencies'            => $this->filterAgenciesByCompany(
+			'origin' => $origin,
+			'label' => $this->getLabel( $origin ),
+			'agencies' => $this->filterAgenciesByCompany(
 				$agencies,
 				ShippingCompany::JADLOG
 			),
-			'agencySelected'      => $this->filterAgencySelectedByCompany(
-				$agenciesSelecteds,
-				ShippingCompany::JADLOG
-			),
-			'agenciesAzul'        => $this->filterAgenciesByCompany(
+			'agenciesJadlogCentralized' => end($agenciesCentralizedsJadlog),
+			'agenciesCorreiosCentralized' => $agenciesCentralizedsCorreios,
+			'agenciesAzul' => $this->filterAgenciesByCompany(
 				$agencies,
 				ShippingCompany::AZUL_CARGO
 			),
-			'agencyAzulSelected'  => $this->filterAgencySelectedByCompany(
+			'agencyAzulSelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::AZUL_CARGO
 			),
-			'agenciesLatam'       => $this->filterAgenciesByCompany(
+			'agenciesLatam' => $this->filterAgenciesByCompany(
 				$agencies,
 				ShippingCompany::LATAM_CARGO
 			),
+			'agencySelected' => $this->filterAgencySelectedByCompany(
+				$agenciesSelecteds,
+				ShippingCompany::JADLOG
+			),
+			'agencyJadlogCentralizedSelected' => $agencyJadlogCentralizedSelected,
+			'agencyCorreiosCentralizedSelected' => $agencyCorreiosCentralizedSelected,
 			'agencyLatamSelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::LATAM_CARGO
 			),
-			'calculator'          => ( new CalculatorShow() )->get(),
-			'where_calculator'    => ( ! get_option( 'melhor_envio_option_where_show_calculator' ) )
+			'calculator' => ( new CalculatorShow() )->get(),
+			'where_calculator' => ( ! get_option( 'melhor_envio_option_where_show_calculator' ) )
 				? 'woocommerce_before_add_to_cart_button'
 				: get_option( 'melhor_envio_option_where_show_calculator' ),
-			'path_plugins'        => $this->getPathPluginsArray(),
-			'options_calculator'  => $this->getOptionsCalculator(),
-			'token_environment'   => $token['token_environment'],
-			'dimension_default'   => $this->getDimensionDefault(),
+			'path_plugins' => $this->getPathPluginsArray(),
+			'options_calculator' => $this->getOptionsCalculator(),
+			'token_environment' => $token['token_environment'],
+			'dimension_default' => $this->getDimensionDefault(),
 		);
 	}
 
@@ -200,9 +233,6 @@ class ConfigurationsService {
 		}
 		return $originselected;
 	}
-
-
-
 
 	/**
 	 * Function to save the moment that will be called the product calculator
