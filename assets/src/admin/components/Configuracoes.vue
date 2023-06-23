@@ -368,7 +368,7 @@
     <div class="wpme_config" v-show="agenciesLoggi.length > 0">
       <h2>Loggi</h2>
       <p>
-        Escolha a agênciaLoggi de sua preferência para realizar o envio dos
+        Escolha a agência Loggi de sua preferência para realizar o envio dos
         seus produtos.
       </p>
       <div class="wpme_flex">
