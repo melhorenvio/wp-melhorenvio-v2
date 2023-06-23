@@ -12,6 +12,8 @@ class ShippingCompany {
 
 	const AZUL_CARGO = 9;
 
+	const LOGGI = 14;
+
 	/**
 	 * @param int $serviceId
 	 * @return int

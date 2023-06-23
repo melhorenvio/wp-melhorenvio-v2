@@ -286,6 +286,7 @@ final class Melhor_Envio_Plugin
             $methods['melhorenvio_jadlog_package_centralized']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package_Centralized';
             $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
             $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
+            $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
             $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';

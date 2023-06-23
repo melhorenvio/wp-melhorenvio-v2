@@ -38,6 +38,8 @@ class ShippingService {
 
 	const CORREIOS_MINI_CENTRALIZED = 30;
 
+	const LOGGI_EXPRESS = 31;
+
 	const SERVICES_LATAM = array( self::LATAM_JUNTOS );
 
 	const LATAM_JUNTOS = 12;
@@ -45,6 +47,8 @@ class ShippingService {
 	const BUSLOG_RODOVIARIO = 22;
 
 	const SERVICES_BUSLOG = array( self::BUSLOG_RODOVIARIO );
+
+	const SERVICES_LOGGI = array( self::LOGGI_EXPRESS );
 
 	const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
@@ -60,7 +64,8 @@ class ShippingService {
 			self::SERVICES_AZUL,
 			self::SERVICES_VIA_BRASIL,
 			self::SERVICES_LATAM,
-			self::SERVICES_BUSLOG
+			self::SERVICES_BUSLOG,
+			self::SERVICES_LOGGI
 		);
 	}
 
@@ -92,6 +97,8 @@ class ShippingService {
 				return self::VIA_BRASIL_RODOVIARIO;
 			case 'melhorenvio_azul_amanha':
 				return self::AZUL_AMANHA;
+			case 'melhorenvio_loggi_express':
+				return self::LOGGI_EXPRESS;
 			case 'melhorenvio_azul_ecommerce':
 				return self::AZUL_ECOMMERCE;
 			case 'melhorenvio_correios_mini':

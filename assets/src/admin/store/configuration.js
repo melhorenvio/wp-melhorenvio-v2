@@ -27,11 +27,13 @@ const configuration = {
         agencies: [],
         agenciesCorreiosCentralized: [],
         agenciesJadlogCentralized: [],
+        agenciesLoggi: [],
         agenciesAzul: [],
         agenciesLatam: [],
         allAgencies: [],
         allAgenciesCorreiosCentralized: [],
         allAgenciesJadlogCentralized: [],
+        allAgenciesLoggi: [],
         allAgenciesAzul: [],
         allAgenciesLatam: [],
         styleCalculator: [],
@@ -47,6 +49,7 @@ const configuration = {
         agencySelected: null,
         agencyCorreiosCentralizedSelected: null,
         agencyJadlogCentralizedSelected: null,
+        agencyLoggiSelected: null,
         agencyAzulSelected: null,
         agencyLatamSelected: null,
         token_enviroment: 'production',
@@ -85,6 +88,9 @@ const configuration = {
         setAgencyJadlogCentralized: (state, data) => {
             state.agenciesJadlogCentralized = data
         },
+        setAgencyLoggi: (state, data) => {
+            state.agenciesLoggi = data
+        },
         setAgencyLatam: (state, data) => {
             state.agenciesLatam = data
         },
@@ -100,6 +106,9 @@ const configuration = {
         setAgencyJadlogCentralizedSelected: (state, data) => {
             state.agencyJadlogCentralizedSelected = data
         },
+        setAgencyLoggiSelected: (state, data) => {
+            state.agencyLoggiSelected = data
+        },
         setAgencyLatamSelected: (state, data) => {
             state.agencyLatamSelected = data
         },
@@ -114,6 +123,9 @@ const configuration = {
         },
         setAllAgencyJadlogCentralized: (state, data) => {
             state.allAgenciesJadlogCentralized = data
+        },
+        setAllAgencyLoggi: (state, data) => {
+            state.allAgenciesLoggi = data
         },
         setAllAgencyLatam: (state, data) => {
             state.allAgenciesLatam = data
@@ -151,12 +163,14 @@ const configuration = {
         getAgenciesAzul: state => state.agenciesAzul,
         getAgenciesCorreiosCentralized: state => state.agenciesCorreiosCentralized,
         getAgenciesJadlogCentralized: state => state.agenciesJadlogCentralized,
+        getAgenciesLoggi: state => state.agenciesLoggi,
         getAgenciesLatam: state => state.agenciesLatam,
         getAllAgencies: state => state.allAgencies,
         getAgencySelected: state => state.agencySelected,
         getAgencyAzulSelected: state => state.agencyAzulSelected,
         getAgencyCorreiosCentralizedSelected: state => state.agencyCorreiosCentralizedSelected,
         getAgencyJadlogCentralizedSelected: state => state.agencyJadlogCentralizedSelected,
+        getAgencyLoggiSelected: state => state.agencyLoggiSelected,
         getAgencyLatamSelected: state => state.agencyLatamSelected,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
@@ -213,6 +227,11 @@ const configuration = {
                             commit('setAllAgencyJadlogCentralized', response.data.allAgenciesJadlogCentralized);
                         }
 
+                        if (response.data.agenciesLoggi && !isNull(response.data.agenciesLoggi)) {
+                            commit('setAgencyLoggi', response.data.agenciesLoggi);
+                            commit('setAllAgencyLoggi', response.data.allAgenciesLoggi);
+                        }
+
                         if (response.data.agenciesLatam && !isNull(response.data.agenciesLatam)) {
                             commit('setAgencyLatam', response.data.agenciesLatam);
                             commit('setAllAgencyLatam', response.data.allAgenciesLatam);
@@ -225,6 +244,7 @@ const configuration = {
                         commit('setAgencyAzulSelected', response.data.agencyAzulSelected)
                         commit('setAgencyCorreiosCentralizedSelected', response.data.agencyCorreiosCentralizedSelected)
                         commit('setAgencyJadlogCentralizedSelected', response.data.agencyJadlogCentralizedSelected)
+                        commit('setAgencyLoggiSelected', response.data.agencyLoggiSelected)
                         commit('setAgencyLatamSelected', response.data.agencyLatamSelected)
                         commit('setStyleCalculator', response.data.style_calculator)
                         commit('setPathPlugins', response.data.path_plugins)
@@ -261,7 +281,7 @@ const configuration = {
         },
         getAgenciesCorreiosCentralized: ({ commit }, data) => {
             commit('toggleLoader', true);
-            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=${28}&company=1`).then(function (response) {
+            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=28&company=1`).then(function (response) {
                 commit('toggleLoader', false);
                 if (response && response.status === 200) {
                     commit('setAgencyCorreiosCentralized', response.data.agencies);
@@ -270,10 +290,19 @@ const configuration = {
         },
         getAgenciesJadlogCentralized: ({ commit }, data) => {
             commit('toggleLoader', true);
-            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=${27}&company=2`).then(function (response) {
+            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=27&company=2`).then(function (response) {
                 commit('toggleLoader', false);
                 if (response && response.status === 200) {
                     commit('setAgencyJadlogCentralized', response.data.agencies);
+                }
+            })
+        },
+        getAgenciesLoggi: ({ commit }, data) => {
+            commit('toggleLoader', true);
+            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=31&company=14`).then(function (response) {
+                commit('toggleLoader', false);
+                if (response && response.status === 200) {
+                    commit('setAgencyLoggi', response.data.agencies);
                 }
             })
         },
@@ -331,6 +360,10 @@ const configuration = {
                     form.append('agency_jadlog_centralized', data.agency_jadlog_centralized);
                 }
 
+                if (data.agency_loggi) {
+                    form.append('agency_loggi', data.agency_loggi);
+                }
+
                 if (data.agency_azul) {
                     form.append('agency_azul', data.agency_azul);
                 }
@@ -380,6 +413,9 @@ const configuration = {
         },
         setAgenciesJadlogCentralized: ({ commit }, data) => {
             commit('setAgencyJadlogCentralized', data)
+        },
+        setAgenciesLoggi: ({ commit }, data) => {
+            commit('setAgencyLoggi', data)
         },
         setAgenciesLatam: ({ commit }, data) => {
             commit('setAgencyLatam', data)

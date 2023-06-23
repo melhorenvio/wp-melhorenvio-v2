@@ -365,6 +365,39 @@
     </div>
     <hr />
 
+    <div class="wpme_config" v-show="agenciesLoggi.length > 0">
+      <h2>Loggi</h2>
+      <p>
+        Escolha a agênciaLoggi de sua preferência para realizar o envio dos
+        seus produtos.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <template>
+              <select
+                name="agency_loggi"
+                id="agency_loggi"
+                v-model="agency_loggi"
+                data-cy="input-agency-loggi"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesLoggi"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
     <div
       v-show="token_environment == 'production' && agenciesAzul.length > 0"
       class="wpme_config"
@@ -691,6 +724,7 @@ export default {
       agency: null,
       agency_correios_centralized: null,
       agency_jadlog_centralized: null,
+      agency_loggi: null,
       agency_azul: null,
       agency_latam: null,
       show_modal: false,
@@ -700,6 +734,7 @@ export default {
       show_all_agencies_azul: false,
       show_all_agencies_correios_centralized: false,
       show_all_agencies_jadlog_centralized: false,
+      show_all_agencies_loggi: false,
       options_calculator: {
         receipt: false,
         own_hand: true,
@@ -732,11 +767,13 @@ export default {
       agencySelected_: "getAgencySelected",
       agencyCorreiosCentralizedSelected_: "getAgencyCorreiosCentralizedSelected",
       agencyJadlogCentralizedSelected_: "getAgencyJadlogCentralizedSelected",
+      agencyLoggiSelected_: "getAgencyLoggiSelected",
       agencyAzulSelected_: "getAgencyAzulSelected",
       agencyLatamSelected_: "getAgencyLatamSelected",
       agencies: "getAgencies",
       agenciesJadlogCentralized: "getAgenciesJadlogCentralized",
       agenciesCorreiosCentralized: "getAgenciesCorreiosCentralized",
+      agenciesLoggi: "getAgenciesLoggi",
       agenciesAzul: "getAgenciesAzul",
       agenciesLatam: "getAgenciesLatam",
       allAgencies: "getAllAgencies",
@@ -762,6 +799,7 @@ export default {
       "setAgenciesAzul",
       "setAgenciesCorreiosCentralized",
       "setAgenciesJadlogCentralized",
+      "setAgenciesLoggi",
       "setAgenciesLatam",
       "setAgencies",
       "saveAll",
@@ -786,6 +824,7 @@ export default {
       data["agency_azul"] = this.agency_azul;
       data["agency_correios_centralized"] = this.agency_correios_centralized;
       data["agency_jadlog_centralized"] = this.agency_jadlog_centralized;
+      data["agency_loggi"] = this.agency_loggi;
       data["agency_latam"] = this.agency_latam;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
@@ -811,6 +850,7 @@ export default {
       this.showAzulAgencies(data);
       this.showCorreiosCentralizedAgencies(data);
       this.showJadlogCentralizedAgencies(data);
+      this.showLoggiAgencies(data);
       this.showALatamAgencies(data);
     },
     setOrigin(id) {
@@ -890,6 +930,32 @@ export default {
 
       promiseAgencies.then((resolve) => {
         this.setAgenciesAzul(responseAgenciesAzul);
+        this.setLoader(false);
+      });
+    },
+    showLoggiAgencies(data) {
+      this.setLoader(true);
+      this.agency_loggi = "";
+      var responseAgenciesLoggi = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
+        this.$http
+          .post(this.createAjaxUrl(14, data, 31))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgenciesLoggi = response.data;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            this.setAgenciesLoggi([]);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesLoggi(responseAgenciesLoggi);
         this.setLoader(false);
       });
     },
@@ -1064,6 +1130,17 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesLoggi() {
+      this.setLoader(true);
+      if (this.agenciesLoggi.length > 0) {
+        this.agenciesLoggi.filter((item) => {
+          if (item.selected) {
+            this.agency_loggi = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
     agenciesLatam() {
       this.setLoader(true);
       if (this.agenciesLatam.length > 0) {
@@ -1086,6 +1163,9 @@ export default {
     },
     agencyJadlogCentralizedSelected_(e) {
       this.agency_jadlog_centralized = e;
+    },
+    agencyLoggiSelected_(e) {
+      this.agency_loggi = e;
     },
     agencyLatamSelected_(e) {
       this.agency_latam = e;

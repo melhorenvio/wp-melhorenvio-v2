@@ -19,7 +19,6 @@ class ConfigurationsService {
 
 	const WEIGHT_DEFAULT = 11;
 
-
 	const FIELDS_ADDRESS = array(
 		'id',
 		'address',
@@ -80,6 +79,10 @@ class ConfigurationsService {
 			( new AgenciesSelectedService() )->setJadlogCentralized( $data['agency_jadlog_centralized'] );
 		}
 
+		if ( ! empty( $data['agency_loggi'] ) ) {
+			( new AgenciesSelectedService() )->setLoggi( $data['agency_loggi'] );
+		}
+
 		if ( isset( $data['show_calculator'] ) ) {
 			$response['show_calculator'] = ( new CalculatorShow() )->set(
 				$data['show_calculator']
@@ -131,6 +134,8 @@ class ConfigurationsService {
 
 		$agenciesCentralizedsCorreios = array();
 
+		$agenciesLoggi = array();
+
 		$agenciesSelecteds = array();
 
 		if ( ! empty( $originselected ) ) {
@@ -148,6 +153,10 @@ class ConfigurationsService {
 			$address['serviceId'] = ShippingService::CORREIOS_SEDEX_CENTRALIZED;
 			$address['company'] = ShippingCompany::CORREIOS;
 			$agenciesCentralizedsCorreios = ( new AgenciesService($address))->get();
+
+			$address['serviceId'] = ShippingService::LOGGI_EXPRESS;
+			$address['company'] = ShippingCompany::LOGGI;
+			$agenciesLoggi = ( new AgenciesService($address))->get();
 		}
 
 		$agenciesSelectedService = new AgenciesSelectedService();
@@ -155,6 +164,7 @@ class ConfigurationsService {
 		$agenciesSelecteds = $agenciesSelectedService->get();
 		$agencyCorreiosCentralizedSelected = $agenciesSelectedService->getCorreiosCentralized();
 		$agencyJadlogCentralizedSelected = $agenciesSelectedService->getJadlogCentralized();
+		$agencyLoggiSelected = $agenciesSelectedService->getLoggi();
 
 		return array(
 			'origin' => $origin,
@@ -165,6 +175,7 @@ class ConfigurationsService {
 			),
 			'agenciesJadlogCentralized' => end($agenciesCentralizedsJadlog),
 			'agenciesCorreiosCentralized' => $agenciesCentralizedsCorreios,
+			'agenciesLoggi' => $agenciesLoggi,
 			'agenciesAzul' => $this->filterAgenciesByCompany(
 				$agencies,
 				ShippingCompany::AZUL_CARGO
@@ -183,6 +194,7 @@ class ConfigurationsService {
 			),
 			'agencyJadlogCentralizedSelected' => $agencyJadlogCentralizedSelected,
 			'agencyCorreiosCentralizedSelected' => $agencyCorreiosCentralizedSelected,
+			'agencyLoggiSelected' => $agencyLoggiSelected,
 			'agencyLatamSelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::LATAM_CARGO

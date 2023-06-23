@@ -65,7 +65,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 = 2.11.36 =
-* Adição de serviços de Correios centralizados e Jadlog centralizado.
+* Adição de serviços de Correios centralizados, Jadlog centralizado e loggi Express.
 
 = 2.11.35 =
 * Correção para aplicar o valor do produto para produtos combos.
