@@ -990,7 +990,6 @@ export default {
       this.agency_jadlog_cetralized = "";
       var responseAgenciesJadlogCentralized = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
-        console.log('URL', this.createAjaxUrl(2, data, 27));
         this.$http
           .post(this.createAjaxUrl(2, data, 27))
           .then(function (response) {
