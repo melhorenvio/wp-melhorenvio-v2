@@ -20,6 +20,27 @@ class AgenciesSelectedService {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getJadlogCentralized() {
+		return $this->agencyModel->getJadlogCentralized();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCorreiosCentralized() {
+		return $this->agencyModel->getCorreiosCentralized();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getLoggi() {
+		return $this->agencyModel->getLoggi();
+	}
+
+	/**
 	 * @param array $data
 	 * @return bool
 	 */
@@ -29,5 +50,41 @@ class AgenciesSelectedService {
 		}
 
 		return $this->agencyModel->set( $data );
+	}
+
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function setJadlogCentralized( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->setJadlogCentralized( $data );
+	}
+
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function setCorreiosCentralized( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->setCorreiosCentralized( $data );
+	}
+
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function setLoggi( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->setLoggi( $data );
 	}
 }
