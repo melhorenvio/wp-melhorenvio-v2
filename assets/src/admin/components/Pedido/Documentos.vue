@@ -4,12 +4,20 @@
       <div class="formBox paddingBox">
         <template
           v-if="
+            item.quotation.choose_method == services.CORREIOS_PAC ||
+            item.quotation.choose_method == services.CORREIOS_PAC_CENTRALIZED ||
+            item.quotation.choose_method == services.CORREIOS_SEDEX ||
+            item.quotation.choose_method == services.CORREIOS_SEDEX_CENTRALIZED ||
+            item.quotation.choose_method == services.CORREIOS_MINI ||
+            item.quotation.choose_method == services.CORREIOS_MINI_CENTRALIZED ||
             item.quotation.choose_method == services.JADLOG_PACKAGE ||
+            item.quotation.choose_method == services.JADLOG_PACKAGE_CENTRALIZED ||
             item.quotation.choose_method == services.JADLOG_COM ||
             item.quotation.choose_method == services.LATAM ||
             item.quotation.choose_method == services.LATAM_JUNTOS ||
             item.quotation.choose_method == services.AZUL_AMANHA ||
-            item.quotation.choose_method == services.AZUL_ECOMMERCE
+            item.quotation.choose_method == services.AZUL_ECOMMERCE ||
+            item.quotation.choose_method == services.BUSLOG_RODOVIARIO
           "
         >
           <fieldset class="checkLine">
@@ -22,10 +30,18 @@
         </template>
         <template
           v-if="
-            ((item.quotation.choose_method == services.JADLOG_PACKAGE ||
+            ((item.quotation.choose_method == services.CORREIOS_PAC ||
+              item.quotation.choose_method == services.CORREIOS_PAC_CENTRALIZED ||
+              item.quotation.choose_method == services.CORREIOS_SEDEX ||
+              item.quotation.choose_method == services.CORREIOS_SEDEX_CENTRALIZED ||
+              item.quotation.choose_method == services.CORREIOS_MINI ||
+              item.quotation.choose_method == services.CORREIOS_MINI_CENTRALIZED ||
+              item.quotation.choose_method == services.JADLOG_PACKAGE ||
+              item.quotation.choose_method == services.JADLOG_PACKAGE_CENTRALIZED ||
               item.quotation.choose_method == services.JADLOG_COM ||
               item.quotation.choose_method == services.LATAM ||
-              item.quotation.choose_method == services.LATAM_JUNTOS) &&
+              item.quotation.choose_method == services.LATAM_JUNTOS ||
+              item.quotation.choose_method == services.BUSLOG_RODOVIARIO) &&
               !item.non_commercial) ||
             item.quotation.choose_method == services.VIA_BRASIL_AEREO ||
             item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
