@@ -29,9 +29,11 @@ class CartService {
 	 * @param int   $shippingMethodId
 	 * @return array
 	 */
-	public function add( $orderId, $products, $dataBuyer, $shippingMethodId ) {
+	public function add( $orderId, $products, $dataBuyer, $shippingMethodId, $nonCommercial = true ) {
 
-		$body = $this->createPayloadToCart( $orderId, $products, $dataBuyer, $shippingMethodId );
+		$nonCommercial = ($nonCommercial === "true");
+
+		$body = $this->createPayloadToCart( $orderId, $products, $dataBuyer, $shippingMethodId, $nonCommercial);
 
 		$errors = $this->validatePayloadBeforeAddCart( $body, $orderId );
 
@@ -83,7 +85,7 @@ class CartService {
 	 * @param int   $shippingMethodId
 	 * @return array
 	 */
-	public function createPayloadToCart( $orderId, $products, $dataBuyer, $shippingMethodId ) {
+	public function createPayloadToCart( $orderId, $products, $dataBuyer, $shippingMethodId, $nonCommercial) {
 		$products = ProductVirtualHelper::removeVirtuals( $products );
 
 		$dataFrom = ( new SellerService() )->getData();
@@ -117,7 +119,7 @@ class CartService {
 				'own_hand'        => $options->own_hand,
 				'collect'         => false,
 				'reverse'         => false,
-				'non_commercial'  => $orderInvoiceService->isNonCommercial( $orderId ),
+				'non_commercial'  => $nonCommercial,
 				'invoice'         => $orderInvoiceService->getInvoiceOrder( $orderId ),
 				'platform'        => self::PLATAFORM,
 				'reminder'        => null,
@@ -231,6 +233,10 @@ class CartService {
 
 		if ( empty( $body['service'] ) ) {
 			$errors[] = 'Informar o serviço de envio.';
+		}
+
+		if (!$body['options']['non_commercial'] && is_null($body['options']['invoice']['key'])) {
+			$errors[] = 'É necessário informar a chave de acesso da nota fiscal para envios comerciais';
 		}
 
 		$isCorreios = ( new CalculateShippingMethodService() )->isCorreios( $body['service'] );

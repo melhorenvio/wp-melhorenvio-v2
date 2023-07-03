@@ -67,7 +67,8 @@ class OrdersController {
 			$postId,
 			$products,
 			$buyer,
-			$service
+			$service,
+			$_GET['non_commercial']
 		);
 
 		if ( empty( $result['success'] ) && isset( $result['errors'] ) && $result['errors'] == 'validation.nfe' ) {
