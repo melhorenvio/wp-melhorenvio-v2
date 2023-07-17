@@ -263,10 +263,6 @@ class CartService {
 					$errors[] = sprintf( 'Infomar a quantidade do produto %d', $index );
 				}
 
-				if ( empty( $product->unitary_value ) ) {
-					$errors[] = sprintf( 'Infomar o valor unitário do produto %d', $index );
-				}
-
 				if ( empty( $product->weight ) ) {
 					$errors[] = sprintf( 'Infomar o peso do produto %d', $index );
 				}
