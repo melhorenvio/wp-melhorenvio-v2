@@ -34,13 +34,17 @@ const extractCss = new MiniCssExtractPlugin({
 
 const browserSyncPlugin = new BrowserSyncPlugin({
     proxy: {
-        target: config.proxyURL
+        target: config.proxyURL,
     },
-    files: [
+    files: [        
+        'assets/js/*.js',
+        'assets/css/*.css',
+        'assets/src/**/*.js',
         '**/*.php'
     ],
     cors: true,
-    reloadDelay: 0
+    reloadDelay: 0,
+    reload: true   
 });
 
 // Differ settings based on production flag
