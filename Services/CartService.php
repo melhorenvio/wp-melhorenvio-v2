@@ -157,7 +157,7 @@ class CartService {
 			return $agenciesSelectedService->getJadlogCentralized();
 		}
 
-		if ((int) $shippingMethodId === ShippingService::LOGGI_EXPRESS) {
+		if ((int) $shippingMethodId === ShippingService::LOGGI_EXPRESS || (int) $shippingMethodId === ShippingService::LOGGI_COLETA) {
 			return $agenciesSelectedService->getLoggi();
 		}
 

@@ -80,6 +80,20 @@
     <template v-if="item.quotation.free_shipping">
       <p>*Cliente utilizou cupom de frete grátis</p>
     </template>
+
+    <template v-if="item.quotation.choose_method == 32">
+      <br />
+      <small style="font-size:12px; font-weight: bold;">Regras Loggi coleta</small></br></br>
+      <ul>
+        <li style="font-size:10px; width:100%;">* Após a geração da etiqueta, a coleta será programada.</li>
+        <li style="font-size:10px; width:100%;">* Para que a sua remessa seja coletada no mesmo dia, você deve gerar as etiquetas antes das 11h. Após este horário, a coleta é programada para o próximo dia útil.</li>
+        <li style="font-size:10px; width:100%;">* As coletas ocorrem em dias úteis no período da tarde (13h - 18h).</li>
+        <li style="font-size:10px; width:100%;">* Veja mais informações em nossa <a target="_blank" href="ajuda.melhorenvio.com.br">Central de Ajuda</a>.</li>
+      </ul>
+    </template>
+
+
+
   </div>
 </template>
 

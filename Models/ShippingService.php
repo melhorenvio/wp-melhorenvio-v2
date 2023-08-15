@@ -40,6 +40,8 @@ class ShippingService {
 
 	const LOGGI_EXPRESS = 31;
 
+	const LOGGI_COLETA = 32;
+
 	const SERVICES_LATAM = array( self::LATAM_JUNTOS );
 
 	const LATAM_JUNTOS = 12;
@@ -48,7 +50,7 @@ class ShippingService {
 
 	const SERVICES_BUSLOG = array( self::BUSLOG_RODOVIARIO );
 
-	const SERVICES_LOGGI = array( self::LOGGI_EXPRESS );
+	const SERVICES_LOGGI = array( self::LOGGI_EXPRESS, self::LOGGI_COLETA );
 
 	const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
@@ -99,6 +101,8 @@ class ShippingService {
 				return self::AZUL_AMANHA;
 			case 'melhorenvio_loggi_express':
 				return self::LOGGI_EXPRESS;
+			case 'melhorenvio_loggi_coleta':
+					return self::LOGGI_COLETA;
 			case 'melhorenvio_azul_ecommerce':
 				return self::AZUL_ECOMMERCE;
 			case 'melhorenvio_correios_mini':
