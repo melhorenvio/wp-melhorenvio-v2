@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.13.1
+Version: 2.14.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -287,6 +287,7 @@ final class Melhor_Envio_Plugin
             $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
             $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
             $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
+            $methods['melhorenvio_loggi_coleta']  = 'WC_Melhor_Envio_Shipping_Loggi_Coleta';
             $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
             $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
