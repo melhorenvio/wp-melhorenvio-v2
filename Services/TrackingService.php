@@ -73,7 +73,7 @@ class TrackingService {
 	 */
 	public function createTrackingColumnOrdersClient() {
 		add_filter(
-			'woocommerce_my_account_my_orders_columns',
+			'woocommerce_account_orders_columns',
 			function ( $columns ) {
 				$newColumns = array();
 				foreach ( $columns as $key => $name ) {
