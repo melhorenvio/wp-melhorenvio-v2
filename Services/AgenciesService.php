@@ -84,23 +84,20 @@ class AgenciesService {
 	private function normalize( $data ) {
 		$agencies = array();
 		foreach ( $data as $agency ) {
+
 			$companyId = null;
 
-			if ( isset( $agency->company_id ) ) {
-				$companyId = $agency->company_id;
-			}
+			foreach ($agency->companies as $company) {
+				
+				$companyId = $company->id;
 
-			if ( isset( $agency->companies[0]->id ) ) {
-				$companyId = $agency->companies[0]->id;
-			}
+				if ( empty( $companyId ) ) {
+					continue;
+				}
 
-			if ( empty( $companyId ) ) {
-				continue;
+				$agencies[ $companyId ][] = $agency;
 			}
-
-			$agencies[ $companyId ][] = $agency;
 		}
-
 		if ( ! empty( $this->company ) ) {
 			if ( ! empty( $agencies[ $this->company ] ) ) {
 				return $agencies[ $this->company ];

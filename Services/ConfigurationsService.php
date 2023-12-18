@@ -173,7 +173,7 @@ class ConfigurationsService {
 				$agencies,
 				ShippingCompany::JADLOG
 			),
-			'agenciesJadlogCentralized' => end($agenciesCentralizedsJadlog),
+			'agenciesJadlogCentralized' => $agenciesCentralizedsJadlog,
 			'agenciesCorreiosCentralized' => $agenciesCentralizedsCorreios,
 			'agenciesLoggi' => $agenciesLoggi,
 			'agenciesAzul' => $this->filterAgenciesByCompany(
