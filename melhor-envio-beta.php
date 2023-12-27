@@ -57,6 +57,7 @@ if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use MelhorEnvio\Controllers\ShowCalculatorProductPage;
 use MelhorEnvio\Models\CalculatorShow;
 use MelhorEnvio\Models\Version;
@@ -332,8 +333,8 @@ final class Melhor_Envio_Plugin
         add_action( 'wp_enqueue_scripts', 'load_var_nonce');
 
         add_action('before_woocommerce_init', function(){
-            if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-                \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+            if ( class_exists( FeaturesUtil::class ) ) {
+                FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
             }
         });
     }
