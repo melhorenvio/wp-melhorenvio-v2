@@ -6,8 +6,6 @@ use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 class TrackingService {
 
-
-
 	const TRACKING_MELHOR_ENVIO = 'melhorenvio_tracking';
 
 	/**
@@ -29,7 +27,7 @@ class TrackingService {
 	 * @return void
 	 */
 	public function addTrackingWcOrder( $order, $tracking ) {
-		$order->add_meta_data(self::TRACKING_MELHOR_ENVIO, $tracking );
+		$order->update_meta_data(self::TRACKING_MELHOR_ENVIO, $tracking );
 		$order->save();
 	}
 
@@ -131,7 +129,6 @@ class TrackingService {
 	 * @return bool
 	 */
 	private function isWaitingToBePosted( $order ) {
-		return true; //remover.
 		return in_array( $order->get_status(), array( 'processing', 'completed' ) );
 	}
 }
