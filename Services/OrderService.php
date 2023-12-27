@@ -407,8 +407,8 @@ class OrderService {
 			);
 
 			if ( ! is_null( $dataOrder->tracking ) ) {
-				( new TrackingService() )->addTrackingOrder(
-					$post->ID,
+				( new TrackingService() )->addTrackingWcOrder(
+					$post,
 					$dataOrder->tracking
 				);
 			}
