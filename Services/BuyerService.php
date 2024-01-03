@@ -16,22 +16,17 @@ class BuyerService {
 	 * @return object $data
 	 */
 	public function getDataBuyerByOrderId( $orderId ) {
+
 		$order = new \WC_Order( $orderId );
 
-		$cpf   = FormaterHelper::formatDocument(
-			get_post_meta(
-				$orderId,
-				'_billing_cpf',
-				true
-			)
+		$cpf = FormaterHelper::formatDocument(
+			$order->get_meta('_billing_cpf')
 		);
-		$cnpj  = FormaterHelper::formatDocument(
-			get_post_meta(
-				$orderId,
-				'_billing_cnpj',
-				true
-			)
+
+		$cnpj = FormaterHelper::formatDocument(
+			$order->get_meta('_billing_cnpj')
 		);
+
 		$phone = get_post_meta( $orderId, '_billing_cellphone', true );
 
 		if ( empty( $phone ) ) {
@@ -41,7 +36,7 @@ class BuyerService {
 		$dataBilling  = $this->getBillingAddress( $order );
 		$dataShipping = $this->getShippingAddress( $order );
 
-		$typePerson = get_post_meta( $orderId, '_billing_persontype', true );
+		$typePerson = $order->get_meta('_billing_persontype');
 
 		if ( empty( $typePerson ) ) {
 			$typePerson = self::PERSONAL;
@@ -95,14 +90,13 @@ class BuyerService {
 	 * @return object $data
 	 */
 	public function getBillingAddress( $order ) {
-		$orderId = $order->get_id();
 
-		$district = get_post_meta( $orderId, '_billing_neighborhood', true );
+		$district = $order->get_meta('_shipping_neighborhood');
 
 		return (object) array(
 			'address'     => $order->get_billing_address_1(),
 			'complement'  => $order->get_billing_address_2(),
-			'number'      => get_post_meta( $orderId, '_billing_number', true ),
+			'number'      => $order->get_meta('_shipping_number'),
 			'district'    => ( ! empty( $district ) ) ? $district : 'N/I',
 			'city'        => $order->get_billing_city(),
 			'state_abbr'  => $order->get_billing_state(),
@@ -118,13 +112,12 @@ class BuyerService {
 	 * @return object $data
 	 */
 	public function getShippingAddress( $order ) {
-		$orderId = $order->get_id();
-
+		
 		return (object) array(
 			'address'     => $order->get_shipping_address_1(),
 			'complement'  => $order->get_shipping_address_2(),
-			'number'      => get_post_meta( $orderId, '_shipping_number', true ),
-			'district'    => get_post_meta( $orderId, '_shipping_neighborhood', true ),
+			'number'      => $order->get_meta('_shipping_number'),
+			'district'    => $order->get_meta('_shipping_neighborhood'),
 			'city'        => $order->get_shipping_city(),
 			'state_abbr'  => $order->get_shipping_state(),
 			'country_id'  => 'BR',

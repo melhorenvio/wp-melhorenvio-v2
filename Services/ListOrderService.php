@@ -44,6 +44,7 @@ class ListOrderService {
 	 * @return array
 	 */
 	private function getData( $posts ) {
+
 		$orders = array();
 
 		$statusMelhorEnvio = ( new OrderService() )->mergeStatus( $posts );
@@ -102,6 +103,7 @@ class ListOrderService {
 	 * @return array posts
 	 */
 	private function getPosts( $limit, $skip, $status, $wpstatus ) {
+
 		$args = array(
 			'numberposts' => ( $limit ) ?: 5,
 			'offset'      => ( $skip ) ?: 0,
@@ -126,6 +128,6 @@ class ListOrderService {
 			);
 		}
 
-		return get_posts( $args );
+		return wc_get_orders($args);
 	}
 }
