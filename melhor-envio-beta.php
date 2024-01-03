@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.14.1
+Version: 2.15.0
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
@@ -57,6 +57,7 @@ if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use MelhorEnvio\Controllers\ShowCalculatorProductPage;
 use MelhorEnvio\Models\CalculatorShow;
 use MelhorEnvio\Models\Version;
@@ -330,6 +331,12 @@ final class Melhor_Envio_Plugin
 
         add_action( 'admin_enqueue_scripts', 'load_var_nonce');
         add_action( 'wp_enqueue_scripts', 'load_var_nonce');
+
+        add_action('before_woocommerce_init', function(){
+            if ( class_exists( FeaturesUtil::class ) ) {
+                FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+            }
+        });
     }
 
     /**
