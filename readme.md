@@ -67,6 +67,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 = 2.15.0 =
 * Adiciona compatibilidade com WC HPOS.
 * Ajuste na exibição de rastreio para os clientes.
+* Ajuste na listagem de agências de coletas.
 
 = 2.14.0 =
 * Adiciona serviço de Loggi coleta.
