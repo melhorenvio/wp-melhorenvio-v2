@@ -37,6 +37,7 @@ class TrackingService {
 	 * @param int $orderId
 	 * @return string $tracking
 	 */
+
 	public function getTrackingOrder( $order ) {
 
 		$data = $order->get_meta(self::TRACKING_MELHOR_ENVIO);
@@ -107,7 +108,6 @@ class TrackingService {
 		add_action(
 			'woocommerce_my_account_my_orders_column_tracking',
 			function ( $order ) {
-
 				$text = 'Não disponível';
 				if ( $this->isWaitingToBePosted( $order ) ) {
 					$text = 'Aguardando postagem';
@@ -129,6 +129,9 @@ class TrackingService {
 	 * @return bool
 	 */
 	private function isWaitingToBePosted( $order ) {
-		return in_array( $order->get_status(), array( 'processing', 'completed' ) );
+		return !in_array(
+			$order->get_status(),
+			['on-hold', 'cancelled', 'refunded']
+		);
 	}
 }
