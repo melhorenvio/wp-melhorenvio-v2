@@ -6,8 +6,6 @@ use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 class TrackingService {
 
-
-
 	const TRACKING_MELHOR_ENVIO = 'melhorenvio_tracking';
 
 	/**
@@ -22,19 +20,32 @@ class TrackingService {
 	}
 
 	/**
+	 * Save tracking order
+	 *
+	 * @param int    $orderId
+	 * @param string $tracking
+	 * @return void
+	 */
+	public function addTrackingWcOrder( $order, $tracking ) {
+		$order->update_meta_data(self::TRACKING_MELHOR_ENVIO, $tracking );
+		$order->save();
+	}
+
+	/**
 	 * Function to get tracking order
 	 *
 	 * @param int $orderId
 	 * @return string $tracking
 	 */
-	public function getTrackingOrder( $orderId ) {
-		$data = get_post_meta( $orderId, self::TRACKING_MELHOR_ENVIO, true );
+	public function getTrackingOrder( $order ) {
+
+		$data = $order->get_meta(self::TRACKING_MELHOR_ENVIO);
 
 		if ( ! empty( $data ) ) {
 			return $data;
 		}
 
-		$data = ( new OrderQuotationService() )->getData( $orderId );
+		$data = ( new OrderQuotationService() )->getData( $order->get_id() );
 
 		if ( empty( $data ) || empty( $data['order_id'] ) ) {
 			return null;
@@ -73,7 +84,7 @@ class TrackingService {
 	 */
 	public function createTrackingColumnOrdersClient() {
 		add_filter(
-			'woocommerce_my_account_my_orders_columns',
+			'woocommerce_account_orders_columns',
 			function ( $columns ) {
 				$newColumns = array();
 				foreach ( $columns as $key => $name ) {
@@ -100,7 +111,7 @@ class TrackingService {
 				$text = 'Não disponível';
 				if ( $this->isWaitingToBePosted( $order ) ) {
 					$text = 'Aguardando postagem';
-					$data = ( new TrackingService() )->getTrackingOrder( $order->get_id() );
+					$data = ( new TrackingService() )->getTrackingOrder( $order );
 				}
 
 				echo wp_kses(
