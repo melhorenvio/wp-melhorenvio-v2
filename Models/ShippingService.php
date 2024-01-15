@@ -48,9 +48,13 @@ class ShippingService {
 
 	const BUSLOG_RODOVIARIO = 22;
 
+    const JET_STANDARD = 33;
+
 	const SERVICES_BUSLOG = array( self::BUSLOG_RODOVIARIO );
 
 	const SERVICES_LOGGI = array( self::LOGGI_EXPRESS, self::LOGGI_COLETA );
+
+    const SERVICES_JET = array( self::JET_STANDARD );
 
 	const OPTIONS_SHIPPING_SERVICES = 'shipping_services_melhor_envio';
 
@@ -67,7 +71,8 @@ class ShippingService {
 			self::SERVICES_VIA_BRASIL,
 			self::SERVICES_LATAM,
 			self::SERVICES_BUSLOG,
-			self::SERVICES_LOGGI
+			self::SERVICES_LOGGI,
+            self::SERVICES_JET
 		);
 	}
 
@@ -113,6 +118,8 @@ class ShippingService {
 				return self::LATAM_JUNTOS;
 			case 'melhorenvio_buslog_rodoviario':
 				return self::BUSLOG_RODOVIARIO;
+            case 'melhorenvio_jet_standard':
+                return self::JET_STANDARD;
 			default:
 				return null;
 		}

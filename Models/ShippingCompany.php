@@ -14,6 +14,8 @@ class ShippingCompany {
 
 	const LOGGI = 14;
 
+    const JET = 15;
+
 	/**
 	 * @param int $serviceId
 	 * @return int
