@@ -67,6 +67,10 @@ class ConfigurationsService {
 			$response['agency'][ ShippingCompany::LATAM_CARGO ] = $data['agency_latam'];
 		}
 
+		if ( isset( $data['agency_jet'] ) ) {
+			$response['agency'][ ShippingCompany::JET ] = $data['agency_jet'];
+		}
+
 		if ( ! empty( $data['agency'] ) ) {
 			( new AgenciesSelectedService() )->set( $response['agency'] );
 		}
@@ -188,6 +192,10 @@ class ConfigurationsService {
 				$agencies,
 				ShippingCompany::LATAM_CARGO
 			),
+			'agenciesJeT' => $this->filterAgenciesByCompany(
+				$agencies,
+				ShippingCompany::JET
+			),
 			'agencySelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::JADLOG
@@ -198,6 +206,10 @@ class ConfigurationsService {
 			'agencyLatamSelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::LATAM_CARGO
+			),
+			'agencyJeTSelected' => $this->filterAgencySelectedByCompany(
+				$agenciesSelecteds,
+				ShippingCompany::JET
 			),
 			'calculator' => ( new CalculatorShow() )->get(),
 			'where_calculator' => ( ! get_option( 'melhor_envio_option_where_show_calculator' ) )
