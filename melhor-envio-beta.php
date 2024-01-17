@@ -294,6 +294,7 @@ final class Melhor_Envio_Plugin
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
             $methods['melhorenvio_correios_mini_centralized']  = 'WC_Melhor_Envio_Shipping_Correios_Mini_Centralized';
             $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
+            $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
             return $methods;
         });
 
