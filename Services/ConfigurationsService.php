@@ -87,6 +87,10 @@ class ConfigurationsService {
 			( new AgenciesSelectedService() )->setLoggi( $data['agency_loggi'] );
 		}
 
+		if ( ! empty( $data['agency_jet'] ) ) {
+			( new AgenciesSelectedService() )->setJet( $data['agency_jet'] );
+		}
+
 		if ( isset( $data['show_calculator'] ) ) {
 			$response['show_calculator'] = ( new CalculatorShow() )->set(
 				$data['show_calculator']
