@@ -41,6 +41,13 @@ class AgenciesSelectedService {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getJet() {
+		return $this->agencyModel->getJet();
+	}
+
+	/**
 	 * @param array $data
 	 * @return bool
 	 */
@@ -81,10 +88,23 @@ class AgenciesSelectedService {
 	 * @return bool
 	 */
 	public function setLoggi( $data ) {
+		
 		if ( empty( $data ) ) {
 			return true;
 		}
 
 		return $this->agencyModel->setLoggi( $data );
+	}
+
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function setJet( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->setJet( $data );
 	}
 }

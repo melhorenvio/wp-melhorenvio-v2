@@ -161,6 +161,10 @@ class CartService {
 			return $agenciesSelectedService->getLoggi();
 		}
 
+		if ((int) $shippingMethodId === ShippingService::JET_STANDARD ) {
+			return $agenciesSelectedService->getJet();
+		}
+
 		return null;
 	}
 

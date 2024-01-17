@@ -31,7 +31,7 @@
 
             <p>
               <b>Opcionais:</b> </br>
-              Aviso: 
+              Aviso:
                 <small v-if="item.quotation[item.quotation.choose_method].additional_services.receipt">Sim</small>
                 <small v-else>Não</small>
                 </br>
@@ -92,6 +92,24 @@
       </ul>
     </template>
 
+    <template v-if="item.quotation.choose_method == 33">
+      <br />
+      <small style="font-size:12px; font-weight: bold;">Regras de envio da JeT</small></br></br>
+      <ul>
+        <li style="font-size:10px; width:100%;">* Documentos aceitos: NF-e (modelo 55) e declaração de conteúdo.</li>
+        <li style="font-size:10px; width:100%;">* Peso mínimo: 0,010g.</li>
+        <li style="font-size:10px; width:100%;">* Peso máximo: 30kg.</li>
+        <li style="font-size:10px; width:100%;">* Dimensões: até 120cm no maior lado. Não há dimensões mínimas.</li>
+        <li style="font-size:10px; width:100%;">* Entrega: 3 tentativas. Na 4ª, é cobrado 50% do frete original.</li>
+        <li style="font-size:10px; width:100%;">* Custo de devolução: 100% do frete original.</li>
+      </ul>
+      <small style="font-size:10px; font-weight: bold;">Declaração e notas fiscais</small></br>
+      <ul>
+        <li style="font-size:10px; width:100%;">* Não aceita NF avulsa.</li>
+        <li style="font-size:10px; width:100%;">* Aceita apenas NF-e.</li>
+        <li style="font-size:10px; width:100%;">* Sem inscrição estadual, use declaração de conteúdo.</li>
+      </ul>
+    </template>
 
 
   </div>
