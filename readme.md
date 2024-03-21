@@ -1,5 +1,5 @@
 === Melhor Envio ===
-Version: 2.15.0
+Version: 2.15.1
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
 Tested up to: 6.4
