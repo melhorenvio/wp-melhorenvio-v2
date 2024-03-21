@@ -58,6 +58,7 @@
                   data-cy="input-quotation"
                   v-if="!(item.status == 'paid' || item.status == 'printed' || item.status == 'generated')"
                   v-model="item.quotation.choose_method"
+                  style="width: 100%"
                 >
                   <option
                     v-if="option.id && option.price"

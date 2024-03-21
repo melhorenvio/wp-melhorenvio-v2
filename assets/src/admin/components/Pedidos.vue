@@ -42,7 +42,7 @@
 
 .scrollBox {
   overflow: auto;
-  height: 50px;
+  height: auto;
 }
 </style>
 
@@ -130,10 +130,10 @@
             <span>Destinatário</span>
           </li>
           <li>
-            <span>Cotação</span>
+            <span>Produtos</span>
           </li>
           <li>
-            <span>Documentos</span>
+            <span>Cotação</span>
           </li>
           <li>
             <span>Etiqueta</span>
@@ -152,9 +152,6 @@
           >
             <ul class="body-list">
               <li>
-                <span></span>
-              </li>
-              <li>
                 <Id :item="item"></Id>
               </li>
               <li>
@@ -162,7 +159,6 @@
               </li>
               <li>
                 <template v-if="item.products">
-                  <label>Produto</label>
                   <div class="scrollBox">
                     <p v-for="product in item.products">
                       {{ product.quantity }}x
@@ -170,6 +166,8 @@
                     </p>
                   </div>
                 </template>
+              </li>
+              <li>
                 <Cotacao :item="item"></Cotacao>
                 <template v-if="item.protocol && item.status != null">
                   <p>
@@ -356,7 +354,7 @@ export default {
   methods: {
     ...mapActions("orders", [
       "retrieveMany",
-      "loadMore",      
+      "loadMore",
       "closeModal",
       "getStatusWooCommerce",
       "printMultiples",
