@@ -76,10 +76,10 @@ class QuotationService {
 	 * Function to calculate a quotation by post_id.
 	 *
 	 * @param int $postId
+	 * @param array $products
 	 * @return array $quotation
 	 */
-	public function calculateQuotationByPostId( $postId ) {
-		$products = ( new OrdersProductsService() )->getProductsOrder( $postId );
+	public function calculateQuotationByPostId( $postId, $products) {
 		$buyer    = ( new BuyerService() )->getDataBuyerByOrderId( $postId );
 		$payload  = ( new PayloadService() )->createPayloadByProducts(
 			$buyer->postal_code,

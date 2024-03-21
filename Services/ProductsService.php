@@ -91,6 +91,11 @@ class ProductsService {
 				continue;
 			}
 
+			if ( ! empty( $item['name'] ) && ! empty( $item['id'] ) ) {
+				$products[] = (object) $item;
+				continue;
+			}
+
 			$product    = $item['data'];
 			$products[] = $this->normalize( $product, $item['quantity'] );
 		}
@@ -118,7 +123,18 @@ class ProductsService {
 	 * @return object
 	 */
 	public function normalize( $product, $quantity = 1 ) {
-		$price = floatval( $product->get_price() );
+		if ($product instanceof \WC_Product_Simple) {
+			$price = floatval( $product->get_price() );
+		}
+
+		if ($product instanceof \WC_Product_Composite) {
+			$price = floatval( $product->get_price() );
+		}
+
+		if ($product instanceof \WC_Product_Woosb) {
+			$price = floatval( $product->get_price() );
+		}
+
 		if ( empty( $price ) ) {
 			$data = $product->get_data();
 			if ( isset( $data['price'] ) ) {

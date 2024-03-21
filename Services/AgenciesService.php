@@ -87,8 +87,12 @@ class AgenciesService {
 
 			$companyId = null;
 
+			if (!isset($agency->companies)){
+				continue;
+			}
+
 			foreach ($agency->companies as $company) {
-				
+
 				$companyId = $company->id;
 
 				if ( empty( $companyId ) ) {
