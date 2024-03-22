@@ -327,7 +327,7 @@ final class Melhor_Envio_Plugin
 
             wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
             wp_enqueue_script( 'wp-nonce-melhor-evio-wp-api' );
-            wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = ${wpApiSettings};" );
+            wp_add_inline_script( 'wp-nonce-melhor-evio-wp-api', "var wpApiSettingsMelhorEnvio = {$wpApiSettings};" );
         }
 
         add_action( 'admin_enqueue_scripts', 'load_var_nonce');
