@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Helpers\ProductVirtualHelper;
 use MelhorEnvio\Models\Option;
 use MelhorEnvio\Models\Payload;
 use MelhorEnvio\Helpers\TimeHelper;
@@ -79,7 +80,12 @@ class QuotationService {
 	 * @param array $products
 	 * @return array $quotation
 	 */
-	public function calculateQuotationByPostId( $postId, $products) {
+	public function calculateQuotationByPostId($postId, $products = array()) {
+		if ( empty($products) ) {
+			$productService = new OrdersProductsService();
+			$products = $productService->getProductsOrder( $postId );
+			$products = ProductVirtualHelper::removeVirtuals( $products );
+		}
 		$buyer    = ( new BuyerService() )->getDataBuyerByOrderId( $postId );
 		$payload  = ( new PayloadService() )->createPayloadByProducts(
 			$buyer->postal_code,

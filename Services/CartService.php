@@ -90,7 +90,7 @@ class CartService {
 
 		$dataFrom = ( new SellerService() )->getData();
 
-		$quotation = ( new QuotationService() )->calculateQuotationByPostId( $orderId );
+		$quotation = ( new QuotationService() )->calculateQuotationByPostId( $orderId , $products);
 
 		$orderInvoiceService = new OrderInvoicesService();
 
