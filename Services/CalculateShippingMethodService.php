@@ -2,11 +2,11 @@
 
 namespace MelhorEnvio\Services;
 
+use Exception;
 use MelhorEnvio\Helpers\MoneyHelper;
 use MelhorEnvio\Helpers\TimeHelper;
 use MelhorEnvio\Models\ShippingService;
 use MelhorEnvio\Helpers\PostalCodeHelper;
-use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 class CalculateShippingMethodService {
 
@@ -38,6 +38,7 @@ class CalculateShippingMethodService {
 	 * @param int    $timeExtra
 	 * @param int    $percent
 	 * @return bool
+	 * @throws Exception
 	 */
 	public function calculateShipping( $package, $code, $id, $company, $title, $taxExtra, $timeExtra, $percent ) {
 		$to = PostalCodeHelper::postalcode( $package['destination']['postcode'] );
@@ -45,13 +46,7 @@ class CalculateShippingMethodService {
 			return false;
 		}
 
-		$products = ( isset( $package['contents'] ) )
-			? $package['contents']
-			: ( new CartWooCommerceService() )->getProducts();
-
-		if ( WooCommerceBundleProductsService::isWooCommerceProductBundle( $products ) ) {
-			$products = ( new WooCommerceBundleProductsService() )->manageProductsBundle( $products );
-		}
+		$products = ( new CartWooCommerceService() )->getProducts();
 
 		$result = ( new QuotationService() )->calculateQuotationByProducts(
 			$products,

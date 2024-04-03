@@ -51,7 +51,7 @@
             </p>
           </template>
 
-          <template v-if="item.quotation && item.quotation[item.quotation.choose_method]">
+          <template v-if="item.quotation">
             <fieldset class="selectLine">
               <div class="inputBox">
                 <select
@@ -60,6 +60,7 @@
                   v-model="item.quotation.choose_method"
                   style="width: 100%"
                 >
+                  <option value="0" disabled>Selecione um método de envio</option>
                   <option
                     v-if="option.id && option.price"
                     v-for="option in item.quotation"
@@ -124,5 +125,10 @@ export default {
       default: () => ({}),
     },
   },
+  created() {
+    if (this.item.quotation && this.item.quotation.choose_method && !this.item.quotation[this.item.quotation.choose_method]) {
+      this.item.quotation.choose_method = '0';
+    }
+  }
 };
 </script>

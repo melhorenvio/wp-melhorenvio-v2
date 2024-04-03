@@ -2,8 +2,7 @@
 
 namespace MelhorEnvio\Services;
 
-use MelhorEnvio\Helpers\DimensionsHelper;
-use MelhorEnvio\Services\ProductsService;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class WooCommerceBundleProductsService {
 

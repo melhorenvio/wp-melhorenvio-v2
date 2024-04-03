@@ -1,12 +1,39 @@
 <?php
 
-namespace MelhorEnvio\Services;
+namespace MelhorEnvio\Services\Products;
 
 use MelhorEnvio\Helpers\DimensionsHelper;
+use MelhorEnvio\Models\Product;
+use MelhorEnvio\Services\ConfigurationsService;
 use MelhorEnvio\Services\WooCommerceBundleProductsService;
-use MelhorEnvio\Services\SessionNoticeService;
 
 class ProductsService {
+
+	const PRODUCT_BUNDLE_TYPE = 'woosb';
+	const PRODUCT_COMPOSITE_TYPE = 'composite';
+
+	public $product;
+
+	public static function isCompositeProduct($product): bool
+	{
+		return $product->get_type() === self::PRODUCT_COMPOSITE_TYPE;
+	}
+
+	public static function isBundleProduct($product): bool
+	{
+		return $product->get_type() === self::PRODUCT_BUNDLE_TYPE;
+	}
+
+	public function getValueBase( $products )
+	{
+		$valueBase = 0;
+		foreach ( $products as $product ) {
+			if ( ( $product->pricing == 'include' || $product->pricing == 'only') && $product->shipping_fee == 'each' ) {
+				$valueBase += wc_get_product($product->id)->get_price();
+			}
+		}
+		return $valueBase;
+	}
 
 	/**
 	 * @param int      $postId
@@ -20,7 +47,7 @@ class ProductsService {
 			$quantity = 1;
 		}
 
-		return $this->normalize( $product, $quantity );
+		return $this->normalize( $quantity );
 	}
 
 	/**
@@ -29,8 +56,8 @@ class ProductsService {
 	 * @param array|object $products
 	 * @return float
 	 */
-	public function getInsuranceValue( $products ) {
-		$insuranceValue = 0;
+	public function getInsuranceValue( $products, $valueBase = 0 ) {
+		$insuranceValue = $valueBase;
 		foreach ( $products as $product ) {
 			$product = (object) $product;
 			if ( ! empty( $product->unitary_value ) ) {
@@ -78,26 +105,37 @@ class ProductsService {
 	 */
 	public function filter( $data ) {
 		$products = array();
-		foreach ( $data as $item ) {
+		foreach ( $data as $key => $item ) {
+			if ( ! empty( $item->shipping_fee ) && $item->shipping_fee == 'whole' ) {
+				$item->components = [];
+			}
+
+			if ( ! empty( $item->shipping_fee ) && $item->shipping_fee == 'each' ) {
+				foreach ($item->components as $component) {
+					$products[] = $component;
+				}
+				continue;
+			}
+
 			if ( $this->isObjectProduct( $item ) ) {
 				$data       = $item->get_data();
 				$product    = $item;
-				$products[] = $this->normalize( $product, $item['quantity'] );
+				$products[$key] = $this->normalize( $product, $item['quantity'] );
 				continue;
 			}
 
 			if ( ! empty( $item->name ) && ! empty( $item->id ) ) {
-				$products[] = $item;
+				$products[$key] = $item;
 				continue;
 			}
 
 			if ( ! empty( $item['name'] ) && ! empty( $item['id'] ) ) {
-				$products[] = (object) $item;
+				$products[$key] = (object) $item;
 				continue;
 			}
 
 			$product    = $item['data'];
-			$products[] = $this->normalize( $product, $item['quantity'] );
+			$products[$key] = $this->normalize( $product, $item['quantity'] );
 		}
 
 		return $products;
@@ -117,46 +155,68 @@ class ProductsService {
 		);
 	}
 
+	public function getDataByProductCart( $productCart , $items): Product
+	{
+		$data = self::normalize(
+			$productCart['data'],
+			$productCart['data']->get_price(),
+			$productCart['quantity']
+		);
+
+		if (isset($productCart['wooco_parent_id'])){
+			$data->parentId = $productCart['wooco_parent_id'];
+		}
+
+		if (isset($productCart['woosb_parent_id'])){
+			$data->parentId = $productCart['woosb_parent_id'];
+		}
+
+		return $data;
+	}
+
+	public function getDataByProductOrder( $productOrder, $items)
+	{
+		$data = self::normalize(
+			$productOrder->get_product(),
+			$productOrder->get_total(),
+			$productOrder->get_quantity()
+		);
+
+		if ($productOrder->get_meta('wooco_parent_id', true) !== null){
+			$data->parentId = $productOrder->get_meta('wooco_parent_id', true);
+		}
+
+		if ($productOrder->get_meta('woosb_parent_id', true) !== null){
+			$data->parentId = $productOrder->get_meta('woosb_parent_id', true);
+		}
+
+		return $data;
+	}
 	/**
-	 * @param WC_Product_Simple $product
-	 * @param int               $quantity
-	 * @return object
+	 * @param $product
+	 * @param $price
+	 * @param int $quantity
+	 * @return Product
 	 */
-	public function normalize( $product, $quantity = 1 ) {
-		if ($product instanceof \WC_Product_Simple) {
-			$price = floatval( $product->get_price() );
-		}
-
-		if ($product instanceof \WC_Product_Composite) {
-			$price = floatval( $product->get_price() );
-		}
-
-		if ($product instanceof \WC_Product_Woosb) {
-			$price = floatval( $product->get_price() );
-		}
-
-		if ( empty( $price ) ) {
-			$data = $product->get_data();
-			if ( isset( $data['price'] ) ) {
-				$price = floatval( $data['price'] );
-			}
-		}
-
+	public function normalize($product, $price, $quantity = 1): Product
+	{
 		$this->setDimensions( $product );
 
-		return (object) array(
-			'id'              => $product->get_id(),
-			'name'            => $product->get_name(),
-			'width'           => DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_width() ),
-			'height'          => DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_height() ),
-			'length'          => DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_length() ),
-			'weight'          => DimensionsHelper::convertWeightUnit( $product->get_weight() ),
-			'unitary_value'   => $price,
-			'insurance_value' => $price,
-			'quantity'        => $quantity,
-			'class'           => get_class( $product ),
-			'is_virtual'      => $product->get_virtual(),
-		);
+		$data = new Product();
+
+		$data->id = $product->get_id();
+		$data->name = $product->get_name();
+		$data->width = DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_width() );
+		$data->height = DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_height() );
+		$data->length = DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_length() );
+		$data->weight = DimensionsHelper::convertWeightUnit( $product->get_weight() );
+		$data->unitary_value = $price;
+		$data->insurance_value = $price;
+		$data->quantity = $quantity;
+		$data->type = $product->get_type();
+		$data->is_virtual = $product->get_virtual();
+
+		return $data;
 	}
 
 	/**

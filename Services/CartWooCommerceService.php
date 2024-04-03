@@ -2,6 +2,8 @@
 
 namespace MelhorEnvio\Services;
 
+use Exception;
+use MelhorEnvio\Factory\ProductFactory;
 use MelhorEnvio\Helpers\DimensionsHelper;
 
 class CartWooCommerceService {
@@ -9,9 +11,11 @@ class CartWooCommerceService {
 	/**
 	 * Function to get alls products on cart woocommerce
 	 *
-	 * @return Array
+	 * @return array
+	 * @throws Exception
 	 */
-	public function getProducts() {
+	public function getProducts(): array
+	{
 		global $woocommerce;
 
 		$items = $woocommerce->cart->get_cart();
@@ -23,28 +27,17 @@ class CartWooCommerceService {
 				? $itemProduct['variation_id']
 				: $itemProduct['product_id'];
 
-			$productInfo = wc_get_product( $productId );
+			$productService = ProductFactory::createProductServiceById($productId);
 
-			if ( empty( $productInfo ) ) {
-				continue;
-			}
-			$data = $productInfo->get_data();
-
-			$products[] = array(
-				'id'              => $itemProduct['product_id'],
-				'variation_id'    => $itemProduct['variation_id'],
-				'name'            => $data['name'],
-				'price'           => $productInfo->get_price(),
-				'insurance_value' => $productInfo->get_price(),
-				'height'          => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_height() ),
-				'width'           => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_width() ),
-				'length'          => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_length() ),
-				'weight'          => DimensionsHelper::convertWeightUnit( $productInfo->get_weight() ),
-				'quantity'        => ( isset( $itemProduct['quantity'] ) )
-					? intval( $itemProduct['quantity'] )
-					: 1,
-			);
+			$products[] = $productService->getDataByProductCart($itemProduct, $items);
 		}
+
+		foreach ($products as $key => $product) {
+			if (isset($product->parentId)){
+				unset($products[$key]);
+			}
+		}
+
 		return $products;
 	}
 }
