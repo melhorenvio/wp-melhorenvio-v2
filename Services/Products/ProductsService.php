@@ -110,7 +110,7 @@ class ProductsService {
 				$item->components = [];
 			}
 
-			if ( ! empty( $item->shipping_fee ) && $item->shipping_fee == 'each' ) {
+			if ( ! empty( $item->shipping_fee ) && $item->shipping_fee == 'each' && ! empty( $item->components ) ) {
 				foreach ($item->components as $component) {
 					$products[] = $component;
 				}

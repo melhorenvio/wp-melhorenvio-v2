@@ -20,11 +20,13 @@ class BundleService extends ProductsService
 		$data->shipping_fee = self::getShippingFeeType($productCart['data']->get_id());
 
 		if ($data->type == self::PRODUCT_BUNDLE_TYPE) {
-			foreach ($productCart['woosb_keys'] as $key) {
-				$data->components[] = parent::normalize(
-					$items[$key]['data'],
-					$items[$key]['line_total'] / $items[$key]['quantity'],
-					$items[$key]['quantity']);
+			if (isset($productCart['woosb_keys'])) {
+				foreach ($productCart['woosb_keys'] as $key) {
+					$data->components[] = parent::normalize(
+						$items[$key]['data'],
+						$items[$key]['line_total'] / $items[$key]['quantity'],
+						$items[$key]['quantity']);
+				}
 			}
 		}
 		return $data;

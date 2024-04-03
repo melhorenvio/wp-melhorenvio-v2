@@ -22,11 +22,13 @@ class CompositeService extends ProductsService
 		$data->shipping_fee = self::getShippingFeeType( $productCart['data']->get_id() );
 
 		if ($data->type == self::PRODUCT_COMPOSITE_TYPE) {
-			foreach ($productCart['wooco_keys'] as $key) {
-			 	$data->components[] = parent::normalize(
-					 $items[$key]['data'],
-					 $items[$key]['line_total'] / $items[$key]['quantity'],
-					 $items[$key]['quantity']);
+			if (isset($productCart['wooco_keys'])) {
+				foreach ($productCart['wooco_keys'] as $key) {
+					$data->components[] = parent::normalize(
+						$items[$key]['data'],
+						$items[$key]['line_total'] / $items[$key]['quantity'],
+						$items[$key]['quantity']);
+				}
 			}
 		}
 
