@@ -66,7 +66,7 @@ class QuotationProductPageService {
 	/**
 	 * A standard array package used in the WooCommerce shopping cart.
 	 *
-	 * @var aray
+	 * @var array
 	 */
 	protected $package;
 
@@ -76,6 +76,8 @@ class QuotationProductPageService {
 	 * @var array
 	 */
 	protected $shippingMethods;
+
+	protected $rates = array();
 
 	/**
 	 * Service Builder

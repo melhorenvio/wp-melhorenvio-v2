@@ -28,7 +28,11 @@ class ProductsService {
 	{
 		$valueBase = 0;
 		foreach ( $products as $product ) {
-			if ( ( $product->pricing == 'include' || $product->pricing == 'only') && $product->shipping_fee == 'each' ) {
+			if (! empty($product->pricing) &&
+				! empty($product->shipping_fee) && 
+				( $product->pricing == 'include' || $product->pricing == 'only')
+				&& $product->shipping_fee == 'each'
+			) {
 				$valueBase += wc_get_product($product->id)->get_price();
 			}
 		}
