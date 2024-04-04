@@ -24,7 +24,7 @@ class OrdersProductsService {
 		}
 
 		foreach ($products as $key => $product) {
-			if (isset($product->parentId)){
+			if (!empty($product->parentId)){
 				unset($products[$key]);
 			}
 		}
