@@ -58,7 +58,7 @@ class ListOrderService {
 		$productService = new OrdersProductsService();
 
 		foreach ( $posts as $post ) {
-			$postId = $post->ID;
+			$postId = $post->get_id();
 
 			$invoice = ( new InvoiceService() )->getInvoice( $postId );
 
