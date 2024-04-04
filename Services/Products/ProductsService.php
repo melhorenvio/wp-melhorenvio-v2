@@ -47,7 +47,7 @@ class ProductsService {
 			$quantity = 1;
 		}
 
-		return $this->normalize( $quantity );
+		return $this->normalize( $product, $product->get_price(), $quantity );
 	}
 
 	/**
@@ -120,7 +120,11 @@ class ProductsService {
 			if ( $this->isObjectProduct( $item ) ) {
 				$data       = $item->get_data();
 				$product    = $item;
-				$products[$key] = $this->normalize( $product, $item['quantity'] );
+				$products[$key] = $this->normalize(
+					$product,
+					$product->get_price(),
+					$item['quantity']
+				);
 				continue;
 			}
 
@@ -135,7 +139,11 @@ class ProductsService {
 			}
 
 			$product    = $item['data'];
-			$products[$key] = $this->normalize( $product, $item['quantity'] );
+			$products[$key] = $this->normalize(
+				$product,
+				$product->get_price(),
+				$item['quantity']
+			);
 		}
 
 		return $products;
