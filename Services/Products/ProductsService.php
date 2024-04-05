@@ -29,7 +29,7 @@ class ProductsService {
 		$valueBase = 0;
 		foreach ( $products as $product ) {
 			if (! empty($product->pricing) &&
-				! empty($product->shipping_fee) && 
+				! empty($product->shipping_fee) &&
 				( $product->pricing == 'include' || $product->pricing == 'only')
 				&& $product->shipping_fee == 'each'
 			) {
@@ -190,7 +190,7 @@ class ProductsService {
 	{
 		$data = self::normalize(
 			$productOrder->get_product(),
-			$productOrder->get_total(),
+			$productOrder->get_product()->get_price(),
 			$productOrder->get_quantity()
 		);
 
