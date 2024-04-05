@@ -14,6 +14,8 @@ class AgenciesService {
 
 	protected $company = null;
 
+	protected $service = null;
+
 	public function __construct( $data ) {
 
 		if ( ! empty( $data['state'] ) ) {
