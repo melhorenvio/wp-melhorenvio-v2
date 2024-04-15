@@ -46,9 +46,11 @@ class CalculateShippingMethodService {
 			return false;
 		}
 
-		$products = ( isset( $package['contents'] ) )
-			? $package['contents']
-			: ( new CartWooCommerceService() )->getProducts();
+		$products = ( new CartWooCommerceService() )->getProducts();
+
+		if ( empty( $products ) ) {
+			$products = $package['contents'];
+		}
 
 		$result = ( new QuotationService() )->calculateQuotationByProducts(
 			$products,
