@@ -198,8 +198,8 @@ class ProductsService {
 			$data->parentId = $productOrder->get_meta('wooco_parent_id', true);
 		}
 
-		if ($productOrder->get_meta('woosb_parent_id', true) !== null){
-			$data->parentId = $productOrder->get_meta('woosb_parent_id', true);
+		if ($productOrder->get_meta('_woosb_parent_id', true) !== null){
+			$data->parentId = $productOrder->get_meta('_woosb_parent_id', true);
 		}
 
 		return $data;
