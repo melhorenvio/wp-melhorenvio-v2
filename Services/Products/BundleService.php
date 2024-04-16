@@ -40,6 +40,8 @@ class BundleService extends ProductsService
 			$productOrder->get_quantity()
 		);
 
+		$data->shipping_fee = self::getShippingFeeType($productOrder->get_product()->get_id());
+
 		if ($data->type == self::PRODUCT_BUNDLE_TYPE) {
 			$components = (new \WPCleverWoosb())->get_bundled($productOrder->get_meta('_woosb_ids', true));
 
@@ -96,6 +98,6 @@ class BundleService extends ProductsService
 	 */
 	public function getShippingFeeType( $productId ): string
 	{
-		return get_post_meta(  $productId, self::PRODUCT_BUNDLE_SHIPPING_FEE, true );
+		return get_post_meta( $productId, self::PRODUCT_BUNDLE_SHIPPING_FEE, true );
 	}
 }
