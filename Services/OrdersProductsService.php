@@ -16,6 +16,7 @@ class OrdersProductsService {
 		$order = wc_get_order( $orderId );
 
 		$items = $order->get_items();
+		$products = array();
 
 		foreach ($items as $itemProduct) {
 			$productService = ProductFactory::createProductServiceByProduct($itemProduct->get_product());
