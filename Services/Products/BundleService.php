@@ -46,10 +46,18 @@ class BundleService extends ProductsService
 			$components = (new \WPCleverWoosb())->get_bundled($productOrder->get_meta('_woosb_ids', true));
 
 			foreach ($components as $component) {
+				foreach ($items as $item) {
+					if ($item->get_product_id() == $component['id']) {
+						$product = $item->get_product();
+						$quantity = $item->get_quantity();
+						$total = $item->get_total();
+					}
+				}
+
 				$data->components[] = parent::normalize(
-					wc_get_product($component['id']),
-					wc_get_product($component['id'])->get_price(),
-					$component['qty']
+					$product ?? wc_get_product($component['id']),
+					$total ?? wc_get_product($component['id'])->get_price(),
+					$quantity ?? $component['qty']
 				);
 			}
 		}
