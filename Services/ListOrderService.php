@@ -85,6 +85,7 @@ class ListOrderService {
 				'non_commercial' => is_null( $invoice['number'] ) || is_null( $invoice['key'] ),
 				'invoice'        => $invoice,
 				'products'       => $products,
+				'payload'		 => $quotationService->getPayload( $postId, $products ),
 				'quotation'      => $quotationService->calculateQuotationByPostId( $postId, $products),
 				'link'           => admin_url() . sprintf( 'post.php?post=%d&action=edit', $postId ),
 			);
