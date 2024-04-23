@@ -16,10 +16,8 @@ class ProductFactory
 				return new \MelhorEnvio\Services\Products\BundleService();
 			case 'composite':
 				return new \MelhorEnvio\Services\Products\CompositeService();
-			case 'simple':
-				return new \MelhorEnvio\Services\Products\ProductsService();
 			default:
-				throw new Exception('Invalid type');
+				return new \MelhorEnvio\Services\Products\ProductsService();
 		}
 	}
 
