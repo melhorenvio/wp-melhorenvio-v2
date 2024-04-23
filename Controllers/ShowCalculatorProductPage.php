@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\EscapeAllowedTags;
+use MelhorEnvio\Services\Products\ProductsService;
 
 /**
  * Controller to manage the product's paged calculator
@@ -104,10 +105,10 @@ class ShowCalculatorProductPage {
 	}
 
 	private function verifyTypeProduct(){
-		if($this->product->get_type() == 'simple') {
-			return "<input type='text' maxlength='9' class='iptCep calculatorRow' id='inputCep' placeholder='Informe seu cep' onkeyup='usePostalCodeMask(event);'>";
-		} else {
-			return "<span>A cotação desse produto deve ser feita no carrinho!</span>";
+		if( ProductsService::isCompositeProduct($this->product) || ProductsService::isBundleProduct($this->product)) {
+			return "<span>A cotação do frete desse produto deve ser feita no carrinho!</span>";
 		}
+
+		return "<input type='text' maxlength='9' class='iptCep calculatorRow' id='inputCep' placeholder='Informe seu cep' onkeyup='usePostalCodeMask(event);'>";
 	}
 }
