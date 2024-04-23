@@ -52,7 +52,7 @@ class CompositeService extends ProductsService
 				if ($woocoParentId !== null && $woocoParentId == $productOrder->get_product()->get_id()) {
 					$data->components[] = parent::normalize(
 						$item->get_product(),
-						$item->get_meta('wooco_price', true),
+						$item->get_total() / $item->get_quantity(),
 						$item->get_quantity()
 					);
 				}
@@ -61,39 +61,6 @@ class CompositeService extends ProductsService
 
 		return $data;
 	}
-
-//	private function calculateValues()
-//	{
-//		if (self::isCompositeWholeAndInclude()) {
-//			foreach ($this->data['components'] as $product) {
-//				$this->data['insurance_value'] += round(($product->insurance_value * $product->quantity), 2);
-//				$this->data['unitary_value'] += round(($product->insurance_value * $product->quantity), 2);
-//			}
-//		}
-//
-//		if (self::isCompositeWholeAndExclude()) {
-//			$this->data['insurance_value'] = 0;
-//			$this->data['unitary_value'] = 0;
-//			foreach ($this->data['components'] as $product) {
-//				$this->data['insurance_value'] += round(($product->insurance_value * $product->quantity), 2);
-//				$this->data['unitary_value'] += round(($product->insurance_value * $product->quantity), 2);
-//			}
-//		}
-//	}
-
-//	public function isCompositeWholeAndInclude(): bool
-//	{
-//		return !empty($this->product) &&
-//			$this->data['shipping_fee'] == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
-//			$this->data['pricing'] == self::PRODUCT_COMPOSITE_PRICING_INCLUDE;
-//	}
-//
-//	public function isCompositeWholeAndExclude(): bool
-//	{
-//		return !empty($this->product) &&
-//			$this->data['shipping_fee'] == self::PRODUCT_COMPOSITE_SHIPPING_FEE_WHOLE &&
-//			$this->data['pricing'] == self::PRODUCT_COMPOSITE_PRICING_EXCLUDE;
-//	}
 
 	/**
 	 * Function to get type pricing
