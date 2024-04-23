@@ -9,19 +9,23 @@ use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 class ProductsService {
 
-	const PRODUCT_BUNDLE_TYPE = 'woosb';
-	const PRODUCT_COMPOSITE_TYPE = 'composite';
+	const BUNDLE_TYPE = 'woosb';
+	const PRODUCT_BUNDLE_TYPE = 'product-woosb';
+	const COMPOSITE_TYPE = 'composite';
+	const PRODUCT_COMPOSITE_TYPE = 'product-composite';
 
 	public $product;
 
 	public static function isCompositeProduct($product): bool
 	{
-		return $product->get_type() === self::PRODUCT_COMPOSITE_TYPE;
+		return $product->get_type() === self::COMPOSITE_TYPE ||
+			$product->get_type() === self::PRODUCT_COMPOSITE_TYPE;
 	}
 
 	public static function isBundleProduct($product): bool
 	{
-		return $product->get_type() === self::PRODUCT_BUNDLE_TYPE;
+		return $product->get_type() === self::BUNDLE_TYPE ||
+			$product->get_type() === self::PRODUCT_BUNDLE_TYPE;
 	}
 
 	public function getValueBase( $products )
