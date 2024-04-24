@@ -27,11 +27,11 @@ class BundleService extends ProductsService
 						$items[$key]['line_total'] / $items[$key]['quantity'],
 						$items[$key]['quantity']);
 				}
-			}
-		}
 
-		if($productCart['data']->is_fixed_price()) {
-			$data->components[0]->setValues($data->unitary_value);
+				if($productCart['data']->is_fixed_price()) {
+					$data->components[0]->setValues($data->unitary_value);
+				}
+			}
 		}
 
 		return $data;
@@ -69,10 +69,10 @@ class BundleService extends ProductsService
 					$quantity ?? $component['qty']
 				);
 			}
-		}
 
-		if($productOrder->get_product()->is_fixed_price()) {
-			$data->components[0]->setValues($data->unitary_value);
+			if($productOrder->get_product()->is_fixed_price()) {
+				$data->components[0]->setValues($data->unitary_value);
+			}
 		}
 
 		return $data;

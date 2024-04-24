@@ -29,15 +29,15 @@ class CompositeService extends ProductsService
 						$items[$key]['line_total'] / $items[$key]['quantity'],
 						$items[$key]['quantity']);
 				}
+
+				if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
+					array_filter($data->components, function($component) {
+						$component->setValues(0);
+					});
+
+					$data->components[0]->setValues($data->unitary_value);
+				}
 			}
-		}
-
-		if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
-			array_filter($data->components, function($component) {
-				$component->setValues(0);
-			});
-
-			$data->components[0]->setValues($data->unitary_value);
 		}
 
 		return $data;
@@ -65,14 +65,14 @@ class CompositeService extends ProductsService
 					);
 				}
 			}
-		}
 
-		if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
-			array_filter($data->components, function($component) {
-				$component->setValues(0);
-			});
+			if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
+				array_filter($data->components, function($component) {
+					$component->setValues(0);
+				});
 
-			$data->components[0]->setValues($data->unitary_value);
+				$data->components[0]->setValues($data->unitary_value);
+			}
 		}
 
 		return $data;

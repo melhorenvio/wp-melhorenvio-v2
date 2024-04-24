@@ -15,7 +15,7 @@ class Product
 	public $insurance_value;
 	public $type;
 	public $is_virtual;
-	public $components;
+	public $components = [];
 	public $parentId;
 	public $pricing;
 	public $shipping_fee;
