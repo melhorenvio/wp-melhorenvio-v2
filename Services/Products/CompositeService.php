@@ -35,7 +35,7 @@ class CompositeService extends ProductsService
 						$component->setValues(0);
 					});
 
-					$data->components[0]->setValues($data->unitary_value);
+					$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 				}
 			}
 		}
@@ -71,7 +71,7 @@ class CompositeService extends ProductsService
 					$component->setValues(0);
 				});
 
-				$data->components[0]->setValues($data->unitary_value);
+				$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 			}
 		}
 

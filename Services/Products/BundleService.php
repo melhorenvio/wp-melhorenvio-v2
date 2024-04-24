@@ -29,7 +29,7 @@ class BundleService extends ProductsService
 				}
 
 				if($productCart['data']->is_fixed_price()) {
-					$data->components[0]->setValues($data->unitary_value);
+					$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 				}
 			}
 		}
@@ -71,7 +71,7 @@ class BundleService extends ProductsService
 			}
 
 			if($productOrder->get_product()->is_fixed_price()) {
-				$data->components[0]->setValues($data->unitary_value);
+				$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 			}
 		}
 
