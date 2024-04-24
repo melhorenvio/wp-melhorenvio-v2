@@ -81,16 +81,7 @@ class QuotationService {
 	 * @return array $quotation
 	 */
 	public function calculateQuotationByPostId($postId, $products = array()) {
-		if ( empty($products) ) {
-			$productService = new OrdersProductsService();
-			$products = $productService->getProductsOrder( $postId );
-			$products = ProductVirtualHelper::removeVirtuals( $products );
-		}
-		$buyer    = ( new BuyerService() )->getDataBuyerByOrderId( $postId );
-		$payload  = ( new PayloadService() )->createPayloadByProducts(
-			$buyer->postal_code,
-			$products
-		);
+		$payload  = $this->getPayload($postId, $products);
 
 		if ( ! ( new PayloadService() )->validatePayload( $payload ) ) {
 			return false;
@@ -106,6 +97,21 @@ class QuotationService {
 		$quotations = $this->removeItemNotHasPrice( $quotations );
 
 		return ( new OrderQuotationService() )->saveQuotation( $postId, $quotations );
+	}
+
+	public function getPayload($postId, $products = array())
+	{
+		if (empty($products)) {
+			$productService = new OrdersProductsService();
+			$products = $productService->getProductsOrder($postId);
+			$products = ProductVirtualHelper::removeVirtuals($products);
+		}
+		$buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+
+		return (new PayloadService())->createPayloadByProducts(
+			$buyer->postal_code,
+			$products
+		);
 	}
 
 	/**
