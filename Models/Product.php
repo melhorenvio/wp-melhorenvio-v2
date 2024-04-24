@@ -19,4 +19,9 @@ class Product
 	public $parentId;
 	public $pricing;
 	public $shipping_fee;
+
+	public function setValues($value){
+		$this->unitary_value = $value;
+		$this->insurance_value = $value;
+	}
 }

@@ -226,11 +226,11 @@ class ProductsService {
 		$data->height = DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_height() );
 		$data->length = DimensionsHelper::convertUnitDimensionToCentimeter( $product->get_length() );
 		$data->weight = DimensionsHelper::convertWeightUnit( $product->get_weight() );
-		$data->unitary_value = $price;
-		$data->insurance_value = $price;
 		$data->quantity = $quantity;
 		$data->type = $product->get_type();
 		$data->is_virtual = $product->get_virtual();
+
+		$data->setValues($price);
 
 		return $data;
 	}

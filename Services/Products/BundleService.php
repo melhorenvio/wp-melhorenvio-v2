@@ -29,14 +29,23 @@ class BundleService extends ProductsService
 				}
 			}
 		}
+
+		if($productCart['data']->is_fixed_price()) {
+			$data->components[0]->setValues($data->unitary_value);
+		}
+
 		return $data;
 	}
 
-	public function getDataByProductOrder( $productOrder, $items): Product
+	public function getDataByProductOrder( $productOrder, $items ): Product
 	{
+		$value = ! empty($productOrder->get_meta('_woosb_price', true)) ?
+			$productOrder->get_meta('_woosb_price', true) :
+			$productOrder->get_total();
+
 		$data = parent::normalize(
 			$productOrder->get_product(),
-			$productOrder->get_meta('_woosb_price', true),
+			$value,
 			$productOrder->get_quantity()
 		);
 
@@ -62,41 +71,12 @@ class BundleService extends ProductsService
 			}
 		}
 
+		if($productOrder->get_product()->is_fixed_price()) {
+			$data->components[0]->setValues($data->unitary_value);
+		}
+
 		return $data;
 	}
-
-//	private function calculateValues()
-//	{
-//		if (self::isCompositeWholeAndFixed()) {
-//			foreach ($this->data['components'] as $product) {
-//				$this->data['insurance_value'] += round(($product->insurance_value * $product->quantity), 2);
-//				$this->data['unitary_value'] += round(($product->insurance_value * $product->quantity), 2);
-//			}
-//		}
-
-//		if (self::isCompositeWholeAndVariable()) {
-//			$this->data['insurance_value'] = 0;
-//			$this->data['unitary_value'] = 0;
-//			foreach ($this->data['components'] as $product) {
-//				$this->data['insurance_value'] += round(($product->insurance_value * $product->quantity), 2);
-//				$this->data['unitary_value'] += round(($product->insurance_value * $product->quantity), 2);
-//			}
-//		}
-//	}
-
-//	public function isCompositeWholeAndFixed(): bool
-//	{
-//		return !empty($this->product) &&
-//			$this->data['shipping_fee'] == self::PRODUCT_BUNDLE_SHIPPING_FEE_WHOLE &&
-//			$this->data['pricing'] == self::PRODUCT_BUNDLE_PRICING_FIXED;
-//	}
-//
-//	public function isCompositeWholeAndVariable(): bool
-//	{
-//		return !empty($this->product) &&
-//			$this->data['shipping_fee'] == self::PRODUCT_BUNDLE_SHIPPING_FEE_WHOLE &&
-//			$this->data['pricing'] == self::PRODUCT_BUNDLE_PRICING_VARIABLE;
-//	}
 
 	/**
 	 * Function to get type shipping fee
