@@ -32,6 +32,14 @@ class CompositeService extends ProductsService
 			}
 		}
 
+		if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
+			array_filter($data->components, function($component) {
+				$component->setValues(0);
+			});
+
+			$data->components[0]->setValues($data->unitary_value);
+		}
+
 		return $data;
 	}
 
@@ -57,6 +65,14 @@ class CompositeService extends ProductsService
 					);
 				}
 			}
+		}
+
+		if (($data->pricing == 'include' || $data->pricing == 'only') && $data->shipping_fee == 'each') {
+			array_filter($data->components, function($component) {
+				$component->setValues(0);
+			});
+
+			$data->components[0]->setValues($data->unitary_value);
 		}
 
 		return $data;

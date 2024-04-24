@@ -136,8 +136,6 @@ class PayloadService {
 
 		$productsFilter = $productService->filter( $products );
 
-		$valueBase = $productService->getValueBase( $products );
-
 		$payload = (object) array(
 			'from'     => (object) array(
 				'postal_code' => $seller->postal_code,
@@ -149,7 +147,7 @@ class PayloadService {
 			'options'  => (object) array(
 				'own_hand'            => $options->own_hand,
 				'receipt'             => $options->receipt,
-				'insurance_value'     => $productService->getInsuranceValue( $productsFilter, $valueBase ),
+				'insurance_value'     => $productService->getInsuranceValue( $productsFilter ),
 				'use_insurance_value' => $options->insurance_value,
 			),
 			'products' => (object) $productsFilter,
