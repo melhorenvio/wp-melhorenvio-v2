@@ -6,8 +6,15 @@ use MelhorEnvio\Models\Product;
 
 class BundleService extends ProductsService
 {
-	const PRODUCT_BUNDLE_TYPE = 'woosb';
+	const BUNDLE_TYPE = 'woosb';
+	const PRODUCT_BUNDLE_TYPE = 'product-woosb';
 	const PRODUCT_BUNDLE_SHIPPING_FEE = 'woosb_shipping_fee';
+
+	public static function isBundleProduct($product): bool
+	{
+		return $product->get_type() === self::BUNDLE_TYPE ||
+			$product->get_type() === self::PRODUCT_BUNDLE_TYPE;
+	}
 
 	public function getDataByProductCart( $productCart , $items): Product
 	{
@@ -19,18 +26,21 @@ class BundleService extends ProductsService
 
 		$data->shipping_fee = self::getShippingFeeType($productCart['data']->get_id());
 
-		if ($data->type == self::PRODUCT_BUNDLE_TYPE) {
-			if (isset($productCart['woosb_keys'])) {
-				foreach ($productCart['woosb_keys'] as $key) {
-					$data->components[] = parent::normalize(
-						$items[$key]['data'],
-						$items[$key]['line_total'] / $items[$key]['quantity'],
-						$items[$key]['quantity']);
-				}
+		if ($data->type == self::BUNDLE_TYPE && isset($productCart['woosb_keys'])) {
+			foreach ($productCart['woosb_keys'] as $key) {
+				$data->components[] = parent::normalize(
+					$items[$key]['data'],
+					$items[$key]['line_total'] / $items[$key]['quantity'],
+					$items[$key]['quantity']);
+			}
 
-				if($productCart['data']->is_fixed_price()) {
-					$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
-				}
+			if($productCart['data']->is_fixed_price()) {
+				/* This was necessary due to the fact that the customer can choose that the value of the kit
+				 is not just the sum of the internal products (components).
+				This value can be defined manually and must be used to correctly calculate shipping insurance,
+				this way the entire insurance value is passed within the first product
+				*/
+				$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 			}
 		}
 
@@ -51,7 +61,7 @@ class BundleService extends ProductsService
 
 		$data->shipping_fee = self::getShippingFeeType($productOrder->get_product()->get_id());
 
-		if ($data->type == self::PRODUCT_BUNDLE_TYPE) {
+		if ($data->type == self::BUNDLE_TYPE) {
 			$components = (new \WPCleverWoosb())->get_bundled($productOrder->get_meta('_woosb_ids', true));
 
 			foreach ($components as $component) {
@@ -71,6 +81,11 @@ class BundleService extends ProductsService
 			}
 
 			if($productOrder->get_product()->is_fixed_price()) {
+				/* This was necessary due to the fact that the customer can choose that the value of the kit
+				 is not just the sum of the internal products (components).
+				This value can be defined manually and must be used to correctly calculate shipping insurance,
+				this way the entire insurance value is passed within the first product
+				*/
 				$data->components[0]->setValues(($data->unitary_value/$data->components[0]->quantity));
 			}
 		}
@@ -84,7 +99,7 @@ class BundleService extends ProductsService
 	 * @param $productId
 	 * @return string
 	 */
-	public function getShippingFeeType( $productId ): string
+	private static function getShippingFeeType( $productId ): string
 	{
 		return get_post_meta( $productId, self::PRODUCT_BUNDLE_SHIPPING_FEE, true );
 	}

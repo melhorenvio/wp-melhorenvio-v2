@@ -4,12 +4,12 @@ namespace MelhorEnvio\Factory;
 
 use Exception;
 
-class ProductFactory
+class ProductServiceFactory
 {
 	/**
 	 * @throws Exception
 	 */
-	public static function createProductServiceByProduct($product)
+	public static function fromProduct($product)
 	{
 		switch ($product->get_type()) {
 			case 'woosb':
@@ -24,10 +24,10 @@ class ProductFactory
 	/**
 	 * @throws Exception
 	 */
-	public static function createProductServiceById($productId)
+	public static function fromId($productId)
 	{
 		$product = wc_get_product($productId);
 
-		return self::createProductServiceByProduct($product);
+		return self::fromProduct($product);
 	}
 }

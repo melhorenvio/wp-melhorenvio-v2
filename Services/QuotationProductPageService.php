@@ -103,7 +103,7 @@ class QuotationProductPageService {
 	 * @return array
 	 */
 	public function getRatesShipping() {
-		if ( ProductsService::isCompositeProduct($this->product) || ProductsService::isBundleProduct($this->product)) {
+		if ( ProductsService::hasProductComposition($this->product) ) {
 			return array(
 				'success' => false,
 				'error'   => 'Cotação disponível apenas no carrinho!',

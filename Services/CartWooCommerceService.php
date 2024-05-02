@@ -3,8 +3,9 @@
 namespace MelhorEnvio\Services;
 
 use Exception;
-use MelhorEnvio\Factory\ProductFactory;
+use MelhorEnvio\Factory\ProductServiceFactory;
 use MelhorEnvio\Helpers\DimensionsHelper;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class CartWooCommerceService {
 
@@ -20,24 +21,16 @@ class CartWooCommerceService {
 
 		$items = $woocommerce->cart->get_cart();
 
-		$products = array();
+		$products = array_map(function($item) use ($items) {
+			$productId = ( $item['variation_id'] != 0 )
+				? $item['variation_id']
+				: $item['product_id'];
 
-		foreach ( $items as $itemProduct ) {
-			$productId = ( $itemProduct['variation_id'] != 0 )
-				? $itemProduct['variation_id']
-				: $itemProduct['product_id'];
+			$productService = ProductServiceFactory::fromId($productId);
 
-			$productService = ProductFactory::createProductServiceById($productId);
+			return $productService->getDataByProductCart($item, $items);
+		}, $items);
 
-			$products[] = $productService->getDataByProductCart($itemProduct, $items);
-		}
-
-		foreach ($products as $key => $product) {
-			if (isset($product->parentId)){
-				unset($products[$key]);
-			}
-		}
-
-		return $products;
+		return ProductsService::removeComponentProducts($products);
 	}
 }

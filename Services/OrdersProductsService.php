@@ -2,7 +2,8 @@
 
 namespace MelhorEnvio\Services;
 
-use MelhorEnvio\Factory\ProductFactory;
+use MelhorEnvio\Factory\ProductServiceFactory;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class OrdersProductsService {
 
@@ -16,20 +17,13 @@ class OrdersProductsService {
 		$order = wc_get_order( $orderId );
 
 		$items = $order->get_items();
-		$products = array();
 
-		foreach ($items as $itemProduct) {
-			$productService = ProductFactory::createProductServiceByProduct($itemProduct->get_product());
+		$products = array_map(function($item) use ($items) {
+			$productService = ProductServiceFactory::fromProduct($item->get_product());
 
-			$products[] = $productService->getDataByProductOrder( $itemProduct, $items );
-		}
+			return $productService->getDataByProductOrder( $item, $items );
+		}, $items);
 
-		foreach ($products as $key => $product) {
-			if (!empty($product->parentId)){
-				unset($products[$key]);
-			}
-		}
-
-		return $products;
+		return ProductsService::removeComponentProducts($products);
 	}
 }

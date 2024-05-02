@@ -9,38 +9,18 @@ use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 class ProductsService {
 
-	const BUNDLE_TYPE = 'woosb';
-	const PRODUCT_BUNDLE_TYPE = 'product-woosb';
-	const COMPOSITE_TYPE = 'composite';
-	const PRODUCT_COMPOSITE_TYPE = 'product-composite';
-
 	public $product;
 
-	public static function isCompositeProduct($product): bool
+	public static function hasProductComposition($product): bool
 	{
-		return $product->get_type() === self::COMPOSITE_TYPE ||
-			$product->get_type() === self::PRODUCT_COMPOSITE_TYPE;
+		return CompositeService::isCompositeProduct($product) || BundleService::isBundleProduct($product);
 	}
 
-	public static function isBundleProduct($product): bool
+	public static function removeComponentProducts($products): array
 	{
-		return $product->get_type() === self::BUNDLE_TYPE ||
-			$product->get_type() === self::PRODUCT_BUNDLE_TYPE;
-	}
-
-	public function getValueBase( $products )
-	{
-		$valueBase = 0;
-		foreach ( $products as $product ) {
-			if (! empty($product->pricing) &&
-				! empty($product->shipping_fee) &&
-				( $product->pricing == 'include' || $product->pricing == 'only')
-				&& $product->shipping_fee == 'each'
-			) {
-				$valueBase += wc_get_product($product->id)->get_price();
-			}
-		}
-		return $valueBase;
+		return array_filter($products, function ($product) {
+			return !isset($product->parentId);
+		});
 	}
 
 	/**
@@ -258,30 +238,5 @@ class ProductsService {
 		if ( empty( $product->get_weight() ) ) {
 			$product->set_weight( $dimensionDefault['weight'] );
 		}
-	}
-
-	/**
-	 * function to return a label with the name of products.
-	 *
-	 * @param array $products
-	 * @return string
-	 */
-	public function createLabelTitleProducts( $products ) {
-		$title = '';
-		foreach ( $products as $id => $product ) {
-			if ( ! empty( $product['data']->get_name() ) ) {
-				$title = $title . sprintf(
-					"<a href='%s'>%s</a>, ",
-					get_edit_post_link( $id ),
-					$product['data']->get_name()
-				);
-			}
-		}
-
-		if ( ! empty( $title ) ) {
-			$title = substr( $title, 0, -2 );
-		}
-
-		return 'Produto(s): ' . $title;
 	}
 }

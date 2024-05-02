@@ -101,11 +101,11 @@ class ShowCalculatorProductPage {
 	 * @return string
 	 */
 	private function getTemplateCalculator() {
-		return "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'> <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?> <input type='hidden' id='calculo_frete_endpoint_url' value='".admin_url( 'admin-ajax.php' )."'> <input type='hidden' id='calculo_frete_produto_altura' value='".$this->height."'> <input type='hidden' id='calculo_frete_produto_largura' value='".$this->width."'> <input type='hidden' id='calculo_frete_produto_comprimento' value='".$this->length."'> <input type='hidden' id='calculo_frete_produto_peso' value='".$this->weight."'> <input type='hidden' id='calculo_frete_produto_preco' value='".$this->price."'> <input type='hidden' id='id_produto' value='".$this->id."'> <div class='calculatorRow'> <div class='row'> <div class='col-75'> <p>Simulação de frete</p>". $this->verifyTypeProduct() . "</div></div><div id='calcular-frete-loader'> <img src='".MELHORENVIO_ASSETS."/images/loader.gif' /> </div> <div class=resultado-frete tableResult> <table> <thead> </thead> <tbody> </tbody> </table> <small id='destiny-shipping-mehor-envio'></small></br> <small class='observation-shipping-free'></small> </div> </div> </div>";
+		return "<div id='woocommerce-correios-calculo-de-frete-na-pagina-do-produto' class='containerCalculator'> <?php wp_nonce_field('solicita_calculo_frete', 'solicita_calculo_frete'); ?> <input type='hidden' id='calculo_frete_endpoint_url' value='".admin_url( 'admin-ajax.php' )."'> <input type='hidden' id='calculo_frete_produto_altura' value='".$this->height."'> <input type='hidden' id='calculo_frete_produto_largura' value='".$this->width."'> <input type='hidden' id='calculo_frete_produto_comprimento' value='".$this->length."'> <input type='hidden' id='calculo_frete_produto_peso' value='".$this->weight."'> <input type='hidden' id='calculo_frete_produto_preco' value='".$this->price."'> <input type='hidden' id='id_produto' value='".$this->id."'> <div class='calculatorRow'> <div class='row'> <div class='col-75'> <p>Simulação de frete</p>". $this->verifyCanQuoteByProductType() . "</div></div><div id='calcular-frete-loader'> <img src='".MELHORENVIO_ASSETS."/images/loader.gif' /> </div> <div class=resultado-frete tableResult> <table> <thead> </thead> <tbody> </tbody> </table> <small id='destiny-shipping-mehor-envio'></small></br> <small class='observation-shipping-free'></small> </div> </div> </div>";
 	}
 
-	private function verifyTypeProduct(){
-		if( ProductsService::isCompositeProduct($this->product) || ProductsService::isBundleProduct($this->product)) {
+	private function verifyCanQuoteByProductType(){
+		if( ProductsService::hasProductComposition($this->product) ){
 			return "<span>A cotação do frete desse produto deve ser feita no carrinho!</span>";
 		}
 

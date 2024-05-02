@@ -102,8 +102,8 @@ class QuotationService {
 	public function getPayload($postId, $products = array())
 	{
 		if (empty($products)) {
-			$productService = new OrdersProductsService();
-			$products = $productService->getProductsOrder($postId);
+			$orderProductService = new OrdersProductsService();
+			$products = $orderProductService->getProductsOrder($postId);
 			$products = ProductVirtualHelper::removeVirtuals($products);
 		}
 		$buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
@@ -160,7 +160,7 @@ class QuotationService {
 
 		$options = ( new Option() )->getOptions();
 
-		$cachedQuotations = $this->getSessionCachedQuotations( $hash );
+		$cachedQuotations = $this->getSessionCachedQuotations( $hash."1" );
 
 		if ( empty( $cachedQuotations ) ) {
 			$quotations = $this->calculate( $payload, $options->insurance_value );
