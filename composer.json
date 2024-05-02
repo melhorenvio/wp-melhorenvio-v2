@@ -19,7 +19,8 @@
             "MelhorEnvio\\Interfaces\\": "core/interfaces/",
             "MelhorEnvio\\Services\\": "Services/",
             "MelhorEnvio\\Bases\\": "core/bases/",
-            "MelhorEnvio\\Helpers\\": "Helpers/"
+            "MelhorEnvio\\Helpers\\": "Helpers/",
+            "MelhorEnvio\\Factory\\": "Factory/"
         }
     }
 }
