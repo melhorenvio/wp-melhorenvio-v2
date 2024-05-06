@@ -47,7 +47,7 @@ Caso queira contribuir com o projeto, o processo para isto é criar um brach sep
 <a href="https://github.com/melhorenvio/wp-melhorenvio-v2" target="_blank">Repositório público do Plugin do Melhor Envio</a>
 
 ## Suporte
-Para entrar em contato com o suporte desse plugin, enviar e-mail para integrations@melhorenvio.com
+Para entrar em contato com o suporte desse plugin, enviar e-mail para contato@melhorenvio.com
 
 == Installation ==
 A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar novo" no seu painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
