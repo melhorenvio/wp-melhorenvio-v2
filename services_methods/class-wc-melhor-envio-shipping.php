@@ -25,6 +25,31 @@ if ( class_exists( 'WC_Shipping_Method' ) ) {
 		 * @var string
 		 */
 		public $company = '';
+		/**
+		 * @var CalculateShippingMethodService
+		 */
+		public $service;
+		public $instance_id;
+		/**
+		 * @var int
+		 */
+		public $shipping_class_id;
+		/**
+		 * @var string
+		 */
+		public $method_description;
+		public $title;
+		public $additional_time;
+		public $additional_tax;
+		public $percent_tax;
+		/**
+		 * @var array|string[]
+		 */
+		public $supports;
+		/**
+		 * @var array|array[]
+		 */
+		public $instance_form_fields;
 
 		/**
 		 * Initialize the Melhor Envio shipping method.

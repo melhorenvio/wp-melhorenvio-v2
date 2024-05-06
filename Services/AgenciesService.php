@@ -14,6 +14,8 @@ class AgenciesService {
 
 	protected $company = null;
 
+	protected $service = null;
+
 	public function __construct( $data ) {
 
 		if ( ! empty( $data['state'] ) ) {
@@ -87,8 +89,12 @@ class AgenciesService {
 
 			$companyId = null;
 
+			if (!isset($agency->companies)){
+				continue;
+			}
+
 			foreach ($agency->companies as $company) {
-				
+
 				$companyId = $company->id;
 
 				if ( empty( $companyId ) ) {

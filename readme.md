@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.15.0
+Version: 2.15.1
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
 Tested up to: 6.4
-Stable tag: 2.15.0
+Stable tag: 2.15.1
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -38,6 +38,10 @@ Com a instalação do plugin do Woocomerce você pode ampliar ainda mais a autom
 ### Compatibilidade
 Caso seja utilizado algum outro plugin que altere o Woocommerce não é garantida a sua compatibilidade, como plugins que adicionam ao Woocommerce funcionalidades de marketplace.
 
+Para utilizar grupos de produtos ou kits, recomendamos a utilização dos plugins 
+<a href="https://br.wordpress.org/plugins/woo-product-bundle/" target="_blank">WPC Product Bundles</a> ou
+<a href="https://br.wordpress.org/plugins/wpc-composite-products/" target="_blank">WPC Composite Products</a> pois esses são plugins compatíveis com o plugin da Melhor Envio.
+
 ## Contribuindo com o Projeto
 Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
 <a href="https://github.com/melhorenvio/wp-melhorenvio-v2" target="_blank">Repositório público do Plugin do Melhor Envio</a>
@@ -64,6 +68,10 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.15.1 =
+* Adiciona compatibilidade com os plugins "WPC Composite Products e WPC Product Bundles".
+* Ajuste na tabela de pedidos.
+
 = 2.15.0 =
 * Adiciona a transportadora JeT.
 * Adiciona o serviço JeT Standard.

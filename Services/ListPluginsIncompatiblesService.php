@@ -46,8 +46,6 @@ class ListPluginsIncompatiblesService {
 	 * @return array
 	 */
 	public function getListPluginsIncompatibles() {
-		return array(
-			'wpc-composite-products/wpc-composite-products.php',
-		);
+		return array();
 	}
 }

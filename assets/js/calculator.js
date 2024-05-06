@@ -5,19 +5,6 @@ function toggleCalculator() {
         return;
     }
 
-    let dimensions = getDimension();
-    if (!dimensions.width
-        || !dimensions.heigth
-        || !dimensions.length
-        || !dimensions.weight
-        || dimensions.width == 0
-        || dimensions.heigth == 0
-        || dimensions.length == 0
-        || dimensions.weight == 0
-    ) {
-        document.querySelector('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').style.display = 'none';
-        return;
-    }
     document.querySelector('#woocommerce-correios-calculo-de-frete-na-pagina-do-produto').style.display = 'block';
 }
 
@@ -32,7 +19,7 @@ function getDimension() {
 }
 
 /**
- *  mask to replace non number 
+ *  mask to replace non number
  * @param {string} content - number to format
  * @returns {string}
  * @example
@@ -44,7 +31,7 @@ function numberMask(content) {
 }
 
 /**
- *  mask to format postal code 
+ *  mask to format postal code
  * @param {string} content - postal code number
  * @returns {string}
  * @example
@@ -57,22 +44,22 @@ function numberMask(content) {
 
     if(isNaN(content)) {
         input.value = numberMask(content);
-        
+
         return;
     }
-    
+
     //regex to add " - " in position 5 of cep: EX:123456-78
-    formatedValue = value.replace(/(\d{5})(\d{1,2})$/, "$1-$2"); 
+    formatedValue = value.replace(/(\d{5})(\d{1,2})$/, "$1-$2");
     input.value = formatedValue;
 }
 
 /**
  *  this function is used to apply the postal code mask in the input to calculate the quotation
  */
-function usePostalCodeMask(evt='') { 
+function usePostalCodeMask(evt='') {
     const inputDefault = evt ? evt.target : evt;
     const inputShortcode = document.querySelector('.iptCepShortcode');
-    
+
 
     if(inputDefault) {
         const content = inputDefault.value;

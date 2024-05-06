@@ -2,49 +2,35 @@
 
 namespace MelhorEnvio\Services;
 
+use Exception;
+use MelhorEnvio\Factory\ProductServiceFactory;
 use MelhorEnvio\Helpers\DimensionsHelper;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class CartWooCommerceService {
 
 	/**
 	 * Function to get alls products on cart woocommerce
 	 *
-	 * @return Array
+	 * @return array
+	 * @throws Exception
 	 */
-	public function getProducts() {
+	public function getProducts(): array
+	{
 		global $woocommerce;
 
 		$items = $woocommerce->cart->get_cart();
 
-		$products = array();
+		$products = array_map(function($item) use ($items) {
+			$productId = ( $item['variation_id'] != 0 )
+				? $item['variation_id']
+				: $item['product_id'];
 
-		foreach ( $items as $itemProduct ) {
-			$productId = ( $itemProduct['variation_id'] != 0 )
-				? $itemProduct['variation_id']
-				: $itemProduct['product_id'];
+			$productService = ProductServiceFactory::fromId($productId);
 
-			$productInfo = wc_get_product( $productId );
+			return $productService->getDataByProductCart($item, $items);
+		}, $items);
 
-			if ( empty( $productInfo ) ) {
-				continue;
-			}
-			$data = $productInfo->get_data();
-
-			$products[] = array(
-				'id'              => $itemProduct['product_id'],
-				'variation_id'    => $itemProduct['variation_id'],
-				'name'            => $data['name'],
-				'price'           => $productInfo->get_price(),
-				'insurance_value' => $productInfo->get_price(),
-				'height'          => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_height() ),
-				'width'           => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_width() ),
-				'length'          => DimensionsHelper::convertUnitDimensionToCentimeter( $productInfo->get_length() ),
-				'weight'          => DimensionsHelper::convertWeightUnit( $productInfo->get_weight() ),
-				'quantity'        => ( isset( $itemProduct['quantity'] ) )
-					? intval( $itemProduct['quantity'] )
-					: 1,
-			);
-		}
-		return $products;
+		return ProductsService::removeComponentProducts($products);
 	}
 }

@@ -5,8 +5,10 @@ namespace MelhorEnvio\Services;
 use MelhorEnvio\Models\Method;
 use MelhorEnvio\Models\Option;
 use MelhorEnvio\Models\Payload;
+use MelhorEnvio\Models\Product;
 use MelhorEnvio\Models\ShippingService;
 use MelhorEnvio\Helpers\PostalCodeHelper;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class PayloadService {
 
@@ -226,10 +228,11 @@ class PayloadService {
 	/**
 	 * validates if the payload product is valid.
 	 *
-	 * @param object $product
+	 * @param Product $product
 	 * @return bool
 	 */
-	private function isProductValid( $product ) {
+	private function isProductValid( $product ): bool
+	{
 		if ( empty( $product->name ) ) {
 			return false;
 		}

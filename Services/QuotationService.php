@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Helpers\ProductVirtualHelper;
 use MelhorEnvio\Models\Option;
 use MelhorEnvio\Models\Payload;
 use MelhorEnvio\Helpers\TimeHelper;
@@ -76,15 +77,11 @@ class QuotationService {
 	 * Function to calculate a quotation by post_id.
 	 *
 	 * @param int $postId
+	 * @param array $products
 	 * @return array $quotation
 	 */
-	public function calculateQuotationByPostId( $postId ) {
-		$products = ( new OrdersProductsService() )->getProductsOrder( $postId );
-		$buyer    = ( new BuyerService() )->getDataBuyerByOrderId( $postId );
-		$payload  = ( new PayloadService() )->createPayloadByProducts(
-			$buyer->postal_code,
-			$products
-		);
+	public function calculateQuotationByPostId($postId, $products = array()) {
+		$payload  = $this->getPayload($postId, $products);
 
 		if ( ! ( new PayloadService() )->validatePayload( $payload ) ) {
 			return false;
@@ -100,6 +97,21 @@ class QuotationService {
 		$quotations = $this->removeItemNotHasPrice( $quotations );
 
 		return ( new OrderQuotationService() )->saveQuotation( $postId, $quotations );
+	}
+
+	public function getPayload($postId, $products = array())
+	{
+		if (empty($products)) {
+			$orderProductService = new OrdersProductsService();
+			$products = $orderProductService->getProductsOrder($postId);
+			$products = ProductVirtualHelper::removeVirtuals($products);
+		}
+		$buyer = (new BuyerService())->getDataBuyerByOrderId($postId);
+
+		return (new PayloadService())->createPayloadByProducts(
+			$buyer->postal_code,
+			$products
+		);
 	}
 
 	/**
@@ -148,7 +160,7 @@ class QuotationService {
 
 		$options = ( new Option() )->getOptions();
 
-		$cachedQuotations = $this->getSessionCachedQuotations( $hash );
+		$cachedQuotations = $this->getSessionCachedQuotations( $hash."1" );
 
 		if ( empty( $cachedQuotations ) ) {
 			$quotations = $this->calculate( $payload, $options->insurance_value );

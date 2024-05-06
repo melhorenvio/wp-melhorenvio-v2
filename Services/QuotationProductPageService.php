@@ -4,7 +4,7 @@ namespace MelhorEnvio\Services;
 
 use MelhorEnvio\Helpers\MoneyHelper;
 use MelhorEnvio\Helpers\PostalCodeHelper;
-use MelhorEnvio\Services\WooCommerceBundleProductsService;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class QuotationProductPageService {
 
@@ -66,7 +66,7 @@ class QuotationProductPageService {
 	/**
 	 * A standard array package used in the WooCommerce shopping cart.
 	 *
-	 * @var aray
+	 * @var array
 	 */
 	protected $package;
 
@@ -76,6 +76,8 @@ class QuotationProductPageService {
 	 * @var array
 	 */
 	protected $shippingMethods;
+
+	protected $rates = array();
 
 	/**
 	 * Service Builder
@@ -101,10 +103,10 @@ class QuotationProductPageService {
 	 * @return array
 	 */
 	public function getRatesShipping() {
-		if ( get_class( $this->product ) == WooCommerceBundleProductsService::OBJECT_WOOCOMMERCE_BUNDLE ) {
+		if ( ProductsService::hasProductComposition($this->product) ) {
 			return array(
 				'success' => false,
-				'error'   => 'Cotação disponível apenas nos próximos passos',
+				'error'   => 'Cotação disponível apenas no carrinho!',
 			);
 		}
 

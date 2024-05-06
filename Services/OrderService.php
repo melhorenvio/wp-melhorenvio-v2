@@ -372,10 +372,11 @@ class OrderService {
 		$response = array();
 
 		foreach ( $posts as $post ) {
-			$data = ( new OrderQuotationService() )->getData( $post->ID );
+			$postId = $post->get_id();
+			$data = ( new OrderQuotationService() )->getData( $postId );
 
 			if ( empty( $data ) ) {
-				$response[ $post->ID ] = array(
+				$response[ $postId ] = array(
 					'order_id'   => null,
 					'status'     => null,
 					'protocol'   => null,
@@ -388,7 +389,7 @@ class OrderService {
 			$dataOrder = $this->getInfoOrder( $data['order_id'] );
 
 			if ( ! isset( $dataOrder->id ) ) {
-				$response[ $post->ID ] = array(
+				$response[ $postId ] = array(
 					'order_id'   => null,
 					'status'     => null,
 					'protocol'   => null,
@@ -398,7 +399,7 @@ class OrderService {
 				continue;
 			}
 
-			$response[ $post->ID ] = array(
+			$response[ $postId ] = array(
 				'order_id'   => $data['order_id'],
 				'status'     => $dataOrder->status,
 				'protocol'   => $dataOrder->protocol,

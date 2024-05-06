@@ -4,15 +4,13 @@ namespace MelhorEnvio\Services;
 
 use MelhorEnvio\Models\Order;
 use MelhorEnvio\Models\Option;
-use MelhorEnvio\Models\Payload;
 use MelhorEnvio\Models\Session;
 use MelhorEnvio\Models\ShippingCompany;
 use MelhorEnvio\Models\ShippingService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\PostalCodeHelper;
-use MelhorEnvio\Helpers\CpfHelper;
 use MelhorEnvio\Helpers\ProductVirtualHelper;
-use MelhorEnvio\Services\AgenciesSelectedService;
+use MelhorEnvio\Services\Products\ProductsService;
 
 class CartService {
 
@@ -90,7 +88,7 @@ class CartService {
 
 		$dataFrom = ( new SellerService() )->getData();
 
-		$quotation = ( new QuotationService() )->calculateQuotationByPostId( $orderId );
+		$quotation = ( new QuotationService() )->calculateQuotationByPostId( $orderId , $products);
 
 		$orderInvoiceService = new OrderInvoicesService();
 
