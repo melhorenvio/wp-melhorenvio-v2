@@ -160,7 +160,7 @@ class QuotationService {
 
 		$options = ( new Option() )->getOptions();
 
-		$cachedQuotations = $this->getSessionCachedQuotations( $hash."1" );
+		$cachedQuotations = $this->getSessionCachedQuotations( $hash );
 
 		if ( empty( $cachedQuotations ) ) {
 			$quotations = $this->calculate( $payload, $options->insurance_value );
