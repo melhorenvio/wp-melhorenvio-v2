@@ -9,6 +9,7 @@ Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: melhor-envio
+Requires Plugins: woocommerce, woocommerce-extra-checkout-fields-for-brazil
 Tested up to: 6.5
 Requires PHP: 7.2
 WC requires at least: 4.0
