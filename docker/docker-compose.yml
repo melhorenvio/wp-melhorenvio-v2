@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: wp-plugin-db
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "${DB_PORT:-3308}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 3
+
+  wordpress:
+    build: .
+    container_name: wp-plugin-app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${WP_PORT:-8000}:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      HOST_PORT: ${WP_PORT:-8000}
+    volumes:
+      - ../:/var/www/html/wp-content/plugins/melhor-envio-cotacao
+
+volumes:
+  db_data:
