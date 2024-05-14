@@ -13,7 +13,7 @@ cd /var/www/html
 # Set up Wordpress
 WORDPRESS='wp --allow-root'
 
-$WORDPRESS core install --url=127.0.0.1:$HOST_PORT --title="Loja de teste" --admin_user=melhorenvio --admin_password=melhorenvio --admin_email=squad-integrations@melhorenvio.com --skip-email
+$WORDPRESS core install --url=127.0.0.1:$HOST_PORT --title="Loja de teste" --admin_user=melhorenvio --admin_password=melhorenvio --admin_email=example@email.com --skip-email
 
 # Fix permissions to allow instalation of plugins from the web page
 mkdir /var/www/html/wp-content/upgrade
