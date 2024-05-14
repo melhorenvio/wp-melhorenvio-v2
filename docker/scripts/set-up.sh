@@ -15,6 +15,11 @@ WORDPRESS='wp --allow-root'
 
 $WORDPRESS core install --url=127.0.0.1:$HOST_PORT --title="Loja de teste" --admin_user=melhorenvio --admin_password=melhorenvio --admin_email=squad-integrations@melhorenvio.com --skip-email
 
+# Fix permissions to allow instalation of plugins from the web page
+mkdir /var/www/html/wp-content/upgrade
+chown -R www-data:www-data /var/www/html/wp-content/upgrade
+chown -R www-data:www-data /var/www/html/wp-content/uploads
+
 # Delete example plugins
 $WORDPRESS plugin delete --all --exclude=melhor-envio-cotacao
 

@@ -34,6 +34,7 @@ services:
       HOST_PORT: ${WP_PORT:-8000}
     volumes:
       - ../:/var/www/html/wp-content/plugins/melhor-envio-cotacao
+      - ./custom-php-settings.ini:/usr/local/etc/php/conf.d/custom-php-settings.ini
 
 volumes:
   db_data:
