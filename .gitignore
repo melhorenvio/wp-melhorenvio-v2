@@ -25,5 +25,8 @@ vendor/
 node_modules/
 package-lock.json
 yarn.lock
+composer.lock
 
 .idea/
+
+docker/.env
