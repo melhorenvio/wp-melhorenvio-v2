@@ -17,5 +17,5 @@ attach:
 wc-setup:
 	@docker exec $(APP_CONTAINER_NAME) wp-content/plugins/melhor-envio-cotacao/docker/scripts/wc-setup.sh
 
-wc-create-example-products:
-	@docker exec $(APP_CONTAINER_NAME) wp-content/plugins/melhor-envio-cotacao/docker/scripts/wc-create-example-products.sh
+wc-create-fake-products:
+	@docker exec $(APP_CONTAINER_NAME) wp-content/plugins/melhor-envio-cotacao/docker/scripts/wc-create-fake-products.sh
