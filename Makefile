@@ -13,3 +13,9 @@ down:
 
 attach:
 	@docker exec -it $(APP_CONTAINER_NAME) bash
+
+wc-setup:
+	@docker exec $(APP_CONTAINER_NAME) wp-content/plugins/melhor-envio-cotacao/docker/scripts/wc-set-up.sh
+
+wc-create-example-products:
+	@docker exec $(APP_CONTAINER_NAME) wp-content/plugins/melhor-envio-cotacao/docker/scripts/wc-create-example-products.sh
