@@ -8,7 +8,6 @@ use MelhorEnvio\Models\Payload;
 use MelhorEnvio\Helpers\TimeHelper;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Services\PayloadService;
-use MelhorEnvio\Services\WooCommerceBundleProductsService;
 
 /**
  * Class responsible for the quotation service with the Melhor Envio api.
