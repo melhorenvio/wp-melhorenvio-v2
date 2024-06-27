@@ -145,14 +145,14 @@
 
         <ul class="body">
           <li
-            v-for="(item, index) in orders"
+            v-for="(item, index) in ordersWithValidationProducts"
             :key="index"
             class="lineGray"
             style="padding: 1%"
           >
             <ul class="body-list">
               <li>
-                <Id :item="item"></Id>
+                <Id :id="item.id" :link="item.link"></Id>
               </li>
               <li>
                 <Destino :to="item.to"></Destino>
@@ -187,7 +187,12 @@
                 <Documentos :item="item"></Documentos>
               </li>
               <li class="-center">
-                <Acoes :item="item"></Acoes>
+                <template v-if="item.existInvalidProduct">
+                  <p style="color: red; font-size: larger">Esse pedido possui produtos inválidos!</p>
+                </template>
+                <template v-else>
+                  <Acoes :item="item"></Acoes>
+                </template>
               </li>
             </ul>
             <template v-if="toggleInfo == item.id">
@@ -350,6 +355,17 @@ export default {
       statusWooCommerce: "statusWooCommerce",
     }),
     ...mapGetters("balance", ["getBalance"]),
+    ordersWithValidationProducts() {
+      return this.orders.map((order) => {
+        const products = Object.values(order.products);
+        const existInvalidProduct = products.some(product => product["type"] === 'invalid');
+        return {
+          ...order,
+          existInvalidProduct,
+          products
+        };
+      });
+    }
   },
   methods: {
     ...mapActions("orders", [
