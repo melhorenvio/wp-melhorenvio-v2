@@ -26,7 +26,7 @@ class InvalidProduct extends ProductsService
 		$data->id = $product->get_product_id();
 		$data->name = $product->get_name();
 		$data->quantity = $quantity;
-		$data->type = "invalid";
+		$data->type = self::INVALID_TYPE;
 		$data->is_virtual = false;
 
 		$dimensionDefault = ( new ConfigurationsService() )->getDimensionDefault();
