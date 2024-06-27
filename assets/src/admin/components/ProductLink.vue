@@ -1,33 +1,32 @@
 <template>
-  <div v-safe-html="customLink" />
+  <span style="padding: 0; display: contents" v-if="!id">{{name}}</span>
+  <a v-else target="_blank" rel="noreferrer noopener" :href="$sanitizeUrl(link)">{{name}}</a>
 </template>
 <script>
 
 export default {
   computed: {
-    customLink() {
+    link() {
+      if(this.definedLink) return this.definedLink;
 
-      const {id, definedLink, name} = this;
+      if (!this.id) return "";
 
-      if(definedLink) {
-        return `<a target="_blank" rel="noreferrer noopener" href="${definedLink}">${name}</a>`;  
-      }
-
-      const link = `/wp-admin/post.php?post=${id}&action=edit`;
-      return `<a target="_blank" rel="noreferrer noopener" href="${link}">${this.name}</a>`;
+      return `/wp-admin/post.php?post=${this.id}&action=edit`;
     },
   },
   props: {
-    id: {
-      type: Number,
-    },
     definedLink: {
       type: String,
-      default: null
+      default: () => null,
+    },
+    id: {
+      type: Number,
+      required: false,
     },
     name: {
       type: String,
       default: () => "",
+      required: true,
     },
   },
 };

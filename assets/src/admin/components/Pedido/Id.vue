@@ -1,21 +1,18 @@
 <template>
-  <span>
-    <div v-safe-html="linkIdSafe"></div>
-  </span>
+  <a rel="noreferrer noopener" target="_blank" :href="$sanitizeUrl(link)" >{{id}}</a>
 </template>
-<script>
 
+<script>
 export default {
   props: {
-    item: {
-      type: Object,
-      default: () => ({}),
+    link: {
+      type: String,
+      required: true
     },
-  },
-  computed: {
-    linkIdSafe() {
-      return `<a rel="noreferrer noopener" target="_blank" href="${this.item.link}" >${this.item.id}</a>`;
+    id: {
+      type: Number,
+      required: true
     },
-  },
+  }
 };
 </script>
