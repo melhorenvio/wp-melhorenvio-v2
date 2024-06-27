@@ -11,6 +11,10 @@ class ProductServiceFactory
 	 */
 	public static function fromProduct($product)
 	{
+		if (!$product) {
+			return new \MelhorEnvio\Services\Products\InvalidProduct();
+		}
+
 		switch ($product->get_type()) {
 			case 'woosb':
 				return new \MelhorEnvio\Services\Products\BundleService();
