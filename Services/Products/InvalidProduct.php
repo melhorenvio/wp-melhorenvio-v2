@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Services\Products;
 
+use MelhorEnvio\Helpers\DimensionsHelper;
 use MelhorEnvio\Models\Product;
 use MelhorEnvio\Services\ConfigurationsService;
 
@@ -30,10 +31,10 @@ class InvalidProduct extends ProductsService
 
 		$dimensionDefault = ( new ConfigurationsService() )->getDimensionDefault();
 
-		$data->width = $dimensionDefault['width'];
-		$data->height = $dimensionDefault['height'];
-		$data->length = $dimensionDefault['length'];
-		$data->weight = $dimensionDefault['weight'];
+		$data->width = DimensionsHelper::convertUnitDimensionToCentimeter( $dimensionDefault['width'] );
+		$data->height = DimensionsHelper::convertUnitDimensionToCentimeter( $dimensionDefault['height'] );
+		$data->length = DimensionsHelper::convertUnitDimensionToCentimeter( $dimensionDefault['length'] );
+		$data->weight = DimensionsHelper::convertWeightUnit( $dimensionDefault['weight'] );
 
 		$data->setValues($price);
 
