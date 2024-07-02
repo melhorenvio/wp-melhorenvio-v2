@@ -106,6 +106,11 @@ class ProductsService {
 				continue;
 			}
 
+			if ( ! empty( $item->type ) && $item->type == InvalidProduct::INVALID_TYPE ) {
+				$products[] = $item;
+				continue;
+			}
+
 			if ( ! empty( $item->name ) && ! empty( $item->id ) ) {
 				$products[$key] = $item;
 				continue;
