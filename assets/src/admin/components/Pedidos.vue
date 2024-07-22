@@ -358,12 +358,9 @@ export default {
     ordersWithValidationProducts() {
       return this.orders.map((order) => {
         const products = Object.values(order.products);
-        const existInvalidProduct = products.some(product => product["type"] === 'invalid');
-        return {
-          ...order,
-          existInvalidProduct,
-          products
-        };
+        order.existInvalidProduct = products.some(product => product.type === 'invalid');
+
+        return order;
       });
     }
   },
