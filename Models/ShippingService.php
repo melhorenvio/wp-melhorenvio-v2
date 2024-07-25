@@ -4,7 +4,7 @@ namespace MelhorEnvio\Models;
 
 class ShippingService {
 
-	const SERVICES_CORREIOS = array( 1, 2, 17, 28, 29, 30 );
+	const SERVICES_CORREIOS = array( 1, 2, 17 );
 
 	const SERVICES_JADLOG = array( 3, 4, 27 );
 
@@ -14,11 +14,7 @@ class ShippingService {
 
 	const CORREIOS_PAC = 1;
 
-	const CORREIOS_PAC_CENTRALIZED = 28;
-
 	const CORREIOS_SEDEX = 2;
-
-	const CORREIOS_SEDEX_CENTRALIZED = 29;
 
 	const JADLOG_PACKAGE = 3;
 
@@ -35,8 +31,6 @@ class ShippingService {
 	const AZUL_ECOMMERCE = 16;
 
 	const CORREIOS_MINI = 17;
-
-	const CORREIOS_MINI_CENTRALIZED = 30;
 
 	const LOGGI_EXPRESS = 31;
 
@@ -86,12 +80,8 @@ class ShippingService {
 		switch ( $methodId ) {
 			case 'melhorenvio_correios_pac':
 				return self::CORREIOS_PAC;
-			case 'melhorenvio_correios_pac_centralized':
-				return self::CORREIOS_PAC_CENTRALIZED;
 			case 'melhorenvio_correios_sedex':
 				return self::CORREIOS_SEDEX;
-			case 'melhorenvio_correios_sedex_centralized':
-				return self::CORREIOS_SEDEX_CENTRALIZED;
 			case 'melhorenvio_jadlog_package':
 				return self::JADLOG_PACKAGE;
 			case 'melhorenvio_jadlog_package_centralized':
@@ -112,8 +102,6 @@ class ShippingService {
 				return self::AZUL_ECOMMERCE;
 			case 'melhorenvio_correios_mini':
 				return self::CORREIOS_MINI;
-			case 'melhorenvio_correios_mini_centralized':
-				return self::CORREIOS_MINI_CENTRALIZED;
 			case 'melhorenvio_latam_juntos':
 				return self::LATAM_JUNTOS;
 			case 'melhorenvio_buslog_rodoviario':
