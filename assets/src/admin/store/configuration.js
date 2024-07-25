@@ -25,14 +25,12 @@ const configuration = {
             weight: 1
         },
         agencies: [],
-        agenciesCorreiosCentralized: [],
         agenciesJadlogCentralized: [],
         agenciesLoggi: [],
         agenciesAzul: [],
         agenciesLatam: [],
         agenciesJeT: [],
         allAgencies: [],
-        allAgenciesCorreiosCentralized: [],
         allAgenciesJadlogCentralized: [],
         allAgenciesLoggi: [],
         allAgenciesAzul: [],
@@ -49,7 +47,6 @@ const configuration = {
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
         agencySelected: null,
-        agencyCorreiosCentralizedSelected: null,
         agencyJadlogCentralizedSelected: null,
         agencyLoggiSelected: null,
         agencyAzulSelected: null,
@@ -85,9 +82,6 @@ const configuration = {
         setAgencyAzul: (state, data) => {
             state.agenciesAzul = data
         },
-        setAgencyCorreiosCentralized: (state, data) => {
-            state.agenciesCorreiosCentralized = data
-        },
         setAgencyJadlogCentralized: (state, data) => {
             state.agenciesJadlogCentralized = data
         },
@@ -106,9 +100,6 @@ const configuration = {
         setAgencyAzulSelected: (state, data) => {
             state.agencyAzulSelected = data
         },
-        setAgencyCorreiosCentralizedSelected: (state, data) => {
-            state.agencyCorreiosCentralizedSelected = data
-        },
         setAgencyJadlogCentralizedSelected: (state, data) => {
             state.agencyJadlogCentralizedSelected = data
         },
@@ -126,9 +117,6 @@ const configuration = {
         },
         setAllAgencyAzul: (state, data) => {
             state.allAgenciesAzul = data
-        },
-        setAllAgencyCorreiosCentralized: (state, data) => {
-            state.allAgenciesCorreiosCentralized = data
         },
         setAllAgencyJadlogCentralized: (state, data) => {
             state.allAgenciesJadlogCentralized = data
@@ -173,7 +161,6 @@ const configuration = {
         getDimension: state => state.dimension,
         getAgencies: state => state.agencies,
         getAgenciesAzul: state => state.agenciesAzul,
-        getAgenciesCorreiosCentralized: state => state.agenciesCorreiosCentralized,
         getAgenciesJadlogCentralized: state => state.agenciesJadlogCentralized,
         getAgenciesLoggi: state => state.agenciesLoggi,
         getAgenciesLatam: state => state.agenciesLatam,
@@ -181,7 +168,6 @@ const configuration = {
         getAllAgencies: state => state.allAgencies,
         getAgencySelected: state => state.agencySelected,
         getAgencyAzulSelected: state => state.agencyAzulSelected,
-        getAgencyCorreiosCentralizedSelected: state => state.agencyCorreiosCentralizedSelected,
         getAgencyJadlogCentralizedSelected: state => state.agencyJadlogCentralizedSelected,
         getAgencyLoggiSelected: state => state.agencyLoggiSelected,
         getAgencyLatamSelected: state => state.agencyLatamSelected,
@@ -231,11 +217,6 @@ const configuration = {
                             commit('setAllAgencyAzul', response.data.allAgenciesAzul);
                         }
 
-                        if (response.data.agenciesCorreiosCentralized && !isNull(response.data.agenciesCorreiosCentralized)) {
-                            commit('setAgencyCorreiosCentralized', response.data.agenciesCorreiosCentralized);
-                            commit('setAllAgencyCorreiosCentralized', response.data.allAgenciesCorreiosCentralized);
-                        }
-
                         if (response.data.agenciesJadlogCentralized && !isNull(response.data.agenciesJadlogCentralized)) {
                             commit('setAgencyJadlogCentralized', response.data.agenciesJadlogCentralized);
                             commit('setAllAgencyJadlogCentralized', response.data.allAgenciesJadlogCentralized);
@@ -261,7 +242,6 @@ const configuration = {
                         }
                         commit('setAgencySelected', response.data.agencySelected)
                         commit('setAgencyAzulSelected', response.data.agencyAzulSelected)
-                        commit('setAgencyCorreiosCentralizedSelected', response.data.agencyCorreiosCentralizedSelected)
                         commit('setAgencyJadlogCentralizedSelected', response.data.agencyJadlogCentralizedSelected)
                         commit('setAgencyLoggiSelected', response.data.agencyLoggiSelected)
                         commit('setAgencyLatamSelected', response.data.agencyLatamSelected)
@@ -296,15 +276,6 @@ const configuration = {
                 commit('toggleLoader', false);
                 if (response && response.status === 200) {
                     commit('setAgencyAzul', response.data.agencies);
-                }
-            })
-        },
-        getAgenciesCorreiosCentralized: ({ commit }, data) => {
-            commit('toggleLoader', true);
-            Axios.post(`${ajaxurl}?action=get_agencies&city=${data.city}&state=${data.state}&serviceId=28&company=1`).then(function (response) {
-                commit('toggleLoader', false);
-                if (response && response.status === 200) {
-                    commit('setAgencyCorreiosCentralized', response.data.agencies);
                 }
             })
         },

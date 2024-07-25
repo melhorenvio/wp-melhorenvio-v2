@@ -29,13 +29,6 @@ class AgenciesSelectedService {
 	/**
 	 * @return array
 	 */
-	public function getCorreiosCentralized() {
-		return $this->agencyModel->getCorreiosCentralized();
-	}
-
-	/**
-	 * @return array
-	 */
 	public function getLoggi() {
 		return $this->agencyModel->getLoggi();
 	}
@@ -75,20 +68,8 @@ class AgenciesSelectedService {
 	 * @param array $data
 	 * @return bool
 	 */
-	public function setCorreiosCentralized( $data ) {
-		if ( empty( $data ) ) {
-			return true;
-		}
-
-		return $this->agencyModel->setCorreiosCentralized( $data );
-	}
-
-	/**
-	 * @param array $data
-	 * @return bool
-	 */
 	public function setLoggi( $data ) {
-		
+
 		if ( empty( $data ) ) {
 			return true;
 		}

@@ -299,39 +299,6 @@
     </div>
     <hr />
 
-    <div class="wpme_config" v-show="agenciesCorreiosCentralized.length > 0">
-      <h2>Correios Centralizado</h2>
-      <p>
-        Escolha a agência correios centralizado de sua preferência para realizar o envio dos
-        seus produtos.
-      </p>
-      <div class="wpme_flex">
-        <ul class="wpme_address">
-          <li>
-            <template>
-              <select
-                name="agency_correios_centralized"
-                id="agency_correios_centralized"
-                v-model="agency_correios_centralized"
-                data-cy="input-agency-correios-centralized"
-              >
-                <option value>Selecione...</option>
-                <option
-                  v-for="option in agenciesCorreiosCentralized"
-                  :value="option.id"
-                  :key="option.id"
-                  :selected="option.selected"
-                >
-                  <strong>{{ option.name }}</strong>
-                </option>
-              </select>
-            </template>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <hr />
-
     <div class="wpme_config" v-show="agenciesJadlogCentralized.length > 0">
       <h2>Jadlog Centralizado</h2>
       <p>
@@ -755,7 +722,6 @@ export default {
       canUpdate: true,
       origin: null,
       agency: null,
-      agency_correios_centralized: null,
       agency_jadlog_centralized: null,
       agency_loggi: null,
       agency_azul: null,
@@ -766,7 +732,6 @@ export default {
       show_calculator: false,
       show_all_agencies_jadlog: false,
       show_all_agencies_azul: false,
-      show_all_agencies_correios_centralized: false,
       show_all_agencies_jadlog_centralized: false,
       show_all_agencies_loggi: false,
       options_calculator: {
@@ -799,7 +764,6 @@ export default {
       label: "getLabel",
       dimension: "getDimension",
       agencySelected_: "getAgencySelected",
-      agencyCorreiosCentralizedSelected_: "getAgencyCorreiosCentralizedSelected",
       agencyJadlogCentralizedSelected_: "getAgencyJadlogCentralizedSelected",
       agencyLoggiSelected_: "getAgencyLoggiSelected",
       agencyAzulSelected_: "getAgencyAzulSelected",

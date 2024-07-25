@@ -5,11 +5,8 @@
         <template
           v-if="
             item.quotation.choose_method == services.CORREIOS_PAC ||
-            item.quotation.choose_method == services.CORREIOS_PAC_CENTRALIZED ||
             item.quotation.choose_method == services.CORREIOS_SEDEX ||
-            item.quotation.choose_method == services.CORREIOS_SEDEX_CENTRALIZED ||
             item.quotation.choose_method == services.CORREIOS_MINI ||
-            item.quotation.choose_method == services.CORREIOS_MINI_CENTRALIZED ||
             item.quotation.choose_method == services.JADLOG_PACKAGE ||
             item.quotation.choose_method == services.JADLOG_PACKAGE_CENTRALIZED ||
             item.quotation.choose_method == services.JADLOG_COM ||
@@ -31,11 +28,8 @@
         <template
           v-if="
             ((item.quotation.choose_method == services.CORREIOS_PAC ||
-              item.quotation.choose_method == services.CORREIOS_PAC_CENTRALIZED ||
               item.quotation.choose_method == services.CORREIOS_SEDEX ||
-              item.quotation.choose_method == services.CORREIOS_SEDEX_CENTRALIZED ||
               item.quotation.choose_method == services.CORREIOS_MINI ||
-              item.quotation.choose_method == services.CORREIOS_MINI_CENTRALIZED ||
               item.quotation.choose_method == services.JADLOG_PACKAGE ||
               item.quotation.choose_method == services.JADLOG_PACKAGE_CENTRALIZED ||
               item.quotation.choose_method == services.JADLOG_COM ||

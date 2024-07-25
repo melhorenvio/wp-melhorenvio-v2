@@ -143,14 +143,6 @@ class CartService {
 
 		$agenciesSelectedService = new AgenciesSelectedService();
 
-		if (in_array($shippingMethodId, [
-			ShippingService::CORREIOS_SEDEX_CENTRALIZED,
-			ShippingService::CORREIOS_PAC_CENTRALIZED,
-			ShippingService::CORREIOS_MINI_CENTRALIZED])
-		) {
-			return $agenciesSelectedService->getCorreiosCentralized();
-		}
-
 		if ((int) $shippingMethodId === ShippingService::JADLOG_PACKAGE_CENTRALIZED) {
 			return $agenciesSelectedService->getJadlogCentralized();
 		}
