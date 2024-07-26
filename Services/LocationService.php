@@ -10,7 +10,7 @@ class LocationService {
 	/**
 	 * Melhor Envio location api URL
 	 */
-	const URL = 'http://location.melhorenvio.com/';
+	const URL = 'https://location.melhorenvio.com/';
 
 	/**
 	 * Via CEP location api URL
@@ -40,7 +40,15 @@ class LocationService {
 			return null;
 		}
 
-		return $address;
+		return (object)[
+			'cep' => $address->cep,
+			'logradouro' => $address->logradouro,
+			'tipo' => $address->tipo,
+			'bairro' => $address->bairro,
+			'cidade' => $address->cidade ?? $address->localidade,
+			'uf' => $address->uf,
+			'ibge' => $address->ibge,
+		];
 	}
 
 	/**
