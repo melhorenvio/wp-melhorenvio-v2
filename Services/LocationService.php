@@ -40,7 +40,15 @@ class LocationService {
 			return null;
 		}
 
-		return $address;
+		return (object)[
+			'cep' => $address->cep,
+			'logradouro' => $address->logradouro,
+			'tipo' => $address->tipo,
+			'bairro' => $address->bairro,
+			'cidade' => $address->cidade ?? $address->localidade,
+			'uf' => $address->uf,
+			'ibge' => $address->ibge,
+		];
 	}
 
 	/**
