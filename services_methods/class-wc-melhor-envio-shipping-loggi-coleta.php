@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 32;
 
-		public $company = 'Loggi';
+		public $company = array(
+			'name' 		=> 'Loggi',
+			'document'	=> '18.728.145/0001-40'
+		);
 
 		/**
 		 * Initialize Loggi.

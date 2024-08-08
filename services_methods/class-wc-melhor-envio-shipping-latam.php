@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 10;
 
-		public $company = 'LATAM Cargo';
+		public $company = array(
+			'name' 		=> 'LATAM Cargo',
+			'document' 	=> '02.012.862/0001-60'
+		);
 
 		/**
 		 * Initialize Latam.

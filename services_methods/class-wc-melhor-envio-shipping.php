@@ -22,7 +22,7 @@ if ( class_exists( 'WC_Shipping_Method' ) ) {
 		/**
 		 * Company name.
 		 *
-		 * @var string
+		 * @var string|array
 		 */
 		public $company = '';
 		/**
