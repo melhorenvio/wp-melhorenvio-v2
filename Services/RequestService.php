@@ -101,8 +101,6 @@ class RequestService {
 
 		if ( empty( $response ) ) {
 			( new ClearDataStored() )->clear();
-            $this->logErrors($route, $typeRequest, $body, $response, $responseCode);
-
 			return (object) array(
 				'success' => false,
 				'errors'  => array( 'Ocorreu um erro ao se conectar com a API do Melhor Envio' ),
