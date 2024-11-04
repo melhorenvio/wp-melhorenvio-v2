@@ -2,11 +2,9 @@
 
 namespace MelhorEnvio\Services;
 
-use MelhorEnvio\Services\ManageRequestService;
-use MelhorEnvio\Services\ClearDataStored;
 use MelhorEnvio\Models\Version;
 use MelhorEnvio\Models\ResponseStatus;
-use MelhorEnvio\Services\SessionNoticeService;
+use WC_Logger;
 
 class RequestService {
 
@@ -76,6 +74,7 @@ class RequestService {
 
 		if ( ! is_array( $responseRemote ) ) {
 			if ( get_class( $responseRemote ) === self::WP_ERROR ) {
+                $this->logErrors($route, $typeRequest, $body, $responseRemote, 000);
 				return (object) array();
 			}
 		}
@@ -109,6 +108,8 @@ class RequestService {
 		}
 
 		if ( ! empty( $response->message ) && $response->message == 'Unauthenticated.' ) {
+            $this->logErrors($route, $typeRequest, $body, $response, $responseCode);
+
 			return (object) array(
 				'success' => false,
 				'errors'  => array( 'Usuário não autenticado' ),
@@ -118,6 +119,8 @@ class RequestService {
 		$errors = $this->treatmentErrors( $response );
 
 		if ( ! empty( $errors ) ) {
+            $this->logErrors($route, $typeRequest, $body, $response, $responseCode);
+
 			return (object) array(
 				'success' => false,
 				'errors'  => $errors,
@@ -126,6 +129,16 @@ class RequestService {
 
 		return $response;
 	}
+
+    private function logErrors($route, $typeRequest, $body, $response, $responseCode)
+    {
+        (new \WC_Logger)->log('error', 'RequestService - CODE '.$responseCode, array(
+            'route' => $route,
+            'typeRequest' => $typeRequest,
+            'body' => $body,
+            'response' => $response,
+        ));
+    }
 
 	/**
 	 * treatment errors to user
