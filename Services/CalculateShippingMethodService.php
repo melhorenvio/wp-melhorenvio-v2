@@ -4,6 +4,7 @@ namespace MelhorEnvio\Services;
 
 use Exception;
 use MelhorEnvio\Helpers\MoneyHelper;
+use MelhorEnvio\Helpers\ProductVirtualHelper;
 use MelhorEnvio\Helpers\TimeHelper;
 use MelhorEnvio\Models\ShippingService;
 use MelhorEnvio\Helpers\PostalCodeHelper;
@@ -47,6 +48,8 @@ class CalculateShippingMethodService {
 		}
 
 		$products = ( new CartWooCommerceService() )->getProducts();
+
+        $products = ProductVirtualHelper::removeVirtuals( $products );
 
 		if ( empty( $products ) ) {
 			$products = $package['contents'];

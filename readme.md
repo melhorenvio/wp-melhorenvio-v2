@@ -70,6 +70,7 @@ Pronto! o plugin do Melhor Envio está funcionando.
 == Changelog ==
 = 2.15.8 =
 * Adiciona log no caso de falha em uma requisição.
+* Corrige cotacao em compras com produtos virtuais.
 
 = 2.15.7 =
 * Corrige problema na busca do CEP.
