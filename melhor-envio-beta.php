@@ -3,14 +3,14 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.15.8
+Version: 2.15.9
 Author: Melhor Envio
 Author URI: melhorenvio.com.br
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: melhor-envio
 Requires Plugins: woocommerce, woocommerce-extra-checkout-fields-for-brazil
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.2
 WC requires at least: 4.0
 WC tested up to: 8.8

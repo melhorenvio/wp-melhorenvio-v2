@@ -197,6 +197,10 @@ class PayloadService {
 			return false;
 		}
 
+        if ($from == '00000000') {
+            return false;
+        }
+
 		if ( empty( $payload->to ) || empty( $payload->to->postal_code ) ) {
 			return false;
 		}
@@ -205,6 +209,10 @@ class PayloadService {
 		if ( strlen( $to ) != PostalCodeHelper::SIZE_POSTAL_CODE ) {
 			return false;
 		}
+
+        if ($to == '00000000') {
+            return false;
+        }
 
 		if ( empty( $payload->options ) ) {
 			return false;
