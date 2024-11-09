@@ -11,8 +11,11 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 1;
 
-		public $company = 'Correios';
-
+		public $company = array(
+			'name' 		=> 'Correios',
+			'document' 	=> '34.028.316/0001-03'
+		);
+		
 		/**
 		 * Initialize Correios Pac.
 		 *
