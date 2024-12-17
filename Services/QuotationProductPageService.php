@@ -186,6 +186,7 @@ class QuotationProductPageService {
 			),
 			'contents'      => $contents,
 			'contents_cost' => $this->product->get_price() * $this->quantity,
+			'product_page_calculation' => true,
 		);
 	}
 
