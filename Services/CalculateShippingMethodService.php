@@ -47,7 +47,9 @@ class CalculateShippingMethodService {
 			return false;
 		}
 
-		$products = ( new CartWooCommerceService() )->getProducts();
+		if(!$this->isProductPageCalculation($package)){
+			$products = ( new CartWooCommerceService() )->getProducts();
+		}
 
         $products = ProductVirtualHelper::removeVirtuals( $products );
 
@@ -297,5 +299,11 @@ class CalculateShippingMethodService {
 		}
 
 		return $optionalInsuredAmount;
+	}
+
+	private function isProductPageCalculation($package)
+	{
+		return isset($package['product_page_calculation']) 
+			&& $package['product_page_calculation'] == true;
 	}
 }
