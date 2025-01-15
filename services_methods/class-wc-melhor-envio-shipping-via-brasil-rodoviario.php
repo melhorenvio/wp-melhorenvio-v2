@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 9;
 
-		public $company = 'Via Brasil';
+		public $company = array(
+			'name' 		=> 'Via Brasil',
+			'document' 	=> '06.361.422/0001-13'
+		);
 
 		/**
 		 * Initialize Via Brasil Rodoviário.
