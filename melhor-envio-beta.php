@@ -3,14 +3,14 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.15.9
+Version: 2.15.10
 Author: Melhor Envio
-Author URI: melhorenvio.com.br
-License: GPL2
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: melhor-envio
+Author URI: https://melhorenvio.com.br
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Text Domain: melhor-envio-cotacao
 Requires Plugins: woocommerce, woocommerce-extra-checkout-fields-for-brazil
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.2
 WC requires at least: 4.0
 WC tested up to: 8.8
@@ -51,7 +51,7 @@ if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
     add_action( 'admin_notices', function () {
         $class = 'notice notice-error';
         $message = 'Erro ao ativar o plugin da Melhor Envio: a pasta <code>vendor</code> não foi localizada no plugin.';
-        printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ));
     } );
     return false;
 }

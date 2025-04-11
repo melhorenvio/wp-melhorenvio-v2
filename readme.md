@@ -1,14 +1,14 @@
 === Melhor Envio ===
-Version: 2.15.9
+Version: 2.15.10
 Tags: frete, fretes, cotação, cotações, correios, envio, jadlog, latam latam cargo, azul, azul cargo express, melhor envio
 Requires at least: 4.7
-Tested up to: 6.6
-Stable tag: 2.15.9
+Tested up to: 6.7
+Stable tag: 2.15.10
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
 
@@ -68,6 +68,9 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+= 2.15.10 =
+* Path com correções importantes
+
 = 2.15.9 =
 * Adiciona validacao quando o cep é somente zeros.
 * Atualiza versão compativel do wordpress.
