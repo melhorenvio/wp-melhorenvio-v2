@@ -35,7 +35,7 @@ class Seller {
 			return update_option( self::OPTION_META_SELLER, $seller, true );
 		}
 
-		return add_option( self::OPTION_META_SELLER, json_encode( $seller ), true );
+		return add_option( self::OPTION_META_SELLER, json_encode( $seller ) );
 	}
 
 	/**

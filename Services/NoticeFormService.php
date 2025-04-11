@@ -5,9 +5,6 @@ namespace MelhorEnvio\Services;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
 
 class NoticeFormService {
-
-
-
 	const SHOW = 'show_form_melhor_envio';
 
 	const HIDE = 'hide_form_melhor_envio';
@@ -56,7 +53,7 @@ class NoticeFormService {
 	 */
 	public function hideForm() {
 		delete_option( self::OPTION_SHOW_FORM );
-		return add_option( self::OPTION_SHOW_FORM, self::HIDE, true );
+		return add_option( self::OPTION_SHOW_FORM, self::HIDE );
 	}
 
 	/**
@@ -66,6 +63,6 @@ class NoticeFormService {
 	 */
 	public function showForm() {
 		delete_option( self::OPTION_SHOW_FORM );
-		return add_option( self::OPTION_SHOW_FORM, self::SHOW, true );
+		return add_option( self::OPTION_SHOW_FORM, self::SHOW );
 	}
 }
