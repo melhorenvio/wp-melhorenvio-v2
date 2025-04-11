@@ -29,8 +29,8 @@ class Admin
 		$slug       = 'melhor-envio';
 
 		$hook = add_menu_page(
-			__('Melhor Envio', 'textdomain'),
-			__('Melhor Envio', 'textdomain'),
+			__('Melhor Envio', 'melhor-envio-cotacao'),
+			__('Melhor Envio', 'melhor-envio-cotacao'),
 			$capability,
 			$slug,
 			array($this, 'plugin_page'),
@@ -38,9 +38,9 @@ class Admin
 		);
 
 		if (current_user_can($capability)) {
-			$submenu[$slug][] = array(__('Meus pedidos', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/pedidos');
-			$submenu[$slug][] = array(__('Configurações', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/configuracoes');
-			$submenu[$slug][] = array(__('Token', 'textdomain'), $capability, 'admin.php?page=' . $slug . '#/token');
+			$submenu[$slug][] = array(__('Meus pedidos', 'melhor-envio-cotacao'), $capability, 'admin.php?page=' . $slug . '#/pedidos');
+			$submenu[$slug][] = array(__('Configurações', 'melhor-envio-cotacao'), $capability, 'admin.php?page=' . $slug . '#/configuracoes');
+			$submenu[$slug][] = array(__('Token', 'melhor-envio-cotacao'), $capability, 'admin.php?page=' . $slug . '#/token');
 		}
 
 		add_action('load-' . $hook, array($this, 'init_hooks'));
