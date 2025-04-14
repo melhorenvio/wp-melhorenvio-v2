@@ -142,13 +142,6 @@ class RouterService {
 		$version = Version::VERSION;
 
 		add_action(
-			'wp_ajax_nopriv_environment',
-			function () use ( $version ) {
-				( new TestService( $version ) )->run();
-			}
-		);
-
-		add_action(
 			'wp_ajax_environment',
 			function () use ( $version ) {
 				( new TestService( $version ) )->run();

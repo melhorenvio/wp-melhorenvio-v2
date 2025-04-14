@@ -10,7 +10,7 @@ class Log {
 	public function register( $id, $type, $body, $response ) {
 		$log = array(
 			'id'       => $id,
-			'date'     => date( 'Y-m-d h:i:s' ),
+			'date'     => gmdate( 'Y-m-d h:i:s' ),
 			'type'     => $type,
 			'body'     => $body,
 			'response' => $response,

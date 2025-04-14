@@ -110,7 +110,7 @@ class PayloadService {
 				'dimension' => strtolower( get_option( 'woocommerce_dimension_unit' ) ),
 			),
 			'shipping_total'   => $order->get_shipping_total(),
-			'created'          => date( 'Y-m-d h:i:s' ),
+			'created'          => gmdate( 'Y-m-d h:i:s' ),
 		);
 
 		if ( ! $this->validatePayload( $payload ) ) {

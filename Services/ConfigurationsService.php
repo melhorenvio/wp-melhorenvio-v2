@@ -304,9 +304,9 @@ class ConfigurationsService {
 		delete_option( Option::OPTION_OWN_HAND );
 		delete_option( Option::OPTION_INSURANCE_VALUE );
 
-		add_option( Option::OPTION_RECEIPT, $options['receipt'], true );
-		add_option( Option::OPTION_OWN_HAND, $options['own_hand'], true );
-		add_option( Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true );
+		add_option( Option::OPTION_RECEIPT, $options['receipt'] );
+		add_option( Option::OPTION_OWN_HAND, $options['own_hand'] );
+		add_option( Option::OPTION_INSURANCE_VALUE, $options['insurance_value'] );
 
 		return array(
 			'success' => true,

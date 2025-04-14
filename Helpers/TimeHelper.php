@@ -42,7 +42,7 @@ class TimeHelper {
 	 * @return float
 	 */
 	public static function getDiffFromNowInSeconds( $date ) {
-		$now   = date( 'Y-m-d H:i:s' );
+		$now   = gmdate( 'Y-m-d H:i:s' );
 		$start = strtotime( $now );
 		$end   = strtotime( $date );
 		return $start - $end;
