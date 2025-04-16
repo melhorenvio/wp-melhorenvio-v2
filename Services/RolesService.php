@@ -34,6 +34,11 @@ class RolesService {
 						'edit_others_products'    => true,
 					)
 				);
+
+                $me_role = get_role('melhor-envio-equipe-suporte');
+                $me_role->add_cap('melhor_envio_debug', true);
+                $admin_role = get_role('administrator');
+                $admin_role->add_cap('melhor_envio_debug', true);
 			}
 		);
 	}
