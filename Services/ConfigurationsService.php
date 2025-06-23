@@ -141,11 +141,19 @@ class ConfigurationsService {
 		$agenciesSelecteds = array();
 
 		if ( ! empty( $originselected ) ) {
-			$address           = array(
-				'state' => $originselected['address']['state'],
-				'city' => $originselected['address']['city'],
-				'company' => null,
-			);
+			if ( ! empty( $originselected['address']['latitude'] ) && ! empty( $originselected['address']['longitude'] ) ) {
+				$address = array(
+					'latitude' => $originselected['address']['latitude'],
+					'longitude' => $originselected['address']['longitude'],
+					'company' => null,
+				);
+			} else {
+				$address = array(
+					'state' => $originselected['address']['state'],
+					'city' => $originselected['address']['city'],
+					'company' => null,
+				);
+			}
 			$agencies = ( new AgenciesService( $address ) )->get();
 
 			$address['serviceId'] = ShippingService::JADLOG_PACKAGE_CENTRALIZED;
@@ -456,6 +464,8 @@ class ConfigurationsService {
 						'city'        => $address->city->city,
 						'state'       => $address->city->state->state_abbr,
 						'country'     => 'BR',
+						'latitude'    => isset( $address->latitude ) ? $address->latitude : null,
+						'longitude'   => isset( $address->longitude ) ? $address->longitude : null,
 					),
 					'selected'               => $address->id == $addressSelectedId,
 				);

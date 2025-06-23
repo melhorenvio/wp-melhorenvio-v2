@@ -56,6 +56,8 @@ class Address {
 				'city'        => $address->city->city,
 				'state'       => $address->city->state->state_abbr,
 				'country'     => $address->city->state->country->id,
+				'latitude'    => $address->latitude,
+				'longitude'   => $address->longitude,
 				'selected'    => ( $selectedAddress == $address->id ),
 			);
 		}

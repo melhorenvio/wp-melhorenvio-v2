@@ -16,10 +16,25 @@ class AgenciesService {
 
 	protected $service = null;
 
-	public function __construct( $data ) {
+	protected $latitude = null;
 
+	protected $longitude = null;
+
+	protected $distanceSearch = 100000;
+
+	protected $limit = 100;
+
+	protected $country = 'BR';
+
+	protected $status = 'available';
+
+	public function __construct( $data ) {
 		if ( ! empty( $data['state'] ) ) {
 			$this->state = $data['state'];
+		}
+
+		if ( ! empty( $data['city'] ) ) {
+			$this->city = $data['city'];
 		}
 
 		if ( ! empty( $data['company'] ) ) {
@@ -28,6 +43,13 @@ class AgenciesService {
 
 		if ( ! empty( $data['serviceId'] ) ) {
 			$this->service = $data['serviceId'];
+		}
+
+		if ( ! empty( $data['latitude'] ) && ! empty( $data['longitude'] ) ) {
+			$this->latitude = $data['latitude'];
+			$this->longitude = $data['longitude'];
+			$this->state = null;
+			$this->city = null;
 		}
 	}
 
@@ -60,10 +82,20 @@ class AgenciesService {
 	 * @return string $route
 	 */
 	private function getRoute() {
-		$data['country'] = 'BR';
+		$data['status'] = $this->status;
+		$data['country'] = $this->country;		
+		$data['limit'] = $this->limit;
+
+		if ( ! empty( $this->distanceSearch ) ) {
+			$data['distanceSearch'] = $this->distanceSearch;
+		}
 
 		if ( ! empty( $this->state ) ) {
 			$data['state'] = $this->state;
+		}
+
+		if ( ! empty( $this->city ) ) {
+			$data['city'] = $this->city;
 		}
 
 		if ( ! empty( $this->company ) ) {
@@ -72,6 +104,13 @@ class AgenciesService {
 
 		if ( ! empty( $this->service ) ) {
 			$data['serviceId'] = $this->service;
+		}
+
+		if ( ! empty( $this->latitude ) && ! empty( $this->longitude ) ) {
+			$data['latitude'] = $this->latitude;
+			$data['longitude'] = $this->longitude;
+			unset( $data['state'] );
+			unset( $data['city'] );
 		}
 
 		$query = http_build_query( $data );

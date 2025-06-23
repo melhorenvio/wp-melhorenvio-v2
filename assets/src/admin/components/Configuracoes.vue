@@ -115,6 +115,8 @@
                       refreshAgencies({
                         city: option.address.city,
                         state: option.address.state,
+                        latitude: option.address.latitude || '',
+                        longitude: option.address.longitude || '',
                       }),
                         setOrigin(option.id)
                     "
@@ -879,9 +881,9 @@ export default {
         });
       }
     },
-    createAjaxUrl(companyId, data, serviceId) {
-      const { city, state } = data;
-      return `${ajaxurl}?action=get_agencies&company=${companyId}&city=${city}&state=${state}&serviceId=${serviceId}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
+    createAjaxUrl(companyId, data, serviceId = "") {
+      const { city, state, latitude, longitude } = data;
+      return `${ajaxurl}?action=get_agencies&company=${companyId}&city=${city}&state=${state}&latitude=${latitude}&longitude=${longitude}&serviceId=${serviceId}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
     },
     showJadlogAgencies(data) {
       this.setLoader(true);
@@ -889,7 +891,7 @@ export default {
       var responseAgencies = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(2, data, null))
+          .post(this.createAjaxUrl(2, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgencies = response.data;
@@ -916,7 +918,7 @@ export default {
       var responseAgenciesAzul = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(9, data, null))
+          .post(this.createAjaxUrl(9, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesAzul = response.data;
@@ -1020,7 +1022,7 @@ export default {
       var responseAgenciesLatam = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(6, data, null))
+          .post(this.createAjaxUrl(6, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesLatam = response.data;
@@ -1046,7 +1048,7 @@ export default {
       var responseAgenciesJeT = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(this.createAjaxUrl(15, data, null))
+          .post(this.createAjaxUrl(15, data))
           .then(function (response) {
             if (response && response.status === 200) {
               responseAgenciesJeT = response.data;
