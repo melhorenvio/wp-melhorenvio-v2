@@ -3,6 +3,7 @@
 namespace MelhorEnvio\Services;
 
 use Exception;
+use MelhorEnvio\Factory\ProductServiceFactory;
 use MelhorEnvio\Helpers\MoneyHelper;
 use MelhorEnvio\Helpers\ProductVirtualHelper;
 use MelhorEnvio\Helpers\TimeHelper;
@@ -47,15 +48,17 @@ class CalculateShippingMethodService {
 			return false;
 		}
 
+        $products = [];
+
 		if(!$this->isProductPageCalculation($package)){
 			$products = ( new CartWooCommerceService() )->getProducts();
 		}
 
-        $products = ProductVirtualHelper::removeVirtuals( $products );
-
 		if ( empty( $products ) ) {
 			$products = $package['contents'];
 		}
+
+        $products = ProductVirtualHelper::removeVirtuals( $products );
 
 		$result = ( new QuotationService() )->calculateQuotationByProducts(
 			$products,
@@ -247,15 +250,15 @@ class CalculateShippingMethodService {
 			return $show;
 		}
 
-		foreach ( $package['contents'] as $values ) {
-			$product = $values['data'];
-			$qty     = $values['quantity'];
-			if ( $qty > 0 && $product->needs_shipping() ) {
-				if ( $this->isProductWithouShippingClass( $product->get_shipping_class_id(), $shippingClassId ) ) {
+		foreach ( $package['contents'] as $product ) {
+            $wcProduct = wc_get_product( $product->id );
+
+			if ( $product->quantity > 0 && $wcProduct->needs_shipping() ) {
+				if ( $this->isProductWithouShippingClass( $wcProduct->get_shipping_class_id(), $shippingClassId ) ) {
 					$show = true;
 					break;
 				}
-				$show = ( $product->get_shipping_class_id() == $shippingClassId );
+				$show = ( $wcProduct->get_shipping_class_id() == $shippingClassId );
 			}
 		}
 
@@ -303,7 +306,7 @@ class CalculateShippingMethodService {
 
 	private function isProductPageCalculation($package)
 	{
-		return isset($package['product_page_calculation']) 
+		return isset($package['product_page_calculation'])
 			&& $package['product_page_calculation'] == true;
 	}
 }
