@@ -21,7 +21,7 @@ class Product
 	public $shipping_fee;
 
 	public function setValues($value){
-		$this->unitary_value = (float) $value;
-		$this->insurance_value = (float) $value;
+		$this->unitary_value = (float) number_format($value, 2, '.', '');
+		$this->insurance_value = (float) number_format($value, 2, '.', '');
 	}
 }
