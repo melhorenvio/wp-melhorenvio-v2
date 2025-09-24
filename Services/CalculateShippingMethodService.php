@@ -251,9 +251,10 @@ class CalculateShippingMethodService {
 		}
 
 		foreach ( $package['contents'] as $product ) {
-            $wcProduct = wc_get_product( $product->id );
+            $quantity = $product->quantity ?? $product['quantity'];
+            $wcProduct = $product->id ? wc_get_product( $product->id ) : $product['data'];
 
-			if ( $product->quantity > 0 && $wcProduct->needs_shipping() ) {
+			if ( $quantity > 0 && $wcProduct->needs_shipping() ) {
 				if ( $this->isProductWithouShippingClass( $wcProduct->get_shipping_class_id(), $shippingClassId ) ) {
 					$show = true;
 					break;
