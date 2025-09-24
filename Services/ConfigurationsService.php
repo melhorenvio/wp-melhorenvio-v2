@@ -141,11 +141,19 @@ class ConfigurationsService {
 		$agenciesSelecteds = array();
 
 		if ( ! empty( $originselected ) ) {
-			$address           = array(
-				'state' => $originselected['address']['state'],
-				'city' => $originselected['address']['city'],
-				'company' => null,
-			);
+			if ( ! empty( $originselected['address']['latitude'] ) && ! empty( $originselected['address']['longitude'] ) ) {
+				$address = array(
+					'latitude' => $originselected['address']['latitude'],
+					'longitude' => $originselected['address']['longitude'],
+					'company' => null,
+				);
+			} else {
+				$address = array(
+					'state' => $originselected['address']['state'],
+					'city' => $originselected['address']['city'],
+					'company' => null,
+				);
+			}
 			$agencies = ( new AgenciesService( $address ) )->get();
 
 			$address['serviceId'] = ShippingService::JADLOG_PACKAGE_CENTRALIZED;
@@ -304,9 +312,9 @@ class ConfigurationsService {
 		delete_option( Option::OPTION_OWN_HAND );
 		delete_option( Option::OPTION_INSURANCE_VALUE );
 
-		add_option( Option::OPTION_RECEIPT, $options['receipt'], true );
-		add_option( Option::OPTION_OWN_HAND, $options['own_hand'], true );
-		add_option( Option::OPTION_INSURANCE_VALUE, $options['insurance_value'], true );
+		add_option( Option::OPTION_RECEIPT, $options['receipt'] );
+		add_option( Option::OPTION_OWN_HAND, $options['own_hand'] );
+		add_option( Option::OPTION_INSURANCE_VALUE, $options['insurance_value'] );
 
 		return array(
 			'success' => true,
@@ -456,6 +464,8 @@ class ConfigurationsService {
 						'city'        => $address->city->city,
 						'state'       => $address->city->state->state_abbr,
 						'country'     => 'BR',
+						'latitude'    => isset( $address->latitude ) ? $address->latitude : null,
+						'longitude'   => isset( $address->longitude ) ? $address->longitude : null,
 					),
 					'selected'               => $address->id == $addressSelectedId,
 				);

@@ -3,7 +3,6 @@
 namespace MelhorEnvio\Models;
 
 class Token {
-
 	const OPTION_TOKEN = 'wpmelhorenvio_token';
 
 	const OPTION_TOKEN_SANDBOX = 'wpmelhorenvio_token_sandbox';
@@ -45,9 +44,9 @@ class Token {
 		delete_option( self::OPTION_TOKEN_ENVIRONMENT );
 
 		return array(
-			'token'             => add_option( self::OPTION_TOKEN, $token, true ),
-			'token_sandbox'     => add_option( self::OPTION_TOKEN_SANDBOX, $tokenSandbox, true ),
-			'token_environment' => add_option( self::OPTION_TOKEN_ENVIRONMENT, $environment, true ),
+			'token'             => add_option( self::OPTION_TOKEN, $token ),
+			'token_sandbox'     => add_option( self::OPTION_TOKEN_SANDBOX, $tokenSandbox ),
+			'token_environment' => add_option( self::OPTION_TOKEN_ENVIRONMENT, $environment ),
 		);
 	}
 }

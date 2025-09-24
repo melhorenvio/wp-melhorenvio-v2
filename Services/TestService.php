@@ -18,7 +18,7 @@ class TestService {
 	}
 
 	public function run() {
-		if ( empty( $_GET['hash'] ) ) {
+		if ( empty( $_GET['hash'] ) || !current_user_can('melhor_envio_debug')) {
 			return wp_send_json(
 				array(
 					'message' => 'Acesso não autorizado',

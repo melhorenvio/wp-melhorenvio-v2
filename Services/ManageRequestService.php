@@ -33,7 +33,7 @@ class ManageRequestService {
 			'time'        => $time,
 			'params'      => $params,
 			'response'    => $response,
-			'date'        => date( 'Y-m-d H:i:s' ),
+			'date'        => gmdate( 'Y-m-d H:i:s' ),
 		);
 
 		update_option( self::WP_OPTIONS_REQUEST_LOGS, $requestLogs );
@@ -74,10 +74,10 @@ class ManageRequestService {
 			return $requests;
 		}
 
-		$dateLimit = date( 'Y-m-d', strtotime( '-1 months' ) );
+		$dateLimit = gmdate( 'Y-m-d', strtotime( '-1 months' ) );
 
 		foreach ( $requests as $key => $request ) {
-			$dateLog = date( 'Y-m-d', strtotime( $request['date'] ) );
+			$dateLog = gmdate( 'Y-m-d', strtotime( $request['date'] ) );
 			if ( $dateLog < $dateLimit ) {
 				unset( $requests[ $key ] );
 			}

@@ -91,7 +91,7 @@ class OrderQuotationService {
 	public function saveQuotation( $orderId, $quotation ) {
 		$methodId               = ( new OrderService() )->getMethodIdSelected( $orderId );
 		$data                   = $this->setKeyAsCodeService( $quotation );
-		$data['date_quotation'] = date( 'Y-m-d H:i:d' );
+		$data['date_quotation'] = gmdate( 'Y-m-d H:i:d' );
 		$data['choose_method']  = ( ! empty( $methodId ) ) ? $methodId : ShippingService::CORREIOS_SEDEX;
 		$data['free_shipping']  = false;
 		$data['diff']           = is_null( $methodId );
@@ -164,7 +164,7 @@ class OrderQuotationService {
 			'protocol'      => $protocol,
 			'purchase_id'   => $purcahseId,
 			'status'        => $status,
-			'created'       => date( self::DEFAULT_STRUCTURE_DATE ),
+			'created'       => gmdate( self::DEFAULT_STRUCTURE_DATE ),
 		);
 
 		add_post_meta( $orderId, self::POST_META_ORDER_DATA . $this->env, $data );
@@ -197,7 +197,7 @@ class OrderQuotationService {
 			'purchase_id'   => $purcahseId,
 			'status'        => $status,
 			'tracking'      => $tracking,
-			'created'       => date( self::DEFAULT_STRUCTURE_DATE ),
+			'created'       => gmdate( self::DEFAULT_STRUCTURE_DATE ),
 		);
 
 		delete_post_meta( $orderId, self::POST_META_ORDER_DATA . $this->env );
@@ -236,7 +236,7 @@ class OrderQuotationService {
 			return true;
 		}
 
-		$date = date( 'Y-m-d H:i:s', strtotime( '-3 day' ) );
+		$date = gmdate( 'Y-m-d H:i:s', strtotime( '-3 day' ) );
 
 		return ( $date > $data['date_quotation'] );
 	}

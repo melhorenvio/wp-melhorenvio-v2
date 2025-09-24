@@ -18,10 +18,10 @@ class AgenciesController {
 
 			WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
 
-			if ( empty( $_GET['state'] ) ) {
+			if ( empty( $_GET['state'] ) && (empty( $_GET['latitude'] ) && empty( $_GET['longitude'] )) ) {
 				return wp_send_json(
 					array(
-						'message' => 'É necessário informar o estado para reallizar a busca de agências',
+						'message' => 'É necessário informar o estado ou a latitude e longitude para reallizar a busca de agências',
 					),
 					400
 				);

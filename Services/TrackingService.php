@@ -91,7 +91,7 @@ class TrackingService {
 				foreach ( $columns as $key => $name ) {
 					$newColumns[ $key ] = $name;
 					if ( 'order-status' === $key ) {
-						$newColumns['tracking'] = __( 'Rastreio', 'textdomain' );
+						$newColumns['tracking'] = __( 'Rastreio', 'melhor-envio-cotacao' );
 					}
 				}
 				return $newColumns;

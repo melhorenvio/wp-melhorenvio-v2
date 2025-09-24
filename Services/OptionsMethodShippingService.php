@@ -65,12 +65,12 @@ class OptionsMethodShippingService {
 	public function getOptionsShipments() {
 		global $wpdb;
 
-		$sql = $wpdb->prepare(
-			"SELECT * FROM $wpdb->options WHERE option_name like %s",
-			'%' . $wpdb->esc_like( self::KEY_OPTIONS_METHOD_DATABASE ) . '%'
-		);
-
-		$results = $wpdb->get_results( $sql );
+		$results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM $wpdb->options WHERE option_name like %s",
+                '%' . $wpdb->esc_like( self::KEY_OPTIONS_METHOD_DATABASE ) . '%'
+            )
+        );
 
 		if ( empty( $results ) ) {
 			return array();

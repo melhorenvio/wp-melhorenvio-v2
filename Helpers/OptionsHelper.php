@@ -7,8 +7,8 @@ use MelhorEnvio\Models\Option;
 class OptionsHelper {
 
 	/**
-	 * @return void
-	 */
+	 * @return array
+     */
 	public function getName( $id, $method, $company, $label ) {
 		if ( is_null( $method ) && is_null( $company ) ) {
 			return array(
@@ -19,9 +19,13 @@ class OptionsHelper {
 
 		global $wpdb;
 
-		$sql = sprintf( "select * from %soptions where option_name = 'melhor_envio_option_method_shipment_%s'", $wpdb->prefix, (string) $id );
-
-		$results = $wpdb->get_results( $sql );
+		$results = $wpdb->get_results(
+            $wpdb->prepare(
+                "select * from %soptions where option_name = 'melhor_envio_option_method_shipment_%s'",
+                $wpdb->prefix,
+                (string) $id
+            )
+        );
 
 		if ( ! $results ) {
 			return array(

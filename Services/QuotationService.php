@@ -198,11 +198,11 @@ class QuotationService {
 	 */
 	private function storeQuotationSession( $hash, $quotation ) {
 		$quotationSession[ $hash ]['quotations'] = $quotation;
-		$quotationSession[ $hash ]['created']    = date( 'Y-m-d H:i:s' );
+		$quotationSession[ $hash ]['created']    = gmdate( 'Y-m-d H:i:s' );
 
 		$_SESSION['quotation-melhor-envio'][ $hash ] = array(
 			'quotations' => $quotation,
-			'created'    => date( 'Y-m-d H:i:s' ),
+			'created'    => gmdate( 'Y-m-d H:i:s' ),
 		);
 	}
 
