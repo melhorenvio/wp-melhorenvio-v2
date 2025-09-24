@@ -2,6 +2,7 @@
 
 namespace MelhorEnvio\Services;
 
+use MelhorEnvio\Factory\ProductServiceFactory;
 use MelhorEnvio\Helpers\MoneyHelper;
 use MelhorEnvio\Helpers\PostalCodeHelper;
 use MelhorEnvio\Services\Products\ProductsService;
@@ -170,12 +171,7 @@ class QuotationProductPageService {
 	 * @return void
 	 */
 	private function createPackageToCalculate() {
-		$contents = array();
-
-		$contents[ $this->product->get_id() ] = array(
-			'data'     => $this->product,
-			'quantity' => $this->quantity,
-		);
+        $productService = ProductServiceFactory::fromId($this->product->get_id());
 
 		$this->package = array(
 			'ship_via'      => '',
@@ -184,8 +180,11 @@ class QuotationProductPageService {
 				'state'    => ( ! empty( $this->destination->uf ) ) ? $this->destination->uf : null,
 				'postcode' => ( ! empty( $this->destination->cep ) ) ? $this->destination->cep : $this->postalCode,
 			),
-			'contents'      => $contents,
+			'contents'      => [
+                $productService->getProduct($this->product->get_id(), $this->quantity)
+            ],
 			'contents_cost' => $this->product->get_price() * $this->quantity,
+			'product_page_calculation' => true,
 		);
 	}
 
