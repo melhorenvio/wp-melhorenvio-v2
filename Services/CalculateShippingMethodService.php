@@ -55,7 +55,9 @@ class CalculateShippingMethodService {
 		}
 
 		if ( empty( $products ) ) {
-			$products = $package['contents'];
+			foreach($package['contents'] as $content){
+				$products[] = $content['formatted_data'];
+			}
 		}
 
         $products = ProductVirtualHelper::removeVirtuals( $products );

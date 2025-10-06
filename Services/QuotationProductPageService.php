@@ -173,6 +173,12 @@ class QuotationProductPageService {
 	private function createPackageToCalculate() {
         $productService = ProductServiceFactory::fromId($this->product->get_id());
 
+		$contents[ $this->product->get_id() ] = array(
+			'data' => $this->product,
+			'quantity' => $this->quantity,
+			'formatted_data' => $productService->getProduct($this->product->get_id(), $this->quantity),
+		);
+
 		$this->package = array(
 			'ship_via'      => '',
 			'destination'   => array(
@@ -180,9 +186,7 @@ class QuotationProductPageService {
 				'state'    => ( ! empty( $this->destination->uf ) ) ? $this->destination->uf : null,
 				'postcode' => ( ! empty( $this->destination->cep ) ) ? $this->destination->cep : $this->postalCode,
 			),
-			'contents'      => [
-                $productService->getProduct($this->product->get_id(), $this->quantity)
-            ],
+			'contents'      => $contents,
 			'contents_cost' => $this->product->get_price() * $this->quantity,
 			'product_page_calculation' => true,
 		);
