@@ -12,6 +12,10 @@ class BundleService extends ProductsService
 
 	public static function isBundleProduct($product): bool
 	{
+		if (!$product || !is_object($product)) {
+			return false;
+		}
+		
 		return $product->get_type() === self::BUNDLE_TYPE ||
 			$product->get_type() === self::PRODUCT_BUNDLE_TYPE;
 	}

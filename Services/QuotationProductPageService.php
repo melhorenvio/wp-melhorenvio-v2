@@ -104,17 +104,17 @@ class QuotationProductPageService {
 	 * @return array
 	 */
 	public function getRatesShipping() {
-		if ( ProductsService::hasProductComposition($this->product) ) {
-			return array(
-				'success' => false,
-				'error'   => 'Cotação disponível apenas no carrinho!',
-			);
-		}
-
 		if ( empty( $this->product ) ) {
 			return array(
 				'success' => false,
 				'error'   => 'Não encontramos o produto na base de dados',
+			);
+		}
+		
+		if ( ProductsService::hasProductComposition($this->product) ) {
+			return array(
+				'success' => false,
+				'error'   => 'Cotação disponível apenas no carrinho!',
 			);
 		}
 
