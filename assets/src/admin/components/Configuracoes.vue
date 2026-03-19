@@ -205,7 +205,7 @@
               <span>CNPJ</span></br>
               <the-mask
                 v-model="label.company_document"
-                :mask="['##.###.###/####-##']"
+                :mask="['XX.XXX.XXX/XXXX-##', '##.###.###/####-##']"
               />
               <br />
               <br />
