@@ -64,8 +64,8 @@ class CheckHealthService {
 			$errors[] = 'Você precisa do plugin WooCommerce ativado no WordPress para utilizar o plugin do Melhor Envio';
 		}
 
-		if ( ! in_array( 'woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds ) && ! is_multisite() ) {
-			$errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">WooCommerce checkout fields for Brazil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
+		if ( ! in_array( 'woo-better-shipping-calculator-for-brazil/wc-better-shipping-calculator-for-brazil.php', $pluginsActiveds ) && ! is_multisite() ) {
+			$errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/">Calculadora de Frete e Campos Checkout para o Brasil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
 		}
 
 		$sessionNoticeService = new SessionNoticeService();
