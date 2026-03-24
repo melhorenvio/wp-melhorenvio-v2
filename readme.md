@@ -54,7 +54,7 @@ A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar nov
 
 Ou se preferir basta fazer o download do plugin na página oficial do plugin no portal do Wordpress e mover o arquivo .Zip para o diretório wp-content/plugins. O próximo passo, é acessar todos os plugins pelo menu Plugins -> Plugins instalados, encontrar o plugin "Melhor Envio" e clicar em "Ativar".
 
-Você também vai precisar do plugin <a href"https://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/" target="_blank">Brazilian Market on WooCommerce</a> para o perfeito funcionamento do plugin do Melhor Envio.
+Você também vai precisar do plugin <a href"https://wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/" target="_blank">Calculadora de Frete e Campos Checkout para o Brasil</a> para o perfeito funcionamento do plugin do Melhor Envio.
 
 O próximo passo para utilizar o plugin é gerar um token na plataforma da Melhor Envio. Para isso, você precisa acessar o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a> e clicar em "Novo token", inserir um nome para o token, selecionar as permissões e clicar em "Salvar". Você deve copiar o token gerado, e colar o mesmo no painel do Wordpress, acessando o menu Melhor Envio -> Token.
 painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
