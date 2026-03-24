@@ -400,7 +400,10 @@
     </div>
     <hr />
 
-    <div class="wpme_config" v-show="originData.length > 0">
+    <div
+    v-show="token_environment == 'production' && agenciesTotalExpress.length > 0"
+    class="wpme_config"
+    >
       <h2>Total Express</h2>
       <p v-if="agenciesTotalExpress.length > 0">
         Escolha a agência Total Express de sua preferência para realizar o envio dos

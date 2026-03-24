@@ -172,9 +172,7 @@ class ConfigurationsService {
 
 			$address['serviceId'] = ShippingService::TOTAL_EXPRESS_STANDARD;
 			$address['company'] = ShippingCompany::TOTAL_EXPRESS;
-			$agenciesTotalExpress = $this->coerceAgenciesList(
-				( new AgenciesService( $address ) )->get()
-			);
+			$agenciesTotalExpress = ( new AgenciesService( $address ) )->get();
 		}
 
 		$agenciesSelectedService = new AgenciesSelectedService();
@@ -234,19 +232,6 @@ class ConfigurationsService {
 			'token_environment' => $token['token_environment'],
 			'dimension_default' => $this->getDimensionDefault(),
 		);
-	}
-
-	/**
-	 * @param array $agencies
-	 * @param int   $companyId
-	 * @return array
-	 */
-	/**
-	 * @param array|object $result
-	 * @return array
-	 */
-	private function coerceAgenciesList( $result ) {
-		return is_array( $result ) ? $result : array();
 	}
 
 	/**
