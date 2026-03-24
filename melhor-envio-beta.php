@@ -293,6 +293,8 @@ final class Melhor_Envio_Plugin
             $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
             $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
             $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
+            $methods['melhorenvio_totalexpress_standard']  = 'WC_Melhor_Envio_Shipping_TotalExpress_Standard';
+            $methods['melhorenvio_totalexpress_etotal']  = 'WC_Melhor_Envio_Shipping_TotalExpress_ETotal';
             return $methods;
         });
 
@@ -321,6 +323,8 @@ final class Melhor_Envio_Plugin
                 'nonce_orders' => wp_create_nonce( 'orders' ),
                 'nonce_tokens' => wp_create_nonce( 'tokens' ),
                 'nonce_users' => wp_create_nonce( 'users' ),
+                'company_total_express' => \MelhorEnvio\Models\ShippingCompany::TOTAL_EXPRESS,
+                'service_total_express_standard' => \MelhorEnvio\Models\ShippingService::TOTAL_EXPRESS_STANDARD,
             ) );
 
             wp_register_script( 'wp-nonce-melhor-evio-wp-api', '' );
