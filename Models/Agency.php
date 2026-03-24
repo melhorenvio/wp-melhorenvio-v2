@@ -12,6 +12,8 @@ class Agency {
 
 	const AGENCY_SELECTED_JET = 'melhorenvio_option_agency_jet';
 
+	const AGENCY_SELECTED_TOTAL_EXPRESS = 'melhorenvio_option_agency_totalexpress';
+
 	/**
 	 * function to get the id of agency Jadlog selected.
 	 *
@@ -47,6 +49,13 @@ class Agency {
 	 */
 	public function getJet() {
 		return get_option( self::AGENCY_SELECTED_JET, null );
+	}
+
+	/**
+	 * @return int|string|null
+	 */
+	public function getTotalExpress() {
+		return get_option( self::AGENCY_SELECTED_TOTAL_EXPRESS, null );
 	}
 
 	/**
@@ -95,6 +104,19 @@ class Agency {
 	public function setJet( $data ) {
 		delete_option( self::AGENCY_SELECTED_JET );
 		if ( ! add_option( self::AGENCY_SELECTED_JET, $data ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param int|string $data
+	 * @return bool
+	 */
+	public function setTotalExpress( $data ) {
+		delete_option( self::AGENCY_SELECTED_TOTAL_EXPRESS );
+		if ( ! add_option( self::AGENCY_SELECTED_TOTAL_EXPRESS, $data ) ) {
 			return false;
 		}
 

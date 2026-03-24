@@ -41,6 +41,13 @@ class AgenciesSelectedService {
 	}
 
 	/**
+	 * @return int|string|null
+	 */
+	public function getTotalExpress() {
+		return $this->agencyModel->getTotalExpress();
+	}
+
+	/**
 	 * @param array $data
 	 * @return bool
 	 */
@@ -87,5 +94,17 @@ class AgenciesSelectedService {
 		}
 
 		return $this->agencyModel->setJet( $data );
+	}
+
+	/**
+	 * @param int|string $data
+	 * @return bool
+	 */
+	public function setTotalExpress( $data ) {
+		if ( empty( $data ) ) {
+			return true;
+		}
+
+		return $this->agencyModel->setTotalExpress( $data );
 	}
 }

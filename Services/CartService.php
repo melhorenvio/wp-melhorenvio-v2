@@ -155,6 +155,10 @@ class CartService {
 			return $agenciesSelectedService->getJet();
 		}
 
+		if ( in_array( (int) $shippingMethodId, ShippingService::SERVICES_TOTAL_EXPRESS, true ) ) {
+			return $agenciesSelectedService->getTotalExpress();
+		}
+
 		return null;
 	}
 

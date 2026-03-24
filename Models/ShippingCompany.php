@@ -16,6 +16,8 @@ class ShippingCompany {
 
 	const JET = 15;
 
+	const TOTAL_EXPRESS = 8;
+
 	/**
 	 * @param int $serviceId
 	 * @return int
@@ -31,6 +33,10 @@ class ShippingCompany {
 
 		if ( in_array( $serviceId, ShippingService::SERVICES_AZUL ) ) {
 			return self::AZUL_CARGO;
+		}
+
+		if ( in_array( (int) $serviceId, ShippingService::SERVICES_TOTAL_EXPRESS, true ) ) {
+			return self::TOTAL_EXPRESS;
 		}
 
 		return null;
