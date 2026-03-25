@@ -324,7 +324,7 @@
       </p>
       <div class="wpme_flex" v-show="agencies.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agencies"
@@ -361,7 +361,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesJadlogCentralized.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agency_jadlog_centralized"
@@ -398,7 +398,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesLoggi.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agency_loggi"
@@ -435,7 +435,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesJeT.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                   name="agency_jet"
@@ -475,7 +475,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesTotalExpress.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agency_totalexpress"
@@ -515,7 +515,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesAzul.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agenciesAzul"
@@ -555,7 +555,7 @@
       </p>
       <div class="wpme_flex" v-show="agenciesLatam.length > 0">
         <ul class="wpme_address">
-          <li>
+          <li class="wpme_agency_select_row">
             <template>
               <select
                 name="agenciesLatam"
@@ -1084,7 +1084,7 @@ export default {
     },
     showJadlogCentralizedAgencies(data) {
       this.setLoader(true);
-      this.agency_jadlog_cetralized = "";
+      this.agency_jadlog_centralized = "";
       var responseAgenciesJadlogCentralized = [];
       var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
@@ -1096,7 +1096,7 @@ export default {
             }
           })
           .catch((error) => {
-            this.setAgenciesjadlogCentralized([]);
+            this.setAgenciesJadlogCentralized([]);
           })
           .finally(() => {
             this.setLoader(false);
@@ -1104,7 +1104,7 @@ export default {
       });
 
       promiseAgencies.then((resolve) => {
-        //this.setAgenciesjadlogCentralized(responseAgenciesjadlogCentralized);
+        this.setAgenciesJadlogCentralized(responseAgenciesJadlogCentralized);
         this.setLoader(false);
       });
     },
@@ -1558,5 +1558,21 @@ export default {
   overflow-wrap: anywhere;
   word-break: break-word;
   white-space: pre-wrap;
+}
+
+.wpme_agency_select_row {
+  display: block !important;
+  width: 100% !important;
+  max-width: 560px !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
+}
+
+.wpme_agency_select_row select {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 </style>
