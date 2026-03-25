@@ -87,6 +87,10 @@ class ConfigurationsService {
 			( new AgenciesSelectedService() )->setJet( $data['agency_jet'] );
 		}
 
+		if ( ! empty( $data['agency_totalexpress'] ) ) {
+			( new AgenciesSelectedService() )->setTotalExpress( $data['agency_totalexpress'] );
+		}
+
 		if ( isset( $data['show_calculator'] ) ) {
 			$response['show_calculator'] = ( new CalculatorShow() )->set(
 				$data['show_calculator']
@@ -138,6 +142,8 @@ class ConfigurationsService {
 
 		$agenciesLoggi = array();
 
+		$agenciesTotalExpress = array();
+
 		$agenciesSelecteds = array();
 
 		if ( ! empty( $originselected ) ) {
@@ -163,6 +169,10 @@ class ConfigurationsService {
 			$address['serviceId'] = ShippingService::LOGGI_EXPRESS;
 			$address['company'] = ShippingCompany::LOGGI;
 			$agenciesLoggi = ( new AgenciesService($address))->get();
+
+			$address['serviceId'] = ShippingService::TOTAL_EXPRESS_STANDARD;
+			$address['company'] = ShippingCompany::TOTAL_EXPRESS;
+			$agenciesTotalExpress = ( new AgenciesService( $address ) )->get();
 		}
 
 		$agenciesSelectedService = new AgenciesSelectedService();
@@ -170,6 +180,7 @@ class ConfigurationsService {
 		$agenciesSelecteds = $agenciesSelectedService->get();
 		$agencyJadlogCentralizedSelected = $agenciesSelectedService->getJadlogCentralized();
 		$agencyLoggiSelected = $agenciesSelectedService->getLoggi();
+		$agencyTotalExpressSelected = $agenciesSelectedService->getTotalExpress();
 
 		return array(
 			'origin' => $origin,
@@ -180,6 +191,7 @@ class ConfigurationsService {
 			),
 			'agenciesJadlogCentralized' => $agenciesCentralizedsJadlog,
 			'agenciesLoggi' => $agenciesLoggi,
+			'agenciesTotalExpress' => $agenciesTotalExpress,
 			'agenciesAzul' => $this->filterAgenciesByCompany(
 				$agencies,
 				ShippingCompany::AZUL_CARGO
@@ -202,6 +214,7 @@ class ConfigurationsService {
 			),
 			'agencyJadlogCentralizedSelected' => $agencyJadlogCentralizedSelected,
 			'agencyLoggiSelected' => $agencyLoggiSelected,
+			'agencyTotalExpressSelected' => $agencyTotalExpressSelected,
 			'agencyLatamSelected' => $this->filterAgencySelectedByCompany(
 				$agenciesSelecteds,
 				ShippingCompany::LATAM_CARGO

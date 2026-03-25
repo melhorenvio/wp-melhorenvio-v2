@@ -401,6 +401,46 @@
     <hr />
 
     <div
+    v-show="token_environment == 'production' && agenciesTotalExpress.length > 0"
+    class="wpme_config"
+    >
+      <h2>Total Express</h2>
+      <p v-if="agenciesTotalExpress.length > 0">
+        Escolha a agência Total Express de sua preferência para realizar o envio dos
+        seus produtos.
+      </p>
+      <p v-else class="description">
+        Nenhuma agência Total Express encontrada para esta origem. Confira o endereço
+        de origem ou se o serviço está disponível na API do Melhor Envio.
+      </p>
+      <div class="wpme_flex" v-show="agenciesTotalExpress.length > 0">
+        <ul class="wpme_address">
+          <li>
+            <template>
+              <select
+                name="agency_totalexpress"
+                id="agency_totalexpress"
+                v-model="agency_totalexpress"
+                data-cy="input-agency-totalexpress"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesTotalExpress"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div
       v-show="token_environment == 'production' && agenciesAzul.length > 0"
       class="wpme_config"
     >
@@ -729,6 +769,7 @@ export default {
       agency_azul: null,
       agency_latam: null,
       agency_jet: null,
+      agency_totalexpress: null,
       show_modal: false,
       custom_calculator: false,
       show_calculator: false,
@@ -771,6 +812,7 @@ export default {
       agencyAzulSelected_: "getAgencyAzulSelected",
       agencyLatamSelected_: "getAgencyLatamSelected",
       agencyJeTSelected_: "getAgencyJeTSelected",
+      agencyTotalExpressSelected_: "getAgencyTotalExpressSelected",
       agencies: "getAgencies",
       agenciesJadlogCentralized: "getAgenciesJadlogCentralized",
       agenciesCorreiosCentralized: "getAgenciesCorreiosCentralized",
@@ -778,6 +820,7 @@ export default {
       agenciesAzul: "getAgenciesAzul",
       agenciesLatam: "getAgenciesLatam",
       agenciesJeT: "getAgenciesJeT",
+      agenciesTotalExpress: "getAgenciesTotalExpress",
       allAgencies: "getAllAgencies",
       style_calculator: "getStyleCalculator",
       methods_shipments: "getMethodsShipments",
@@ -804,6 +847,7 @@ export default {
       "setAgenciesLoggi",
       "setAgenciesLatam",
       "setAgenciesJeT",
+      "setAgenciesTotalExpress",
       "setAgencies",
       "saveAll",
       "getEnvironment",
@@ -830,6 +874,7 @@ export default {
       data["agency_loggi"] = this.agency_loggi;
       data["agency_latam"] = this.agency_latam;
       data["agency_jet"] = this.agency_jet;
+      data["agency_totalexpress"] = this.agency_totalexpress;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
       data["where_calculator"] = this.where_calculator;
@@ -857,6 +902,7 @@ export default {
       this.showLoggiAgencies(data);
       this.showALatamAgencies(data);
       this.showJeTAgencies(data);
+      this.showTotalExpressAgencies(data);
     },
     setOrigin(id) {
       if (this.originData.length > 0) {
@@ -1068,6 +1114,42 @@ export default {
         this.setLoader(false);
       });
     },
+    showTotalExpressAgencies(data) {
+      const companyId =
+        typeof wpApiSettingsMelhorEnvio !== "undefined" &&
+        wpApiSettingsMelhorEnvio.company_total_express != null
+          ? wpApiSettingsMelhorEnvio.company_total_express
+          : 8;
+      const serviceId =
+        typeof wpApiSettingsMelhorEnvio !== "undefined" &&
+        wpApiSettingsMelhorEnvio.service_total_express_standard != null
+          ? wpApiSettingsMelhorEnvio.service_total_express_standard
+          : 35;
+      this.setLoader(true);
+      this.agency_totalexpress = "";
+      var responseAgenciesTotalExpress = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
+        this.$http
+          .post(this.createAjaxUrl(companyId, data, serviceId))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgenciesTotalExpress = response.data;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            this.setAgenciesTotalExpress([]);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesTotalExpress(responseAgenciesTotalExpress);
+        this.setLoader(false);
+      });
+    },
     close() {
       this.show_modal = false;
     },
@@ -1193,6 +1275,17 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesTotalExpress() {
+      this.setLoader(true);
+      if (this.agenciesTotalExpress.length > 0) {
+        this.agenciesTotalExpress.filter((item) => {
+          if (item.selected) {
+            this.agency_totalexpress = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
     agencySelected_(e) {
       this.agency = e;
     },
@@ -1213,6 +1306,9 @@ export default {
     },
     agencyJeTSelected_(e) {
       this.agency_jet = e;
+    },
+    agencyTotalExpressSelected_(e) {
+      this.agency_totalexpress = e;
     },
     show_calculator_(e) {
       this.show_calculator = e;

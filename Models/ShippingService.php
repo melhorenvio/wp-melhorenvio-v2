@@ -12,6 +12,8 @@ class ShippingService {
 
 	const SERVICES_VIA_BRASIL = array( 9 );
 
+	const SERVICES_TOTAL_EXPRESS = array( 35, 18 );
+
 	const CORREIOS_PAC = 1;
 
 	const CORREIOS_SEDEX = 2;
@@ -44,6 +46,10 @@ class ShippingService {
 
 	const JET_STANDARD = 33;
 
+	const TOTAL_EXPRESS_STANDARD = 35;
+
+	const TOTAL_EXPRESS_E_TOTAL = 18;
+
 	const SERVICES_BUSLOG = array( self::BUSLOG_RODOVIARIO );
 
 	const SERVICES_LOGGI = array( self::LOGGI_EXPRESS, self::LOGGI_COLETA );
@@ -66,7 +72,8 @@ class ShippingService {
 			self::SERVICES_LATAM,
 			self::SERVICES_BUSLOG,
 			self::SERVICES_LOGGI,
-			self::SERVICES_JET
+			self::SERVICES_JET,
+			self::SERVICES_TOTAL_EXPRESS,
 		);
 	}
 
@@ -108,6 +115,10 @@ class ShippingService {
 				return self::BUSLOG_RODOVIARIO;
 			case 'melhorenvio_jet_standard':
 				return self::JET_STANDARD;
+			case 'melhorenvio_totalexpress_standard':
+				return self::TOTAL_EXPRESS_STANDARD;
+			case 'melhorenvio_totalexpress_etotal':
+				return self::TOTAL_EXPRESS_E_TOTAL;
 			default:
 				return null;
 		}

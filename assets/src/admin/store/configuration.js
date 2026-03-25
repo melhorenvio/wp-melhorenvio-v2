@@ -30,6 +30,7 @@ const configuration = {
         agenciesAzul: [],
         agenciesLatam: [],
         agenciesJeT: [],
+        agenciesTotalExpress: [],
         allAgencies: [],
         allAgenciesJadlogCentralized: [],
         allAgenciesLoggi: [],
@@ -52,6 +53,7 @@ const configuration = {
         agencyAzulSelected: null,
         agencyLatamSelected: null,
         agencyJeTSelected: null,
+        agencyTotalExpressSelected: null,
         token_enviroment: 'production',
         methods_shipments: [],
         show_load: true,
@@ -94,6 +96,9 @@ const configuration = {
         setAgencyJeT: (state, data) => {
             state.agenciesJeT = data
         },
+        setAgencyTotalExpress: (state, data) => {
+            state.agenciesTotalExpress = data
+        },
         setAgencySelected: (state, data) => {
             state.agencySelected = data
         },
@@ -111,6 +116,9 @@ const configuration = {
         },
         setAgencyJeTSelected: (state, data) => {
             state.agencyJeTSelected = data
+        },
+        setAgencyTotalExpressSelected: (state, data) => {
+            state.agencyTotalExpressSelected = data
         },
         setAllAgency: (state, data) => {
             state.allAgencies = data
@@ -165,6 +173,7 @@ const configuration = {
         getAgenciesLoggi: state => state.agenciesLoggi,
         getAgenciesLatam: state => state.agenciesLatam,
         getAgenciesJeT: state => state.agenciesJeT,
+        getAgenciesTotalExpress: state => state.agenciesTotalExpress,
         getAllAgencies: state => state.allAgencies,
         getAgencySelected: state => state.agencySelected,
         getAgencyAzulSelected: state => state.agencyAzulSelected,
@@ -172,6 +181,7 @@ const configuration = {
         getAgencyLoggiSelected: state => state.agencyLoggiSelected,
         getAgencyLatamSelected: state => state.agencyLatamSelected,
         getAgencyJeTSelected: state => state.agencyJeTSelected,
+        getAgencyTotalExpressSelected: state => state.agencyTotalExpressSelected,
         getStyleCalculator: state => state.styleCalculator,
         getPathPlugins: state => state.path_plugins,
         getShowCalculator: state => state.show_calculator,
@@ -237,6 +247,10 @@ const configuration = {
                             commit('setAllAgencyJeT', response.data.allAgenciesJeT);
                         }
 
+                        if (response.data.agenciesTotalExpress && !isNull(response.data.agenciesTotalExpress)) {
+                            commit('setAgencyTotalExpress', response.data.agenciesTotalExpress);
+                        }
+
                         if (response.data.stores && !isEmpty(response.data.stores)) {
                             commit('setStore', response.data.stores)
                         }
@@ -246,6 +260,7 @@ const configuration = {
                         commit('setAgencyLoggiSelected', response.data.agencyLoggiSelected)
                         commit('setAgencyLatamSelected', response.data.agencyLatamSelected)
                         commit('setAgencyJeTSelected', response.data.agencyJeTSelected)
+                        commit('setAgencyTotalExpressSelected', response.data.agencyTotalExpressSelected)
                         commit('setStyleCalculator', response.data.style_calculator)
                         commit('setPathPlugins', response.data.path_plugins)
                         commit('setShowCalculator', response.data.calculator)
@@ -376,6 +391,10 @@ const configuration = {
                     form.append('agency_jet', data.agency_jet);
                 }
 
+                if (data.agency_totalexpress) {
+                    form.append('agency_totalexpress', data.agency_totalexpress);
+                }
+
                 if (data.show_calculator) {
                     form.append('show_calculator', data.show_calculator);
                 }
@@ -426,6 +445,9 @@ const configuration = {
         },
         setAgenciesJeT: ({ commit }, data) => {
             commit('setAgencyJeT', data)
+        },
+        setAgenciesTotalExpress: ({ commit }, data) => {
+            commit('setAgencyTotalExpress', data)
         },
         setAllAgencies: ({ commit }, data) => {
             commit('setAllAgency', data)
