@@ -181,7 +181,9 @@ class OrdersController {
 		if ( empty( $paymentResult['order_id'] ) ) {
 			( new OrderQuotationService() )->removeDataQuotation( $postId );
 
-			( new CartService() )->remove( $postId, $cartResult['order_id'] );
+			if ( ! empty( $orderId ) ) {
+				( new CartService() )->remove( $postId, $orderId );
+			}
 
 			if ( isset( $paymentResult['errors'] ) ) {
 				return wp_send_json(

@@ -1,6 +1,10 @@
 'use strict'
 import Axios from 'axios'
 import StatusMelhorEnvio from '../utils/status'
+import {
+    isSuccessfulCartApiResponse,
+    getOrderIdFromCartResponse,
+} from '../utils/api-errors'
 
 const orders = {
     namespaced: true,
@@ -9,6 +13,7 @@ const orders = {
         status_woocommerce: [],
         show_loader: true,
         show_modal: false,
+        modal_tone: 'alert',
         show_more: true,
         msg_modal: '',
         filters: {
@@ -168,8 +173,12 @@ const orders = {
         toggleModal: (state, data) => {
             if (data == false) {
                 state.msg_modal = null;
+                state.modal_tone = 'alert';
             }
             state.show_modal = data;
+        },
+        setModalTone: (state, tone) => {
+            state.modal_tone = tone === 'success' ? 'success' : 'alert';
         },
         toggleMore: (state, data) => {
             state.show_more = data;
@@ -194,6 +203,7 @@ const orders = {
         getOrders: state => state.orders,
         toggleLoader: state => state.show_loader,
         setMsgModal: state => state.msg_modal,
+        modalTone: state => state.modal_tone,
         showModal: state => state.show_modal,
         showMore: state => state.show_more,
         statusWooCommerce: state => state.status_woocommerce
@@ -201,6 +211,7 @@ const orders = {
     },
     actions: {
         showErrorAlert: ({ commit }, data) => {
+            commit('setModalTone', 'alert')
             commit('setMsgModal', data)
             commit('toggleModal', true)
         },
@@ -224,6 +235,7 @@ const orders = {
                     commit('toggleLoader', false)
                 }
             }).catch(error => {
+                commit('setModalTone', 'alert')
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -245,6 +257,7 @@ const orders = {
                 window.open(response.data.url, '_blank');
 
             }).catch(error => {
+                commit('setModalTone', 'alert')
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -279,6 +292,7 @@ const orders = {
                 }
 
             }).catch(error => {
+                commit('setModalTone', 'alert')
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -290,11 +304,13 @@ const orders = {
             commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=insert_invoice_order&id=${data.id}&number=${data.invoice.number}&key=${data.invoice.key}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_orders}`).then(response => {
                 commit('updateInvoice', data);
+                commit('setModalTone', 'success')
                 commit('setMsgModal', response.data.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
                 return true
             }).catch(error => {
+                commit('setModalTone', 'alert')
                 commit('setMsgModal', error.message)
                 commit('toggleLoader', false)
                 commit('toggleModal', true)
@@ -307,8 +323,29 @@ const orders = {
         stopLoader: ({ commit }) => {
             commit('toggleLoader', false)
         },
-        setMessageModal: ({ commit }, msg) => {
+        setMessageModal: ({ commit }, payload) => {
+            let msg = payload
+            let tone = 'alert'
+            if (payload != null && typeof payload === 'object' && !Array.isArray(payload)) {
+                if ('message' in payload || 'msg' in payload) {
+                    msg = payload.message !== undefined ? payload.message : payload.msg
+                    if (
+                        payload.success === true ||
+                        payload.tone === 'success' ||
+                        payload.success === 1
+                    ) {
+                        tone = 'success'
+                    }
+                }
+            }
+            commit('setModalTone', tone)
             commit('setMsgModal', msg)
+            commit('toggleModal', true)
+        },
+        /** Modal de sucesso (ícone/título verdes) — use no lugar de setMessageModal após operações OK */
+        openSuccessModal: ({ commit }, message) => {
+            commit('setModalTone', 'success')
+            commit('setMsgModal', message)
             commit('toggleModal', true)
         },
         addCartSimple: ({ commit }, data) => {
@@ -346,16 +383,20 @@ const orders = {
                     Axios.post(`${ajaxurl}?action=add_order&post_id=${data.id}&service_id=${data.service_id}&non_commercial=${data.non_commercial}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_orders}`, data)
                         .then(response => {
                             commit('toggleLoader', false)
-                            if (!response.data.success) {
-                                reject(response.data);
+                            const payload = response.data
+                            if (!isSuccessfulCartApiResponse(payload)) {
+                                reject(payload)
+                                return
                             }
+                            const orderId = getOrderIdFromCartResponse(payload)
                             commit('addCart', {
                                 id: data.id,
-                                order_id: response.data.data.order_id,
+                                order_id: orderId,
                                 service_id: data.service_id
                             })
-                            resolve(response.data);
+                            resolve(payload)
                         }).catch((error) => {
+                            commit('toggleLoader', false)
                             reject(error);
                         });
                 }
@@ -365,10 +406,12 @@ const orders = {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=update_order&id=${data.id}&order_id=${data.order_id}`).then(response => {
                 context.commit('toggleLoader', false)
+                context.commit('setModalTone', 'success')
                 context.commit('setMsgModal', 'Item #' + data.id + ' atualizado')
                 context.commit('toggleModal', true)
                 context.commit('refreshCotation', response.data)
             }).catch(error => {
+                context.commit('setModalTone', 'alert')
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
@@ -380,6 +423,7 @@ const orders = {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=remove_order&id=${data.id}&order_id=${data.order_id}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_orders}`, data).then(response => {
                 if (!response.data.success) {
+                    context.commit('setModalTone', 'alert')
                     context.commit('setMsgModal', response.data.message)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
@@ -391,6 +435,7 @@ const orders = {
                 context.commit('toggleLoader', false)
 
             }).catch(error => {
+                context.commit('setModalTone', 'alert')
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
@@ -403,12 +448,14 @@ const orders = {
         cancelOrder: (context, data) => {
             context.commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=cancel_order&post_id=${data.post_id}&order_id=${data.order_id}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_orders}`, data).then(response => {
+                context.commit('setModalTone', 'success')
                 context.commit('setMsgModal', response.data.message)
                 context.commit('toggleModal', true)
                 context.commit('cancelCart', data.post_id)
                 context.dispatch('balance/setBalance', null, { root: true })
                 context.commit('toggleLoader', false)
             }).catch(error => {
+                context.commit('setModalTone', 'alert')
                 context.commit('setMsgModal', 'Etiqueta não pode ser cancelada.')
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
@@ -419,6 +466,7 @@ const orders = {
             Axios.post(`${ajaxurl}?action=pay_ticket&id=${data.id}&order_id=${data.order_id}`, data).then(response => {
 
                 if (!response.data.success) {
+                    context.commit('setModalTone', 'alert')
                     context.commit('setMsgModal', response.data.data)
                     context.commit('toggleLoader', false)
                     context.commit('toggleModal', true)
@@ -426,10 +474,12 @@ const orders = {
                 }
                 context.commit('payTicket', data.id)
                 context.dispatch('balance/setBalance', null, { root: true })
+                context.commit('setModalTone', 'success')
                 context.commit('setMsgModal', 'Item #' + data.id + ' pago com sucesso')
                 context.commit('toggleModal', true)
                 context.commit('toggleLoader', false)
             }).catch(error => {
+                context.commit('setModalTone', 'alert')
                 context.commit('setMsgModal', error.message)
                 context.commit('toggleLoader', false)
                 context.commit('toggleModal', true)
@@ -440,6 +490,7 @@ const orders = {
             commit('toggleLoader', true)
             Axios.post(`${ajaxurl}?action=print_ticket&id=${data.id}&order_id=${data.order_id}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_orders}`, data).then(response => {
                 if (!response.data.success) {
+                    commit('setModalTone', 'success')
                     commit('setMsgModal', 'Etiquetas geradas!')
                     commit('toggleLoader', false)
                     commit('toggleModal', true)
@@ -449,6 +500,7 @@ const orders = {
                 commit('toggleLoader', false)
                 window.open(response.data.data.url, '_blank');
             }).catch(error => {
+                commit('setModalTone', 'alert')
                 commit('setMsgModal', error.message[0])
                 commit('toggleLoader', false)
                 commit('toggleModal', true)

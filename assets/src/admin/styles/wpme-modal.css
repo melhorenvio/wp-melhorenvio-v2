@@ -1,0 +1,156 @@
+/**
+ * Modais do admin Melhor Envio (overlay + card alinhados às telas de configuração)
+ */
+
+.wpme_modal_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(30, 40, 50, 0.55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+    Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.wpme_modal_card {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 28px 28px 24px;
+  background: #fff;
+  border: 1px solid #c8d0dc;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(5, 80, 160, 0.1), 0 4px 14px rgba(0, 0, 0, 0.07);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.wpme_modal_card--wide {
+  max-width: 520px;
+}
+
+.wpme_modal_card--loading {
+  max-width: 280px;
+  padding: 32px 28px 28px;
+}
+
+.wpme_modal_icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #e8f0fa 0%, #ffffff 100%);
+  border: 1px solid #dde3ec;
+  color: #0550a0;
+}
+
+.wpme_modal_icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.wpme_modal_icon--success {
+  color: #0550a0;
+}
+
+.wpme_modal_icon--alert {
+  background: linear-gradient(180deg, #fcf0f0 0%, #ffffff 100%);
+  border-color: #f0c8c8;
+  color: #b32d2e;
+}
+
+.wpme_modal_title {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0550a0;
+  line-height: 1.3;
+}
+
+.wpme_modal_title--alert {
+  color: #1d2327;
+}
+
+.wpme_modal_text {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #50575e;
+}
+
+.wpme_modal_body {
+  margin: 0 0 20px;
+  max-height: 50vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.wpme_modal_message {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #50575e;
+  word-break: break-word;
+}
+
+.wpme_modal_message:last-child {
+  margin-bottom: 0;
+}
+
+.wpme_modal_actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wpme_modal_btn {
+  min-width: 140px;
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+
+.wpme_modal_btn.btn-border.-full-blue:hover {
+  background-color: #043d7a;
+  color: #fff;
+  border-color: #043d7a;
+}
+
+.wpme_modal_spinner {
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wpme_modal_spinner svg {
+  display: block;
+}
+
+.wpme_modal_loading_text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #50575e;
+}
+
+/* Transição (usada com <transition name="wpme-modal-fade">) */
+.wpme-modal-fade-enter-active,
+.wpme-modal-fade-leave-active {
+  transition: opacity 0.22s ease;
+}
+
+.wpme-modal-fade-enter,
+.wpme-modal-fade-leave-to {
+  opacity: 0;
+}

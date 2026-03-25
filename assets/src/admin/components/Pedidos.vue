@@ -27,17 +27,17 @@
 }
 
 .error-message {
-  width: 98%;
-  padding: 10px 0 10px 2%;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px 14px;
+  color: #fff;
   font-weight: 600;
-}
-
-.me-modal {
-  z-index: 1 !important;
-}
-
-.me-modal-2 {
-  z-index: 1 !important;
+  font-size: 14px;
+  line-height: 1.45;
+  background: #d63638;
+  border-radius: 4px;
+  border-left: 4px solid #8b0000;
 }
 
 .scrollBox {
@@ -58,7 +58,7 @@
             <h1>Meus pedidos</h1>
           </div>
           <hr />
-          <div class="col-12-12" v-show="true">
+          <div class="col-12-12" v-show="error_message">
             <p class="error-message">{{ error_message }}</p>
           </div>
           <br />
@@ -197,9 +197,9 @@
             </ul>
             <template v-if="toggleInfo == item.id">
               <informacoes
-                :volume="
-                  item.quotation[item.quotation.choose_method].volumes[0]
-                "
+                v-if="quotationVolume(item)"
+                :item="item"
+                :volume="quotationVolume(item)"
                 :products="item.products"
               ></informacoes>
             </template>
@@ -218,21 +218,86 @@
       Carregar mais
     </button>
 
-    <transition name="fade">
-      <!-- show_modal -->
-      <div class="me-modal me-modal-2" v-show="show_modal || show_modal2">
-        <div>
-          <p class="title">Atenção</p>
-          <div class="content">
-            <p v-for="msg in msg_modal" class="txt">{{ msg }}</p>
-            <p v-for="msg in msg_modal2" class="txt">{{ msg }}</p>
+    <transition name="wpme-modal-fade">
+      <div
+        v-show="show_modal || show_modal2"
+        class="wpme_modal_overlay"
+        role="dialog"
+        aria-modal="true"
+        :aria-labelledby="
+          modalIsSuccess
+            ? 'wpme-pedidos-modal-title-success'
+            : 'wpme-pedidos-modal-title-alert'
+        "
+      >
+        <div class="wpme_modal_card wpme_modal_card--wide" @click.stop>
+          <div
+            class="wpme_modal_icon"
+            :class="
+              modalIsSuccess ? 'wpme_modal_icon--success' : 'wpme_modal_icon--alert'
+            "
+            aria-hidden="true"
+          >
+            <svg
+              v-if="modalIsSuccess"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M8 12l2.5 2.5 5-5" />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
           </div>
-          <div class="buttons -center">
+          <h2
+            :id="
+              modalIsSuccess
+                ? 'wpme-pedidos-modal-title-success'
+                : 'wpme-pedidos-modal-title-alert'
+            "
+            class="wpme_modal_title"
+            :class="{ 'wpme_modal_title--alert': !modalIsSuccess }"
+          >
+            {{ modalIsSuccess ? "Sucesso" : "Atenção" }}
+          </h2>
+          <div class="wpme_modal_body">
+            <p
+              v-for="(msg, idx) in msgModalPrimaryList"
+              :key="'m-' + idx"
+              class="wpme_modal_message"
+            >
+              {{ msg }}
+            </p>
+            <p
+              v-for="(msg, idx) in msg_modal2"
+              :key="'m2-' + idx"
+              class="wpme_modal_message"
+            >
+              {{ msg }}
+            </p>
+          </div>
+          <div v-if="btnClose" class="wpme_modal_actions">
             <button
-              v-if="btnClose"
               type="button"
+              class="btn-border -full-blue -big wpme_modal_btn"
               @click="close"
-              class="btn-border -full-blue"
             >
               Fechar
             </button>
@@ -241,65 +306,69 @@
       </div>
     </transition>
 
-    <!-- show_loader -->
-    <div class="me-modal" v-show="show_loader">
-      <svg
-        style="float: left; margin-top: 10%; margin-left: 50%"
-        class="ico"
-        width="88"
-        height="88"
-        viewBox="0 0 44 44"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="#3598dc"
-      >
-        <g fill="none" fill-rule="evenodd" stroke-width="2">
-          <circle cx="22" cy="22" r="1">
-            <animate
-              attributeName="r"
-              begin="0s"
-              dur="1.8s"
-              values="1; 20"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.165, 0.84, 0.44, 1"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="stroke-opacity"
-              begin="0s"
-              dur="1.8s"
-              values="1; 0"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.3, 0.61, 0.355, 1"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="22" cy="22" r="1">
-            <animate
-              attributeName="r"
-              begin="-0.9s"
-              dur="1.8s"
-              values="1; 20"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.165, 0.84, 0.44, 1"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="stroke-opacity"
-              begin="-0.9s"
-              dur="1.8s"
-              values="1; 0"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.3, 0.61, 0.355, 1"
-              repeatCount="indefinite"
-            />
-          </circle>
-        </g>
-      </svg>
-    </div>
+    <transition name="wpme-modal-fade">
+      <div v-show="show_loader" class="wpme_modal_overlay" aria-busy="true" aria-live="polite">
+        <div class="wpme_modal_card wpme_modal_card--loading">
+          <div class="wpme_modal_spinner">
+            <svg
+              width="88"
+              height="88"
+              viewBox="0 0 44 44"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#0550a0"
+            >
+              <g fill="none" fill-rule="evenodd" stroke-width="2">
+                <circle cx="22" cy="22" r="1">
+                  <animate
+                    attributeName="r"
+                    begin="0s"
+                    dur="1.8s"
+                    values="1; 20"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.165, 0.84, 0.44, 1"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="stroke-opacity"
+                    begin="0s"
+                    dur="1.8s"
+                    values="1; 0"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.3, 0.61, 0.355, 1"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <circle cx="22" cy="22" r="1">
+                  <animate
+                    attributeName="r"
+                    begin="-0.9s"
+                    dur="1.8s"
+                    values="1; 20"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.165, 0.84, 0.44, 1"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="stroke-opacity"
+                    begin="-0.9s"
+                    dur="1.8s"
+                    values="1; 0"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.3, 0.61, 0.355, 1"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              </g>
+            </svg>
+          </div>
+          <p class="wpme_modal_loading_text">Carregando…</p>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -313,6 +382,10 @@ import Acoes from "./Pedido/Acoes.vue";
 import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
 import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
+import {
+  getErrorMessagesFromCatch,
+  buildCartSuccessMessage,
+} from "admin/utils/api-errors";
 
 export default {
   name: "Pedidos",
@@ -333,6 +406,7 @@ export default {
       totalCart: 0,
       show_modal2: false,
       msg_modal2: [],
+      modal2_tone: "alert",
       btnClose: true,
     };
   },
@@ -353,6 +427,7 @@ export default {
       show_modal: "showModal",
       show_more: "showMore",
       statusWooCommerce: "statusWooCommerce",
+      modal_tone: "modalTone",
     }),
     ...mapGetters("balance", ["getBalance"]),
     ordersWithValidationProducts() {
@@ -362,7 +437,24 @@ export default {
 
         return order;
       });
-    }
+    },
+    /** msg_modal no Vuex pode ser string ou array */
+    msgModalPrimaryList() {
+      const m = this.msg_modal;
+      if (m == null || m === "") {
+        return [];
+      }
+      return Array.isArray(m) ? m : [m];
+    },
+    modalIsSuccess() {
+      if (this.show_modal) {
+        return this.modal_tone === "success";
+      }
+      if (this.show_modal2) {
+        return this.modal2_tone === "success";
+      }
+      return false;
+    },
   },
   methods: {
     ...mapActions("orders", [
@@ -376,11 +468,20 @@ export default {
       "showErrorAlert",
     ]),
     ...mapActions("balance", ["setBalance"]),
-    close() {
-      this.closeModal();
-    },
     handleToggleInfo(id) {
       this.toggleInfo = this.toggleInfo != id ? id : null;
+    },
+    quotationVolume(order) {
+      const q = order && order.quotation;
+      if (!q || q.choose_method == null) return null;
+      const method = q[q.choose_method];
+      if (!method || !method.volumes || !method.volumes.length) return null;
+      return method.volumes[0];
+    },
+    goToTokenIfNeeded() {
+      if (this.$route.name !== "Token") {
+        this.$router.push({ name: "Token" }).catch(() => {});
+      }
     },
     getToken() {
       this.$http
@@ -389,7 +490,7 @@ export default {
         )
         .then((response) => {
           if (!response.data.exists_token) {
-            this.$router.push("Token");
+            this.goToTokenIfNeeded();
           }
 
           this.validateToken();
@@ -467,6 +568,7 @@ export default {
     },
     async beforeBuyOrders() {
       this.show_modal2 = true;
+      this.modal2_tone = "alert";
       this.btnClose = false;
       const orderSelected = this.getSelectedOrders();
 
@@ -476,9 +578,14 @@ export default {
         return;
       }
 
+      let hadError = false;
       for (const idx in orderSelected) {
-        await this.dispatchCart(orderSelected[idx]);
+        const ok = await this.dispatchCart(orderSelected[idx]);
+        if (!ok) {
+          hadError = true;
+        }
       }
+      this.modal2_tone = hadError ? "alert" : "success";
       this.btnClose = true;
     },
     countOrdersEnabledToBuy: function () {
@@ -497,6 +604,7 @@ export default {
       return new Promise((resolve, reject) => {
         let data = {
           id: order.id,
+          service_id: order.quotation.choose_method,
           choosen: order.quotation.choose_method,
           non_commercial: order.non_commercial,
         };
@@ -504,21 +612,21 @@ export default {
         setTimeout(() => {
           this.addCart(data)
             .then((response) => {
-              this.msg_modal2.push(
-                "Pedido ID" + order.id + " enviado com sucesso!"
-              );
-              resolve(response);
+              buildCartSuccessMessage(order.id, response).forEach((line) => {
+                this.msg_modal2.push(line);
+              });
+              resolve(true);
             })
             .catch((error) => {
               this.msg_modal2.push(
-                "OPS!, ocorreu um erro ao enviar o pedido ID" + order.id
+                "Erro ao enviar o pedido ID " + order.id + "."
               );
               this.btnClose = true;
-              error.errors.filter((item) => {
-                this.msg_modal2.push("ID:" + order.id + ": " + item);
+              getErrorMessagesFromCatch(error).forEach((msg) => {
+                this.msg_modal2.push("ID " + order.id + ": " + msg);
               });
               this.btnClose = true;
-              resolve();
+              resolve(false);
             });
         }, 100);
       });
@@ -538,6 +646,7 @@ export default {
     close() {
       this.show_modal2 = false;
       this.msg_modal2.length = 0;
+      this.modal2_tone = "alert";
       this.closeModal();
     },
     validateToken() {
@@ -546,6 +655,15 @@ export default {
           getToken()
         )
         .then((response) => {
+          const env = response.data.token_environment || "production";
+          if (env === "sandbox") {
+            if (response.data.token_sandbox) {
+              this.error_message = "";
+            } else {
+              this.goToTokenIfNeeded();
+            }
+            return;
+          }
           if (response.data.token) {
             if (isDateTokenExpired(response.data.token)) {
               this.error_message =
@@ -554,7 +672,7 @@ export default {
               this.error_message = "";
             }
           } else {
-            this.$router.push("Token");
+            this.goToTokenIfNeeded();
           }
         });
     },

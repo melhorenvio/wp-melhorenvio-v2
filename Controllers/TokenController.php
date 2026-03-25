@@ -4,6 +4,7 @@ namespace MelhorEnvio\Controllers;
 
 use MelhorEnvio\Helpers\SanitizeHelper;
 use MelhorEnvio\Helpers\WpNonceValidatorHelper;
+use MelhorEnvio\Models\Token;
 use MelhorEnvio\Services\TokenService;
 
 class TokenController {
@@ -89,17 +90,12 @@ class TokenController {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
 
-		if ( ! get_option( 'wpmelhorenvio_token' ) ) {
-			return wp_send_json(
-				array(
-					'exists_token' => false,
-				),
-				200
-			);
-		}
+		$token_data = ( new Token() )->get();
+		$exists     = ( new TokenService() )->isValid( $token_data );
+
 		return wp_send_json(
 			array(
-				'exists_token' => true,
+				'exists_token' => $exists,
 			),
 			200
 		);

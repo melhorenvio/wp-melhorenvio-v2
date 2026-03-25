@@ -12,11 +12,14 @@
         </tr>
         <tr>
           <td>
-            <p>
+            <p v-if="volume && volume.dimensions">
               <b>Dimensões:</b>
               {{ volume.dimensions.height }}cm A x
               {{ volume.dimensions.width }}cm L x
               {{ volume.dimensions.length }}cm C - {{ volume.weight }}Kg
+            </p>
+            <p v-else>
+              <b>Dimensões:</b> —
             </p>
           </td>
           <td>
@@ -79,13 +82,17 @@
 <script>
 export default {
   props: {
+    item: {
+      type: Object,
+      required: true,
+    },
     volume: {
       type: Object,
-      default: {},
+      default: () => ({}),
     },
     products: {
-      type: Object,
-      default: {},
+      type: [Object, Array],
+      default: () => [],
     },
   },
 };
