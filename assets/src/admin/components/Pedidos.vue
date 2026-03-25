@@ -397,6 +397,11 @@ export default {
       if (!method || !method.volumes || !method.volumes.length) return null;
       return method.volumes[0];
     },
+    goToTokenIfNeeded() {
+      if (this.$route.name !== "Token") {
+        this.$router.push({ name: "Token" }).catch(() => {});
+      }
+    },
     getToken() {
       this.$http
         .get(
@@ -404,7 +409,7 @@ export default {
         )
         .then((response) => {
           if (!response.data.exists_token) {
-            this.$router.push("Token");
+            this.goToTokenIfNeeded();
           }
 
           this.validateToken();
@@ -561,6 +566,15 @@ export default {
           getToken()
         )
         .then((response) => {
+          const env = response.data.token_environment || "production";
+          if (env === "sandbox") {
+            if (response.data.token_sandbox) {
+              this.error_message = "";
+            } else {
+              this.goToTokenIfNeeded();
+            }
+            return;
+          }
           if (response.data.token) {
             if (isDateTokenExpired(response.data.token)) {
               this.error_message =
@@ -569,7 +583,7 @@ export default {
               this.error_message = "";
             }
           } else {
-            this.$router.push("Token");
+            this.goToTokenIfNeeded();
           }
         });
     },

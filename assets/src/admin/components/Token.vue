@@ -164,7 +164,6 @@
 
 <script>
 import axios from "axios";
-import Router from "vue-router";
 
 export default {
   name: "Token",
@@ -208,10 +207,12 @@ export default {
           data: bodyFormData,
           method: "POST",
         })
-          .then((response) => {
-            var router = new Router();
-            router.push("/configuracoes");
-            router.go();
+          .then(() => {
+            this.$router.push({ name: "Configuracoes" }).catch((err) => {
+              if (err && err.name !== "NavigationDuplicated") {
+                console.error(err);
+              }
+            });
           })
           .catch((err) => console.log(err));
       }

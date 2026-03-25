@@ -709,16 +709,43 @@
       </button>
     </div>
 
-    <transition name="fade">
-      <div class="me-modal" v-show="show_modal">
-        <div>
-          <p class="title">Sucesso!</p>
-          <div class="content">
-            <p class="txt">dados atualizados com sucesso!</p>
+    <transition name="wpme-modal-fade">
+      <div
+        v-show="show_modal"
+        class="wpme_modal_success"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wpme-success-title"
+        @click.self="close"
+      >
+        <div class="wpme_modal_success__card" @click.stop>
+          <div class="wpme_modal_success__icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M8 12l2.5 2.5 5-5" />
+            </svg>
           </div>
-          <div class="buttons -center">
-            <button type="button" @click="close" class="btn-border -full-blue">
-              Fechar
+          <h2 id="wpme-success-title" class="wpme_modal_success__title">
+            Configurações salvas
+          </h2>
+          <p class="wpme_modal_success__text">
+            Suas alterações foram aplicadas com sucesso.
+          </p>
+          <div class="wpme_modal_success__actions">
+            <button
+              type="button"
+              class="btn-border -full-blue -big wpme_modal_success__btn"
+              @click="close"
+            >
+              Entendi
             </button>
           </div>
         </div>
@@ -1210,17 +1237,30 @@ export default {
       let val = value == 1 ? value + " dia" : value + " dias";
       return val;
     },
+    goToTokenIfNeeded() {
+      if (this.$route.name !== "Token") {
+        this.$router.push({ name: "Token" }).catch(() => {});
+      }
+    },
     getToken() {
       this.$http.get(verifyToken()).then((response) => {
         if (!response.data.exists_token) {
-          this.$router.push("Token");
+          this.goToTokenIfNeeded();
         }
-
         this.validateToken();
       });
     },
     validateToken() {
       this.$http.get(getToken()).then((response) => {
+        const env = response.data.token_environment || "production";
+        if (env === "sandbox") {
+          if (response.data.token_sandbox) {
+            this.error_message = "";
+          } else {
+            this.goToTokenIfNeeded();
+          }
+          return;
+        }
         if (response.data.token) {
           if (isDateTokenExpired(response.data.token)) {
             this.error_message =
@@ -1229,7 +1269,7 @@ export default {
             this.error_message = "";
           }
         } else {
-          this.$router.push("Token");
+          this.goToTokenIfNeeded();
         }
       });
     },
@@ -1379,6 +1419,17 @@ export default {
     promiseConfigs.then((resolve) => {
       this.setLoader(false);
     });
+    this._onModalSuccessEscape = (e) => {
+      if (e.key === "Escape" && this.show_modal) {
+        this.close();
+      }
+    };
+    document.addEventListener("keydown", this._onModalSuccessEscape);
+  },
+  beforeDestroy() {
+    if (this._onModalSuccessEscape) {
+      document.removeEventListener("keydown", this._onModalSuccessEscape);
+    }
   },
 };
 </script>
@@ -1494,7 +1545,6 @@ export default {
   color: #464646;
 }
 
-/* Caixas de mesmo tamanho na seleção de origem */
 .wpme_origin_cards {
   float: none;
   flex: 1 1 100%;
@@ -1529,7 +1579,6 @@ export default {
   flex: 1;
 }
 
-/* Diretório de plugins: largura total, sem barra horizontal; caminho quebra em linhas */
 .wpme_config_panel__path-plugins {
   overflow-x: hidden;
   min-width: 0;
@@ -1574,5 +1623,94 @@ export default {
   min-width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.wpme_modal_success {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(30, 40, 50, 0.55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.wpme_modal_success__card {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 28px 28px 24px;
+  background: #fff;
+  border: 1px solid #c8d0dc;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(5, 80, 160, 0.1), 0 4px 14px rgba(0, 0, 0, 0.07);
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+    Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.wpme_modal_success__icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #e8f0fa 0%, #ffffff 100%);
+  border: 1px solid #dde3ec;
+  color: #0550a0;
+}
+
+.wpme_modal_success__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.wpme_modal_success__title {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0550a0;
+  line-height: 1.3;
+}
+
+.wpme_modal_success__text {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #50575e;
+}
+
+.wpme_modal_success__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.wpme_modal_success__btn {
+  min-width: 140px;
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+
+.wpme_modal_success__btn.btn-border.-full-blue:hover {
+  background-color: #043d7a;
+  color: #fff;
+  border-color: #043d7a;
+}
+
+.wpme-modal-fade-enter-active,
+.wpme-modal-fade-leave-active {
+  transition: opacity 0.22s ease;
+}
+
+.wpme-modal-fade-enter,
+.wpme-modal-fade-leave-to {
+  opacity: 0;
 }
 </style>
