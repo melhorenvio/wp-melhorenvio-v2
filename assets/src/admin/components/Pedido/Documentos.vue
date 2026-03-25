@@ -14,7 +14,9 @@
             item.quotation.choose_method == services.LATAM_JUNTOS ||
             item.quotation.choose_method == services.AZUL_AMANHA ||
             item.quotation.choose_method == services.AZUL_ECOMMERCE ||
-            item.quotation.choose_method == services.BUSLOG_RODOVIARIO
+            item.quotation.choose_method == services.BUSLOG_RODOVIARIO ||
+            item.quotation.choose_method == services.TOTAL_EXPRESS_STANDARD ||
+            item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL
           "
         >
           <fieldset class="checkLine">
