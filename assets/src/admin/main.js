@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Axios from 'axios'
+import './styles/wpme-modal.css'
 import App from './App.vue'
 import router from './router'
 import menuFix from './utils/admin-menu-fix'

@@ -280,6 +280,10 @@
 <script>
 import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
+import {
+  getErrorMessagesFromCatch,
+  buildCartSuccessMessage,
+} from "../../utils/api-errors";
 export default {
   props: {
     item: {
@@ -293,6 +297,7 @@ export default {
       "initLoader",
       "stopLoader",
       "setMessageModal",
+      "openSuccessModal",
       "removeCart",
       "cancelOrder",
       "payTicket",
@@ -305,13 +310,17 @@ export default {
       this.addCartSimple(data)
         .then((response) => {
           const msg = [];
-          msg.push(
-            `Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`
-          );
-          this.setMessageModal(msg);
+          if (response && response.protocol) {
+            msg.push(
+              `Pedido #${data.id} enviado para o carrinho de compras do Melhor Envio com o protocolo ${response.protocol}`
+            );
+          } else {
+            msg.push(...buildCartSuccessMessage(data.id, response));
+          }
+          this.openSuccessModal(msg);
         })
         .catch((error) => {
-          this.setMessageModal(error.response.data.errors);
+          this.setMessageModal(getErrorMessagesFromCatch(error));
         })
         .finally(() => {
           this.stopLoader();
@@ -325,15 +334,12 @@ export default {
       this.initLoader();
       this.addCart(data)
         .then((response) => {
-          if (response.success) {
-            const msgErr = [];
-            msgErr.push("Etiqueta #" + data.id + " comprada com sucesso.");
-            this.setMessageModal(msgErr);
-            return;
-          }
+          this.openSuccessModal(
+            buildCartSuccessMessage(data.id, response, "purchase")
+          );
         })
         .catch((error) => {
-          this.setMessageModal(error.response.data.errors);
+          this.setMessageModal(getErrorMessagesFromCatch(error));
         })
         .finally(() => {
           this.stopLoader();

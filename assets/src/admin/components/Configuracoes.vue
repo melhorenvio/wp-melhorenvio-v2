@@ -712,14 +712,14 @@
     <transition name="wpme-modal-fade">
       <div
         v-show="show_modal"
-        class="wpme_modal_success"
+        class="wpme_modal_overlay"
         role="dialog"
         aria-modal="true"
         aria-labelledby="wpme-success-title"
         @click.self="close"
       >
-        <div class="wpme_modal_success__card" @click.stop>
-          <div class="wpme_modal_success__icon" aria-hidden="true">
+        <div class="wpme_modal_card" @click.stop>
+          <div class="wpme_modal_icon wpme_modal_icon--success" aria-hidden="true">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -733,16 +733,16 @@
               <path d="M8 12l2.5 2.5 5-5" />
             </svg>
           </div>
-          <h2 id="wpme-success-title" class="wpme_modal_success__title">
+          <h2 id="wpme-success-title" class="wpme_modal_title">
             Configurações salvas
           </h2>
-          <p class="wpme_modal_success__text">
+          <p class="wpme_modal_text">
             Suas alterações foram aplicadas com sucesso.
           </p>
-          <div class="wpme_modal_success__actions">
+          <div class="wpme_modal_actions">
             <button
               type="button"
-              class="btn-border -full-blue -big wpme_modal_success__btn"
+              class="btn-border -full-blue -big wpme_modal_btn"
               @click="close"
             >
               Entendi
@@ -752,64 +752,69 @@
       </div>
     </transition>
 
-    <div class="me-modal" v-show="show_load">
-      <svg
-        style="float: left; margin-top: 10%; margin-left: 50%"
-        class="ico"
-        width="88"
-        height="88"
-        viewBox="0 0 44 44"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="#3598dc"
-      >
-        <g fill="none" fill-rule="evenodd" stroke-width="2">
-          <circle cx="22" cy="22" r="1">
-            <animate
-              attributeName="r"
-              begin="0s"
-              dur="1.8s"
-              values="1; 20"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.165, 0.84, 0.44, 1"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="stroke-opacity"
-              begin="0s"
-              dur="1.8s"
-              values="1; 0"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.3, 0.61, 0.355, 1"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="22" cy="22" r="1">
-            <animate
-              attributeName="r"
-              begin="-0.9s"
-              dur="1.8s"
-              values="1; 20"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.165, 0.84, 0.44, 1"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="stroke-opacity"
-              begin="-0.9s"
-              dur="1.8s"
-              values="1; 0"
-              calcMode="spline"
-              keyTimes="0; 1"
-              keySplines="0.3, 0.61, 0.355, 1"
-              repeatCount="indefinite"
-            />
-          </circle>
-        </g>
-      </svg>
-    </div>
+    <transition name="wpme-modal-fade">
+      <div v-show="show_load" class="wpme_modal_overlay" aria-busy="true" aria-live="polite">
+        <div class="wpme_modal_card wpme_modal_card--loading">
+          <div class="wpme_modal_spinner">
+            <svg
+              width="88"
+              height="88"
+              viewBox="0 0 44 44"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#0550a0"
+            >
+              <g fill="none" fill-rule="evenodd" stroke-width="2">
+                <circle cx="22" cy="22" r="1">
+                  <animate
+                    attributeName="r"
+                    begin="0s"
+                    dur="1.8s"
+                    values="1; 20"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.165, 0.84, 0.44, 1"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="stroke-opacity"
+                    begin="0s"
+                    dur="1.8s"
+                    values="1; 0"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.3, 0.61, 0.355, 1"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <circle cx="22" cy="22" r="1">
+                  <animate
+                    attributeName="r"
+                    begin="-0.9s"
+                    dur="1.8s"
+                    values="1; 20"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.165, 0.84, 0.44, 1"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="stroke-opacity"
+                    begin="-0.9s"
+                    dur="1.8s"
+                    values="1; 0"
+                    calcMode="spline"
+                    keyTimes="0; 1"
+                    keySplines="0.3, 0.61, 0.355, 1"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              </g>
+            </svg>
+          </div>
+          <p class="wpme_modal_loading_text">Carregando…</p>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -1625,92 +1630,4 @@ export default {
   box-sizing: border-box;
 }
 
-.wpme_modal_success {
-  position: fixed;
-  inset: 0;
-  z-index: 100000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-  background: rgba(30, 40, 50, 0.55);
-  -webkit-backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
-}
-
-.wpme_modal_success__card {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 28px 28px 24px;
-  background: #fff;
-  border: 1px solid #c8d0dc;
-  border-radius: 8px;
-  box-shadow: 0 12px 40px rgba(5, 80, 160, 0.1), 0 4px 14px rgba(0, 0, 0, 0.07);
-  text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
-    Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-.wpme_modal_success__icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #e8f0fa 0%, #ffffff 100%);
-  border: 1px solid #dde3ec;
-  color: #0550a0;
-}
-
-.wpme_modal_success__icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.wpme_modal_success__title {
-  margin: 0 0 10px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #0550a0;
-  line-height: 1.3;
-}
-
-.wpme_modal_success__text {
-  margin: 0 0 24px;
-  font-size: 14px;
-  line-height: 1.55;
-  color: #50575e;
-}
-
-.wpme_modal_success__actions {
-  display: flex;
-  justify-content: center;
-}
-
-.wpme_modal_success__btn {
-  min-width: 140px;
-  font-family: inherit;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-}
-
-.wpme_modal_success__btn.btn-border.-full-blue:hover {
-  background-color: #043d7a;
-  color: #fff;
-  border-color: #043d7a;
-}
-
-.wpme-modal-fade-enter-active,
-.wpme-modal-fade-leave-active {
-  transition: opacity 0.22s ease;
-}
-
-.wpme-modal-fade-enter,
-.wpme-modal-fade-leave-to {
-  opacity: 0;
-}
 </style>
