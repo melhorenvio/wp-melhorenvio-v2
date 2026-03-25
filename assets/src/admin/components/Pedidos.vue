@@ -27,9 +27,17 @@
 }
 
 .error-message {
-  width: 98%;
-  padding: 10px 0 10px 2%;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px 14px;
+  color: #fff;
   font-weight: 600;
+  font-size: 14px;
+  line-height: 1.45;
+  background: #d63638;
+  border-radius: 4px;
+  border-left: 4px solid #8b0000;
 }
 
 .me-modal {
@@ -58,7 +66,7 @@
             <h1>Meus pedidos</h1>
           </div>
           <hr />
-          <div class="col-12-12" v-show="true">
+          <div class="col-12-12" v-show="error_message">
             <p class="error-message">{{ error_message }}</p>
           </div>
           <br />
@@ -197,9 +205,9 @@
             </ul>
             <template v-if="toggleInfo == item.id">
               <informacoes
-                :volume="
-                  item.quotation[item.quotation.choose_method].volumes[0]
-                "
+                v-if="quotationVolume(item)"
+                :item="item"
+                :volume="quotationVolume(item)"
                 :products="item.products"
               ></informacoes>
             </template>
@@ -381,6 +389,13 @@ export default {
     },
     handleToggleInfo(id) {
       this.toggleInfo = this.toggleInfo != id ? id : null;
+    },
+    quotationVolume(order) {
+      const q = order && order.quotation;
+      if (!q || q.choose_method == null) return null;
+      const method = q[q.choose_method];
+      if (!method || !method.volumes || !method.volumes.length) return null;
+      return method.volumes[0];
     },
     getToken() {
       this.$http
