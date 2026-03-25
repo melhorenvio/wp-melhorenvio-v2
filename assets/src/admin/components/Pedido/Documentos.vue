@@ -37,7 +37,9 @@
               item.quotation.choose_method == services.JADLOG_COM ||
               item.quotation.choose_method == services.LATAM ||
               item.quotation.choose_method == services.LATAM_JUNTOS ||
-              item.quotation.choose_method == services.BUSLOG_RODOVIARIO) &&
+              item.quotation.choose_method == services.BUSLOG_RODOVIARIO ||
+              item.quotation.choose_method == services.TOTAL_EXPRESS_STANDARD ||
+              item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL) &&
               !item.non_commercial) ||
             item.quotation.choose_method == services.VIA_BRASIL_AEREO ||
             item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
