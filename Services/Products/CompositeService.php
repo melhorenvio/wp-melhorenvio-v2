@@ -13,6 +13,10 @@ class CompositeService extends ProductsService
 
 	public static function isCompositeProduct($product): bool
 	{
+		if (!$product || !is_object($product)) {
+			return false;
+		}
+		
 		return $product->get_type() === self::COMPOSITE_TYPE ||
 			$product->get_type() === self::PRODUCT_COMPOSITE_TYPE;
 	}
