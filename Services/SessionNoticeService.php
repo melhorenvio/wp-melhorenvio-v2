@@ -117,6 +117,34 @@ class SessionNoticeService {
 	}
 
 	/**
+	 * Remove notices by partial text match in stored HTML.
+	 *
+	 * @param string $needle
+	 * @return bool
+	 */
+	public function removeByContains( $needle ) {
+		if ( empty( $needle ) ) {
+			return false;
+		}
+
+		$notices = $this->get();
+		$updated = false;
+
+		foreach ( $notices as $hash => $notice ) {
+			if ( false !== stripos( $notice, $needle ) ) {
+				unset( $notices[ $hash ] );
+				$updated = true;
+			}
+		}
+
+		if ( ! $updated ) {
+			return false;
+		}
+
+		return update_option( self::ID_NOTICES_OPTIONS, $notices );
+	}
+
+	/**
 	 * function to list all notices
 	 *
 	 * @return bool|array
