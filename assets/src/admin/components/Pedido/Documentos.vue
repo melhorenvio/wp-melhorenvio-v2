@@ -16,7 +16,10 @@
             item.quotation.choose_method == services.AZUL_ECOMMERCE ||
             item.quotation.choose_method == services.BUSLOG_RODOVIARIO ||
             item.quotation.choose_method == services.TOTAL_EXPRESS_STANDARD ||
-            item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL
+            item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL ||
+            item.quotation.choose_method == services.LOGGI_EXPRESS ||
+            item.quotation.choose_method == services.LOGGI_COLETA ||
+            item.quotation.choose_method == services.JET_STANDARD
           "
         >
           <fieldset class="checkLine">
@@ -39,7 +42,10 @@
               item.quotation.choose_method == services.LATAM_JUNTOS ||
               item.quotation.choose_method == services.BUSLOG_RODOVIARIO ||
               item.quotation.choose_method == services.TOTAL_EXPRESS_STANDARD ||
-              item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL) &&
+              item.quotation.choose_method == services.TOTAL_EXPRESS_E_TOTAL ||
+              item.quotation.choose_method == services.LOGGI_EXPRESS ||
+              item.quotation.choose_method == services.LOGGI_COLETA ||
+              item.quotation.choose_method == services.JET_STANDARD) &&
               !item.non_commercial) ||
             item.quotation.choose_method == services.VIA_BRASIL_AEREO ||
             item.quotation.choose_method == services.VIA_BRASIL_RODOVIARIO
