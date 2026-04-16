@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.16.1
+Version: 2.16.2
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 6.9
-Stable tag: 2.16.1
+Stable tag: 2.16.2
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -54,7 +54,7 @@ A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar nov
 
 Ou se preferir basta fazer o download do plugin na página oficial do plugin no portal do Wordpress e mover o arquivo .Zip para o diretório wp-content/plugins. O próximo passo, é acessar todos os plugins pelo menu Plugins -> Plugins instalados, encontrar o plugin "Melhor Envio" e clicar em "Ativar".
 
-Você também vai precisar do plugin <a href"https://wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/" target="_blank">Calculadora de Frete e Campos Checkout para o Brasil</a> para o perfeito funcionamento do plugin do Melhor Envio.
+Recomendamos a instalação do plugin <a href="https://wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/" target="_blank">Calculadora de Frete e Campos Checkout para o Brasil</a> para o perfeito funcionamento do plugin do Melhor Envio.
 
 O próximo passo para utilizar o plugin é gerar um token na plataforma da Melhor Envio. Para isso, você precisa acessar o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a> e clicar em "Novo token", inserir um nome para o token, selecionar as permissões e clicar em "Salvar". Você deve copiar o token gerado, e colar o mesmo no painel do Wordpress, acessando o menu Melhor Envio -> Token.
 painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
@@ -68,6 +68,9 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+
+= 2.16.2 =
+* Altera plugin de campos de checkout para recomendado ao invés de obrigatório
 
 = 2.16.1 =
 * Adiciona envio de NF para JeT e Loggi

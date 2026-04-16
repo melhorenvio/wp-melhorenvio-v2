@@ -55,6 +55,7 @@ class CheckHealthService {
 		}
 
 		$errors          = array();
+		$warnings        = array();
 		$pluginsActiveds = apply_filters(
 			'network_admin_active_plugins',
 			get_option( 'active_plugins' )
@@ -65,18 +66,26 @@ class CheckHealthService {
 		}
 
 		if ( ! in_array( 'woo-better-shipping-calculator-for-brazil/wc-better-shipping-calculator-for-brazil.php', $pluginsActiveds ) && ! is_multisite() ) {
-			$errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/">Calculadora de Frete e Campos Checkout para o Brasil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
+			$warnings[] = 'Recomendamos a instalação do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/">Calculadora de Frete e Campos Checkout para o Brasil</a> ativado no wordpress para perfeito funcionamento do plugin do Melhor Envio.';
 		}
 
 		$sessionNoticeService = new SessionNoticeService();
+
 		if ( ! empty( $errors ) ) {
 			foreach ( $errors as $err ) {
 				$sessionNoticeService->add( $err, SessionNoticeService::NOTICE_INFO );
 			}
 		}
 
+		if ( ! empty( $warnings ) ) {
+			foreach ( $warnings as $warning ) {
+				$sessionNoticeService->add( $warning, SessionNoticeService::NOTICE_WARNING );
+			}
+		}
+
 		return array(
 			'errors'     => $errors,
+			'warnings'   => $warnings,
 			'errorsPath' => $errorsPath,
 		);
 	}

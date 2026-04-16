@@ -30,3 +30,6 @@ composer.lock
 .idea/
 
 docker/.env
+
+.cursor/
+.specs/

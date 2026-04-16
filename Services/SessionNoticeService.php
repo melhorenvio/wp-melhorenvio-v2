@@ -19,6 +19,8 @@ class SessionNoticeService {
 
 	const NOTICE_INFO = 'notice-info';
 
+	const NOTICE_WARNING = 'notice-warning';
+
 	const TYPES_NOTICE = array(
 		'notice-error',
 		'notice-warning',
