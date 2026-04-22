@@ -60,7 +60,6 @@ class CheckHealthService {
 		}
 
 		$errors          = array();
-		$warnings        = array();
 		$pluginsActiveds = apply_filters(
 			'network_admin_active_plugins',
 			get_option( 'active_plugins' )
@@ -83,15 +82,8 @@ class CheckHealthService {
 			}
 		}
 
-		if ( ! empty( $warnings ) ) {
-			foreach ( $warnings as $warning ) {
-				$sessionNoticeService->add( $warning, SessionNoticeService::NOTICE_WARNING );
-			}
-		}
-
 		return array(
 			'errors'     => $errors,
-			'warnings'   => $warnings,
 			'errorsPath' => $errorsPath,
 		);
 	}
