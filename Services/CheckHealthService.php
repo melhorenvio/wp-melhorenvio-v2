@@ -50,6 +50,11 @@ class CheckHealthService {
 	 */
 	public function checkPathPlugin( $pathPlugins ) {
 		$errorsPath = array();
+
+        $sessionNoticeService = new SessionNoticeService();
+        $sessionNoticeService->removeNoticesContaning( 'woocommerce-extra-checkout-fields-for-brazil' );
+        $sessionNoticeService->removeNoticesContaning( 'woo-better-shipping-calculator-for-brazil' );
+
 		if ( ! is_dir( $pathPlugins . '/woocommerce' ) ) {
 			$errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
 		}
@@ -64,11 +69,13 @@ class CheckHealthService {
 			$errors[] = 'Você precisa do plugin WooCommerce ativado no WordPress para utilizar o plugin do Melhor Envio';
 		}
 
-		if ( ! in_array( 'woo-better-shipping-calculator-for-brazil/wc-better-shipping-calculator-for-brazil.php', $pluginsActiveds ) && ! is_multisite() ) {
-			$errors[] = 'Você precisa do plugin <a target="_blank" href="https://br.wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/">Calculadora de Frete e Campos Checkout para o Brasil</a> ativado no wordpress para utilizar o plugin do Melhor Envio';
+		$hasBetterShipping = in_array( 'woo-better-shipping-calculator-for-brazil/wc-better-shipping-calculator-for-brazil.php', $pluginsActiveds );
+		$hasExtraCheckout  = in_array( 'woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', $pluginsActiveds );
+
+		if ( ! $hasBetterShipping && ! $hasExtraCheckout && ! is_multisite() ) {
+			$errors[] = 'O plugin do Melhor Envio <strong>necessita obrigatoriamente</strong> de um dos seguintes plugins instalado e ativado para funcionar corretamente: <a target="_blank" href="https://br.wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/">Calculadora de Frete e Campos Checkout para o Brasil</a> ou <a target="_blank" href="https://br.wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">Brazilian Market on WooCommerce</a>.';
 		}
 
-		$sessionNoticeService = new SessionNoticeService();
 		if ( ! empty( $errors ) ) {
 			foreach ( $errors as $err ) {
 				$sessionNoticeService->add( $err, SessionNoticeService::NOTICE_INFO );
