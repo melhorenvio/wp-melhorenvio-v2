@@ -69,7 +69,6 @@ use MelhorEnvio\Services\RouterService;
 use MelhorEnvio\Services\ShortCodeService;
 use MelhorEnvio\Services\TrackingService;
 use MelhorEnvio\Services\ListPluginsIncompatiblesService;
-use MelhorEnvio\Services\NoticeInterviewService;
 use MelhorEnvio\Services\SessionNoticeService;
 use MelhorEnvio\Helpers\SessionHelper;
 use MelhorEnvio\Helpers\EscapeAllowedTags;
@@ -190,7 +189,6 @@ final class Melhor_Envio_Plugin
 
         if (is_admin()) {
             (new SessionNoticeService())->showNotices();
-            (new NoticeInterviewService())->insertNotice();
             $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
 
             if (!empty($result['errors'])) {
