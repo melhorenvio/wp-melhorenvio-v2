@@ -27,6 +27,10 @@ class OrdersController {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		unset( $_GET['action'] );
 		$orders = ( new ListOrderService() )->getList( SanitizeHelper::apply( $_GET ) );
 		return wp_send_json( $orders, 200 );
@@ -54,6 +58,10 @@ class OrdersController {
 	public function addCart() {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		$postId = SanitizeHelper::apply( $_GET['post_id'] );
 
@@ -98,6 +106,10 @@ class OrdersController {
 	public function sendOrder() {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		if ( empty( $_GET['post_id'] ) ) {
 			return wp_send_json(
@@ -227,6 +239,10 @@ class OrdersController {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		if ( ! isset( $_GET['order_id'] ) ) {
 			return wp_send_json(
 				array(
@@ -265,6 +281,10 @@ class OrdersController {
 	public function cancelOrder() {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		if ( ! isset( $_GET['post_id'] ) ) {
 			return wp_send_json(
@@ -311,6 +331,12 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function payTicket() {
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$posts = explode( ',', SanitizeHelper::apply( $_GET['id'] ) );
 
 		$result = ( new OrderService() )->pay( $posts );
@@ -342,6 +368,12 @@ class OrdersController {
 	 * @return array $response
 	 */
 	public function createTicket() {
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$result = ( new OrderService() )->createLabel( SanitizeHelper::apply( $_GET['id'] ) );
 
 		if ( empty( $result['order_id'] ) ) {
@@ -374,6 +406,10 @@ class OrdersController {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$result = ( new OrderService() )->printLabel( SanitizeHelper::apply( $_GET['id'] ) );
 
 		if ( empty( $result->url ) ) {
@@ -403,6 +439,12 @@ class OrdersController {
 	 * @return array $response;
 	 */
 	public function buyOnClick() {
+		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		if ( ! isset( $_GET['ids'] ) ) {
 			return wp_send_json(
 				array(
@@ -446,6 +488,10 @@ class OrdersController {
 	public function insertInvoiceOrder() {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'orders' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		unset( $_GET['action'] );
 

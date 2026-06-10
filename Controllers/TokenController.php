@@ -19,6 +19,10 @@ class TokenController {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$tokenData = ( new TokenService() )->get();
 		return wp_send_json( $tokenData, 200 );
 	}
@@ -35,6 +39,10 @@ class TokenController {
 	public function save() {
 
 		WpNonceValidatorHelper::check( $_POST[ self::WP_NONCE ], 'tokens' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		if ( ! isset( $_POST['token'] ) ) {
 			return wp_send_json(
@@ -89,6 +97,10 @@ class TokenController {
 	public function verifyToken() {
 
 		WpNonceValidatorHelper::check( $_GET[ self::WP_NONCE ], 'tokens' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		$token_data = ( new Token() )->get();
 		$exists     = ( new TokenService() )->isValid( $token_data );

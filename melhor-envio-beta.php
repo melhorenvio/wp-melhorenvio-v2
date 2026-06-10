@@ -335,7 +335,6 @@ final class Melhor_Envio_Plugin
         }
 
         add_action( 'admin_enqueue_scripts', 'load_var_nonce');
-        add_action( 'wp_enqueue_scripts', 'load_var_nonce');
 
         add_action('before_woocommerce_init', function(){
             if ( class_exists( FeaturesUtil::class ) ) {
