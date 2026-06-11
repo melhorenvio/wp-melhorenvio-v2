@@ -26,6 +26,10 @@ class ConfigurationController {
 
 		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		return wp_send_json(
 			( new ConfigurationsService() )->getConfigurations(),
 			200
@@ -55,6 +59,10 @@ class ConfigurationController {
 	public function saveAll() {
 
 		WpNonceValidatorHelper::check( $_POST['_wpnonce'], 'save_configurations' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		$response = ( new ConfigurationsService() )->saveConfigurations( SanitizeHelper::apply( $_POST ) );
 		return wp_send_json( $response, 200 );

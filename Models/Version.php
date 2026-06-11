@@ -3,5 +3,5 @@
 namespace MelhorEnvio\Models;
 
 class Version {
-	const VERSION = '2.16.3';
+	const VERSION = '2.16.4';
 }

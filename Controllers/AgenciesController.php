@@ -18,6 +18,10 @@ class AgenciesController {
 
 			WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
 
+			if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+				wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+			}
+
 			if ( empty( $_GET['state'] ) && (empty( $_GET['latitude'] ) && empty( $_GET['longitude'] )) ) {
 				return wp_send_json(
 					array(

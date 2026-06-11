@@ -69,6 +69,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_get_quotation',
 			function () use ( $ordersController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				$ordersController->getOrderQuotationByOrderId( $_GET['id'] );
 			}
 		);
@@ -144,6 +147,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_environment',
 			function () use ( $version ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				( new TestService( $version ) )->run();
 			}
 		);
@@ -232,6 +238,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_get_payload',
 			function () use ( $payloadsController, $postId ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				if ( empty( $_GET['post_id'] ) ) {
 					return wp_send_json(
 						array(
@@ -248,6 +257,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_destroy_payload',
 			function () use ( $payloadsController, $postId ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				if ( empty( $_GET['post_id'] ) ) {
 					return wp_send_json(
 						array(
@@ -264,6 +276,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_get_payload_cart',
 			function () use ( $payloadsController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				if ( empty( $_GET['post_id'] ) ) {
 					return wp_send_json(
 						array(
@@ -301,6 +316,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_get_notices',
 			function () {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				( new SessionNoticeService() )->get();
 			}
 		);
@@ -308,6 +326,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_remove_notices',
 			function () {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				( new SessionNoticeService() )->remove( SanitizeHelper::apply( $_GET['id'] ) );
 			}
 		);
@@ -319,6 +340,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_test_user_woocommerce_data',
 			function () use ( $locationService ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 
 				if ( empty( $_GET['postcode'] ) ) {
 					return wp_send_json(
@@ -348,6 +372,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_user_woocommerce_data',
 			function () use ( $usersController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				return wp_send_json(
 					array(
 						'data' => $usersController->getFrom(),
@@ -363,6 +390,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_show_cart',
 			function () use ( $cartController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				return wp_send_json(
 					array(
 						'data' => $cartController->getInfoCart(),
@@ -383,6 +413,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_open_form_melhor_envio',
 			function () use ( $formController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				return wp_send_json( $formController->openForm() );
 			}
 		);
@@ -390,6 +423,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_show_form_melhor_envio',
 			function () use ( $formController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				return wp_send_json( $formController->showForm() );
 			}
 		);
@@ -397,6 +433,9 @@ class RouterService {
 		add_action(
 			'wp_ajax_hide_form_melhor_envio',
 			function () use ( $formController ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+					wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+				}
 				return wp_send_json( $formController->hideForm() );
 			}
 		);

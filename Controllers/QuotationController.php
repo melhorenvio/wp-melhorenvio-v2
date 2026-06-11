@@ -52,6 +52,10 @@ class QuotationController {
 	 * @return json
 	 */
 	public function refreshCotation() {
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$results = $this->makeCotationOrder( SanitizeHelper::apply( $_GET['id'] ) );
 		return wp_send_json(
 			$results,

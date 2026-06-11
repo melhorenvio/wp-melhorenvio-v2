@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.16.3
+Version: 2.16.4
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
-Tested up to: 6.9
-Stable tag: 2.16.3
+Tested up to: 7.0
+Stable tag: 2.16.4
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
@@ -68,6 +68,9 @@ Observação: Atenção com as medidas de unidades utilizadas, cuidado se você 
 Pronto! o plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+
+= 2.16.4 =
+* Correção de vulnerabilidades
 
 = 2.16.3 =
 * Adiciona notificação de pesquisa com usuários

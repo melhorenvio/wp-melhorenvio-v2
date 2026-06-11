@@ -15,6 +15,12 @@ class SessionsController {
 	 * @return json
 	 */
 	public function getSession() {
+		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		SessionHelper::initIfNotExists();
 
 		return wp_send_json( $_SESSION[ Session::ME_KEY ], 200 );
@@ -27,6 +33,11 @@ class SessionsController {
 	 */
 	public function deleteSession() {
 		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'save_configurations' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		( new ClearDataStored() )->clear();
 	}
 }

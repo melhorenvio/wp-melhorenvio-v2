@@ -127,6 +127,10 @@ class UsersController {
 
 		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
 
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+
 		$balance = ( new BalanceService() )->get();
 
 		if ( empty( $balance['success'] ) ) {
@@ -144,6 +148,10 @@ class UsersController {
 	public function getMe() {
 
 		WpNonceValidatorHelper::check( $_GET['_wpnonce'], 'users' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 
 		$data = (array) $this->getInfo();
 
