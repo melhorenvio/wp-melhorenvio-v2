@@ -1,0 +1,94 @@
+/*
+ * Variáveis sobrescrevíveis pelo tema:
+ *   --me-calc-border        borda do container
+ *   --me-calc-radius        arredondamento
+ *   --me-calc-padding       padding interno
+ *   --me-calc-bg            fundo do container (padrão: transparente)
+ *   --me-calc-hint-color    cor do texto de dica
+ *   --me-calc-error-color   cor da mensagem de erro
+ *   --me-calc-th-bg         fundo do cabeçalho da tabela
+ */
+
+.me-cep-calc {
+	margin: 1em 0;
+	padding: var( --me-calc-padding, 0.75em );
+	border: var( --me-calc-border, 1px solid #ddd );
+	border-radius: var( --me-calc-radius, 4px );
+	background: var( --me-calc-bg, transparent );
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+}
+
+.me-cep-calc__title {
+	margin: 0 0 0.35em;
+	font-size: 1em;
+	font-weight: 600;
+	color: inherit;
+}
+
+.me-cep-calc__hint {
+	margin: 0 0 0.5em;
+	font-size: 0.8em;
+	color: var( --me-calc-hint-color, currentColor );
+	opacity: 0.65;
+}
+
+/* Herda estilos do tema via classe WooCommerce — sem override de aparência */
+.me-cep-calc__input {
+	display: block;
+	width: 100%;
+	max-width: 160px;
+	box-sizing: border-box;
+}
+
+.me-cep-calc__result {
+	margin-top: 0.75em;
+}
+
+.me-cep-calc__error,
+.me-cep-calc__loading {
+	font-size: 0.875em;
+	margin: 0;
+}
+
+.me-cep-calc__loading {
+	color: inherit;
+	opacity: 0.65;
+}
+
+.me-cep-calc__error {
+	color: var( --me-calc-error-color, #c00 );
+}
+
+.me-cep-calc__table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.me-cep-calc__table {
+	width: 100%;
+	min-width: 280px;
+	border-collapse: collapse;
+	font-size: 0.875em;
+	color: inherit;
+}
+
+.me-cep-calc__table th,
+.me-cep-calc__table td {
+	padding: 0.4em 0.6em;
+	border: 1px solid var( --me-calc-border-color, #ddd );
+	text-align: left;
+	white-space: nowrap;
+}
+
+.me-cep-calc__table thead th {
+	background: var( --me-calc-th-bg, #f5f5f5 );
+	font-weight: 600;
+}
+
+@media ( max-width: 480px ) {
+	.me-cep-calc__input {
+		max-width: 100%;
+	}
+}
