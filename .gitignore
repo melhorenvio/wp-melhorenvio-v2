@@ -19,7 +19,12 @@ wp-content/plugins/hello.php
 /sitemap.xml.gz
 
 assets/css/admin.css.map
-assets/js/admin.js  
+assets/js/admin.js
+
+legacy/assets/js/*.min.js
+legacy/assets/js/*.min.js.LICENSE.txt
+legacy/assets/js/*.jpeg
+legacy/assets/js/*.gif
 
 vendor/
 node_modules/
