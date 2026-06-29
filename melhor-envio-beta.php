@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
-Version: 2.16.4
+Version: 3.0.0
 Author: Melhor Envio
 Author URI: https://melhorenvio.com.br
 License: GPLv3
@@ -11,7 +11,7 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: melhor-envio-cotacao
 Requires Plugins: woocommerce
 Tested up to: 7.0
-Requires PHP: 7.2
+Requires PHP: 8.1
 WC requires at least: 4.0
 WC tested up to: 10.8
 Domain Path: /languages
@@ -167,9 +167,9 @@ final class Melhor_Envio_Plugin
         define('MELHORENVIO_VERSION', $this->version);
         define('MELHORENVIO_FILE', __FILE__);
         define('MELHORENVIO_PATH', dirname(MELHORENVIO_FILE));
-        define('MELHORENVIO_INCLUDES', MELHORENVIO_PATH . '/includes');
+        define('MELHORENVIO_INCLUDES', MELHORENVIO_PATH . '/legacy/includes');
         define('MELHORENVIO_URL', plugins_url('', MELHORENVIO_FILE));
-        define('MELHORENVIO_ASSETS', MELHORENVIO_URL . '/assets');
+        define('MELHORENVIO_ASSETS', MELHORENVIO_URL . '/legacy/assets');
     }
 
     /**
@@ -179,6 +179,7 @@ final class Melhor_Envio_Plugin
      */
     public function init_plugin()
     {
+        ( new \MelhorEnvio\Plugin() )->boot();
         $this->includes();
         $this->init_hooks();
 
@@ -211,6 +212,8 @@ final class Melhor_Envio_Plugin
         }
 
         update_option('melhorenvio_version', MELHORENVIO_VERSION);
+
+        add_option('melhor_envio_integrador_me_api_url', 'https://melhorenvio.com.br');
 
         (new ClearDataStored())->clear();
     }
@@ -263,14 +266,15 @@ final class Melhor_Envio_Plugin
 
         (new RouterService())->handler();
 
-        require_once dirname(__FILE__) . '/services_methods/class-wc-melhor-envio-shipping.php';
-        foreach (glob(plugin_dir_path(__FILE__) . 'services_methods/*.php') as $filename) {
+        require_once dirname(__FILE__) . '/legacy/services_methods/class-wc-melhor-envio-shipping.php';
+        foreach (glob(plugin_dir_path(__FILE__) . 'legacy/services_methods/*.php') as $filename) {
             require_once $filename;
         }
 
         (new TrackingService())->createTrackingColumnOrdersClient();
         $hideCalculator = (new CalculatorShow)->get();
-        if ($hideCalculator) {
+        $hasToken = ! empty( get_option( 'melhor_envio_integrador_quotation_token' ) );
+        if ($hideCalculator && ! $hasToken) {
             (new ShowCalculatorProductPage())->insertCalculator();
         }
 

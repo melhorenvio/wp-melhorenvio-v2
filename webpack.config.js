@@ -19,11 +19,11 @@ const env = process.env.WEBPACK_ENV;
 // Naming and path settings
 let appName = '[name].js';
 const entryPoint = {    
-    admin: './assets/src/admin/main.js',    
-    style: './assets/stylus/index.styl',    
+    admin: './legacy/assets/src/admin/main.js',    
+    style: './legacy/assets/stylus/index.styl',    
 };
 
-const exportPath = path.resolve(__dirname, './assets/js');
+const exportPath = path.resolve(__dirname, './legacy/assets/js');
 
 const vueLoaderPlugin = new VueLoaderPlugin();
 
@@ -37,9 +37,9 @@ const browserSyncPlugin = new BrowserSyncPlugin({
         target: config.proxyURL,
     },
     files: [        
-        'assets/js/*.js',
-        'assets/css/*.css',
-        'assets/src/**/*.js',
+        'legacy/assets/js/*.js',
+        'legacy/assets/css/*.css',
+        'legacy/assets/src/**/*.js',
         '**/*.php'
     ],
     cors: true,
@@ -76,15 +76,15 @@ module.exports = {
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.js',
-            '@': path.resolve('./assets/src/'),
-            'frontend': path.resolve('./assets/src/frontend/'),
-            'admin': path.resolve('./assets/src/admin/'),    
-            '@images': path.resolve('./assets/images/'),
-            'me': path.resolve('./assets/stylus/me-bootstrap')
+            '@': path.resolve('./legacy/assets/src/'),
+            'frontend': path.resolve('./legacy/assets/src/frontend/'),
+            'admin': path.resolve('./legacy/assets/src/admin/'),    
+            '@images': path.resolve('./legacy/assets/images/'),
+            'me': path.resolve('./legacy/assets/stylus/me-bootstrap')
         },
         modules: [
             path.resolve('./node_modules'),
-            path.resolve(path.join(__dirname, 'assets/src/index.styl')),
+            path.resolve(path.join(__dirname, 'legacy/assets/src/index.styl')),
         ],
         fallback: {
             path: require.resolve("path-browserify")
@@ -127,7 +127,7 @@ module.exports = {
                         options: {
                             stylusOptions: {
                                 use: ['jeet', 'rupture'],                                
-                                include: [path.join(__dirname, "assets/stylus")]
+                                include: [path.join(__dirname, "legacy/assets/stylus")]
                             }
                         }
                     }
