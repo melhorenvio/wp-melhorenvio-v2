@@ -1,5 +1,8 @@
 FROM wordpress:latest
 
+ARG WWWUSER=1000
+ARG WWWGROUP=1000
+
 # Install dependencies
 RUN apt update && apt install less npm -y
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
