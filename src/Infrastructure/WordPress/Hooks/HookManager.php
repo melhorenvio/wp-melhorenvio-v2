@@ -8,6 +8,7 @@ use MelhorEnvio\Core\Container;
 use MelhorEnvio\Infrastructure\WordPress\Admin\AdminMenu;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
+use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\QuotationTokenEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\SaveSecretEndpoint;
@@ -36,6 +37,9 @@ final class HookManager {
 
 		$productShippingCalculator = $this->container->get( ProductShippingCalculator::class );
 		$productShippingCalculator->register();
+
+		$checkoutFieldsManager = $this->container->get( CheckoutFieldsManager::class );
+		$checkoutFieldsManager->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
