@@ -1,0 +1,24 @@
+--- a/woocommerce/woocommerce/includes/class-wc-auth.php
++++ b/woocommerce/woocommerce/includes/class-wc-auth.php
+@@ -191,9 +191,9 @@
+
+ 		$callback_url = $this->get_formatted_url( $data['callback_url'] );
+
+-		if ( 0 !== stripos( $callback_url, 'https://' ) ) {
+-			throw new Exception( __( 'The callback_url needs to be over SSL', 'woocommerce' ) );
+-		}
++//		if ( 0 !== stripos( $callback_url, 'https://' ) ) {
++//			throw new Exception( __( 'The callback_url needs to be over SSL', 'woocommerce' ) );
++//		}
+ 	}
+
+ 	/**
+@@ -270,7 +270,7 @@
+ 			),
+ 		);
+
+-		$response = wp_safe_remote_post( esc_url_raw( $url ), $params );
++		$response = wp_remote_post( esc_url_raw( $url ), $params );
+
+ 		if ( is_wp_error( $response ) ) {
+ 			throw new Exception( $response->get_error_message() );

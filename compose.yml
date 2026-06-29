@@ -1,0 +1,120 @@
+services:
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WWWUSER: '${WWWUSER:-1000}'
+        WWWGROUP: '${WWWGROUP:-1000}'
+    container_name: wp-melhorenvio-cotacao
+    ports:
+      - "${WORDPRESS_PORT:-8000}:80"
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-db}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
+      WORDPRESS_SITEURL: ${WORDPRESS_SITEURL:-http://localhost:${WORDPRESS_PORT:-8000}}
+      WORDPRESS_HOME: ${WORDPRESS_HOME:-http://localhost:${WORDPRESS_PORT:-8000}}
+      # Lida pelo AdminPage via getenv para montar a URL do iframe.
+      MELHOR_INTEGRADOR_BASE_URL: ${MELHOR_INTEGRADOR_BASE_URL:-https://app.localhost/wp}
+      # Proxy awareness para TLS terminado pelo caddy (HTTPS .localhost).
+      WORDPRESS_CONFIG_EXTRA: |
+        if ( ( ! empty( $$_SERVER['HTTP_X_FORWARDED_PORT'] ) && '443' === $$_SERVER['HTTP_X_FORWARDED_PORT'] )
+        	|| ( ! empty( $$_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $$_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) {
+        	$$_SERVER['HTTPS']       = 'on';
+        	$$_SERVER['SERVER_PORT'] = 443;
+        }
+        if ( ! empty( $$_SERVER['HTTP_HOST'] ) && 'wordpress' === $$_SERVER['HTTP_HOST'] && defined( 'WP_HOME' ) && WP_HOME ) {
+        	$$_SERVER['HTTP_HOST'] = (string) parse_url( WP_HOME, PHP_URL_HOST );
+        }
+        add_filter( 'https_ssl_verify', '__return_false' );
+        add_filter( 'https_local_ssl_verify', '__return_false' );
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/melhor-envio-cotacao
+      - ./custom-php-settings.ini:/usr/local/etc/php/conf.d/custom-php-settings.ini
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - wp-network
+
+  db:
+    image: mysql:8.4
+    container_name: wp-melhorenvio-cotacao-db
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wordpress}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT:-3309}:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 3
+    networks:
+      - wp-network
+
+  # Proxy compartilhado do fluxo Melhor Integrador (browser + server-to-server).
+  # Fica APENAS na rede externa tray-native_sail para que os aliases resolvam
+  # corretamente entre containers. Os demais containers (frontend, int-1-proxy,
+  # plugin WP) entram na rede via `make mi-network`.
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    networks:
+      shared-proxy:
+        aliases:
+          - app.localhost
+          - cotacao.localhost
+          - wp.localhost
+          - front.localhost
+          - app.me.test
+          - cotacao.me.test
+          - wp.me.test
+          - front.me.test
+
+  localtunnel:
+    image: node:24-alpine
+    container_name: wp-melhorenvio-cotacao-localtunnel
+    environment:
+      TUNNEL_HOST: ${TUNNEL_HOST:-http://lt.melhorenvio.work}
+      TUNNEL_SUBDOMAIN: ${TUNNEL_SUBDOMAIN:-cotacao}
+      TUNNEL_LOCAL_HOST: ${TUNNEL_LOCAL_HOST:-host.docker.internal}
+      TUNNEL_PORT: ${TUNNEL_PORT:-3000}
+    command:
+      - "sh"
+      - "-c"
+      - "npx localtunnel --host $$TUNNEL_HOST --local-host $$TUNNEL_LOCAL_HOST --port $$TUNNEL_PORT --subdomain $$TUNNEL_SUBDOMAIN --print-requests"
+    networks:
+      - wp-network
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  wp-network:
+    driver: bridge
+  # Rede compartilhada criada pelo backend (tray-native / sail). Precisa existir
+  # antes de subir o caddy (o `make mi-up` sobe o backend primeiro).
+  shared-proxy:
+    external: true
+    name: tray-native_sail

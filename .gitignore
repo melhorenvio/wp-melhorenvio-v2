@@ -29,7 +29,8 @@ composer.lock
 
 .idea/
 
-docker/.env
+.env
+caddy/caddy-root-ca.crt
 
 .cursor/
 .specs/
