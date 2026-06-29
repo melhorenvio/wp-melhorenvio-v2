@@ -195,7 +195,8 @@ final class CheckoutFieldsManager {
 			return;
 		}
 		$extensions = $request->get_param( 'extensions' ) ?? [];
-		$data       = $extensions['melhor_envio_person_type'] ?? [];
+		$raw        = $extensions['melhor_envio_person_type'] ?? [];
+		$data       = is_array( $raw ) ? $raw : [];
 
 		$persontype = sanitize_text_field( $data['billing_persontype'] ?? '' );
 		$cpf        = sanitize_text_field( $data['billing_cpf']        ?? '' );
