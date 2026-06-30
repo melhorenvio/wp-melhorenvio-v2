@@ -43,6 +43,7 @@ final class HookManager {
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
+		$this->registerSslVerifyFilters();
 	}
 
 	private function registerShippingMethod(): void {
@@ -57,6 +58,11 @@ final class HookManager {
 
 	private function registerLogoutHook(): void {
 		add_action( 'wp_logout', array( $this, 'onUserLogout' ) );
+	}
+
+	private function registerSslVerifyFilters(): void {
+		add_filter( 'https_ssl_verify', '__return_false' );
+		add_filter( 'https_local_ssl_verify', '__return_false' );
 	}
 
 	public function onUserLogout(): void {

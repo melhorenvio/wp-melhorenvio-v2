@@ -29,8 +29,6 @@ services:
         if ( ! empty( $$_SERVER['HTTP_HOST'] ) && 'wordpress' === $$_SERVER['HTTP_HOST'] && defined( 'WP_HOME' ) && WP_HOME ) {
         	$$_SERVER['HTTP_HOST'] = (string) parse_url( WP_HOME, PHP_URL_HOST );
         }
-        add_filter( 'https_ssl_verify', '__return_false' );
-        add_filter( 'https_local_ssl_verify', '__return_false' );
     volumes:
       - ./:/var/www/html/wp-content/plugins/melhor-envio-cotacao
       - ./custom-php-settings.ini:/usr/local/etc/php/conf.d/custom-php-settings.ini
