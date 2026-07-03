@@ -46,7 +46,7 @@ patch-woocommerce: ## Patch WooCommerce for local dev (remove SSL validation on 
 	docker compose exec --user root -T wordpress sh -c "patch --forward --reject-file=- -p2 -d /var/www/html/wp-content/plugins" < patches/wc-auth-remove-ssl-check.patch || true
 
 tunnel-up: ## Start tunnel and update WordPress URLs to tunnel address
-	@if [ -f .env ]; then export $$(grep -v '^#' .env | grep -v '^$$' | xargs); fi; \
+	@if [ -f .env ]; then . ./.env 2>/dev/null; fi; \
 	TUNNEL_URL=$${TUNNEL_URL:-https://cotacao.lt.melhorenvio.work}; \
 	echo "Updating WordPress URLs to tunnel address..."; \
 	$(WP_EXEC) wp option update siteurl $$TUNNEL_URL --quiet > /dev/null 2>&1; \
@@ -58,7 +58,7 @@ tunnel-up: ## Start tunnel and update WordPress URLs to tunnel address
 	echo "Tunnel started and WordPress URLs updated to: $$TUNNEL_URL";
 
 tunnel-down: ## Stop tunnel and restore WordPress URLs to localhost
-	@if [ -f .env ]; then export $$(grep -v '^#' .env | grep -v '^$$' | xargs); fi; \
+	@if [ -f .env ]; then . ./.env 2>/dev/null; fi; \
 	LOCAL_URL=$${WORDPRESS_SITEURL:-https://cotacao.localhost}; \
 	echo "Stopping localtunnel and restoring WordPress URLs..."; \
 	$(COMPOSE) stop localtunnel; \
@@ -103,7 +103,7 @@ mi-wp-config: ## Garante WooCommerce + plugin + siteurl/home do WP
 		i=$$((i+1)); if [ $$i -ge 30 ]; then echo "ERRO: WordPress nao iniciou em 90s" >&2; exit 1; fi; \
 		echo "    ... aguardando ($$i/30)"; sleep 3; \
 	done
-	@if [ -f .env ]; then export $$(grep -v '^#' .env | grep -v '^$$' | xargs) 2>/dev/null; fi; \
+	@if [ -f .env ]; then . ./.env 2>/dev/null; fi; \
 	$(WP_EXEC) wp core is-installed 2>/dev/null || $(WP_EXEC) wp core install \
 		--url="$${WORDPRESS_SITEURL:-https://cotacao.localhost}" \
 		--title="$${WORDPRESS_TITLE:-Melhor Envio Cotação}" \
@@ -112,7 +112,7 @@ mi-wp-config: ## Garante WooCommerce + plugin + siteurl/home do WP
 		--admin_email="$${WORDPRESS_ADMIN_EMAIL:-dev@melhorenvio.com}" \
 		--skip-email; true
 	-docker exec $(APP_CONTAINER) sh -c "cd $(PLUGIN_PATH) && composer install --no-interaction --no-progress"
-	@if [ -f .env ]; then export $$(grep -v '^#' .env | grep -v '^$$' | xargs) 2>/dev/null; fi; \
+	@if [ -f .env ]; then . ./.env 2>/dev/null; fi; \
 	WP_URL=$${WORDPRESS_SITEURL:-https://cotacao.localhost}; \
 	$(WP_EXEC) wp option update siteurl $$WP_URL && \
 	$(WP_EXEC) wp option update home $$WP_URL
