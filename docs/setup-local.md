@@ -41,6 +41,12 @@ Backend Laravel com Octane + RoadRunner. Exposto em `app.localhost` via Caddy.
 
 Configure manualmente no `.env`:
 
+> **Conflito de porta com o Caddy:** o Caddy ocupa a porta 80 do host. Mude `APP_PORT` para evitar conflito — o Caddy roteia para `app:80` internamente via rede Docker, então a porta exposta no host não precisa ser 80.
+
+```dotenv
+APP_PORT=8080
+```
+
 ```dotenv
 # CORS — permite que o iframe em front.localhost chame a API
 CORS_ALLOWED_ORIGINS=https://front.localhost
