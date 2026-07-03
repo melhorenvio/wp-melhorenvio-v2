@@ -44,7 +44,7 @@ Configure manualmente no `.env`:
 > **Conflito de porta com o Caddy:** o Caddy ocupa a porta 80 do host. Mude `APP_PORT` para evitar conflito — o Caddy roteia para `app:80` internamente via rede Docker, então a porta exposta no host não precisa ser 80.
 
 ```dotenv
-APP_PORT=8080
+APP_PORT=3600
 ```
 
 ```dotenv
