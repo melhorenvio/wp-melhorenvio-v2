@@ -8,6 +8,28 @@ final class ShippingZoneSetup {
 
 	private const METHOD_ID = 'melhor_envio';
 
+	public function removeMethod(): void {
+		if ( ! class_exists( 'WC_Shipping_Zones' ) ) {
+			return;
+		}
+
+		foreach ( \WC_Shipping_Zones::get_zones() as $zoneData ) {
+			$zone = new \WC_Shipping_Zone( $zoneData['id'] );
+
+			foreach ( $zone->get_zone_locations() as $location ) {
+				if ( $location->type !== 'country' || $location->code !== 'BR' ) {
+					continue;
+				}
+
+				foreach ( $zone->get_shipping_methods( false ) as $method ) {
+					if ( $method->id === self::METHOD_ID ) {
+						$zone->delete_shipping_method( $method->instance_id );
+					}
+				}
+			}
+		}
+	}
+
 	public function ensureMethodRegistered(): void {
 		if ( ! class_exists( 'WC_Shipping_Zones' ) ) {
 			return;

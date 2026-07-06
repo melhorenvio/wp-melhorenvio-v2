@@ -14,6 +14,7 @@ use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
 use MelhorEnvio\Infrastructure\WordPress\Hooks\HookManager;
 use MelhorEnvio\Infrastructure\WordPress\Http\MelhorEnvioApiClient;
+use MelhorEnvio\Infrastructure\WordPress\RestApi\DisconnectEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\QuotationTokenEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\SaveSecretEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\ShippingZoneSetup;
@@ -51,6 +52,13 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 		$this->container->singleton(
 			QuotationTokenEndpoint::class,
 			static fn( Container $container ) => new QuotationTokenEndpoint(
+				$container->get( SecretManager::class ),
+				$container->get( ShippingZoneSetup::class )
+			)
+		);
+		$this->container->singleton(
+			DisconnectEndpoint::class,
+			static fn( Container $container ) => new DisconnectEndpoint(
 				$container->get( SecretManager::class ),
 				$container->get( ShippingZoneSetup::class )
 			)
