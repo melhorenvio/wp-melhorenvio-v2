@@ -12,11 +12,11 @@ class Method {
 		$result = $wpdb->get_results(
             $wpdb->prepare(
                 'select meta_value as method 
-                 from %swoocommerce_order_itemmeta 
+                 from {$wpdb->prefix}woocommerce_order_itemmeta 
                  where meta_key = "method_id" 
                  and order_item_id IN (
                   select order_item_id 
-                  from %swoocommerce_order_items 
+                  from {$wpdb->prefix}woocommerce_order_items 
                   where order_id = %d 
                   and order_item_type = "shipping"
                  )',
@@ -56,7 +56,7 @@ class Method {
 		$enableds = array();
 		$results  = $wpdb->get_results(
             $wpdb->prepare(
-                'select * from %swoocommerce_shipping_zone_methods where is_enabled = 1',
+                'select * from {$wpdb->prefix}woocommerce_shipping_zone_methods where is_enabled = 1',
                 $wpdb->prefix
             )
         );
