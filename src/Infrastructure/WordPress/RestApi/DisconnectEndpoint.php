@@ -31,31 +31,20 @@ final class DisconnectEndpoint {
 				'methods'             => 'DELETE',
 				'callback'            => array( $this, 'handleRequest' ),
 				'permission_callback' => array( $this, 'checkPermission' ),
-				'args'                => array(
-					'timestamp' => array(
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					),
-					'signature' => array(
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					),
-				),
 			)
 		);
 	}
 
 	public function checkPermission( WP_REST_Request $request ): bool {
-		$signature = $request->get_param( 'signature' );
-		$timestamp = $request->get_param( 'timestamp' );
+		$secret = $request->get_header( 'X-ME-Secret' );
 
-		if ( empty( $signature ) || empty( $timestamp ) ) {
+		if ( empty( $secret ) ) {
 			return false;
 		}
 
-		return $this->validateHmac( $signature, $timestamp );
+		$storedSecret = $this->secretManager->getSecret();
+
+		return $storedSecret !== null && hash_equals( $storedSecret, $secret );
 	}
 
 	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
@@ -67,41 +56,5 @@ final class DisconnectEndpoint {
 			array( 'message' => 'Disconnected successfully.' ),
 			200
 		);
-	}
-
-	private function validateHmac( string $signature, string $timestamp ): bool {
-		$secret = $this->secretManager->getSecret();
-
-		if ( empty( $secret ) || ! str_starts_with( $secret, 'base64:' ) ) {
-			return false;
-		}
-
-		$outerDecoded = base64_decode( substr( $secret, 7 ), true );
-
-		if ( $outerDecoded === false ) {
-			return false;
-		}
-
-		$parts = explode( '.', $outerDecoded, 2 );
-
-		if ( count( $parts ) !== 2 ) {
-			return false;
-		}
-
-		$payload = json_decode( $parts[0], true );
-
-		if ( ! is_array( $payload ) || ! isset( $payload['secret'] ) ) {
-			return false;
-		}
-
-		$rawKey = base64_decode( $payload['secret'], true );
-
-		if ( $rawKey === false ) {
-			return false;
-		}
-
-		$expected = hash_hmac( 'sha256', $timestamp . '.disconnect', $rawKey );
-
-		return hash_equals( $expected, $signature );
 	}
 }
