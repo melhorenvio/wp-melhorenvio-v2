@@ -41,12 +41,7 @@ final class SaveSecretEndpoint {
 				'callback'            => array( $this, 'handleRequest' ),
 				'permission_callback' => array( $this, 'checkPermission' ),
 				'args'                => array(
-					'secret'    => array(
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					),
-					'signature' => array(
+					'secret' => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
@@ -57,7 +52,7 @@ final class SaveSecretEndpoint {
 	}
 
 	public function checkPermission( WP_REST_Request $request ): bool {
-		$signature = $request->get_param( 'signature' );
+		$signature = $request->get_header( 'X-ME-Signature' );
 
 		if ( empty( $signature ) ) {
 			return false;
