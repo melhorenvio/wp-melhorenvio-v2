@@ -10,6 +10,7 @@ use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
+use MelhorEnvio\Infrastructure\WordPress\RestApi\DisconnectEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\QuotationTokenEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\SaveSecretEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\MelhorEnvioShippingMethod;
@@ -31,6 +32,9 @@ final class HookManager {
 
 		$quotationTokenEndpoint = $this->container->get( QuotationTokenEndpoint::class );
 		$quotationTokenEndpoint->register();
+
+		$disconnectEndpoint = $this->container->get( DisconnectEndpoint::class );
+		$disconnectEndpoint->register();
 
 		$quotationAjaxHandler = $this->container->get( QuotationAjaxHandler::class );
 		$quotationAjaxHandler->register();

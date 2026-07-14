@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MelhorEnvio\Infrastructure\WordPress\RestApi;
+
+use MelhorEnvio\Infrastructure\WordPress\Admin\SecretManager;
+use MelhorEnvio\Infrastructure\WordPress\Shipping\ShippingZoneSetup;
+use WP_REST_Request;
+use WP_REST_Response;
+
+final class DisconnectEndpoint {
+
+	private const NAMESPACE = 'wp-melhor-integrador/v1';
+	private const ROUTE     = '/disconnect';
+
+	public function __construct(
+		private readonly SecretManager $secretManager,
+		private readonly ShippingZoneSetup $shippingZoneSetup,
+	) {}
+
+	public function register(): void {
+		add_action( 'rest_api_init', array( $this, 'registerRoute' ) );
+	}
+
+	public function registerRoute(): void {
+		register_rest_route(
+			self::NAMESPACE,
+			self::ROUTE,
+			array(
+				'methods'             => 'DELETE',
+				'callback'            => array( $this, 'handleRequest' ),
+				'permission_callback' => array( $this, 'checkPermission' ),
+			)
+		);
+	}
+
+	public function checkPermission( WP_REST_Request $request ): bool {
+		$secret = $request->get_header( 'X-ME-Secret' );
+
+		if ( empty( $secret ) ) {
+			return false;
+		}
+
+		$storedSecret = $this->secretManager->getSecret();
+
+		return $storedSecret !== null && hash_equals( $storedSecret, $secret );
+	}
+
+	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
+		$this->secretManager->deleteSecret();
+		delete_option( 'melhor_envio_integrador_quotation_token' );
+		$this->shippingZoneSetup->removeMethod();
+
+		return new WP_REST_Response(
+			array( 'message' => 'Disconnected successfully.' ),
+			200
+		);
+	}
+}
