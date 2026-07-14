@@ -21,7 +21,10 @@ final class AdminPage {
 	}
 
 	public function render(): void {
-		$hasSecret = $this->secretManager->getSecret() !== null;
+		$secret    = $this->secretManager->getSecret();
+		$hasSecret = $secret !== null;
+
+		$secretJson = json_encode( $secret, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
 		$signature     = $this->signatureManager->getSignature();
 		$signatureJson = json_encode( $signature, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
@@ -36,6 +39,7 @@ final class AdminPage {
 			if (!container) return;
 
 			var hasSecret = <?php echo $hasSecret ? 'true' : 'false'; ?>;
+			var secret    = <?php echo $secretJson; ?>;
 			var signature = <?php echo $signatureJson; ?>;
 			var storeUrl  = window.location.origin;
 			var baseUrl   = <?php echo $baseUrlJson; ?>;
@@ -43,7 +47,7 @@ final class AdminPage {
 			var iframeUrl = new URL(baseUrl);
 
 			if (hasSecret) {
-				iframeUrl.searchParams.set('configured', '1');
+				iframeUrl.searchParams.set('secret', secret);
 			}
 
 			iframeUrl.searchParams.set('url', storeUrl);
