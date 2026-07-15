@@ -6,6 +6,14 @@ namespace MelhorEnvio\Infrastructure\WordPress\Checkout;
 
 final class CheckoutFieldsManager {
 
+	/**
+	 * Constants defined by known third-party plugins that customize WooCommerce checkout fields.
+	 */
+	private const KNOWN_CHECKOUT_FIELDS_PLUGIN_CONSTANTS = [
+		'WC_BETTER_SHIPPING_CALCULATOR_FOR_BRAZIL_FILE', // Calculadora de Frete e Campos Checkout para o Brasil (Link Nacional)
+		'CSBMW_PLUGIN_FILE',                              // Brazilian Market on WooCommerce (claudiosanches)
+	];
+
 	public function register(): void {
 		// Classic/shortcode checkout
 		add_filter( 'woocommerce_checkout_fields',            [ $this, 'addDocumentFields' ] );
@@ -25,8 +33,13 @@ final class CheckoutFieldsManager {
 	}
 
 	private function externalPluginActive(): bool {
-		$option = get_option( 'woo_better_calc_person_type_select', 'none' );
-		return ! empty( $option ) && $option !== 'none';
+		foreach ( self::KNOWN_CHECKOUT_FIELDS_PLUGIN_CONSTANTS as $constant ) {
+			if ( defined( $constant ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function addDocumentFields( array $fields ): array {
