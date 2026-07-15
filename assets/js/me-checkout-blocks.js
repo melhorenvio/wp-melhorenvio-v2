@@ -34,13 +34,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				dispatch.setExtensionData( 'melhor_envio_person_type', data );
 			}
 		} catch ( e ) {}
-		if ( window.wc && window.wc.blocksCheckout &&
-			typeof window.wc.blocksCheckout.extensionCartUpdate === 'function' ) {
-			window.wc.blocksCheckout.extensionCartUpdate( {
-				namespace: 'melhor_envio_person_type',
-				data: data,
-			} );
-		}
 	}
 
 	function getClean( v ) {
