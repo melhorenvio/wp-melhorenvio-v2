@@ -10,9 +10,10 @@
 			return;
 		}
 
-		var $input  = $( '#me-cep-input' );
-		var $result = $( '#me-cep-result' );
-		var xhr     = null;
+		var $input       = $( '#me-cep-input' );
+		var $result      = $( '#me-cep-result' );
+		var xhr          = null;
+		var requoteTimer = null;
 
 		$input.on( 'input', function () {
 			var digits = $( this ).val().replace( /\D/g, '' );
@@ -39,6 +40,34 @@
 			quote( digits, $result );
 		} );
 
+		// Recotar automaticamente quando a quantidade ou a seleção de itens do
+		// bundle/composição mudar - 'woosb_save_ids'/'wooco_save_ids' são eventos
+		// próprios dos plugins, disparados no `document` assim que eles terminam de
+		// atualizar os campos escondidos 'woosb_ids'/'wooco_ids' com a seleção atual.
+		$( document ).on( 'input change', 'input.qty', function () {
+			scheduleRequote();
+		} );
+
+		$( document ).on( 'woosb_save_ids wooco_save_ids', function () {
+			scheduleRequote();
+		} );
+
+		function scheduleRequote() {
+			var digits = $input.val().replace( /\D/g, '' );
+
+			if ( digits.length !== 8 ) {
+				return;
+			}
+
+			if ( requoteTimer ) {
+				clearTimeout( requoteTimer );
+			}
+
+			requoteTimer = setTimeout( function () {
+				quote( digits, $result );
+			}, 300 );
+		}
+
 		function quote( cep, $result ) {
 			if ( xhr ) {
 				xhr.abort();
@@ -55,6 +84,8 @@
 					cep:        cep,
 					product_id: meSC.productId,
 					quantity:   $( 'input.qty' ).val() || 1,
+					woosb_ids:  $( 'form.cart input[name="woosb_ids"]' ).val() || '',
+					wooco_ids:  $( 'form.cart input[name="wooco_ids"]' ).val() || '',
 				},
 				success: function ( response ) {
 					if ( ! response.success || ! response.data || ! response.data.length ) {
