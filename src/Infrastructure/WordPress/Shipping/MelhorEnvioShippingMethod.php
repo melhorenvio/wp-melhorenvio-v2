@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 
 	private MelhorEnvioApiClient $apiClient;
+	private CartItemsBuilder $cartItemsBuilder;
 
 	public function __construct( int $instance_id = 0 ) {
 		parent::__construct( $instance_id );
@@ -27,7 +28,8 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 		$this->title              = $this->get_option( 'title', __( 'Melhor Envio', 'melhor-envio-cotacao' ) );
 
 		$this->init();
-		$this->apiClient = new MelhorEnvioApiClient();
+		$this->apiClient        = new MelhorEnvioApiClient();
+		$this->cartItemsBuilder = new CartItemsBuilder();
 	}
 
 	public function init(): void {
@@ -67,7 +69,7 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 			return;
 		}
 
-		$items    = $this->buildItems( $package['contents'] ?? array() );
+		$items    = $this->cartItemsBuilder->buildItems();
 		$cacheKey = 'me_quote_' . md5( $toCep . serialize( $items ) );
 		$cached   = get_transient( $cacheKey );
 
@@ -99,30 +101,5 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 				)
 			);
 		}
-	}
-
-	private function buildItems( array $contents ): array {
-		$items = array();
-
-		foreach ( $contents as $item ) {
-			$product  = $item['data'] ?? null;
-			$quantity = (int) ( $item['quantity'] ?? 1 );
-
-			if ( ! $product instanceof \WC_Product ) {
-				continue;
-			}
-
-			$items[] = array(
-				'id'              => $product->get_id(),
-				'width'           => (float) ( $product->get_width() ?: 11 ),
-				'height'          => (float) ( $product->get_height() ?: 2 ),
-				'length'          => (float) ( $product->get_length() ?: 16 ),
-				'weight'          => (float) ( $product->get_weight() ?: 0.3 ),
-				'insurance_value' => (float) $product->get_price(),
-				'quantity'        => $quantity,
-			);
-		}
-
-		return $items;
 	}
 }

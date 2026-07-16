@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace MelhorEnvio\Infrastructure\WordPress\Ajax;
 
 use MelhorEnvio\Infrastructure\WordPress\Http\MelhorEnvioApiClient;
+use MelhorEnvio\Infrastructure\WordPress\Shipping\CartItemsBuilder;
 
 final class QuotationAjaxHandler {
 
 	public function __construct(
 		private readonly MelhorEnvioApiClient $apiClient,
+		private readonly CartItemsBuilder $cartItemsBuilder,
 	) {}
 
 	public function register(): void {
@@ -52,17 +54,38 @@ final class QuotationAjaxHandler {
 			wp_send_json_error( array( 'message' => __( 'CEP de origem não configurado.', 'melhor-envio-cotacao' ) ) );
 		}
 
-		$items = array(
-			array(
-				'id'              => $product->get_id(),
-				'width'           => (float) ( $product->get_width() ?: 11 ),
-				'height'          => (float) ( $product->get_height() ?: 2 ),
-				'length'          => (float) ( $product->get_length() ?: 16 ),
-				'weight'          => (float) ( $product->get_weight() ?: 0.3 ),
-				'insurance_value' => (float) $product->get_price(),
-				'quantity'        => $quantity,
-			),
-		);
+		$onlyInCartMessage = __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' );
+
+		if ( CartItemsBuilder::isCompositeProduct( $product ) ) {
+			$compositeIds = sanitize_text_field( wp_unslash( $_POST['wooco_ids'] ?? '' ) );
+			$items        = $this->cartItemsBuilder->buildItemsForCompositeProduct( $product, $quantity, $compositeIds );
+
+			if ( $items === null ) {
+				wp_send_json_error(
+					array( 'message' => __( 'Selecione os itens da composição antes de calcular o frete.', 'melhor-envio-cotacao' ) )
+				);
+			}
+		} elseif ( CartItemsBuilder::isBundleProduct( $product ) ) {
+			$bundleIds = sanitize_text_field( wp_unslash( $_POST['woosb_ids'] ?? '' ) );
+
+			if ( empty( $bundleIds ) && CartItemsBuilder::bundleHasOptionalItems( $product ) ) {
+				wp_send_json_error( array( 'message' => $onlyInCartMessage ) );
+			}
+
+			$items = $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
+		} else {
+			$items = array(
+				array(
+					'id'              => $product->get_id(),
+					'width'           => (float) ( $product->get_width() ?: 11 ),
+					'height'          => (float) ( $product->get_height() ?: 2 ),
+					'length'          => (float) ( $product->get_length() ?: 16 ),
+					'weight'          => (float) ( $product->get_weight() ?: 0.3 ),
+					'insurance_value' => (float) $product->get_price(),
+					'quantity'        => $quantity,
+				),
+			);
+		}
 
 		$quotations = $this->apiClient->getQuotations( $fromCep, $cep, $items );
 
