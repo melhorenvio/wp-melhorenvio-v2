@@ -1,6 +1,6 @@
 {
     "name": "vue-wp-starter",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "A WordPress Vue.js starter plugin",
     "author": "Tareq Hasan <tareq@wedevs.com>",
     "license": "GPLv2",

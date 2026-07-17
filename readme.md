@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 2.16.5
+Version: 3.0.0
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 2.16.5
+Stable tag: 3.0.0
 Requires PHP: 7.2+
 Requires Wordpress 4.0+
 Requires WooCommerce 4.0+
