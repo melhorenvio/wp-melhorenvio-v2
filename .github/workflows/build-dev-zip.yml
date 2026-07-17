@@ -1,0 +1,60 @@
+name: Build dev zip
+on:
+  workflow_dispatch: {}
+permissions: {}
+jobs:
+  build:
+    name: Build plugin zip
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+
+      - name: Install PHP dependencies
+        run: composer install --optimize-autoloader --no-dev --no-interaction
+
+      - name: Install JS dependencies and build assets
+        run: |
+          npm install
+          npm run build
+
+      - name: Assemble plugin folder
+        run: |
+          mkdir -p dist/melhor-envio-cotacao
+          rsync -a ./ dist/melhor-envio-cotacao/ \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=.idea \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=caddy \
+            --exclude=compose.yml \
+            --exclude=Dockerfile \
+            --exclude=custom-php-settings.ini \
+            --exclude=.env \
+            --exclude=.env.example \
+            --exclude=Makefile \
+            --exclude=.gitignore \
+            --exclude=.gitattributes \
+            --exclude=.distignore \
+            --exclude=a.out
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: melhor-envio-cotacao-dev
+          path: dist
+          retention-days: 7
