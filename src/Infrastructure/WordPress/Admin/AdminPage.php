@@ -45,6 +45,7 @@ final class AdminPage {
 			var baseUrl   = <?php echo $baseUrlJson; ?>;
 
 			var iframeUrl = new URL(baseUrl);
+			iframeUrl.pathname = iframeUrl.pathname.replace(/\/$/, '') + '/wp';
 
 			if (hasSecret) {
 				iframeUrl.searchParams.set('secret', secret);
