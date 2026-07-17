@@ -1,0 +1,62 @@
+name: Build dev zip
+on:
+  workflow_dispatch: {}
+jobs:
+  build:
+    name: Build plugin zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install PHP dependencies
+        run: composer install --optimize-autoloader --no-dev --no-interaction
+
+      - name: Install JS dependencies and build assets
+        run: |
+          npm install
+          npm run build
+
+      - name: Assemble plugin folder
+        run: |
+          mkdir -p dist/melhor-envio-cotacao
+          rsync -a ./ dist/melhor-envio-cotacao/ \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=.idea \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=caddy \
+            --exclude=compose.yml \
+            --exclude=Dockerfile \
+            --exclude=custom-php-settings.ini \
+            --exclude=.env \
+            --exclude=.env.example \
+            --exclude=Makefile \
+            --exclude=.gitignore \
+            --exclude=.gitattributes \
+            --exclude=.distignore \
+            --exclude=a.out
+
+      - name: Zip plugin folder
+        run: |
+          cd dist
+          zip -r ../melhor-envio-cotacao-dev.zip melhor-envio-cotacao
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: melhor-envio-cotacao-dev
+          path: melhor-envio-cotacao-dev.zip
+          retention-days: 14
