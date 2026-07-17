@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Infrastructure\WordPress\Checkout;
 
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+
 final class CheckoutFieldsManager {
 
 	/**
@@ -14,22 +16,46 @@ final class CheckoutFieldsManager {
 		'CSBMW_PLUGIN_FILE',                              // Brazilian Market on WooCommerce (claudiosanches)
 	];
 
+	/**
+	 * Id do campo nativo de checkout (Blocks). Precisa ser "namespace/nome".
+	 */
+	private const DOCUMENT_FIELD_ID = 'melhor-envio-cotacao/billing-document';
+
+	private const NUMBER_FIELD_ID = 'melhor-envio-cotacao/address-number';
+
+	private const NEIGHBORHOOD_FIELD_ID = 'melhor-envio-cotacao/neighborhood';
+
 	public function register(): void {
 		// Classic/shortcode checkout
 		add_filter( 'woocommerce_checkout_fields',            [ $this, 'addDocumentFields' ] );
+		add_filter( 'woocommerce_checkout_fields',            [ $this, 'addAddressFields' ] );
 		add_action( 'woocommerce_checkout_process',           [ $this, 'validateFields' ] );
 		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'saveFields' ] );
 		add_action( 'wp_enqueue_scripts',                     [ $this, 'enqueueAssets' ] );
 
-		// Blocks checkout
-		add_action( 'woocommerce_init', [ $this, 'registerStoreApiSchema' ] );
-		add_action(
-			'woocommerce_store_api_checkout_update_order_from_request',
-			[ $this, 'saveFieldsFromBlocksRequest' ],
-			10,
-			2
-		);
+		// Blocks checkout - campos registrados via API nativa do WooCommerce (WC 8.9+), renderizados
+		// pelo próprio React do Checkout Blocks, sem manipulação manual de DOM.
+		add_action( 'woocommerce_init', [ $this, 'registerBlocksCheckoutField' ] );
+		add_action( 'woocommerce_init', [ $this, 'registerBlocksAddressFields' ] );
+		add_action( 'woocommerce_init', [ $this, 'ensureBlocksPhoneRequired' ] );
+		add_action( 'woocommerce_store_api_checkout_order_processed', [ $this, 'saveFieldsFromBlocksRequest' ] );
+		add_action( 'woocommerce_store_api_checkout_order_processed', [ $this, 'saveAddressFieldsFromBlocksRequest' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueueBlocksAssets' ] );
+	}
+
+	/**
+	 * No Checkout Blocks, o telefone obrigatório é controlado pela option
+	 * 'woocommerce_checkout_phone_field' (não pelo filtro clássico 'woocommerce_checkout_fields'),
+	 * e o padrão em checkouts novos é 'optional'.
+	 */
+	public function ensureBlocksPhoneRequired(): void {
+		if ( $this->externalPluginActive() ) {
+			return;
+		}
+
+		if ( get_option( 'woocommerce_checkout_phone_field' ) !== 'required' ) {
+			update_option( 'woocommerce_checkout_phone_field', 'required' );
+		}
 	}
 
 	private function externalPluginActive(): bool {
@@ -51,6 +77,12 @@ final class CheckoutFieldsManager {
 			$fields['billing']['billing_phone']['required'] = true;
 		}
 
+		// Fora da submissão o $_POST ainda não tem o tipo escolhido - assume '1' (CPF, opção
+		// padrão do select) pra decidir qual dos dois já nasce marcado como obrigatório. Na
+		// submissão real (validate_posted_data), esse filtro roda de novo já com o tipo
+		// escolhido no $_POST, então o campo certo (e só ele) é o exigido pelo WooCommerce.
+		$personType = sanitize_text_field( wp_unslash( $_POST['billing_persontype'] ?? '1' ) );
+
 		$fields['billing']['billing_persontype'] = [
 			'label'    => __( 'Tipo de pessoa', 'melhor-envio-cotacao' ),
 			'type'     => 'select',
@@ -66,7 +98,7 @@ final class CheckoutFieldsManager {
 		$fields['billing']['billing_cpf'] = [
 			'label'       => __( 'CPF', 'melhor-envio-cotacao' ),
 			'type'        => 'text',
-			'required'    => false,
+			'required'    => $personType !== '2',
 			'class'       => [ 'form-row-wide', 'me-doc-cpf' ],
 			'placeholder' => '000.000.000-00',
 			'maxlength'   => 14,
@@ -76,12 +108,45 @@ final class CheckoutFieldsManager {
 		$fields['billing']['billing_cnpj'] = [
 			'label'       => __( 'CNPJ', 'melhor-envio-cotacao' ),
 			'type'        => 'text',
-			'required'    => false,
+			'required'    => $personType === '2',
 			'class'       => [ 'form-row-wide', 'me-doc-cnpj' ],
 			'placeholder' => 'AB.CDE.FGH/IJKL-12',
 			'maxlength'   => 18,
 			'priority'    => 33,
 		];
+
+		return $fields;
+	}
+
+	/**
+	 * Número e bairro são exigidos pelos Correios/transportadoras pra gerar a etiqueta -
+	 * legacy/Services/BuyerService.php já lê '_shipping_number'/'_shipping_neighborhood'
+	 * pra montar o destinatário do envio.
+	 */
+	public function addAddressFields( array $fields ): array {
+		if ( $this->externalPluginActive() ) {
+			return $fields;
+		}
+
+		foreach ( [ 'billing', 'shipping' ] as $group ) {
+			$fields[ $group ][ $group . '_number' ] = [
+				'label'       => __( 'Número', 'melhor-envio-cotacao' ),
+				'type'        => 'text',
+				'required'    => true,
+				'class'       => [ 'form-row-wide' ],
+				'placeholder' => __( 'Ex: 123', 'melhor-envio-cotacao' ),
+				'priority'    => 55,
+			];
+
+			$fields[ $group ][ $group . '_neighborhood' ] = [
+				'label'       => __( 'Bairro', 'melhor-envio-cotacao' ),
+				'type'        => 'text',
+				'required'    => true,
+				'class'       => [ 'form-row-wide' ],
+				'placeholder' => __( 'Digite o nome do bairro', 'melhor-envio-cotacao' ),
+				'priority'    => 69,
+			];
+		}
 
 		return $fields;
 	}
@@ -178,73 +243,162 @@ final class CheckoutFieldsManager {
 				);
 			}
 		}
+
+		foreach ( [ 'number', 'neighborhood' ] as $suffix ) {
+			$billingValue  = sanitize_text_field( wp_unslash( $_POST[ 'billing_' . $suffix ] ?? '' ) );
+			$shippingValue = sanitize_text_field( wp_unslash( $_POST[ 'shipping_' . $suffix ] ?? '' ) ) ?: $billingValue;
+
+			update_post_meta( $orderId, '_billing_' . $suffix, $billingValue );
+			update_post_meta( $orderId, '_shipping_' . $suffix, $shippingValue );
+		}
 	}
 
-	public function registerStoreApiSchema(): void {
+	public function registerBlocksCheckoutField(): void {
 		if ( $this->externalPluginActive() ) {
 			return;
 		}
-		if ( ! function_exists( 'woocommerce_store_api_register_endpoint_data' ) ) {
+		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
 			return;
 		}
-		woocommerce_store_api_register_endpoint_data( [
-			'endpoint'        => 'checkout',
-			'namespace'       => 'melhor_envio_person_type',
-			'schema_callback' => fn() => [
-				'billing_persontype' => [ 'type' => 'string', 'readonly' => true ],
-				'billing_cpf'        => [ 'type' => 'string', 'readonly' => true ],
-				'billing_cnpj'       => [ 'type' => 'string', 'readonly' => true ],
+
+		woocommerce_register_additional_checkout_field( [
+			'id'                => self::DOCUMENT_FIELD_ID,
+			'label'             => __( 'CPF / CNPJ', 'melhor-envio-cotacao' ),
+			'location'          => 'address',
+			'type'              => 'text',
+			'required'          => true,
+			'attributes'        => [
+				'autocomplete'   => 'off',
+				'autocapitalize' => 'characters',
+				'maxLength'      => 18,
 			],
-			'data_callback'   => fn() => [
-				'billing_persontype' => '',
-				'billing_cpf'        => '',
-				'billing_cnpj'       => '',
-			],
+			'sanitize_callback' => function ( $value ) {
+				return strtoupper( preg_replace( '/[^0-9A-Za-z]/', '', (string) $value ) );
+			},
+			'validate_callback' => function ( $value ) {
+				return $this->validateDocumentField( (string) $value );
+			},
 		] );
 	}
 
-	public function saveFieldsFromBlocksRequest( \WC_Order $order, \WP_REST_Request $request ): void {
+	public function registerBlocksAddressFields(): void {
 		if ( $this->externalPluginActive() ) {
 			return;
 		}
-		$extensions = $request->get_param( 'extensions' ) ?? [];
-		$raw        = $extensions['melhor_envio_person_type'] ?? [];
-		$data       = is_array( $raw ) ? $raw : [];
-
-		$persontype = sanitize_text_field( $data['billing_persontype'] ?? '' );
-		$cpf        = sanitize_text_field( $data['billing_cpf']        ?? '' );
-		$cnpj       = sanitize_text_field( $data['billing_cnpj']       ?? '' );
-
-		if ( empty( $persontype ) && isset( $_POST['billing_persontype'] ) ) {
-			$persontype = sanitize_text_field( wp_unslash( $_POST['billing_persontype'] ) );
+		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+			return;
 		}
 
-		if ( $persontype ) {
-			$order->update_meta_data( '_billing_persontype', (int) $persontype );
+		woocommerce_register_additional_checkout_field( [
+			'id'       => self::NUMBER_FIELD_ID,
+			'label'    => __( 'Número', 'melhor-envio-cotacao' ),
+			'location' => 'address',
+			'type'     => 'text',
+			'required' => true,
+		] );
+
+		woocommerce_register_additional_checkout_field( [
+			'id'       => self::NEIGHBORHOOD_FIELD_ID,
+			'label'    => __( 'Bairro', 'melhor-envio-cotacao' ),
+			'location' => 'address',
+			'type'     => 'text',
+			'required' => true,
+		] );
+	}
+
+	private function validateDocumentField( string $value ): ?\WP_Error {
+		if ( $value === '' ) {
+			return new \WP_Error( 'melhor_envio_document_required', __( 'Informe um CPF ou CNPJ.', 'melhor-envio-cotacao' ) );
 		}
-		if ( $cpf ) {
-			$order->update_meta_data( '_billing_cpf', $cpf );
+
+		if ( strlen( $value ) === 11 ) {
+			return $this->isValidCpf( $value )
+				? null
+				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CPF inválido.', 'melhor-envio-cotacao' ) );
 		}
-		if ( $cnpj ) {
-			$order->update_meta_data( '_billing_cnpj', $cnpj );
+
+		if ( strlen( $value ) === 14 ) {
+			return $this->isValidCnpj( $value )
+				? null
+				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CNPJ inválido.', 'melhor-envio-cotacao' ) );
 		}
+
+		return new \WP_Error(
+			'melhor_envio_document_invalid',
+			__( 'Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).', 'melhor-envio-cotacao' )
+		);
+	}
+
+	public function saveFieldsFromBlocksRequest( \WC_Order $order ): void {
+		if ( $this->externalPluginActive() ) {
+			return;
+		}
+
+		// Campo é 'address', então pode ter sido preenchido no form de billing e/ou de
+		// shipping (quando "usar mesmo endereço" está desmarcado) - billing tem prioridade
+		// por ser o documento associado à cobrança/nota fiscal.
+		$billingPrefix  = class_exists( CheckoutFields::class ) ? CheckoutFields::BILLING_FIELDS_PREFIX : '_wc_billing/';
+		$shippingPrefix = class_exists( CheckoutFields::class ) ? CheckoutFields::SHIPPING_FIELDS_PREFIX : '_wc_shipping/';
+
+		$document = (string) $order->get_meta( $billingPrefix . self::DOCUMENT_FIELD_ID );
+
+		if ( $document === '' ) {
+			$document = (string) $order->get_meta( $shippingPrefix . self::DOCUMENT_FIELD_ID );
+		}
+
+		if ( $document === '' ) {
+			return;
+		}
+
+		$isCnpj = strlen( $document ) > 11 || (bool) preg_match( '/[A-Z]/', $document );
+
+		$order->update_meta_data( '_billing_persontype', $isCnpj ? '2' : '1' );
+		$order->update_meta_data( '_billing_cpf', $isCnpj ? '' : $document );
+		$order->update_meta_data( '_billing_cnpj', $isCnpj ? $document : '' );
+		$order->save();
+	}
+
+	public function saveAddressFieldsFromBlocksRequest( \WC_Order $order ): void {
+		if ( $this->externalPluginActive() ) {
+			return;
+		}
+
+		$billingPrefix  = class_exists( CheckoutFields::class ) ? CheckoutFields::BILLING_FIELDS_PREFIX : '_wc_billing/';
+		$shippingPrefix = class_exists( CheckoutFields::class ) ? CheckoutFields::SHIPPING_FIELDS_PREFIX : '_wc_shipping/';
+
+		foreach ( [ self::NUMBER_FIELD_ID => 'number', self::NEIGHBORHOOD_FIELD_ID => 'neighborhood' ] as $fieldId => $suffix ) {
+			$billingValue  = (string) $order->get_meta( $billingPrefix . $fieldId );
+			$shippingValue = (string) $order->get_meta( $shippingPrefix . $fieldId ) ?: $billingValue;
+
+			$order->update_meta_data( '_billing_' . $suffix, $billingValue );
+			$order->update_meta_data( '_shipping_' . $suffix, $shippingValue );
+		}
+
 		$order->save();
 	}
 
 	public function enqueueBlocksAssets(): void {
+		// Sem checagem de has_block(): em temas block/FSE o checkout pode vir de um
+		// template, não do conteúdo do post, e has_block() dá falso negativo nesse caso.
+		// is_checkout() já é suficiente - no clássico os seletores CSS/JS simplesmente não
+		// casam com nada (classes só existem no DOM do Checkout Blocks).
 		if ( $this->externalPluginActive() || ! is_checkout() ) {
 			return;
 		}
-		global $post;
-		if ( ! function_exists( 'has_block' ) || ! has_block( 'woocommerce/checkout', $post ) ) {
-			return;
-		}
+
 		wp_enqueue_script(
 			'me-checkout-blocks',
 			MELHORENVIO_URL . '/assets/js/me-checkout-blocks.js',
 			[],
 			MELHORENVIO_VERSION,
 			true
+		);
+
+		wp_enqueue_style(
+			'me-checkout-blocks',
+			MELHORENVIO_URL . '/assets/css/me-checkout-blocks.css',
+			[],
+			MELHORENVIO_VERSION
 		);
 	}
 
@@ -258,10 +412,32 @@ final class CheckoutFieldsManager {
 	private function getInlineScript(): string {
 		return <<<'JS'
 (function($){
+    function meSetRequired($input, isRequired) {
+        var $row   = $input.closest('.form-row');
+        var $label = $row.find('label[for="' + $input.attr('id') + '"]');
+
+        $row.toggleClass('validate-required', isRequired);
+        $label.toggleClass('required_field', isRequired);
+        $input.attr('aria-required', isRequired ? 'true' : 'false');
+
+        $label.find('.required, .optional').remove();
+        $label.append(
+            isRequired
+                ? '&nbsp;<span class="required" aria-hidden="true">*</span>'
+                : '&nbsp;<span class="optional">(opcional)</span>'
+        );
+    }
     function meToggleDocs() {
-        var t = $('#billing_persontype').val();
-        $('.me-doc-cpf').closest('.form-row').toggle(t !== '2');
-        $('.me-doc-cnpj').closest('.form-row').toggle(t === '2');
+        var t       = $('#billing_persontype').val();
+        var isCnpj  = t === '2';
+        var $cpf    = $('#billing_cpf');
+        var $cnpj   = $('#billing_cnpj');
+
+        $cpf.closest('.form-row').toggle(!isCnpj);
+        $cnpj.closest('.form-row').toggle(isCnpj);
+
+        meSetRequired($cpf, !isCnpj);
+        meSetRequired($cnpj, isCnpj);
     }
     function meMaskCpf($el) {
         $el.on('input', function(){
