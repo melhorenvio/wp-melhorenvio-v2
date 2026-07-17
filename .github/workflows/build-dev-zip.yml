@@ -53,10 +53,6 @@ jobs:
             --exclude=a.out
 
       - name: Upload plugin artifact
-        # Não zipamos aqui de propósito: o upload-artifact já compacta o que recebe, então
-        # zipar antes geraria um zip dentro do zip baixado (double zip problem). Apontando
-        # pro pai da pasta montada, o download já sai como um único zip com a pasta
-        # 'melhor-envio-cotacao/' na raiz - pronta pra ir em wp-content/plugins/.
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: melhor-envio-cotacao-dev
