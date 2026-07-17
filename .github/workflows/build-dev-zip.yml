@@ -57,4 +57,4 @@ jobs:
         with:
           name: melhor-envio-cotacao-dev
           path: dist
-          retention-days: 14
+          retention-days: 7
