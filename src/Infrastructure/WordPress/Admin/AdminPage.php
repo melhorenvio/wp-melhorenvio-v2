@@ -29,7 +29,7 @@ final class AdminPage {
 		$signature     = $this->signatureManager->getSignature();
 		$signatureJson = json_encode( $signature, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
-		$baseUrl     = getenv( 'MELHOR_INTEGRADOR_BASE_URL' ) ?: get_option( 'melhor_integrador_base_url', 'https://wordpress-envios.melhorenvio.com/' );
+		$baseUrl     = getenv( 'MELHOR_INTEGRADOR_BASE_URL' ) ?: get_option( 'melhor_integrador_base_url', 'https://wordpress-envios.melhorenvio.work' );
 		$baseUrlJson = json_encode( $baseUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		?>
 		<div class="wrap" id="melhor-envio-integrador-container" style="margin: 0; padding: 0; border: none;"></div>
