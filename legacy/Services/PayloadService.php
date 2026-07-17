@@ -101,7 +101,7 @@ class PayloadService {
 				'insurance_value'     => $order->get_subtotal(),
 				'use_insurance_value' => $options->insurance_value,
 			),
-			'products'         => (object) $productsFilter,
+            'products'         => array_values( $productsFilter ),
 			'service_selected' => $serviceId,
 			'seller'           => $seller,
 			'buyer'            => $buyer,
@@ -150,7 +150,7 @@ class PayloadService {
 				'insurance_value'     => $productService->getInsuranceValue( $productsFilter ),
 				'use_insurance_value' => $options->insurance_value,
 			),
-			'products' => (object) $productsFilter,
+            'products' => array_values( $productsFilter ),
 		);
 
 		if ( ! $this->validatePayload( $payload ) ) {
