@@ -59,6 +59,11 @@ final class MelhorEnvioApiClient {
 			),
 		);
 
+		$this->logger()->debug(
+			sprintf( 'Cotação payload enviado. from=%s to=%s payload=%s', $fromCep, $toCep, wp_json_encode( $payload ) ),
+			self::LOG_CONTEXT
+		);
+
 		$response = wp_remote_post(
 			$this->getBaseUrl() . '/api/v2/me/shipment/calculate',
 			array(
@@ -91,7 +96,14 @@ final class MelhorEnvioApiClient {
 			return array();
 		}
 
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$rawBody = wp_remote_retrieve_body( $response );
+
+		$this->logger()->debug(
+			sprintf( 'Cotação response recebido. HTTP=%d body=%s', $statusCode, $rawBody ),
+			self::LOG_CONTEXT
+		);
+
+		$body = json_decode( $rawBody, true );
 
 		if ( ! is_array( $body ) ) {
 			$this->logger()->error( 'Cotação retornou JSON inválido.', self::LOG_CONTEXT );
