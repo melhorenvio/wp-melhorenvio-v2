@@ -75,6 +75,11 @@
 
 			$result.html( '<p class="me-cep-calc__loading">Calculando...</p>' );
 
+			var $form = $( 'button[name="add-to-cart"][value="' + meSC.productId + '"]' ).closest( 'form.cart' );
+			if ( ! $form.length ) {
+				$form = $( 'form.cart' ).first();
+			}
+
 			xhr = $.ajax( {
 				url:    meSC.ajaxUrl,
 				method: 'POST',
@@ -83,9 +88,9 @@
 					nonce:      meSC.nonce,
 					cep:        cep,
 					product_id: meSC.productId,
-					quantity:   $( 'form.cart input[name="quantity"]' ).val() || 1,
-					woosb_ids:  $( 'form.cart input[name="woosb_ids"]' ).val() || '',
-					wooco_ids:  $( 'form.cart input[name="wooco_ids"]' ).val() || '',
+					quantity:   $form.find( 'input[name="quantity"]' ).val() || 1,
+					woosb_ids:  $form.find( 'input[name="woosb_ids"]' ).val() || '',
+					wooco_ids:  $form.find( 'input[name="wooco_ids"]' ).val() || '',
 				},
 				success: function ( response ) {
 					if ( ! response.success || ! response.data || ! response.data.length ) {
