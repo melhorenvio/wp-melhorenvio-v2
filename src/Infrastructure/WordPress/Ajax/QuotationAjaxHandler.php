@@ -6,6 +6,7 @@ namespace MelhorEnvio\Infrastructure\WordPress\Ajax;
 
 use MelhorEnvio\Infrastructure\WordPress\Http\MelhorEnvioApiClient;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\CartItemsBuilder;
+use MelhorEnvio\Infrastructure\WordPress\Shipping\UnitConverter;
 
 final class QuotationAjaxHandler {
 
@@ -77,10 +78,10 @@ final class QuotationAjaxHandler {
 			$items = array(
 				array(
 					'id'              => $product->get_id(),
-					'width'           => (float) ( $product->get_width() ?: 11 ),
-					'height'          => (float) ( $product->get_height() ?: 2 ),
-					'length'          => (float) ( $product->get_length() ?: 16 ),
-					'weight'          => (float) ( $product->get_weight() ?: 0.3 ),
+					'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: 11 ) ),
+					'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: 2 ) ),
+					'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: 16 ) ),
+					'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: 0.3 ) ),
 					'insurance_value' => (float) $product->get_price(),
 					'quantity'        => $quantity,
 				),
