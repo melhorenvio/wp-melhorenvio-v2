@@ -83,7 +83,7 @@
 					nonce:      meSC.nonce,
 					cep:        cep,
 					product_id: meSC.productId,
-					quantity:   $( 'input.qty' ).val() || 1,
+					quantity:   $( 'form.cart input[name="quantity"]' ).val() || 1,
 					woosb_ids:  $( 'form.cart input[name="woosb_ids"]' ).val() || '',
 					wooco_ids:  $( 'form.cart input[name="wooco_ids"]' ).val() || '',
 				},
