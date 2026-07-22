@@ -48,6 +48,7 @@ final class HookManager {
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
 		$this->registerSslVerifyFilters();
+		$this->registerWcAuthApproveGuard();
 	}
 
 	private function registerShippingMethod(): void {
@@ -67,6 +68,32 @@ final class HookManager {
 	private function registerSslVerifyFilters(): void {
 		add_filter( 'https_ssl_verify', '__return_false' );
 		add_filter( 'https_local_ssl_verify', '__return_false' );
+	}
+
+	private function registerWcAuthApproveGuard(): void {
+		add_action(
+			'woocommerce_auth_page_footer',
+			static function (): void {
+				?>
+				<script>
+				(function () {
+					var btn = document.querySelector('.wc-auth-approve');
+					if (!btn) return;
+					btn.addEventListener('click', function (e) {
+						if (btn.dataset.clicked) {
+							e.preventDefault();
+							return;
+						}
+						btn.dataset.clicked = '1';
+						btn.style.opacity = '0.6';
+						btn.style.pointerEvents = 'none';
+						btn.textContent = btn.textContent + '...';
+					});
+				})();
+				</script>
+				<?php
+			}
+		);
 	}
 
 	public function onUserLogout(): void {
