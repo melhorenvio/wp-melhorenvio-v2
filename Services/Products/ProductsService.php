@@ -121,7 +121,10 @@ class ProductsService {
 				continue;
 			}
 
-			$product    = $item['data'];
+			$product = $item['data'];
+			if ( is_null( $product ) ) {
+				continue;
+			}
 			$products[$key] = $this->normalize(
 				$product,
 				$product->get_price(),

@@ -55,8 +55,12 @@ class CalculateShippingMethodService {
 		}
 
 		if ( empty( $products ) ) {
-			foreach($package['contents'] as $content){
-				$products[] = $content['formatted_data'];
+			if ( $this->isProductPageCalculation( $package ) ) {
+				foreach ( $package['contents'] as $content ) {
+					$products[] = $content['formatted_data'];
+				}
+			} else {
+				$products = ( new \MelhorEnvio\Services\Products\ProductsService() )->filter( $package['contents'] );
 			}
 		}
 
