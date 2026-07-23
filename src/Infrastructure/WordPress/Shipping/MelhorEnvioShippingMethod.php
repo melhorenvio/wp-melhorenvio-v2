@@ -87,7 +87,9 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 				? ( (int) $service['delivery_time'] + $extraDays )
 				: null;
 
-			$label = $service['name'] ?? __( 'Melhor Envio', 'melhor-envio-cotacao' );
+			$serviceName = $service['name'] ?? __( 'Melhor Envio', 'melhor-envio-cotacao' );
+			$company     = $service['company']['name'] ?? '';
+			$label       = $company !== '' ? sprintf( '%s - %s', $company, $serviceName ) : $serviceName;
 
 			if ( $deadline !== null ) {
 				$label .= sprintf( ' (%d dias úteis)', $deadline );
