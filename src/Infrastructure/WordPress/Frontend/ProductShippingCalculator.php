@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Infrastructure\WordPress\Frontend;
 
+use MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager;
+
 final class ProductShippingCalculator {
 
 	public function register(): void {
+		if ( ! PluginModeManager::isIntegradorMode() ) {
+			return;
+		}
+
 		if ( get_option( 'melhorenvio_hide_calculator_product' ) ) {
 			return;
 		}
