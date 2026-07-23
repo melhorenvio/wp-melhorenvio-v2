@@ -55,6 +55,27 @@ final class QuotationAjaxHandler {
 			wp_send_json_error( array( 'message' => __( 'CEP de origem não configurado.', 'melhor-envio-cotacao' ) ) );
 		}
 
+		$package = array(
+			'destination'   => array(
+				'country'  => 'BR',
+				'state'    => '',
+				'postcode' => $cep,
+			),
+			'contents'      => array(),
+			'contents_cost' => 0,
+		);
+
+		$zone      = \WC_Shipping_Zones::get_zone_matching_package( $package );
+		$methods   = $zone->get_shipping_methods( true );
+		$meMethods = array_filter( $methods, fn( $m ) => $m->id === 'melhor_envio' );
+
+		if ( empty( $meMethods ) ) {
+			wp_send_json_error( array( 'message' => __( 'Frete não disponível para este endereço.', 'melhor-envio-cotacao' ) ) );
+		}
+
+		$meMethod  = reset( $meMethods );
+		$extraDays = (int) $meMethod->get_option( 'extra_days', 0 );
+
 		$onlyInCartMessage = __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' );
 
 		if ( CartItemsBuilder::isCompositeProduct( $product ) ) {
@@ -95,7 +116,7 @@ final class QuotationAjaxHandler {
 				'name'          => $q['name'] ?? '',
 				'company'       => $q['company']['name'] ?? '',
 				'price'         => (float) ( $q['price'] ?? 0 ),
-				'delivery_time' => (int) ( $q['delivery_time'] ?? 0 ),
+				'delivery_time' => (int) ( $q['delivery_time'] ?? 0 ) + $extraDays,
 			),
 			array_values( $quotations )
 		);
