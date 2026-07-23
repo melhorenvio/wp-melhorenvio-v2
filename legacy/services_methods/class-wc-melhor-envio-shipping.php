@@ -97,7 +97,7 @@ if ( class_exists( 'WC_Shipping_Method' ) ) {
 				'title'             => array(
 					'title'   => 'Título',
 					'type'    => 'text',
-					'default' => $this->method_title,
+					'default' => sprintf( '%s (Melhor Envio)', static::TITLE ),
 				),
 				'additional_tax'    => array(
 					'title'       => 'Taxa adicional',
