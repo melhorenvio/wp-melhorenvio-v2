@@ -17,8 +17,8 @@ final class AdminMenu {
 
 	public function __construct(
 		Container $container,
-		string $pageTitle  = 'Melhor Integrador',
-		string $menuTitle  = 'Melhor Integrador',
+		string $pageTitle  = 'Melhor Envio',
+		string $menuTitle  = 'Melhor Envio',
 		string $capability = 'manage_options',
 		string $menuSlug   = 'melhor-integrador',
 		string $parentSlug = 'woocommerce'
