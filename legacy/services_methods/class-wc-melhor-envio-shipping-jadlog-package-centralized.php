@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Jadlog Package Centralizado';
 
-		const METHOD_TITLE = 'Jadlog Package Centralizado (Melhor Envio)';
+		const METHOD_TITLE = 'Jadlog Package Centralizado (Melhor Envio) (Legado)';
 
 		public $code = 27;
 

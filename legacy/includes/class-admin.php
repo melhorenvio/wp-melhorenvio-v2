@@ -29,8 +29,8 @@ class Admin
 		$slug       = 'melhor-envio';
 
 		$hook = add_menu_page(
-			__('Melhor Envio', 'melhor-envio-cotacao'),
-			__('Melhor Envio', 'melhor-envio-cotacao'),
+			__('Melhor Envio (Legado)', 'melhor-envio-cotacao'),
+			__('Melhor Envio (Legado)', 'melhor-envio-cotacao'),
 			$capability,
 			$slug,
 			array($this, 'plugin_page'),

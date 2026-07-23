@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Correios Sedex';
 
-		const METHOD_TITLE = 'Correios Sedex (Melhor Envio)';
+		const METHOD_TITLE = 'Correios Sedex (Melhor Envio) (Legado)';
 
 		public $code = 2;
 

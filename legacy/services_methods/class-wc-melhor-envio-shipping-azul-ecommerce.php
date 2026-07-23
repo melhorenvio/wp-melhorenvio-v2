@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Azul Ecommerce';
 
-		const METHOD_TITLE = 'Azul Ecommerce (Melhor Envio)';
+		const METHOD_TITLE = 'Azul Ecommerce (Melhor Envio) (Legado)';
 
 		public $code = 16;
 

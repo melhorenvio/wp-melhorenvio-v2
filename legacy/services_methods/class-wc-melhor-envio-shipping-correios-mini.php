@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Correios Mini';
 
-		const METHOD_TITLE = 'Correios Mini (Melhor Envio)';
+		const METHOD_TITLE = 'Correios Mini (Melhor Envio) (Legado)';
 
 		public $code = 17;
 

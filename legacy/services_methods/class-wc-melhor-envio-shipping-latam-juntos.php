@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'LATAM Cargo éFácil';
 
-		const METHOD_TITLE = 'LATAM Cargo éFácil (Melhor Envio)';
+		const METHOD_TITLE = 'LATAM Cargo éFácil (Melhor Envio) (Legado)';
 
 		public $code = 12;
 

@@ -7,7 +7,7 @@ if (class_exists('WC_Melhor_Envio_Shipping')) {
 
        const TITLE = 'Total Express Standard';
 
-       const METHOD_TITLE = "Total Express Standard (Melhor Envio)";
+       const METHOD_TITLE = "Total Express Standard (Melhor Envio) (Legado)";
 
        public $code = 35;
 

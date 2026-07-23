@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Via Brasil Rodoviário';
 
-		const METHOD_TITLE = 'Via Brasil Rodoviário (Melhor Envio)';
+		const METHOD_TITLE = 'Via Brasil Rodoviário (Melhor Envio) (Legado)';
 
 		public $code = 9;
 

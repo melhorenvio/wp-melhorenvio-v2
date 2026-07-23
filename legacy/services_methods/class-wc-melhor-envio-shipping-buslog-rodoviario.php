@@ -9,7 +9,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Buslog Rodoviário';
 
-		const METHOD_TITLE = 'Buslog Rodoviário (Melhor Envio)';
+		const METHOD_TITLE = 'Buslog Rodoviário (Melhor Envio) (Legado)';
 
 		public $code = ShippingService::BUSLOG_RODOVIARIO;
 

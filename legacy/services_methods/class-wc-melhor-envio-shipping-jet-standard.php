@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'JeT Standard';
 
-		const METHOD_TITLE = 'JeT Standard (Melhor Envio)';
+		const METHOD_TITLE = 'JeT Standard (Melhor Envio) (Legado)';
 
 		public $code = 33;
 

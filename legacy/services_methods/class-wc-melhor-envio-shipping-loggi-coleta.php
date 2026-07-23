@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Loggi Coleta';
 
-		const METHOD_TITLE = 'Loggi Coleta (Melhor Envio)';
+		const METHOD_TITLE = 'Loggi Coleta (Melhor Envio) (Legado)';
 
 		public $code = 32;
 

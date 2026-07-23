@@ -7,7 +7,7 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		const TITLE = 'Correios Pac';
 
-		const METHOD_TITLE = 'Correios Pac (Melhor Envio)';
+		const METHOD_TITLE = 'Correios Pac (Melhor Envio) (Legado)';
 
 		public $code = 1;
 
