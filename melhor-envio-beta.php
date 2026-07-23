@@ -278,8 +278,7 @@ final class Melhor_Envio_Plugin
 
         (new TrackingService())->createTrackingColumnOrdersClient();
         $hideCalculator = (new CalculatorShow)->get();
-        $hasToken = ! empty( get_option( 'melhor_envio_integrador_quotation_token' ) );
-        if ($hideCalculator && ! $hasToken && ! \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+        if ($hideCalculator && ! \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
             (new ShowCalculatorProductPage())->insertCalculator();
         }
 
