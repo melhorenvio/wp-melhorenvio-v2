@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MelhorEnvio\Infrastructure\WordPress\Checkout;
 
 use MelhorEnvio\Infrastructure\WordPress\Shipping\CartItemsBuilder;
-use MelhorEnvio\Infrastructure\WordPress\Shipping\UnitConverter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -59,8 +58,9 @@ final class CheckoutOrderHandler {
 			return;
 		}
 
-		$service  = $this->getServiceFromTransient( $order->get_shipping_postcode(), $serviceId );
-		$products = $this->buildProducts( $order );
+		$items    = $this->cartItemsBuilder->buildItems();
+		$service  = $this->getServiceFromTransient( $order->get_shipping_postcode(), $items, $serviceId );
+		$products = $this->buildProducts( $order, $items );
 
 		$data = array(
 			'service_id'     => $serviceId,
@@ -77,9 +77,8 @@ final class CheckoutOrderHandler {
 		$order->save_meta_data();
 	}
 
-	private function getServiceFromTransient( string $postcode, int $serviceId ): array {
+	private function getServiceFromTransient( string $postcode, array $items, int $serviceId ): array {
 		$toCep    = preg_replace( '/\D/', '', $postcode );
-		$items    = $this->cartItemsBuilder->buildItems();
 		$cacheKey = 'me_quote_' . md5( $toCep . serialize( $items ) );
 		$cached   = get_transient( $cacheKey );
 
@@ -88,30 +87,29 @@ final class CheckoutOrderHandler {
 			: array();
 	}
 
-	private function buildProducts( \WC_Order $order ): array {
-		$products = array();
+	private function buildProducts( \WC_Order $order, array $items ): array {
+		$lineItemsByProductId = array();
 
 		foreach ( $order->get_items() as $lineItem ) {
-			$product = $lineItem->get_product();
+			$lineItemsByProductId[ $lineItem->get_product_id() ] = $lineItem;
+		}
 
-			if ( ! $product ) {
-				continue;
-			}
+		$products = array();
 
-			$qty        = max( 1, (int) $lineItem->get_quantity() );
-			$unitPrice  = (float) $lineItem->get_subtotal() / $qty;
+		foreach ( $items as $item ) {
+			$lineItem = $lineItemsByProductId[ $item['id'] ] ?? null;
 
 			$products[] = array(
-				'id'              => $lineItem->get_id(),
-				'product_id'      => $lineItem->get_product_id(),
-				'name'            => $lineItem->get_name(),
-				'quantity'        => $qty,
-				'price'           => $unitPrice,
-				'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: 0.3 ) ),
-				'height'          => (int) round( UnitConverter::toCm( (float) ( $product->get_height() ?: 2 ) ) ),
-				'width'           => (int) round( UnitConverter::toCm( (float) ( $product->get_width() ?: 11 ) ) ),
-				'length'          => (int) round( UnitConverter::toCm( (float) ( $product->get_length() ?: 16 ) ) ),
-				'insurance_value' => $unitPrice,
+				'id'              => $lineItem ? $lineItem->get_id() : $item['id'],
+				'product_id'      => $item['id'],
+				'name'            => $lineItem ? $lineItem->get_name() : '',
+				'quantity'        => max( 1, (int) $item['quantity'] ),
+				'price'           => $item['insurance_value'],
+				'weight'          => $item['weight'],
+				'height'          => (int) round( $item['height'] ),
+				'width'           => (int) round( $item['width'] ),
+				'length'          => (int) round( $item['length'] ),
+				'insurance_value' => $item['insurance_value'],
 			);
 		}
 
