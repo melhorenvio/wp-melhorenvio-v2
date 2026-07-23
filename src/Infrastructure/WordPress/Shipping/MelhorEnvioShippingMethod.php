@@ -97,9 +97,12 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 
 			$this->add_rate(
 				array(
-					'id'    => $this->id . '_' . ( $service['id'] ?? uniqid() ),
-					'label' => $label,
-					'cost'  => (float) ( $service['price'] ?? 0 ),
+					'id'        => $this->id . '_' . ( $service['id'] ?? uniqid() ),
+					'label'     => $label,
+					'cost'      => (float) ( $service['price'] ?? 0 ),
+					'meta_data' => array(
+						'me_service_id' => (string) ( $service['id'] ?? '' ),
+					),
 				)
 			);
 		}
