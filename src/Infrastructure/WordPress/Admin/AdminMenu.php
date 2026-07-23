@@ -72,13 +72,16 @@ final class AdminMenu {
 			overflow-x: initial !important;
 		}
 
-		.melhor-envio-integrador-page #wpbody-content {
-			padding-top: 0;
-		}
-
 		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page.<?php echo $screenId; ?> #wpbody-content {
 			padding: 0;
 			min-height: calc(100vh - 32px);
+		}
+
+		.melhor-envio-integrador-page #wpbody-content > .notice,
+		.melhor-envio-integrador-page #wpbody-content > .me-alert {
+			margin-left: 20px;
+			margin-right: 20px;
+			margin-top: 8px;
 		}
 		</style>
 		<?php

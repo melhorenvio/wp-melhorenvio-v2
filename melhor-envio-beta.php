@@ -231,7 +231,9 @@ final class Melhor_Envio_Plugin
             require_once MELHORENVIO_INCLUDES . '/class-assets.php';
 
             if ($this->is_request('admin')) {
-                require_once MELHORENVIO_INCLUDES . '/class-admin.php';
+                if (!\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+                    require_once MELHORENVIO_INCLUDES . '/class-admin.php';
+                }
             }
 
             if ($this->is_request('frontend')) {
@@ -261,6 +263,7 @@ final class Melhor_Envio_Plugin
         if (is_admin()) {
             (new CheckHealthService())->init();
             (new RolesService())->init();
+            (new \MelhorEnvio\Infrastructure\WordPress\Admin\ModeNotice())->register();
         }
 
         add_action('init', array($this, 'init_classes'));
@@ -285,24 +288,26 @@ final class Melhor_Envio_Plugin
             return $styles;
         } );
 
-        add_filter('woocommerce_shipping_methods', function ($methods) {
-            $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
-            $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
-            $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
-            $methods['melhorenvio_jadlog_package_centralized']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package_Centralized';
-            $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
-            $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
-            $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
-            $methods['melhorenvio_loggi_coleta']  = 'WC_Melhor_Envio_Shipping_Loggi_Coleta';
-            $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
-            $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
-            $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
-            $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
-            $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
-            $methods['melhorenvio_totalexpress_standard']  = 'WC_Melhor_Envio_Shipping_TotalExpress_Standard';
-            $methods['melhorenvio_totalexpress_etotal']  = 'WC_Melhor_Envio_Shipping_TotalExpress_ETotal';
-            return $methods;
-        });
+        if (!\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+            add_filter('woocommerce_shipping_methods', function ($methods) {
+                $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
+                $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
+                $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
+                $methods['melhorenvio_jadlog_package_centralized']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package_Centralized';
+                $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
+                $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
+                $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
+                $methods['melhorenvio_loggi_coleta']  = 'WC_Melhor_Envio_Shipping_Loggi_Coleta';
+                $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
+                $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
+                $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+                $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
+                $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
+                $methods['melhorenvio_totalexpress_standard']  = 'WC_Melhor_Envio_Shipping_TotalExpress_Standard';
+                $methods['melhorenvio_totalexpress_etotal']  = 'WC_Melhor_Envio_Shipping_TotalExpress_ETotal';
+                return $methods;
+            });
+        }
 
         add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
         function orderingQuotationsByPrice($rates, $package)
@@ -355,7 +360,7 @@ final class Melhor_Envio_Plugin
     public function init_classes()
     {
         try {
-            if ($this->is_request('admin')) {
+            if ($this->is_request('admin') && !\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
                 $this->container['admin'] = new App\Admin();
             }
 
