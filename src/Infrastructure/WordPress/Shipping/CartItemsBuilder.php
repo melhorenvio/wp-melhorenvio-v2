@@ -60,13 +60,20 @@ final class CartItemsBuilder {
 
 		$shippingFee = get_post_meta( $product->get_id(), 'woosb_shipping_fee', true );
 
-		// Fora do carrinho (sem passar por 'woocommerce_before_calculate_totals'), o kit com
-		// preço automático não tem '_price' preenchido - só get_regular_price() soma os
-		// componentes nesse caso. Preço fixo já retorna certo via get_price().
-		$kitUnitPrice  = (float) $product->get_price() ?: (float) $product->get_regular_price();
+		// Fora do carrinho (sem passar por 'woocommerce_before_calculate_totals'), o desconto
+		// do kit (percentual/valor fixo, cadastrado no produto) nunca é aplicado sozinho por
+		// get_price() - usamos get_sale_price() do WPC Product Bundles, que já soma os
+		// componentes com o desconto quando há um configurado (vazio quando não há, cai pro
+		// preço normal do kit; kit com preço automático e sem '_price' preenchido ainda cai
+		// pro get_regular_price()).
+		$kitSalePrice  = method_exists( $product, 'get_sale_price' ) ? $product->get_sale_price() : '';
+		$kitUnitPrice  = $kitSalePrice !== '' && $kitSalePrice !== null
+			? (float) $kitSalePrice
+			: ( (float) $product->get_price() ?: (float) $product->get_regular_price() );
 		$kitPriceTotal = $kitUnitPrice * $quantity;
 
-		$components = array();
+		$discountPercentage = method_exists( $product, 'get_discount_percentage' ) ? (float) $product->get_discount_percentage() : 0.0;
+		$components         = array();
 
 		foreach ( $product->get_items() as $componentDef ) {
 			$componentProduct = wc_get_product( $componentDef['id'] ?? 0 );
@@ -75,9 +82,17 @@ final class CartItemsBuilder {
 				continue;
 			}
 
-			$componentQty = max( 1, (int) ( $componentDef['qty'] ?? 1 ) ) * $quantity;
+			$componentQty   = max( 1, (int) ( $componentDef['qty'] ?? 1 ) ) * $quantity;
+			$componentPrice = (float) $componentProduct->get_price();
 
-			$components[] = $this->toLine( $componentProduct, $componentQty, (float) $componentProduct->get_price() );
+			// O plugin também reduz o preço de cada componente do kit no carrinho (não só o
+			// total agregado) - replica aqui pro modo "cotar cada componente" (shipping_fee
+			// 'each') não perder o desconto percentual.
+			if ( $discountPercentage > 0 ) {
+				$componentPrice *= ( 100 - $discountPercentage ) / 100;
+			}
+
+			$components[] = $this->toLine( $componentProduct, $componentQty, $componentPrice );
 		}
 
 		$dumpIntoFirst = method_exists( $product, 'is_fixed_price' ) && $product->is_fixed_price();
@@ -102,7 +117,11 @@ final class CartItemsBuilder {
 
 		$resolved = \WPCleverWooco_Helper::get_items( $selectionIds );
 
-		$components = array();
+		// O desconto da composição (percentual, cadastrado no produto) é aplicado pelo WPC
+		// Composite Products a cada componente antes de somar o total no carrinho - fora do
+		// carrinho precisa ser replicado aqui, senão o seguro cota pelo valor cheio.
+		$discountPercentage = method_exists( $product, 'get_discount' ) ? (float) $product->get_discount() : 0.0;
+		$components         = array();
 
 		foreach ( $resolved as $componentDef ) {
 			$componentProduct = wc_get_product( $componentDef['id'] ?? 0 );
@@ -111,9 +130,14 @@ final class CartItemsBuilder {
 				continue;
 			}
 
-			$componentQty = max( 1, (int) ( $componentDef['qty'] ?? 1 ) ) * $quantity;
+			$componentQty   = max( 1, (int) ( $componentDef['qty'] ?? 1 ) ) * $quantity;
+			$componentPrice = (float) $componentProduct->get_price();
 
-			$components[] = $this->toLine( $componentProduct, $componentQty, (float) $componentProduct->get_price() );
+			if ( $discountPercentage > 0 ) {
+				$componentPrice *= ( 100 - $discountPercentage ) / 100;
+			}
+
+			$components[] = $this->toLine( $componentProduct, $componentQty, $componentPrice );
 		}
 
 		if ( empty( $components ) ) {
