@@ -19,20 +19,22 @@ final class OrderMetaBackfill {
 	}
 
 	public function register(): void {
-		add_filter( 'woocommerce_rest_prepare_shop_order_object', array( $this, 'maybeBackfill' ), 10, 2 );
+		add_filter( 'woocommerce_rest_prepare_shop_order_object', array( $this, 'refresh' ), 10, 2 );
 	}
 
-	public function maybeBackfill( \WP_REST_Response $response, \WC_Order $order ): \WP_REST_Response {
-		if ( $order->get_meta( OrderShippingSnapshotBuilder::META_KEY, true ) ) {
-			return $response;
-		}
-
+	public function refresh( \WP_REST_Response $response, \WC_Order $order ): \WP_REST_Response {
 		$data = $this->snapshotBuilder->buildSnapshot( $order );
 
 		$order->update_meta_data( OrderShippingSnapshotBuilder::META_KEY, $data );
 		$order->save_meta_data();
 
-		$responseData                = $response->get_data();
+		$responseData              = $response->get_data();
+		$responseData['meta_data'] = array_values(
+			array_filter(
+				$responseData['meta_data'] ?? array(),
+				static fn( $meta ): bool => ( is_array( $meta ) ? ( $meta['key'] ?? null ) : ( $meta->key ?? null ) ) !== OrderShippingSnapshotBuilder::META_KEY
+			)
+		);
 		$responseData['meta_data'][] = array(
 			'id'    => 0,
 			'key'   => OrderShippingSnapshotBuilder::META_KEY,
