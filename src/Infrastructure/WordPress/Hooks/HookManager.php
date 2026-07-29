@@ -9,7 +9,6 @@ use MelhorEnvio\Infrastructure\WordPress\Admin\AdminMenu;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
-use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutOrderHandler;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\DisconnectEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\OrderMetaBackfill;
@@ -46,9 +45,6 @@ final class HookManager {
 
 		$checkoutFieldsManager = $this->container->get( CheckoutFieldsManager::class );
 		$checkoutFieldsManager->register();
-
-		$checkoutOrderHandler = $this->container->get( CheckoutOrderHandler::class );
-		$checkoutOrderHandler->register();
 
 		$orderMetaBackfill = $this->container->get( OrderMetaBackfill::class );
 		$orderMetaBackfill->register();

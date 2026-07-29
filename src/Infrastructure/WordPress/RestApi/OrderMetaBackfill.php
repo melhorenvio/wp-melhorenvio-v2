@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Infrastructure\WordPress\RestApi;
 
-use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutOrderHandler;
+use MelhorEnvio\Infrastructure\WordPress\Shipping\OrderShippingSnapshotBuilder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class OrderMetaBackfill {
 
-	private CheckoutOrderHandler $checkoutOrderHandler;
+	private OrderShippingSnapshotBuilder $snapshotBuilder;
 
-	public function __construct( CheckoutOrderHandler $checkoutOrderHandler ) {
-		$this->checkoutOrderHandler = $checkoutOrderHandler;
+	public function __construct( OrderShippingSnapshotBuilder $snapshotBuilder ) {
+		$this->snapshotBuilder = $snapshotBuilder;
 	}
 
 	public function register(): void {
@@ -23,19 +23,19 @@ final class OrderMetaBackfill {
 	}
 
 	public function maybeBackfill( \WP_REST_Response $response, \WC_Order $order ): \WP_REST_Response {
-		if ( $order->get_meta( CheckoutOrderHandler::META_KEY, true ) ) {
+		if ( $order->get_meta( OrderShippingSnapshotBuilder::META_KEY, true ) ) {
 			return $response;
 		}
 
-		$data = $this->checkoutOrderHandler->buildBackfillSnapshot( $order );
+		$data = $this->snapshotBuilder->buildSnapshot( $order );
 
-		$order->update_meta_data( CheckoutOrderHandler::META_KEY, $data );
+		$order->update_meta_data( OrderShippingSnapshotBuilder::META_KEY, $data );
 		$order->save_meta_data();
 
 		$responseData                = $response->get_data();
 		$responseData['meta_data'][] = array(
 			'id'    => 0,
-			'key'   => CheckoutOrderHandler::META_KEY,
+			'key'   => OrderShippingSnapshotBuilder::META_KEY,
 			'value' => $data,
 		);
 		$response->set_data( $responseData );

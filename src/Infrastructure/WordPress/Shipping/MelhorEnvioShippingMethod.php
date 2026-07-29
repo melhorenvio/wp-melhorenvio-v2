@@ -101,7 +101,11 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 					'label'     => $label,
 					'cost'      => (float) ( $service['price'] ?? 0 ),
 					'meta_data' => array(
-						'me_service_id' => (string) ( $service['id'] ?? '' ),
+						'me_service_id'    => (string) ( $service['id'] ?? '' ),
+						'me_service_name'  => $serviceName,
+						'me_company_id'    => (string) ( $service['company']['id'] ?? 0 ),
+						'me_company_name'  => $company,
+						'me_delivery_time' => (string) ( $service['delivery_time'] ?? 0 ),
 					),
 				)
 			);
