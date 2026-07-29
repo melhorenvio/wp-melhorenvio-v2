@@ -117,7 +117,8 @@ final class CheckoutOrderHandler {
 		$lineItemsByProductId = array();
 
 		foreach ( $order->get_items() as $lineItem ) {
-			$lineItemsByProductId[ $lineItem->get_product_id() ] = $lineItem;
+			$key                          = $lineItem->get_variation_id() ?: $lineItem->get_product_id();
+			$lineItemsByProductId[ $key ] = $lineItem;
 		}
 
 		$products = array();
