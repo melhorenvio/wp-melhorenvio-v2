@@ -241,7 +241,7 @@ final class CartItemsBuilder {
 	 *
 	 * @param array<int, array{product: \WC_Product, quantity: int, unitaryValue: float}> $components
 	 */
-	private function composedItems(
+	public function composedItems(
 		\WC_Product $parent,
 		int $quantity,
 		float $aggregateTotal,
@@ -290,7 +290,7 @@ final class CartItemsBuilder {
 		return $components;
 	}
 
-	private function toLine( \WC_Product $product, int $quantity, float $unitaryValue ): array {
+	public function toLine( \WC_Product $product, int $quantity, float $unitaryValue ): array {
 		return array(
 			'product'      => $product,
 			'quantity'     => $quantity,
@@ -301,7 +301,7 @@ final class CartItemsBuilder {
 	/**
 	 * @param array{product: \WC_Product, quantity: int, unitaryValue: float} $line
 	 */
-	private function toApiItem( array $line ): array {
+	public function toApiItem( array $line ): array {
 		$product = $line['product'];
 
 		return array(

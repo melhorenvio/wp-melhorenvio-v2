@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Infrastructure\WordPress\Checkout;
 
 use MelhorEnvio\Infrastructure\WordPress\Shipping\CartItemsBuilder;
+use MelhorEnvio\Infrastructure\WordPress\Shipping\OrderItemsBuilder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,9 +16,11 @@ final class CheckoutOrderHandler {
 	public const META_KEY = 'melhor_integrador_order_data';
 
 	private CartItemsBuilder $cartItemsBuilder;
+	private OrderItemsBuilder $orderItemsBuilder;
 
-	public function __construct( CartItemsBuilder $cartItemsBuilder ) {
-		$this->cartItemsBuilder = $cartItemsBuilder;
+	public function __construct( CartItemsBuilder $cartItemsBuilder, OrderItemsBuilder $orderItemsBuilder ) {
+		$this->cartItemsBuilder  = $cartItemsBuilder;
+		$this->orderItemsBuilder = $orderItemsBuilder;
 	}
 
 	public function register(): void {
@@ -75,6 +78,21 @@ final class CheckoutOrderHandler {
 
 		$order->update_meta_data( self::META_KEY, $data );
 		$order->save_meta_data();
+	}
+
+	public function buildBackfillSnapshot( \WC_Order $order ): array {
+		$items = $this->orderItemsBuilder->buildItems( $order );
+
+		return array(
+			'service_id'     => null,
+			'service_name'   => '',
+			'company_id'     => 0,
+			'company_name'   => '',
+			'price'          => '',
+			'delivery_time'  => 0,
+			'date_quotation' => current_time( 'mysql' ),
+			'products'       => $this->buildProducts( $order, $items ),
+		);
 	}
 
 	private function getServiceFromTransient( string $postcode, array $items, int $serviceId ): array {

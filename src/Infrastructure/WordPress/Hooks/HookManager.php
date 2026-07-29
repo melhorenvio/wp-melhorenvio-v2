@@ -12,6 +12,7 @@ use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
 use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutOrderHandler;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\DisconnectEndpoint;
+use MelhorEnvio\Infrastructure\WordPress\RestApi\OrderMetaBackfill;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\QuotationTokenEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\RestApi\SaveSecretEndpoint;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\MelhorEnvioShippingMethod;
@@ -48,6 +49,9 @@ final class HookManager {
 
 		$checkoutOrderHandler = $this->container->get( CheckoutOrderHandler::class );
 		$checkoutOrderHandler->register();
+
+		$orderMetaBackfill = $this->container->get( OrderMetaBackfill::class );
+		$orderMetaBackfill->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
