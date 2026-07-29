@@ -100,9 +100,17 @@ final class CheckoutOrderHandler {
 		$cacheKey = 'me_quote_' . md5( $toCep . serialize( $items ) );
 		$cached   = get_transient( $cacheKey );
 
-		return ( is_array( $cached ) && isset( $cached[ $serviceId ] ) )
-			? $cached[ $serviceId ]
-			: array();
+		if ( ! is_array( $cached ) ) {
+			return array();
+		}
+
+		foreach ( $cached as $service ) {
+			if ( is_array( $service ) && (int) ( $service['id'] ?? 0 ) === $serviceId ) {
+				return $service;
+			}
+		}
+
+		return array();
 	}
 
 	private function buildProducts( \WC_Order $order, array $items ): array {
