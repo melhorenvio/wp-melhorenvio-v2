@@ -67,13 +67,19 @@ final class QuotationAjaxHandler {
 				'state'    => '',
 				'postcode' => $cep,
 			),
-			'contents'      => array(),
-			'contents_cost' => 0,
+			'contents'      => array(
+				$product->get_id() => array(
+					'data'     => $product,
+					'quantity' => $quantity,
+				),
+			),
+			'contents_cost' => (float) $product->get_price() * $quantity,
 		);
 
-		$zone      = \WC_Shipping_Zones::get_zone_matching_package( $package );
-		$methods   = $zone->get_shipping_methods( true );
-		$meMethods = array_filter( $methods, fn( $m ) => $m->id === 'melhor_envio' );
+		$zone         = \WC_Shipping_Zones::get_zone_matching_package( $package );
+		$methods      = $zone->get_shipping_methods( true );
+		$meMethods    = array_filter( $methods, fn( $m ) => $m->id === 'melhor_envio' );
+		$otherMethods = array_filter( $methods, fn( $m ) => $m->id !== 'melhor_envio' );
 
 		if ( empty( $meMethods ) ) {
 			wp_send_json_error( array( 'message' => __( 'Frete não disponível para este endereço.', 'melhor-envio-cotacao' ) ) );
@@ -124,6 +130,63 @@ final class QuotationAjaxHandler {
 			array_values( $quotations )
 		);
 
+		$result = array_merge( $result, $this->buildNativeRates( $otherMethods, $package, $product->get_shipping_class_id() ) );
+
+		usort( $result, static fn( $a, $b ) => $a['price'] <=> $b['price'] );
+
 		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Builds quote rows for the WooCommerce native shipping methods configured
+	 * in the matching zone (flat rate, free shipping, local pickup, etc.),
+	 * so they show up alongside the Melhor Envio quotations.
+	 *
+	 * @param \WC_Shipping_Method[] $methods
+	 * @param array                 $package
+	 * @param int                   $productShippingClassId
+	 * @return array
+	 */
+	private function buildNativeRates( array $methods, array $package, int $productShippingClassId ): array {
+		$rates = array();
+
+		foreach ( $methods as $method ) {
+			$shippingClassId = (int) ( $method->instance_settings['shipping_class_id'] ?? 0 );
+
+			if ( $productShippingClassId && $shippingClassId > 0 && $shippingClassId !== $productShippingClassId ) {
+				continue;
+			}
+
+			if ( $method->id === 'free_shipping' ) {
+				if ( in_array( $method->requires, array( 'coupon', 'both', 'either' ), true ) ) {
+					continue;
+				}
+
+				$rates[] = array(
+					'name'          => $method->title,
+					'company'       => '',
+					'price'         => 0.0,
+					'delivery_time' => 0,
+				);
+
+				continue;
+			}
+
+			$methodRates = $method->get_rates_for_package( $package );
+			$rate        = end( $methodRates );
+
+			if ( empty( $rate ) ) {
+				continue;
+			}
+
+			$rates[] = array(
+				'name'          => $method->title,
+				'company'       => '',
+				'price'         => (float) $rate->get_cost(),
+				'delivery_time' => 0,
+			);
+		}
+
+		return $rates;
 	}
 }
