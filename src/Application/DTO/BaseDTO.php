@@ -6,7 +6,10 @@ namespace MelhorEnvio\Application\DTO;
 
 abstract class BaseDTO {
 
-	abstract public static function fromArray( array $data ): static;
+	/**
+	 * @return static
+	 */
+	abstract public static function fromArray( array $data );
 
 	abstract public function toArray(): array;
 }

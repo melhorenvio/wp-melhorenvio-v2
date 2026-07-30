@@ -40,15 +40,25 @@ abstract class AjaxHandler {
 
 	abstract protected function process(): void;
 
-	protected function getInput( string $key, mixed $default = null ): mixed {
+	/**
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	protected function getInput( string $key, $default = null ) {
 		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : $default;
 	}
 
-	protected function sendSuccess( mixed $data, int $status_code = 200 ): void {
+	/**
+	 * @param mixed $data
+	 */
+	protected function sendSuccess( $data, int $status_code = 200 ): void {
 		wp_send_json_success( $data, $status_code );
 	}
 
-	protected function sendError( mixed $data, int $status_code = 400 ): void {
+	/**
+	 * @param mixed $data
+	 */
+	protected function sendError( $data, int $status_code = 400 ): void {
 		wp_send_json_error( $data, $status_code );
 	}
 }

@@ -14,10 +14,16 @@ final class DisconnectEndpoint {
 	private const NAMESPACE = 'wp-melhor-integrador/v1';
 	private const ROUTE     = '/disconnect';
 
+	private SecretManager $secretManager;
+	private ShippingZoneSetup $shippingZoneSetup;
+
 	public function __construct(
-		private readonly SecretManager $secretManager,
-		private readonly ShippingZoneSetup $shippingZoneSetup,
-	) {}
+		SecretManager $secretManager,
+		ShippingZoneSetup $shippingZoneSetup
+	) {
+		$this->secretManager     = $secretManager;
+		$this->shippingZoneSetup = $shippingZoneSetup;
+	}
 
 	public function register(): void {
 		add_action( 'rest_api_init', array( $this, 'registerRoute' ) );

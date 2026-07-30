@@ -10,7 +10,10 @@ interface DatabaseInterface {
 
 	public function getResults( string $query ): array;
 
-	public function getVar( string $query ): mixed;
+	/**
+	 * @return mixed
+	 */
+	public function getVar( string $query );
 
 	public function insert( string $table, array $data ): int;
 
@@ -18,7 +21,10 @@ interface DatabaseInterface {
 
 	public function delete( string $table, array $where ): int;
 
-	public function prepare( string $query, mixed ...$args ): string;
+	/**
+	 * @param mixed ...$args
+	 */
+	public function prepare( string $query, ...$args ): string;
 
 	public function getTableName( string $table ): string;
 }

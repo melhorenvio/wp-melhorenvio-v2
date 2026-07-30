@@ -155,11 +155,17 @@ final class CartItemsBuilder {
 			)
 		);
 
-		$aggregateTotal = match ( $pricing ) {
-			'exclude' => $componentsTotal,
-			'only'    => $parentBaseTotal,
-			default   => $parentBaseTotal + $componentsTotal, // 'include' ou não configurado.
-		};
+		switch ( $pricing ) {
+			case 'exclude':
+				$aggregateTotal = $componentsTotal;
+				break;
+			case 'only':
+				$aggregateTotal = $parentBaseTotal;
+				break;
+			default: // 'include' ou não configurado.
+				$aggregateTotal = $parentBaseTotal + $componentsTotal;
+				break;
+		}
 
 		$dumpIntoFirst = in_array( $pricing, array( 'include', 'only' ), true );
 

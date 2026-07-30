@@ -10,10 +10,16 @@ use MelhorEnvio\Infrastructure\WordPress\Shipping\UnitConverter;
 
 final class QuotationAjaxHandler {
 
+	private MelhorEnvioApiClient $apiClient;
+	private CartItemsBuilder $cartItemsBuilder;
+
 	public function __construct(
-		private readonly MelhorEnvioApiClient $apiClient,
-		private readonly CartItemsBuilder $cartItemsBuilder,
-	) {}
+		MelhorEnvioApiClient $apiClient,
+		CartItemsBuilder $cartItemsBuilder
+	) {
+		$this->apiClient        = $apiClient;
+		$this->cartItemsBuilder = $cartItemsBuilder;
+	}
 
 	public function register(): void {
 		add_action( 'wp_ajax_me_quote', array( $this, 'handle' ) );

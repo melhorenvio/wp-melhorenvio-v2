@@ -11,7 +11,7 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: melhor-envio-cotacao
 Requires Plugins: woocommerce
 Tested up to: 7.0
-Requires PHP: 8.1
+Requires PHP: 7.4
 WC requires at least: 4.0
 WC tested up to: 10.8
 Domain Path: /languages

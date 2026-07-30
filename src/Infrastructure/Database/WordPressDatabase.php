@@ -35,7 +35,10 @@ final class WordPressDatabase implements DatabaseInterface {
 		);
 	}
 
-	public function getVar( string $query ): mixed {
+	/**
+	 * @return mixed
+	 */
+	public function getVar( string $query ) {
 		return $this->wpdb->get_var( $query );
 	}
 
@@ -61,7 +64,10 @@ final class WordPressDatabase implements DatabaseInterface {
 		return $result !== false ? $result : 0;
 	}
 
-	public function prepare( string $query, mixed ...$args ): string {
+	/**
+	 * @param mixed ...$args
+	 */
+	public function prepare( string $query, ...$args ): string {
 		return $this->wpdb->prepare( $query, ...$args );
 	}
 

@@ -16,11 +16,17 @@ final class Container {
 
 	private array $instances = array();
 
-	public function bind( string $abstract, Closure|string $concrete ): void {
+	/**
+	 * @param Closure|string $concrete
+	 */
+	public function bind( string $abstract, $concrete ): void {
 		$this->bindings[ $abstract ] = $concrete;
 	}
 
-	public function singleton( string $abstract, Closure|string $concrete ): void {
+	/**
+	 * @param Closure|string $concrete
+	 */
+	public function singleton( string $abstract, $concrete ): void {
 		$this->bind( $abstract, $concrete );
 		$this->instances[ $abstract ] = null;
 	}
@@ -106,8 +112,11 @@ final class Container {
 				if ( $parameter->isDefaultValueAvailable() ) {
 					$dependencies[] = $parameter->getDefaultValue();
 				} else {
+					$declaringClass    = $parameter->getDeclaringClass();
+					$declaringClassName = $declaringClass !== null ? $declaringClass->getName() : 'unknown';
+
 					throw new InvalidArgumentException(
-						"Cannot resolve parameter {$parameter->getName()} in {$parameter->getDeclaringClass()?->getName()}"
+						"Cannot resolve parameter {$parameter->getName()} in {$declaringClassName}"
 					);
 				}
 			} else {

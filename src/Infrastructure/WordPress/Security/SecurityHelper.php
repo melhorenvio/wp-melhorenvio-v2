@@ -6,43 +6,73 @@ namespace MelhorEnvio\Infrastructure\WordPress\Security;
 
 final class SecurityHelper {
 
-	public static function sanitizeText( mixed $input ): string {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeText( $input ): string {
 		return strip_tags( (string) $input );
 	}
 
-	public static function sanitizeTextarea( mixed $input ): string {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeTextarea( $input ): string {
 		return strip_tags( (string) $input );
 	}
 
-	public static function sanitizeEmail( mixed $input ): string {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeEmail( $input ): string {
 		return filter_var( (string) $input, FILTER_SANITIZE_EMAIL );
 	}
 
-	public static function sanitizeUrl( mixed $input ): string {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeUrl( $input ): string {
 		return filter_var( (string) $input, FILTER_SANITIZE_URL );
 	}
 
-	public static function sanitizeInt( mixed $input ): int {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeInt( $input ): int {
 		return abs( (int) $input );
 	}
 
-	public static function sanitizeFloat( mixed $input ): float {
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeFloat( $input ): float {
 		return (float) filter_var( $input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 	}
 
-	public static function escapeHtml( mixed $output ): string {
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeHtml( $output ): string {
 		return htmlspecialchars( (string) $output, ENT_QUOTES, 'UTF-8' );
 	}
 
-	public static function escapeAttr( mixed $output ): string {
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeAttr( $output ): string {
 		return htmlspecialchars( (string) $output, ENT_QUOTES, 'UTF-8' );
 	}
 
-	public static function escapeUrl( mixed $output ): string {
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeUrl( $output ): string {
 		return filter_var( (string) $output, FILTER_SANITIZE_URL );
 	}
 
-	public static function escapeJs( mixed $output ): string {
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeJs( $output ): string {
 		return htmlspecialchars( (string) $output, ENT_COMPAT, 'UTF-8' );
 	}
 

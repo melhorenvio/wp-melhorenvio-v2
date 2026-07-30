@@ -96,7 +96,7 @@ final class SaveSecretEndpoint {
 	}
 
 	private function isValidSecretFormat( string $secret ): bool {
-		if ( ! str_starts_with( $secret, 'base64:' ) ) {
+		if ( substr( $secret, 0, 7 ) !== 'base64:' ) {
 			return false;
 		}
 
