@@ -4,36 +4,29 @@ Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 7.0
 Stable tag: 3.0.0
-Requires PHP: 7.2+
-Requires Wordpress 4.0+
+Requires PHP: 7.4
+Requires Wordpress 4.7+
 Requires WooCommerce 4.0+
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
+Cotação, compra de etiquetas e gestão de fretes direto no seu WooCommerce, com toda a gestão centralizada num painel integrado.
 
 == Description ==
-Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
-A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
-Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
-Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema.
+O Melhor Envio conecta sua loja WooCommerce à maior plataforma de fretes do Brasil, com cotações simultâneas dos Correios e de diversas transportadoras privadas de forma ágil e gratuita. A plataforma possui contratos com várias empresas de logística para oferecer condições mais competitivas aos vendedores online, sem mensalidades ou contratos individuais.
 
-Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
-A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
-Simplifique o envio de mercadorias sem volume mínimo de pedidos e administre o transporte de suas remessas em um só lugar. Livre de mensalidades ou contratos individuais.
-Utilize um painel exclusivo para comprar etiquetas de postagem e acompanhar a movimentação das encomendas com um rastreio inteligente. Com o Melhor Envio você pode escolher diferentes modalidades de frete pagando apenas pelas etiquetas geradas no sistema.
+A partir da versão 3.0, o plugin passa a funcionar através de um painel centralizado, embutido direto no admin do WordPress, que substitui a configuração manual por um vínculo automático entre sua loja e sua conta Melhor Envio. Não é mais necessário gerar e colar token manualmente — basta acessar o menu Melhor Envio dentro do WooCommerce e concluir a conexão em poucos cliques.
 
-### Funcionalidades do Plugin WooCommerce
-Com a instalação do plugin do Woocomerce você pode ampliar ainda mais a automação dos fretes de sua loja virtual. Confira os principais benefícios e vantagens personalizadas disponíveis:
-- Cotação dos envios com as funcionalidades do Melhor Envio direto na tela do produto.
-- Conexão da Loja WooCommerce com a conta do Melhor Envio para buscar automaticamente informações como endereços, lojas e documentos (CNPJ, Inscrição estadual) e saldo em carteira.
-- Buscar todos pedidos da Loja WooCommerce do vendedor, com filtros de status da compra e por status da etiqueta de envio.
-- Cotar a compra de etiqueta usando os dados da loja e do cliente no painel.
-- Enviar etiquetas de postagem para o carrinho de compras do Melhor Envio.
-- Comprar etiquetas no painel do Wordpress utilizando saldo do Melhor Envio.
-- Gerar, imprimir ou cancelar etiquetas do Melhor Envio pelo painel do Wordpress.
-- Adicionar taxas e tempo extra para as etiquetas (exemplo: inserir um custo extra para embalagem, aumentar 2 dias no tempo de entrega).
-- Possibilidade de selecionar a Jadlog como agência padrão para geração de etiquetas.
+A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes, acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
+
+### Funcionalidades da Melhor Envio
+- Conexão automática entre a loja WooCommerce e a conta Melhor Envio, sem necessidade de gerar e colar token manualmente.
+- Cotação de fretes em tempo real no carrinho e na tela do produto, com todas as transportadoras disponíveis na sua conta Melhor Envio.
+- Gestão centralizada de pedidos, etiquetas e rastreios num único painel integrado ao WordPress.
+- Compra e emissão de etiquetas de postagem utilizando o saldo da conta Melhor Envio.
+- Regras de frete inteligentes e configurações de cotação aplicadas automaticamente, sem necessidade de ajustar cada transportadora individualmente.
+
+Lojas que ainda utilizam a versão anterior (legado) continuam funcionando normalmente e podem migrar para a nova versão a qualquer momento pelo próprio painel administrativo, sem perda de configurações.
 
 ### Compatibilidade
 Caso seja utilizado algum outro plugin que altere o Woocommerce não é garantida a sua compatibilidade, como plugins que adicionam ao Woocommerce funcionalidades de marketplace.
@@ -50,22 +43,20 @@ Caso queira contribuir com o projeto, o processo para isto é criar um brach sep
 Para entrar em contato com o suporte desse plugin, enviar e-mail para contato@melhorenvio.com
 
 == Installation ==
-A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar novo" no seu painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
+A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar novo" no seu painel administrativo do WordPress e buscar pelo plugin "Melhor Envio" na barra de busca.
 
-Ou se preferir basta fazer o download do plugin na página oficial do plugin no portal do Wordpress e mover o arquivo .Zip para o diretório wp-content/plugins. O próximo passo, é acessar todos os plugins pelo menu Plugins -> Plugins instalados, encontrar o plugin "Melhor Envio" e clicar em "Ativar".
+Ou se preferir, basta fazer o download do plugin na página oficial do plugin no portal do WordPress e mover o arquivo .zip para o diretório wp-content/plugins. O próximo passo é acessar todos os plugins pelo menu Plugins -> Plugins instalados, encontrar o plugin "Melhor Envio" e clicar em "Ativar".
 
-Recomendamos a instalação do plugin <a href="https://wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/" target="_blank">Calculadora de Frete e Campos Checkout para o Brasil</a> para o perfeito funcionamento do plugin do Melhor Envio.
+A partir da versão 3.0, não é mais necessário utilizar um plugin de campos de checkout adicional — os campos necessários para o funcionamento do frete já são adicionados automaticamente pelo próprio Melhor Envio. Caso já utilize o plugin <a href="https://wordpress.org/plugins/woo-better-shipping-calculator-for-brazil/" target="_blank">Calculadora de Frete e Campos Checkout para o Brasil</a> e prefira mantê-lo, a compatibilidade continua garantida.
 
-O próximo passo para utilizar o plugin é gerar um token na plataforma da Melhor Envio. Para isso, você precisa acessar o <a target="_blank" href="https://melhorenvio.com.br/painel/gerenciar/tokens">link</a> e clicar em "Novo token", inserir um nome para o token, selecionar as permissões e clicar em "Salvar". Você deve copiar o token gerado, e colar o mesmo no painel do Wordpress, acessando o menu Melhor Envio -> Token.
-painel administrativo do wordpress e buscar pelo plugin "Melhor Envio" na barra de busca.
- 
-Agora que sua conta Melhor Envio está vinculada com nosso plugin, basta selecionar os métodos de envios, acessando o Menu WooCommerce -> Configurações -> Entrega. Agora você precisa escolher as áreas que deseja enviar seus produtos utilizando a Melhor Envio. Por padrão, existe a opção "Em toda parte", que seria a área geral do Brasil. Basta clicar em "Editar" logo abaixo do nome da área e selecionar os métodos de envio e para finalizar clicar em "Salvar".
+Após ativar o plugin, acesse o menu "Melhor Envio" dentro do WooCommerce. Você será direcionado ao painel da Melhor Envio, onde basta concluir a conexão da sua conta Melhor Envio com a loja — não é necessário gerar ou colar nenhum token manualmente. Caso ainda não tenha uma conta, é possível criá-la diretamente pelo próprio painel.
 
-Não esqueça de cadastrar de forma correta as medidas do produto na aba de entrega de cada produto cadastrado.
+Com a conta conectada, as cotações de frete já ficam disponíveis automaticamente no carrinho e na tela do produto, considerando todas as transportadoras habilitadas na sua conta Melhor Envio.
 
-Observação: Atenção com as medidas de unidades utilizadas, cuidado se você está utilizando gramas ou quilos, metros ou centímetros, isso vai aplicar no valor da cotação e no bom funcionamento da calculadora de fretes do Melhor Envio.
- 
-Pronto! o plugin do Melhor Envio está funcionando.
+Não esqueça de cadastrar corretamente as medidas do produto na aba de entrega de cada produto cadastrado.
+
+
+Pronto! O plugin do Melhor Envio está funcionando.
 
 == Changelog ==
 
