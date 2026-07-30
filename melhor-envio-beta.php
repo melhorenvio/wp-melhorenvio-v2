@@ -109,6 +109,32 @@ final class Melhor_Envio_Plugin
         register_activation_hook(__FILE__, array($this, 'activate'));
 
         add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
+
+        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_action_links'));
+    }
+
+    /**
+     * Add "Settings" link on plugins page
+     *
+     * @param array $links
+     *
+     * @return array
+     */
+    public function add_action_links($links)
+    {
+        $slug = \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()
+            ? 'admin.php?page=melhor-integrador'
+            : 'admin.php?page=melhor-envio';
+
+        $settings_link = sprintf(
+            '<a href="%s">%s</a>',
+            esc_url(admin_url($slug)),
+            esc_html__('Configurações', 'melhor-envio-cotacao')
+        );
+
+        array_unshift($links, $settings_link);
+
+        return $links;
     }
 
     /**
