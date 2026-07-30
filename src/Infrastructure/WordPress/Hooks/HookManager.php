@@ -53,6 +53,25 @@ final class HookManager {
 		$this->registerLogoutHook();
 		$this->registerSslVerifyFilters();
 		$this->registerWcAuthApproveGuard();
+		$this->registerHiddenOrderItemMeta();
+	}
+
+	private function registerHiddenOrderItemMeta(): void {
+		add_filter(
+			'woocommerce_hidden_order_itemmeta',
+			static function ( array $hidden ): array {
+				return array_merge(
+					$hidden,
+					array(
+						'me_service_id',
+						'me_service_name',
+						'me_company_id',
+						'me_company_name',
+						'me_delivery_time',
+					)
+				);
+			}
+		);
 	}
 
 	private function registerShippingMethod(): void {
