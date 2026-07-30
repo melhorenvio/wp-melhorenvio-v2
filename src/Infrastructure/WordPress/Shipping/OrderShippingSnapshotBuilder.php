@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Infrastructure\WordPress\Shipping;
 
+use MelhorEnvio\Infrastructure\WordPress\Admin\OrderInvoiceKeyMetaBox;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -23,6 +25,7 @@ final class OrderShippingSnapshotBuilder {
 			$this->buildServiceData( $order ),
 			array(
 				'date_quotation' => current_time( 'mysql' ),
+				'invoice_key'    => (string) $order->get_meta( OrderInvoiceKeyMetaBox::META_KEY, true ),
 				'products'       => $this->buildProducts( $order, $this->orderItemsBuilder->buildItems( $order ) ),
 			)
 		);

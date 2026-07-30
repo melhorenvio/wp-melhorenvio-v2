@@ -6,6 +6,7 @@ namespace MelhorEnvio\Infrastructure\WordPress\Hooks;
 
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Infrastructure\WordPress\Admin\AdminMenu;
+use MelhorEnvio\Infrastructure\WordPress\Admin\OrderInvoiceKeyMetaBox;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
@@ -48,6 +49,9 @@ final class HookManager {
 
 		$orderMetaBackfill = $this->container->get( OrderMetaBackfill::class );
 		$orderMetaBackfill->register();
+
+		$orderInvoiceKeyMetaBox = $this->container->get( OrderInvoiceKeyMetaBox::class );
+		$orderInvoiceKeyMetaBox->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
