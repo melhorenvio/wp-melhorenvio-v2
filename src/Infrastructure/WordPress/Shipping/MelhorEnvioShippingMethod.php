@@ -44,15 +44,10 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 
 	public function init_form_fields(): void {
 		$this->form_fields = array(
-			'title'      => array(
+			'title' => array(
 				'title'   => __( 'Título', 'melhor-envio-cotacao' ),
 				'type'    => 'text',
 				'default' => __( 'Melhor Envio', 'melhor-envio-cotacao' ),
-			),
-			'extra_days' => array(
-				'title'   => __( 'Dias extras de prazo', 'melhor-envio-cotacao' ),
-				'type'    => 'number',
-				'default' => '0',
 			),
 		);
 	}
@@ -80,32 +75,29 @@ final class MelhorEnvioShippingMethod extends WC_Shipping_Method {
 			set_transient( $cacheKey, $quotations, 30 * MINUTE_IN_SECONDS );
 		}
 
-		$extraDays = (int) $this->get_option( 'extra_days', 0 );
-
 		foreach ( $quotations as $service ) {
-			$deadline = isset( $service['delivery_time'] )
-				? ( (int) $service['delivery_time'] + $extraDays )
-				: null;
+			$deliveryTime = $service['custom_delivery_time'] ?? $service['delivery_time'] ?? null;
+			$price        = $service['custom_price'] ?? $service['price'] ?? 0;
 
 			$serviceName = $service['name'] ?? __( 'Melhor Envio', 'melhor-envio-cotacao' );
 			$company     = $service['company']['name'] ?? '';
 			$label       = $company !== '' ? sprintf( '%s - %s', $company, $serviceName ) : $serviceName;
 
-			if ( $deadline !== null ) {
-				$label .= sprintf( ' (%d dias úteis)', $deadline );
+			if ( $deliveryTime !== null ) {
+				$label .= sprintf( ' (%d dias úteis)', (int) $deliveryTime );
 			}
 
 			$this->add_rate(
 				array(
 					'id'        => $this->id . '_' . ( $service['id'] ?? uniqid() ),
 					'label'     => $label,
-					'cost'      => (float) ( $service['price'] ?? 0 ),
+					'cost'      => (float) $price,
 					'meta_data' => array(
 						'me_service_id'    => (string) ( $service['id'] ?? '' ),
 						'me_service_name'  => $serviceName,
 						'me_company_id'    => (string) ( $service['company']['id'] ?? 0 ),
 						'me_company_name'  => $company,
-						'me_delivery_time' => (string) ( $service['delivery_time'] ?? 0 ),
+						'me_delivery_time' => (string) ( $deliveryTime ?? 0 ),
 					),
 				)
 			);

@@ -73,9 +73,6 @@ final class QuotationAjaxHandler {
 			wp_send_json_error( array( 'message' => __( 'Frete não disponível para este endereço.', 'melhor-envio-cotacao' ) ) );
 		}
 
-		$meMethod  = reset( $meMethods );
-		$extraDays = (int) $meMethod->get_option( 'extra_days', 0 );
-
 		$onlyInCartMessage = __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' );
 
 		if ( CartItemsBuilder::isCompositeProduct( $product ) ) {
@@ -115,8 +112,8 @@ final class QuotationAjaxHandler {
 			static fn( $q ) => array(
 				'name'          => $q['name'] ?? '',
 				'company'       => $q['company']['name'] ?? '',
-				'price'         => (float) ( $q['price'] ?? 0 ),
-				'delivery_time' => (int) ( $q['delivery_time'] ?? 0 ) + $extraDays,
+				'price'         => (float) ( $q['custom_price'] ?? $q['price'] ?? 0 ),
+				'delivery_time' => (int) ( $q['custom_delivery_time'] ?? $q['delivery_time'] ?? 0 ),
 			),
 			array_values( $quotations )
 		);
