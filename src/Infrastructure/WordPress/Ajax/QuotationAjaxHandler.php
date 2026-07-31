@@ -81,56 +81,60 @@ final class QuotationAjaxHandler {
 		$meMethods    = array_filter( $methods, fn( $m ) => $m->id === 'melhor_envio' );
 		$otherMethods = array_filter( $methods, fn( $m ) => $m->id !== 'melhor_envio' );
 
-		if ( empty( $meMethods ) ) {
-			wp_send_json_error( array( 'message' => __( 'Frete não disponível para este endereço.', 'melhor-envio-cotacao' ) ) );
-		}
-
 		$onlyInCartMessage = __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' );
 
-		if ( CartItemsBuilder::isCompositeProduct( $product ) ) {
-			$compositeIds = sanitize_text_field( wp_unslash( $_POST['wooco_ids'] ?? '' ) );
-			$items        = $this->cartItemsBuilder->buildItemsForCompositeProduct( $product, $quantity, $compositeIds );
+		$result = array();
 
-			if ( $items === null ) {
-				wp_send_json_error(
-					array( 'message' => __( 'Selecione os itens da composição antes de calcular o frete.', 'melhor-envio-cotacao' ) )
+		if ( ! empty( $meMethods ) ) {
+			if ( CartItemsBuilder::isCompositeProduct( $product ) ) {
+				$compositeIds = sanitize_text_field( wp_unslash( $_POST['wooco_ids'] ?? '' ) );
+				$items        = $this->cartItemsBuilder->buildItemsForCompositeProduct( $product, $quantity, $compositeIds );
+
+				if ( $items === null ) {
+					wp_send_json_error(
+						array( 'message' => __( 'Selecione os itens da composição antes de calcular o frete.', 'melhor-envio-cotacao' ) )
+					);
+				}
+			} elseif ( CartItemsBuilder::isBundleProduct( $product ) ) {
+				$bundleIds = sanitize_text_field( wp_unslash( $_POST['woosb_ids'] ?? '' ) );
+
+				if ( empty( $bundleIds ) && CartItemsBuilder::bundleHasOptionalItems( $product ) ) {
+					wp_send_json_error( array( 'message' => $onlyInCartMessage ) );
+				}
+
+				$items = $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
+			} else {
+				$items = array(
+					array(
+						'id'              => $product->get_id(),
+						'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: 11 ) ),
+						'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: 2 ) ),
+						'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: 16 ) ),
+						'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: 0.3 ) ),
+						'insurance_value' => (float) $product->get_price(),
+						'quantity'        => $quantity,
+					),
 				);
 			}
-		} elseif ( CartItemsBuilder::isBundleProduct( $product ) ) {
-			$bundleIds = sanitize_text_field( wp_unslash( $_POST['woosb_ids'] ?? '' ) );
 
-			if ( empty( $bundleIds ) && CartItemsBuilder::bundleHasOptionalItems( $product ) ) {
-				wp_send_json_error( array( 'message' => $onlyInCartMessage ) );
-			}
+			$quotations = $this->apiClient->getQuotations( $fromCep, $cep, $items );
 
-			$items = $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
-		} else {
-			$items = array(
-				array(
-					'id'              => $product->get_id(),
-					'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: 11 ) ),
-					'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: 2 ) ),
-					'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: 16 ) ),
-					'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: 0.3 ) ),
-					'insurance_value' => (float) $product->get_price(),
-					'quantity'        => $quantity,
+			$result = array_map(
+				static fn( $q ) => array(
+					'name'          => $q['name'] ?? '',
+					'company'       => $q['company']['name'] ?? '',
+					'price'         => (float) ( $q['custom_price'] ?? $q['price'] ?? 0 ),
+					'delivery_time' => (int) ( $q['custom_delivery_time'] ?? $q['delivery_time'] ?? 0 ),
 				),
+				array_values( $quotations )
 			);
 		}
 
-		$quotations = $this->apiClient->getQuotations( $fromCep, $cep, $items );
-
-		$result = array_map(
-			static fn( $q ) => array(
-				'name'          => $q['name'] ?? '',
-				'company'       => $q['company']['name'] ?? '',
-				'price'         => (float) ( $q['custom_price'] ?? $q['price'] ?? 0 ),
-				'delivery_time' => (int) ( $q['custom_delivery_time'] ?? $q['delivery_time'] ?? 0 ),
-			),
-			array_values( $quotations )
-		);
-
 		$result = array_merge( $result, $this->buildNativeRates( $otherMethods, $package, $product->get_shipping_class_id() ) );
+
+		if ( empty( $result ) ) {
+			wp_send_json_error( array( 'message' => __( 'Frete não disponível para este endereço.', 'melhor-envio-cotacao' ) ) );
+		}
 
 		usort( $result, static fn( $a, $b ) => $a['price'] <=> $b['price'] );
 
@@ -158,7 +162,11 @@ final class QuotationAjaxHandler {
 			}
 
 			if ( $method->id === 'free_shipping' ) {
-				if ( in_array( $method->requires, array( 'coupon', 'both', 'either' ), true ) ) {
+				// Frete grátis nativo do WC é validado contra o total do carrinho,
+				// que na página de produto normalmente está vazio; por isso ele é
+				// sempre exibido aqui (exceto quando exige só cupom, que não dá pra
+				// validar fora do carrinho), com a condição explicada na observação.
+				if ( $method->requires === 'coupon' ) {
 					continue;
 				}
 
@@ -167,6 +175,7 @@ final class QuotationAjaxHandler {
 					'company'       => '',
 					'price'         => 0.0,
 					'delivery_time' => 0,
+					'observation'   => $this->freeShippingObservation( $method ),
 				);
 
 				continue;
@@ -188,5 +197,45 @@ final class QuotationAjaxHandler {
 		}
 
 		return $rates;
+	}
+
+	/**
+	 * Explica a condição do frete grátis (valor mínimo e/ou cupom), já que a
+	 * cotação da página de produto não tem como validar isso sem o carrinho.
+	 */
+	private function freeShippingObservation( \WC_Shipping_Method $method ): string {
+		$minAmount = (float) ( $method->min_amount ?? 0 );
+
+		if ( $method->requires === 'both' ) {
+			return sprintf(
+				/* translators: %s: minimum order amount, e.g. R$10,00 */
+				__( 'Frete grátis para pedidos com valor mínimo de %s e uso de cupom.', 'melhor-envio-cotacao' ),
+				$this->formatPrice( $minAmount )
+			);
+		}
+
+		if ( $method->requires === 'either' ) {
+			return $minAmount > 0
+				? sprintf(
+					/* translators: %s: minimum order amount, e.g. R$10,00 */
+					__( 'Frete grátis para pedidos com valor mínimo de %s ou uso de cupom.', 'melhor-envio-cotacao' ),
+					$this->formatPrice( $minAmount )
+				)
+				: __( 'Frete grátis mediante uso de cupom.', 'melhor-envio-cotacao' );
+		}
+
+		if ( $method->requires === 'min_amount' && $minAmount > 0 ) {
+			return sprintf(
+				/* translators: %s: minimum order amount, e.g. R$10,00 */
+				__( 'Frete grátis para pedidos com valor mínimo de %s.', 'melhor-envio-cotacao' ),
+				$this->formatPrice( $minAmount )
+			);
+		}
+
+		return '';
+	}
+
+	private function formatPrice( float $value ): string {
+		return 'R$' . number_format( $value, 2, ',', '.' );
 	}
 }

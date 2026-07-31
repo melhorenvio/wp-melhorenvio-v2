@@ -133,9 +133,14 @@
 				currency: 'BRL',
 			} );
 
+			var name = escHtml( s.name );
+			if ( s.observation ) {
+				name += '<br><small class="me-cep-calc__note">' + escHtml( s.observation ) + '</small>';
+			}
+
 			html += '<tr>';
 			html += '<td>' + escHtml( s.company ) + '</td>';
-			html += '<td>' + escHtml( s.name ) + '</td>';
+			html += '<td>' + name + '</td>';
 			html += '<td>' + deadline + '</td>';
 			html += '<td>' + price + '</td>';
 			html += '</tr>';

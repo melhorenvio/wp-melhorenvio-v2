@@ -87,6 +87,13 @@
 	font-weight: 600;
 }
 
+.me-cep-calc__note {
+	display: block;
+	white-space: normal;
+	color: var( --me-calc-note-color, #666 );
+	font-weight: 400;
+}
+
 @media ( max-width: 480px ) {
 	.me-cep-calc__input {
 		max-width: 100%;
