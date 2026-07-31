@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Infrastructure\WordPress\Ajax;
 
 use MelhorEnvio\Infrastructure\WordPress\Http\MelhorEnvioApiClient;
+use MelhorEnvio\Infrastructure\WordPress\Http\PostalCodeLocationClient;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\CartItemsBuilder;
 use MelhorEnvio\Infrastructure\WordPress\Shipping\UnitConverter;
 
@@ -12,13 +13,16 @@ final class QuotationAjaxHandler {
 
 	private MelhorEnvioApiClient $apiClient;
 	private CartItemsBuilder $cartItemsBuilder;
+	private PostalCodeLocationClient $locationClient;
 
 	public function __construct(
 		MelhorEnvioApiClient $apiClient,
-		CartItemsBuilder $cartItemsBuilder
+		CartItemsBuilder $cartItemsBuilder,
+		PostalCodeLocationClient $locationClient
 	) {
 		$this->apiClient        = $apiClient;
 		$this->cartItemsBuilder = $cartItemsBuilder;
+		$this->locationClient   = $locationClient;
 	}
 
 	public function register(): void {
@@ -64,7 +68,7 @@ final class QuotationAjaxHandler {
 		$package = array(
 			'destination'   => array(
 				'country'  => 'BR',
-				'state'    => '',
+				'state'    => (string) $this->locationClient->getState( $cep ),
 				'postcode' => $cep,
 			),
 			'contents'      => array(
