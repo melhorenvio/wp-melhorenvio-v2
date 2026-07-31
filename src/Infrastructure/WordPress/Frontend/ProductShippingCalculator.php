@@ -38,6 +38,10 @@ final class ProductShippingCalculator {
 			return;
 		}
 
+		if ( $product->is_virtual() ) {
+			return;
+		}
+
 		wp_enqueue_style(
 			'me-shipping-calculator',
 			MELHORENVIO_URL . '/assets/css/me-shipping-calculator.css',
