@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 15;
 
-		public $company = 'Azul Cargo Express';
+		public $company = array(
+			'name' 		=> 'Azul Cargo Express',
+			'document' 	=> '09.296.295/0001-60'
+		);
 
 		/**
 		 * Initialize Azul Amanhã.

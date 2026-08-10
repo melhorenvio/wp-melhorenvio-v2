@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 27;
 
-		public $company = 'Jadlog';
+		public $company = array(
+			'name' 		=> 'Jadlog',
+			'document' 	=> '05.011.552/0001-65'
+		);
 
 		/**
 		 * Initialize Jadlog Package.
