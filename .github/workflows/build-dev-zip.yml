@@ -35,7 +35,7 @@ jobs:
         if: ${{ inputs.environment == 'dev' }}
         run: |
           for f in melhor-envio-beta.php src/Infrastructure/WordPress/Admin/AdminPage.php; do
-            [ -f "$f" ] && sed -i "s#https://wordpress-envios.melhorenvio.com/#https://wordpress-envios.melhorenvio.work#g" "$f"
+            [ -f "$f" ] && sed -i "s#https://woocommerceenvios.com#https://wordpress-envios.melhorenvio.work#g" "$f"
           done
 
       - name: Install PHP dependencies
