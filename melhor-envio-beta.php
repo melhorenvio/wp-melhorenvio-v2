@@ -205,7 +205,7 @@ final class Melhor_Envio_Plugin
      */
     public function init_plugin()
     {
-        update_option('melhor_integrador_base_url', 'https://wordpress-envios.melhorenvio.com/');
+        update_option('melhor_integrador_base_url', 'https://woocommerceenvios.com');
 
         ( new \MelhorEnvio\Plugin() )->boot();
         $this->includes();
