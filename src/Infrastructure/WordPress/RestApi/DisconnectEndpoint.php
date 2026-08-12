@@ -66,9 +66,11 @@ final class DisconnectEndpoint {
 	}
 
 	private function deleteMelhorEnvioWebhooks(): void {
-		$webhooks = \wc_get_webhooks( array( 'limit' => -1 ) );
+		$data_store = \WC_Data_Store::load( 'webhook' );
+		$ids        = $data_store->get_webhooks_ids();
 
-		foreach ( $webhooks as $webhook ) {
+		foreach ( $ids as $id ) {
+			$webhook      = new \WC_Webhook( $id );
 			$delivery_url = $webhook->get_delivery_url();
 
 			if ( str_contains( $delivery_url, 'webhook-wordpress-envios.melhorenvio' ) ||
