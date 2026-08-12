@@ -424,7 +424,7 @@ final class Melhor_Envio_Plugin
      */
     public function localization_setup()
     {
-        load_plugin_textdomain('melhor-envio', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        load_plugin_textdomain('melhor-envio-cotacao', false, dirname(plugin_basename(__FILE__)) . '/languages/');
     }
 
     /**
