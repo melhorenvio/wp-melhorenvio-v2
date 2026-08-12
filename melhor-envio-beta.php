@@ -345,7 +345,13 @@ final class Melhor_Envio_Plugin
         }
 
         add_action('upgrader_process_complete', function () {
-            (new ClearDataStored())->clear();
+            $file = __DIR__ . '/legacy/Services/ClearDataStored.php';
+            if (file_exists($file)) {
+                require_once $file;
+            }
+            if (class_exists(\MelhorEnvio\Services\ClearDataStored::class)) {
+                (new \MelhorEnvio\Services\ClearDataStored())->clear();
+            }
         });
 
         if (is_admin()) {
