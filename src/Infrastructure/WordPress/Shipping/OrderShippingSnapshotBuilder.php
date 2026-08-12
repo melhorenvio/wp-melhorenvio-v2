@@ -23,12 +23,30 @@ final class OrderShippingSnapshotBuilder {
 	public function buildSnapshot( \WC_Order $order ): array {
 		return array_merge(
 			$this->buildServiceData( $order ),
+			$this->buildOrderStatus( $order ),
 			array(
 				'date_quotation' => current_time( 'mysql' ),
 				'invoice_key'    => (string) $order->get_meta( OrderInvoiceKeyMetaBox::META_KEY, true ),
 				'products'       => $this->buildProducts( $order, $this->orderItemsBuilder->buildItems( $order ) ),
 			)
 		);
+	}
+
+	private function buildOrderStatus( \WC_Order $order ): array {
+		$status = $order->get_meta( 'melhorenvio_status_v2', true );
+
+		$purchase = null;
+
+		if ( is_array( $status ) && ! empty( $status['order_id'] ) ) {
+			$purchase = array(
+				'order_id'    => $status['order_id'],
+				'purchase_id' => $status['purchase_id'] ?? null,
+				'protocol'    => $status['protocol'] ?? null,
+				'status'      => $status['status'] ?? null,
+			);
+		}
+
+		return array( 'me_purchase' => $purchase );
 	}
 
 	private function buildServiceData( \WC_Order $order ): array {
