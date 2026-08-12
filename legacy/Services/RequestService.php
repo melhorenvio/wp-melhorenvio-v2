@@ -8,10 +8,8 @@ use WC_Logger;
 
 class RequestService {
 
-	// const URL = 'https://api.melhorenvio.com/v2/me';
-	// const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api/v2/me';
-	const URL = 'https://me-integrations-1.melhorenvio.work/api/v2/me';
-	const SANDBOX_URL = 'https://me-integrations-1.melhorenvio.work/api/v2/me';
+	const URL = 'https://api.melhorenvio.com/v2/me';
+	const SANDBOX_URL = 'https://sandbox.melhorenvio.com.br/api/v2/me';
 
 	const TIMEOUT = 10;
 
