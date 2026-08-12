@@ -57,10 +57,24 @@ final class DisconnectEndpoint {
 		$this->secretManager->deleteSecret();
 		delete_option( 'melhor_envio_integrador_quotation_token' );
 		$this->shippingZoneSetup->removeMethod();
+		$this->deleteMelhorEnvioWebhooks();
 
 		return new WP_REST_Response(
 			array( 'message' => 'Disconnected successfully.' ),
 			200
 		);
+	}
+
+	private function deleteMelhorEnvioWebhooks(): void {
+		$webhooks = wc_get_webhooks( array( 'limit' => -1 ) );
+
+		foreach ( $webhooks as $webhook ) {
+			$delivery_url = $webhook->get_delivery_url();
+
+			if ( str_contains( $delivery_url, 'webhook-wordpress-envios.melhorenvio' ) ||
+				str_contains( $delivery_url, 'webhook.woocommerceenvios' ) ) {
+				$webhook->delete( true );
+			}
+		}
 	}
 }
