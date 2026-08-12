@@ -66,7 +66,7 @@ final class DisconnectEndpoint {
 	}
 
 	private function deleteMelhorEnvioWebhooks(): void {
-		$webhooks = wc_get_webhooks( array( 'limit' => -1 ) );
+		$webhooks = \wc_get_webhooks( array( 'limit' => -1 ) );
 
 		foreach ( $webhooks as $webhook ) {
 			$delivery_url = $webhook->get_delivery_url();
