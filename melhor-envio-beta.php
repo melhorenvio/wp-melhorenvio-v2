@@ -122,9 +122,9 @@ final class Melhor_Envio_Plugin
      */
     public function add_action_links($links)
     {
-        $slug = \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()
-            ? 'admin.php?page=melhor-integrador'
-            : 'admin.php?page=melhor-envio';
+        $isIntegrador = \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode();
+
+        $slug = $isIntegrador ? 'admin.php?page=melhor-integrador' : 'admin.php?page=melhor-envio';
 
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
@@ -133,6 +133,18 @@ final class Melhor_Envio_Plugin
         );
 
         array_unshift($links, $settings_link);
+
+        if ($isIntegrador) {
+            $rollback_url = wp_nonce_url(
+                admin_url('admin-post.php?action=melhor_envio_set_mode&mode=legacy'),
+                'melhor_envio_mode_nonce'
+            );
+            $links[] = sprintf(
+                '<a href="%s">%s</a>',
+                esc_url($rollback_url),
+                esc_html__('Voltar para versão anterior', 'melhor-envio-cotacao')
+            );
+        }
 
         return $links;
     }

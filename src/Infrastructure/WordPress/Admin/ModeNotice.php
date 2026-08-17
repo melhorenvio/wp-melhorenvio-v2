@@ -17,12 +17,7 @@ final class ModeNotice {
 	}
 
 	public function renderNotice(): void {
-		if ( PluginModeManager::isIntegradorMode() ) {
-			if ( ! $this->isDismissed() ) {
-				$this->printStyles();
-				$this->renderReturnToLegacyNotice();
-			}
-		} elseif ( ! $this->isDismissed() ) {
+		if ( ! PluginModeManager::isIntegradorMode() && ! $this->isDismissed() ) {
 			$this->printStyles();
 			$this->renderUpgradeToIntegradorNotice();
 		}
@@ -150,54 +145,12 @@ final class ModeNotice {
 		<?php
 	}
 
-	private function renderReturnToLegacyNotice(): void {
-		$screen = get_current_screen();
-		if ( ! $screen || $screen->id !== 'woocommerce_page_melhor-integrador' ) {
-			return;
-		}
-
-		$actionUrl = esc_url( admin_url( 'admin-post.php' ) );
-		?>
-		<div class="notice me-alert" role="region" aria-labelledby="me-alert-legacy-title">
-			<div class="me-alert__body">
-				<h2 id="me-alert-legacy-title" class="me-alert__title">
-					<?php esc_html_e( 'Você está usando a nova versão do Melhor Envio', 'melhor-envio-cotacao' ); ?> 🚀
-				</h2>
-				<p class="me-alert__description">
-					<?php esc_html_e( 'Se preferir, você pode voltar para a versão anterior do plugin a qualquer momento.', 'melhor-envio-cotacao' ); ?>
-				</p>
-				<div class="me-alert__actions">
-					<form method="post" action="<?php echo $actionUrl; ?>">
-						<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>">
-						<input type="hidden" name="mode" value="legacy">
-						<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
-						<button type="submit" class="me-alert__btn me-alert__btn--secondary">
-							<?php esc_html_e( 'Voltar para versão anterior', 'melhor-envio-cotacao' ); ?>
-						</button>
-					</form>
-				</div>
-			</div>
-
-			<form class="me-alert__close-form" method="post" action="<?php echo $actionUrl; ?>">
-				<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>">
-				<input type="hidden" name="mode" value="dismiss">
-				<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
-				<button type="submit" class="me-alert__close" aria-label="<?php esc_attr_e( 'Fechar alerta', 'melhor-envio-cotacao' ); ?>">
-					<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-						<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-					</svg>
-				</button>
-			</form>
-		</div>
-		<?php
-	}
-
 	public function handleModeSwitch(): void {
 		if ( ! check_admin_referer( self::NONCE_KEY ) ) {
 			wp_die( esc_html__( 'Ação não autorizada.', 'melhor-envio-cotacao' ) );
 		}
 
-		$mode = isset( $_POST['mode'] ) ? sanitize_text_field( wp_unslash( $_POST['mode'] ) ) : '';
+		$mode = isset( $_REQUEST['mode'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : '';
 
 		if ( $mode === 'dismiss' ) {
 			update_user_meta( get_current_user_id(), self::DISMISS_META_KEY, time() );
