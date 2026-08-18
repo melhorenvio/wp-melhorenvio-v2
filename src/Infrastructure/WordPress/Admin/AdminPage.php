@@ -52,6 +52,7 @@ final class AdminPage {
 			}
 
 			iframeUrl.searchParams.set('url', storeUrl);
+			iframeUrl.searchParams.set('signature', signature);
 
 			var iframe = document.createElement('iframe');
 
