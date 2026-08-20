@@ -100,10 +100,8 @@
 .me-alert__btn--primary { color: var(--me-white); background: var(--me-primary); }
 .me-alert__btn--primary:hover { background: var(--me-primary-light); }
 .me-alert__btn--primary:active { background: var(--me-primary-dark); }
-.me-alert__confirmed { display: flex; align-items: center; gap: 0.4rem; font-size: var(--me-text-xs); color: var(--me-neutral-clear); }
-.me-alert__confirmed-dot { width: 14px; height: 14px; border-radius: 50%; background: oklch(0.6 0.15 145); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
-.me-alert__video { flex: 2; border-radius: var(--me-radius-sm); overflow: hidden; background: var(--me-neutral-dark); aspect-ratio: 16 / 9; align-self: center; }
-.me-alert__video video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.me-alert__image { flex: 2; border-radius: var(--me-radius-sm); overflow: hidden; align-self: center; }
+.me-alert__image img { display: block; width: 100%; height: auto; object-fit: contain; border-radius: var(--me-radius-sm); }
 @media (max-width: 480px) { .me-alert__actions { flex-direction: column; align-items: stretch; } }
 </style>
 
@@ -195,30 +193,16 @@
           </ul>
           <div class="me-alert__actions">
             <button
-              v-if="!teaserNotifyConfirmed"
               type="button"
               class="me-alert__btn me-alert__btn--primary"
-              @click="teaserNotifyConfirmed = true"
+              @click="openEarlyAccess"
             >
               Quero acesso antecipado
             </button>
-            <span v-if="teaserNotifyConfirmed" class="me-alert__confirmed" aria-live="polite">
-              <span class="me-alert__confirmed-dot" aria-hidden="true">
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              </span>
-              Tudo certo — você está na lista de acesso antecipado!
-            </span>
           </div>
         </div>
-        <div class="me-alert__video">
-          <video
-            src="@images/apresentacao.mp4"
-            controls
-            preload="metadata"
-            aria-label="Prévia da nova versão do Melhor Envio"
-          ></video>
+        <div class="me-alert__image">
+          <img src="@images/nova_versao.png" alt="Prévia da nova versão do Melhor Envio" />
         </div>
       </section>
     </div>
@@ -515,7 +499,6 @@ export default {
       msg_modal2: [],
       modal2_tone: "alert",
       btnClose: true,
-      teaserNotifyConfirmed: false,
     };
   },
   components: {
@@ -565,6 +548,9 @@ export default {
     },
   },
   methods: {
+    openEarlyAccess() {
+      window.open('https://www.google.com', '_blank');
+    },
     ...mapActions("orders", [
       "retrieveMany",
       "loadMore",
