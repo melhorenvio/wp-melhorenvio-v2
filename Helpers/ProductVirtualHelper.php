@@ -10,7 +10,7 @@ class ProductVirtualHelper {
 	 */
 	public static function removeVirtuals( $products ) {
 		foreach ( $products as $key => $product ) {
-			if ( $product->is_virtual ) {
+			if ( ! is_object( $product ) || $product->is_virtual ) {
 				unset( $products[ $key ] );
 			}
 		}
