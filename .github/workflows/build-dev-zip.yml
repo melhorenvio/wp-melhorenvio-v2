@@ -34,9 +34,8 @@ jobs:
       - name: Point Melhor Integrador to staging URL
         if: ${{ inputs.environment == 'dev' }}
         run: |
-          for f in melhor-envio-beta.php src/Infrastructure/WordPress/Admin/AdminPage.php; do
-            [ -f "$f" ] && sed -i "s#https://woocommerceenvios.com#https://wordpress-envios.melhorenvio.work#g" "$f"
-          done
+          grep -rl "https://woocommerceenvios.com" --include="*.php" . \
+            | xargs -r sed -i "s#https://woocommerceenvios.com#https://wordpress-envios.melhorenvio.work#g"
 
       - name: Install PHP dependencies
         run: composer install --optimize-autoloader --no-dev --no-interaction
