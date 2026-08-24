@@ -549,7 +549,7 @@ export default {
   },
   methods: {
     openEarlyAccess() {
-      window.open('https://www.google.com', '_blank');
+      window.open('https://tally.so/r/ODxqBa', '_blank');
     },
     ...mapActions("orders", [
       "retrieveMany",
