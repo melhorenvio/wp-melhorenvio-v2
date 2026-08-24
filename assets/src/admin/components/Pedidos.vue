@@ -176,7 +176,7 @@
         </tr>
       </table>
 
-      <section class="me-alert" role="region" aria-labelledby="me-alert-title">
+      <section class="me-alert" aria-labelledby="me-alert-title">
         <div class="me-alert__body">
           <h2 id="me-alert-title" class="me-alert__title">
             Uma versão completamente nova do Melhor Envio está chegando ✨
