@@ -377,6 +377,7 @@ final class Melhor_Envio_Plugin
                 'nonce_orders' => wp_create_nonce( 'orders' ),
                 'nonce_tokens' => wp_create_nonce( 'tokens' ),
                 'nonce_users' => wp_create_nonce( 'users' ),
+                'nonce_mode' => wp_create_nonce( 'melhor_envio_mode_nonce' ),
                 'company_total_express' => \MelhorEnvio\Models\ShippingCompany::TOTAL_EXPRESS,
                 'service_total_express_standard' => \MelhorEnvio\Models\ShippingService::TOTAL_EXPRESS_STANDARD,
             ) );

@@ -8,8 +8,7 @@ final class ModeNotice {
 
 	private const ACTION            = 'melhor_envio_set_mode';
 	private const NONCE_KEY         = 'melhor_envio_mode_nonce';
-	private const DISMISS_META_KEY  = 'melhor_envio_mode_notice_dismissed_at';
-	private const DISMISS_DURATION  = DAY_IN_SECONDS;
+	private const DISMISS_META_KEY  = 'melhor_envio_mode_notice_dismissed';
 
 	public function register(): void {
 		add_action( 'admin_notices', array( $this, 'renderNotice' ) );
@@ -24,9 +23,7 @@ final class ModeNotice {
 	}
 
 	private function isDismissed(): bool {
-		$dismissedAt = (int) get_user_meta( get_current_user_id(), self::DISMISS_META_KEY, true );
-
-		return $dismissedAt && ( time() - $dismissedAt ) < self::DISMISS_DURATION;
+		return (bool) get_user_meta( get_current_user_id(), self::DISMISS_META_KEY, true );
 	}
 
 	private function printStyles(): void {
@@ -153,7 +150,7 @@ final class ModeNotice {
 		$mode = isset( $_REQUEST['mode'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : '';
 
 		if ( $mode === 'dismiss' ) {
-			update_user_meta( get_current_user_id(), self::DISMISS_META_KEY, time() );
+			update_user_meta( get_current_user_id(), self::DISMISS_META_KEY, 1 );
 			wp_safe_redirect( wp_get_referer() ?: admin_url() );
 			exit;
 		}

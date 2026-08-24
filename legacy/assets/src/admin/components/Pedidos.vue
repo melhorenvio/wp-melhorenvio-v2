@@ -44,6 +44,62 @@
   overflow: auto;
   height: auto;
 }
+
+.account-row {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.account-row .table-box {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.me-migrate-card {
+  --me-info: oklch(0.6539 0.1355 243.23);
+  --me-primary: oklch(0.4391 0.1409 254.24);
+  --me-primary-dark: oklch(0.4008 0.1308 255.49);
+  --me-primary-light: oklch(0.5071 0.166498 254.9145);
+  --me-white: #fff;
+  --me-neutral-bright: oklch(0.971 0.0059 239.82);
+  --me-neutral-light: oklch(0.8484 0.0188 269.06);
+  --me-neutral-clear: oklch(0.5638 0.0236 237.08);
+  --me-neutral-dark: oklch(0.3714 0.0314 275);
+  --me-font: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --me-text-xs: 0.75rem;
+  --me-text-sm: 0.875rem;
+  --me-radius-sm: 0.25rem;
+  --me-radius-full: 9999px;
+  --me-shadow-sm: 0 2px 5px #26303c33;
+  --me-transition: 150ms cubic-bezier(0, 0, 0.2, 1);
+
+  flex: 1;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--me-white);
+  border-left: none;
+  border-radius: var(--me-radius-sm);
+  box-shadow: var(--me-shadow-sm);
+  font-family: var(--me-font);
+  color: var(--me-neutral-dark);
+}
+.me-migrate-card *, .me-migrate-card *::before, .me-migrate-card *::after { box-sizing: border-box; }
+.me-migrate-card__body { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+.me-migrate-card__title { margin: 0; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: var(--me-neutral-dark); }
+.me-migrate-card__description { margin: 0; font-size: var(--me-text-sm); font-weight: 400; line-height: 1.5; color: var(--me-neutral-clear); }
+.me-migrate-card__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.me-migrate-card__chip { padding: 0.3rem 0.85rem; font-size: var(--me-text-xs); font-weight: 400; color: var(--me-neutral-dark); background: var(--me-neutral-bright); border: 1px solid var(--me-neutral-light); border-radius: var(--me-radius-full); white-space: nowrap; }
+.me-migrate-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; }
+.me-migrate-card__btn { display: inline-flex; align-items: center; justify-content: center; height: 3rem; padding: 0 1.5rem; font-family: inherit; font-size: var(--me-text-sm); font-weight: 700; line-height: 1.25; border: 1px solid transparent; border-radius: var(--me-radius-sm); box-shadow: var(--me-shadow-sm); cursor: pointer; text-decoration: none; transition: background-color var(--me-transition), color var(--me-transition), border-color var(--me-transition); }
+.me-migrate-card__btn--primary { color: var(--me-white); background: var(--me-primary); }
+.me-migrate-card__btn--primary:hover { background: var(--me-primary-light); }
+.me-migrate-card__btn--primary:active { background: var(--me-primary-dark); }
 </style>
 
 <template>
@@ -66,55 +122,82 @@
       </div>
     </template>
 
-    <table border="0" class="table-box">
-      <tr>
-        <td>
-          <h4>
-            <b>Usuário:</b>
-            {{ name }}
-          </h4>
-          <h4>
-            <b>Ambiente:</b>
-            {{ environment }}
-          </h4>
-          <h4>
-            <b>Envios:</b>
-            {{ limitEnabled }}/{{ limit }}
-          </h4>
-          <h4>
-            <b>Saldo:</b>
-            {{ getBalance }}
-          </h4>
-        </td>
-      </tr>
-      <tr>
-        <td width="50%">
-          <h3>Etiquetas</h3>
-          <select v-model="status">
-            <option value="all">Todas</option>
-            <option value="pending">Pendente</option>
-            <option value="released">Liberada</option>
-            <option value="posted">Postado</option>
-            <option value="delivered">Entregue</option>
-            <option value="canceled">Cancelado</option>
-            <option value="undelivered">Não Entregue</option>
-          </select>
-        </td>
-        <td width="50%">
-          <h3>Pedidos</h3>
-          <select v-model="wpstatus">
-            <option value="all">Todos</option>
-            <option
-              v-for="(statusName, statusKey) in statusWooCommerce"
-              :key="statusKey"
-              v-bind:value="statusKey"
+    <div class="account-row">
+      <table border="0" class="table-box">
+        <tr>
+          <td>
+            <h4>
+              <b>Usuário:</b>
+              {{ name }}
+            </h4>
+            <h4>
+              <b>Ambiente:</b>
+              {{ environment }}
+            </h4>
+            <h4>
+              <b>Envios:</b>
+              {{ limitEnabled }}/{{ limit }}
+            </h4>
+            <h4>
+              <b>Saldo:</b>
+              {{ getBalance }}
+            </h4>
+          </td>
+        </tr>
+        <tr>
+          <td width="50%">
+            <h3>Etiquetas</h3>
+            <select v-model="status">
+              <option value="all">Todas</option>
+              <option value="pending">Pendente</option>
+              <option value="released">Liberada</option>
+              <option value="posted">Postado</option>
+              <option value="delivered">Entregue</option>
+              <option value="canceled">Cancelado</option>
+              <option value="undelivered">Não Entregue</option>
+            </select>
+          </td>
+          <td width="50%">
+            <h3>Pedidos</h3>
+            <select v-model="wpstatus">
+              <option value="all">Todos</option>
+              <option
+                v-for="(statusName, statusKey) in statusWooCommerce"
+                :key="statusKey"
+                v-bind:value="statusKey"
+              >
+                {{ statusName }}
+              </option>
+            </select>
+          </td>
+        </tr>
+      </table>
+
+      <section class="me-migrate-card" role="region" aria-labelledby="me-migrate-card-title">
+        <div class="me-migrate-card__body">
+          <h2 id="me-migrate-card-title" class="me-migrate-card__title">
+            O plugin do Melhor Envio ficou ainda melhor 🚀
+          </h2>
+          <p class="me-migrate-card__description">
+            Melhorias para deixar sua operação mais rápida e fácil. A versão atual será descontinuada em 3 meses — e a migração leva poucos minutos.
+          </p>
+          <ul class="me-migrate-card__chips">
+            <li class="me-migrate-card__chip">Gestão centralizada</li>
+            <li class="me-migrate-card__chip">Etiquetas em lote</li>
+            <li class="me-migrate-card__chip">Regras de frete inteligentes</li>
+          </ul>
+          <div class="me-migrate-card__actions">
+            <button
+              type="button"
+              class="me-migrate-card__btn me-migrate-card__btn--primary"
+              @click="migrateToIntegrador"
             >
-              {{ statusName }}
-            </option>
-          </select>
-        </td>
-      </tr>
-    </table>
+              Migrar para nova versão
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <div
       class="table-box"
@@ -457,6 +540,26 @@ export default {
     },
   },
   methods: {
+    migrateToIntegrador() {
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = ajaxurl.replace('/admin-ajax.php', '/admin-post.php');
+
+      const addField = (name, value) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      };
+
+      addField('action', 'melhor_envio_set_mode');
+      addField('mode', 'integrador');
+      addField('_wpnonce', wpApiSettingsMelhorEnvio.nonce_mode);
+
+      document.body.appendChild(form);
+      form.submit();
+    },
     ...mapActions("orders", [
       "retrieveMany",
       "loadMore",
