@@ -1,0 +1,102 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MelhorEnvio\Support;
+
+final class SecurityHelper {
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeText( $input ): string {
+		return strip_tags( (string) $input );
+	}
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeTextarea( $input ): string {
+		return strip_tags( (string) $input );
+	}
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeEmail( $input ): string {
+		return filter_var( (string) $input, FILTER_SANITIZE_EMAIL );
+	}
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeUrl( $input ): string {
+		return filter_var( (string) $input, FILTER_SANITIZE_URL );
+	}
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeInt( $input ): int {
+		return abs( (int) $input );
+	}
+
+	/**
+	 * @param mixed $input
+	 */
+	public static function sanitizeFloat( $input ): float {
+		return (float) filter_var( $input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+	}
+
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeHtml( $output ): string {
+		return htmlspecialchars( (string) $output, ENT_QUOTES, 'UTF-8' );
+	}
+
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeAttr( $output ): string {
+		return htmlspecialchars( (string) $output, ENT_QUOTES, 'UTF-8' );
+	}
+
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeUrl( $output ): string {
+		return filter_var( (string) $output, FILTER_SANITIZE_URL );
+	}
+
+	/**
+	 * @param mixed $output
+	 */
+	public static function escapeJs( $output ): string {
+		return htmlspecialchars( (string) $output, ENT_COMPAT, 'UTF-8' );
+	}
+
+	public static function createNonce( string $action ): string {
+		if ( function_exists( 'wp_create_nonce' ) ) {
+			return wp_create_nonce( $action );
+		}
+
+		return md5( $action . time() );
+	}
+
+	public static function verifyNonce( string $nonce, string $action ): bool {
+		if ( function_exists( 'wp_verify_nonce' ) ) {
+			return wp_verify_nonce( $nonce, $action ) !== false;
+		}
+
+		return ! empty( $nonce );
+	}
+
+	public static function currentUserCan( string $capability ): bool {
+		if ( function_exists( 'current_user_can' ) ) {
+			return current_user_can( $capability );
+		}
+
+		return true;
+	}
+}

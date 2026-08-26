@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace MelhorEnvio;
 
 use MelhorEnvio\Core\Container;
-use MelhorEnvio\Core\ServiceProvider;
-use MelhorEnvio\Infrastructure\WordPress\Hooks\HookManager;
+use MelhorEnvio\Hooks\HookManager;
+use MelhorEnvio\Providers\ApplicationServiceProvider;
+use MelhorEnvio\Providers\CoreServiceProvider;
 
 final class Plugin {
 
@@ -24,8 +25,8 @@ final class Plugin {
 
 	private function registerServiceProviders(): void {
 		$providers = array(
-			ServiceProvider\CoreServiceProvider::class,
-			ServiceProvider\ApplicationServiceProvider::class,
+			CoreServiceProvider::class,
+			ApplicationServiceProvider::class,
 		);
 
 		foreach ( $providers as $providerClass ) {
