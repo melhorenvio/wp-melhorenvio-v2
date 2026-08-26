@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Services\Order;
 
+use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
