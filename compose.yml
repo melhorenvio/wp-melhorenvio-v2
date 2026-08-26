@@ -18,7 +18,7 @@ services:
       WORDPRESS_SITEURL: ${WORDPRESS_SITEURL:-http://localhost:${WORDPRESS_PORT:-8000}}
       WORDPRESS_HOME: ${WORDPRESS_HOME:-http://localhost:${WORDPRESS_PORT:-8000}}
       # Lida pelo AdminPage via getenv para montar a URL do iframe.
-      MELHOR_INTEGRADOR_BASE_URL: ${MELHOR_INTEGRADOR_BASE_URL:-https://app.localhost/wp}
+      MELHOR_INTEGRADOR_BASE_URL: ${MELHOR_INTEGRADOR_BASE_URL:-https://app.localhost}
       # Proxy awareness para TLS terminado pelo caddy (HTTPS .localhost).
       WORDPRESS_CONFIG_EXTRA: |
         if ( ( ! empty( $$_SERVER['HTTP_X_FORWARDED_PORT'] ) && '443' === $$_SERVER['HTTP_X_FORWARDED_PORT'] )
