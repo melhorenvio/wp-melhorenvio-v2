@@ -6,6 +6,7 @@ namespace MelhorEnvio\Http\Controllers\Auth;
 
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
+use MelhorEnvio\Http\Controllers\RestEndpointContract;
 use WP_REST_Request;
 use WP_REST_Response;
 
