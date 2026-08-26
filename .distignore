@@ -3,7 +3,26 @@
 /.github
 /node_modules
 /docker
+/dist
+/caddy
+/bin
+/docs
+/scripts
+/patches
+/.claude
+/.idea
 
 .distignore
 .gitignore
+.gitattributes
+.env
+.env.example
 Makefile
+Dockerfile
+compose.yml
+custom-php-settings.ini
+webpack.config.js
+package.json
+package-lock.json
+composer.lock
+config.json

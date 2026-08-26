@@ -65,7 +65,6 @@ jobs:
             --exclude=.gitignore \
             --exclude=.gitattributes \
             --exclude=.distignore \
-            --exclude=a.out \
             --exclude=bin \
             --exclude=docs \
             --exclude=scripts \
