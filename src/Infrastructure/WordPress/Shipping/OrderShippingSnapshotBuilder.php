@@ -26,7 +26,8 @@ final class OrderShippingSnapshotBuilder {
 			$this->buildOrderStatus( $order ),
 			array(
 				'date_quotation' => current_time( 'mysql' ),
-				'invoice_key'    => (string) $order->get_meta( OrderInvoiceKeyMetaBox::META_KEY, true ),
+				'invoice_key'       => (string) $order->get_meta( OrderInvoiceKeyMetaBox::META_KEY, true ),
+				'invoice_xml_danfe' => (string) $order->get_meta( '_me_invoice_xml_danfe', true ),
 				'products'       => $this->buildProducts( $order, $this->orderItemsBuilder->buildItems( $order ) ),
 			)
 		);

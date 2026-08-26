@@ -10,6 +10,7 @@ use MelhorEnvio\Infrastructure\Database\WordPressDatabase;
 use MelhorEnvio\Infrastructure\WordPress\Admin\AdminMenu;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SecretManager;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
+use MelhorEnvio\Infrastructure\WordPress\Ajax\NFeXmlUploadAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
 use MelhorEnvio\Infrastructure\WordPress\Hooks\HookManager;
@@ -69,6 +70,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 				$container->get( ShippingZoneSetup::class )
 			)
 		);
+		$this->container->singleton( NFeXmlUploadAjaxHandler::class, NFeXmlUploadAjaxHandler::class );
 		$this->container->singleton(
 			DatabaseInterface::class,
 			static fn() => new WordPressDatabase( $wpdb )

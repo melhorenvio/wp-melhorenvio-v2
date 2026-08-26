@@ -8,6 +8,7 @@ use MelhorEnvio\Core\Container;
 use MelhorEnvio\Infrastructure\WordPress\Admin\AdminMenu;
 use MelhorEnvio\Infrastructure\WordPress\Admin\OrderInvoiceKeyMetaBox;
 use MelhorEnvio\Infrastructure\WordPress\Admin\SignatureManager;
+use MelhorEnvio\Infrastructure\WordPress\Ajax\NFeXmlUploadAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Ajax\QuotationAjaxHandler;
 use MelhorEnvio\Infrastructure\WordPress\Checkout\CheckoutFieldsManager;
 use MelhorEnvio\Infrastructure\WordPress\Frontend\ProductShippingCalculator;
@@ -40,6 +41,9 @@ final class HookManager {
 
 		$quotationAjaxHandler = $this->container->get( QuotationAjaxHandler::class );
 		$quotationAjaxHandler->register();
+
+		$nfeXmlUploadHandler = $this->container->get( NFeXmlUploadAjaxHandler::class );
+		$nfeXmlUploadHandler->register();
 
 		$productShippingCalculator = $this->container->get( ProductShippingCalculator::class );
 		$productShippingCalculator->register();
