@@ -34,7 +34,7 @@ jobs:
       - name: Point Melhor Integrador to staging URL
         if: ${{ inputs.environment == 'dev' }}
         run: |
-          for f in melhor-envio-beta.php src/Infrastructure/WordPress/Admin/AdminPage.php; do
+          for f in melhor-envio-beta.php src/Http/Controllers/Admin/AdminPageController.php; do
             [ -f "$f" ] && sed -i "s#https://woocommerceenvios.com#https://wordpress-envios.melhorenvio.work#g" "$f"
           done
 
@@ -65,7 +65,17 @@ jobs:
             --exclude=.gitignore \
             --exclude=.gitattributes \
             --exclude=.distignore \
-            --exclude=a.out
+            --exclude=a.out \
+            --exclude=bin \
+            --exclude=docs \
+            --exclude=scripts \
+            --exclude=patches \
+            --exclude=.claude \
+            --exclude=webpack.config.js \
+            --exclude=package.json \
+            --exclude=package-lock.json \
+            --exclude=composer.lock \
+            --exclude=config.json
 
       - name: Upload plugin artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
