@@ -8,6 +8,7 @@ use MelhorEnvio\Core\Container;
 use MelhorEnvio\Database\Contracts\DatabaseInterface;
 use MelhorEnvio\Database\Repositories\WordPressDatabaseRepository;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
+use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
@@ -70,6 +71,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 				$container->get( ShippingZoneService::class )
 			)
 		);
+		$this->container->singleton( ModeNoticeController::class, ModeNoticeController::class );
 		$this->container->singleton( NFeXmlUploadController::class, NFeXmlUploadController::class );
 		$this->container->singleton(
 			DatabaseInterface::class,

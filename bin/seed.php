@@ -11,7 +11,7 @@ if ( ! file_exists( $autoload ) ) {
 
 require_once $autoload;
 
-use MelhorEnvio\Infrastructure\WordPress\Seeder\DatabaseSeeder;
+use MelhorEnvio\Database\Seeders\DatabaseSeeder;
 
 try {
 	echo "Running seeders...\n\n";

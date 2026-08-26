@@ -122,7 +122,7 @@ final class Melhor_Envio_Plugin
      */
     public function add_action_links($links)
     {
-        $isIntegrador = \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode();
+        $isIntegrador = \MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode();
 
         $slug = $isIntegrador ? 'admin.php?page=melhor-integrador' : 'admin.php?page=melhor-envio';
 
@@ -269,7 +269,7 @@ final class Melhor_Envio_Plugin
             require_once MELHORENVIO_INCLUDES . '/class-assets.php';
 
             if ($this->is_request('admin')) {
-                if (!\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+                if (!\MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode()) {
                     require_once MELHORENVIO_INCLUDES . '/class-admin.php';
                 }
             }
@@ -301,7 +301,6 @@ final class Melhor_Envio_Plugin
         if (is_admin()) {
             (new CheckHealthService())->init();
             (new RolesService())->init();
-            (new \MelhorEnvio\Infrastructure\WordPress\Admin\ModeNotice())->register();
         }
 
         add_action('init', array($this, 'init_classes'));
@@ -316,7 +315,7 @@ final class Melhor_Envio_Plugin
 
         (new TrackingService())->createTrackingColumnOrdersClient();
         $hideCalculator = (new CalculatorShow)->get();
-        if ($hideCalculator && ! \MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+        if ($hideCalculator && ! \MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode()) {
             (new ShowCalculatorProductPage())->insertCalculator();
         }
 
@@ -325,7 +324,7 @@ final class Melhor_Envio_Plugin
             return $styles;
         } );
 
-        if (!\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+        if (!\MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode()) {
             add_filter('woocommerce_shipping_methods', function ($methods) {
                 $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
                 $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
@@ -404,7 +403,7 @@ final class Melhor_Envio_Plugin
     public function init_classes()
     {
         try {
-            if ($this->is_request('admin') && !\MelhorEnvio\Infrastructure\WordPress\Admin\PluginModeManager::isIntegradorMode()) {
+            if ($this->is_request('admin') && !\MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode()) {
                 $this->container['admin'] = new App\Admin();
             }
 

@@ -6,6 +6,7 @@ namespace MelhorEnvio\Hooks;
 
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
+use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
@@ -29,6 +30,9 @@ final class HookManager {
 	public function register(): void {
 		$adminMenu = $this->container->get( AdminMenuController::class );
 		$adminMenu->register();
+
+		$modeNotice = $this->container->get( ModeNoticeController::class );
+		$modeNotice->register();
 
 		$saveSecretEndpoint = $this->container->get( SaveSecretController::class );
 		$saveSecretEndpoint->register();
