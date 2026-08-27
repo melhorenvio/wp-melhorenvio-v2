@@ -3,7 +3,7 @@
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
 Description: Cotação, compra de etiquetas e gestão de fretes, com conexão automática à sua conta Melhor Envio e toda a gestão centralizada em um painel integrado.
-Version: 3.0.0
+Version: 3.0.1
 Author: Melhor Envio
 Author URI: https://melhorenvio.com.br
 License: GPLv3
