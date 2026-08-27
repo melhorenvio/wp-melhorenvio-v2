@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Services\Shipping;
 
+use MelhorEnvio\Support\UnitConverter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
