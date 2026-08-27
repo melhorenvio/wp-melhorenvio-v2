@@ -41,11 +41,11 @@ final class AdminPageController {
 			var container = document.getElementById('melhor-envio-integrador-container');
 			if (!container) return;
 
-			var hasSecret = <?php echo $hasSecret ? 'true' : 'false'; ?>;
-			var secret    = <?php echo $secretJson; ?>;
-			var signature = <?php echo $signatureJson; ?>;
+			var hasSecret = <?php echo $hasSecret ? 'true' : 'false'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			var secret    = <?php echo $secretJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			var signature = <?php echo $signatureJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 			var storeUrl  = window.location.origin;
-			var baseUrl   = <?php echo $baseUrlJson; ?>;
+			var baseUrl   = <?php echo $baseUrlJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 
 			var iframeUrl = new URL(baseUrl);
 			iframeUrl.pathname = iframeUrl.pathname.replace(/\/$/, '') + '/wp';

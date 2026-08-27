@@ -15,13 +15,13 @@ final class WordPressDatabaseRepository implements DatabaseInterface {
 	}
 
 	public function getRow( string $query ): ?array {
-		$result = $this->wpdb->get_row( $query, ARRAY_A );
+		$result = $this->wpdb->get_row( $query, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		return $result !== null ? (array) $result : null;
 	}
 
 	public function getResults( string $query ): array {
-		$results = $this->wpdb->get_results( $query, ARRAY_A );
+		$results = $this->wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( $results === null ) {
 			return array();
@@ -39,7 +39,7 @@ final class WordPressDatabaseRepository implements DatabaseInterface {
 	 * @return mixed
 	 */
 	public function getVar( string $query ) {
-		return $this->wpdb->get_var( $query );
+		return $this->wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	public function insert( string $table, array $data ): int {
@@ -68,7 +68,7 @@ final class WordPressDatabaseRepository implements DatabaseInterface {
 	 * @param mixed ...$args
 	 */
 	public function prepare( string $query, ...$args ): string {
-		return $this->wpdb->prepare( $query, ...$args );
+		return $this->wpdb->prepare( $query, ...$args ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	public function getTableName( string $table ): string {

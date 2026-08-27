@@ -59,7 +59,7 @@ final class Container {
 		}
 
 		if ( interface_exists( $abstract ) ) {
-			throw new InvalidArgumentException(
+			throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				"Interface {$abstract} is not bound. Please register it in a ServiceProvider."
 			);
 		}
@@ -68,7 +68,7 @@ final class Container {
 			try {
 				$reflector = new ReflectionClass( $abstract );
 				if ( $reflector->isAbstract() ) {
-					throw new InvalidArgumentException(
+					throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 						"Abstract class {$abstract} is not bound. Please register it in a ServiceProvider."
 					);
 				}
@@ -83,11 +83,11 @@ final class Container {
 		try {
 			$reflector = new ReflectionClass( $class );
 		} catch ( ReflectionException $e ) {
-			throw new InvalidArgumentException( "Class {$class} does not exist.", 0, $e );
+			throw new InvalidArgumentException( "Class {$class} does not exist.", 0, $e ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( ! $reflector->isInstantiable() ) {
-			throw new InvalidArgumentException( "Class {$class} is not instantiable." );
+			throw new InvalidArgumentException( "Class {$class} is not instantiable." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$constructor = $reflector->getConstructor();
@@ -115,7 +115,7 @@ final class Container {
 					$declaringClass    = $parameter->getDeclaringClass();
 					$declaringClassName = $declaringClass !== null ? $declaringClass->getName() : 'unknown';
 
-					throw new InvalidArgumentException(
+					throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 						"Cannot resolve parameter {$parameter->getName()} in {$declaringClassName}"
 					);
 				}

@@ -67,14 +67,13 @@ final class AdminMenuController {
 		if ( ! $screen || $screen->id !== $this->getScreenId() ) {
 			return;
 		}
-		$screenId = esc_attr( $this->getScreenId() );
 		?>
 		<style>
 		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page #wpbody-content {
 			overflow-x: initial !important;
 		}
 
-		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page.<?php echo $screenId; ?> #wpbody-content {
+		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page.<?php echo esc_attr( $this->getScreenId() ); ?> #wpbody-content {
 			padding: 0;
 			min-height: calc(100vh - 32px);
 		}

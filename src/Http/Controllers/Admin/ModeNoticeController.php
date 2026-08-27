@@ -90,7 +90,6 @@ final class ModeNoticeController {
 	}
 
 	private function renderUpgradeToIntegradorNotice(): void {
-		$actionUrl = esc_url( admin_url( 'admin-post.php' ) );
 		$chips     = array(
 			__( 'Gestão centralizada', 'melhor-envio-cotacao' ),
 			__( 'Etiquetas em lote', 'melhor-envio-cotacao' ),
@@ -111,7 +110,7 @@ final class ModeNoticeController {
 					<?php endforeach; ?>
 				</ul>
 				<div class="me-alert__actions">
-					<form method="post" action="<?php echo $actionUrl; ?>">
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>">
 						<input type="hidden" name="mode" value="integrador">
 						<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
@@ -119,7 +118,7 @@ final class ModeNoticeController {
 							<?php esc_html_e( 'Migrar para nova versão', 'melhor-envio-cotacao' ); ?>
 						</button>
 					</form>
-					<form method="post" action="<?php echo $actionUrl; ?>">
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>">
 						<input type="hidden" name="mode" value="dismiss">
 						<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
@@ -130,7 +129,7 @@ final class ModeNoticeController {
 				</div>
 			</div>
 
-			<form class="me-alert__close-form" method="post" action="<?php echo $actionUrl; ?>">
+			<form class="me-alert__close-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>">
 				<input type="hidden" name="mode" value="dismiss">
 				<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
