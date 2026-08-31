@@ -66,6 +66,8 @@ final class HookManager {
 		$this->registerSslVerifyFilters();
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
+		$this->registerWebhookDeliveryFilter();
+		$this->registerWebhookDeliveryHashUpdater();
 	}
 
 	private function registerHiddenOrderItemMeta(): void {
@@ -134,5 +136,104 @@ final class HookManager {
 	public function onUserLogout(): void {
 		$signatureManager = $this->container->get( SignatureService::class );
 		$signatureManager->deleteSignature();
+	}
+
+	private function registerWebhookDeliveryFilter(): void {
+		add_filter(
+			'woocommerce_webhook_should_deliver',
+			static function ( bool $should_deliver, \WC_Webhook $webhook, int $arg ): bool {
+				if ( ! $should_deliver ) {
+					return false;
+				}
+
+				if ( ! self::isMelhorIntegradorWebhook( $webhook ) ) {
+					return $should_deliver;
+				}
+
+				if ( 'order.updated' !== $webhook->get_topic() ) {
+					return $should_deliver;
+				}
+
+				$order = wc_get_order( $arg );
+				if ( ! $order instanceof \WC_Order ) {
+					return false;
+				}
+
+				return self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
+			},
+			10,
+			3
+		);
+	}
+
+	private function registerWebhookDeliveryHashUpdater(): void {
+		add_action(
+			'woocommerce_webhook_delivery',
+			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ): void {
+				$response_code = (int) wp_remote_retrieve_response_code( $response );
+
+				if ( $response_code < 200 || $response_code >= 300 ) {
+					return;
+				}
+
+				$webhook = new \WC_Webhook( $webhook_id );
+
+				if ( ! self::isMelhorIntegradorWebhook( $webhook ) ) {
+					return;
+				}
+
+				if ( 'order.updated' !== $webhook->get_topic() ) {
+					return;
+				}
+
+				$order = wc_get_order( $arg );
+				if ( ! $order instanceof \WC_Order ) {
+					return;
+				}
+
+				$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
+				$order->save_meta_data();
+			},
+			10,
+			5
+		);
+	}
+
+	private static function isMelhorIntegradorWebhook( \WC_Webhook $webhook ): bool {
+		$delivery_url = $webhook->get_delivery_url();
+
+		return str_contains( $delivery_url, 'webhook-wordpress-envios.melhorenvio' ) ||
+			str_contains( $delivery_url, 'webhook.woocommerceenvios' );
+	}
+
+	private static function buildOrderHash( \WC_Order $order ): string {
+		$shipping_lines = array_map(
+			static fn( \WC_Order_Item_Shipping $line ) => array(
+				'method_id'    => $line->get_method_id(),
+				'method_title' => $line->get_method_title(),
+				'total'        => $line->get_total(),
+			),
+			$order->get_shipping_methods()
+		);
+
+		$line_items = array_map(
+			static fn( \WC_Order_Item_Product $item ) => array(
+				'product_id' => $item->get_product_id(),
+				'quantity'   => $item->get_quantity(),
+			),
+			$order->get_items()
+		);
+
+		return md5(
+			serialize(
+				array(
+					'status'         => $order->get_status(),
+					'billing'        => $order->get_address( 'billing' ),
+					'shipping'       => $order->get_address( 'shipping' ),
+					'shipping_lines' => $shipping_lines,
+					'line_items'     => $line_items,
+				)
+			)
+		);
 	}
 }
