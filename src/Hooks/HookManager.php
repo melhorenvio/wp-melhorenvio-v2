@@ -232,6 +232,7 @@ final class HookManager {
 					'shipping'       => $order->get_address( 'shipping' ),
 					'shipping_lines' => $shipping_lines,
 					'line_items'     => $line_items,
+					'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
 				)
 			)
 		);
