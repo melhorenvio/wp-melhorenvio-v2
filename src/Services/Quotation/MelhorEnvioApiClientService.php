@@ -50,6 +50,7 @@ final class MelhorEnvioApiClientService {
 			'from'     => array( 'postal_code' => $fromCep ),
 			'to'       => array( 'postal_code' => $toCep ),
 			'products' => $items,
+			'presentation' => true
 		);
 
 		$this->logger()->debug(
