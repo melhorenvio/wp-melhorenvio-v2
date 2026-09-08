@@ -72,10 +72,6 @@ final class AdminMenuController {
 		remove_all_actions( 'all_admin_notices' );
 		?>
 		<style>
-		.melhor-envio-integrador-page {
-			overflow: hidden;
-		}
-
 		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page #wpbody-content {
 			overflow-x: initial !important;
 		}
