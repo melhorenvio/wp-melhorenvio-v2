@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 3.0.3
+Version: 3.0.4
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 3.0.3
+Stable tag: 3.0.4
 Requires PHP: 7.4
 Requires Wordpress 4.7+
 Requires WooCommerce 4.0+
@@ -59,6 +59,9 @@ Não esqueça de cadastrar corretamente as medidas do produto na aba de entrega 
 Pronto! O plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+
+= 3.0.4 =
+* Remove notices do WordPress na página do Melhor Integrador para não interferir no iframe
 
 = 3.0.3 =
 * Adiciona filtro de webhook para o Melhor Integrador, evitando reenvios desnecessários quando nenhum dado relevante do pedido foi alterado

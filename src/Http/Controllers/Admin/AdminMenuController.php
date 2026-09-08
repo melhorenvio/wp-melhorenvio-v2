@@ -67,6 +67,9 @@ final class AdminMenuController {
 		if ( ! $screen || $screen->id !== $this->getScreenId() ) {
 			return;
 		}
+
+		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'all_admin_notices' );
 		?>
 		<style>
 		.melhor-envio-integrador-page #wpcontent, .melhor-envio-integrador-page #wpbody-content {
