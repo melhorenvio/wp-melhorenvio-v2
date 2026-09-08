@@ -39,7 +39,12 @@ final class PostalCodeLocationClientService {
 	 * @param string $errorField Response field that signals a "not found" error for this source.
 	 */
 	private function fetchState( string $url, string $errorField ): ?string {
-		$response = wp_remote_get( $url, array( 'timeout' => 5 ) );
+		$response = wp_remote_get( $url, [
+			'timeout' => 5,
+			'headers' => [
+				'version-plugin-me' => defined( 'MELHORENVIO_VERSION' ) ? MELHORENVIO_VERSION : '',
+			],
+		] );
 
 		if ( is_wp_error( $response ) ) {
 			$this->logger()->warning(

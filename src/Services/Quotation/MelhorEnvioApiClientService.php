@@ -62,9 +62,10 @@ final class MelhorEnvioApiClientService {
 			$this->getBaseUrl() . '/api/v2/me/shipment/calculate',
 			array(
 				'headers' => array(
-					'Authorization' => 'Bearer ' . $token,
-					'Content-Type'  => 'application/json',
-					'Accept'        => 'application/json',
+					'Authorization'     => 'Bearer ' . $token,
+					'Content-Type'      => 'application/json',
+					'Accept'            => 'application/json',
+					'version-plugin-me' => defined( 'MELHORENVIO_VERSION' ) ? MELHORENVIO_VERSION : '',
 				),
 				'body'      => wp_json_encode( $payload ),
 				'timeout'   => 15,
