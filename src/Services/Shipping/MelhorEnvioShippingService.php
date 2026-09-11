@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Services\Shipping;
 
 use MelhorEnvio\Services\Quotation\MelhorEnvioApiClientService;
+use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use WC_Shipping_Method;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +30,7 @@ final class MelhorEnvioShippingService extends WC_Shipping_Method {
 
 		$this->init();
 		$this->apiClient        = new MelhorEnvioApiClientService();
-		$this->cartItemsBuilder = new CartItemsBuilderService();
+		$this->cartItemsBuilder = new CartItemsBuilderService( new IntegradorSettingsService() );
 	}
 
 	public function init(): void {

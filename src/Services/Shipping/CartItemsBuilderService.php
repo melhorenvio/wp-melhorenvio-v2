@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Services\Shipping;
 
+use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Support\UnitConverter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,6 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * e composições (WPC Composite Products) em seus componentes reais quando aplicável.
  */
 final class CartItemsBuilderService {
+
+	private IntegradorSettingsService $settingsService;
+
+	public function __construct( IntegradorSettingsService $settingsService ) {
+		$this->settingsService = $settingsService;
+	}
 
 	private const BUNDLE_TYPES    = array( 'woosb', 'product-woosb' );
 	private const COMPOSITE_TYPES = array( 'composite', 'product-composite' );
@@ -311,13 +318,14 @@ final class CartItemsBuilderService {
 	 */
 	public function toApiItem( array $line ): array {
 		$product = $line['product'];
+		$dim     = $this->settingsService->getSettings()['dimensions_default'] ?? array();
 
 		return array(
 			'id'              => $product->get_id(),
-			'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: 11 ) ),
-			'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: 2 ) ),
-			'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: 16 ) ),
-			'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: 0.3 ) ),
+			'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: ( $dim['width'] ?? 11 ) ) ),
+			'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: ( $dim['height'] ?? 2 ) ) ),
+			'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: ( $dim['length'] ?? 16 ) ) ),
+			'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: ( $dim['weight'] ?? 0.3 ) ) ),
 			'insurance_value' => (float) $line['unitaryValue'],
 			'quantity'        => $line['quantity'],
 		);
