@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers\Checkout;
 
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 
 final class CheckoutFieldsController {
+
+	private IntegradorSettingsService $settingsService;
+
+	public function __construct( IntegradorSettingsService $settingsService ) {
+		$this->settingsService = $settingsService;
+	}
 
 	/**
 	 * Constants defined by known third-party plugins that customize WooCommerce checkout fields.
@@ -77,43 +84,52 @@ final class CheckoutFieldsController {
 			$fields['billing']['billing_phone']['required'] = true;
 		}
 
+		$checkout     = $this->settingsService->getCheckoutSettings();
+		$documentType = $checkout['document_type'];
+
 		// Fora da submissão o $_POST ainda não tem o tipo escolhido - assume '1' (CPF, opção
 		// padrão do select) pra decidir qual dos dois já nasce marcado como obrigatório. Na
 		// submissão real (validate_posted_data), esse filtro roda de novo já com o tipo
 		// escolhido no $_POST, então o campo certo (e só ele) é o exigido pelo WooCommerce.
 		$personType = sanitize_text_field( wp_unslash( $_POST['billing_persontype'] ?? '1' ) );
 
-		$fields['billing']['billing_persontype'] = [
-			'label'    => __( 'Tipo de pessoa', 'melhor-envio-cotacao' ),
-			'type'     => 'select',
-			'options'  => [
-				'1' => __( 'Pessoa física (CPF)', 'melhor-envio-cotacao' ),
-				'2' => __( 'Pessoa jurídica (CNPJ)', 'melhor-envio-cotacao' ),
-			],
-			'required' => true,
-			'class'    => [ 'form-row-wide' ],
-			'priority' => 31,
-		];
+		if ( $documentType === 'both' ) {
+			$fields['billing']['billing_persontype'] = [
+				'label'    => __( 'Tipo de pessoa', 'melhor-envio-cotacao' ),
+				'type'     => 'select',
+				'options'  => [
+					'1' => __( 'Pessoa física (CPF)', 'melhor-envio-cotacao' ),
+					'2' => __( 'Pessoa jurídica (CNPJ)', 'melhor-envio-cotacao' ),
+				],
+				'required' => true,
+				'class'    => [ 'form-row-wide' ],
+				'priority' => 31,
+			];
+		}
 
-		$fields['billing']['billing_cpf'] = [
-			'label'       => __( 'CPF', 'melhor-envio-cotacao' ),
-			'type'        => 'text',
-			'required'    => $personType !== '2',
-			'class'       => [ 'form-row-wide', 'me-doc-cpf' ],
-			'placeholder' => '000.000.000-00',
-			'maxlength'   => 14,
-			'priority'    => 32,
-		];
+		if ( $documentType !== 'cnpj_only' ) {
+			$fields['billing']['billing_cpf'] = [
+				'label'       => __( 'CPF', 'melhor-envio-cotacao' ),
+				'type'        => 'text',
+				'required'    => $documentType === 'cpf_only' || $personType !== '2',
+				'class'       => [ 'form-row-wide', 'me-doc-cpf' ],
+				'placeholder' => '000.000.000-00',
+				'maxlength'   => 14,
+				'priority'    => 32,
+			];
+		}
 
-		$fields['billing']['billing_cnpj'] = [
-			'label'       => __( 'CNPJ', 'melhor-envio-cotacao' ),
-			'type'        => 'text',
-			'required'    => $personType === '2',
-			'class'       => [ 'form-row-wide', 'me-doc-cnpj' ],
-			'placeholder' => 'AB.CDE.FGH/IJKL-12',
-			'maxlength'   => 18,
-			'priority'    => 33,
-		];
+		if ( $documentType !== 'cpf_only' ) {
+			$fields['billing']['billing_cnpj'] = [
+				'label'       => __( 'CNPJ', 'melhor-envio-cotacao' ),
+				'type'        => 'text',
+				'required'    => $documentType === 'cnpj_only' || $personType === '2',
+				'class'       => [ 'form-row-wide', 'me-doc-cnpj' ],
+				'placeholder' => 'AB.CDE.FGH/IJKL-12',
+				'maxlength'   => 18,
+				'priority'    => 33,
+			];
+		}
 
 		return $fields;
 	}
@@ -128,11 +144,15 @@ final class CheckoutFieldsController {
 			return $fields;
 		}
 
+		$checkout             = $this->settingsService->getCheckoutSettings();
+		$requireNumber        = $checkout['require_number'];
+		$requireNeighborhood  = $checkout['require_neighborhood'];
+
 		foreach ( [ 'billing', 'shipping' ] as $group ) {
 			$fields[ $group ][ $group . '_number' ] = [
 				'label'       => __( 'Número', 'melhor-envio-cotacao' ),
 				'type'        => 'text',
-				'required'    => true,
+				'required'    => $requireNumber,
 				'class'       => [ 'form-row-wide' ],
 				'placeholder' => __( 'Ex: 123', 'melhor-envio-cotacao' ),
 				'priority'    => 55,
@@ -141,7 +161,7 @@ final class CheckoutFieldsController {
 			$fields[ $group ][ $group . '_neighborhood' ] = [
 				'label'       => __( 'Bairro', 'melhor-envio-cotacao' ),
 				'type'        => 'text',
-				'required'    => true,
+				'required'    => $requireNeighborhood,
 				'class'       => [ 'form-row-wide' ],
 				'placeholder' => __( 'Digite o nome do bairro', 'melhor-envio-cotacao' ),
 				'priority'    => 69,
@@ -156,16 +176,31 @@ final class CheckoutFieldsController {
 			return;
 		}
 
-		$personType = sanitize_text_field( wp_unslash( $_POST['billing_persontype'] ?? '1' ) );
-		$cpf        = preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST['billing_cpf'] ?? '' ) ) );
-		$cnpj       = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', sanitize_text_field( wp_unslash( $_POST['billing_cnpj'] ?? '' ) ) ) );
+		$checkout     = $this->settingsService->getCheckoutSettings();
+		$documentType = $checkout['document_type'];
 
-		if ( $personType === '1' && ! $this->isValidCpf( $cpf ) ) {
-			wc_add_notice( __( 'CPF inválido.', 'melhor-envio-cotacao' ), 'error' );
-		}
+		if ( $documentType === 'cpf_only' ) {
+			$cpf = preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST['billing_cpf'] ?? '' ) ) );
+			if ( ! $this->isValidCpf( $cpf ) ) {
+				wc_add_notice( __( 'CPF inválido.', 'melhor-envio-cotacao' ), 'error' );
+			}
+		} elseif ( $documentType === 'cnpj_only' ) {
+			$cnpj = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', sanitize_text_field( wp_unslash( $_POST['billing_cnpj'] ?? '' ) ) ) );
+			if ( ! $this->isValidCnpj( $cnpj ) ) {
+				wc_add_notice( __( 'CNPJ inválido.', 'melhor-envio-cotacao' ), 'error' );
+			}
+		} else {
+			$personType = sanitize_text_field( wp_unslash( $_POST['billing_persontype'] ?? '1' ) );
+			$cpf        = preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST['billing_cpf'] ?? '' ) ) );
+			$cnpj       = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', sanitize_text_field( wp_unslash( $_POST['billing_cnpj'] ?? '' ) ) ) );
 
-		if ( $personType === '2' && ! $this->isValidCnpj( $cnpj ) ) {
-			wc_add_notice( __( 'CNPJ inválido.', 'melhor-envio-cotacao' ), 'error' );
+			if ( $personType === '1' && ! $this->isValidCpf( $cpf ) ) {
+				wc_add_notice( __( 'CPF inválido.', 'melhor-envio-cotacao' ), 'error' );
+			}
+
+			if ( $personType === '2' && ! $this->isValidCnpj( $cnpj ) ) {
+				wc_add_notice( __( 'CNPJ inválido.', 'melhor-envio-cotacao' ), 'error' );
+			}
 		}
 
 		$phone = preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST['billing_phone'] ?? '' ) ) );
@@ -261,22 +296,36 @@ final class CheckoutFieldsController {
 			return;
 		}
 
+		$checkout     = $this->settingsService->getCheckoutSettings();
+		$documentType = $checkout['document_type'];
+
+		if ( $documentType === 'cpf_only' ) {
+			$label     = __( 'CPF', 'melhor-envio-cotacao' );
+			$maxLength = 14;
+		} elseif ( $documentType === 'cnpj_only' ) {
+			$label     = __( 'CNPJ', 'melhor-envio-cotacao' );
+			$maxLength = 18;
+		} else {
+			$label     = __( 'CPF / CNPJ', 'melhor-envio-cotacao' );
+			$maxLength = 18;
+		}
+
 		woocommerce_register_additional_checkout_field( [
 			'id'                => self::DOCUMENT_FIELD_ID,
-			'label'             => __( 'CPF / CNPJ', 'melhor-envio-cotacao' ),
+			'label'             => $label,
 			'location'          => 'address',
 			'type'              => 'text',
 			'required'          => true,
 			'attributes'        => [
 				'autocomplete'   => 'off',
 				'autocapitalize' => 'characters',
-				'maxLength'      => 18,
+				'maxLength'      => $maxLength,
 			],
 			'sanitize_callback' => function ( $value ) {
 				return strtoupper( preg_replace( '/[^0-9A-Za-z]/', '', (string) $value ) );
 			},
-			'validate_callback' => function ( $value ) {
-				return $this->validateDocumentField( (string) $value );
+			'validate_callback' => function ( $value ) use ( $documentType ) {
+				return $this->validateDocumentField( (string) $value, $documentType );
 			},
 		] );
 	}
@@ -289,12 +338,16 @@ final class CheckoutFieldsController {
 			return;
 		}
 
+		$checkout            = $this->settingsService->getCheckoutSettings();
+		$requireNumber       = $checkout['require_number'];
+		$requireNeighborhood = $checkout['require_neighborhood'];
+
 		woocommerce_register_additional_checkout_field( [
 			'id'       => self::NUMBER_FIELD_ID,
 			'label'    => __( 'Número', 'melhor-envio-cotacao' ),
 			'location' => 'address',
 			'type'     => 'text',
-			'required' => true,
+			'required' => $requireNumber,
 		] );
 
 		woocommerce_register_additional_checkout_field( [
@@ -302,13 +355,31 @@ final class CheckoutFieldsController {
 			'label'    => __( 'Bairro', 'melhor-envio-cotacao' ),
 			'location' => 'address',
 			'type'     => 'text',
-			'required' => true,
+			'required' => $requireNeighborhood,
 		] );
 	}
 
-	private function validateDocumentField( string $value ): ?\WP_Error {
+	private function validateDocumentField( string $value, string $documentType = 'both' ): ?\WP_Error {
 		if ( $value === '' ) {
-			return new \WP_Error( 'melhor_envio_document_required', __( 'Informe um CPF ou CNPJ.', 'melhor-envio-cotacao' ) );
+			$emptyMsg = $documentType === 'cpf_only'
+				? __( 'Informe um CPF.', 'melhor-envio-cotacao' )
+				: ( $documentType === 'cnpj_only'
+					? __( 'Informe um CNPJ.', 'melhor-envio-cotacao' )
+					: __( 'Informe um CPF ou CNPJ.', 'melhor-envio-cotacao' ) );
+
+			return new \WP_Error( 'melhor_envio_document_required', $emptyMsg );
+		}
+
+		if ( $documentType === 'cpf_only' ) {
+			return $this->isValidCpf( $value )
+				? null
+				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CPF inválido.', 'melhor-envio-cotacao' ) );
+		}
+
+		if ( $documentType === 'cnpj_only' ) {
+			return $this->isValidCnpj( $value )
+				? null
+				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CNPJ inválido.', 'melhor-envio-cotacao' ) );
 		}
 
 		if ( strlen( $value ) === 11 ) {
