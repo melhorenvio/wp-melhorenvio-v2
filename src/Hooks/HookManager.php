@@ -17,6 +17,8 @@ use MelhorEnvio\Http\Controllers\Auth\DisconnectController;
 use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
 use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
+use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
+use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 
 final class HookManager {
@@ -42,6 +44,12 @@ final class HookManager {
 
 		$disconnectEndpoint = $this->container->get( DisconnectController::class );
 		$disconnectEndpoint->register();
+
+		$getSettingsEndpoint = $this->container->get( GetSettingsController::class );
+		$getSettingsEndpoint->register();
+
+		$saveSettingsEndpoint = $this->container->get( SaveSettingsController::class );
+		$saveSettingsEndpoint->register();
 
 		$quotationAjaxHandler = $this->container->get( QuotationController::class );
 		$quotationAjaxHandler->register();
