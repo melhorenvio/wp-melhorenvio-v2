@@ -5,15 +5,24 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers\Frontend;
 
 use MelhorEnvio\Services\Admin\PluginModeService;
+use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 
 final class ProductShippingCalculatorController {
+
+	private IntegradorSettingsService $settingsService;
+
+	public function __construct( IntegradorSettingsService $settingsService ) {
+		$this->settingsService = $settingsService;
+	}
 
 	public function register(): void {
 		if ( ! PluginModeService::isIntegradorMode() ) {
 			return;
 		}
 
-		if ( get_option( 'melhorenvio_hide_calculator_product' ) ) {
+		$settings = $this->settingsService->getSettings();
+
+		if ( ! ( $settings['calculator']['enabled'] ?? true ) ) {
 			return;
 		}
 
@@ -21,8 +30,7 @@ final class ProductShippingCalculatorController {
 			return;
 		}
 
-		$hook = get_option( 'melhor_envio_option_where_show_calculator' )
-			?: 'woocommerce_before_add_to_cart_button';
+		$hook = $settings['calculator']['position'] ?? 'woocommerce_before_add_to_cart_button';
 
 		add_action( $hook, array( $this, 'renderWidget' ) );
 	}
