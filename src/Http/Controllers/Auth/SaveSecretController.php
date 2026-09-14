@@ -7,14 +7,15 @@ namespace MelhorEnvio\Http\Controllers\Auth;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
+use MelhorEnvio\Http\Controllers\Concerns\ValidatesAuthentication;
 use MelhorEnvio\Http\Controllers\RestEndpointContract;
 use WP_REST_Request;
 use WP_REST_Response;
 
 final class SaveSecretController extends RestEndpointContract {
 
-	private SecretService $secretManager;
-	private SignatureService $signatureManager;
+	use ValidatesAuthentication;
+
 	private ShippingZoneService $shippingZoneSetup;
 	private const ROUTE = '/secret';
 
@@ -35,7 +36,7 @@ final class SaveSecretController extends RestEndpointContract {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'handleRequest' ),
-				'permission_callback' => array( $this, 'checkPermission' ),
+				'permission_callback' => array( $this, 'checkSignaturePermission' ),
 				'args'                => array(
 					'secret' => array(
 						'required'          => true,
@@ -45,16 +46,6 @@ final class SaveSecretController extends RestEndpointContract {
 				),
 			)
 		);
-	}
-
-	public function checkPermission( WP_REST_Request $request ): bool {
-		$signature = $request->get_header( 'X-ME-Signature' );
-
-		if ( empty( $signature ) ) {
-			return false;
-		}
-
-		return $this->signatureManager->validateSignature( $signature );
 	}
 
 	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
