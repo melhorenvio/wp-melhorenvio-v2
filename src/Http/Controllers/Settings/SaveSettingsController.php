@@ -76,32 +76,63 @@ final class SaveSettingsController extends RestEndpointContract {
 
 		if ( isset( $body['calculator'] ) ) {
 			$calc = $body['calculator'];
-			$settings['calculator'] = array(
-				'enabled'  => isset( $calc['enabled'] ) ? (bool) $calc['enabled'] : true,
-				'position' => isset( $calc['position'] ) ? sanitize_text_field( $calc['position'] ) : 'woocommerce_before_add_to_cart_button',
-			);
+			$calculator = array();
+
+			if ( isset( $calc['enabled'] ) ) {
+				$calculator['enabled'] = (bool) $calc['enabled'];
+			}
+
+			if ( isset( $calc['position'] ) ) {
+				$calculator['position'] = sanitize_text_field( $calc['position'] );
+			}
+
+			$settings['calculator'] = $calculator;
 		}
 
 		if ( isset( $body['dimensions_default'] ) ) {
 			$dim = $body['dimensions_default'];
-			$settings['dimensions_default'] = array(
-				'height' => isset( $dim['height'] ) ? (float) $dim['height'] : 10,
-				'width'  => isset( $dim['width'] ) ? (float) $dim['width'] : 10,
-				'length' => isset( $dim['length'] ) ? (float) $dim['length'] : 10,
-				'weight' => isset( $dim['weight'] ) ? (float) $dim['weight'] : 11,
-			);
+			$dimensions = array();
+
+			if ( isset( $dim['height'] ) ) {
+				$dimensions['height'] = (float) $dim['height'];
+			}
+
+			if ( isset( $dim['width'] ) ) {
+				$dimensions['width'] = (float) $dim['width'];
+			}
+
+			if ( isset( $dim['length'] ) ) {
+				$dimensions['length'] = (float) $dim['length'];
+			}
+
+			if ( isset( $dim['weight'] ) ) {
+				$dimensions['weight'] = (float) $dim['weight'];
+			}
+
+			$settings['dimensions_default'] = $dimensions;
 		}
 
 		if ( isset( $body['checkout'] ) && is_array( $body['checkout'] ) ) {
 			$checkout = $body['checkout'];
 			$allowed_document_types = [ 'both', 'cpf_only', 'cnpj_only' ];
-			$document_type = sanitize_text_field( $checkout['document_type'] ?? 'both' );
+			$checkout_settings = array();
 
-			$settings['checkout'] = array(
-				'document_type'        => in_array( $document_type, $allowed_document_types, true ) ? $document_type : 'both',
-				'require_number'       => isset( $checkout['require_number'] ) ? (bool) $checkout['require_number'] : true,
-				'require_neighborhood' => isset( $checkout['require_neighborhood'] ) ? (bool) $checkout['require_neighborhood'] : true,
-			);
+			if ( isset( $checkout['document_type'] ) ) {
+				$document_type = sanitize_text_field( $checkout['document_type'] );
+				if ( in_array( $document_type, $allowed_document_types, true ) ) {
+					$checkout_settings['document_type'] = $document_type;
+				}
+			}
+
+			if ( isset( $checkout['require_number'] ) ) {
+				$checkout_settings['require_number'] = (bool) $checkout['require_number'];
+			}
+
+			if ( isset( $checkout['require_neighborhood'] ) ) {
+				$checkout_settings['require_neighborhood'] = (bool) $checkout['require_neighborhood'];
+			}
+
+			$settings['checkout'] = $checkout_settings;
 		}
 
 		return $settings;
