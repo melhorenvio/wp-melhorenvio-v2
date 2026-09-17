@@ -68,6 +68,10 @@ final class SaveSettingsController extends RestEndpointContract {
 			return false;
 		}
 
+		if ( isset( $body['checkout'] ) && ! is_array( $body['checkout'] ) ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -75,7 +79,7 @@ final class SaveSettingsController extends RestEndpointContract {
 		$settings = array();
 
 		if ( isset( $body['calculator'] ) ) {
-			$calc = $body['calculator'];
+			$calc       = $body['calculator'];
 			$calculator = array();
 
 			if ( isset( $calc['enabled'] ) ) {
@@ -90,7 +94,7 @@ final class SaveSettingsController extends RestEndpointContract {
 		}
 
 		if ( isset( $body['dimensions_default'] ) ) {
-			$dim = $body['dimensions_default'];
+			$dim        = $body['dimensions_default'];
 			$dimensions = array();
 
 			if ( isset( $dim['height'] ) ) {
@@ -112,10 +116,10 @@ final class SaveSettingsController extends RestEndpointContract {
 			$settings['dimensions_default'] = $dimensions;
 		}
 
-		if ( isset( $body['checkout'] ) && is_array( $body['checkout'] ) ) {
-			$checkout = $body['checkout'];
+		if ( isset( $body['checkout'] ) ) {
+			$checkout               = $body['checkout'];
 			$allowed_document_types = [ 'both', 'cpf_only', 'cnpj_only' ];
-			$checkout_settings = array();
+			$checkout_settings      = array();
 
 			if ( isset( $checkout['document_type'] ) ) {
 				$document_type = sanitize_text_field( $checkout['document_type'] );
