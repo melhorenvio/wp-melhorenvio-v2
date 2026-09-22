@@ -20,6 +20,7 @@ use MelhorEnvio\Services\Quotation\PostalCodeLocationClientService;
 use MelhorEnvio\Http\Controllers\Auth\DisconnectController;
 use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
+use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
 use wpdb;
@@ -34,6 +35,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 			AdminMenuController::class,
 			static fn( Container $container ) => new AdminMenuController( $container )
 		);
+		$this->container->singleton( IntegradorSettingsService::class, IntegradorSettingsService::class );
 		$this->container->singleton( SecretService::class, SecretService::class );
 		$this->container->singleton( SignatureService::class, SignatureService::class );
 		$this->container->singleton(
@@ -49,10 +51,16 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 			static fn( Container $container ) => new QuotationController(
 				$container->get( MelhorEnvioApiClientService::class ),
 				$container->get( CartItemsBuilderService::class ),
-				$container->get( PostalCodeLocationClientService::class )
+				$container->get( PostalCodeLocationClientService::class ),
+				$container->get( IntegradorSettingsService::class )
 			)
 		);
-		$this->container->singleton( CartItemsBuilderService::class, CartItemsBuilderService::class );
+		$this->container->singleton(
+			CartItemsBuilderService::class,
+			static fn( Container $container ) => new CartItemsBuilderService(
+				$container->get( IntegradorSettingsService::class )
+			)
+		);
 		$this->container->singleton( ProductShippingCalculatorController::class, ProductShippingCalculatorController::class );
 		$this->container->singleton( MelhorEnvioApiClientService::class, MelhorEnvioApiClientService::class );
 		$this->container->singleton( PostalCodeLocationClientService::class, PostalCodeLocationClientService::class );
