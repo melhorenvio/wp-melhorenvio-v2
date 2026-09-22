@@ -117,10 +117,10 @@ final class QuotationController implements ControllerInterface {
 				$items = array(
 					array(
 						'id'              => $product->get_id(),
-						'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: ( $dim['width'] ?? 11 ) ) ),
+						'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: ( $dim['width'] ?? 12 ) ) ),
 						'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: ( $dim['height'] ?? 2 ) ) ),
-						'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: ( $dim['length'] ?? 16 ) ) ),
-						'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: ( $dim['weight'] ?? 0.3 ) ) ),
+						'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: ( $dim['length'] ?? 17 ) ) ),
+						'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: ( $dim['weight'] ?? 0.5 ) ) ),
 						'insurance_value' => (float) $product->get_price(),
 						'quantity'        => $quantity,
 					),
