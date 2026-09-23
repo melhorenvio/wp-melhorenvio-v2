@@ -548,7 +548,7 @@ export default {
   },
   methods: {
     openEarlyAccess() {
-      window.open('https://tally.so/r/ODxqBa', '_blank', 'noopener');
+      window.open('https://lp.melhorenvio.com.br/plugin-melhor-envio/', '_blank', 'noopener');
     },
     ...mapActions("orders", [
       "retrieveMany",
