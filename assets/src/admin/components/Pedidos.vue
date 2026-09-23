@@ -179,17 +179,16 @@
       <section class="me-alert" aria-labelledby="me-alert-title">
         <div class="me-alert__body">
           <h2 id="me-alert-title" class="me-alert__title">
-            Uma versão completamente nova do Melhor Envio está chegando ✨
+            Uma experiência completamente nova do Melhor Envio está chegando (com 20% OFF) ✨
           </h2>
           <p class="me-alert__description">
-            Repensamos a experiência de ponta a ponta: menos cliques, mais controle sobre toda a sua operação. Garanta acesso antecipado e seja um dos primeiros a usar.
+            Refizemos a integração do zero para acabar com as instabilidades e facilitar a sua rotina. Teste o novo plugin, faça pelo menos 1 envio até 25/09/2026 e ganhe 20% OFF em 5 envios!
           </p>
           <ul class="me-alert__chips">
-            <li class="me-alert__chip">📦 Etiquetas em lote</li>
+            <li class="me-alert__chip">📦 Etiquetas em lote (até 100)</li>
             <li class="me-alert__chip">⚡ Configuração sem token</li>
             <li class="me-alert__chip">🚚 Rastreio e pós-envio</li>
-            <li class="me-alert__chip">↩️ Logística reversa</li>
-            <li class="me-alert__chip">💰 Controle financeiro</li>
+            <li class="me-alert__chip">🎧 Chamados em 1 clique</li>
           </ul>
           <div class="me-alert__actions">
             <button
@@ -197,7 +196,7 @@
               class="me-alert__btn me-alert__btn--primary"
               @click="openEarlyAccess"
             >
-              Quero acesso antecipado
+              Quero testar e ganhar 20% OFF em 5 envios
             </button>
           </div>
         </div>
