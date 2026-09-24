@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 3.0.4
+Version: 3.0.5
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 Requires PHP: 7.4
 Requires Wordpress 4.7+
 Requires WooCommerce 4.0+
@@ -59,6 +59,9 @@ Não esqueça de cadastrar corretamente as medidas do produto na aba de entrega 
 Pronto! O plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+
+= 3.0.5 =
+* Corrige erro "Usuário não autorizado" ao finalizar pedido no modo Melhor Integrador sem token do plugin antigo configurado
 
 = 3.0.4 =
 * Remove notices do WordPress na página do Melhor Integrador para não interferir no iframe
