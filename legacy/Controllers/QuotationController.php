@@ -17,6 +17,10 @@ class QuotationController {
 	 * Construct of CotationController
 	 */
 	public function __construct() {
+		if ( \MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode() ) {
+			return;
+		}
+
 		add_action(
 			'woocommerce_checkout_order_processed',
 			array(
