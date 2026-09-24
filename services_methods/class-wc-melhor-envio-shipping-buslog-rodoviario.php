@@ -13,7 +13,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = ShippingService::BUSLOG_RODOVIARIO;
 
-		public $company = 'Buslog';
+		public $company = array(
+			'name' 		=> 'Buslog',
+			'document' 	=> '24.611.241/0001-50'
+		);
 
 		/**
 		 * Initialize Buslog Rodoviário.

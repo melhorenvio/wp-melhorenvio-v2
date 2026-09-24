@@ -11,7 +11,10 @@ if ( class_exists( 'WC_Melhor_Envio_Shipping' ) ) {
 
 		public $code = 33;
 
-		public $company = 'JeT';
+		public $company = array(
+			'name' 		=> 'JeT',
+			'document' 	=> '08.336.938/0001-03'
+		);
 
 		/**
 		 * Initialize JeT Standard.
