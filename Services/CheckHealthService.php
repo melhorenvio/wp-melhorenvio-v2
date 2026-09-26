@@ -54,6 +54,7 @@ class CheckHealthService {
         $sessionNoticeService = new SessionNoticeService();
         $sessionNoticeService->removeNoticesContaning( 'woocommerce-extra-checkout-fields-for-brazil' );
         $sessionNoticeService->removeNoticesContaning( 'woo-better-shipping-calculator-for-brazil' );
+        $sessionNoticeService->removeNoticesContaning( 'Você precisa do plugin WooCommerce ativado' );
 
 		if ( ! is_dir( $pathPlugins . '/woocommerce' ) ) {
 			$errorsPath[] = 'Defina o path do diretório de plugins nas configurações do plugin do Melhor Envio';
