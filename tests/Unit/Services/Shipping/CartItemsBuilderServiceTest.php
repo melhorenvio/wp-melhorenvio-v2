@@ -257,11 +257,6 @@ final class CartItemsBuilderServiceTest extends TestCase {
 	}
 
 	public function test_to_api_item_hardcoded_defaults_are_not_converted_from_store_units(): void {
-		$this->markTestIncomplete(
-			'BUG: os fallbacks fixos (12x2x17 cm, 0,5 kg) passam pelo UnitConverter; em lojas g/mm a caixa vira 0,0005 kg. '
-			. 'Correção: fix/default-dimensions-fallback-units.'
-		);
-
 		$this->options['woocommerce_dimension_unit'] = 'mm';
 		$this->options['woocommerce_weight_unit']    = 'g';
 

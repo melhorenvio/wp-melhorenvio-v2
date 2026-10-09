@@ -113,12 +113,10 @@ final class QuotationControllerTest extends TestCase {
 			),
 		);
 
-		$settings         = new IntegradorSettingsService();
 		$this->controller = new QuotationController(
 			new MelhorEnvioApiClientService(),
-			new CartItemsBuilderService( $settings ),
-			new PostalCodeLocationClientService(),
-			$settings
+			new CartItemsBuilderService( new IntegradorSettingsService() ),
+			new PostalCodeLocationClientService()
 		);
 	}
 

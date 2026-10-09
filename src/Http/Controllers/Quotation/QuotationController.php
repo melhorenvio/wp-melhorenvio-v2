@@ -7,27 +7,22 @@ namespace MelhorEnvio\Http\Controllers\Quotation;
 use MelhorEnvio\Http\Controllers\Contracts\ControllerInterface;
 use MelhorEnvio\Services\Quotation\MelhorEnvioApiClientService;
 use MelhorEnvio\Services\Quotation\PostalCodeLocationClientService;
-use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
-use MelhorEnvio\Support\UnitConverter;
 
 final class QuotationController implements ControllerInterface {
 
 	private MelhorEnvioApiClientService $apiClient;
 	private CartItemsBuilderService $cartItemsBuilder;
 	private PostalCodeLocationClientService $locationClient;
-	private IntegradorSettingsService $settingsService;
 
 	public function __construct(
 		MelhorEnvioApiClientService $apiClient,
 		CartItemsBuilderService $cartItemsBuilder,
-		PostalCodeLocationClientService $locationClient,
-		IntegradorSettingsService $settingsService
+		PostalCodeLocationClientService $locationClient
 	) {
 		$this->apiClient        = $apiClient;
 		$this->cartItemsBuilder = $cartItemsBuilder;
 		$this->locationClient   = $locationClient;
-		$this->settingsService  = $settingsService;
 	}
 
 	public function register(): void {
@@ -113,16 +108,9 @@ final class QuotationController implements ControllerInterface {
 
 				$items = $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
 			} else {
-				$dim   = $this->settingsService->getSettings()['dimensions_default'] ?? array();
 				$items = array(
-					array(
-						'id'              => $product->get_id(),
-						'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: ( $dim['width'] ?? 12 ) ) ),
-						'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: ( $dim['height'] ?? 2 ) ) ),
-						'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: ( $dim['length'] ?? 17 ) ) ),
-						'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: ( $dim['weight'] ?? 0.5 ) ) ),
-						'insurance_value' => (float) $product->get_price(),
-						'quantity'        => $quantity,
+					$this->cartItemsBuilder->toApiItem(
+						$this->cartItemsBuilder->toLine( $product, $quantity, (float) $product->get_price() )
 					),
 				);
 			}

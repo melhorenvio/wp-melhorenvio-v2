@@ -26,6 +26,11 @@ final class CartItemsBuilderService {
 	private const BUNDLE_TYPES    = array( 'woosb', 'product-woosb' );
 	private const COMPOSITE_TYPES = array( 'composite', 'product-composite' );
 
+	private const FALLBACK_WIDTH_CM  = 12.0;
+	private const FALLBACK_HEIGHT_CM = 2.0;
+	private const FALLBACK_LENGTH_CM = 17.0;
+	private const FALLBACK_WEIGHT_KG = 0.5;
+
 	public static function isComposedProduct( \WC_Product $product ): bool {
 		return self::isBundleProduct( $product ) || self::isCompositeProduct( $product );
 	}
@@ -324,12 +329,34 @@ final class CartItemsBuilderService {
 
 		return array(
 			'id'              => $product->get_id(),
-			'width'           => UnitConverter::toCm( (float) ( $product->get_width() ?: ( $dim['width'] ?? 12 ) ) ),
-			'height'          => UnitConverter::toCm( (float) ( $product->get_height() ?: ( $dim['height'] ?? 2 ) ) ),
-			'length'          => UnitConverter::toCm( (float) ( $product->get_length() ?: ( $dim['length'] ?? 17 ) ) ),
-			'weight'          => UnitConverter::toKg( (float) ( $product->get_weight() ?: ( $dim['weight'] ?? 0.5 ) ) ),
+			'width'           => $this->resolveCm( $product->get_width(), $dim['width'] ?? null, self::FALLBACK_WIDTH_CM ),
+			'height'          => $this->resolveCm( $product->get_height(), $dim['height'] ?? null, self::FALLBACK_HEIGHT_CM ),
+			'length'          => $this->resolveCm( $product->get_length(), $dim['length'] ?? null, self::FALLBACK_LENGTH_CM ),
+			'weight'          => $this->resolveKg( $product->get_weight(), $dim['weight'] ?? null, self::FALLBACK_WEIGHT_KG ),
 			'insurance_value' => (float) $line['unitaryValue'],
 			'quantity'        => $line['quantity'],
 		);
+	}
+
+	/**
+	 * Product and configured default dimensions are in the store unit; the hardcoded fallback is already in cm.
+	 *
+	 * @param mixed $productValue
+	 * @param mixed $configuredValue
+	 */
+	private function resolveCm( $productValue, $configuredValue, float $fallbackCm ): float {
+		$value = (float) ( $productValue ?: $configuredValue );
+		return $value > 0 ? UnitConverter::toCm( $value ) : $fallbackCm;
+	}
+
+	/**
+	 * Product and configured default weight are in the store unit; the hardcoded fallback is already in kg.
+	 *
+	 * @param mixed $productValue
+	 * @param mixed $configuredValue
+	 */
+	private function resolveKg( $productValue, $configuredValue, float $fallbackKg ): float {
+		$value = (float) ( $productValue ?: $configuredValue );
+		return $value > 0 ? UnitConverter::toKg( $value ) : $fallbackKg;
 	}
 }
