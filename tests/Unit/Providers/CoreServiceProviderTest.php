@@ -87,11 +87,6 @@ final class CoreServiceProviderTest extends TestCase {
 	}
 
 	public function test_database_interface_resolves_to_repository_wrapping_global_wpdb(): void {
-		$this->markTestIncomplete(
-			'BUG: WordPressDatabaseRepository implementa DatabaseInterface sem o use e gera erro fatal ao carregar. '
-			. 'Correção: fix/database-repository-interface-import.'
-		);
-
 		$wpdb           = Mockery::mock( 'wpdb' );
 		$wpdb->prefix   = 'wp_test_';
 		$GLOBALS['wpdb'] = $wpdb;
