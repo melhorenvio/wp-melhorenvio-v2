@@ -14,6 +14,12 @@ final class SecretService {
 	}
 
 	public function setSecret( string $secret ): bool {
+		$current = $this->getSecret();
+
+		if ( $current !== null && hash_equals( $current, $secret ) ) {
+			return true;
+		}
+
 		return update_option( self::OPTION_NAME, $secret );
 	}
 
