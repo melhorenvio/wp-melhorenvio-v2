@@ -96,9 +96,9 @@ final class OrderItemsBuilderService {
 	private function buildBundleOrderRow( \WC_Order_Item_Product $lineItem, \WC_Product $product, array $children ): array {
 		$quantity    = max( 1, (int) $lineItem->get_quantity() );
 		$rawPrice    = $lineItem->get_meta( '_woosb_price', true );
-		// Kit com preço fixo não grava '_woosb_price' - o próprio total da linha pai já é
-		// o valor real nesse caso (o plugin só zera/desconta o total quando NÃO é fixo).
-		$kitPrice    = $rawPrice !== '' ? (float) $rawPrice : (float) $lineItem->get_total();
+		// '_woosb_price' é o valor de UM kit (copiado do 'woosb_price' do carrinho). Kit com preço fixo não
+		// grava '_woosb_price' - o próprio total da linha pai já é o valor real nesse caso.
+		$kitPrice    = $rawPrice !== '' ? (float) $rawPrice * $quantity : (float) $lineItem->get_total();
 		$shippingFee = get_post_meta( $product->get_id(), 'woosb_shipping_fee', true );
 
 		$components    = $this->toComponentLines( $children );
@@ -113,7 +113,8 @@ final class OrderItemsBuilderService {
 	private function buildCompositeOrderRow( \WC_Order_Item_Product $lineItem, \WC_Product $product, array $children ): array {
 		$quantity    = max( 1, (int) $lineItem->get_quantity() );
 		$rawPrice    = $lineItem->get_meta( 'wooco_price', true );
-		$totalPrice  = $rawPrice !== '' ? (float) $rawPrice : (float) $lineItem->get_total();
+		// 'wooco_price' é o valor de UMA unidade do composto; get_total() já é o total da linha.
+		$totalPrice  = $rawPrice !== '' ? (float) $rawPrice * $quantity : (float) $lineItem->get_total();
 		$shippingFee = get_post_meta( $product->get_id(), 'wooco_shipping_fee', true );
 		$pricing     = get_post_meta( $product->get_id(), 'wooco_pricing', true );
 
