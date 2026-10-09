@@ -8,6 +8,7 @@ use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
 use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
+use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
@@ -68,6 +69,9 @@ final class HookManager {
 
 		$orderInvoiceKeyMetaBox = $this->container->get( OrderInvoiceKeyMetaBoxController::class );
 		$orderInvoiceKeyMetaBox->register();
+
+		$orderNoteInvoiceKey = $this->container->get( OrderNoteInvoiceKeyController::class );
+		$orderNoteInvoiceKey->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
