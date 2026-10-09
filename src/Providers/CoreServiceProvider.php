@@ -51,8 +51,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 			static fn( Container $container ) => new QuotationController(
 				$container->get( MelhorEnvioApiClientService::class ),
 				$container->get( CartItemsBuilderService::class ),
-				$container->get( PostalCodeLocationClientService::class ),
-				$container->get( IntegradorSettingsService::class )
+				$container->get( PostalCodeLocationClientService::class )
 			)
 		);
 		$this->container->singleton(
