@@ -58,11 +58,6 @@ final class SecretServiceTest extends TestCase {
 	}
 
 	public function test_set_secret_returns_true_without_writing_when_value_is_unchanged(): void {
-		$this->markTestIncomplete(
-			'BUG: update_option retorna false quando o valor não muda e o controller responde 500. '
-			. 'Correção: fix/secret-resend-idempotent.'
-		);
-
 		Functions\when( 'get_option' )->justReturn( 'same-secret' );
 		Functions\expect( 'update_option' )->never();
 
