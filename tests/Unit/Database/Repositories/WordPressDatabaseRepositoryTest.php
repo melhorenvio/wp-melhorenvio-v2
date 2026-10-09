@@ -18,10 +18,7 @@ final class WordPressDatabaseRepositoryTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->markTestIncomplete(
-			'BUG: WordPressDatabaseRepository implementa DatabaseInterface sem o use e gera erro fatal ao carregar. '
-			. 'Correção: fix/database-repository-interface-import.'
-		);
+
 		$this->wpdb = Mockery::mock( 'wpdb' );
 	}
 

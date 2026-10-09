@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Database\Repositories;
 
+use MelhorEnvio\Database\Contracts\DatabaseInterface;
 use wpdb;
 
 final class WordPressDatabaseRepository implements DatabaseInterface {
