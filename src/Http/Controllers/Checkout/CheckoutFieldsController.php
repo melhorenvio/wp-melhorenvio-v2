@@ -180,7 +180,7 @@ final class CheckoutFieldsController {
 	}
 
 	private function isValidCpf( string $cpf ): bool {
-		if ( strlen( $cpf ) !== 11 || preg_match( '/^(\d)\1{10}$/', $cpf ) ) {
+		if ( ! preg_match( '/^\d{11}$/', $cpf ) || preg_match( '/^(\d)\1{10}$/', $cpf ) ) {
 			return false;
 		}
 		for ( $t = 9; $t < 11; $t++ ) {
