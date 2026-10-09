@@ -55,21 +55,15 @@ final class SaveSettingsController extends RestEndpointContract {
 		return new WP_REST_Response( $settings, 200 );
 	}
 
-	private function isValidPayload( mixed $body ): bool {
+	private function isValidPayload( $body ): bool {
 		if ( ! is_array( $body ) ) {
 			return false;
 		}
 
-		if ( isset( $body['calculator'] ) && ! is_array( $body['calculator'] ) ) {
-			return false;
-		}
-
-		if ( isset( $body['dimensions_default'] ) && ! is_array( $body['dimensions_default'] ) ) {
-			return false;
-		}
-
-		if ( isset( $body['checkout'] ) && ! is_array( $body['checkout'] ) ) {
-			return false;
+		foreach ( array( 'calculator', 'dimensions_default', 'checkout' ) as $section ) {
+			if ( isset( $body[ $section ] ) && ! is_array( $body[ $section ] ) ) {
+				return false;
+			}
 		}
 
 		return true;

@@ -76,7 +76,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	 * @dataProvider invalidPayloads
 	 */
 	public function test_handle_request_rejects_invalid_payload( string $body ): void {
-		$this->skipOnPhp74MixedTypeBug();
 		Functions\expect( 'update_option' )->never();
 
 		$response = $this->controller->handleRequest( $this->requestWithBody( $body ) );
@@ -97,7 +96,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_sanitizes_and_saves_settings(): void {
-		$this->skipOnPhp74MixedTypeBug();
 		$body = array(
 			'calculator'         => array(
 				'enabled'  => 1,
@@ -144,7 +142,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_drops_unsupported_document_type(): void {
-		$this->skipOnPhp74MixedTypeBug();
 		$expected = array( 'checkout' => array( 'require_number' => false ) );
 		Functions\expect( 'update_option' )->once()->with( self::SETTINGS_OPTION, $expected )->andReturn( true );
 
@@ -160,7 +157,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	 * @dataProvider allowedDocumentTypes
 	 */
 	public function test_handle_request_accepts_allowed_document_types( string $documentType ): void {
-		$this->skipOnPhp74MixedTypeBug();
 		$expected = array( 'checkout' => array( 'document_type' => $documentType ) );
 		Functions\expect( 'update_option' )->once()->with( self::SETTINGS_OPTION, $expected )->andReturn( true );
 
@@ -180,7 +176,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_keeps_empty_sections_sent_as_empty_objects(): void {
-		$this->skipOnPhp74MixedTypeBug();
 		$expected = array(
 			'calculator'         => array(),
 			'dimensions_default' => array(),
@@ -197,7 +192,6 @@ final class SaveSettingsControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_treats_unchanged_settings_as_success(): void {
-		$this->skipOnPhp74MixedTypeBug();
 		$settings                               = array( 'calculator' => array( 'enabled' => false ) );
 		$this->options[ self::SETTINGS_OPTION ] = $settings;
 		Functions\expect( 'update_option' )->once()->andReturn( false );
@@ -209,23 +203,12 @@ final class SaveSettingsControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_returns_500_when_save_fails(): void {
-		$this->skipOnPhp74MixedTypeBug();
 		Functions\expect( 'update_option' )->once()->andReturn( false );
 
 		$response = $this->controller->handleRequest( $this->requestWithBody( '{"calculator":{"enabled":true}}' ) );
 
 		self::assertSame( 500, $response->get_status() );
 		self::assertSame( array( 'message' => 'Failed to save settings.' ), $response->get_data() );
-	}
-
-	/**
-	 * BUG: SaveSettingsController::isValidPayload() usa o tipo `mixed` (PHP 8.0+); no PHP 7.4 toda requisição
-	 * falha com TypeError. Correção: fix/settings-php74-mixed-type.
-	 */
-	private function skipOnPhp74MixedTypeBug(): void {
-		if ( PHP_VERSION_ID < 80000 ) {
-			$this->markTestIncomplete( 'BUG: tipo mixed em SaveSettingsController no PHP 7.4. Correção: fix/settings-php74-mixed-type.' );
-		}
 	}
 
 	private function captureRouteArgs(): array {
