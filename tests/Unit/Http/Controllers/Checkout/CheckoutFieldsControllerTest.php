@@ -45,7 +45,7 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		self::assertNotFalse( has_filter( 'woocommerce_checkout_fields', array( $this->controller, 'addDocumentFields' ) ) );
 		self::assertNotFalse( has_filter( 'woocommerce_checkout_fields', array( $this->controller, 'addAddressFields' ) ) );
 		self::assertNotFalse( has_action( 'woocommerce_checkout_process', array( $this->controller, 'validateFields' ) ) );
-		self::assertNotFalse( has_action( 'woocommerce_checkout_update_order_meta', array( $this->controller, 'saveFields' ) ) );
+		self::assertNotFalse( has_action( 'woocommerce_checkout_create_order', array( $this->controller, 'saveFields' ) ) );
 		self::assertNotFalse( has_action( 'wp_enqueue_scripts', array( $this->controller, 'enqueueAssets' ) ) );
 		self::assertNotFalse( has_action( 'woocommerce_init', array( $this->controller, 'registerBlocksCheckoutField' ) ) );
 		self::assertNotFalse( has_action( 'woocommerce_init', array( $this->controller, 'registerBlocksAddressFields' ) ) );
@@ -361,9 +361,7 @@ final class CheckoutFieldsControllerTest extends TestCase {
 			'shipping_number'       => '200',
 			'shipping_neighborhood' => 'Bela Vista',
 		);
-		$this->collectPostMeta( 55 );
-
-		$this->controller->saveFields( 55 );
+		$this->controller->saveFields( $this->orderCollectingMeta() );
 
 		self::assertSame(
 			array(
@@ -385,9 +383,7 @@ final class CheckoutFieldsControllerTest extends TestCase {
 			'billing_neighborhood'  => 'Centro',
 			'shipping_number'       => '',
 		);
-		$this->collectPostMeta( 55 );
-
-		$this->controller->saveFields( 55 );
+		$this->controller->saveFields( $this->orderCollectingMeta() );
 
 		self::assertSame( '100', $this->savedMeta['_shipping_number'] );
 		self::assertSame( 'Centro', $this->savedMeta['_shipping_neighborhood'] );
@@ -395,9 +391,7 @@ final class CheckoutFieldsControllerTest extends TestCase {
 
 	public function test_save_fields_skips_document_fields_not_posted(): void {
 		$_POST = array();
-		$this->collectPostMeta( 55 );
-
-		$this->controller->saveFields( 55 );
+		$this->controller->saveFields( $this->orderCollectingMeta() );
 
 		self::assertSame(
 			array(
@@ -729,7 +723,7 @@ final class CheckoutFieldsControllerTest extends TestCase {
 
 		$this->controller->ensureBlocksPhoneRequired();
 		$this->controller->validateFields();
-		$this->controller->saveFields( 1 );
+		$this->controller->saveFields( $order );
 		$this->controller->registerBlocksCheckoutField();
 		$this->controller->registerBlocksAddressFields();
 		$this->controller->saveFieldsFromBlocksRequest( $order );
@@ -771,14 +765,22 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		);
 	}
 
-	private function collectPostMeta( int $expectedOrderId ): void {
-		Functions\when( 'update_post_meta' )->alias(
-			function ( int $orderId, string $key, $value ) use ( $expectedOrderId ): bool {
-				self::assertSame( $expectedOrderId, $orderId );
+	/**
+	 * WooCommerce saves the order right after 'woocommerce_checkout_create_order', so saveFields()
+	 * must only stage meta on the order (works with and without HPOS) and never save it itself.
+	 *
+	 * @return \Mockery\MockInterface&\WC_Order
+	 */
+	private function orderCollectingMeta() {
+		$order = Mockery::mock( 'WC_Order' );
+		$order->allows( 'update_meta_data' )->andReturnUsing(
+			function ( string $key, $value ): void {
 				$this->savedMeta[ $key ] = $value;
-				return true;
 			}
 		);
+		$order->shouldNotReceive( 'save' );
+
+		return $order;
 	}
 
 	private function collectRegisteredFields(): void {
