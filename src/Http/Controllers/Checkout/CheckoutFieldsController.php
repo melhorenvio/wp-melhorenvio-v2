@@ -30,7 +30,7 @@ final class CheckoutFieldsController {
 		add_filter( 'woocommerce_checkout_fields',            [ $this, 'addDocumentFields' ] );
 		add_filter( 'woocommerce_checkout_fields',            [ $this, 'addAddressFields' ] );
 		add_action( 'woocommerce_checkout_process',           [ $this, 'validateFields' ] );
-		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'saveFields' ] );
+		add_action( 'woocommerce_checkout_create_order',      [ $this, 'saveFields' ] );
 		add_action( 'wp_enqueue_scripts',                     [ $this, 'enqueueAssets' ] );
 
 		// Blocks checkout - campos registrados via API nativa do WooCommerce (WC 8.9+), renderizados
@@ -229,18 +229,18 @@ final class CheckoutFieldsController {
 			&& (int) $cnpj[13] === $check( $cnpj, $weights2, 13 );
 	}
 
-	public function saveFields( int $orderId ): void {
+	/**
+	 * Runs on 'woocommerce_checkout_create_order', before WooCommerce saves the order, so the meta
+	 * goes through the order data store and works with and without HPOS.
+	 */
+	public function saveFields( \WC_Order $order ): void {
 		if ( $this->externalPluginActive() ) {
 			return;
 		}
 
 		foreach ( [ 'billing_persontype', 'billing_cpf', 'billing_cnpj' ] as $field ) {
 			if ( isset( $_POST[ $field ] ) ) {
-				update_post_meta(
-					$orderId,
-					'_' . $field,
-					sanitize_text_field( wp_unslash( $_POST[ $field ] ) )
-				);
+				$order->update_meta_data( '_' . $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );
 			}
 		}
 
@@ -248,8 +248,8 @@ final class CheckoutFieldsController {
 			$billingValue  = sanitize_text_field( wp_unslash( $_POST[ 'billing_' . $suffix ] ?? '' ) );
 			$shippingValue = sanitize_text_field( wp_unslash( $_POST[ 'shipping_' . $suffix ] ?? '' ) ) ?: $billingValue;
 
-			update_post_meta( $orderId, '_billing_' . $suffix, $billingValue );
-			update_post_meta( $orderId, '_shipping_' . $suffix, $shippingValue );
+			$order->update_meta_data( '_billing_' . $suffix, $billingValue );
+			$order->update_meta_data( '_shipping_' . $suffix, $shippingValue );
 		}
 	}
 
