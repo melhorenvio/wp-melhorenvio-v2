@@ -220,7 +220,8 @@ final class CartItemsBuilderService {
 	private function buildBundleCartRow( array $item, array $cartItems ): array {
 		$product     = $item['data'];
 		$quantity    = (int) $item['quantity'];
-		$kitPrice    = ! empty( $item['woosb_price'] ) ? (float) $item['woosb_price'] : (float) $item['line_total'];
+		// 'woosb_price' é o valor de UM kit (o plugin exibe subtotal = woosb_price * quantity); 'line_total' já é o total da linha.
+		$kitPrice    = ! empty( $item['woosb_price'] ) ? (float) $item['woosb_price'] * $quantity : (float) $item['line_total'];
 		$shippingFee = get_post_meta( $product->get_id(), 'woosb_shipping_fee', true );
 
 		$components    = $this->expandComponents( (array) $item['woosb_keys'], $cartItems );
@@ -236,7 +237,8 @@ final class CartItemsBuilderService {
 	private function buildCompositeCartRow( array $item, array $cartItems ): array {
 		$product     = $item['data'];
 		$quantity    = (int) $item['quantity'];
-		$totalPrice  = ! empty( $item['wooco_price'] ) ? (float) $item['wooco_price'] : (float) $item['line_total'];
+		// 'wooco_price' é o valor de UMA unidade do composto; 'line_total' já é o total da linha.
+		$totalPrice  = ! empty( $item['wooco_price'] ) ? (float) $item['wooco_price'] * $quantity : (float) $item['line_total'];
 		$shippingFee = get_post_meta( $product->get_id(), 'wooco_shipping_fee', true );
 		$pricing     = get_post_meta( $product->get_id(), 'wooco_pricing', true );
 

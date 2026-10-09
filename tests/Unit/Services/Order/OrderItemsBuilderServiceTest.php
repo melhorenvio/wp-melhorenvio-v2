@@ -106,11 +106,6 @@ final class OrderItemsBuilderServiceTest extends TestCase {
 	}
 
 	public function test_bundle_quoted_as_parent_uses_woosb_price_as_unit_value(): void {
-		$this->markTestIncomplete(
-			'BUG: o preço do WPC Bundle/Composite é por unidade, mas é dividido pela quantidade de novo. '
-			. 'Correção: fix/wpc-bundle-composite-unit-price.'
-		);
-
 		$bundle = $this->mockProduct( 100, 'woosb', array( 30, 10, 40, 2 ) );
 		$order  = $this->mockOrder(
 			array(
@@ -239,11 +234,6 @@ final class OrderItemsBuilderServiceTest extends TestCase {
 	}
 
 	public function test_composite_quoted_as_parent_uses_wooco_price_as_unit_value(): void {
-		$this->markTestIncomplete(
-			'BUG: o preço do WPC Bundle/Composite é por unidade, mas é dividido pela quantidade de novo. '
-			. 'Correção: fix/wpc-bundle-composite-unit-price.'
-		);
-
 		$composite = $this->mockProduct( 200, 'composite', array( 20, 20, 20, 3 ) );
 		$order     = $this->mockOrder(
 			array( $this->mockLineItem( 1, $composite, 2, 0.0, array( 'wooco_price' => '80' ) ) )
