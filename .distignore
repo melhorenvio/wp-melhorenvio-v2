@@ -28,4 +28,4 @@ composer.lock
 config.json
 phpunit.xml.dist
 .phpunit.cache
-.sonarcloud.properties
+sonar-project.properties

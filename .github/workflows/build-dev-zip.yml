@@ -72,7 +72,7 @@ jobs:
             --exclude=tests \
             --exclude=phpunit.xml.dist \
             --exclude=.phpunit.cache \
-            --exclude=.sonarcloud.properties \
+            --exclude=sonar-project.properties \
             --exclude=.claude \
             --exclude=webpack.config.js \
             --exclude=package.json \

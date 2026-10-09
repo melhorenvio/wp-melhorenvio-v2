@@ -41,3 +41,4 @@ caddy/caddy-root-ca.crt
 .specs/
 
 .phpunit.cache/
+coverage.xml
