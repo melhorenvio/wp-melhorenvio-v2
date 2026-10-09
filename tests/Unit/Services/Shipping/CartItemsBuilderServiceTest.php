@@ -567,11 +567,6 @@ final class CartItemsBuilderServiceTest extends TestCase {
 	}
 
 	public function test_build_items_quotes_bundle_per_kit_value_when_quantity_above_one(): void {
-		$this->markTestIncomplete(
-			'BUG: o preço do WPC Bundle/Composite é por unidade, mas é dividido pela quantidade de novo. '
-			. 'Correção: fix/wpc-bundle-composite-unit-price.'
-		);
-
 		$parent = $this->mockProduct( 1, '0', array(), 'woosb', self::WOOSB );
 		$parent->allows( 'is_fixed_price' )->andReturn( false );
 
@@ -637,11 +632,6 @@ final class CartItemsBuilderServiceTest extends TestCase {
 	}
 
 	public function test_build_items_quotes_composite_per_unit_value_when_quantity_above_one(): void {
-		$this->markTestIncomplete(
-			'BUG: o preço do WPC Bundle/Composite é por unidade, mas é dividido pela quantidade de novo. '
-			. 'Correção: fix/wpc-bundle-composite-unit-price.'
-		);
-
 		$this->givenCart(
 			array(
 				'comp' => $this->cartItem(
