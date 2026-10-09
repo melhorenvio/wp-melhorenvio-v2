@@ -166,11 +166,6 @@ final class SaveSecretControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_succeeds_when_same_secret_is_resent(): void {
-		$this->markTestIncomplete(
-			'BUG: update_option retorna false quando o valor não muda e o controller responde 500. '
-			. 'Correção: fix/secret-resend-idempotent.'
-		);
-
 		Functions\when( 'get_option' )->justReturn( self::VALID_SECRET );
 		Functions\when( 'update_option' )->justReturn( false );
 
