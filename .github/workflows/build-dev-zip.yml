@@ -69,6 +69,10 @@ jobs:
             --exclude=docs \
             --exclude=scripts \
             --exclude=patches \
+            --exclude=tests \
+            --exclude=phpunit.xml.dist \
+            --exclude=.phpunit.cache \
+            --exclude=sonar-project.properties \
             --exclude=.claude \
             --exclude=webpack.config.js \
             --exclude=package.json \

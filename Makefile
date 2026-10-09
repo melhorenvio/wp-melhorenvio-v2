@@ -1,4 +1,4 @@
-.PHONY: help init up down attach shell install wc-setup wc-create-products patch-woocommerce tunnel-up tunnel-down mi-up mi-network mi-wp-config mi-info mi-trust-ca mi-down mi-clean
+.PHONY: help init up down attach shell install test test-coverage wc-setup wc-create-products patch-woocommerce tunnel-up tunnel-down mi-up mi-network mi-wp-config mi-info mi-trust-ca mi-down mi-clean
 
 # Variables
 COMPOSE         := docker compose
@@ -35,6 +35,12 @@ shell: ## Open shell in WP container (www-data)
 
 install: ## Install Composer + npm dependencies
 	$(COMPOSE) exec --user www-data wordpress sh -c "cd $(PLUGIN_PATH) && composer install && npm i && npm run build"
+
+test: ## Run PHPUnit suite inside WP container (ARGS="--filter Foo")
+	$(COMPOSE) exec -T --user www-data wordpress sh -c "cd $(PLUGIN_PATH) && vendor/bin/phpunit $(ARGS)"
+
+test-coverage: ## Run PHPUnit with text coverage report (requires pcov/xdebug)
+	$(COMPOSE) exec -T --user www-data wordpress sh -c "cd $(PLUGIN_PATH) && vendor/bin/phpunit --coverage-text"
 
 wc-setup: ## Create WooCommerce shipping zones and payment methods
 	docker exec $(APP_CONTAINER) $(PLUGIN_PATH)/scripts/wc-setup.sh
