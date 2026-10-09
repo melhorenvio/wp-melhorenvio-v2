@@ -55,7 +55,7 @@ final class SaveSettingsController extends RestEndpointContract {
 		return new WP_REST_Response( $settings, 200 );
 	}
 
-	private function isValidPayload( mixed $body ): bool {
+	private function isValidPayload( $body ): bool {
 		if ( ! is_array( $body ) ) {
 			return false;
 		}
