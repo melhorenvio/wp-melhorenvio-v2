@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Database\Seeders;
 
+use MelhorEnvio\Database\Contracts\SeederInterface;
+
 final class WooCommerceSeeder implements SeederInterface {
 
 	public function run(): void {
