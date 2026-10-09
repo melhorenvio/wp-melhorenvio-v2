@@ -485,11 +485,6 @@ final class CheckoutFieldsControllerTest extends TestCase {
 	}
 
 	public function test_document_field_validator_rejects_cpf_containing_letters(): void {
-		$this->markTestIncomplete(
-			'BUG: isValidCpf converte letras em 0, então O1234567890 passa como CPF válido no checkout Blocks. '
-			. 'Correção: fix/checkout-cpf-digits-only.'
-		);
-
 		$field = $this->registerDocumentField();
 
 		$error = $field['validate_callback']( 'O1234567890' );
