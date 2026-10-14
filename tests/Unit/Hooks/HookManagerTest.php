@@ -17,6 +17,7 @@ use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
+use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
@@ -24,6 +25,7 @@ use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Auth\SignatureService;
+use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
@@ -51,6 +53,7 @@ final class HookManagerTest extends TestCase {
 		OrderMetaBackfillController::class,
 		OrderInvoiceKeyMetaBoxController::class,
 		OrderNoteInvoiceKeyController::class,
+		OrderBulkImportController::class,
 	);
 
 	private const CAPTURED_FILTERS = array(
@@ -251,6 +254,85 @@ final class HookManagerTest extends TestCase {
 		);
 	}
 
+	public function test_should_deliver_unchanged_order_while_force_import_is_active(): void {
+		$order = $this->makeOrder();
+		$this->givenOrder( $order );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+		$order->storedHash = $order->savedHash;
+
+		$order->forceImportExpiresAt = (string) ( time() + 600 );
+
+		self::assertTrue( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_should_not_deliver_unchanged_order_when_force_import_expired(): void {
+		$order = $this->makeOrder();
+		$this->givenOrder( $order );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+		$order->storedHash = $order->savedHash;
+
+		$order->forceImportExpiresAt = (string) ( time() - 1 );
+
+		self::assertFalse( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_should_deliver_keeps_false_even_when_force_import_is_active(): void {
+		$order                       = $this->makeOrder();
+		$order->forceImportExpiresAt = (string) ( time() + 600 );
+		$this->givenOrder( $order );
+
+		self::assertFalse( $this->shouldDeliver( false, self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_should_deliver_ignores_force_import_on_third_party_webhooks(): void {
+		Functions\expect( 'wc_get_order' )->never();
+
+		self::assertFalse( $this->shouldDeliver( false, self::OTHER_WEBHOOK_ID ) );
+		self::assertTrue( $this->shouldDeliver( true, self::OTHER_WEBHOOK_ID ) );
+	}
+
+	/**
+	 * @dataProvider forceImportTopics
+	 */
+	public function test_delivery_clears_force_import_mark_on_success( string $topic, bool $storesHash ): void {
+		WC_Webhook::$records[ self::ME_WEBHOOK_ID ]['topic'] = $topic;
+		$order                       = $this->makeOrder();
+		$order->forceImportExpiresAt = (string) ( time() + 600 );
+		$this->givenOrder( $order );
+
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		self::assertSame( array( ForceImportService::META_KEY ), $order->deletedMeta );
+		self::assertSame( $storesHash, $order->savedHash !== null );
+	}
+
+	public function forceImportTopics(): array {
+		return array(
+			'order.updated' => array( 'order.updated', true ),
+			'order.created' => array( 'order.created', false ),
+		);
+	}
+
+	public function test_delivery_keeps_force_import_mark_on_failure(): void {
+		$order                       = $this->makeOrder();
+		$order->forceImportExpiresAt = (string) ( time() + 600 );
+		$this->givenOrder( $order );
+
+		$this->deliver( 500, self::ME_WEBHOOK_ID );
+
+		self::assertSame( array(), $order->deletedMeta );
+	}
+
+	public function test_delivery_keeps_force_import_mark_for_third_party_webhooks(): void {
+		$order                       = $this->makeOrder();
+		$order->forceImportExpiresAt = (string) ( time() + 600 );
+		$this->givenOrder( $order );
+
+		$this->deliver( 200, self::OTHER_WEBHOOK_ID );
+
+		self::assertSame( array(), $order->deletedMeta );
+	}
+
 	public function test_delivery_stores_order_hash_on_success(): void {
 		$order = $this->makeOrder();
 		$this->givenOrder( $order );
@@ -347,7 +429,8 @@ final class HookManagerTest extends TestCase {
 	/**
 	 * Order mock whose getters read from the mutable $order->state array; the hash written by
 	 * update_meta_data() lands in $order->savedHash, get_meta() returns $order->storedHash and
-	 * save_meta_data() calls are counted in $order->metaSaves.
+	 * save_meta_data() calls are counted in $order->metaSaves. The force import mark is read from
+	 * $order->forceImportExpiresAt ('' = absent) and deleted keys are pushed into $order->deletedMeta.
 	 *
 	 * @return \Mockery\MockInterface&\WC_Order
 	 */
@@ -364,6 +447,9 @@ final class HookManagerTest extends TestCase {
 		$order->storedHash = '';
 		$order->savedHash  = null;
 		$order->metaSaves  = 0;
+
+		$order->forceImportExpiresAt = '';
+		$order->deletedMeta          = array();
 
 		$order->allows( 'get_status' )->andReturnUsing(
 			static function () use ( $order ) {
@@ -400,7 +486,24 @@ final class HookManagerTest extends TestCase {
 					return $order->state['invoice_key'];
 				}
 
+				if ( $key === ForceImportService::META_KEY ) {
+					return $order->forceImportExpiresAt;
+				}
+
 				return $key === self::HASH_META ? $order->storedHash : '';
+			}
+		);
+		$order->allows( 'meta_exists' )->andReturnUsing(
+			static function ( $key ) use ( $order ) {
+				return $key === ForceImportService::META_KEY && $order->forceImportExpiresAt !== '';
+			}
+		);
+		$order->allows( 'delete_meta_data' )->andReturnUsing(
+			static function ( $key ) use ( $order ): void {
+				$order->deletedMeta[] = $key;
+				if ( $key === ForceImportService::META_KEY ) {
+					$order->forceImportExpiresAt = '';
+				}
 			}
 		);
 		$order->allows( 'update_meta_data' )->andReturnUsing(
