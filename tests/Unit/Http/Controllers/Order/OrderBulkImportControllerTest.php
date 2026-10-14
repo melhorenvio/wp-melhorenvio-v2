@@ -454,12 +454,13 @@ final class OrderBulkImportControllerTest extends TestCase {
 	/**
 	 * @dataProvider blockedStatuses
 	 */
-	public function test_column_hides_button_for_completed_and_cancelled_orders( string $status ): void {
+	public function test_column_renders_disabled_button_for_completed_and_cancelled_orders( string $status ): void {
 		$this->givenNonceUrls();
 		$order = $this->givenOrder( 77, $status );
 		$this->givenOrder( 55, $status );
+		$disabled = '<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio." aria-label="Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio."><span class="dashicons dashicons-upload" aria-hidden="true"></span></span>';
 
-		$this->expectOutputString( '' );
+		$this->expectOutputString( $disabled . $disabled );
 
 		$this->controller->renderHposColumn( OrderBulkImportController::COLUMN, $order );
 		$this->controller->renderLegacyColumn( OrderBulkImportController::COLUMN, 55 );

@@ -183,7 +183,7 @@ final class OrderBulkImportController implements ControllerInterface {
 		<style>
 			.column-<?php echo esc_attr( self::COLUMN ); ?> { width: 7em; text-align: center !important; }
 			.me-import-order-button .dashicons { line-height: inherit; }
-			.me-import-order-button.disabled { pointer-events: none; }
+			.me-import-order-button.me-import-sending { pointer-events: none; }
 		</style>
 		<?php
 	}
@@ -253,7 +253,7 @@ final class OrderBulkImportController implements ControllerInterface {
 		(function () {
 			document.addEventListener('click', function (event) {
 				var button = event.target.closest ? event.target.closest('.me-import-order-button') : null;
-				if (button) button.classList.add('disabled');
+				if (button && !button.classList.contains('disabled')) button.classList.add('disabled', 'me-import-sending');
 			});
 
 			var action = '<?php echo esc_js( self::ACTION ); ?>';
@@ -304,12 +304,18 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	private function renderImportButton( \WC_Order $order ): void {
+		// Concluído/cancelado: botão cinza, sem ação; o tooltip explica o motivo.
+		// "no-link" impede a lista legada de abrir o pedido ao clicar na linha.
 		if ( $order->has_status( self::BLOCKED_STATUSES ) ) {
+			printf(
+				'<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="%1$s" aria-label="%1$s"><span class="dashicons dashicons-upload" aria-hidden="true"></span></span>',
+				esc_attr__( 'Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio.', 'melhor-envio-cotacao' )
+			);
 			return;
 		}
 
 		$orderId = $order->get_id();
-		$label = __( 'Importar para a Melhor Envio', 'melhor-envio-cotacao' );
+		$label   = __( 'Importar para a Melhor Envio', 'melhor-envio-cotacao' );
 		$url   = wp_nonce_url(
 			admin_url( 'admin-post.php?action=' . self::SINGLE_ACTION . '&order_id=' . $orderId ),
 			self::SINGLE_ACTION . '_' . $orderId
