@@ -175,7 +175,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		self::assertSame(
 			array(
 				'trash'      => 'Mover para lixeira',
-				self::ACTION => 'Importar para a Melhor Envio',
+				self::ACTION => 'Sincronizar na Melhor Envio',
 			),
 			$this->controller->addBulkAction( array( 'trash' => 'Mover para lixeira' ) )
 		);
@@ -236,7 +236,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 			$this->controller->handleBulkAction( self::REDIRECT, self::ACTION, array( 1 ) );
 			self::fail( 'wp_die was not called.' );
 		} catch ( RuntimeException $e ) {
-			self::assertSame( 'wp_die: Você não tem permissão para importar pedidos.', $e->getMessage() );
+			self::assertSame( 'wp_die: Você não tem permissão para sincronizar pedidos.', $e->getMessage() );
 		}
 
 		self::assertSame( array(), $this->transientsSet );
@@ -285,7 +285,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		foreach ( array( $first, $second ) as $order ) {
 			$order->expects( 'update_meta_data' )->with( ForceImportService::META_KEY, Mockery::type( 'int' ) );
 			$order->expects( 'save_meta_data' );
-			$order->expects( 'add_order_note' )->with( 'Importação para a Melhor Envio solicitada.' );
+			$order->expects( 'add_order_note' )->with( 'Sincronização na Melhor Envio solicitada.' );
 		}
 		$result = $this->controller->handleBulkAction(
 			self::REDIRECT . '&me_mi_import_error=limit&me_mi_import_sent=9',
@@ -320,7 +320,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$_GET['me_mi_import_sent'] = '3';
 
 		$this->expectOutputString(
-			'<div class="notice notice-success is-dismissible"><p>3 pedido(s) enviado(s) para importação na Melhor Envio. O resultado aparece nas notas de cada pedido.</p></div>'
+			'<div class="notice notice-success is-dismissible"><p>3 pedido(s) enviado(s) para sincronização na Melhor Envio. O resultado aparece nas notas de cada pedido.</p></div>'
 		);
 
 		$this->controller->renderNotice();
@@ -348,7 +348,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		return array(
 			'no_webhook' => array( 'no_webhook', 'O webhook da Melhor Envio não está configurado ou está inativo nesta loja. Reconecte a integração na Melhor Envio.' ),
 			'limit'      => array( 'limit', 'Selecione no máximo 50 pedidos por vez.' ),
-			'throttled'  => array( 'throttled', 'Aguarde alguns segundos antes de enviar uma nova importação.' ),
+			'throttled'  => array( 'throttled', 'Aguarde alguns segundos antes de enviar uma nova sincronização.' ),
 			'empty'      => array( 'empty', 'Selecione ao menos um pedido.' ),
 		);
 	}
@@ -411,7 +411,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$allowed->expects( 'add_order_note' );
 		$blocked = $this->givenOrder( 102, $status );
 		$blocked->expects( 'update_meta_data' )->never();
-		$blocked->expects( 'add_order_note' )->with( 'Importação para a Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser importados.' );
+		$blocked->expects( 'add_order_note' )->with( 'Sincronização na Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser sincronizados.' );
 
 		$result = $this->controller->handleBulkAction( self::REDIRECT, self::ACTION, array( 101, 102 ) );
 
@@ -425,7 +425,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 	public function test_handler_reports_when_only_blocked_orders_are_selected( string $status ): void {
 		$blocked = $this->givenOrder( 102, $status );
 		$blocked->expects( 'update_meta_data' )->never();
-		$blocked->expects( 'add_order_note' )->with( 'Importação para a Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser importados.' );
+		$blocked->expects( 'add_order_note' )->with( 'Sincronização na Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser sincronizados.' );
 
 		$result = $this->controller->handleBulkAction( self::REDIRECT, self::ACTION, array( 102 ) );
 
@@ -445,7 +445,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$_GET['me_mi_import_skipped'] = '3';
 
 		$this->expectOutputString(
-			'<div class="notice notice-success is-dismissible"><p>2 pedido(s) enviado(s) para importação na Melhor Envio. O resultado aparece nas notas de cada pedido. 3 pedido(s) concluído(s) ou cancelado(s) foram ignorados.</p></div>'
+			'<div class="notice notice-success is-dismissible"><p>2 pedido(s) enviado(s) para sincronização na Melhor Envio. O resultado aparece nas notas de cada pedido. 3 pedido(s) concluído(s) ou cancelado(s) foram ignorados.</p></div>'
 		);
 
 		$this->controller->renderNotice();
@@ -458,7 +458,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$this->givenNonceUrls();
 		$order = $this->givenOrder( 77, $status );
 		$this->givenOrder( 55, $status );
-		$disabled = '<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio." aria-label="Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio."><span class="dashicons dashicons-upload" aria-hidden="true"></span></span>';
+		$disabled = '<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="Pedidos concluídos ou cancelados não podem ser sincronizados na Melhor Envio." aria-label="Pedidos concluídos ou cancelados não podem ser sincronizados na Melhor Envio."><span class="dashicons dashicons-update" aria-hidden="true"></span></span>';
 
 		$this->expectOutputString( $disabled . $disabled );
 
@@ -503,7 +503,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$order = $this->givenOrder( 101 );
 		$order->expects( 'update_meta_data' )->with( ForceImportService::META_KEY, Mockery::type( 'int' ) );
 		$order->expects( 'save_meta_data' );
-		$order->expects( 'add_order_note' )->with( 'Importação para a Melhor Envio solicitada.' );
+		$order->expects( 'add_order_note' )->with( 'Sincronização na Melhor Envio solicitada.' );
 		$_GET['order_id'] = '101';
 		$this->givenSingleImportRedirect( self::REDIRECT . '&me_mi_import_sent=4' );
 
@@ -537,7 +537,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$_GET['order_id'] = '101';
 		$this->givenSingleImportRedirect( self::REDIRECT );
 
-		$this->expectExceptionMessage( 'wp_die: Você não tem permissão para importar pedidos.' );
+		$this->expectExceptionMessage( 'wp_die: Você não tem permissão para sincronizar pedidos.' );
 
 		$this->controller->handleSingleImport();
 	}
@@ -590,7 +590,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 
 	private function expectedButton( int $orderId ): string {
 		return sprintf(
-			'<a class="button me-import-order-button" href="https://shop.test/wp-admin/admin-post.php?action=melhor_integrador_import_order&order_id=%1$d&_wpnonce=melhor_integrador_import_order_%1$d" title="Importar para a Melhor Envio" aria-label="Importar para a Melhor Envio"><span class="dashicons dashicons-upload" aria-hidden="true"></span></a>',
+			'<a class="button me-import-order-button" href="https://shop.test/wp-admin/admin-post.php?action=melhor_integrador_import_order&order_id=%1$d&_wpnonce=melhor_integrador_import_order_%1$d" title="Sincronizar na Melhor Envio" aria-label="Sincronizar na Melhor Envio"><span class="dashicons dashicons-update" aria-hidden="true"></span></a>',
 			$orderId
 		);
 	}

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Ação em massa "Importar para a Melhor Envio" na listagem de pedidos, mais um botão
+ * Ação em massa "Sincronizar na Melhor Envio" na listagem de pedidos, mais um botão
  * por pedido (coluna própria, só ícone) para importar um único pedido.
  *
  * O plugin não monta nem assina payload: marca os pedidos para importação forçada
@@ -95,7 +95,7 @@ final class OrderBulkImportController implements ControllerInterface {
 
 	public function addBulkAction( array $actions ): array {
 		if ( $this->isAvailable() ) {
-			$actions[ self::ACTION ] = __( 'Importar para a Melhor Envio', 'melhor-envio-cotacao' );
+			$actions[ self::ACTION ] = __( 'Sincronizar na Melhor Envio', 'melhor-envio-cotacao' );
 		}
 
 		return $actions;
@@ -115,7 +115,7 @@ final class OrderBulkImportController implements ControllerInterface {
 		check_admin_referer( self::SCREENS[ $this->currentScreenId() ] ?? 'bulk-posts' );
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'Você não tem permissão para importar pedidos.', 'melhor-envio-cotacao' ) );
+			wp_die( esc_html__( 'Você não tem permissão para sincronizar pedidos.', 'melhor-envio-cotacao' ) );
 		}
 
 		return $this->run( (array) $ids, (string) $redirectTo, $this->lockKey() );
@@ -165,7 +165,7 @@ final class OrderBulkImportController implements ControllerInterface {
 		check_admin_referer( self::SINGLE_ACTION . '_' . $orderId );
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'Você não tem permissão para importar pedidos.', 'melhor-envio-cotacao' ) );
+			wp_die( esc_html__( 'Você não tem permissão para sincronizar pedidos.', 'melhor-envio-cotacao' ) );
 		}
 
 		$redirectTo = wp_get_referer() ?: admin_url( 'edit.php?post_type=shop_order' );
@@ -211,7 +211,7 @@ final class OrderBulkImportController implements ControllerInterface {
 			$skipped = absint( wp_unslash( $_GET[ self::SKIPPED_QUERY_ARG ] ?? 0 ) );
 			$message = sprintf(
 				/* translators: %d: quantidade de pedidos enviados. */
-				__( '%d pedido(s) enviado(s) para importação na Melhor Envio. O resultado aparece nas notas de cada pedido.', 'melhor-envio-cotacao' ),
+				__( '%d pedido(s) enviado(s) para sincronização na Melhor Envio. O resultado aparece nas notas de cada pedido.', 'melhor-envio-cotacao' ),
 				$sent
 			);
 
@@ -308,21 +308,21 @@ final class OrderBulkImportController implements ControllerInterface {
 		// "no-link" impede a lista legada de abrir o pedido ao clicar na linha.
 		if ( $order->has_status( self::BLOCKED_STATUSES ) ) {
 			printf(
-				'<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="%1$s" aria-label="%1$s"><span class="dashicons dashicons-upload" aria-hidden="true"></span></span>',
-				esc_attr__( 'Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio.', 'melhor-envio-cotacao' )
+				'<span class="button disabled no-link me-import-order-button" aria-disabled="true" title="%1$s" aria-label="%1$s"><span class="dashicons dashicons-update" aria-hidden="true"></span></span>',
+				esc_attr__( 'Pedidos concluídos ou cancelados não podem ser sincronizados na Melhor Envio.', 'melhor-envio-cotacao' )
 			);
 			return;
 		}
 
 		$orderId = $order->get_id();
-		$label   = __( 'Importar para a Melhor Envio', 'melhor-envio-cotacao' );
+		$label   = __( 'Sincronizar na Melhor Envio', 'melhor-envio-cotacao' );
 		$url   = wp_nonce_url(
 			admin_url( 'admin-post.php?action=' . self::SINGLE_ACTION . '&order_id=' . $orderId ),
 			self::SINGLE_ACTION . '_' . $orderId
 		);
 
 		printf(
-			'<a class="button me-import-order-button" href="%1$s" title="%2$s" aria-label="%2$s"><span class="dashicons dashicons-upload" aria-hidden="true"></span></a>',
+			'<a class="button me-import-order-button" href="%1$s" title="%2$s" aria-label="%2$s"><span class="dashicons dashicons-update" aria-hidden="true"></span></a>',
 			esc_url( $url ),
 			esc_attr( $label )
 		);
@@ -366,7 +366,7 @@ final class OrderBulkImportController implements ControllerInterface {
 			}
 
 			if ( $order->has_status( self::BLOCKED_STATUSES ) ) {
-				$order->add_order_note( __( 'Importação para a Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser importados.', 'melhor-envio-cotacao' ) );
+				$order->add_order_note( __( 'Sincronização na Melhor Envio não realizada: pedidos concluídos ou cancelados não podem ser sincronizados.', 'melhor-envio-cotacao' ) );
 				++$skipped;
 				continue;
 			}
@@ -379,7 +379,7 @@ final class OrderBulkImportController implements ControllerInterface {
 				$webhook->process( $order->get_id() );
 			}
 
-			$order->add_order_note( __( 'Importação para a Melhor Envio solicitada.', 'melhor-envio-cotacao' ) );
+			$order->add_order_note( __( 'Sincronização na Melhor Envio solicitada.', 'melhor-envio-cotacao' ) );
 			++$sent;
 		}
 
@@ -394,10 +394,10 @@ final class OrderBulkImportController implements ControllerInterface {
 				__( 'Selecione no máximo %d pedidos por vez.', 'melhor-envio-cotacao' ),
 				self::MAX_ORDERS
 			),
-			'throttled'      => __( 'Aguarde alguns segundos antes de enviar uma nova importação.', 'melhor-envio-cotacao' ),
+			'throttled'      => __( 'Aguarde alguns segundos antes de enviar uma nova sincronização.', 'melhor-envio-cotacao' ),
 			'empty'          => __( 'Selecione ao menos um pedido.', 'melhor-envio-cotacao' ),
-			'not_found'      => __( 'Nenhum pedido válido foi encontrado para importação.', 'melhor-envio-cotacao' ),
-			'blocked_status' => __( 'Pedidos concluídos ou cancelados não podem ser importados para a Melhor Envio.', 'melhor-envio-cotacao' ),
+			'not_found'      => __( 'Nenhum pedido válido foi encontrado para sincronização.', 'melhor-envio-cotacao' ),
+			'blocked_status' => __( 'Pedidos concluídos ou cancelados não podem ser sincronizados na Melhor Envio.', 'melhor-envio-cotacao' ),
 		);
 	}
 
