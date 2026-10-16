@@ -38,9 +38,12 @@ final class ForceImportServiceTest extends TestCase {
 
 		$before = time();
 		$this->service->mark( $order );
+		$after = time();
 
-		self::assertGreaterThanOrEqual( $before + 3600, $stored );
-		self::assertLessThanOrEqual( time() + 3600, $stored );
+		self::assertThat(
+			$stored,
+			self::logicalAnd( self::greaterThanOrEqual( $before + 3600 ), self::lessThanOrEqual( $after + 3600 ) )
+		);
 	}
 
 	public function test_active_expiration_is_returned_as_int(): void {
