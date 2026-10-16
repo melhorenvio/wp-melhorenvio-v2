@@ -140,6 +140,8 @@ final class HookManagerTest extends TestCase {
 		Functions\expect( 'delete_transient' )->once()->with( 'melhor_envio_integrador_signature' )->andReturn( true );
 
 		$this->manager->onUserLogout();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_hidden_order_item_meta_appends_melhor_envio_keys(): void {
@@ -352,6 +354,8 @@ final class HookManagerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->deliver( $code, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function unsuccessfulResponseCodes(): array {
@@ -368,6 +372,8 @@ final class HookManagerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->deliver( 200, self::OTHER_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_delivery_skips_other_topics(): void {
@@ -375,12 +381,16 @@ final class HookManagerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_delivery_skips_missing_order(): void {
 		Functions\expect( 'wc_get_order' )->once()->with( self::ORDER_ID )->andReturn( null );
 
 		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	/**

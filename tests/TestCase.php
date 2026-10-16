@@ -29,4 +29,14 @@ abstract class TestCase extends PHPUnitTestCase {
 		$_GET  = array();
 		parent::tearDown();
 	}
+
+	/**
+	 * Verifica as expectativas do Mockery/Brain Monkey (once(), never()...) e as conta como
+	 * assertions, para testes cujo único resultado observável é a chamada a uma função mockada.
+	 */
+	protected function assertMockExpectationsMet(): void {
+		$container = \Mockery::getContainer();
+		$container->mockery_verify();
+		$this->addToAssertionCount( $container->mockery_getExpectationCount() );
+	}
 }

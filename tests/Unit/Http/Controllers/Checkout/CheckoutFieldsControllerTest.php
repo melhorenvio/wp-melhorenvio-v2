@@ -64,6 +64,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		Functions\expect( 'update_option' )->once()->with( 'woocommerce_checkout_phone_field', 'required' );
 
 		$this->controller->ensureBlocksPhoneRequired();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_ensure_blocks_phone_required_skips_update_when_already_required(): void {
@@ -71,6 +73,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		Functions\expect( 'update_option' )->never();
 
 		$this->controller->ensureBlocksPhoneRequired();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	/*
@@ -653,6 +657,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 			->with( 'me-checkout-blocks', MELHORENVIO_URL . '/assets/css/me-checkout-blocks.css', array(), MELHORENVIO_VERSION );
 
 		$this->controller->enqueueBlocksAssets();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_enqueue_blocks_assets_skips_non_checkout_pages(): void {
@@ -661,6 +667,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		Functions\expect( 'wp_enqueue_style' )->never();
 
 		$this->controller->enqueueBlocksAssets();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_enqueue_assets_adds_inline_document_script_on_checkout(): void {
@@ -682,6 +690,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 			);
 
 		$this->controller->enqueueAssets();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_enqueue_assets_skips_non_checkout_pages(): void {
@@ -689,6 +699,8 @@ final class CheckoutFieldsControllerTest extends TestCase {
 		Functions\expect( 'wp_add_inline_script' )->never();
 
 		$this->controller->enqueueAssets();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	/*

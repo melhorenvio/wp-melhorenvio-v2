@@ -77,14 +77,14 @@ final class GetSettingsControllerTest extends TestCase {
 		);
 		$this->options[ self::SETTINGS_OPTION ] = $settings;
 
-		$response = $this->controller->handleRequest( new WP_REST_Request( 'GET', '/settings' ) );
+		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( $settings, $response->get_data() );
 	}
 
 	public function test_handle_request_returns_empty_settings_when_nothing_configured(): void {
-		$response = $this->controller->handleRequest( new WP_REST_Request( 'GET', '/settings' ) );
+		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( array(), $response->get_data() );

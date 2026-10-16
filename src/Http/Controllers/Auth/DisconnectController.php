@@ -44,7 +44,7 @@ final class DisconnectController extends RestEndpointContract {
 		);
 	}
 
-	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
+	public function handleRequest(): WP_REST_Response {
 		$this->secretManager->deleteSecret();
 		delete_option( 'melhor_envio_integrador_quotation_token' );
 		$this->shippingZoneSetup->removeMethod();

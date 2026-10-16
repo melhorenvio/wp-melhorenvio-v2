@@ -38,7 +38,7 @@ final class GetSettingsController extends RestEndpointContract {
 		);
 	}
 
-	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
+	public function handleRequest(): WP_REST_Response {
 		return new WP_REST_Response( $this->settingsService->getSettings(), 200 );
 	}
 }

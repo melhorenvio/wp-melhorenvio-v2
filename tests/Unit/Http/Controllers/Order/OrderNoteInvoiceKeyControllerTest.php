@@ -74,6 +74,8 @@ final class OrderNoteInvoiceKeyControllerTest extends TestCase {
 		Functions\expect( 'get_comment' )->never();
 
 		$this->controller->extractInvoiceKey( 10, new \stdClass() );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_ignores_missing_comment(): void {

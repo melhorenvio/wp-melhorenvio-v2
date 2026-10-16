@@ -104,9 +104,9 @@ final class OrderInvoiceKeyMetaBoxController {
 
 			<!-- Left: XML upload zone -->
 			<div id="me-nfe-upload-col">
-				<p style="margin:0 0 6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#646970;">
+				<label for="me_nfe_xml_upload" style="display:block;margin:0 0 6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#646970;">
 					<?php esc_html_e( 'Importar XML NF-e', 'melhor-envio-cotacao' ); ?>
-				</p>
+				</label>
 				<div id="me-nfe-drop-zone">
 					<input type="file" id="me_nfe_xml_upload" accept=".xml" />
 					<?php if ( $hasXml ) : ?>
@@ -155,11 +155,12 @@ final class OrderInvoiceKeyMetaBoxController {
 		</div>
 
 		<!-- Hidden field: raw XML content, filled by JS on file select -->
-		<textarea
+		<input
+			type="hidden"
 			name="<?php echo esc_attr( self::XML_FIELD_NAME ); ?>"
 			id="me_nfe_raw_xml"
-			style="display:none;"
-		></textarea>
+			value=""
+		/>
 
 		<script>
 		(function () {

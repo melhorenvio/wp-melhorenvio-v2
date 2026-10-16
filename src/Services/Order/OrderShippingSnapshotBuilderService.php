@@ -61,18 +61,10 @@ final class OrderShippingSnapshotBuilderService {
 		);
 
 		$shippingItems = $order->get_items( 'shipping' );
-
-		if ( empty( $shippingItems ) ) {
-			return $empty;
-		}
-
-		$shippingItem = reset( $shippingItems );
-
-		if ( $shippingItem->get_method_id() !== 'melhor_envio' ) {
-			return $empty;
-		}
-
-		$serviceId = (int) $shippingItem->get_meta( 'me_service_id', true );
+		$shippingItem  = reset( $shippingItems );
+		$serviceId     = $shippingItem && $shippingItem->get_method_id() === 'melhor_envio'
+			? (int) $shippingItem->get_meta( 'me_service_id', true )
+			: 0;
 
 		if ( ! $serviceId ) {
 			return $empty;

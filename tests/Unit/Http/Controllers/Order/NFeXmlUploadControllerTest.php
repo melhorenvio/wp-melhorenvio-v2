@@ -77,6 +77,8 @@ final class NFeXmlUploadControllerTest extends TestCase {
 		Functions\expect( 'wp_send_json_error' )->once()->with( array( 'message' => 'Insufficient permissions.' ), 403 );
 
 		$this->controller->handle();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_falls_back_to_inf_nfe_id_when_protocol_is_missing(): void {

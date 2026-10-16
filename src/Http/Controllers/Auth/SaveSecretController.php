@@ -50,27 +50,16 @@ final class SaveSecretController extends RestEndpointContract {
 
 	public function handleRequest( WP_REST_Request $request ): WP_REST_Response {
 		$secret = $request->get_param( 'secret' );
+		$error  = $this->validateSecret( $secret );
 
-		if ( empty( $secret ) ) {
-			return new WP_REST_Response(
-				array( 'message' => 'Secret is required.' ),
-				400
-			);
+		if ( $error === null && ! $this->secretManager->setSecret( $secret ) ) {
+			$error = array( 'Failed to save secret.', 500 );
 		}
 
-		if ( ! $this->isValidSecretFormat( $secret ) ) {
+		if ( $error !== null ) {
 			return new WP_REST_Response(
-				array( 'message' => 'Invalid secret format.' ),
-				400
-			);
-		}
-
-		$result = $this->secretManager->setSecret( $secret );
-
-		if ( ! $result ) {
-			return new WP_REST_Response(
-				array( 'message' => 'Failed to save secret.' ),
-				500
+				array( 'message' => $error[0] ),
+				$error[1]
 			);
 		}
 
@@ -80,6 +69,18 @@ final class SaveSecretController extends RestEndpointContract {
 			array( 'message' => 'Secret saved successfully.' ),
 			200
 		);
+	}
+
+	/**
+	 * @param mixed $secret
+	 * @return array{0: string, 1: int}|null Mensagem e status HTTP do erro, ou null quando válido.
+	 */
+	private function validateSecret( $secret ): ?array {
+		if ( empty( $secret ) ) {
+			return array( 'Secret is required.', 400 );
+		}
+
+		return $this->isValidSecretFormat( $secret ) ? null : array( 'Invalid secret format.', 400 );
 	}
 
 	private function isValidSecretFormat( string $secret ): bool {

@@ -64,7 +64,8 @@ final class ContainerTest extends TestCase {
 
 		$this->container->get( Leaf::class );
 
-		self::assertSame( $this->container, $received );
+		$expected = $this->container;
+		self::assertSame( $expected, $received );
 	}
 
 	public function test_uses_default_value_for_scalar_parameter(): void {

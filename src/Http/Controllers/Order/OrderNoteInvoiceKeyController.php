@@ -28,23 +28,23 @@ final class OrderNoteInvoiceKeyController implements ControllerInterface {
 			return;
 		}
 
-		$note = get_comment( (int) $noteId );
+		$invoiceKey = $this->findInvoiceKey( (int) $noteId );
 
-		if ( ! $note instanceof \WP_Comment ) {
-			return;
-		}
-
-		if ( ! preg_match( self::NFE_KEY_PATTERN, (string) $note->comment_content, $matches ) ) {
-			return;
-		}
-
-		$invoiceKey = $matches[0];
-
-		if ( $order->get_meta( OrderInvoiceKeyMetaBoxController::META_KEY, true ) === $invoiceKey ) {
+		if ( $invoiceKey === null || $order->get_meta( OrderInvoiceKeyMetaBoxController::META_KEY, true ) === $invoiceKey ) {
 			return;
 		}
 
 		$order->update_meta_data( OrderInvoiceKeyMetaBoxController::META_KEY, $invoiceKey );
 		$order->save();
+	}
+
+	private function findInvoiceKey( int $noteId ): ?string {
+		$note = get_comment( $noteId );
+
+		if ( ! $note instanceof \WP_Comment ) {
+			return null;
+		}
+
+		return preg_match( self::NFE_KEY_PATTERN, (string) $note->comment_content, $matches ) ? $matches[0] : null;
 	}
 }
