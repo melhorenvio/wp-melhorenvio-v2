@@ -394,6 +394,29 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$this->controller->renderSubmitGuard();
 	}
 
+	/**
+	 * @dataProvider orderScreens
+	 */
+	public function test_column_style_is_rendered_on_order_screens( string $screen ): void {
+		$this->screenId = $screen;
+
+		ob_start();
+		$this->controller->renderColumnStyle();
+		$output = (string) ob_get_clean();
+
+		self::assertStringContainsString( '<style>', $output );
+		self::assertStringContainsString( '.column-melhor_envio_import { width: 7em; text-align: center !important; }', $output );
+		self::assertStringContainsString( '.me-import-order-button.me-import-sending { pointer-events: none; }', $output );
+	}
+
+	public function test_column_style_is_not_rendered_outside_order_screens(): void {
+		$this->screenId = 'dashboard';
+
+		$this->expectOutputString( '' );
+
+		$this->controller->renderColumnStyle();
+	}
+
 	public function test_handler_reports_when_no_selected_order_exists(): void {
 		$result = $this->controller->handleBulkAction( self::REDIRECT, self::ACTION, array( 999 ) );
 
