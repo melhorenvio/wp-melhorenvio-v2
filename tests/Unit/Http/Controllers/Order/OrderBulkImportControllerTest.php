@@ -370,6 +370,15 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$this->controller->renderNotice();
 	}
 
+	public function test_notice_is_not_rendered_before_screen_is_set(): void {
+		Functions\when( 'get_current_screen' )->justReturn( null );
+		$_GET['me_mi_import_sent'] = '3';
+
+		$this->expectOutputString( '' );
+
+		$this->controller->renderNotice();
+	}
+
 	/**
 	 * @dataProvider orderScreens
 	 */

@@ -414,10 +414,6 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	private function currentScreenId(): string {
-		if ( ! function_exists( 'get_current_screen' ) ) {
-			return '';
-		}
-
 		$screen = get_current_screen();
 
 		return $screen ? (string) $screen->id : '';
