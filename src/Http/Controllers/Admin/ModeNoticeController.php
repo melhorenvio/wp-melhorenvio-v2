@@ -96,7 +96,6 @@ final class ModeNoticeController {
 			__( 'Regras de frete inteligentes', 'melhor-envio-cotacao' ),
 		);
 		?>
-		<?php // Mantém <div class="notice">: o common.js do WP só reposiciona notices que são div.notice. ?>
 		<div class="notice me-alert">
 			<div class="me-alert__body">
 				<h2 id="me-alert-title" class="me-alert__title">
