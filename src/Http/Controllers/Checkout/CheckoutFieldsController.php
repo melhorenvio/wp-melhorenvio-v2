@@ -199,13 +199,7 @@ final class CheckoutFieldsController {
 	// CNPJ alfanumérico (Receita Federal, jul/2026): posições 1-12 = [A-Z0-9], 13-14 = [0-9]
 	// Mapeamento: ord($c) - 48 (ex: '0'→0, 'A'→17, 'B'→18...)
 	private function isValidCnpj( string $cnpj ): bool {
-		if ( strlen( $cnpj ) !== 14 ) {
-			return false;
-		}
-		if ( ! preg_match( '/^[A-Z0-9]{12}[0-9]{2}$/', $cnpj ) ) {
-			return false;
-		}
-		if ( preg_match( '/^(.)\1{13}$/', $cnpj ) ) {
+		if ( strlen( $cnpj ) !== 14 || ! preg_match( '/^[A-Z0-9]{12}[0-9]{2}$/', $cnpj ) || preg_match( '/^(.)\1{13}$/', $cnpj ) ) {
 			return false;
 		}
 
@@ -311,22 +305,24 @@ final class CheckoutFieldsController {
 			return new \WP_Error( 'melhor_envio_document_required', __( 'Informe um CPF ou CNPJ.', 'melhor-envio-cotacao' ) );
 		}
 
-		if ( strlen( $value ) === 11 ) {
-			return $this->isValidCpf( $value )
+		$length = strlen( $value );
+
+		if ( $length === 11 ) {
+			$error = $this->isValidCpf( $value )
 				? null
 				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CPF inválido.', 'melhor-envio-cotacao' ) );
-		}
-
-		if ( strlen( $value ) === 14 ) {
-			return $this->isValidCnpj( $value )
+		} elseif ( $length === 14 ) {
+			$error = $this->isValidCnpj( $value )
 				? null
 				: new \WP_Error( 'melhor_envio_document_invalid', __( 'CNPJ inválido.', 'melhor-envio-cotacao' ) );
+		} else {
+			$error = new \WP_Error(
+				'melhor_envio_document_invalid',
+				__( 'Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).', 'melhor-envio-cotacao' )
+			);
 		}
 
-		return new \WP_Error(
-			'melhor_envio_document_invalid',
-			__( 'Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).', 'melhor-envio-cotacao' )
-		);
+		return $error;
 	}
 
 	public function saveFieldsFromBlocksRequest( \WC_Order $order ): void {
