@@ -85,48 +85,7 @@ final class QuotationController implements ControllerInterface {
 		$meMethods    = array_filter( $methods, fn( $m ) => $m->id === 'melhor_envio' );
 		$otherMethods = array_filter( $methods, fn( $m ) => $m->id !== 'melhor_envio' );
 
-		$onlyInCartMessage = __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' );
-
-		$result = array();
-
-		if ( ! empty( $meMethods ) ) {
-			if ( CartItemsBuilderService::isCompositeProduct( $product ) ) {
-				$compositeIds = sanitize_text_field( wp_unslash( $_POST['wooco_ids'] ?? '' ) );
-				$items        = $this->cartItemsBuilder->buildItemsForCompositeProduct( $product, $quantity, $compositeIds );
-
-				if ( $items === null ) {
-					wp_send_json_error(
-						array( 'message' => __( 'Selecione os itens da composição antes de calcular o frete.', 'melhor-envio-cotacao' ) )
-					);
-				}
-			} elseif ( CartItemsBuilderService::isBundleProduct( $product ) ) {
-				$bundleIds = sanitize_text_field( wp_unslash( $_POST['woosb_ids'] ?? '' ) );
-
-				if ( empty( $bundleIds ) && CartItemsBuilderService::bundleHasOptionalItems( $product ) ) {
-					wp_send_json_error( array( 'message' => $onlyInCartMessage ) );
-				}
-
-				$items = $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
-			} else {
-				$items = array(
-					$this->cartItemsBuilder->toApiItem(
-						$this->cartItemsBuilder->toLine( $product, $quantity, (float) $product->get_price() )
-					),
-				);
-			}
-
-			$quotations = $this->apiClient->getQuotations( $fromCep, $cep, $items );
-
-			$result = array_map(
-				static fn( $q ) => array(
-					'name'          => $q['name'] ?? '',
-					'company'       => $q['company']['name'] ?? '',
-					'price'         => (float) ( $q['custom_price'] ?? $q['price'] ?? 0 ),
-					'delivery_time' => (int) ( $q['custom_delivery_time'] ?? $q['delivery_time'] ?? 0 ),
-				),
-				array_values( $quotations )
-			);
-		}
+		$result = empty( $meMethods ) ? array() : $this->buildMelhorEnvioRates( $product, $quantity, $fromCep, $cep );
 
 		$result = array_merge( $result, $this->buildNativeRates( $otherMethods, $package, $product->get_shipping_class_id() ) );
 
@@ -137,6 +96,58 @@ final class QuotationController implements ControllerInterface {
 		usort( $result, static fn( $a, $b ) => $a['price'] <=> $b['price'] );
 
 		wp_send_json_success( $result );
+	}
+
+	private function buildMelhorEnvioRates( \WC_Product $product, int $quantity, string $fromCep, string $toCep ): array {
+		$items      = $this->buildItemsForProduct( $product, $quantity );
+		$quotations = $this->apiClient->getQuotations( $fromCep, $toCep, $items );
+
+		return array_map(
+			static fn( $q ) => array(
+				'name'          => $q['name'] ?? '',
+				'company'       => $q['company']['name'] ?? '',
+				'price'         => (float) ( $q['custom_price'] ?? $q['price'] ?? 0 ),
+				'delivery_time' => (int) ( $q['custom_delivery_time'] ?? $q['delivery_time'] ?? 0 ),
+			),
+			array_values( $quotations )
+		);
+	}
+
+	/**
+	 * Itens de cotação do produto da página, considerando a seleção viva do formulário
+	 * para composições (WPC Composite) e kits (WPC Bundles).
+	 */
+	private function buildItemsForProduct( \WC_Product $product, int $quantity ): array {
+		if ( CartItemsBuilderService::isCompositeProduct( $product ) ) {
+			$compositeIds = sanitize_text_field( wp_unslash( $_POST['wooco_ids'] ?? '' ) );
+			$items        = $this->cartItemsBuilder->buildItemsForCompositeProduct( $product, $quantity, $compositeIds );
+
+			if ( $items === null ) {
+				wp_send_json_error(
+					array( 'message' => __( 'Selecione os itens da composição antes de calcular o frete.', 'melhor-envio-cotacao' ) )
+				);
+			}
+
+			return $items;
+		}
+
+		if ( CartItemsBuilderService::isBundleProduct( $product ) ) {
+			$bundleIds = sanitize_text_field( wp_unslash( $_POST['woosb_ids'] ?? '' ) );
+
+			if ( empty( $bundleIds ) && CartItemsBuilderService::bundleHasOptionalItems( $product ) ) {
+				wp_send_json_error(
+					array( 'message' => __( 'Cotação deste produto disponível apenas no carrinho.', 'melhor-envio-cotacao' ) )
+				);
+			}
+
+			return $this->cartItemsBuilder->buildItemsForBundleProduct( $product, $quantity, $bundleIds ?: null );
+		}
+
+		return array(
+			$this->cartItemsBuilder->toApiItem(
+				$this->cartItemsBuilder->toLine( $product, $quantity, (float) $product->get_price() )
+			),
+		);
 	}
 
 	/**
@@ -202,35 +213,32 @@ final class QuotationController implements ControllerInterface {
 	 * cotação da página de produto não tem como validar isso sem o carrinho.
 	 */
 	private function freeShippingObservation( \WC_Shipping_Method $method ): string {
-		$minAmount = (float) ( $method->min_amount ?? 0 );
+		$minAmount   = (float) ( $method->min_amount ?? 0 );
+		$observation = '';
 
 		if ( $method->requires === 'both' ) {
-			return sprintf(
+			$observation = sprintf(
 				/* translators: %s: minimum order amount, e.g. R$10,00 */
 				__( 'Frete grátis para pedidos com valor mínimo de %s e uso de cupom.', 'melhor-envio-cotacao' ),
 				$this->formatPrice( $minAmount )
 			);
-		}
-
-		if ( $method->requires === 'either' ) {
-			return $minAmount > 0
+		} elseif ( $method->requires === 'either' ) {
+			$observation = $minAmount > 0
 				? sprintf(
 					/* translators: %s: minimum order amount, e.g. R$10,00 */
 					__( 'Frete grátis para pedidos com valor mínimo de %s ou uso de cupom.', 'melhor-envio-cotacao' ),
 					$this->formatPrice( $minAmount )
 				)
 				: __( 'Frete grátis mediante uso de cupom.', 'melhor-envio-cotacao' );
-		}
-
-		if ( $method->requires === 'min_amount' && $minAmount > 0 ) {
-			return sprintf(
+		} elseif ( $method->requires === 'min_amount' && $minAmount > 0 ) {
+			$observation = sprintf(
 				/* translators: %s: minimum order amount, e.g. R$10,00 */
 				__( 'Frete grátis para pedidos com valor mínimo de %s.', 'melhor-envio-cotacao' ),
 				$this->formatPrice( $minAmount )
 			);
 		}
 
-		return '';
+		return $observation;
 	}
 
 	private function formatPrice( float $value ): string {
