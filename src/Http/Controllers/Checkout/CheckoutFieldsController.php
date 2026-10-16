@@ -199,7 +199,7 @@ final class CheckoutFieldsController {
 	// CNPJ alfanumérico (Receita Federal, jul/2026): posições 1-12 = [A-Z0-9], 13-14 = [0-9]
 	// Mapeamento: ord($c) - 48 (ex: '0'→0, 'A'→17, 'B'→18...)
 	private function isValidCnpj( string $cnpj ): bool {
-		if ( strlen( $cnpj ) !== 14 || ! preg_match( '/^[A-Z0-9]{12}[0-9]{2}$/', $cnpj ) || preg_match( '/^(.)\1{13}$/', $cnpj ) ) {
+		if ( strlen( $cnpj ) !== 14 || ! preg_match( '/^[A-Z\d]{12}\d{2}$/', $cnpj ) || preg_match( '/^(.)\1{13}$/', $cnpj ) ) {
 			return false;
 		}
 
