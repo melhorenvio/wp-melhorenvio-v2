@@ -1,9 +1,9 @@
 === Melhor Envio ===
-Version: 3.0.5
+Version: 3.0.6
 Tags: frete, cotação, logística, envio, melhor envio
 Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 3.0.5
+Stable tag: 3.0.6
 Requires PHP: 7.4
 Requires Wordpress 4.7+
 Requires WooCommerce 4.0+
@@ -59,6 +59,17 @@ Não esqueça de cadastrar corretamente as medidas do produto na aba de entrega 
 Pronto! O plugin do Melhor Envio está funcionando.
 
 == Changelog ==
+
+= 3.0.6 =
+* Adiciona sincronização sob demanda de pedidos na Melhor Envio (ação em massa e botão por pedido na lista de pedidos)
+* Extrai automaticamente a chave da NF-e das notas do pedido (ex.: integração com Bling)
+* Corrige campos do checkout clássico (CPF/CNPJ, número e bairro) não salvos no pedido com HPOS ativo
+* Corrige validação de CPF no checkout, que aceitava letras
+* Corrige valor declarado de kits WPC Bundle/Composite, que era dividido pela quantidade
+* Corrige dimensões padrão fixas convertidas indevidamente em lojas configuradas em g/mm
+* Corrige erro ao reenviar o mesmo secret na conexão com o Melhor Integrador
+* Corrige erro ao salvar configurações no PHP 7.4
+* Corrige erro fatal ao carregar o repositório de banco de dados
 
 = 3.0.5 =
 * Corrige erro "Usuário não autorizado" ao finalizar pedido no modo Melhor Integrador sem token do plugin antigo configurado
