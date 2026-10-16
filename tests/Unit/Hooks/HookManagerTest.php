@@ -18,6 +18,7 @@ use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
+use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
@@ -54,6 +55,7 @@ final class HookManagerTest extends TestCase {
 		OrderInvoiceKeyMetaBoxController::class,
 		OrderNoteInvoiceKeyController::class,
 		OrderBulkImportController::class,
+		OrderBulkImportNoticeController::class,
 	);
 
 	private const CAPTURED_FILTERS = array(

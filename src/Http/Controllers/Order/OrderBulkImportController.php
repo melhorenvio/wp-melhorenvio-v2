@@ -9,6 +9,7 @@ use MelhorEnvio\Services\Admin\PluginModeService;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
+use MelhorEnvio\Support\OrderListScreen;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -37,12 +38,6 @@ final class OrderBulkImportController implements ControllerInterface {
 	// Pedido concluído ou cancelado nunca é importado, nem forçado (o MI também barra).
 	private const BLOCKED_STATUSES = array( 'completed', 'cancelled' );
 
-	// Telas da listagem de pedidos: posts (legado) e HPOS, com o nonce que o core/WC usa em cada uma.
-	private const SCREENS = array(
-		'edit-shop_order'            => 'bulk-posts',
-		'woocommerce_page_wc-orders' => 'bulk-orders',
-	);
-
 	private const LOCK_TRANSIENT_PREFIX = 'melhor_integrador_import_lock_';
 
 	private SecretService $secretService;
@@ -65,7 +60,7 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	public function register(): void {
-		foreach ( array_keys( self::SCREENS ) as $screen ) {
+		foreach ( array_keys( OrderListScreen::SCREENS ) as $screen ) {
 			add_filter( 'bulk_actions-' . $screen, array( $this, 'addBulkAction' ) );
 			add_filter( 'handle_bulk_actions-' . $screen, array( $this, 'handleBulkAction' ), 10, 3 );
 		}
@@ -77,10 +72,8 @@ final class OrderBulkImportController implements ControllerInterface {
 		add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'renderHposColumn' ), 10, 2 );
 		add_action( 'admin_post_' . self::SINGLE_ACTION, array( $this, 'handleSingleImport' ) );
 
-		add_action( 'admin_notices', array( $this, 'renderNotice' ) );
 		add_action( 'admin_head', array( $this, 'renderColumnStyle' ) );
 		add_action( 'admin_footer', array( $this, 'renderSubmitGuard' ) );
-		add_filter( 'removable_query_args', array( $this, 'addRemovableQueryArgs' ) );
 	}
 
 	public function isAvailable(): bool {
@@ -112,7 +105,7 @@ final class OrderBulkImportController implements ControllerInterface {
 			return $redirectTo;
 		}
 
-		check_admin_referer( self::SCREENS[ $this->currentScreenId() ] ?? 'bulk-posts' );
+		check_admin_referer( OrderListScreen::bulkNonceAction() );
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( esc_html__( 'Você não tem permissão para sincronizar pedidos.', 'melhor-envio-cotacao' ) );
@@ -176,7 +169,7 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	public function renderColumnStyle(): void {
-		if ( ! $this->isOrdersScreen() ) {
+		if ( ! OrderListScreen::isCurrent() ) {
 			return;
 		}
 		?>
@@ -189,63 +182,10 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	/**
-	 * O WP limpa esses args da URL no navegador, evitando repetir o aviso ao recarregar.
-	 */
-	public function addRemovableQueryArgs( array $args ): array {
-		$args[] = self::SENT_QUERY_ARG;
-		$args[] = self::SKIPPED_QUERY_ARG;
-		$args[] = self::ERROR_QUERY_ARG;
-
-		return $args;
-	}
-
-	public function renderNotice(): void {
-		if ( ! $this->isOrdersScreen() ) {
-			return;
-		}
-
-		// Somente leitura do resultado da ação (o nonce foi validado no envio).
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET[ self::SENT_QUERY_ARG ] ) ) {
-			$sent    = absint( wp_unslash( $_GET[ self::SENT_QUERY_ARG ] ) );
-			$skipped = absint( wp_unslash( $_GET[ self::SKIPPED_QUERY_ARG ] ?? 0 ) );
-			$message = sprintf(
-				/* translators: %d: quantidade de pedidos enviados. */
-				__( '%d pedido(s) enviado(s) para sincronização na Melhor Envio. O resultado aparece nas notas de cada pedido.', 'melhor-envio-cotacao' ),
-				$sent
-			);
-
-			if ( $skipped > 0 ) {
-				$message .= ' ' . sprintf(
-					/* translators: %d: quantidade de pedidos ignorados. */
-					__( '%d pedido(s) concluído(s) ou cancelado(s) foram ignorados.', 'melhor-envio-cotacao' ),
-					$skipped
-				);
-			}
-
-			$this->printNotice( 'success', $message );
-			return;
-		}
-
-		if ( ! isset( $_GET[ self::ERROR_QUERY_ARG ] ) ) {
-			return;
-		}
-
-		$code = sanitize_key( wp_unslash( $_GET[ self::ERROR_QUERY_ARG ] ) );
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		$messages = $this->errorMessages();
-
-		if ( isset( $messages[ $code ] ) ) {
-			$this->printNotice( 'error', $messages[ $code ] );
-		}
-	}
-
-	/**
 	 * Evita envio duplo: desabilita os botões "Aplicar" ao submeter a nossa ação.
 	 */
 	public function renderSubmitGuard(): void {
-		if ( ! $this->isOrdersScreen() || ! $this->isAvailable() ) {
+		if ( ! OrderListScreen::isCurrent() || ! $this->isAvailable() ) {
 			return;
 		}
 		?>
@@ -329,25 +269,21 @@ final class OrderBulkImportController implements ControllerInterface {
 	}
 
 	private function validate( array $ids, string $lockKey ): ?string {
+		$error = null;
+
 		if ( get_transient( $lockKey ) ) {
-			return 'throttled';
+			$error = 'throttled';
+		} elseif ( empty( $ids ) ) {
+			$error = 'empty';
+		} elseif ( count( $ids ) > self::MAX_ORDERS ) {
+			$error = 'limit';
+		} elseif ( empty( $this->webhookService->getDeliverableWebhooks() ) ) {
+			$error = 'no_webhook';
+		} else {
+			set_transient( $lockKey, 1, self::THROTTLE_SECONDS );
 		}
 
-		if ( empty( $ids ) ) {
-			return 'empty';
-		}
-
-		if ( count( $ids ) > self::MAX_ORDERS ) {
-			return 'limit';
-		}
-
-		if ( empty( $this->webhookService->getDeliverableWebhooks() ) ) {
-			return 'no_webhook';
-		}
-
-		set_transient( $lockKey, 1, self::THROTTLE_SECONDS );
-
-		return null;
+		return $error;
 	}
 
 	/**
@@ -384,38 +320,5 @@ final class OrderBulkImportController implements ControllerInterface {
 		}
 
 		return array( $sent, $skipped );
-	}
-
-	private function errorMessages(): array {
-		return array(
-			'no_webhook'     => __( 'O webhook da Melhor Envio não está configurado ou está inativo nesta loja. Reconecte a integração na Melhor Envio.', 'melhor-envio-cotacao' ),
-			'limit'          => sprintf(
-				/* translators: %d: quantidade máxima de pedidos por envio. */
-				__( 'Selecione no máximo %d pedidos por vez.', 'melhor-envio-cotacao' ),
-				self::MAX_ORDERS
-			),
-			'throttled'      => __( 'Aguarde alguns segundos antes de enviar uma nova sincronização.', 'melhor-envio-cotacao' ),
-			'empty'          => __( 'Selecione ao menos um pedido.', 'melhor-envio-cotacao' ),
-			'not_found'      => __( 'Nenhum pedido válido foi encontrado para sincronização.', 'melhor-envio-cotacao' ),
-			'blocked_status' => __( 'Pedidos concluídos ou cancelados não podem ser sincronizados na Melhor Envio.', 'melhor-envio-cotacao' ),
-		);
-	}
-
-	private function printNotice( string $type, string $message ): void {
-		printf(
-			'<div class="notice notice-%1$s is-dismissible"><p>%2$s</p></div>',
-			esc_attr( $type ),
-			esc_html( $message )
-		);
-	}
-
-	private function isOrdersScreen(): bool {
-		return isset( self::SCREENS[ $this->currentScreenId() ] );
-	}
-
-	private function currentScreenId(): string {
-		$screen = get_current_screen();
-
-		return $screen ? (string) $screen->id : '';
 	}
 }

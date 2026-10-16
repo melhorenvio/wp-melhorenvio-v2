@@ -8,6 +8,7 @@ use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
 use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
+use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Services\Auth\SignatureService;
@@ -78,6 +79,9 @@ final class HookManager {
 
 		$orderBulkImport = $this->container->get( OrderBulkImportController::class );
 		$orderBulkImport->register();
+
+		$orderBulkImportNotice = $this->container->get( OrderBulkImportNoticeController::class );
+		$orderBulkImportNotice->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
