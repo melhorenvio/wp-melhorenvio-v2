@@ -6,21 +6,41 @@
     "minimum-stability": "stable",
     "authors": [
         {
-            "name": "Vinícius Schlee Tessmann",
-            "email": "vinicius.tessmann@melhorenvio.com",
-            "homepage": "https://www.melhorenvio.com.br",
-            "role": "Developer"
+            "name": "Melhor Envio",
+            "email": "contato@melhorenvio.com",
+            "homepage": "https://www.melhorenvio.com.br"
         }
     ],
     "autoload": {
         "psr-4": {
-            "MelhorEnvio\\Controllers\\": "Controllers/",
-            "MelhorEnvio\\Models\\": "Models/",
-            "MelhorEnvio\\Interfaces\\": "core/interfaces/",
-            "MelhorEnvio\\Services\\": "Services/",
-            "MelhorEnvio\\Bases\\": "core/bases/",
-            "MelhorEnvio\\Helpers\\": "Helpers/",
-            "MelhorEnvio\\Factory\\": "Factory/"
+            "MelhorEnvio\\": "src/",
+            "MelhorEnvio\\Controllers\\": "legacy/Controllers/",
+            "MelhorEnvio\\Models\\": "legacy/Models/",
+            "MelhorEnvio\\Interfaces\\": "legacy/core/interfaces/",
+            "MelhorEnvio\\Services\\": "legacy/Services/",
+            "MelhorEnvio\\Bases\\": "legacy/core/bases/",
+            "MelhorEnvio\\Helpers\\": "legacy/Helpers/",
+            "MelhorEnvio\\Factory\\": "legacy/Factory/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brain/monkey": "^2.6",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MelhorEnvio\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.33"
+        },
+        "sort-packages": true
     }
 }

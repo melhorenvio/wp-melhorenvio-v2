@@ -1,0 +1,24 @@
+/*
+ * Reordena os campos do form de endereço no Checkout Blocks só com CSS (flexbox `order`),
+ * sem tocar em DOM - o form (.wc-block-components-address-form) já é `display:flex;
+ * flex-wrap:wrap`, então isso é o único jeito seguro de reposicionar campo custom entre
+ * campos nativos (a alternativa seria mover nó via JS, que é exatamente o que causava o
+ * crash de removeChild que corrigimos).
+ *
+ * Ordem alvo: nome/sobrenome, CPF/CNPJ, empresa, país, endereço, número + bairro (mesma
+ * linha), cidade, estado, CEP, telefone.
+ */
+.wc-block-components-address-form__first_name { order: 1; }
+.wc-block-components-address-form__last_name { order: 2; }
+.wc-block-components-address-form__melhor-envio-cotacao-billing-document { order: 3; }
+.wc-block-components-address-form__company { order: 4; }
+.wc-block-components-address-form__country { order: 5; }
+.wc-block-components-address-form__address_1 { order: 6; }
+.wc-block-components-address-form__address_2-toggle,
+.wc-block-components-address-form__address_2-hidden-input { order: 7; }
+.wc-block-components-address-form__melhor-envio-cotacao-address-number { order: 8; }
+.wc-block-components-address-form__melhor-envio-cotacao-neighborhood { order: 9; }
+.wc-block-components-address-form__city { order: 10; }
+.wc-block-components-address-form__state { order: 11; }
+.wc-block-components-address-form__postcode { order: 12; }
+.wc-block-components-address-form__phone { order: 13; }

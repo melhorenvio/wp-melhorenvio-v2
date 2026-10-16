@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+	<infNFe Id="NFe35240612345678000190550010000001231234567890" versao="4.00">
+		<ide><cUF>35</cUF><mod>55</mod><nNF>123</nNF></ide>
+	</infNFe>
+</NFe>

@@ -1,0 +1,39 @@
+{
+	local_certs
+}
+
+# Proxy compartilhado para o fluxo Melhor Integrador (dev local, sem tunnel).
+# Cada host responde em HTTP (server-to-server entre containers, sem redirect
+# forcado) e HTTPS (browser, cert interno do caddy). Mesma URL resolve igual
+# do browser (.localhost -> 127.0.0.1) e de qualquer container (alias -> caddy).
+
+# .localhost -> resolvido pelo browser (Windows/Chrome nativo -> 127.0.0.1).
+# .me.test   -> resolvido por containers cujo glibc faz hijack de *.localhost
+#               para loopback (ex: WordPress). Mesmo backend, dois nomes.
+#
+# Alvos (resolvidos na rede externa tray-native_sail):
+#   app:80                 -> backend tray-native (service "app")
+#   wp-melhorenvio-cotacao:80 -> container do plugin WordPress (cotacao)
+#   wordpress:3030         -> frontend melhor-integrador-app (alias setado por mi-network)
+#   int-1-proxy:80         -> proxy da Melhor Envio (alias setado por mi-network)
+
+http://app.localhost, https://app.localhost, http://app.me.test, https://app.me.test {
+	reverse_proxy app:80
+}
+
+http://cotacao.localhost, https://cotacao.localhost, http://cotacao.me.test, https://cotacao.me.test {
+	reverse_proxy wp-melhorenvio-cotacao:80
+}
+
+http://wp.localhost, https://wp.localhost, http://wp.me.test, https://wp.me.test {
+	reverse_proxy wp-melhor-integrador-wp:80
+}
+
+http://front.localhost, https://front.localhost, http://front.me.test, https://front.me.test {
+	handle /api/* {
+		reverse_proxy int-1-proxy:80
+	}
+	handle {
+		reverse_proxy wordpress:3030
+	}
+}

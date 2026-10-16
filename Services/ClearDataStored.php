@@ -2,61 +2,36 @@
 
 namespace MelhorEnvio\Services;
 
-use MelhorEnvio\Models\Seller;
-use MelhorEnvio\Models\Session;
-use MelhorEnvio\Models\ShippingService;
-use MelhorEnvio\Helpers\SessionHelper;
-
+/**
+ * Compatibility shim for upgrades from 2.x.
+ *
+ * The 2.x Composer autoloader maps MelhorEnvio\Services\ to Services/ (no legacy/ prefix).
+ * During upgrade the old autoloader stays in memory while new files replace the disk,
+ * so this standalone class satisfies the old autoloader without pulling in legacy dependencies.
+ *
+ * Remove this file in 4.0 when legacy/ is dropped.
+ */
 class ClearDataStored {
 
-	public function __construct() {
-		SessionHelper::initIfNotExists();
-	}
-	/**
-	 * Function to clear data about seller stored in session or database.
-	 *
-	 * @return void
-	 */
-	public function clear() {
-		( new Seller() )->destroy();
-		( new ShippingService() )->destroy();
+    public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
+    }
 
-		if (  empty( $_SESSION[ Session::ME_KEY ] ) ) {
-            return false;
+    public function clear() {
+        delete_option('wp_melhor_envio_seller');
+        delete_option('shipping_services_melhor_envio');
+
+        $meKey = 'melhor_envio_session';
+        if (empty($_SESSION[$meKey])) {
+            return;
         }
 
-        foreach ( $_SESSION[ Session::ME_KEY ] as $hash => $item) {
-
-            if ( $hash != 'notices_melhor_envio' ) {
-                
-                if (!$this->hasDataOnSession($hash)) {
-                    continue;
-                }
-
-                unset( $_SESSION[ Session::ME_KEY ][ $hash ] );
+        foreach ($_SESSION[$meKey] as $hash => $item) {
+            if ($hash !== 'notices_melhor_envio' && isset($_SESSION[$meKey][$hash])) {
+                unset($_SESSION[$meKey][$hash]);
             }
         }
-	}
-
-    /**
-     * @param string $hash
-     * @return bool
-     */
-    private function hasDataOnSession($hash)
-    {
-        $hasData = true;
-        if (empty($_SESSION)) {
-            $hasData = false;
-        }
-
-        if (empty($_SESSION[ Session::ME_KEY ])) {
-            $hasData = false;
-        }
-
-        if (empty($_SESSION[ Session::ME_KEY ][ $hash ])) {
-            $hasData = false;
-        }
-
-        return $hasData;
     }
 }
