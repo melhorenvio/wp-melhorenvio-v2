@@ -167,15 +167,7 @@ final class HookManager {
 		add_filter(
 			'woocommerce_webhook_should_deliver',
 			static function ( bool $should_deliver, \WC_Webhook $webhook, int $arg ) use ( $webhooks, $forceImport ): bool {
-				if ( ! $should_deliver ) {
-					return false;
-				}
-
-				if ( ! $webhooks->isMelhorIntegradorWebhook( $webhook ) ) {
-					return $should_deliver;
-				}
-
-				if ( 'order.updated' !== $webhook->get_topic() ) {
+				if ( ! $should_deliver || ! $webhooks->isMelhorIntegradorWebhook( $webhook ) || 'order.updated' !== $webhook->get_topic() ) {
 					return $should_deliver;
 				}
 
@@ -185,11 +177,8 @@ final class HookManager {
 				}
 
 				// Importação forçada pelo lojista: entrega mesmo sem mudança relevante no pedido.
-				if ( $forceImport->isActive( $order ) ) {
-					return true;
-				}
-
-				return self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
+				return $forceImport->isActive( $order )
+					|| self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
 			},
 			10,
 			3
@@ -203,25 +192,9 @@ final class HookManager {
 		add_action(
 			'woocommerce_webhook_delivery',
 			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport ): void {
-				$response_code = (int) wp_remote_retrieve_response_code( $response );
+				$topic = self::deliveredOrderTopic( $webhooks, $response, $webhook_id );
+				$order = null !== $topic ? wc_get_order( $arg ) : null;
 
-				if ( $response_code < 200 || $response_code >= 300 ) {
-					return;
-				}
-
-				$webhook = new \WC_Webhook( $webhook_id );
-
-				if ( ! $webhooks->isMelhorIntegradorWebhook( $webhook ) ) {
-					return;
-				}
-
-				$topic = $webhook->get_topic();
-
-				if ( 'order.updated' !== $topic && 'order.created' !== $topic ) {
-					return;
-				}
-
-				$order = wc_get_order( $arg );
 				if ( ! $order instanceof \WC_Order ) {
 					return;
 				}
@@ -229,16 +202,35 @@ final class HookManager {
 				// Marca de uso único: o MI já recebeu o pedido com ela.
 				$forceImport->clear( $order );
 
-				if ( 'order.updated' !== $topic ) {
-					return;
+				if ( 'order.updated' === $topic ) {
+					$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
+					$order->save_meta_data();
 				}
-
-				$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
-				$order->save_meta_data();
 			},
 			10,
 			5
 		);
+	}
+
+	/**
+	 * Tópico de pedido (order.created/order.updated) de uma entrega 2xx do webhook do MI,
+	 * ou null quando a entrega falhou ou não é do MI.
+	 *
+	 * @param array|\WP_Error $response
+	 */
+	private static function deliveredOrderTopic( MelhorIntegradorWebhookService $webhooks, $response, int $webhookId ): ?string {
+		$responseCode = (int) wp_remote_retrieve_response_code( $response );
+
+		if ( $responseCode < 200 || $responseCode >= 300 ) {
+			return null;
+		}
+
+		$webhook = new \WC_Webhook( $webhookId );
+		$topic   = $webhook->get_topic();
+
+		return in_array( $topic, array( 'order.created', 'order.updated' ), true ) && $webhooks->isMelhorIntegradorWebhook( $webhook )
+			? $topic
+			: null;
 	}
 
 	private static function buildOrderHash( \WC_Order $order ): string {
