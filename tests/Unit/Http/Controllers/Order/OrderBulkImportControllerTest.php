@@ -370,6 +370,17 @@ final class OrderBulkImportControllerTest extends TestCase {
 		$this->controller->renderNotice();
 	}
 
+	/**
+	 * @dataProvider orderScreens
+	 */
+	public function test_notice_is_not_rendered_without_result_query_args( string $screen ): void {
+		$this->screenId = $screen;
+
+		$this->expectOutputString( '' );
+
+		$this->controller->renderNotice();
+	}
+
 	public function test_submit_guard_disables_apply_buttons_for_our_action(): void {
 		$this->expectOutputRegex(
 			"/<script>.*var action = 'melhor_integrador_import';.*'Enviando…'.*bulk-action-selector-top.*bulk-action-selector-bottom.*'doaction', 'doaction2'.*disabled = true.*<\/script>/s"
