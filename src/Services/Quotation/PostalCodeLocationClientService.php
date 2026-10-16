@@ -54,11 +54,9 @@ final class PostalCodeLocationClientService {
 			return null;
 		}
 
-		if ( wp_remote_retrieve_response_code( $response ) !== 200 ) {
-			return null;
-		}
-
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body = wp_remote_retrieve_response_code( $response ) === 200
+			? json_decode( wp_remote_retrieve_body( $response ), true )
+			: null;
 
 		if ( ! is_array( $body ) || ! empty( $body[ $errorField ] ) || empty( $body['uf'] ) ) {
 			return null;
