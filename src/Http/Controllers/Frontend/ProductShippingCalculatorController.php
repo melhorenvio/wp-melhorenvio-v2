@@ -78,6 +78,7 @@ final class ProductShippingCalculatorController {
 		?>
 		<div id="me-cep-calc" class="me-cep-calc" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
 			<h4 class="me-cep-calc__title"><?php esc_html_e( 'Calcular frete', 'melhor-envio-cotacao' ); ?></h4>
+			<label for="me-cep-input" class="screen-reader-text"><?php esc_html_e( 'CEP de destino', 'melhor-envio-cotacao' ); ?></label>
 			<input
 				type="text"
 				id="me-cep-input"
