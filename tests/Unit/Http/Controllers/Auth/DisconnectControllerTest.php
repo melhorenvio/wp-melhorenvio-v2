@@ -78,7 +78,7 @@ final class DisconnectControllerTest extends TestCase {
 			)
 		);
 
-		$response = $this->controller->handleRequest( new WP_REST_Request( 'DELETE', '/disconnect' ) );
+		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( array( 'message' => 'Disconnected successfully.' ), $response->get_data() );
@@ -95,7 +95,7 @@ final class DisconnectControllerTest extends TestCase {
 			)
 		);
 
-		$response = $this->controller->handleRequest( new WP_REST_Request( 'DELETE', '/disconnect' ) );
+		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( array(), WC_Webhook::$deleted );
@@ -105,7 +105,7 @@ final class DisconnectControllerTest extends TestCase {
 		Functions\when( 'delete_option' )->justReturn( true );
 		$this->givenWebhooks( array() );
 
-		$response = $this->controller->handleRequest( new WP_REST_Request( 'DELETE', '/disconnect' ) );
+		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( array(), WC_Webhook::$deleted );
@@ -121,7 +121,7 @@ final class DisconnectControllerTest extends TestCase {
 		WC_Shipping_Zones::$zones     = array( array( 'id' => 8 ) );
 		$this->givenWebhooks( array() );
 
-		$this->controller->handleRequest( new WP_REST_Request( 'DELETE', '/disconnect' ) );
+		$this->controller->handleRequest();
 
 		self::assertSame( array(), WC_Shipping_Zone::$instances[0]->deleted_method_instance_ids );
 	}
