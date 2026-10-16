@@ -64,16 +64,11 @@ final class Container {
 			);
 		}
 
-		if ( class_exists( $abstract ) ) {
-			try {
-				$reflector = new ReflectionClass( $abstract );
-				if ( $reflector->isAbstract() ) {
-					throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-						"Abstract class {$abstract} is not bound. Please register it in a ServiceProvider."
-					);
-				}
-			} catch ( ReflectionException $e ) {
-			}
+		// class_exists() garante que ReflectionClass não lança ReflectionException aqui.
+		if ( class_exists( $abstract ) && ( new ReflectionClass( $abstract ) )->isAbstract() ) {
+			throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				"Abstract class {$abstract} is not bound. Please register it in a ServiceProvider."
+			);
 		}
 
 		return $this->build( $abstract );
@@ -106,30 +101,34 @@ final class Container {
 		$dependencies = array();
 
 		foreach ( $parameters as $parameter ) {
-			$type = $parameter->getType();
-
-			if ( $type === null || ! $type instanceof \ReflectionNamedType || $type->isBuiltin() ) {
-				if ( $parameter->isDefaultValueAvailable() ) {
-					$dependencies[] = $parameter->getDefaultValue();
-				} else {
-					$declaringClass    = $parameter->getDeclaringClass();
-					$declaringClassName = $declaringClass !== null ? $declaringClass->getName() : 'unknown';
-
-					throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-						"Cannot resolve parameter {$parameter->getName()} in {$declaringClassName}"
-					);
-				}
-			} else {
-				$typeName = $type->getName();
-				if ( $typeName === self::class ) {
-					$dependencies[] = $this;
-				} else {
-					$dependencies[] = $this->get( $typeName );
-				}
-			}
+			$dependencies[] = $this->resolveParameter( $parameter );
 		}
 
 		return $dependencies;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	private function resolveParameter( ReflectionParameter $parameter ) {
+		$type = $parameter->getType();
+
+		if ( $type instanceof \ReflectionNamedType && ! $type->isBuiltin() ) {
+			$typeName = $type->getName();
+
+			return $typeName === self::class ? $this : $this->get( $typeName );
+		}
+
+		if ( $parameter->isDefaultValueAvailable() ) {
+			return $parameter->getDefaultValue();
+		}
+
+		$declaringClass     = $parameter->getDeclaringClass();
+		$declaringClassName = $declaringClass !== null ? $declaringClass->getName() : 'unknown';
+
+		throw new InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			"Cannot resolve parameter {$parameter->getName()} in {$declaringClassName}"
+		);
 	}
 
 	public function has( string $abstract ): bool {
