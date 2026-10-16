@@ -53,18 +53,18 @@ final class ContainerTest extends TestCase {
 	}
 
 	public function test_closure_binding_receives_container(): void {
-		$received = null;
+		$received = array();
 		$this->container->bind(
 			Leaf::class,
 			function ( Container $c ) use ( &$received ) {
-				$received = $c;
+				$received[] = $c;
 				return new Leaf();
 			}
 		);
 
 		$this->container->get( Leaf::class );
 
-		self::assertSame( $this->container, $received );
+		self::assertSame( array( $this->container ), $received );
 	}
 
 	public function test_uses_default_value_for_scalar_parameter(): void {

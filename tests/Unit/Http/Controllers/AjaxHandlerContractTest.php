@@ -121,6 +121,8 @@ final class AjaxHandlerContractTest extends TestCase {
 		$handler = $this->makeHandler( 'do_thing' );
 		$handler->success( array( 'ok' => true ) );
 		$handler->success( 'created', 201 );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_send_error_delegates_to_wp_send_json_error(): void {
@@ -130,6 +132,8 @@ final class AjaxHandlerContractTest extends TestCase {
 		$handler = $this->makeHandler( 'do_thing' );
 		$handler->error( array( 'message' => 'x' ) );
 		$handler->error( 'gone', 410 );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	private function makeHandler( string $action, string $capability = 'manage_options', bool $public = false ): FakeAjaxHandler {

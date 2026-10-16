@@ -45,6 +45,8 @@ final class SignatureServiceTest extends TestCase {
 		Functions\expect( 'update_option' )->once()->with( 'melhor_envio_integrador_signature_key', 'generated' );
 
 		$this->service->generateSignature();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_get_signature_returns_null_when_missing_and_not_generating(): void {

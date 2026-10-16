@@ -64,6 +64,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 			->with( 'me_invoice_data', 'Nota Fiscal', array( $this->controller, 'render' ), 'shop_order', 'normal', 'default' );
 
 		$this->controller->addMetaBox();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_render_with_hpos_order_shows_stored_key(): void {
@@ -229,6 +231,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->controller->save( self::ORDER_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_save_bails_with_invalid_nonce(): void {
@@ -239,6 +243,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->controller->save( self::ORDER_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_save_bails_without_capability(): void {
@@ -249,6 +255,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->never();
 
 		$this->controller->save( self::ORDER_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_save_bails_when_order_is_not_found(): void {
@@ -258,6 +266,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		Functions\expect( 'wc_get_order' )->once()->with( self::ORDER_ID )->andReturn( false );
 
 		$this->controller->save( self::ORDER_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	private function validPost( array $fields ): array {

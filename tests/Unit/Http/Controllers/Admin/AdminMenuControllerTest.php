@@ -47,6 +47,8 @@ final class AdminMenuControllerTest extends TestCase {
 			);
 
 		$this->controller->addSubmenuPage();
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_add_submenu_page_uses_custom_configuration(): void {
