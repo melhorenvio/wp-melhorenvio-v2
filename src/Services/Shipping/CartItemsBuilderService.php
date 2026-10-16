@@ -74,17 +74,7 @@ final class CartItemsBuilderService {
 
 		$shippingFee = get_post_meta( $product->get_id(), 'woosb_shipping_fee', true );
 
-		// Fora do carrinho (sem passar por 'woocommerce_before_calculate_totals'), o desconto
-		// do kit (percentual/valor fixo, cadastrado no produto) nunca é aplicado sozinho por
-		// get_price() - usamos get_sale_price() do WPC Product Bundles, que já soma os
-		// componentes com o desconto quando há um configurado (vazio quando não há, cai pro
-		// preço normal do kit; kit com preço automático e sem '_price' preenchido ainda cai
-		// pro get_regular_price()).
-		$kitSalePrice  = method_exists( $product, 'get_sale_price' ) ? $product->get_sale_price() : '';
-		$kitUnitPrice  = $kitSalePrice !== '' && $kitSalePrice !== null
-			? (float) $kitSalePrice
-			: ( (float) $product->get_price() ?: (float) $product->get_regular_price() );
-		$kitPriceTotal = $kitUnitPrice * $quantity;
+		$kitPriceTotal = $this->bundleUnitPrice( $product ) * $quantity;
 
 		$discountPercentage = method_exists( $product, 'get_discount_percentage' ) ? (float) $product->get_discount_percentage() : 0.0;
 		$components         = array();
@@ -112,6 +102,24 @@ final class CartItemsBuilderService {
 		$dumpIntoFirst = method_exists( $product, 'is_fixed_price' ) && $product->is_fixed_price();
 
 		return $this->composedItems( $product, $quantity, $kitPriceTotal, $shippingFee, $components, $dumpIntoFirst );
+	}
+
+	/**
+	 * Fora do carrinho (sem passar por 'woocommerce_before_calculate_totals'), o desconto
+	 * do kit (percentual/valor fixo, cadastrado no produto) nunca é aplicado sozinho por
+	 * get_price() - usamos get_sale_price() do WPC Product Bundles, que já soma os
+	 * componentes com o desconto quando há um configurado (vazio quando não há, cai pro
+	 * preço normal do kit; kit com preço automático e sem '_price' preenchido ainda cai
+	 * pro get_regular_price()).
+	 */
+	private function bundleUnitPrice( \WC_Product $product ): float {
+		$kitSalePrice = method_exists( $product, 'get_sale_price' ) ? $product->get_sale_price() : '';
+
+		if ( $kitSalePrice !== '' && $kitSalePrice !== null ) {
+			return (float) $kitSalePrice;
+		}
+
+		return (float) $product->get_price() ?: (float) $product->get_regular_price();
 	}
 
 	/**

@@ -14,6 +14,7 @@ use MelhorEnvio\Tests\TestCase;
 use Mockery;
 
 require_once dirname( __DIR__, 4 ) . '/Stubs/Extra/QuotationControllerTest.php';
+require_once dirname( __DIR__, 4 ) . '/Stubs/Extra/CartItemsBuilderServiceTest.php';
 
 /**
  * All collaborators are final, so the real services are used and the WordPress functions
@@ -346,6 +347,34 @@ final class QuotationControllerTest extends TestCase {
 
 		$this->assertError( 'Selecione os itens da composição antes de calcular o frete.', $this->dispatch() );
 		self::assertSame( array(), $this->apiPayloads );
+	}
+
+	public function test_composite_with_selection_is_quoted_through_cart_items_builder(): void {
+		$this->givenRequest( array( 'wooco_ids' => '7/2' ) );
+		$composite = $this->mockProduct( array( 'type' => 'composite', 'price' => '0' ) );
+		$component = $this->mockProduct( array( 'price' => '15' ) );
+		Functions\when( 'wc_get_product' )->alias(
+			static function ( $id ) use ( $composite, $component ) {
+				return (int) $id === 7 ? $component : $composite;
+			}
+		);
+		Functions\when( 'get_post_meta' )->alias(
+			static function ( $postId, string $key ): string {
+				return $key === 'wooco_pricing' ? 'exclude' : '';
+			}
+		);
+		\WPCleverWooco_Helper::$items     = array( array( 'id' => 7, 'qty' => 2 ) );
+		\WPCleverWooco_Helper::$requested = array();
+		$this->givenZoneMethods( array( $this->meMethod() ) );
+		$this->apiQuotations = array( $this->quotation( 'PAC', 25.5 ) );
+
+		$response = $this->dispatch();
+
+		self::assertTrue( $response['success'] );
+		self::assertSame( array( '7/2' ), \WPCleverWooco_Helper::$requested );
+		self::assertCount( 1, $this->apiPayloads );
+		self::assertSame( self::PRODUCT_ID, $this->apiPayloads[0]['products'][0]['id'] );
+		self::assertEquals( 30.0, $this->apiPayloads[0]['products'][0]['insurance_value'] );
 	}
 
 	public function test_bundle_with_optional_items_and_no_selection_is_quoted_only_in_cart(): void {
