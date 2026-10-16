@@ -23,6 +23,7 @@ use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
+use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 use wpdb;
 
 final class CoreServiceProvider extends AbstractServiceProvider {
@@ -64,6 +65,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 		$this->container->singleton( MelhorEnvioApiClientService::class, MelhorEnvioApiClientService::class );
 		$this->container->singleton( PostalCodeLocationClientService::class, PostalCodeLocationClientService::class );
 		$this->container->singleton( ShippingZoneService::class, ShippingZoneService::class );
+		$this->container->singleton( MelhorIntegradorWebhookService::class, MelhorIntegradorWebhookService::class );
 		$this->container->singleton(
 			QuotationTokenController::class,
 			static fn( Container $container ) => new QuotationTokenController(
@@ -75,7 +77,8 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 			DisconnectController::class,
 			static fn( Container $container ) => new DisconnectController(
 				$container->get( SecretService::class ),
-				$container->get( ShippingZoneService::class )
+				$container->get( ShippingZoneService::class ),
+				$container->get( MelhorIntegradorWebhookService::class )
 			)
 		);
 		$this->container->singleton( ModeNoticeController::class, ModeNoticeController::class );

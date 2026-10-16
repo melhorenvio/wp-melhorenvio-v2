@@ -8,6 +8,7 @@ use Brain\Monkey\Functions;
 use MelhorEnvio\Http\Controllers\Auth\DisconnectController;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
+use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
 use WC_Data_Store;
@@ -25,7 +26,7 @@ final class DisconnectControllerTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->controller = new DisconnectController( new SecretService(), new ShippingZoneService() );
+		$this->controller = new DisconnectController( new SecretService(), new ShippingZoneService(), new MelhorIntegradorWebhookService() );
 	}
 
 	public function test_register_hooks_route_registration_into_rest_api_init(): void {

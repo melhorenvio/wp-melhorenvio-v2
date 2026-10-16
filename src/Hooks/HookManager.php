@@ -7,6 +7,8 @@ namespace MelhorEnvio\Hooks;
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
 use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
+use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
+use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Services\Auth\SignatureService;
@@ -20,7 +22,9 @@ use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
+use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
+use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
 final class HookManager {
 
@@ -72,6 +76,12 @@ final class HookManager {
 
 		$orderNoteInvoiceKey = $this->container->get( OrderNoteInvoiceKeyController::class );
 		$orderNoteInvoiceKey->register();
+
+		$orderBulkImport = $this->container->get( OrderBulkImportController::class );
+		$orderBulkImport->register();
+
+		$orderBulkImportNotice = $this->container->get( OrderBulkImportNoticeController::class );
+		$orderBulkImportNotice->register();
 
 		$this->registerShippingMethod();
 		$this->registerLogoutHook();
@@ -151,18 +161,13 @@ final class HookManager {
 	}
 
 	private function registerWebhookDeliveryFilter(): void {
+		$webhooks    = $this->container->get( MelhorIntegradorWebhookService::class );
+		$forceImport = $this->container->get( ForceImportService::class );
+
 		add_filter(
 			'woocommerce_webhook_should_deliver',
-			static function ( bool $should_deliver, \WC_Webhook $webhook, int $arg ): bool {
-				if ( ! $should_deliver ) {
-					return false;
-				}
-
-				if ( ! self::isMelhorIntegradorWebhook( $webhook ) ) {
-					return $should_deliver;
-				}
-
-				if ( 'order.updated' !== $webhook->get_topic() ) {
+			static function ( bool $should_deliver, \WC_Webhook $webhook, int $arg ) use ( $webhooks, $forceImport ): bool {
+				if ( ! $should_deliver || ! $webhooks->isMelhorIntegradorWebhook( $webhook ) || 'order.updated' !== $webhook->get_topic() ) {
 					return $should_deliver;
 				}
 
@@ -171,7 +176,9 @@ final class HookManager {
 					return false;
 				}
 
-				return self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
+				// Importação forçada pelo lojista: entrega mesmo sem mudança relevante no pedido.
+				return $forceImport->isActive( $order )
+					|| self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
 			},
 			10,
 			3
@@ -179,43 +186,51 @@ final class HookManager {
 	}
 
 	private function registerWebhookDeliveryHashUpdater(): void {
+		$webhooks    = $this->container->get( MelhorIntegradorWebhookService::class );
+		$forceImport = $this->container->get( ForceImportService::class );
+
 		add_action(
 			'woocommerce_webhook_delivery',
-			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ): void {
-				$response_code = (int) wp_remote_retrieve_response_code( $response );
+			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport ): void {
+				$topic = self::deliveredOrderTopic( $webhooks, $response, $webhook_id );
+				$order = null !== $topic ? wc_get_order( $arg ) : null;
 
-				if ( $response_code < 200 || $response_code >= 300 ) {
-					return;
-				}
-
-				$webhook = new \WC_Webhook( $webhook_id );
-
-				if ( ! self::isMelhorIntegradorWebhook( $webhook ) ) {
-					return;
-				}
-
-				if ( 'order.updated' !== $webhook->get_topic() ) {
-					return;
-				}
-
-				$order = wc_get_order( $arg );
 				if ( ! $order instanceof \WC_Order ) {
 					return;
 				}
 
-				$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
-				$order->save_meta_data();
+				// Marca de uso único: o MI já recebeu o pedido com ela.
+				$forceImport->clear( $order );
+
+				if ( 'order.updated' === $topic ) {
+					$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
+					$order->save_meta_data();
+				}
 			},
 			10,
 			5
 		);
 	}
 
-	private static function isMelhorIntegradorWebhook( \WC_Webhook $webhook ): bool {
-		$delivery_url = $webhook->get_delivery_url();
+	/**
+	 * Tópico de pedido (order.created/order.updated) de uma entrega 2xx do webhook do MI,
+	 * ou null quando a entrega falhou ou não é do MI.
+	 *
+	 * @param array|\WP_Error $response
+	 */
+	private static function deliveredOrderTopic( MelhorIntegradorWebhookService $webhooks, $response, int $webhookId ): ?string {
+		$responseCode = (int) wp_remote_retrieve_response_code( $response );
 
-		return str_contains( $delivery_url, 'webhook-wordpress-envios.melhorenvio' ) ||
-			str_contains( $delivery_url, 'webhook.woocommerceenvios' );
+		if ( $responseCode < 200 || $responseCode >= 300 ) {
+			return null;
+		}
+
+		$webhook = new \WC_Webhook( $webhookId );
+		$topic   = $webhook->get_topic();
+
+		return in_array( $topic, array( 'order.created', 'order.updated' ), true ) && $webhooks->isMelhorIntegradorWebhook( $webhook )
+			? $topic
+			: null;
 	}
 
 	private static function buildOrderHash( \WC_Order $order ): string {

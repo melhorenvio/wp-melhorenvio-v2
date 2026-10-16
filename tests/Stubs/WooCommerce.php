@@ -11,8 +11,9 @@
 
 if ( ! class_exists( 'WC_Webhook' ) ) {
 	/**
-	 * Seed: WC_Webhook::$records[ $id ] = array( 'delivery_url' => '...', 'topic' => 'order.updated' );
-	 * Any get_<prop>() reads from the seeded record. delete() pushes the id into WC_Webhook::$deleted.
+	 * Seed: WC_Webhook::$records[ $id ] = array( 'delivery_url' => '...', 'topic' => 'order.updated', 'status' => 'active' );
+	 * Any get_<prop>() reads from the seeded record. delete() pushes the id into WC_Webhook::$deleted;
+	 * process( $arg ) pushes array( $id, $arg ) into WC_Webhook::$processed.
 	 */
 	class WC_Webhook {
 
@@ -21,6 +22,9 @@ if ( ! class_exists( 'WC_Webhook' ) ) {
 
 		/** @var int[] */
 		public static $deleted = array();
+
+		/** @var array<int, array{0: int, 1: mixed}> */
+		public static $processed = array();
 
 		/** @var int */
 		private $id;
@@ -36,6 +40,15 @@ if ( ! class_exists( 'WC_Webhook' ) ) {
 		public function delete( bool $force = false ): bool {
 			self::$deleted[] = $this->id;
 			return true;
+		}
+
+		/**
+		 * @param mixed $arg
+		 * @return mixed
+		 */
+		public function process( $arg ) {
+			self::$processed[] = array( $this->id, $arg );
+			return $arg;
 		}
 
 		/** @return mixed */
@@ -241,6 +254,7 @@ final class WooCommerceFakes {
 	public static function reset(): void {
 		WC_Webhook::$records             = array();
 		WC_Webhook::$deleted             = array();
+		WC_Webhook::$processed           = array();
 		WC_Data_Store::$stores           = array();
 		WC_Shipping_Zone::$records       = array();
 		WC_Shipping_Zone::$instances     = array();

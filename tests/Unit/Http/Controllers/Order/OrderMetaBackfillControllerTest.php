@@ -7,6 +7,7 @@ namespace MelhorEnvio\Tests\Unit\Http\Controllers\Order;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
+use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Order\OrderItemsBuilderService;
 use MelhorEnvio\Services\Order\OrderShippingSnapshotBuilderService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
@@ -26,7 +27,7 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 
 		Functions\when( 'current_time' )->justReturn( self::NOW );
 
-		$this->controller = new OrderMetaBackfillController( $this->buildSnapshotBuilder() );
+		$this->controller = new OrderMetaBackfillController( $this->buildSnapshotBuilder(), new ForceImportService() );
 	}
 
 	public function test_register_hooks_into_rest_order_response(): void {
@@ -100,6 +101,66 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 		);
 	}
 
+	public function test_injects_force_import_mark_while_active(): void {
+		$expiresAt = time() + 600;
+		$order     = $this->mockOrder( (string) $expiresAt );
+		$order->allows( 'update_meta_data' );
+		$order->allows( 'save_meta_data' );
+
+		$response = new \WP_REST_Response(
+			array(
+				'id'        => 1,
+				'meta_data' => array(
+					array( 'id' => 3, 'key' => 'other_meta', 'value' => 'keep' ),
+					array( 'id' => 7, 'key' => ForceImportService::META_KEY, 'value' => (string) $expiresAt ),
+					array( 'id' => 8, 'key' => ForceImportService::PAYLOAD_KEY, 'value' => 'forged' ),
+				),
+			)
+		);
+
+		$result = $this->controller->refresh( $response, $order );
+
+		self::assertSame(
+			array(
+				array( 'id' => 3, 'key' => 'other_meta', 'value' => 'keep' ),
+				array( 'id' => 0, 'key' => self::META_KEY, 'value' => $this->expectedSnapshot() ),
+				array( 'id' => 0, 'key' => ForceImportService::PAYLOAD_KEY, 'value' => $expiresAt ),
+			),
+			$result->get_data()['meta_data']
+		);
+	}
+
+	public function test_strips_force_import_mark_when_expired(): void {
+		$expiredAt = (string) ( time() - 1 );
+		$order     = $this->mockOrder( $expiredAt );
+		$order->allows( 'update_meta_data' );
+		$order->allows( 'save_meta_data' );
+
+		$markAsObject        = new \stdClass();
+		$markAsObject->id    = 7;
+		$markAsObject->key   = ForceImportService::META_KEY;
+		$markAsObject->value = $expiredAt;
+
+		$response = new \WP_REST_Response(
+			array(
+				'id'        => 1,
+				'meta_data' => array(
+					$markAsObject,
+					array( 'id' => 8, 'key' => ForceImportService::PAYLOAD_KEY, 'value' => (int) $expiredAt ),
+				),
+			)
+		);
+
+		$result = $this->controller->refresh( $response, $order );
+
+		self::assertSame(
+			array(
+				array( 'id' => 0, 'key' => self::META_KEY, 'value' => $this->expectedSnapshot() ),
+			),
+			$result->get_data()['meta_data']
+		);
+	}
+
 	/**
 	 * The snapshot builder chain is made of final classes, so the real one is used with an order
 	 * without items (CartItemsBuilderService is never reached and is built without its constructor).
@@ -113,8 +174,9 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 	/**
 	 * @return \Mockery\MockInterface&\WC_Order
 	 */
-	private function mockOrder() {
+	private function mockOrder( string $forceImportExpiresAt = '' ) {
 		$order = Mockery::mock( 'WC_Order' );
+		$order->allows( 'get_meta' )->with( ForceImportService::META_KEY, true )->andReturn( $forceImportExpiresAt );
 		$order->allows( 'get_items' )->andReturn( array() );
 		$order->allows( 'get_meta' )->with( 'melhorenvio_status_v2', true )->andReturn( '' );
 		$order->allows( 'get_meta' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, true )->andReturn( self::INVOICE_KEY );
