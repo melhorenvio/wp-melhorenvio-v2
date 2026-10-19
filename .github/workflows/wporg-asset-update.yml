@@ -1,0 +1,38 @@
+name: Atualizar assets e readme no WordPress.org
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  assets:
+    name: Atualizar assets e readme
+    # Só publica o que já está no main, nunca de uma branch em revisão.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # O readme do trunk define qual tag o WordPress.org serve. Se o Stable tag
+      # apontar para uma versão que ainda não foi publicada no SVN, a página do
+      # plugin quebra — então só seguimos quando a tag já existe.
+      - name: Check stable tag exists on SVN
+        run: |
+          STABLE_TAG=$(grep -m 1 -E "^Stable tag:" readme.md | tr -d '\r\n' | awk '{print $NF}')
+          echo "Stable tag: $STABLE_TAG"
+          if ! curl -sfI "https://plugins.svn.wordpress.org/melhor-envio-cotacao/tags/${STABLE_TAG}/" > /dev/null; then
+            echo "::error::Tag ${STABLE_TAG} não existe no SVN. Publique a release antes de atualizar o readme."
+            exit 1
+          fi
+
+      # Copia o readme.md para trunk/ e tags/<Stable tag>/ e espelha
+      # .wordpress-org/ em assets/ (arquivos fora da pasta são removidos).
+      - name: WordPress.org plugin asset/readme update
+        uses: 10up/action-wordpress-plugin-asset-update@2480306f6f693672726d08b5917ea114cb2825f7 # 2.2.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: melhor-envio-cotacao
+          README_NAME: readme.md
+          IGNORE_OTHER_FILES: true
