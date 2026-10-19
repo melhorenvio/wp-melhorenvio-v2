@@ -82,7 +82,7 @@ Confira se as medidas e o peso estão cadastrados corretamente na aba de entrega
 Sim, com os plugins WPC Product Bundles e WPC Composite Products, que são compatíveis com o Melhor Envio. Plugins que alteram o WooCommerce de outras formas, como os de marketplace, podem não ser compatíveis.
 
 = Como entro em contato com o suporte? =
-Envie um e-mail para contato@melhorenvio.com.
+Acesse nossa central de ajuda: https://centraldeajuda.melhorenvio.com.br/hc/pt-br
 
 == Screenshots ==
 
