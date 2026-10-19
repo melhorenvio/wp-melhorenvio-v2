@@ -61,7 +61,6 @@ Pronto! O plugin do Melhor Envio está funcionando.
 == Changelog ==
 
 = 3.0.6 =
-* Adiciona sincronização sob demanda de pedidos na Melhor Envio (ação em massa e botão por pedido na lista de pedidos)
 * Extrai automaticamente a chave da NF-e das notas do pedido (ex.: integração com Bling)
 * Corrige campos do checkout clássico (CPF/CNPJ, número e bairro) não salvos no pedido com HPOS ativo
 * Corrige validação de CPF no checkout, que aceitava letras

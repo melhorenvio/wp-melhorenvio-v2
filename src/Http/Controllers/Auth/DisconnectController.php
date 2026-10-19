@@ -6,7 +6,6 @@ namespace MelhorEnvio\Http\Controllers\Auth;
 
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
-use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 use MelhorEnvio\Http\Controllers\Concerns\ValidatesAuthentication;
 use MelhorEnvio\Http\Controllers\RestEndpointContract;
 use WP_REST_Request;
@@ -20,16 +19,12 @@ final class DisconnectController extends RestEndpointContract {
 
 	private ShippingZoneService $shippingZoneSetup;
 
-	private MelhorIntegradorWebhookService $webhookService;
-
 	public function __construct(
 		SecretService $secretManager,
-		ShippingZoneService $shippingZoneSetup,
-		MelhorIntegradorWebhookService $webhookService
+		ShippingZoneService $shippingZoneSetup
 	) {
-		$this->secretManager     = $secretManager;
+		$this->secretManager    = $secretManager;
 		$this->shippingZoneSetup = $shippingZoneSetup;
-		$this->webhookService    = $webhookService;
 	}
 
 	public function registerRoute(): void {
@@ -57,8 +52,15 @@ final class DisconnectController extends RestEndpointContract {
 	}
 
 	private function deleteMelhorEnvioWebhooks(): void {
-		foreach ( $this->webhookService->getWebhooks() as $webhook ) {
-			if ( $this->webhookService->isMelhorIntegradorWebhook( $webhook ) ) {
+		$data_store = \WC_Data_Store::load( 'webhook' );
+		$ids        = $data_store->get_webhooks_ids();
+
+		foreach ( $ids as $id ) {
+			$webhook      = new \WC_Webhook( $id );
+			$delivery_url = $webhook->get_delivery_url();
+
+			if ( str_contains( $delivery_url, 'webhook-wordpress-envios.melhorenvio' ) ||
+				str_contains( $delivery_url, 'webhook.woocommerceenvios' ) ) {
 				$webhook->delete( true );
 			}
 		}
