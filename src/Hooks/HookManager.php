@@ -77,7 +77,7 @@ final class HookManager {
 		$orderNoteInvoiceKey = $this->container->get( OrderNoteInvoiceKeyController::class );
 		$orderNoteInvoiceKey->register();
 
-		// Sincronização sob demanda oculta até o backend da Tray Native suportá-la.
+		// Sincronização sob demanda oculta até o backend da Melhor Envio suportá-la.
 		// $orderBulkImport = $this->container->get( OrderBulkImportController::class );
 		// $orderBulkImport->register();
 
