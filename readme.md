@@ -38,7 +38,7 @@ Caso queira contribuir com o projeto, o processo para isto é criar um branch se
 <a href="https://github.com/melhorenvio/wp-melhorenvio-v2" target="_blank">Repositório público do Plugin do Melhor Envio</a>
 
 ### Suporte
-Acesse nossa central de ajuda: https://centraldeajuda.melhorenvio.com.br/hc/pt-br
+Acesse nossa [central de ajuda](https://centraldeajuda.melhorenvio.com.br/hc/pt-br).
 
 == Installation ==
 A instalação do plugin é simples, basta acessar a aba "Plugins > Instalar novo" no seu painel administrativo do WordPress e buscar pelo plugin "Melhor Envio" na barra de busca.
@@ -82,7 +82,7 @@ Confira se as medidas e o peso estão cadastrados corretamente na aba de entrega
 Sim, com os plugins WPC Product Bundles e WPC Composite Products, que são compatíveis com o Melhor Envio. Plugins que alteram o WooCommerce de outras formas, como os de marketplace, podem não ser compatíveis.
 
 = Como entro em contato com o suporte? =
-Acesse nossa central de ajuda: https://centraldeajuda.melhorenvio.com.br/hc/pt-br
+Acesse nossa [central de ajuda](https://centraldeajuda.melhorenvio.com.br/hc/pt-br).
 
 == Screenshots ==
 
