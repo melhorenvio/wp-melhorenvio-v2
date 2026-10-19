@@ -15,14 +15,14 @@ O Melhor Envio conecta sua loja WooCommerce à maior plataforma de fretes do Bra
 
 A partir da versão 3.0, o plugin passa a funcionar através de um painel centralizado, embutido direto no admin do WordPress, que substitui a configuração manual por um vínculo automático entre sua loja e sua conta Melhor Envio. Não é mais necessário gerar e colar token manualmente — basta acessar o menu Melhor Envio dentro do WooCommerce e concluir a conexão em poucos cliques.
 
-A tecnologia já ajudou mais de 3 milhões de lojistas a otimizar a gestão de fretes, acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
+O Melhor Envio já ajudou mais de 3 milhões de lojistas a otimizar a gestão de fretes, acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
 
 ### Funcionalidades
 - Conexão automática entre a loja WooCommerce e a conta Melhor Envio, sem necessidade de gerar e colar token manualmente.
 - Cotação de fretes em tempo real no carrinho e na tela do produto, com todas as transportadoras disponíveis na sua conta Melhor Envio.
 - Gestão centralizada de pedidos, etiquetas e rastreios num único painel integrado ao WordPress.
 - Compra e emissão de etiquetas de postagem utilizando o saldo da conta Melhor Envio.
-- Escolha das transportadoras e serviços exibidos na cotação direto no painel.
+- Regras de frete inteligentes e configurações de cotação aplicadas automaticamente, sem necessidade de ajustar cada transportadora individualmente.
 
 Lojas que ainda utilizam a versão anterior (legado) continuam funcionando normalmente e podem migrar para a nova versão a qualquer momento pelo próprio painel administrativo, sem perda de configurações.
 
