@@ -1,12 +1,10 @@
 === Melhor Envio ===
-Version: 3.0.6
-Tags: frete, cotação, logística, envio, melhor envio
+Contributors: melhorenvio
+Tags: frete, woocommerce, correios, envio, logística
 Requires at least: 4.7
 Tested up to: 7.0
-Stable tag: 3.0.6
 Requires PHP: 7.4
-Requires Wordpress 4.7+
-Requires WooCommerce 4.0+
+Stable tag: 3.0.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -35,11 +33,11 @@ Para utilizar grupos de produtos ou kits, recomendamos a utilização dos plugin
 <a href="https://br.wordpress.org/plugins/woo-product-bundle/" target="_blank">WPC Product Bundles</a> ou
 <a href="https://br.wordpress.org/plugins/wpc-composite-products/" target="_blank">WPC Composite Products</a> pois esses são plugins compatíveis com o plugin da Melhor Envio.
 
-## Contribuindo com o Projeto
-Caso queira contribuir com o projeto, o processo para isto é criar um brach separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
+### Contribuindo com o Projeto
+Caso queira contribuir com o projeto, o processo para isto é criar um branch separado, implementar o desejado, e encaminhar um pull request para o develop, com descrição da alteração.
 <a href="https://github.com/melhorenvio/wp-melhorenvio-v2" target="_blank">Repositório público do Plugin do Melhor Envio</a>
 
-## Suporte
+### Suporte
 Para entrar em contato com o suporte desse plugin, enviar e-mail para contato@melhorenvio.com
 
 == Installation ==
@@ -55,8 +53,48 @@ Com a conta conectada, as cotações de frete já ficam disponíveis automaticam
 
 Não esqueça de cadastrar corretamente as medidas do produto na aba de entrega de cada produto cadastrado.
 
-
 Pronto! O plugin do Melhor Envio está funcionando.
+
+== Frequently Asked Questions ==
+
+= Preciso ter uma conta no Melhor Envio? =
+Sim. O plugin conecta sua loja WooCommerce à sua conta Melhor Envio. Caso ainda não tenha uma conta, é possível criá-la diretamente pelo painel do plugin, no menu "Melhor Envio" dentro do WooCommerce.
+
+= Ainda preciso gerar e colar um token? =
+Não. A partir da versão 3.0, a conexão entre a loja e a conta Melhor Envio é feita automaticamente pelo painel do plugin, em poucos cliques.
+
+= O Melhor Envio cobra mensalidade? =
+Não. Não há mensalidades nem contratos individuais com as transportadoras. Você paga apenas pelas etiquetas de postagem geradas, utilizando o saldo da sua conta Melhor Envio.
+
+= Quais transportadoras aparecem na cotação? =
+A cotação considera todas as transportadoras habilitadas na sua conta Melhor Envio, incluindo os Correios e diversas transportadoras privadas.
+
+= Uso a versão anterior do plugin. O que acontece ao atualizar? =
+Lojas que utilizam a versão anterior (legado) continuam funcionando normalmente e podem migrar para a nova versão a qualquer momento pelo próprio painel administrativo, sem perda de configurações.
+
+= Preciso instalar um plugin de campos de checkout? =
+Não. A partir da versão 3.0, os campos necessários para o funcionamento do frete são adicionados automaticamente pelo próprio Melhor Envio. Se você já usa o plugin Calculadora de Frete e Campos Checkout para o Brasil, a compatibilidade continua garantida.
+
+= O frete não aparece ou aparece com valor errado. O que verificar? =
+Confira se as medidas e o peso estão cadastrados corretamente na aba de entrega de cada produto, e se as unidades configuradas no WooCommerce (gramas ou quilos, centímetros ou metros) correspondem aos valores informados. Medidas ausentes ou em unidade errada afetam diretamente a cotação.
+
+= O plugin funciona com kits e produtos agrupados? =
+Sim, com os plugins WPC Product Bundles e WPC Composite Products, que são compatíveis com o Melhor Envio. Plugins que alteram o WooCommerce de outras formas, como os de marketplace, podem não ser compatíveis.
+
+= Como entro em contato com o suporte? =
+Envie um e-mail para contato@melhorenvio.com.
+
+== Screenshots ==
+
+1. Plugin Melhor Envio na loja de plugins
+2. Painel da Melhor Envio no admin do WordPress
+3. Seleção das transportadoras e serviços disponíveis na cotação
+4. Peso e dimensões do produto usados no cálculo do frete
+
+== Upgrade Notice ==
+
+= 3.0.6 =
+Nova versão com painel centralizado e conexão automática da conta Melhor Envio, sem necessidade de gerar token manualmente. Lojas na versão legado continuam funcionando e podem migrar pelo painel.
 
 == Changelog ==
 
@@ -86,6 +124,11 @@ Pronto! O plugin do Melhor Envio está funcionando.
 = 3.0.1 =
 * Adiciona upload de XML NF-e no admin do pedido, com extração automática da chave de acesso
 
+= 2.16.6 =
+* Adiciona card de acesso antecipado à nova versão do plugin na tela de pedidos
+* Correção de crash na cotação quando serviço de carrinho retorna vazio no checkout
+* Correção do prefixo de tabela SQL no wpdb->prepare
+
 = 2.16.5 =
 * Correção na cotação de pedidos
 
@@ -104,7 +147,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 = 2.16.0 =
 * Altera plugin obrigatório para campos de checkout
 * Adiciona nova transportadora (Total Express)
-* Adiciona mascára para o campo de CNPJ
+* Adiciona máscara para o campo de CNPJ
 * Melhoria nas telas de admin
 
 = 2.15.18 =
@@ -120,7 +163,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Corrige formatação de valor do produto para duas casas decimais
 
 = 2.15.14 =
-* Busca agencias usando latitude e longitude
+* Busca agências usando latitude e longitude
 
 = 2.15.13 =
 * Altera tags de busca
@@ -129,18 +172,18 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Adiciona nova capacidade
 
 = 2.15.11 =
-* Path com correções importantes
+* Patch com correções importantes
 
 = 2.15.10 =
-* Path com correções importantes
+* Patch com correções importantes
 
 = 2.15.9 =
-* Adiciona validacao quando o cep é somente zeros.
-* Atualiza versão compativel do wordpress.
+* Adiciona validação quando o CEP é somente zeros.
+* Atualiza versão compatível do WordPress.
 
 = 2.15.8 =
 * Adiciona log no caso de falha em uma requisição.
-* Corrige cotacao em compras com produtos virtuais.
+* Corrige cotação em compras com produtos virtuais.
 
 = 2.15.7 =
 * Corrige problema na busca do CEP.
@@ -152,14 +195,14 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Corrige reatividade na adição dos dados de NF.
 
 = 2.15.4 =
-* Adiciona plugins requiridos pelo ME.
+* Adiciona plugins requeridos pelo ME.
 * Adiciona tratativas para produtos excluídos.
 
 = 2.15.3 =
 * Corrige lentidão no checkout.
 
 = 2.15.2 =
-* Atualiza a versão testada do Wordpress e WooCommerce.
+* Atualiza a versão testada do WordPress e WooCommerce.
 
 = 2.15.1 =
 * Adiciona compatibilidade com os plugins "WPC Composite Products e WPC Product Bundles".
@@ -182,7 +225,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Adição de validação de chave de acesso da nota fiscal para envios comerciais de Correios.
 
 = 2.12.0 =
-* Adição de serviços de Correios centralizados, Jadlog centralizado e loggi Express.
+* Adição de serviços de Correios centralizados, Jadlog centralizado e Loggi Express.
 
 = 2.11.35 =
 * Correção para aplicar o valor do produto para produtos combos.
@@ -206,7 +249,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Correção na validação de nome e telefone para transportadoras
 
 = 2.11.28 =
-* Adicioando fluxo automatizado de deploy
+* Adicionando fluxo automatizado de deploy
 
 = 2.11.25 =
 * Correção para o problema de não salvar as configurações em algumas lojas.
@@ -231,7 +274,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Ajuste na listagem de endereços de lojas no painel administrativo.
 
 = 2.11.11 =
-* Correções de seguranças.
+* Correções de segurança.
 
 = 2.11.9 =
 * Ajuste para resolver o problema de alteração de endereços.
@@ -241,7 +284,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Correção de vulnerabilidade no redirect para tela de configurações
 
 = 2.11.7 =
-* Correção do problema de inserção de pediddos no carrinho de compras.
+* Correção do problema de inserção de pedidos no carrinho de compras.
 
 = 2.11.6 =
 * Correção do problema de lentidão ao inserir um produto no carrinho de compras.
@@ -271,17 +314,17 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Ajuste para exibir o nome da loja na etiqueta
 
 = 2.10.0 =
-* Reformulação da forma de selecionar origem da etiquetas com edição dos dados da etiqueta
+* Reformulação da forma de selecionar origem das etiquetas com edição dos dados da etiqueta
 
-= 2.9.24 = 
+= 2.9.24 =
 * Ajuste para aceitar endereço com número 0 (zero)
-* Ajuste para poder editar informações do pedido (woocommerce)
+* Ajuste para poder editar informações do pedido (WooCommerce)
 
 = 2.9.23 =
-* Adiciona o serviço Rodoviário de Buslog 
+* Adiciona o serviço Rodoviário de Buslog
 
 = 2.9.22 =
-* Correções para o plugin se adaptar ao plugin WooCommerce Bundle Products 
+* Correções para o plugin se adaptar ao plugin WooCommerce Bundle Products
 
 = 2.9.21 =
 * Remoção da obrigatoriedade de agências para Via Brasil e Jadlog.
@@ -290,7 +333,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Correção do erro de produtos sem medidas
 
 = 2.9.19 =
-*  Correção do erro fatal da versão 2.9.17
+* Correção do erro fatal da versão 2.9.17
 
 = 2.9.17 =
 * Adição de alerta em casos de token inválidos ou expirados
@@ -305,7 +348,7 @@ Pronto! O plugin do Melhor Envio está funcionando.
 * Validações para CEP
 
 = 2.9.11 =
-* Validação de cep de destino para cotação
+* Validação de CEP de destino para cotação
 
 = 2.9.10 =
 * Correção do aviso de erro de session_start()
@@ -314,10 +357,10 @@ Pronto! O plugin do Melhor Envio está funcionando.
 = 2.9.9 =
 * Criando helper para iniciar session
 * Correções de warning de PHP
-* Correção do problema de não exibr botões de compras da etiqueta na listagem de pedidos
+* Correção do problema de não exibir botões de compras da etiqueta na listagem de pedidos
 * Correção no processo de finalização de compras de produtos virtuais
 * Ajuste para usar valores com centavos nas taxas extras de envios
-* Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecioando um método do Melhor Envio
+* Ajuste no aviso que o usuário não selecionou um método do Melhor Envio mesmo selecionando um método do Melhor Envio
 * Correção do problema de link de rastreio na aba de pedidos dos clientes
 * Ajuste erro 500 na listagem de pedidos
 * Removendo listagem duplicada de rastreio
