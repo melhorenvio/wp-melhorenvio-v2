@@ -230,7 +230,9 @@ final class Melhor_Envio_Plugin
         }
 
         if (is_admin()) {
-            (new SessionNoticeService())->showNotices();
+            if (!\MelhorEnvio\Services\Admin\PluginModeService::isIntegradorMode()) {
+                (new SessionNoticeService())->showNotices();
+            }
             $result = (new CheckHealthService())->checkPathPlugin($pathPlugins);
 
             if (!empty($result['errors'])) {
