@@ -134,17 +134,18 @@ final class Melhor_Envio_Plugin
 
         array_unshift($links, $settings_link);
 
-        if ($isIntegrador) {
-            $rollback_url = wp_nonce_url(
-                admin_url('admin-post.php?action=melhor_envio_set_mode&mode=legacy'),
-                'melhor_envio_mode_nonce'
-            );
-            $links[] = sprintf(
-                '<a href="%s">%s</a>',
-                esc_url($rollback_url),
-                esc_html__('Voltar para versão anterior', 'melhor-envio-cotacao')
-            );
-        }
+        $target_mode = $isIntegrador ? 'legacy' : 'integrador';
+        $mode_url = wp_nonce_url(
+            admin_url('admin-post.php?action=melhor_envio_set_mode&mode=' . $target_mode),
+            'melhor_envio_mode_nonce'
+        );
+        $links[] = sprintf(
+            '<a href="%s">%s</a>',
+            esc_url($mode_url),
+            $isIntegrador
+                ? esc_html__('Voltar para versão anterior', 'melhor-envio-cotacao')
+                : esc_html__('Migrar para nova versão', 'melhor-envio-cotacao')
+        );
 
         return $links;
     }
