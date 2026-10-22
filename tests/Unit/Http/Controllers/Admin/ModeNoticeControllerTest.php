@@ -199,6 +199,7 @@ final class ModeNoticeControllerTest extends TestCase {
 		$GLOBALS['wpdb'] = $wpdb;
 
 		Functions\expect( 'update_option' )->once()->with( self::MODE_OPTION, $mode );
+		Functions\when( 'delete_option' )->justReturn( true );
 
 		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'redirect: https://shop.test/wp-admin/admin.php?page=' . $page );

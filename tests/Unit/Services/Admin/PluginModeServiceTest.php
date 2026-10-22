@@ -60,6 +60,7 @@ final class PluginModeServiceTest extends TestCase {
 
 	public function test_set_mode_integrador_saves_option_and_enables_shipping_method(): void {
 		Functions\expect( 'update_option' )->once()->with( 'melhor_envio_ui_mode', 'integrador' );
+		Functions\expect( 'delete_option' )->once()->with( 'wp_option_notices_melhor_envio' );
 		$this->expectShippingMethodToggle( 1 );
 
 		PluginModeService::setMode( 'integrador' );
@@ -72,6 +73,7 @@ final class PluginModeServiceTest extends TestCase {
 	 */
 	public function test_set_mode_other_than_integrador_disables_shipping_method( string $mode ): void {
 		Functions\expect( 'update_option' )->once()->with( 'melhor_envio_ui_mode', $mode );
+		Functions\expect( 'delete_option' )->never();
 		$this->expectShippingMethodToggle( 0 );
 
 		PluginModeService::setMode( $mode );
