@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Ação em massa "Sincronizar na Melhor Envio" na listagem de pedidos, mais um botão
+ * Ação em massa "Sincronizar no Melhor Envio" na listagem de pedidos, mais um botão
  * por pedido (coluna própria, só ícone) para importar um único pedido.
  *
  * O plugin não monta nem assina payload: marca os pedidos para importação forçada
@@ -88,7 +88,7 @@ final class OrderBulkImportController implements ControllerInterface {
 
 	public function addBulkAction( array $actions ): array {
 		if ( $this->isAvailable() ) {
-			$actions[ self::ACTION ] = __( 'Sincronizar na Melhor Envio', 'melhor-envio-cotacao' );
+			$actions[ self::ACTION ] = __( 'Sincronizar no Melhor Envio', 'melhor-envio-cotacao' );
 		}
 
 		return $actions;
@@ -255,7 +255,7 @@ final class OrderBulkImportController implements ControllerInterface {
 		}
 
 		$orderId = $order->get_id();
-		$label   = __( 'Sincronizar na Melhor Envio', 'melhor-envio-cotacao' );
+		$label   = __( 'Sincronizar no Melhor Envio', 'melhor-envio-cotacao' );
 		$url   = wp_nonce_url(
 			admin_url( 'admin-post.php?action=' . self::SINGLE_ACTION . '&order_id=' . $orderId ),
 			self::SINGLE_ACTION . '_' . $orderId
