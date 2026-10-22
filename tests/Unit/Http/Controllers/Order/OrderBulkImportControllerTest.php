@@ -166,7 +166,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 		self::assertSame(
 			array(
 				'trash'      => 'Mover para lixeira',
-				self::ACTION => 'Sincronizar na Melhor Envio',
+				self::ACTION => 'Sincronizar no Melhor Envio',
 			),
 			$this->controller->addBulkAction( array( 'trash' => 'Mover para lixeira' ) )
 		);
@@ -542,7 +542,7 @@ final class OrderBulkImportControllerTest extends TestCase {
 
 	private function expectedButton( int $orderId ): string {
 		return sprintf(
-			'<a class="button me-import-order-button" href="https://shop.test/wp-admin/admin-post.php?action=melhor_integrador_import_order&order_id=%1$d&_wpnonce=melhor_integrador_import_order_%1$d" title="Sincronizar na Melhor Envio" aria-label="Sincronizar na Melhor Envio"><span class="dashicons dashicons-update" aria-hidden="true"></span></a>',
+			'<a class="button me-import-order-button" href="https://shop.test/wp-admin/admin-post.php?action=melhor_integrador_import_order&order_id=%1$d&_wpnonce=melhor_integrador_import_order_%1$d" title="Sincronizar no Melhor Envio" aria-label="Sincronizar no Melhor Envio"><span class="dashicons dashicons-update" aria-hidden="true"></span></a>',
 			$orderId
 		);
 	}
