@@ -54,6 +54,7 @@ final class HookManagerTest extends TestCase {
 		OrderMetaBackfillController::class,
 		OrderInvoiceKeyMetaBoxController::class,
 		OrderNoteInvoiceKeyController::class,
+		OrderBulkImportController::class,
 		OrderBulkImportNoticeController::class,
 	);
 
