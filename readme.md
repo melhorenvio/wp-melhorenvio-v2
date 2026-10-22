@@ -2,7 +2,7 @@
 Contributors: melhorenvio
 Tags: frete, woocommerce, correios, envio, logística
 Requires at least: 4.7
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 3.0.6
 License: GPLv3
