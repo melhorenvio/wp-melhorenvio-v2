@@ -122,6 +122,90 @@ final class OrderShippingSnapshotBuilderServiceTest extends TestCase {
 		self::assertSame( $this->emptyServiceData(), $this->serviceData( $this->service->buildSnapshot( $order ) ) );
 	}
 
+	public function test_service_data_is_resolved_from_legacy_shipping_method(): void {
+		$order = $this->mockOrder(
+			array(),
+			array(
+				$this->mockShippingItem(
+					'melhorenvio_correios_pac',
+					array(
+						'delivery_time' => '(13 a 15 dias úteis)',
+						'price'         => 'R$33,01',
+						'company'       => 'Correios',
+					),
+					'33.01'
+				),
+			),
+			array()
+		);
+
+		self::assertSame(
+			array(
+				'service_id'    => 1,
+				'service_name'  => 'PAC',
+				'company_id'    => 1,
+				'company_name'  => 'Correios',
+				'price'         => '33.01',
+				'delivery_time' => 15,
+			),
+			$this->serviceData( $this->service->buildSnapshot( $order ) )
+		);
+	}
+
+	/**
+	 * @dataProvider legacyDeliveryTimeLabels
+	 */
+	public function test_legacy_delivery_time_uses_largest_day_count( string $label, int $expected ): void {
+		$order = $this->mockOrder(
+			array(),
+			array( $this->mockShippingItem( 'melhorenvio_jadlog_package', array( 'delivery_time' => $label ), '20.00' ) ),
+			array()
+		);
+
+		self::assertSame( $expected, $this->service->buildSnapshot( $order )['delivery_time'] );
+	}
+
+	public function legacyDeliveryTimeLabels(): array {
+		return array(
+			'range'      => array( ' (5 a 8 dias úteis)', 8 ),
+			'single day' => array( ' (1 dia útil)', 1 ),
+			'same days'  => array( ' (4 dias úteis)', 4 ),
+			'unknown'    => array( ' (*)', 0 ),
+			'missing'    => array( '', 0 ),
+		);
+	}
+
+	public function test_legacy_company_uses_api_naming_regardless_of_item_meta(): void {
+		$order = $this->mockOrder(
+			array(),
+			array( $this->mockShippingItem( 'melhorenvio_totalexpress_standard', array( 'company' => 'TotalExpress' ), '20.00' ) ),
+			array()
+		);
+
+		$snapshot = $this->service->buildSnapshot( $order );
+
+		self::assertSame( 35, $snapshot['service_id'] );
+		self::assertSame( 'Standard', $snapshot['service_name'] );
+		self::assertSame( 8, $snapshot['company_id'] );
+		self::assertSame( 'Total Express', $snapshot['company_name'] );
+	}
+
+	/**
+	 * @dataProvider unmappedLegacyMethods
+	 */
+	public function test_service_data_is_empty_for_unmapped_legacy_method( string $methodId ): void {
+		$order = $this->mockOrder( array(), array( $this->mockShippingItem( $methodId, array(), '10.00' ) ), array() );
+
+		self::assertSame( $this->emptyServiceData(), $this->serviceData( $this->service->buildSnapshot( $order ) ) );
+	}
+
+	public function unmappedLegacyMethods(): array {
+		return array(
+			'discontinued' => array( 'melhorenvio_via_brasil_aereo' ),
+			'unknown'      => array( 'melhorenvio_unknown' ),
+		);
+	}
+
 	public function test_only_first_shipping_item_is_considered(): void {
 		$order = $this->mockOrder(
 			array(),
