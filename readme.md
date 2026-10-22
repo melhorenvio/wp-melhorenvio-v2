@@ -4,7 +4,7 @@ Tags: frete, woocommerce, correios, envio, logística
 Requires at least: 4.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.0.6
+Stable tag: 3.0.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,11 @@ Acesse nossa [central de ajuda](https://centraldeajuda.melhorenvio.com.br/hc/pt-
 Nova versão com painel centralizado e conexão automática da conta Melhor Envio, sem necessidade de gerar token manualmente. Lojas na versão legado continuam funcionando e podem migrar pelo painel.
 
 == Changelog ==
+
+= 3.0.7 =
+* Adiciona sincronização sob demanda de pedidos na Melhor Envio (ação em massa e botão por pedido na lista de pedidos)
+* Adiciona o link "Migrar para nova versão" na lista de plugins para lojas no modo legado
+* Declara compatibilidade com WordPress 7.1 e WooCommerce 11.2
 
 = 3.0.6 =
 * Novo painel do Melhor Envio dentro do admin do WordPress (modo Melhor Integrador, em que o plugin se conecta à plataforma de integrações do Melhor Envio), com conexão automática da conta, sem gerar nem colar token
