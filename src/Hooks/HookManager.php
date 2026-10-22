@@ -77,9 +77,8 @@ final class HookManager {
 		$orderNoteInvoiceKey = $this->container->get( OrderNoteInvoiceKeyController::class );
 		$orderNoteInvoiceKey->register();
 
-		// Sincronização sob demanda oculta até o backend da Melhor Envio suportá-la.
-		// $orderBulkImport = $this->container->get( OrderBulkImportController::class );
-		// $orderBulkImport->register();
+		$orderBulkImport = $this->container->get( OrderBulkImportController::class );
+		$orderBulkImport->register();
 
 		$orderBulkImportNotice = $this->container->get( OrderBulkImportNoticeController::class );
 		$orderBulkImportNotice->register();
