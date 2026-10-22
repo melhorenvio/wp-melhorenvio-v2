@@ -102,6 +102,7 @@ Nova versão com painel centralizado e conexão automática da conta Melhor Envi
 * Adiciona sincronização sob demanda de pedidos na Melhor Envio (ação em massa e botão por pedido na lista de pedidos)
 * Adiciona o link "Migrar para nova versão" na lista de plugins para lojas no modo legado
 * Remove os avisos do plugin legado ao migrar para a nova versão, que deixam de ser exibidos no modo Melhor Integrador
+* Pedidos feitos com os métodos de frete da versão legado passam a enviar ao Melhor Integrador o serviço, a transportadora, o preço e o prazo escolhidos
 * Declara compatibilidade com WordPress 7.1 e WooCommerce 11.2
 
 = 3.0.6 =
