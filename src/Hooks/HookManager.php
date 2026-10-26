@@ -251,17 +251,22 @@ final class HookManager {
 			$order->get_items()
 		);
 
-		return md5(
-			serialize(
-				array(
-					'status'         => $order->get_status(),
-					'billing'        => $order->get_address( 'billing' ),
-					'shipping'       => $order->get_address( 'shipping' ),
-					'shipping_lines' => $shipping_lines,
-					'line_items'     => $line_items,
-					'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
-				)
-			)
+		$data = array(
+			'status'         => $order->get_status(),
+			'billing'        => $order->get_address( 'billing' ),
+			'shipping'       => $order->get_address( 'shipping' ),
+			'shipping_lines' => $shipping_lines,
+			'line_items'     => $line_items,
+			'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
 		);
+
+		// XML da NF-e entra como md5 (pode ser grande) e só quando existe, para não mudar o hash
+		// já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
+		$invoiceXml = (string) $order->get_meta( '_me_invoice_xml_danfe', true );
+		if ( '' !== $invoiceXml ) {
+			$data['invoice_xml_md5'] = md5( $invoiceXml );
+		}
+
+		return md5( serialize( $data ) );
 	}
 }
