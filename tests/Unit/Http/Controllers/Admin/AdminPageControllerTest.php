@@ -23,6 +23,9 @@ final class AdminPageControllerTest extends TestCase {
 	/** @var array<int, array{0: string, 1: mixed, 2: int}> */
 	private array $transientWrites = array();
 
+	/** @var string[] Capacidades do usuário atual; padrão é o administrador. */
+	private array $capabilities = array( 'manage_options', 'manage_woocommerce' );
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->originalEnvBaseUrl = getenv( self::ENV_BASE_URL );
@@ -50,6 +53,11 @@ final class AdminPageControllerTest extends TestCase {
 			function ( $key, $value, $expiration ) {
 				$this->transientWrites[] = array( $key, $value, $expiration );
 				return true;
+			}
+		);
+		Functions\when( 'current_user_can' )->alias(
+			function ( $capability ) {
+				return in_array( $capability, $this->capabilities, true );
 			}
 		);
 	}
@@ -165,6 +173,36 @@ final class AdminPageControllerTest extends TestCase {
 
 		self::assertMatchesRegularExpression( '/var signature = "[a-f0-9]{64}";/', $output );
 		self::assertCount( 1, $this->transientWrites );
+	}
+
+	public function test_render_without_signature_for_shop_manager_with_connected_account(): void {
+		$this->capabilities = array( 'manage_woocommerce' );
+		$this->options['melhor_envio_integrador_secret'] = 'base64:c2VjcmV0';
+		Functions\expect( 'get_transient' )->never();
+		Functions\expect( 'set_transient' )->never();
+
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var secret    = "base64:c2VjcmV0";', $output );
+		self::assertStringContainsString( 'var signature = null;', $output );
+		self::assertStringContainsString( "if (signature) {\n\t\t\t\tiframeUrl.searchParams.set('signature', signature);", $output );
+	}
+
+	public function test_render_blocks_account_connection_for_shop_manager(): void {
+		$this->capabilities = array( 'manage_woocommerce' );
+		Functions\expect( 'get_transient' )->never();
+		Functions\expect( 'set_transient' )->never();
+		Functions\when( 'esc_html_e' )->alias(
+			static function ( $text ) {
+				echo $text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+		);
+
+		$output = $this->render();
+
+		self::assertStringNotContainsString( 'melhor-envio-integrador-container', $output );
+		self::assertStringNotContainsString( '<script>', $output );
+		self::assertStringContainsString( 'Peça a um administrador da loja para conectá-la.', $output );
 	}
 
 	private function render(): string {
