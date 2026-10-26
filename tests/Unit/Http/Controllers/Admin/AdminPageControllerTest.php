@@ -43,6 +43,7 @@ final class AdminPageControllerTest extends TestCase {
 			)
 		);
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 		Functions\when( 'untrailingslashit' )->alias(
 			function ( $value ) {
 				return rtrim( $value, '/\\' );
@@ -132,11 +133,19 @@ final class AdminPageControllerTest extends TestCase {
 		self::assertStringContainsString( 'var baseUrl   = "https:\/\/env.example";', $output );
 	}
 
-	public function test_render_uses_wordpress_home_as_store_url(): void {
+	public function test_render_keeps_browser_origin_for_store_at_root(): void {
 		$output = $this->render();
 
-		self::assertStringContainsString( 'var storeUrl  = "https:\/\/loja.example";', $output );
-		self::assertStringNotContainsString( 'window.location.origin', $output );
+		self::assertStringContainsString( 'var storeUrl  = window.location.origin + "";', $output );
+	}
+
+	public function test_render_ignores_scheme_and_host_of_home_option(): void {
+		$this->options['home'] = 'http://outro-host.example/loja';
+
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var storeUrl  = window.location.origin + "\/loja";', $output );
+		self::assertStringNotContainsString( 'outro-host', $output );
 	}
 
 	public function test_render_keeps_subdirectory_of_home_in_store_url(): void {
@@ -144,7 +153,7 @@ final class AdminPageControllerTest extends TestCase {
 
 		$output = $this->render();
 
-		self::assertStringContainsString( 'var storeUrl  = "https:\/\/exemplo.com.br\/loja";', $output );
+		self::assertStringContainsString( 'var storeUrl  = window.location.origin + "\/loja";', $output );
 	}
 
 	public function test_render_ignores_language_filter_of_home_url(): void {
@@ -154,7 +163,7 @@ final class AdminPageControllerTest extends TestCase {
 
 		$output = $this->render();
 
-		self::assertStringContainsString( 'var storeUrl  = "https:\/\/exemplo.com.br\/loja";', $output );
+		self::assertStringContainsString( 'var storeUrl  = window.location.origin + "\/loja";', $output );
 	}
 
 	public function test_render_escapes_store_url_injected_into_script(): void {
