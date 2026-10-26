@@ -189,6 +189,8 @@ sudo update-ca-certificates
 
 > Reinicie o navegador completamente após instalar. No Chrome/Edge no Windows, encerre o processo pelo gerenciador de tarefas se necessário.
 
+> **Requisições do WordPress para o Caddy:** o container não confia na CA interna do Caddy. O mu-plugin de dev `docker/mu-plugins/melhor-envio-dev-ssl.php` (montado pelo `compose.yml`, fora do pacote do plugin) desliga a verificação SSL **somente** para hosts `*.localhost` e `*.me.test`. Recrie o container (`docker compose up -d wordpress`) para montá-lo.
+
 ---
 
 ## URLs e Credenciais

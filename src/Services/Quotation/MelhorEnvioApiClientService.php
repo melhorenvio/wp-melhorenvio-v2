@@ -98,9 +98,8 @@ final class MelhorEnvioApiClientService {
 					'Accept'            => 'application/json',
 					'version-plugin-me' => defined( 'MELHORENVIO_VERSION' ) ? MELHORENVIO_VERSION : '',
 				),
-				'body'      => wp_json_encode( $payload ),
-				'timeout'   => 15,
-				'sslverify' => false,
+				'body'    => wp_json_encode( $payload ),
+				'timeout' => 15,
 			)
 		);
 
