@@ -27,6 +27,11 @@ class TrackingService {
 	 * @return void
 	 */
 	public function addTrackingWcOrder( $order, $tracking ) {
+		// Chamado a cada listagem de pedidos: salvar sem mudança dispara order.updated à toa.
+		if ( (string) $order->get_meta( self::TRACKING_MELHOR_ENVIO ) === (string) $tracking ) {
+			return;
+		}
+
 		$order->update_meta_data(self::TRACKING_MELHOR_ENVIO, $tracking );
 		$order->save();
 	}
