@@ -9,6 +9,12 @@ final class SignatureService {
 	private const TRANSIENT_KEY = 'melhor_envio_integrador_signature';
 	private const SIGNATURE_KEY = 'melhor_envio_integrador_signature_key';
 
+	/**
+	 * Validade da assinatura, renovada a cada entrega à página do admin. Ela não depende
+	 * da sessão de nenhum usuário: é única para o site e de uso único (consumida no /secret).
+	 */
+	public const TTL = HOUR_IN_SECONDS;
+
 	public function generateSignature(): string {
 		$data = array(
 			'timestamp' => time(),
@@ -22,16 +28,14 @@ final class SignatureService {
 		return $signature;
 	}
 
-	private function getExpirationTime(): int {
-		$userId = get_current_user_id();
-		return (int) apply_filters( 'auth_cookie_expiration', 1 * DAY_IN_SECONDS, $userId, false );
-	}
-
 	public function getSignature( bool $generate = true ): ?string {
 		$signature = get_transient( self::TRANSIENT_KEY );
 
 		if ( ! $signature && $generate ) {
 			$signature = $this->generateSignature();
+		} elseif ( $signature && $generate ) {
+			// Entregue de novo ao admin: renova a validade para o handshake não expirar no meio.
+			$this->saveSignature( $signature );
 		}
 
 		return $signature ?: null;
@@ -49,8 +53,7 @@ final class SignatureService {
 	}
 
 	private function saveSignature( string $signature ): bool {
-		$expiration = $this->getExpirationTime();
-		return set_transient( self::TRANSIENT_KEY, $signature, $expiration );
+		return set_transient( self::TRANSIENT_KEY, $signature, self::TTL );
 	}
 
 	public function deleteSignature(): bool {

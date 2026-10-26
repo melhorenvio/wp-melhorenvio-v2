@@ -47,7 +47,7 @@ final class PluginTest extends TestCase {
 		$this->plugin->boot();
 		$container = $this->plugin->getContainer();
 
-		self::assertSame( 10, has_action( 'wp_logout', array( $container->get( HookManager::class ), 'onUserLogout' ) ) );
+		self::assertFalse( has_action( 'wp_logout' ) );
 		self::assertSame( 20, has_action( 'admin_menu', array( $container->get( AdminMenuController::class ), 'addSubmenuPage' ) ) );
 		self::assertNotFalse( has_filter( 'woocommerce_shipping_methods' ) );
 		self::assertNotFalse( has_action( 'woocommerce_order_note_added' ) );

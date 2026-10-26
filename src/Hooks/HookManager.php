@@ -11,7 +11,6 @@ use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
-use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
@@ -84,7 +83,6 @@ final class HookManager {
 		$orderBulkImportNotice->register();
 
 		$this->registerShippingMethod();
-		$this->registerLogoutHook();
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
 		$this->registerWebhookDeliveryFilter();
@@ -119,10 +117,6 @@ final class HookManager {
 		);
 	}
 
-	private function registerLogoutHook(): void {
-		add_action( 'wp_logout', array( $this, 'onUserLogout' ) );
-	}
-
 	private function registerWcAuthApproveGuard(): void {
 		add_action(
 			'woocommerce_auth_page_footer',
@@ -147,11 +141,6 @@ final class HookManager {
 				<?php
 			}
 		);
-	}
-
-	public function onUserLogout(): void {
-		$signatureManager = $this->container->get( SignatureService::class );
-		$signatureManager->deleteSignature();
 	}
 
 	private function registerWebhookDeliveryFilter(): void {
