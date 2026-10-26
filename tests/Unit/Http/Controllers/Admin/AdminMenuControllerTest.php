@@ -88,7 +88,12 @@ final class AdminMenuControllerTest extends TestCase {
 				return $default;
 			}
 		);
-		Functions\when( 'get_transient' )->justReturn( 'sig' );
+		Functions\when( 'get_transient' )->justReturn(
+			array(
+				'signature' => 'sig',
+				'issued_at' => time(),
+			)
+		);
 		Functions\when( 'set_transient' )->justReturn( true );
 
 		ob_start();

@@ -33,7 +33,12 @@ final class AdminPageControllerTest extends TestCase {
 				return array_key_exists( $key, $this->options ) ? $this->options[ $key ] : $default;
 			}
 		);
-		Functions\when( 'get_transient' )->justReturn( 'stored-signature' );
+		Functions\when( 'get_transient' )->justReturn(
+			array(
+				'signature' => 'stored-signature',
+				'issued_at' => time(),
+			)
+		);
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'untrailingslashit' )->alias(
 			function ( $value ) {
