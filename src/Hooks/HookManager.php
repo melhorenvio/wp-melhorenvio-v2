@@ -244,11 +244,11 @@ final class HookManager {
 			'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
 		);
 
-		// XML da NF-e entra como md5 (pode ser grande) e só quando existe, para não mudar o hash
+		// XML da NF-e entra como sha256 (pode ser grande) e só quando existe, para não mudar o hash
 		// já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
 		$invoiceXml = (string) $order->get_meta( '_me_invoice_xml_danfe', true );
 		if ( '' !== $invoiceXml ) {
-			$data['invoice_xml_md5'] = md5( $invoiceXml );
+			$data['invoice_xml_sha256'] = hash( 'sha256', $invoiceXml );
 		}
 
 		return md5( serialize( $data ) );
