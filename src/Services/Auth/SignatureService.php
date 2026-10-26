@@ -15,6 +15,12 @@ final class SignatureService {
 	 */
 	public const TTL = HOUR_IN_SECONDS;
 
+	/**
+	 * Vida máxima da assinatura contada da geração. A renovação do TTL nunca passa desse
+	 * teto: depois dele a próxima entrega ao admin gera uma assinatura nova.
+	 */
+	public const MAX_AGE = 6 * HOUR_IN_SECONDS;
+
 	public function generateSignature(): string {
 		$data = array(
 			'timestamp' => time(),
@@ -23,22 +29,40 @@ final class SignatureService {
 
 		$signature = hash_hmac( 'sha256', serialize( $data ), $this->getSecretKey() );
 
-		$this->saveSignature( $signature );
+		$this->saveSignature( $signature, $data['timestamp'] );
 
 		return $signature;
 	}
 
 	public function getSignature( bool $generate = true ): ?string {
-		$signature = get_transient( self::TRANSIENT_KEY );
+		$stored = get_transient( self::TRANSIENT_KEY );
 
-		if ( ! $signature && $generate ) {
-			$signature = $this->generateSignature();
-		} elseif ( $signature && $generate ) {
-			// Entregue de novo ao admin: renova a validade para o handshake não expirar no meio.
-			$this->saveSignature( $signature );
+		// Formato antigo (sem data de geração): ainda vale no /secret, mas o admin recebe uma nova.
+		if ( is_string( $stored ) && $stored !== '' ) {
+			return $generate ? $this->generateSignature() : $stored;
 		}
 
-		return $signature ?: null;
+		$signature = is_array( $stored ) && ! empty( $stored['signature'] ) ? (string) $stored['signature'] : null;
+		$issuedAt  = is_array( $stored ) && isset( $stored['issued_at'] ) ? (int) $stored['issued_at'] : 0;
+
+		// O transient já expira dentro do teto; a checagem cobre caches que não respeitam a validade.
+		if ( $signature !== null && time() - $issuedAt > self::MAX_AGE ) {
+			$signature = null;
+		}
+
+		if ( ! $generate ) {
+			return $signature;
+		}
+
+		// Sem assinatura, ou a renovação passaria do teto de vida: gera outra.
+		if ( $signature === null || time() - $issuedAt + self::TTL > self::MAX_AGE ) {
+			return $this->generateSignature();
+		}
+
+		// Entregue de novo ao admin: renova a validade para o handshake não expirar no meio.
+		$this->saveSignature( $signature, $issuedAt );
+
+		return $signature;
 	}
 
 	public function validateSignature( string $signature ): bool {
@@ -52,8 +76,13 @@ final class SignatureService {
 		return $isValid;
 	}
 
-	private function saveSignature( string $signature ): bool {
-		return set_transient( self::TRANSIENT_KEY, $signature, self::TTL );
+	private function saveSignature( string $signature, int $issuedAt ): bool {
+		$data = array(
+			'signature' => $signature,
+			'issued_at' => $issuedAt,
+		);
+
+		return set_transient( self::TRANSIENT_KEY, $data, self::TTL );
 	}
 
 	public function deleteSignature(): bool {
