@@ -39,18 +39,24 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 		);
 	}
 
-	public function test_persists_fresh_snapshot_on_order(): void {
+	public function test_does_not_write_to_order_on_read(): void {
 		$order = $this->mockOrder();
-		$order->expects( 'update_meta_data' )->with( self::META_KEY, $this->expectedSnapshot() );
-		$order->expects( 'save_meta_data' );
+		$order->shouldNotReceive( 'update_meta_data' );
+		$order->shouldNotReceive( 'save_meta_data' );
+		$order->shouldNotReceive( 'save' );
 
-		$this->controller->refresh( new \WP_REST_Response( array( 'id' => 1 ) ), $order );
+		$result = $this->controller->refresh( new \WP_REST_Response( array( 'id' => 1 ) ), $order );
+
+		self::assertSame(
+			array(
+				array( 'id' => 0, 'key' => self::META_KEY, 'value' => $this->expectedSnapshot() ),
+			),
+			$result->get_data()['meta_data']
+		);
 	}
 
 	public function test_replaces_stale_snapshot_in_response_meta_data(): void {
 		$order = $this->mockOrder();
-		$order->allows( 'update_meta_data' );
-		$order->allows( 'save_meta_data' );
 
 		$otherAsObject        = new \stdClass();
 		$otherAsObject->id    = 5;
@@ -88,8 +94,6 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 
 	public function test_adds_snapshot_when_response_has_no_meta_data(): void {
 		$order = $this->mockOrder();
-		$order->allows( 'update_meta_data' );
-		$order->allows( 'save_meta_data' );
 
 		$result = $this->controller->refresh( new \WP_REST_Response( array( 'id' => 1 ) ), $order );
 
@@ -104,8 +108,6 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 	public function test_injects_force_import_mark_while_active(): void {
 		$expiresAt = time() + 600;
 		$order     = $this->mockOrder( (string) $expiresAt );
-		$order->allows( 'update_meta_data' );
-		$order->allows( 'save_meta_data' );
 
 		$response = new \WP_REST_Response(
 			array(
@@ -133,8 +135,6 @@ final class OrderMetaBackfillControllerTest extends TestCase {
 	public function test_strips_force_import_mark_when_expired(): void {
 		$expiredAt = (string) ( time() - 1 );
 		$order     = $this->mockOrder( $expiredAt );
-		$order->allows( 'update_meta_data' );
-		$order->allows( 'save_meta_data' );
 
 		$markAsObject        = new \stdClass();
 		$markAsObject->id    = 7;
