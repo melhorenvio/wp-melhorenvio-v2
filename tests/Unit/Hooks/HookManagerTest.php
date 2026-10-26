@@ -122,10 +122,13 @@ final class HookManagerTest extends TestCase {
 		}
 	}
 
-	public function test_register_hooks_logout_and_ssl_filters(): void {
+	public function test_register_hooks_logout(): void {
 		self::assertSame( 10, has_action( 'wp_logout', array( $this->manager, 'onUserLogout' ) ) );
-		self::assertSame( 10, has_filter( 'https_ssl_verify', '__return_false' ) );
-		self::assertSame( 10, has_filter( 'https_local_ssl_verify', '__return_false' ) );
+	}
+
+	public function test_register_does_not_disable_ssl_verification_site_wide(): void {
+		self::assertFalse( has_filter( 'https_ssl_verify' ) );
+		self::assertFalse( has_filter( 'https_local_ssl_verify' ) );
 	}
 
 	public function test_webhook_hooks_accept_all_arguments(): void {
