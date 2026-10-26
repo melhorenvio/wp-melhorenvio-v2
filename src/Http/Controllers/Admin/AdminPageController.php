@@ -31,7 +31,12 @@ final class AdminPageController {
 
 		// Conectar a conta exige a assinatura; sem conta conectada, só o administrador segue.
 		if ( ! $hasSecret && ! $canManageAccount ) {
-			$this->renderAccountRestrictedNotice();
+			$this->renderAccountRestrictedNotice( __( 'A conta Melhor Envio ainda não está conectada. Peça a um administrador da loja para conectá-la.', 'melhor-envio-cotacao' ) );
+			return;
+		}
+
+		if ( ! $canManageAccount && ! Capabilities::canUseConnection() ) {
+			$this->renderAccountRestrictedNotice( __( 'Você não tem permissão para acessar a integração com o Melhor Envio. Fale com um administrador da loja.', 'melhor-envio-cotacao' ) );
 			return;
 		}
 
@@ -88,6 +93,9 @@ final class AdminPageController {
 			container.appendChild(iframe);
 
 			window.addEventListener('message', function(event) {
+				// Só responde ao próprio iframe do Melhor Integrador.
+				if (event.source !== iframe.contentWindow) return;
+
 				if (event.data && event.data.state === 'READY') {
 					iframe.contentWindow.postMessage(
 						{ signature: signature, url: storeUrl },
@@ -100,11 +108,11 @@ final class AdminPageController {
 		<?php
 	}
 
-	private function renderAccountRestrictedNotice(): void {
+	private function renderAccountRestrictedNotice( string $message ): void {
 		?>
 		<div class="wrap">
 			<div class="notice notice-warning inline">
-				<p><?php esc_html_e( 'A conta Melhor Envio ainda não está conectada. Peça a um administrador da loja para conectá-la.', 'melhor-envio-cotacao' ); ?></p>
+				<p><?php echo esc_html( $message ); ?></p>
 			</div>
 		</div>
 		<?php
