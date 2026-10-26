@@ -44,6 +44,8 @@ final class AdminPageControllerTest extends TestCase {
 		);
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
+		Functions\stubTranslationFunctions();
+		Functions\stubEscapeFunctions();
 		Functions\when( 'untrailingslashit' )->alias(
 			function ( $value ) {
 				return rtrim( $value, '/\\' );
@@ -201,17 +203,28 @@ final class AdminPageControllerTest extends TestCase {
 		$this->capabilities = array( 'manage_woocommerce' );
 		Functions\expect( 'get_transient' )->never();
 		Functions\expect( 'set_transient' )->never();
-		Functions\when( 'esc_html_e' )->alias(
-			static function ( $text ) {
-				echo $text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			}
-		);
-
 		$output = $this->render();
 
 		self::assertStringNotContainsString( 'melhor-envio-integrador-container', $output );
 		self::assertStringNotContainsString( '<script>', $output );
 		self::assertStringContainsString( 'Peça a um administrador da loja para conectá-la.', $output );
+	}
+
+	public function test_render_does_not_expose_secret_below_default_capability(): void {
+		$this->capabilities = array( 'edit_shop_orders' );
+		$this->options['melhor_envio_integrador_secret'] = 'base64:c2VjcmV0';
+
+		$output = $this->render();
+
+		self::assertStringNotContainsString( 'c2VjcmV0', $output );
+		self::assertStringNotContainsString( '<script>', $output );
+		self::assertStringContainsString( 'Fale com um administrador da loja.', $output );
+	}
+
+	public function test_render_only_answers_messages_from_own_iframe(): void {
+		$output = $this->render();
+
+		self::assertStringContainsString( 'if (event.source !== iframe.contentWindow) return;', $output );
 	}
 
 	private function render(): string {

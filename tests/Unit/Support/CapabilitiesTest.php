@@ -57,4 +57,26 @@ final class CapabilitiesTest extends TestCase {
 			'gerente de loja'  => array( false ),
 		);
 	}
+
+	/**
+	 * @dataProvider connectionCapabilityChecks
+	 */
+	public function test_can_use_connection_requires_default_capability_regardless_of_filter( array $userCaps, bool $expected ): void {
+		Functions\when( 'apply_filters' )->justReturn( 'read' );
+		Functions\when( 'current_user_can' )->alias(
+			static function ( $capability ) use ( $userCaps ) {
+				return in_array( $capability, $userCaps, true );
+			}
+		);
+
+		self::assertSame( $expected, Capabilities::canUseConnection() );
+	}
+
+	public function connectionCapabilityChecks(): array {
+		return array(
+			'administrador'   => array( array( 'manage_options' ), true ),
+			'gerente de loja' => array( array( 'manage_woocommerce' ), true ),
+			'papel filtrado'  => array( array( 'read', 'edit_shop_orders' ), false ),
+		);
+	}
 }

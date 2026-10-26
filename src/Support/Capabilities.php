@@ -31,4 +31,9 @@ final class Capabilities {
 	public static function canManageAccount(): bool {
 		return current_user_can( self::ACCOUNT );
 	}
+
+	// Usar a conta conectada exige ao menos a capacidade padrão, mesmo que o filtro libere a página para menos.
+	public static function canUseConnection(): bool {
+		return current_user_can( self::ADMIN_DEFAULT ) || self::canManageAccount();
+	}
 }
