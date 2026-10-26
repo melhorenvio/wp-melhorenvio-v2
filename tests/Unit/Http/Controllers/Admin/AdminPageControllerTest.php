@@ -31,6 +31,13 @@ final class AdminPageControllerTest extends TestCase {
 			}
 		);
 		Functions\when( 'get_transient' )->justReturn( 'stored-signature' );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+		Functions\when( 'untrailingslashit' )->alias(
+			function ( $value ) {
+				return rtrim( $value, '/\\' );
+			}
+		);
+		$this->options['home'] = 'https://loja.example';
 	}
 
 	protected function tearDown(): void {
@@ -101,6 +108,39 @@ final class AdminPageControllerTest extends TestCase {
 		$output = $this->render();
 
 		self::assertStringContainsString( 'var baseUrl   = "https:\/\/env.example";', $output );
+	}
+
+	public function test_render_uses_wordpress_home_as_store_url(): void {
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var storeUrl  = "https:\/\/loja.example";', $output );
+		self::assertStringNotContainsString( 'window.location.origin', $output );
+	}
+
+	public function test_render_keeps_subdirectory_of_home_in_store_url(): void {
+		$this->options['home'] = 'https://exemplo.com.br/loja/';
+
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var storeUrl  = "https:\/\/exemplo.com.br\/loja";', $output );
+	}
+
+	public function test_render_ignores_language_filter_of_home_url(): void {
+		$this->options['home'] = 'https://exemplo.com.br/loja';
+		Functions\when( 'home_url' )->justReturn( 'https://exemplo.com.br/loja/en' );
+		Functions\when( 'get_home_url' )->justReturn( 'https://exemplo.com.br/loja/en' );
+
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var storeUrl  = "https:\/\/exemplo.com.br\/loja";', $output );
+	}
+
+	public function test_render_escapes_store_url_injected_into_script(): void {
+		$this->options['home'] = 'https://exemplo.com.br/</script><script>alert(1)';
+
+		$output = $this->render();
+
+		self::assertStringNotContainsString( '</script><script>alert(1)', $output );
 	}
 
 	public function test_render_generates_signature_when_none_is_stored(): void {
