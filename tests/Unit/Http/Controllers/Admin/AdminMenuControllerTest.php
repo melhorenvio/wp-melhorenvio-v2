@@ -111,6 +111,7 @@ final class AdminMenuControllerTest extends TestCase {
 		);
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 
 		ob_start();
 		try {
