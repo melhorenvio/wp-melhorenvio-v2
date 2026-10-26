@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Tests\Unit\Http\Controllers\Admin;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
@@ -41,10 +42,24 @@ final class AdminMenuControllerTest extends TestCase {
 				'woocommerce',
 				'Melhor Envio',
 				'Melhor Envio',
-				'manage_options',
+				'manage_woocommerce',
 				'melhor-integrador',
 				array( $this->controller, 'renderPage' )
 			);
+
+		$this->controller->addSubmenuPage();
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_add_submenu_page_uses_capability_from_filter(): void {
+		Filters\expectApplied( 'melhorenvio_admin_capability' )
+			->once()
+			->with( 'manage_woocommerce' )
+			->andReturn( 'manage_options' );
+		Functions\expect( 'add_submenu_page' )
+			->once()
+			->with( 'woocommerce', 'Melhor Envio', 'Melhor Envio', 'manage_options', 'melhor-integrador', array( $this->controller, 'renderPage' ) );
 
 		$this->controller->addSubmenuPage();
 
@@ -95,6 +110,7 @@ final class AdminMenuControllerTest extends TestCase {
 			)
 		);
 		Functions\when( 'set_transient' )->justReturn( true );
+		Functions\when( 'current_user_can' )->justReturn( true );
 
 		ob_start();
 		try {

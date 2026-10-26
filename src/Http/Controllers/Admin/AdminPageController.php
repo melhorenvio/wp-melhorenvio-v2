@@ -6,6 +6,7 @@ namespace MelhorEnvio\Http\Controllers\Admin;
 
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
+use MelhorEnvio\Support\Capabilities;
 
 final class AdminPageController {
 
@@ -24,12 +25,20 @@ final class AdminPageController {
 	}
 
 	public function render(): void {
-		$secret    = $this->secretManager->getSecret();
-		$hasSecret = $secret !== null;
+		$secret           = $this->secretManager->getSecret();
+		$hasSecret        = $secret !== null;
+		$canManageAccount = Capabilities::canManageAccount();
+
+		// Conectar a conta exige a assinatura; sem conta conectada, só o administrador segue.
+		if ( ! $hasSecret && ! $canManageAccount ) {
+			$this->renderAccountRestrictedNotice();
+			return;
+		}
 
 		$secretJson = json_encode( $secret, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
-		$signature     = $this->signatureManager->getSignature();
+		// A assinatura autoriza salvar um novo secret (reconectar/trocar a conta): só vai para o administrador.
+		$signature     = $canManageAccount ? $this->signatureManager->getSignature() : null;
 		$signatureJson = json_encode( $signature, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
 		$baseUrl     = getenv( 'MELHOR_INTEGRADOR_BASE_URL' ) ?: get_option( 'melhor_integrador_base_url', 'https://woocommerceenvios.com' );
@@ -61,7 +70,10 @@ final class AdminPageController {
 			}
 
 			iframeUrl.searchParams.set('url', storeUrl);
-			iframeUrl.searchParams.set('signature', signature);
+
+			if (signature) {
+				iframeUrl.searchParams.set('signature', signature);
+			}
 
 			var iframe = document.createElement('iframe');
 
@@ -84,6 +96,16 @@ final class AdminPageController {
 			});
 		})();
 		</script>
+		<?php
+	}
+
+	private function renderAccountRestrictedNotice(): void {
+		?>
+		<div class="wrap">
+			<div class="notice notice-warning inline">
+				<p><?php esc_html_e( 'A conta Melhor Envio ainda não está conectada. Peça a um administrador da loja para conectá-la.', 'melhor-envio-cotacao' ); ?></p>
+			</div>
+		</div>
 		<?php
 	}
 }
