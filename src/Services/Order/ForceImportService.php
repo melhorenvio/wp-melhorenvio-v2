@@ -17,12 +17,13 @@ final class ForceImportService {
 	public const TTL         = HOUR_IN_SECONDS;
 
 	/**
-	 * Usa save_meta_data() em vez de save() para não disparar woocommerce_update_order
-	 * (e, com ele, os webhooks order.updated de forma não controlada).
+	 * Grava só a meta, sem salvar o pedido: com HPOS, save_meta_data() sozinho ainda
+	 * dispararia woocommerce_update_order e um order.updated para todos os webhooks.
+	 * A entrega ao MI é feita explicitamente por quem chama.
 	 */
 	public function mark( \WC_Order $order ): void {
 		$order->update_meta_data( self::META_KEY, time() + self::TTL );
-		$order->save_meta_data();
+		OrderMetaPersister::saveWithoutTouchingOrder( $order );
 	}
 
 	public function getActiveExpiration( \WC_Order $order ): ?int {
@@ -45,6 +46,6 @@ final class ForceImportService {
 		}
 
 		$order->delete_meta_data( self::META_KEY );
-		$order->save_meta_data();
+		OrderMetaPersister::saveWithoutTouchingOrder( $order );
 	}
 }
