@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Tests\Unit\Services\Auth;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Tests\TestCase;
@@ -22,12 +23,11 @@ final class SignatureServiceTest extends TestCase {
 
 	public function test_generate_signature_stores_hmac_as_transient(): void {
 		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
-		Functions\when( 'get_current_user_id' )->justReturn( 1 );
 		Functions\when( 'get_option' )->justReturn( 'secret' );
 
 		Functions\expect( 'set_transient' )
 			->once()
-			->with( self::TRANSIENT_KEY, Mockery::pattern( '/^[a-f0-9]{64}$/' ), DAY_IN_SECONDS )
+			->with( self::TRANSIENT_KEY, Mockery::pattern( '/^[a-f0-9]{64}$/' ), HOUR_IN_SECONDS )
 			->andReturn( true );
 
 		$signature = $this->service->generateSignature();
@@ -37,7 +37,6 @@ final class SignatureServiceTest extends TestCase {
 
 	public function test_generate_signature_creates_secret_when_missing(): void {
 		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
-		Functions\when( 'get_current_user_id' )->justReturn( 1 );
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'get_option' )->justReturn( false );
 		Functions\when( 'wp_generate_password' )->justReturn( 'generated' );
@@ -47,6 +46,31 @@ final class SignatureServiceTest extends TestCase {
 		$this->service->generateSignature();
 
 		$this->assertMockExpectationsMet();
+	}
+
+	public function test_ttl_is_short_and_ignores_auth_cookie_expiration(): void {
+		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
+		Functions\when( 'get_option' )->justReturn( 'secret' );
+		Functions\when( 'set_transient' )->justReturn( true );
+
+		$this->service->generateSignature();
+
+		self::assertSame( HOUR_IN_SECONDS, SignatureService::TTL );
+		self::assertFalse( Filters\applied( 'auth_cookie_expiration' ) > 0 );
+	}
+
+	public function test_get_signature_renews_ttl_of_existing_signature(): void {
+		Functions\when( 'get_transient' )->justReturn( 'abc' );
+		Functions\expect( 'set_transient' )->once()->with( self::TRANSIENT_KEY, 'abc', HOUR_IN_SECONDS )->andReturn( true );
+
+		self::assertSame( 'abc', $this->service->getSignature() );
+	}
+
+	public function test_get_signature_without_generating_does_not_renew_ttl(): void {
+		Functions\when( 'get_transient' )->justReturn( 'abc' );
+		Functions\expect( 'set_transient' )->never();
+
+		self::assertSame( 'abc', $this->service->getSignature( false ) );
 	}
 
 	public function test_get_signature_returns_null_when_missing_and_not_generating(): void {

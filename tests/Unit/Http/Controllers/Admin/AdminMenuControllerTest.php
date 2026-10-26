@@ -89,6 +89,7 @@ final class AdminMenuControllerTest extends TestCase {
 			}
 		);
 		Functions\when( 'get_transient' )->justReturn( 'sig' );
+		Functions\when( 'set_transient' )->justReturn( true );
 
 		ob_start();
 		try {

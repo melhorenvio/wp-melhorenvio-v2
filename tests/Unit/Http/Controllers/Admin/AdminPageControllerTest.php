@@ -20,6 +20,9 @@ final class AdminPageControllerTest extends TestCase {
 	/** @var array<string, mixed> */
 	private array $options = array();
 
+	/** @var array<int, array{0: string, 1: mixed, 2: int}> */
+	private array $transientWrites = array();
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->originalEnvBaseUrl = getenv( self::ENV_BASE_URL );
@@ -38,6 +41,12 @@ final class AdminPageControllerTest extends TestCase {
 			}
 		);
 		$this->options['home'] = 'https://loja.example';
+		Functions\when( 'set_transient' )->alias(
+			function ( $key, $value, $expiration ) {
+				$this->transientWrites[] = array( $key, $value, $expiration );
+				return true;
+			}
+		);
 	}
 
 	protected function tearDown(): void {
@@ -146,13 +155,11 @@ final class AdminPageControllerTest extends TestCase {
 	public function test_render_generates_signature_when_none_is_stored(): void {
 		Functions\when( 'get_transient' )->justReturn( false );
 		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
-		Functions\when( 'get_current_user_id' )->justReturn( 1 );
 		$this->options['melhor_envio_integrador_signature_key'] = 'key';
-		Functions\expect( 'set_transient' )->once()->andReturn( true );
-
 		$output = $this->render();
 
 		self::assertMatchesRegularExpression( '/var signature = "[a-f0-9]{64}";/', $output );
+		self::assertCount( 1, $this->transientWrites );
 	}
 
 	private function render(): string {
