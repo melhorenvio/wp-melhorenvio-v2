@@ -4,7 +4,7 @@ Tags: frete, woocommerce, correios, envio, logística
 Requires at least: 4.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.0.7
+Stable tag: 3.0.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,17 @@ Acesse nossa [central de ajuda](https://centraldeajuda.melhorenvio.com.br/hc/pt-
 Nova versão com painel centralizado e conexão automática da conta Melhor Envio, sem necessidade de gerar token manualmente. Lojas na versão legado continuam funcionando e podem migrar pelo painel.
 
 == Changelog ==
+
+= 3.0.8 =
+* Corrige o loop de webhooks order.updated em lojas com HPOS: ler um pedido pela API REST não salva mais o pedido, e as marcas de controle do plugin são gravadas sem disparar novas atualizações
+* Modo legado: o rastreio só é salvo no pedido quando muda, sem salvar todos os pedidos ao abrir a listagem
+* Segurança: o plugin não desliga mais a verificação de certificado SSL do WordPress
+* Exibe o frete quando a cotação retorna um único serviço, e cotações vazias deixam de ser guardadas em cache (inclusive as gravadas por versões anteriores)
+* Lojas instaladas em subdiretório (ex.: exemplo.com.br/loja) passam a conectar ao Melhor Integrador
+* O logout de outros usuários não interrompe mais a conexão com o Melhor Integrador
+* O Gerente de loja volta a acessar WooCommerce > Melhor Envio; conectar ou trocar a conta continua restrito ao administrador, e trocar o modo do plugin exige permissão do WooCommerce
+* Notifica o Melhor Integrador quando só o XML da NF-e do pedido é enviado ou substituído
+* Atualiza o banner de migração para a nova versão
 
 = 3.0.7 =
 * Adiciona sincronização sob demanda de pedidos na Melhor Envio (ação em massa e botão por pedido na lista de pedidos)
