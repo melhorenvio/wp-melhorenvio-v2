@@ -251,22 +251,31 @@ final class HookManager {
 			$order->get_items()
 		);
 
-		$data = array(
-			'status'         => $order->get_status(),
-			'billing'        => $order->get_address( 'billing' ),
-			'shipping'       => $order->get_address( 'shipping' ),
-			'shipping_lines' => $shipping_lines,
-			'line_items'     => $line_items,
-			'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
+		return md5(
+			serialize(
+				array(
+					'status'         => $order->get_status(),
+					'billing'        => $order->get_address( 'billing' ),
+					'shipping'       => $order->get_address( 'shipping' ),
+					'shipping_lines' => $shipping_lines,
+					'line_items'     => $line_items,
+					'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
+				) + self::buildInvoiceXmlHash( $order )
+			)
 		);
+	}
 
-		// XML da NF-e entra como sha256 (pode ser grande) e só quando existe, para não mudar o hash
-		// já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
+	/**
+	 * XML da NF-e entra como sha256 (pode ser grande) e só quando existe, para não mudar o hash
+	 * já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
+	 */
+	private static function buildInvoiceXmlHash( \WC_Order $order ): array {
 		$invoiceXml = (string) $order->get_meta( '_me_invoice_xml_danfe', true );
-		if ( '' !== $invoiceXml ) {
-			$data['invoice_xml_sha256'] = hash( 'sha256', $invoiceXml );
+
+		if ( '' === $invoiceXml ) {
+			return array();
 		}
 
-		return md5( serialize( $data ) );
+		return array( 'invoice_xml_sha256' => hash( 'sha256', $invoiceXml ) );
 	}
 }
