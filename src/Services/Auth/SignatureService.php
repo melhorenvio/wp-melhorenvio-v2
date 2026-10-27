@@ -7,6 +7,7 @@ namespace MelhorEnvio\Services\Auth;
 final class SignatureService {
 
 	private const TRANSIENT_KEY = 'melhor_envio_integrador_signature';
+	private const ISSUED_AT_KEY = 'melhor_envio_integrador_signature_issued_at';
 	private const SIGNATURE_KEY = 'melhor_envio_integrador_signature_key';
 
 	/**
@@ -35,15 +36,14 @@ final class SignatureService {
 	}
 
 	public function getSignature( bool $generate = true ): ?string {
-		$stored = get_transient( self::TRANSIENT_KEY );
+		$stored    = get_transient( self::TRANSIENT_KEY );
+		$signature = is_string( $stored ) && $stored !== '' ? $stored : null;
+		$issuedAt  = (int) get_transient( self::ISSUED_AT_KEY );
 
-		// Formato antigo (sem data de geração): ainda vale no /secret, mas o admin recebe uma nova.
-		if ( is_string( $stored ) && $stored !== '' ) {
-			return $generate ? $this->generateSignature() : $stored;
+		// Sem data de geração (gravada pela 3.0.7 ou anterior): ainda vale no /secret, mas o admin recebe uma nova.
+		if ( $signature !== null && $issuedAt === 0 ) {
+			return $generate ? $this->generateSignature() : $signature;
 		}
-
-		$signature = is_array( $stored ) && ! empty( $stored['signature'] ) ? (string) $stored['signature'] : null;
-		$issuedAt  = is_array( $stored ) && isset( $stored['issued_at'] ) ? (int) $stored['issued_at'] : 0;
 
 		// O transient já expira dentro do teto; a checagem cobre caches que não respeitam a validade.
 		if ( $signature !== null && time() - $issuedAt > self::MAX_AGE ) {
@@ -76,16 +76,19 @@ final class SignatureService {
 		return $isValid;
 	}
 
+	/**
+	 * A assinatura continua gravada como string, no mesmo formato da 3.0.7, e a data de
+	 * geração fica num transient à parte: assim um rollback do plugin segue lendo o valor.
+	 */
 	private function saveSignature( string $signature, int $issuedAt ): bool {
-		$data = array(
-			'signature' => $signature,
-			'issued_at' => $issuedAt,
-		);
+		set_transient( self::ISSUED_AT_KEY, $issuedAt, self::TTL );
 
-		return set_transient( self::TRANSIENT_KEY, $data, self::TTL );
+		return set_transient( self::TRANSIENT_KEY, $signature, self::TTL );
 	}
 
 	public function deleteSignature(): bool {
+		delete_transient( self::ISSUED_AT_KEY );
+
 		return delete_transient( self::TRANSIENT_KEY );
 	}
 

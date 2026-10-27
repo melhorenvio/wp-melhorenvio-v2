@@ -36,11 +36,10 @@ final class AdminPageControllerTest extends TestCase {
 				return array_key_exists( $key, $this->options ) ? $this->options[ $key ] : $default;
 			}
 		);
-		Functions\when( 'get_transient' )->justReturn(
-			array(
-				'signature' => 'stored-signature',
-				'issued_at' => time(),
-			)
+		Functions\when( 'get_transient' )->alias(
+			static function ( $key ) {
+				return 'melhor_envio_integrador_signature_issued_at' === $key ? time() : 'stored-signature';
+			}
 		);
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
@@ -183,7 +182,11 @@ final class AdminPageControllerTest extends TestCase {
 		$output = $this->render();
 
 		self::assertMatchesRegularExpression( '/var signature = "[a-f0-9]{64}";/', $output );
-		self::assertCount( 1, $this->transientWrites );
+
+		$writes = array_column( $this->transientWrites, 1, 0 );
+		self::assertCount( 2, $writes );
+		self::assertMatchesRegularExpression( '/^[a-f0-9]{64}$/', $writes['melhor_envio_integrador_signature'] );
+		self::assertIsInt( $writes['melhor_envio_integrador_signature_issued_at'] );
 	}
 
 	public function test_render_without_signature_for_shop_manager_with_connected_account(): void {

@@ -103,11 +103,10 @@ final class AdminMenuControllerTest extends TestCase {
 				return $default;
 			}
 		);
-		Functions\when( 'get_transient' )->justReturn(
-			array(
-				'signature' => 'sig',
-				'issued_at' => time(),
-			)
+		Functions\when( 'get_transient' )->alias(
+			static function ( $key ) {
+				return 'melhor_envio_integrador_signature_issued_at' === $key ? time() : 'sig';
+			}
 		);
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'current_user_can' )->justReturn( true );
