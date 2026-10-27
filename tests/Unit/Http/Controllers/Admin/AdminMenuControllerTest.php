@@ -111,6 +111,8 @@ final class AdminMenuControllerTest extends TestCase {
 		Functions\when( 'set_transient' )->justReturn( true );
 		Functions\when( 'current_user_can' )->justReturn( true );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
+		Functions\when( 'admin_url' )->justReturn( 'https://loja.example/wp-admin/admin-ajax.php' );
+		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
 
 		ob_start();
 		try {

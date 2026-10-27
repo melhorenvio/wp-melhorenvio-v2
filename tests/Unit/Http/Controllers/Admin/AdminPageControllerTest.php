@@ -42,6 +42,12 @@ final class AdminPageControllerTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+		Functions\when( 'admin_url' )->alias(
+			static function ( $path = '' ) {
+				return 'https://loja.example/wp-admin/' . $path;
+			}
+		);
+		Functions\when( 'wp_create_nonce' )->justReturn( 'origin-nonce' );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 		Functions\stubTranslationFunctions();
 		Functions\stubEscapeFunctions();
@@ -228,6 +234,21 @@ final class AdminPageControllerTest extends TestCase {
 		$output = $this->render();
 
 		self::assertStringContainsString( 'if (event.source !== iframe.contentWindow) return;', $output );
+	}
+
+	public function test_render_lists_backend_domain_as_allowed_app_origin(): void {
+		$output = $this->render();
+
+		self::assertStringContainsString( 'var appDomains     = ["woocommerceenvios.com"];', $output );
+	}
+
+	public function test_render_logs_signature_sent_to_unknown_origin_without_blocking(): void {
+		$output = $this->render();
+
+		self::assertStringContainsString( '"action":"melhor_envio_app_origin_mismatch"', $output );
+		self::assertStringContainsString( '"nonce":"origin-nonce"', $output );
+		self::assertStringContainsString( 'if (!isAppOrigin(event.origin)) logOriginMismatch(event.origin);', $output );
+		self::assertMatchesRegularExpression( '/logOriginMismatch\(event\.origin\);\s+iframe\.contentWindow\.postMessage\(/', $output );
 	}
 
 	private function render(): string {
