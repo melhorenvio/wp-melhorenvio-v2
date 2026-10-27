@@ -168,7 +168,11 @@ final class ModeNoticeController {
 
 		// Trocar o modo altera os métodos de frete da loja: exige a mesma capacidade do WooCommerce.
 		if ( ! current_user_can( Capabilities::ADMIN_DEFAULT ) ) {
-			wp_die( esc_html__( 'Você não tem permissão para alterar o modo do plugin.', 'melhor-envio-cotacao' ) );
+			wp_die(
+				esc_html__( 'Você não tem permissão para alterar o modo do plugin.', 'melhor-envio-cotacao' ),
+				'',
+				array( 'response' => 403 )
+			);
 		}
 
 		PluginModeService::setMode( $mode );
