@@ -116,7 +116,8 @@ final class MelhorEnvioApiClientServiceTest extends TestCase {
 			$args['headers']
 		);
 		self::assertSame( 15, $args['timeout'] );
-		self::assertFalse( $args['sslverify'] );
+		// Sem sslverify: vale o padrão do WordPress (verificação ligada).
+		self::assertArrayNotHasKey( 'sslverify', $args );
 		self::assertSame(
 			array(
 				'from'                => array( 'postal_code' => '01001000' ),

@@ -32,6 +32,8 @@ services:
     volumes:
       - ./:/var/www/html/wp-content/plugins/melhor-envio-cotacao
       - ./custom-php-settings.ini:/usr/local/etc/php/conf.d/custom-php-settings.ini
+      # Somente dev: aceita o cert interno do caddy nos hosts *.localhost/*.me.test.
+      - ./docker/mu-plugins:/var/www/html/wp-content/mu-plugins:ro
     depends_on:
       db:
         condition: service_healthy
