@@ -244,8 +244,22 @@ final class HookManager {
 					'shipping_lines' => $shipping_lines,
 					'line_items'     => $line_items,
 					'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
-				)
+				) + self::buildInvoiceXmlHash( $order )
 			)
 		);
+	}
+
+	/**
+	 * XML da NF-e entra como sha256 (pode ser grande) e só quando existe, para não mudar o hash
+	 * já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
+	 */
+	private static function buildInvoiceXmlHash( \WC_Order $order ): array {
+		$invoiceXml = (string) $order->get_meta( '_me_invoice_xml_danfe', true );
+
+		if ( '' === $invoiceXml ) {
+			return array();
+		}
+
+		return array( 'invoice_xml_sha256' => hash( 'sha256', $invoiceXml ) );
 	}
 }
