@@ -83,10 +83,15 @@ final class ModeNoticeControllerTest extends TestCase {
 		self::assertStringContainsString( 'name="action" value="melhor_envio_set_mode"', $output );
 		self::assertStringContainsString( 'name="mode" value="integrador"', $output );
 		self::assertSame( 2, substr_count( $output, 'name="mode" value="dismiss"' ) );
-		self::assertStringContainsString( 'Gestão centralizada', $output );
-		self::assertStringContainsString( 'Etiquetas em lote', $output );
-		self::assertStringContainsString( 'Regras de frete inteligentes', $output );
-		self::assertStringContainsString( 'Migrar para nova versão', $output );
+		self::assertStringContainsString( 'A nova versão do Melhor Envio para WooCommerce está disponível!', $output );
+		self::assertStringContainsString( 'Refizemos a experiência de ponta a ponta para acabar com as instabilidades.', $output );
+		self::assertStringContainsString( '📦 Etiquetas em lote', $output );
+		self::assertStringContainsString( '⚡ Configuração sem token', $output );
+		self::assertStringContainsString( '🚚 Rastreio e pós-envio', $output );
+		self::assertStringContainsString( '🎧 Chamados em 1 clique', $output );
+		self::assertStringContainsString( 'Migrar agora', $output );
+		self::assertStringContainsString( 'Agora não', $output );
+		self::assertStringNotContainsString( 'descontinuada', $output );
 	}
 
 	public function test_render_notice_outputs_nothing_in_integrador_mode(): void {

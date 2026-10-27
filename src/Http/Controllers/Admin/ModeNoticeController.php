@@ -91,18 +91,19 @@ final class ModeNoticeController {
 
 	private function renderUpgradeToIntegradorNotice(): void {
 		$chips     = array(
-			__( 'Gestão centralizada', 'melhor-envio-cotacao' ),
-			__( 'Etiquetas em lote', 'melhor-envio-cotacao' ),
-			__( 'Regras de frete inteligentes', 'melhor-envio-cotacao' ),
+			'📦 ' . __( 'Etiquetas em lote', 'melhor-envio-cotacao' ),
+			'⚡ ' . __( 'Configuração sem token', 'melhor-envio-cotacao' ),
+			'🚚 ' . __( 'Rastreio e pós-envio', 'melhor-envio-cotacao' ),
+			'🎧 ' . __( 'Chamados em 1 clique', 'melhor-envio-cotacao' ),
 		);
 		?>
 		<div class="notice me-alert">
 			<div class="me-alert__body">
 				<h2 id="me-alert-title" class="me-alert__title">
-					<?php esc_html_e( 'O plugin do Melhor Envio ficou ainda melhor', 'melhor-envio-cotacao' ); ?> 🚀
+					<?php esc_html_e( 'A nova versão do Melhor Envio para WooCommerce está disponível!', 'melhor-envio-cotacao' ); ?> ✨
 				</h2>
 				<p class="me-alert__description">
-					<?php esc_html_e( 'Melhorias para deixar sua operação mais rápida e fácil. A versão atual será descontinuada em 3 meses — e a migração leva poucos minutos.', 'melhor-envio-cotacao' ); ?>
+					<?php esc_html_e( 'Refizemos a experiência de ponta a ponta para acabar com as instabilidades. Faça a migração para ter mais controle e automatizar sua rotina sem complicações.', 'melhor-envio-cotacao' ); ?>
 				</p>
 				<ul class="me-alert__chips">
 					<?php foreach ( $chips as $chip ) : ?>
@@ -115,7 +116,7 @@ final class ModeNoticeController {
 						<input type="hidden" name="mode" value="integrador">
 						<?php wp_nonce_field( self::NONCE_KEY, '_wpnonce', false ); ?>
 						<button type="submit" class="me-alert__btn me-alert__btn--primary">
-							<?php esc_html_e( 'Migrar para nova versão', 'melhor-envio-cotacao' ); ?>
+							<?php esc_html_e( 'Migrar agora', 'melhor-envio-cotacao' ); ?>
 						</button>
 					</form>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
