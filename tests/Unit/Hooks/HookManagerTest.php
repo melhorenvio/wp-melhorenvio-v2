@@ -25,7 +25,6 @@ use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
-use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 use MelhorEnvio\Tests\TestCase;
@@ -122,10 +121,9 @@ final class HookManagerTest extends TestCase {
 		}
 	}
 
-	public function test_register_hooks_logout_and_ssl_filters(): void {
-		self::assertSame( 10, has_action( 'wp_logout', array( $this->manager, 'onUserLogout' ) ) );
-		self::assertSame( 10, has_filter( 'https_ssl_verify', '__return_false' ) );
-		self::assertSame( 10, has_filter( 'https_local_ssl_verify', '__return_false' ) );
+	public function test_register_does_not_disable_ssl_verification_site_wide(): void {
+		self::assertFalse( has_filter( 'https_ssl_verify' ) );
+		self::assertFalse( has_filter( 'https_local_ssl_verify' ) );
 	}
 
 	public function test_webhook_hooks_accept_all_arguments(): void {
@@ -135,13 +133,10 @@ final class HookManagerTest extends TestCase {
 		self::assertSame( 5, $this->captured['woocommerce_webhook_delivery']['args'] );
 	}
 
-	public function test_on_user_logout_deletes_signature(): void {
-		$this->container->singleton( SignatureService::class, SignatureService::class );
-		Functions\expect( 'delete_transient' )->once()->with( 'melhor_envio_integrador_signature' )->andReturn( true );
-
-		$this->manager->onUserLogout();
-
-		$this->assertMockExpectationsMet();
+	public function test_register_does_not_hook_logout(): void {
+		// A assinatura é única para o site: o logout de qualquer usuário não pode apagá-la.
+		self::assertFalse( has_action( 'wp_logout' ) );
+		self::assertFalse( method_exists( $this->manager, 'onUserLogout' ) );
 	}
 
 	public function test_hidden_order_item_meta_appends_melhor_envio_keys(): void {

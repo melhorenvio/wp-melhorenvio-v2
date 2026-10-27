@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Tests\Unit\Http\Controllers\Admin;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Http\Controllers\Admin\AdminMenuController;
@@ -41,10 +42,24 @@ final class AdminMenuControllerTest extends TestCase {
 				'woocommerce',
 				'Melhor Envio',
 				'Melhor Envio',
-				'manage_options',
+				'manage_woocommerce',
 				'melhor-integrador',
 				array( $this->controller, 'renderPage' )
 			);
+
+		$this->controller->addSubmenuPage();
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_add_submenu_page_uses_capability_from_filter(): void {
+		Filters\expectApplied( 'melhorenvio_admin_capability' )
+			->once()
+			->with( 'manage_woocommerce' )
+			->andReturn( 'manage_options' );
+		Functions\expect( 'add_submenu_page' )
+			->once()
+			->with( 'woocommerce', 'Melhor Envio', 'Melhor Envio', 'manage_options', 'melhor-integrador', array( $this->controller, 'renderPage' ) );
 
 		$this->controller->addSubmenuPage();
 
@@ -88,7 +103,16 @@ final class AdminMenuControllerTest extends TestCase {
 				return $default;
 			}
 		);
-		Functions\when( 'get_transient' )->justReturn( 'sig' );
+		Functions\when( 'get_transient' )->alias(
+			static function ( $key ) {
+				return 'melhor_envio_integrador_signature_issued_at' === $key ? time() : 'sig';
+			}
+		);
+		Functions\when( 'set_transient' )->justReturn( true );
+		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
+		Functions\when( 'admin_url' )->justReturn( 'https://loja.example/wp-admin/admin-ajax.php' );
+		Functions\when( 'wp_create_nonce' )->justReturn( 'nonce' );
 
 		ob_start();
 		try {

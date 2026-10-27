@@ -29,14 +29,16 @@ final class ModeNoticeControllerTest extends TestCase {
 		Functions\stubEscapeFunctions();
 		Functions\stubTranslationFunctions();
 		Functions\when( 'get_current_user_id' )->justReturn( 7 );
+		Functions\when( 'current_user_can' )->justReturn( true );
 		Functions\when( 'admin_url' )->alias(
 			function ( $path = '' ) {
 				return 'https://shop.test/wp-admin/' . $path;
 			}
 		);
 		Functions\when( 'wp_die' )->alias(
-			function ( $message = '' ) {
-				throw new RuntimeException( 'wp_die: ' . $message );
+			function ( $message = '', $title = '', $args = array() ) {
+				$status = is_array( $args ) && isset( $args['response'] ) ? ' [' . $args['response'] . ']' : '';
+				throw new RuntimeException( 'wp_die: ' . $message . $status );
 			}
 		);
 		Functions\when( 'wp_safe_redirect' )->alias(
@@ -205,6 +207,34 @@ final class ModeNoticeControllerTest extends TestCase {
 		$this->expectExceptionMessage( 'redirect: https://shop.test/wp-admin/admin.php?page=' . $page );
 
 		$this->controller->handleModeSwitch();
+	}
+
+	public function test_handle_mode_switch_dies_without_woocommerce_capability(): void {
+		$this->givenValidNonce();
+		$this->givenSanitization();
+		$_REQUEST['mode'] = 'integrador';
+		Functions\when( 'current_user_can' )->alias(
+			static function ( $capability ) {
+				return $capability !== 'manage_woocommerce';
+			}
+		);
+		Functions\expect( 'update_option' )->never();
+
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( 'wp_die: Você não tem permissão para alterar o modo do plugin. [403]' );
+
+		$this->controller->handleModeSwitch();
+	}
+
+	public function test_render_notice_outputs_nothing_without_woocommerce_capability(): void {
+		$this->givenMode( 'legacy' );
+		Functions\when( 'current_user_can' )->justReturn( false );
+		Functions\expect( 'get_user_meta' )->never();
+
+		ob_start();
+		$this->controller->renderNotice();
+
+		self::assertSame( '', ob_get_clean() );
 	}
 
 	public function validModes(): array {

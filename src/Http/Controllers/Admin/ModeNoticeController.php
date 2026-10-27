@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers\Admin;
 
 use MelhorEnvio\Services\Admin\PluginModeService;
+use MelhorEnvio\Support\Capabilities;
 
 final class ModeNoticeController {
 
@@ -18,6 +19,10 @@ final class ModeNoticeController {
 	}
 
 	public function renderNotice(): void {
+		if ( ! current_user_can( Capabilities::ADMIN_DEFAULT ) ) {
+			return;
+		}
+
 		if ( ! PluginModeService::isIntegradorMode() && ! $this->isDismissed() ) {
 			$this->printStyles();
 			$this->renderUpgradeToIntegradorNotice();
@@ -158,6 +163,15 @@ final class ModeNoticeController {
 
 		if ( ! in_array( $mode, array( 'legacy', 'integrador' ), true ) ) {
 			wp_die( esc_html__( 'Modo inválido.', 'melhor-envio-cotacao' ) );
+		}
+
+		// Trocar o modo altera os métodos de frete da loja: exige a mesma capacidade do WooCommerce.
+		if ( ! current_user_can( Capabilities::ADMIN_DEFAULT ) ) {
+			wp_die(
+				esc_html__( 'Você não tem permissão para alterar o modo do plugin.', 'melhor-envio-cotacao' ),
+				'',
+				array( 'response' => 403 )
+			);
 		}
 
 		PluginModeService::setMode( $mode );

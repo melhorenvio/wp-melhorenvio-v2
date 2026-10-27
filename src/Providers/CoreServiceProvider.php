@@ -12,6 +12,7 @@ use MelhorEnvio\Http\Controllers\Admin\ModeNoticeController;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
+use MelhorEnvio\Http\Controllers\Admin\AppOriginMismatchController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
 use MelhorEnvio\Hooks\HookManager;
@@ -83,6 +84,7 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 		);
 		$this->container->singleton( ModeNoticeController::class, ModeNoticeController::class );
 		$this->container->singleton( NFeXmlUploadController::class, NFeXmlUploadController::class );
+		$this->container->singleton( AppOriginMismatchController::class, AppOriginMismatchController::class );
 		$this->container->singleton(
 			DatabaseInterface::class,
 			static fn() => new WordPressDatabaseRepository( $wpdb )

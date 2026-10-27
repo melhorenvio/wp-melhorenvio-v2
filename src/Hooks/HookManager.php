@@ -11,8 +11,8 @@ use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
-use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
+use MelhorEnvio\Http\Controllers\Admin\AppOriginMismatchController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
@@ -63,6 +63,9 @@ final class HookManager {
 		$nfeXmlUploadHandler = $this->container->get( NFeXmlUploadController::class );
 		$nfeXmlUploadHandler->register();
 
+		$appOriginMismatchHandler = $this->container->get( AppOriginMismatchController::class );
+		$appOriginMismatchHandler->register();
+
 		$productShippingCalculator = $this->container->get( ProductShippingCalculatorController::class );
 		$productShippingCalculator->register();
 
@@ -85,8 +88,6 @@ final class HookManager {
 		$orderBulkImportNotice->register();
 
 		$this->registerShippingMethod();
-		$this->registerLogoutHook();
-		$this->registerSslVerifyFilters();
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
 		$this->registerWebhookDeliveryFilter();
@@ -121,15 +122,6 @@ final class HookManager {
 		);
 	}
 
-	private function registerLogoutHook(): void {
-		add_action( 'wp_logout', array( $this, 'onUserLogout' ) );
-	}
-
-	private function registerSslVerifyFilters(): void {
-		add_filter( 'https_ssl_verify', '__return_false' );
-		add_filter( 'https_local_ssl_verify', '__return_false' );
-	}
-
 	private function registerWcAuthApproveGuard(): void {
 		add_action(
 			'woocommerce_auth_page_footer',
@@ -154,11 +146,6 @@ final class HookManager {
 				<?php
 			}
 		);
-	}
-
-	public function onUserLogout(): void {
-		$signatureManager = $this->container->get( SignatureService::class );
-		$signatureManager->deleteSignature();
 	}
 
 	private function registerWebhookDeliveryFilter(): void {

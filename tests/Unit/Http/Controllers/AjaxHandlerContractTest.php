@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Tests\Unit\Http\Controllers;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Tests\TestCase;
 use MelhorEnvio\Tests\Unit\Http\Controllers\Fixtures\FakeAjaxHandler;
@@ -81,13 +82,29 @@ final class AjaxHandlerContractTest extends TestCase {
 	public function test_handle_processes_when_nonce_and_capability_are_valid(): void {
 		$_POST['nonce'] = 'ok';
 		Functions\when( 'wp_verify_nonce' )->justReturn( 1 );
-		Functions\expect( 'current_user_can' )->once()->with( 'manage_options' )->andReturn( true );
+		Functions\expect( 'current_user_can' )->once()->with( 'manage_woocommerce' )->andReturn( true );
 		Functions\expect( 'wp_send_json_error' )->never();
 
 		$handler = $this->makeHandler( 'do_thing' );
 		$handler->handle();
 
 		self::assertSame( 1, $handler->processed );
+	}
+
+	public function test_handle_requires_capability_from_filter_by_default(): void {
+		$_POST['nonce'] = 'ok';
+		Functions\when( 'wp_verify_nonce' )->justReturn( 1 );
+		Filters\expectApplied( 'melhorenvio_admin_capability' )
+			->once()
+			->with( 'manage_woocommerce' )
+			->andReturn( 'manage_options' );
+		Functions\expect( 'current_user_can' )->once()->with( 'manage_options' )->andReturn( false );
+		Functions\expect( 'wp_send_json_error' )->once()->with( array( 'message' => 'Insufficient permissions.' ), 403 );
+
+		$handler = $this->makeHandler( 'do_thing' );
+		$handler->handle();
+
+		self::assertSame( 0, $handler->processed );
 	}
 
 	public function test_handle_skips_capability_check_when_public(): void {
@@ -136,7 +153,7 @@ final class AjaxHandlerContractTest extends TestCase {
 		$this->assertMockExpectationsMet();
 	}
 
-	private function makeHandler( string $action, string $capability = 'manage_options', bool $public = false ): FakeAjaxHandler {
+	private function makeHandler( string $action, ?string $capability = null, bool $public = false ): FakeAjaxHandler {
 		return new FakeAjaxHandler( $action, $capability, $public );
 	}
 }
