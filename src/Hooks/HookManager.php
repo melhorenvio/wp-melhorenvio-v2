@@ -23,6 +23,7 @@ use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
+use MelhorEnvio\Services\Order\OrderMetaPersister;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
@@ -204,7 +205,7 @@ final class HookManager {
 
 				if ( 'order.updated' === $topic ) {
 					$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
-					$order->save_meta_data();
+					OrderMetaPersister::saveWithoutTouchingOrder( $order );
 				}
 			},
 			10,
