@@ -249,6 +249,49 @@ final class MelhorEnvioShippingServiceTest extends TestCase {
 		self::assertSame( array( 'melhor_envio_1' ), array_column( $method->rates, 'id' ) );
 	}
 
+	public function test_calculate_shipping_caches_single_service_returned_as_object(): void {
+		Functions\when( 'get_transient' )->justReturn( false );
+		Functions\when( 'wp_remote_post' )->justReturn( array( 'response' => array( 'code' => 200 ) ) );
+		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( json_encode( $this->quotation() ) );
+
+		Functions\expect( 'set_transient' )
+			->once()
+			->with( Mockery::type( 'string' ), array( $this->quotation() ), 30 * MINUTE_IN_SECONDS );
+
+		$method = new MelhorEnvioShippingService();
+		$method->calculate_shipping( $this->package( self::TO_CEP ) );
+
+		self::assertSame( array( 'melhor_envio_1' ), array_column( $method->rates, 'id' ) );
+	}
+
+	/**
+	 * @dataProvider emptyQuotationResponses
+	 *
+	 * @param array<string, mixed> $response
+	 */
+	public function test_calculate_shipping_does_not_cache_empty_quotations( array $response, string $body ): void {
+		Functions\when( 'get_transient' )->justReturn( false );
+		Functions\when( 'wp_remote_post' )->justReturn( $response );
+		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( $response['response']['code'] );
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $body );
+		Functions\expect( 'set_transient' )->never();
+		$this->logger->allows( 'error' );
+
+		$method = new MelhorEnvioShippingService();
+		$method->calculate_shipping( $this->package( self::TO_CEP ) );
+
+		self::assertSame( array(), $method->rates );
+	}
+
+	public function emptyQuotationResponses(): array {
+		return array(
+			'empty list' => array( array( 'response' => array( 'code' => 200 ) ), '[]' ),
+			'only error' => array( array( 'response' => array( 'code' => 200 ) ), '{"id":2,"name":"SEDEX","error":"Serviço indisponível"}' ),
+			'http error' => array( array( 'response' => array( 'code' => 500 ) ), '{"message":"Server Error"}' ),
+		);
+	}
+
 	public function test_calculate_shipping_adds_rate_with_service_metadata(): void {
 		$method = $this->calculateWithCachedQuotations( array( $this->quotation() ) );
 
