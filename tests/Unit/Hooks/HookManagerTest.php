@@ -242,12 +242,59 @@ final class HookManagerTest extends TestCase {
 		self::assertTrue( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
 	}
 
+	public function test_should_deliver_again_when_only_invoice_xml_is_replaced(): void {
+		$order                       = $this->makeOrder();
+		$order->state['invoice_xml'] = '<nfeProc><NFe Id="NFe1"/></nfeProc>';
+		$this->givenOrder( $order );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+		$order->storedHash = $order->savedHash;
+
+		$order->state['invoice_xml'] = '<nfeProc><NFe Id="NFe2"/></nfeProc>';
+
+		self::assertTrue( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_order_hash_without_invoice_xml_matches_hash_stored_before_xml_was_hashed(): void {
+		$order = $this->makeOrder();
+		$this->givenOrder( $order );
+
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		// Fórmula anterior à inclusão do XML: pedidos sem XML não podem ter o hash alterado.
+		$legacyHash = md5(
+			serialize(
+				array(
+					'status'         => 'processing',
+					'billing'        => array( 'city' => 'São Paulo' ),
+					'shipping'       => array( 'postcode' => '01001000' ),
+					'shipping_lines' => array(
+						5 => array(
+							'method_id'    => 'melhor_envio',
+							'method_title' => 'PAC',
+							'total'        => '15.00',
+						),
+					),
+					'line_items'     => array(
+						6 => array(
+							'product_id' => 42,
+							'quantity'   => 1,
+						),
+					),
+					'invoice_key'    => '',
+				)
+			)
+		);
+
+		self::assertSame( $legacyHash, $order->savedHash );
+	}
+
 	public function relevantOrderChanges(): array {
 		return array(
 			'status'           => array( array( 'status' => 'completed' ) ),
 			'billing address'  => array( array( 'billing' => array( 'city' => 'Rio de Janeiro' ) ) ),
 			'shipping address' => array( array( 'shipping' => array( 'postcode' => '20000000' ) ) ),
 			'invoice key'      => array( array( 'invoice_key' => '35240612345678000190550010000001231234567890' ) ),
+			'invoice xml'      => array( array( 'invoice_xml' => '<nfeProc><NFe/></nfeProc>' ) ),
 			'shipping total'   => array( array( 'shipping_total' => '30.00' ) ),
 			'item quantity'    => array( array( 'quantity' => 3 ) ),
 		);
@@ -448,6 +495,7 @@ final class HookManagerTest extends TestCase {
 			'billing'        => array( 'city' => 'São Paulo' ),
 			'shipping'       => array( 'postcode' => '01001000' ),
 			'invoice_key'    => '',
+			'invoice_xml'    => '',
 			'shipping_total' => '15.00',
 			'quantity'       => 1,
 		);
@@ -491,6 +539,10 @@ final class HookManagerTest extends TestCase {
 			static function ( $key ) use ( $order ) {
 				if ( $key === '_me_invoice_key' ) {
 					return $order->state['invoice_key'];
+				}
+
+				if ( $key === '_me_invoice_xml_danfe' ) {
+					return $order->state['invoice_xml'];
 				}
 
 				if ( $key === ForceImportService::META_KEY ) {
