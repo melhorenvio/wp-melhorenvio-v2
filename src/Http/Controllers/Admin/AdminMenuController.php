@@ -7,12 +7,14 @@ namespace MelhorEnvio\Http\Controllers\Admin;
 use MelhorEnvio\Core\Container;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
+use MelhorEnvio\Support\Capabilities;
 
 final class AdminMenuController {
 
 	private string $pageTitle;
 	private string $menuTitle;
-	private string $capability;
+	// Null usa a capacidade filtrável de Capabilities::admin(), resolvida no admin_menu.
+	private ?string $capability;
 	private string $menuSlug;
 	private string $parentSlug;
 	private Container $container;
@@ -21,7 +23,7 @@ final class AdminMenuController {
 		Container $container,
 		string $pageTitle  = 'Melhor Envio',
 		string $menuTitle  = 'Melhor Envio',
-		string $capability = 'manage_options',
+		?string $capability = null,
 		string $menuSlug   = 'melhor-integrador',
 		string $parentSlug = 'woocommerce'
 	) {
@@ -44,7 +46,7 @@ final class AdminMenuController {
 			$this->parentSlug,
 			$this->pageTitle,
 			$this->menuTitle,
-			$this->capability,
+			$this->capability ?? Capabilities::admin(),
 			$this->menuSlug,
 			array( $this, 'renderPage' )
 		);

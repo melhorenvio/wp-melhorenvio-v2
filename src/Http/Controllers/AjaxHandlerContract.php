@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers;
 
 use MelhorEnvio\Http\Controllers\Contracts\ControllerInterface;
+use MelhorEnvio\Support\Capabilities;
 
 abstract class AjaxHandlerContract implements ControllerInterface {
 
 	protected string $action;
 
-	protected string $capability;
+	// Null usa a capacidade filtrável de Capabilities::admin(), resolvida a cada requisição.
+	protected ?string $capability;
 
 	protected bool $public = false;
 
-	public function __construct( string $action, string $capability = 'manage_options', bool $public = false ) {
+	public function __construct( string $action, ?string $capability = null, bool $public = false ) {
 		$this->action     = $action;
 		$this->capability = $capability;
 		$this->public     = $public;
@@ -32,7 +34,7 @@ abstract class AjaxHandlerContract implements ControllerInterface {
 			return;
 		}
 
-		if ( ! $this->public && ! current_user_can( $this->capability ) ) {
+		if ( ! $this->public && ! current_user_can( $this->capability ?? Capabilities::admin() ) ) {
 			wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
 			return;
 		}
