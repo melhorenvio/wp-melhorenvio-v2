@@ -6,6 +6,7 @@ namespace MelhorEnvio\Http\Controllers\Admin;
 
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
+use MelhorEnvio\Support\AppOrigins;
 use MelhorEnvio\Support\Capabilities;
 
 final class AdminPageController {
@@ -49,6 +50,18 @@ final class AdminPageController {
 		$baseUrl     = getenv( 'MELHOR_INTEGRADOR_BASE_URL' ) ?: get_option( 'melhor_integrador_base_url', 'https://woocommerceenvios.com' );
 		$baseUrlJson = json_encode( $baseUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 
+		// Origens do app do MI que podem receber a assinatura. Versão de observação (INT-2499): origem fora
+		// da lista ainda recebe, mas fica registrada no log; o bloqueio entra depois de confirmar a lista.
+		$appDomainsJson     = wp_json_encode( AppOrigins::allowedDomains( $baseUrl ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+		$originMismatchJson = wp_json_encode(
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'action'  => AppOriginMismatchController::ACTION,
+				'nonce'   => wp_create_nonce( AppOriginMismatchController::ACTION ),
+			),
+			JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+		);
+
 		// Caminho da loja (ex.: /loja em https://exemplo.com.br/loja), somado no JS à origem do navegador.
 		// A origem continua vindo do navegador para não mudar esquema/host das lojas já conectadas (é a
 		// identity delas no backend); só o subdiretório, que window.location.origin perde, vem da home.
@@ -67,6 +80,39 @@ final class AdminPageController {
 			var signature = <?php echo $signatureJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 			var storeUrl  = window.location.origin + <?php echo $storePathJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 			var baseUrl   = <?php echo $baseUrlJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			var appDomains     = <?php echo $appDomainsJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			var originMismatch = <?php echo $originMismatchJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			var mismatchLogged = false;
+
+			function isAppOrigin(origin) {
+				var url;
+				try {
+					url = new URL(origin);
+				} catch (e) {
+					return false;
+				}
+				if (url.protocol !== 'https:' && url.protocol !== new URL(baseUrl).protocol) return false;
+
+				return appDomains.some(function(domain) {
+					return url.hostname === domain || url.hostname.slice(-(domain.length + 1)) === '.' + domain;
+				});
+			}
+
+			function logOriginMismatch(origin) {
+				if (mismatchLogged) return;
+				mismatchLogged = true;
+
+				var body = new FormData();
+				body.append('action', originMismatch.action);
+				body.append('nonce', originMismatch.nonce);
+				body.append('origin', origin);
+
+				if (navigator.sendBeacon) {
+					navigator.sendBeacon(originMismatch.ajaxUrl, body);
+				} else {
+					fetch(originMismatch.ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' });
+				}
+			}
 
 			var iframeUrl = new URL(baseUrl);
 			iframeUrl.pathname = iframeUrl.pathname.replace(/\/$/, '') + '/wp';
@@ -97,6 +143,8 @@ final class AdminPageController {
 				if (event.source !== iframe.contentWindow) return;
 
 				if (event.data && event.data.state === 'READY') {
+					if (!isAppOrigin(event.origin)) logOriginMismatch(event.origin);
+
 					iframe.contentWindow.postMessage(
 						{ signature: signature, url: storeUrl },
 						event.origin

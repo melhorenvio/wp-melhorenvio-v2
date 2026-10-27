@@ -12,6 +12,7 @@ use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
+use MelhorEnvio\Http\Controllers\Admin\AppOriginMismatchController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
@@ -61,6 +62,9 @@ final class HookManager {
 
 		$nfeXmlUploadHandler = $this->container->get( NFeXmlUploadController::class );
 		$nfeXmlUploadHandler->register();
+
+		$appOriginMismatchHandler = $this->container->get( AppOriginMismatchController::class );
+		$appOriginMismatchHandler->register();
 
 		$productShippingCalculator = $this->container->get( ProductShippingCalculatorController::class );
 		$productShippingCalculator->register();
