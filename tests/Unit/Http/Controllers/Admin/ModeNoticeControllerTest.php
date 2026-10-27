@@ -36,8 +36,9 @@ final class ModeNoticeControllerTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_die' )->alias(
-			function ( $message = '' ) {
-				throw new RuntimeException( 'wp_die: ' . $message );
+			function ( $message = '', $title = '', $args = array() ) {
+				$status = is_array( $args ) && isset( $args['response'] ) ? ' [' . $args['response'] . ']' : '';
+				throw new RuntimeException( 'wp_die: ' . $message . $status );
 			}
 		);
 		Functions\when( 'wp_safe_redirect' )->alias(
@@ -220,7 +221,7 @@ final class ModeNoticeControllerTest extends TestCase {
 		Functions\expect( 'update_option' )->never();
 
 		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'wp_die: Você não tem permissão para alterar o modo do plugin.' );
+		$this->expectExceptionMessage( 'wp_die: Você não tem permissão para alterar o modo do plugin. [403]' );
 
 		$this->controller->handleModeSwitch();
 	}
