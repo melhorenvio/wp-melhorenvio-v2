@@ -43,7 +43,7 @@ final class MelhorEnvioApiClientService {
 		}
 
 		$quotations = array_filter(
-			$body,
+			$this->normalizeQuotations( $body ),
 			static fn( $item ) => is_array( $item ) && empty( $item['error'] ) && isset( $item['price'] )
 		);
 
@@ -53,6 +53,18 @@ final class MelhorEnvioApiClientService {
 		);
 
 		return $quotations;
+	}
+
+	/**
+	 * A API devolve um objeto (não uma lista) quando há um único serviço na cotação;
+	 * nesse caso ele é envolvido em uma lista para seguir o mesmo fluxo das demais respostas.
+	 */
+	private function normalizeQuotations( array $body ): array {
+		if ( isset( $body['id'] ) || isset( $body['price'] ) ) {
+			return array( $body );
+		}
+
+		return $body;
 	}
 
 	private function canQuote( string $token, string $fromCep, string $toCep ): bool {
@@ -98,9 +110,8 @@ final class MelhorEnvioApiClientService {
 					'Accept'            => 'application/json',
 					'version-plugin-me' => defined( 'MELHORENVIO_VERSION' ) ? MELHORENVIO_VERSION : '',
 				),
-				'body'      => wp_json_encode( $payload ),
-				'timeout'   => 15,
-				'sslverify' => false,
+				'body'    => wp_json_encode( $payload ),
+				'timeout' => 15,
 			)
 		);
 

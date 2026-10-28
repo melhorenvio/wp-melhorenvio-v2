@@ -28,10 +28,9 @@ final class OrderMetaBackfillController implements ControllerInterface {
 	}
 
 	public function refresh( \WP_REST_Response $response, \WC_Order $order ): \WP_REST_Response {
+		// Só em memória: gravar no pedido a cada leitura (o snapshot muda a cada chamada) dispara
+		// woocommerce_update_order com HPOS e, com ele, o webhook order.updated, que faz o MI reler o pedido.
 		$data = $this->snapshotBuilder->buildSnapshot( $order );
-
-		$order->update_meta_data( OrderShippingSnapshotBuilderService::META_KEY, $data );
-		$order->save_meta_data();
 
 		$replacedKeys = array(
 			OrderShippingSnapshotBuilderService::META_KEY,

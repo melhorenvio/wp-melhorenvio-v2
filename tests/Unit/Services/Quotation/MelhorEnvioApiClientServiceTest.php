@@ -116,7 +116,8 @@ final class MelhorEnvioApiClientServiceTest extends TestCase {
 			$args['headers']
 		);
 		self::assertSame( 15, $args['timeout'] );
-		self::assertFalse( $args['sslverify'] );
+		// Sem sslverify: vale o padrão do WordPress (verificação ligada).
+		self::assertArrayNotHasKey( 'sslverify', $args );
 		self::assertSame(
 			array(
 				'from'                => array( 'postal_code' => '01001000' ),
@@ -172,6 +173,41 @@ final class MelhorEnvioApiClientServiceTest extends TestCase {
 		$quotations = $this->service->getQuotations( '01001000', '20040002', $this->items() );
 
 		self::assertSame( array( $body[0], $body[4] ), array_values( $quotations ) );
+	}
+
+	public function test_returns_single_service_when_api_responds_with_object(): void {
+		$service = array(
+			'id'            => 1,
+			'name'          => 'PAC',
+			'price'         => '20.50',
+			'delivery_time' => 5,
+			'company'       => array(
+				'id'   => 1,
+				'name' => 'Correios',
+			),
+		);
+
+		$this->givenResponse( 200, (string) json_encode( $service ) );
+
+		self::assertSame( array( $service ), array_values( $this->service->getQuotations( '01001000', '20040002', $this->items() ) ) );
+	}
+
+	public function test_returns_empty_when_api_responds_with_single_object_with_error(): void {
+		$service = array(
+			'id'    => 2,
+			'name'  => 'SEDEX',
+			'error' => 'Transportadora não atende este trecho.',
+		);
+
+		$this->givenResponse( 200, (string) json_encode( $service ) );
+
+		self::assertSame( array(), $this->service->getQuotations( '01001000', '20040002', $this->items() ) );
+	}
+
+	public function test_returns_empty_when_api_responds_with_empty_list(): void {
+		$this->givenResponse( 200, '[]' );
+
+		self::assertSame( array(), $this->service->getQuotations( '01001000', '20040002', $this->items() ) );
 	}
 
 	public function test_returns_empty_and_logs_error_on_transport_failure(): void {

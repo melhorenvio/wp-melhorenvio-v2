@@ -11,8 +11,8 @@ use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
-use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
+use MelhorEnvio\Http\Controllers\Admin\AppOriginMismatchController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
@@ -23,6 +23,7 @@ use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
+use MelhorEnvio\Services\Order\OrderMetaPersister;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
@@ -62,6 +63,9 @@ final class HookManager {
 		$nfeXmlUploadHandler = $this->container->get( NFeXmlUploadController::class );
 		$nfeXmlUploadHandler->register();
 
+		$appOriginMismatchHandler = $this->container->get( AppOriginMismatchController::class );
+		$appOriginMismatchHandler->register();
+
 		$productShippingCalculator = $this->container->get( ProductShippingCalculatorController::class );
 		$productShippingCalculator->register();
 
@@ -84,8 +88,6 @@ final class HookManager {
 		$orderBulkImportNotice->register();
 
 		$this->registerShippingMethod();
-		$this->registerLogoutHook();
-		$this->registerSslVerifyFilters();
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
 		$this->registerWebhookDeliveryFilter();
@@ -120,15 +122,6 @@ final class HookManager {
 		);
 	}
 
-	private function registerLogoutHook(): void {
-		add_action( 'wp_logout', array( $this, 'onUserLogout' ) );
-	}
-
-	private function registerSslVerifyFilters(): void {
-		add_filter( 'https_ssl_verify', '__return_false' );
-		add_filter( 'https_local_ssl_verify', '__return_false' );
-	}
-
 	private function registerWcAuthApproveGuard(): void {
 		add_action(
 			'woocommerce_auth_page_footer',
@@ -153,11 +146,6 @@ final class HookManager {
 				<?php
 			}
 		);
-	}
-
-	public function onUserLogout(): void {
-		$signatureManager = $this->container->get( SignatureService::class );
-		$signatureManager->deleteSignature();
 	}
 
 	private function registerWebhookDeliveryFilter(): void {
@@ -204,7 +192,7 @@ final class HookManager {
 
 				if ( 'order.updated' === $topic ) {
 					$order->update_meta_data( '_me_webhook_last_hash', self::buildOrderHash( $order ) );
-					$order->save_meta_data();
+					OrderMetaPersister::saveWithoutTouchingOrder( $order );
 				}
 			},
 			10,
@@ -260,8 +248,22 @@ final class HookManager {
 					'shipping_lines' => $shipping_lines,
 					'line_items'     => $line_items,
 					'invoice_key'    => $order->get_meta( '_me_invoice_key', true ),
-				)
+				) + self::buildInvoiceXmlHash( $order )
 			)
 		);
+	}
+
+	/**
+	 * XML da NF-e entra como sha256 (pode ser grande) e só quando existe, para não mudar o hash
+	 * já gravado dos pedidos sem XML e disparar reentregas em massa após a atualização.
+	 */
+	private static function buildInvoiceXmlHash( \WC_Order $order ): array {
+		$invoiceXml = (string) $order->get_meta( '_me_invoice_xml_danfe', true );
+
+		if ( '' === $invoiceXml ) {
+			return array();
+		}
+
+		return array( 'invoice_xml_sha256' => hash( 'sha256', $invoiceXml ) );
 	}
 }

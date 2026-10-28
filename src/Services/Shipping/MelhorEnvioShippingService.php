@@ -69,11 +69,17 @@ final class MelhorEnvioShippingService extends WC_Shipping_Method {
 		$cacheKey = 'me_quote_' . md5( $toCep . serialize( $items ) );
 		$cached   = get_transient( $cacheKey );
 
-		if ( $cached !== false ) {
+		// Cotação vazia gravada por versões anteriores (até a 3.0.7) é tratada como ausente,
+		// para o lojista não ficar sem frete até o transient expirar depois da atualização.
+		if ( is_array( $cached ) && ! empty( $cached ) ) {
 			$quotations = $cached;
 		} else {
 			$quotations = $this->apiClient->getQuotations( $fromCep, $toCep, $items );
-			set_transient( $cacheKey, $quotations, 30 * MINUTE_IN_SECONDS );
+
+			// Cotação vazia (falha na API ou nenhum serviço) não é cacheada para não esconder o frete por 30 min.
+			if ( ! empty( $quotations ) ) {
+				set_transient( $cacheKey, $quotations, 30 * MINUTE_IN_SECONDS );
+			}
 		}
 
 		foreach ( $quotations as $service ) {

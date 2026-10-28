@@ -25,7 +25,6 @@ use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
-use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
 use MelhorEnvio\Tests\TestCase;
@@ -122,10 +121,9 @@ final class HookManagerTest extends TestCase {
 		}
 	}
 
-	public function test_register_hooks_logout_and_ssl_filters(): void {
-		self::assertSame( 10, has_action( 'wp_logout', array( $this->manager, 'onUserLogout' ) ) );
-		self::assertSame( 10, has_filter( 'https_ssl_verify', '__return_false' ) );
-		self::assertSame( 10, has_filter( 'https_local_ssl_verify', '__return_false' ) );
+	public function test_register_does_not_disable_ssl_verification_site_wide(): void {
+		self::assertFalse( has_filter( 'https_ssl_verify' ) );
+		self::assertFalse( has_filter( 'https_local_ssl_verify' ) );
 	}
 
 	public function test_webhook_hooks_accept_all_arguments(): void {
@@ -135,13 +133,10 @@ final class HookManagerTest extends TestCase {
 		self::assertSame( 5, $this->captured['woocommerce_webhook_delivery']['args'] );
 	}
 
-	public function test_on_user_logout_deletes_signature(): void {
-		$this->container->singleton( SignatureService::class, SignatureService::class );
-		Functions\expect( 'delete_transient' )->once()->with( 'melhor_envio_integrador_signature' )->andReturn( true );
-
-		$this->manager->onUserLogout();
-
-		$this->assertMockExpectationsMet();
+	public function test_register_does_not_hook_logout(): void {
+		// A assinatura é única para o site: o logout de qualquer usuário não pode apagá-la.
+		self::assertFalse( has_action( 'wp_logout' ) );
+		self::assertFalse( method_exists( $this->manager, 'onUserLogout' ) );
 	}
 
 	public function test_hidden_order_item_meta_appends_melhor_envio_keys(): void {
@@ -247,12 +242,59 @@ final class HookManagerTest extends TestCase {
 		self::assertTrue( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
 	}
 
+	public function test_should_deliver_again_when_only_invoice_xml_is_replaced(): void {
+		$order                       = $this->makeOrder();
+		$order->state['invoice_xml'] = '<nfeProc><NFe Id="NFe1"/></nfeProc>';
+		$this->givenOrder( $order );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+		$order->storedHash = $order->savedHash;
+
+		$order->state['invoice_xml'] = '<nfeProc><NFe Id="NFe2"/></nfeProc>';
+
+		self::assertTrue( $this->shouldDeliver( true, self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_order_hash_without_invoice_xml_matches_hash_stored_before_xml_was_hashed(): void {
+		$order = $this->makeOrder();
+		$this->givenOrder( $order );
+
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		// Fórmula anterior à inclusão do XML: pedidos sem XML não podem ter o hash alterado.
+		$legacyHash = md5(
+			serialize(
+				array(
+					'status'         => 'processing',
+					'billing'        => array( 'city' => 'São Paulo' ),
+					'shipping'       => array( 'postcode' => '01001000' ),
+					'shipping_lines' => array(
+						5 => array(
+							'method_id'    => 'melhor_envio',
+							'method_title' => 'PAC',
+							'total'        => '15.00',
+						),
+					),
+					'line_items'     => array(
+						6 => array(
+							'product_id' => 42,
+							'quantity'   => 1,
+						),
+					),
+					'invoice_key'    => '',
+				)
+			)
+		);
+
+		self::assertSame( $legacyHash, $order->savedHash );
+	}
+
 	public function relevantOrderChanges(): array {
 		return array(
 			'status'           => array( array( 'status' => 'completed' ) ),
 			'billing address'  => array( array( 'billing' => array( 'city' => 'Rio de Janeiro' ) ) ),
 			'shipping address' => array( array( 'shipping' => array( 'postcode' => '20000000' ) ) ),
 			'invoice key'      => array( array( 'invoice_key' => '35240612345678000190550010000001231234567890' ) ),
+			'invoice xml'      => array( array( 'invoice_xml' => '<nfeProc><NFe/></nfeProc>' ) ),
 			'shipping total'   => array( array( 'shipping_total' => '30.00' ) ),
 			'item quantity'    => array( array( 'quantity' => 3 ) ),
 		);
@@ -453,6 +495,7 @@ final class HookManagerTest extends TestCase {
 			'billing'        => array( 'city' => 'São Paulo' ),
 			'shipping'       => array( 'postcode' => '01001000' ),
 			'invoice_key'    => '',
+			'invoice_xml'    => '',
 			'shipping_total' => '15.00',
 			'quantity'       => 1,
 		);
@@ -496,6 +539,10 @@ final class HookManagerTest extends TestCase {
 			static function ( $key ) use ( $order ) {
 				if ( $key === '_me_invoice_key' ) {
 					return $order->state['invoice_key'];
+				}
+
+				if ( $key === '_me_invoice_xml_danfe' ) {
+					return $order->state['invoice_xml'];
 				}
 
 				if ( $key === ForceImportService::META_KEY ) {
