@@ -17,11 +17,11 @@ final class AppOriginMismatchControllerTest extends TestCase {
 	}
 
 	public function test_registers_private_ajax_action(): void {
-		Functions\expect( 'add_action' )
-			->once()
-			->with( 'wp_ajax_melhor_envio_app_origin_mismatch', Mockery::type( 'array' ) );
+		$controller = new AppOriginMismatchController();
+		$controller->register();
 
-		( new AppOriginMismatchController() )->register();
+		self::assertNotFalse( has_action( 'wp_ajax_melhor_envio_app_origin_mismatch', array( $controller, 'handle' ) ) );
+		self::assertFalse( has_action( 'wp_ajax_nopriv_melhor_envio_app_origin_mismatch' ) );
 	}
 
 	public function test_logs_unknown_origin_without_signature(): void {

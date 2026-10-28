@@ -6,9 +6,7 @@ namespace MelhorEnvio\Http\Controllers\Admin;
 
 use MelhorEnvio\Http\Controllers\AjaxHandlerContract;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 // Registra quando a assinatura foi entregue a uma origem fora de AppOrigins (versão de observação).
 final class AppOriginMismatchController extends AjaxHandlerContract {

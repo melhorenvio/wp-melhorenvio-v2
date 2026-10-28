@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Support;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Capacidades exigidas no admin do plugin.

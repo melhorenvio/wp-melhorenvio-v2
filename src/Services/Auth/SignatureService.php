@@ -40,22 +40,13 @@ final class SignatureService {
 		$signature = is_string( $stored ) && $stored !== '' ? $stored : null;
 		$issuedAt  = (int) get_transient( self::ISSUED_AT_KEY );
 
-		// Sem data de geração (gravada pela 3.0.7 ou anterior): ainda vale no /secret, mas o admin recebe uma nova.
-		if ( $signature !== null && $issuedAt === 0 ) {
-			return $generate ? $this->generateSignature() : $signature;
-		}
-
-		// O transient já expira dentro do teto; a checagem cobre caches que não respeitam a validade.
-		if ( $signature !== null && time() - $issuedAt > self::MAX_AGE ) {
-			$signature = null;
-		}
-
 		if ( ! $generate ) {
-			return $signature;
+			return $this->validStoredSignature( $signature, $issuedAt );
 		}
 
-		// Sem assinatura, ou a renovação passaria do teto de vida: gera outra.
-		if ( $signature === null || time() - $issuedAt + self::TTL > self::MAX_AGE ) {
+		// Sem assinatura, gravada sem data de geração (3.0.7 ou anterior), ou a renovação passaria
+		// do teto de vida: o admin recebe uma nova.
+		if ( $signature === null || $issuedAt === 0 || time() - $issuedAt + self::TTL > self::MAX_AGE ) {
 			return $this->generateSignature();
 		}
 
@@ -63,6 +54,16 @@ final class SignatureService {
 		$this->saveSignature( $signature, $issuedAt );
 
 		return $signature;
+	}
+
+	/**
+	 * Assinatura gravada que ainda vale no /secret. Sem data de geração (3.0.7 ou anterior) ela
+	 * continua valendo; a checagem do teto cobre caches que não respeitam a validade do transient.
+	 */
+	private function validStoredSignature( ?string $signature, int $issuedAt ): ?string {
+		$expired = $issuedAt !== 0 && time() - $issuedAt > self::MAX_AGE;
+
+		return $expired ? null : $signature;
 	}
 
 	public function validateSignature( string $signature ): bool {
