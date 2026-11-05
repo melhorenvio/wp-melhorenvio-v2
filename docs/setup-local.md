@@ -182,6 +182,16 @@ certutil -addstore -f "ROOT" C:\Users\<seu-usuario>\caddy-root-ca.crt
 
 ### Linux
 
+Chrome, Chromium e Edge leem o NSS do usuário, não o repositório do sistema. Instale a CA nele (o `certutil` vem do pacote `libnss3-tools`):
+
+```bash
+certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n caddy-local-wp-melhorenvio -i ./caddy/caddy-root-ca.crt
+```
+
+Para remover: `certutil -d sql:$HOME/.pki/nssdb -D -n caddy-local-wp-melhorenvio`.
+
+O repositório do sistema vale para `curl` e outras ferramentas de linha de comando:
+
 ```bash
 sudo cp ./caddy/caddy-root-ca.crt /usr/local/share/ca-certificates/
 sudo update-ca-certificates
@@ -202,7 +212,7 @@ sudo update-ca-certificates
 | https://app.localhost | Backend tray-native (API) | — |
 | https://front.localhost | Frontend Melhor Integrador (SPA) | — |
 
-O menu **Melhor Integrador** aparece no admin do WooCommerce após a ativação do plugin. Ele abre o iframe da SPA (`front.localhost`) para o fluxo de integração.
+O menu **Melhor Envio** aparece no admin do WooCommerce após a ativação do plugin. Ele abre o iframe da SPA (`front.localhost`) para o fluxo de integração.
 
 ---
 
@@ -245,7 +255,7 @@ make mi-wp-config
 
 ### Erros de certificado HTTPS no navegador
 
-Execute `make mi-trust-ca`, siga as instruções para seu SO e reinicie o navegador completamente.
+Execute `make mi-trust-ca`, siga as instruções para seu SO e reinicie o navegador completamente. Sem a CA, o menu **Melhor Envio** abre em branco (o navegador bloqueia o iframe de `app.localhost` e `front.localhost`). No Linux, o `update-ca-certificates` não basta para o Chrome: use o `certutil` do Passo 5.
 
 ### Frontend não carrega em `front.localhost`
 
