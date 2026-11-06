@@ -148,7 +148,10 @@ mi-trust-ca: ## Exporta a CA interna do caddy p/ confiar no navegador (HTTPS .lo
 	@echo "    (no WSL)            cp ./caddy/caddy-root-ca.crt /mnt/c/Users/<seu-usuario>/"
 	@echo '    (PowerShell Admin)  certutil -addstore -f "ROOT" C:\\Users\\<seu-usuario>\\caddy-root-ca.crt'
 	@echo ""
-	@echo "  Linux:"
+	@echo "  Linux (Chrome/Chromium/Edge, pacote libnss3-tools):"
+	@echo '    certutil -d sql:$$HOME/.pki/nssdb -A -t "C,," -n caddy-local-wp-melhorenvio -i ./caddy/caddy-root-ca.crt'
+	@echo ""
+	@echo "  Linux (curl e ferramentas do sistema):"
 	@echo "    sudo cp ./caddy/caddy-root-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates"
 	@echo ""
 	@echo "  Depois reinicie o navegador."
