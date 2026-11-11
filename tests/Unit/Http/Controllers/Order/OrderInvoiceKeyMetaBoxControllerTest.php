@@ -6,6 +6,7 @@ namespace MelhorEnvio\Tests\Unit\Http\Controllers\Order;
 
 use Brain\Monkey\Functions;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
 
@@ -13,6 +14,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 
 	private const INVOICE_KEY = '35240612345678000190550010000001231234567890';
 	private const ORDER_ID    = 77;
+
+	private ImmediateWebhookDeliveryService $immediateDelivery;
 
 	private OrderInvoiceKeyMetaBoxController $controller;
 
@@ -24,7 +27,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		Functions\stubEscapeFunctions();
 		Functions\stubTranslationFunctions();
 
-		$this->controller = new OrderInvoiceKeyMetaBoxController();
+		$this->immediateDelivery = new ImmediateWebhookDeliveryService();
+		$this->controller        = new OrderInvoiceKeyMetaBoxController( $this->immediateDelivery );
 	}
 
 	public function test_register_hooks_meta_box_and_order_save(): void {
@@ -224,6 +228,72 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 		$this->controller->save( self::ORDER_ID );
 	}
 
+	public function test_save_marks_order_for_immediate_delivery_when_key_changes(): void {
+		$_POST = $this->validPost( array( 'me_invoice_key' => self::INVOICE_KEY ) );
+		$this->givenAuthorized();
+
+		$order = $this->givenOrder( '35240612345678000190550010000001231234567891' );
+		$order->expects( 'update_meta_data' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, self::INVOICE_KEY );
+		$order->expects( 'save' );
+
+		$this->controller->save( self::ORDER_ID );
+
+		self::assertTrue( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
+	}
+
+	public function test_save_marks_order_for_immediate_delivery_when_only_xml_changes(): void {
+		$xml   = '<nfeProc><NFe/></nfeProc>';
+		$_POST = $this->validPost(
+			array(
+				'me_invoice_key' => self::INVOICE_KEY,
+				'me_nfe_raw_xml' => $xml,
+			)
+		);
+		$this->givenAuthorized();
+
+		$order = $this->givenOrder( self::INVOICE_KEY, '<nfeProc/>' );
+		$order->expects( 'update_meta_data' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, self::INVOICE_KEY );
+		$order->expects( 'update_meta_data' )->with( '_me_invoice_xml_danfe', $xml );
+		$order->expects( 'save' );
+
+		$this->controller->save( self::ORDER_ID );
+
+		self::assertTrue( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
+	}
+
+	public function test_save_does_not_mark_order_when_key_and_xml_are_unchanged(): void {
+		$xml   = '<nfeProc/>';
+		$_POST = $this->validPost(
+			array(
+				'me_invoice_key' => self::INVOICE_KEY,
+				'me_nfe_raw_xml' => $xml,
+			)
+		);
+		$this->givenAuthorized();
+
+		$order = $this->givenOrder( self::INVOICE_KEY, $xml );
+		$order->expects( 'update_meta_data' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, self::INVOICE_KEY );
+		$order->expects( 'update_meta_data' )->with( '_me_invoice_xml_danfe', $xml );
+		$order->expects( 'save' );
+
+		$this->controller->save( self::ORDER_ID );
+
+		self::assertFalse( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
+	}
+
+	public function test_save_does_not_mark_order_when_key_is_unchanged_and_no_xml_is_sent(): void {
+		$_POST = $this->validPost( array( 'me_invoice_key' => self::INVOICE_KEY ) );
+		$this->givenAuthorized();
+
+		$order = $this->givenOrder( self::INVOICE_KEY, '<nfeProc/>' );
+		$order->expects( 'update_meta_data' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, self::INVOICE_KEY );
+		$order->expects( 'save' );
+
+		$this->controller->save( self::ORDER_ID );
+
+		self::assertFalse( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
+	}
+
 	public function test_save_bails_without_nonce(): void {
 		$_POST = array( 'me_invoice_key' => self::INVOICE_KEY );
 
@@ -282,8 +352,8 @@ final class OrderInvoiceKeyMetaBoxControllerTest extends TestCase {
 	/**
 	 * @return \Mockery\MockInterface&\WC_Order
 	 */
-	private function givenOrder() {
-		$order = Mockery::mock( 'WC_Order' );
+	private function givenOrder( string $storedKey = '', string $storedXml = '' ) {
+		$order = $this->mockOrderWithMeta( $storedKey, $storedXml );
 		Functions\expect( 'wc_get_order' )->once()->with( self::ORDER_ID )->andReturn( $order );
 
 		return $order;

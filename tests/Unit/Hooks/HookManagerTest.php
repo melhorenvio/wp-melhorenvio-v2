@@ -27,6 +27,7 @@ use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
 use WC_Webhook;
@@ -61,6 +62,7 @@ final class HookManagerTest extends TestCase {
 		'woocommerce_hidden_order_itemmeta',
 		'woocommerce_shipping_methods',
 		'woocommerce_webhook_should_deliver',
+		'woocommerce_webhook_deliver_async',
 	);
 
 	private const CAPTURED_ACTIONS = array(
@@ -82,6 +84,7 @@ final class HookManagerTest extends TestCase {
 		parent::setUp();
 
 		$this->container = new Container();
+		$this->container->singleton( ImmediateWebhookDeliveryService::class, ImmediateWebhookDeliveryService::class );
 
 		foreach ( self::CONTROLLERS as $class ) {
 			$spy                             = $this->makeControllerSpy();
@@ -129,6 +132,8 @@ final class HookManagerTest extends TestCase {
 	public function test_webhook_hooks_accept_all_arguments(): void {
 		self::assertSame( 10, $this->captured['woocommerce_webhook_should_deliver']['priority'] );
 		self::assertSame( 3, $this->captured['woocommerce_webhook_should_deliver']['args'] );
+		self::assertSame( 10, $this->captured['woocommerce_webhook_deliver_async']['priority'] );
+		self::assertSame( 3, $this->captured['woocommerce_webhook_deliver_async']['args'] );
 		self::assertSame( 10, $this->captured['woocommerce_webhook_delivery']['priority'] );
 		self::assertSame( 5, $this->captured['woocommerce_webhook_delivery']['args'] );
 	}
@@ -427,6 +432,50 @@ final class HookManagerTest extends TestCase {
 		$this->assertMockExpectationsMet();
 	}
 
+	public function test_deliver_async_is_disabled_for_marked_order_on_melhor_integrador_order_updated(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_keeps_value_when_order_is_not_marked(): void {
+		self::assertTrue( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_keeps_value_for_other_marked_orders(): void {
+		$this->container->get( ImmediateWebhookDeliveryService::class )->markOrder( self::ORDER_ID + 1 );
+
+		self::assertTrue( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_keeps_value_for_other_topics(): void {
+		WC_Webhook::$records[ self::ME_WEBHOOK_ID ]['topic'] = 'order.created';
+		$this->markOrderForImmediateDelivery();
+
+		self::assertTrue( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_keeps_value_for_third_party_webhooks(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertTrue( $this->deliverAsync( self::OTHER_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_keeps_value_received_from_other_filters(): void {
+		self::assertSame(
+			'custom',
+			$this->invoke( 'woocommerce_webhook_deliver_async', 'custom', new WC_Webhook( self::ME_WEBHOOK_ID ), self::ORDER_ID )
+		);
+	}
+
+	public function test_deliver_async_ignores_non_numeric_args(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertTrue(
+			$this->invoke( 'woocommerce_webhook_deliver_async', true, new WC_Webhook( self::ME_WEBHOOK_ID ), array( 'action' => 'x' ) )
+		);
+	}
+
 	public function test_delivery_skips_missing_order(): void {
 		Functions\expect( 'wc_get_order' )->once()->with( self::ORDER_ID )->andReturn( null );
 
@@ -450,6 +499,14 @@ final class HookManagerTest extends TestCase {
 			new WC_Webhook( $webhookId ),
 			self::ORDER_ID
 		);
+	}
+
+	private function markOrderForImmediateDelivery(): void {
+		$this->container->get( ImmediateWebhookDeliveryService::class )->markOrder( self::ORDER_ID );
+	}
+
+	private function deliverAsync( int $webhookId ) {
+		return $this->invoke( 'woocommerce_webhook_deliver_async', true, new WC_Webhook( $webhookId ), self::ORDER_ID );
 	}
 
 	private function deliver( int $responseCode, int $webhookId ): void {

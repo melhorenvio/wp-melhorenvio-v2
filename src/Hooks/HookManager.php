@@ -25,6 +25,7 @@ use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Order\OrderMetaPersister;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
 final class HookManager {
@@ -91,6 +92,7 @@ final class HookManager {
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
 		$this->registerWebhookDeliveryFilter();
+		$this->registerImmediateWebhookDeliveryFilter();
 		$this->registerWebhookDeliveryHashUpdater();
 	}
 
@@ -167,6 +169,26 @@ final class HookManager {
 				// Importação forçada pelo lojista: entrega mesmo sem mudança relevante no pedido.
 				return $forceImport->isActive( $order )
 					|| self::buildOrderHash( $order ) !== $order->get_meta( '_me_webhook_last_hash' );
+			},
+			10,
+			3
+		);
+	}
+
+	private function registerImmediateWebhookDeliveryFilter(): void {
+		$webhooks          = $this->container->get( MelhorIntegradorWebhookService::class );
+		$immediateDelivery = $this->container->get( ImmediateWebhookDeliveryService::class );
+
+		add_filter(
+			'woocommerce_webhook_deliver_async',
+			static function ( $deliverAsync, $webhook, $arg ) use ( $webhooks, $immediateDelivery ) {
+				$isMarkedOrderUpdate = is_numeric( $arg )
+					&& $immediateDelivery->isOrderMarked( (int) $arg )
+					&& $webhook instanceof \WC_Webhook
+					&& 'order.updated' === $webhook->get_topic()
+					&& $webhooks->isMelhorIntegradorWebhook( $webhook );
+
+				return $isMarkedOrderUpdate ? false : $deliverAsync;
 			},
 			10,
 			3
