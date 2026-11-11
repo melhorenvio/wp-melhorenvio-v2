@@ -438,7 +438,15 @@ final class HookManagerTest extends TestCase {
 	}
 
 	public function test_deliver_async_is_disabled_for_marked_order_on_melhor_integrador_order_updated(): void {
+		Functions\expect( 'WC' )->never();
 		$this->markOrderForImmediateDelivery();
+
+		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_delivery_cancels_pending_async_delivery_after_immediate_success(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\when( 'wc_get_order' )->justReturn( null );
 		$queue = Mockery::mock( 'WC_Queue_Interface' );
 		$queue->expects( 'cancel' )
 			->once()
@@ -452,14 +460,67 @@ final class HookManagerTest extends TestCase {
 			);
 		$this->givenQueue( $queue );
 
-		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
-	public function test_deliver_async_is_disabled_when_queue_is_unavailable(): void {
+	public function test_delivery_skips_cancel_when_queue_is_unavailable(): void {
 		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'wc_get_order' )->once()->with( self::ORDER_ID )->andReturn( null );
 		$this->givenQueue( null );
 
-		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_delivery_keeps_pending_async_delivery_on_wp_error(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'WC' )->never();
+		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( '' );
+
+		$this->invoke( 'woocommerce_webhook_delivery', array(), new \WP_Error(), 0.5, self::ORDER_ID, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_delivery_keeps_pending_async_delivery_on_server_error(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'WC' )->never();
+
+		$this->deliver( 500, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_delivery_keeps_pending_async_delivery_when_order_is_not_marked(): void {
+		Functions\expect( 'WC' )->never();
+		Functions\when( 'wc_get_order' )->justReturn( null );
+
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_delivery_keeps_pending_async_delivery_for_other_topics(): void {
+		WC_Webhook::$records[ self::ME_WEBHOOK_ID ]['topic'] = 'order.created';
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'WC' )->never();
+		Functions\when( 'wc_get_order' )->justReturn( null );
+
+		$this->deliver( 200, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_delivery_keeps_pending_async_delivery_for_third_party_webhooks(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'WC' )->never();
+
+		$this->deliver( 200, self::OTHER_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
 	}
 
 	public function test_deliver_async_keeps_value_when_order_is_not_marked(): void {
@@ -549,6 +610,7 @@ final class HookManagerTest extends TestCase {
 	public function test_shutdown_finishes_request_when_an_order_is_marked(): void {
 		$this->markOrderForImmediateDelivery();
 		Functions\expect( 'fastcgi_finish_request' )->once()->andReturn( true );
+		Functions\expect( 'litespeed_finish_request' )->never();
 
 		$this->invoke( 'shutdown' );
 
@@ -557,6 +619,7 @@ final class HookManagerTest extends TestCase {
 
 	public function test_shutdown_keeps_request_open_when_no_order_is_marked(): void {
 		Functions\expect( 'fastcgi_finish_request' )->never();
+		Functions\expect( 'litespeed_finish_request' )->never();
 
 		$this->invoke( 'shutdown' );
 
@@ -567,12 +630,27 @@ final class HookManagerTest extends TestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_shutdown_ignores_missing_fastcgi_finish_request(): void {
+	public function test_shutdown_falls_back_to_litespeed_finish_request(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'litespeed_finish_request' )->once()->andReturn( true );
+
+		$this->invoke( 'shutdown' );
+
+		self::assertFalse( function_exists( 'fastcgi_finish_request' ) );
+		$this->assertMockExpectationsMet();
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_shutdown_ignores_missing_finish_request_functions(): void {
 		$this->markOrderForImmediateDelivery();
 
 		$this->invoke( 'shutdown' );
 
 		self::assertFalse( function_exists( 'fastcgi_finish_request' ) );
+		self::assertFalse( function_exists( 'litespeed_finish_request' ) );
 	}
 
 	public function test_delivery_skips_missing_order(): void {

@@ -189,13 +189,7 @@ final class HookManager {
 					&& $webhook instanceof \WC_Webhook
 					&& self::isMelhorIntegradorOrderUpdate( $webhooks, $webhook );
 
-				if ( ! $isMarkedOrderUpdate ) {
-					return $deliverAsync;
-				}
-
-				self::cancelPendingAsyncDelivery( $webhook, $arg );
-
-				return false;
+				return $isMarkedOrderUpdate ? false : $deliverAsync;
 			},
 			10,
 			3
@@ -225,8 +219,14 @@ final class HookManager {
 		add_action(
 			'shutdown',
 			static function () use ( $immediateDelivery ): void {
-				if ( $immediateDelivery->hasMarkedOrders() && function_exists( 'fastcgi_finish_request' ) ) {
+				if ( ! $immediateDelivery->hasMarkedOrders() ) {
+					return;
+				}
+
+				if ( function_exists( 'fastcgi_finish_request' ) ) {
 					fastcgi_finish_request();
+				} elseif ( function_exists( 'litespeed_finish_request' ) ) {
+					litespeed_finish_request();
 				}
 			},
 			9
@@ -237,7 +237,7 @@ final class HookManager {
 		return 'order.updated' === $webhook->get_topic() && $webhooks->isMelhorIntegradorWebhook( $webhook );
 	}
 
-	private static function cancelPendingAsyncDelivery( \WC_Webhook $webhook, $arg ): void {
+	private static function cancelPendingAsyncDelivery( int $webhookId, $arg ): void {
 		$queue = function_exists( 'WC' ) ? WC()->queue() : null;
 
 		if ( ! $queue instanceof \WC_Queue_Interface ) {
@@ -247,7 +247,7 @@ final class HookManager {
 		$queue->cancel(
 			'woocommerce_deliver_webhook_async',
 			array(
-				'webhook_id' => $webhook->get_id(),
+				'webhook_id' => $webhookId,
 				'arg'        => $arg,
 			),
 			'woocommerce-webhooks'
@@ -255,13 +255,19 @@ final class HookManager {
 	}
 
 	private function registerWebhookDeliveryHashUpdater(): void {
-		$webhooks    = $this->container->get( MelhorIntegradorWebhookService::class );
-		$forceImport = $this->container->get( ForceImportService::class );
+		$webhooks          = $this->container->get( MelhorIntegradorWebhookService::class );
+		$forceImport       = $this->container->get( ForceImportService::class );
+		$immediateDelivery = $this->container->get( ImmediateWebhookDeliveryService::class );
 
 		add_action(
 			'woocommerce_webhook_delivery',
-			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport ): void {
+			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport, $immediateDelivery ): void {
 				$topic = self::deliveredOrderTopic( $webhooks, $response, $webhook_id );
+
+				if ( 'order.updated' === $topic && $immediateDelivery->isOrderMarked( $arg ) ) {
+					self::cancelPendingAsyncDelivery( $webhook_id, $arg );
+				}
+
 				$order = null !== $topic ? wc_get_order( $arg ) : null;
 
 				if ( ! $order instanceof \WC_Order ) {
