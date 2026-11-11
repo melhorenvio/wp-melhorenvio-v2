@@ -15,4 +15,8 @@ final class ImmediateWebhookDeliveryService {
 	public function isOrderMarked( int $orderId ): bool {
 		return isset( $this->orderIds[ $orderId ] );
 	}
+
+	public function hasMarkedOrders(): bool {
+		return array() !== $this->orderIds;
+	}
 }

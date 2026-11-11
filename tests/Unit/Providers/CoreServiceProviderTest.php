@@ -24,6 +24,7 @@ use MelhorEnvio\Services\Quotation\PostalCodeLocationClientService;
 use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
 
@@ -73,6 +74,7 @@ final class CoreServiceProviderTest extends TestCase {
 			DisconnectController::class,
 			ModeNoticeController::class,
 			NFeXmlUploadController::class,
+			ImmediateWebhookDeliveryService::class,
 		);
 
 		return array_combine(

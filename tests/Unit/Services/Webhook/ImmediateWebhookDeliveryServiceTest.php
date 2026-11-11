@@ -21,4 +21,14 @@ final class ImmediateWebhookDeliveryServiceTest extends TestCase {
 		self::assertTrue( $service->isOrderMarked( 10 ) );
 		self::assertFalse( $service->isOrderMarked( 11 ) );
 	}
+
+	public function test_has_marked_orders_only_after_marking(): void {
+		$service = new ImmediateWebhookDeliveryService();
+
+		self::assertFalse( $service->hasMarkedOrders() );
+
+		$service->markOrder( 10 );
+
+		self::assertTrue( $service->hasMarkedOrders() );
+	}
 }

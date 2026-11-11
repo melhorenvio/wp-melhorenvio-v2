@@ -63,11 +63,13 @@ final class HookManagerTest extends TestCase {
 		'woocommerce_shipping_methods',
 		'woocommerce_webhook_should_deliver',
 		'woocommerce_webhook_deliver_async',
+		'woocommerce_webhook_http_args',
 	);
 
 	private const CAPTURED_ACTIONS = array(
 		'woocommerce_auth_page_footer',
 		'woocommerce_webhook_delivery',
+		'shutdown',
 	);
 
 	private Container $container;
@@ -134,6 +136,9 @@ final class HookManagerTest extends TestCase {
 		self::assertSame( 3, $this->captured['woocommerce_webhook_should_deliver']['args'] );
 		self::assertSame( 10, $this->captured['woocommerce_webhook_deliver_async']['priority'] );
 		self::assertSame( 3, $this->captured['woocommerce_webhook_deliver_async']['args'] );
+		self::assertSame( 10, $this->captured['woocommerce_webhook_http_args']['priority'] );
+		self::assertSame( 3, $this->captured['woocommerce_webhook_http_args']['args'] );
+		self::assertSame( 9, $this->captured['shutdown']['priority'] );
 		self::assertSame( 10, $this->captured['woocommerce_webhook_delivery']['priority'] );
 		self::assertSame( 5, $this->captured['woocommerce_webhook_delivery']['args'] );
 	}
@@ -434,21 +439,44 @@ final class HookManagerTest extends TestCase {
 
 	public function test_deliver_async_is_disabled_for_marked_order_on_melhor_integrador_order_updated(): void {
 		$this->markOrderForImmediateDelivery();
+		$queue = Mockery::mock( 'WC_Queue_Interface' );
+		$queue->expects( 'cancel' )
+			->once()
+			->with(
+				'woocommerce_deliver_webhook_async',
+				array(
+					'webhook_id' => self::ME_WEBHOOK_ID,
+					'arg'        => self::ORDER_ID,
+				),
+				'woocommerce-webhooks'
+			);
+		$this->givenQueue( $queue );
+
+		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
+	}
+
+	public function test_deliver_async_is_disabled_when_queue_is_unavailable(): void {
+		$this->markOrderForImmediateDelivery();
+		$this->givenQueue( null );
 
 		self::assertFalse( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
 	}
 
 	public function test_deliver_async_keeps_value_when_order_is_not_marked(): void {
+		Functions\expect( 'WC' )->never();
+
 		self::assertTrue( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
 	}
 
 	public function test_deliver_async_keeps_value_for_other_marked_orders(): void {
+		Functions\expect( 'WC' )->never();
 		$this->container->get( ImmediateWebhookDeliveryService::class )->markOrder( self::ORDER_ID + 1 );
 
 		self::assertTrue( $this->deliverAsync( self::ME_WEBHOOK_ID ) );
 	}
 
 	public function test_deliver_async_keeps_value_for_other_topics(): void {
+		Functions\expect( 'WC' )->never();
 		WC_Webhook::$records[ self::ME_WEBHOOK_ID ]['topic'] = 'order.created';
 		$this->markOrderForImmediateDelivery();
 
@@ -456,6 +484,7 @@ final class HookManagerTest extends TestCase {
 	}
 
 	public function test_deliver_async_keeps_value_for_third_party_webhooks(): void {
+		Functions\expect( 'WC' )->never();
 		$this->markOrderForImmediateDelivery();
 
 		self::assertTrue( $this->deliverAsync( self::OTHER_WEBHOOK_ID ) );
@@ -474,6 +503,76 @@ final class HookManagerTest extends TestCase {
 		self::assertTrue(
 			$this->invoke( 'woocommerce_webhook_deliver_async', true, new WC_Webhook( self::ME_WEBHOOK_ID ), array( 'action' => 'x' ) )
 		);
+	}
+
+	public function test_http_args_limit_timeout_for_marked_order_on_melhor_integrador_order_updated(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertSame(
+			array(
+				'method'  => 'POST',
+				'timeout' => 10.0,
+			),
+			$this->httpArgs( 60, self::ORDER_ID, self::ME_WEBHOOK_ID )
+		);
+	}
+
+	public function test_http_args_keep_lower_timeout_from_other_filters(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertSame( 5.0, $this->httpArgs( 5, self::ORDER_ID, self::ME_WEBHOOK_ID )['timeout'] );
+	}
+
+	public function test_http_args_keep_timeout_when_order_is_not_marked(): void {
+		self::assertSame( 60, $this->httpArgs( 60, self::ORDER_ID, self::ME_WEBHOOK_ID )['timeout'] );
+	}
+
+	public function test_http_args_keep_timeout_for_other_topics(): void {
+		WC_Webhook::$records[ self::ME_WEBHOOK_ID ]['topic'] = 'order.created';
+		$this->markOrderForImmediateDelivery();
+
+		self::assertSame( 60, $this->httpArgs( 60, self::ORDER_ID, self::ME_WEBHOOK_ID )['timeout'] );
+	}
+
+	public function test_http_args_keep_timeout_for_third_party_webhooks(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertSame( 60, $this->httpArgs( 60, self::ORDER_ID, self::OTHER_WEBHOOK_ID )['timeout'] );
+	}
+
+	public function test_http_args_keep_timeout_for_ping(): void {
+		$this->markOrderForImmediateDelivery();
+
+		self::assertSame( 60, $this->httpArgs( 60, null, self::ME_WEBHOOK_ID )['timeout'] );
+	}
+
+	public function test_shutdown_finishes_request_when_an_order_is_marked(): void {
+		$this->markOrderForImmediateDelivery();
+		Functions\expect( 'fastcgi_finish_request' )->once()->andReturn( true );
+
+		$this->invoke( 'shutdown' );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_shutdown_keeps_request_open_when_no_order_is_marked(): void {
+		Functions\expect( 'fastcgi_finish_request' )->never();
+
+		$this->invoke( 'shutdown' );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_shutdown_ignores_missing_fastcgi_finish_request(): void {
+		$this->markOrderForImmediateDelivery();
+
+		$this->invoke( 'shutdown' );
+
+		self::assertFalse( function_exists( 'fastcgi_finish_request' ) );
 	}
 
 	public function test_delivery_skips_missing_order(): void {
@@ -507,6 +606,24 @@ final class HookManagerTest extends TestCase {
 
 	private function deliverAsync( int $webhookId ) {
 		return $this->invoke( 'woocommerce_webhook_deliver_async', true, new WC_Webhook( $webhookId ), self::ORDER_ID );
+	}
+
+	private function givenQueue( $queue ): void {
+		$wc = Mockery::mock();
+		$wc->allows( 'queue' )->andReturn( $queue );
+		Functions\when( 'WC' )->justReturn( $wc );
+	}
+
+	private function httpArgs( int $timeout, $arg, int $webhookId ): array {
+		return $this->invoke(
+			'woocommerce_webhook_http_args',
+			array(
+				'method'  => 'POST',
+				'timeout' => $timeout,
+			),
+			$arg,
+			$webhookId
+		);
 	}
 
 	private function deliver( int $responseCode, int $webhookId ): void {

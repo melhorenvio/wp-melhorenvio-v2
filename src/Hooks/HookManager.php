@@ -30,6 +30,8 @@ use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
 final class HookManager {
 
+	private const IMMEDIATE_DELIVERY_TIMEOUT = 10.0;
+
 	private Container $container;
 
 	public function __construct( Container $container ) {
@@ -185,13 +187,70 @@ final class HookManager {
 				$isMarkedOrderUpdate = is_numeric( $arg )
 					&& $immediateDelivery->isOrderMarked( (int) $arg )
 					&& $webhook instanceof \WC_Webhook
-					&& 'order.updated' === $webhook->get_topic()
-					&& $webhooks->isMelhorIntegradorWebhook( $webhook );
+					&& self::isMelhorIntegradorOrderUpdate( $webhooks, $webhook );
 
-				return $isMarkedOrderUpdate ? false : $deliverAsync;
+				if ( ! $isMarkedOrderUpdate ) {
+					return $deliverAsync;
+				}
+
+				self::cancelPendingAsyncDelivery( $webhook, $arg );
+
+				return false;
 			},
 			10,
 			3
+		);
+
+		add_filter(
+			'woocommerce_webhook_http_args',
+			static function ( $httpArgs, $arg, $webhookId ) use ( $webhooks, $immediateDelivery ) {
+				$isMarkedOrderUpdate = is_array( $httpArgs )
+					&& is_numeric( $arg )
+					&& $immediateDelivery->isOrderMarked( (int) $arg )
+					&& is_numeric( $webhookId )
+					&& self::isMelhorIntegradorOrderUpdate( $webhooks, new \WC_Webhook( (int) $webhookId ) );
+
+				if ( ! $isMarkedOrderUpdate ) {
+					return $httpArgs;
+				}
+
+				$httpArgs['timeout'] = min( (float) ( $httpArgs['timeout'] ?? self::IMMEDIATE_DELIVERY_TIMEOUT ), self::IMMEDIATE_DELIVERY_TIMEOUT );
+
+				return $httpArgs;
+			},
+			10,
+			3
+		);
+
+		add_action(
+			'shutdown',
+			static function () use ( $immediateDelivery ): void {
+				if ( $immediateDelivery->hasMarkedOrders() && function_exists( 'fastcgi_finish_request' ) ) {
+					fastcgi_finish_request();
+				}
+			},
+			9
+		);
+	}
+
+	private static function isMelhorIntegradorOrderUpdate( MelhorIntegradorWebhookService $webhooks, \WC_Webhook $webhook ): bool {
+		return 'order.updated' === $webhook->get_topic() && $webhooks->isMelhorIntegradorWebhook( $webhook );
+	}
+
+	private static function cancelPendingAsyncDelivery( \WC_Webhook $webhook, $arg ): void {
+		$queue = function_exists( 'WC' ) ? WC()->queue() : null;
+
+		if ( ! $queue instanceof \WC_Queue_Interface ) {
+			return;
+		}
+
+		$queue->cancel(
+			'woocommerce_deliver_webhook_async',
+			array(
+				'webhook_id' => $webhook->get_id(),
+				'arg'        => $arg,
+			),
+			'woocommerce-webhooks'
 		);
 	}
 
