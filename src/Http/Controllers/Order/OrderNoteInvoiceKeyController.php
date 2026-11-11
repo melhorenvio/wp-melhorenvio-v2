@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers\Order;
 
 use MelhorEnvio\Http\Controllers\Contracts\ControllerInterface;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,6 +19,12 @@ final class OrderNoteInvoiceKeyController implements ControllerInterface {
 
 	// 20 digits (UF, AAMM, CNPJ) + model 55 (positions 21-22) + 22 digits.
 	private const NFE_KEY_PATTERN = '/\b\d{20}55\d{22}\b/';
+
+	private ImmediateWebhookDeliveryService $immediateDelivery;
+
+	public function __construct( ImmediateWebhookDeliveryService $immediateDelivery ) {
+		$this->immediateDelivery = $immediateDelivery;
+	}
 
 	public function register(): void {
 		add_action( 'woocommerce_order_note_added', array( $this, 'extractInvoiceKey' ), 10, 2 );
@@ -35,6 +42,7 @@ final class OrderNoteInvoiceKeyController implements ControllerInterface {
 		}
 
 		$order->update_meta_data( OrderInvoiceKeyMetaBoxController::META_KEY, $invoiceKey );
+		$this->immediateDelivery->markOrder( $order->get_id() );
 		$order->save();
 	}
 
