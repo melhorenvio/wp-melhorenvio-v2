@@ -128,7 +128,7 @@ final class SaveSecretControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_saves_secret_and_registers_shipping_method(): void {
-		Functions\when( 'get_option' )->justReturn( false );
+		$this->givenMode( 'legacy' );
 		Functions\expect( 'update_option' )->once()->with( self::SECRET_OPTION, self::VALID_SECRET )->andReturn( true );
 
 		$response = $this->controller->handleRequest( $this->requestWithSecret( self::VALID_SECRET ) );
@@ -145,13 +145,33 @@ final class SaveSecretControllerTest extends TestCase {
 			'methods'   => array( (object) array( 'id' => 'melhor_envio', 'instance_id' => 9 ) ),
 		);
 		WC_Shipping_Zones::$zones     = array( array( 'id' => 3 ) );
-		Functions\when( 'get_option' )->justReturn( false );
+		$this->givenMode( 'legacy' );
 		Functions\when( 'update_option' )->justReturn( true );
 
 		$response = $this->controller->handleRequest( $this->requestWithSecret( self::VALID_SECRET ) );
 
 		self::assertSame( 200, $response->get_status() );
 		self::assertSame( array(), WC_Shipping_Zone::$instances[0]->added_methods );
+	}
+
+	public function test_handle_request_in_integrador_mode_adds_method_to_state_zones(): void {
+		WC_Shipping_Zone::$records[3] = array(
+			'locations' => array( (object) array( 'type' => 'country', 'code' => 'BR' ) ),
+			'methods'   => array(),
+		);
+		WC_Shipping_Zone::$records[6] = array(
+			'locations' => array( (object) array( 'type' => 'state', 'code' => 'BR:BA' ) ),
+			'methods'   => array(),
+		);
+		WC_Shipping_Zones::$zones     = array( array( 'id' => 3 ), array( 'id' => 6 ) );
+		$this->givenMode( 'integrador' );
+		Functions\when( 'update_option' )->justReturn( true );
+
+		$response = $this->controller->handleRequest( $this->requestWithSecret( self::VALID_SECRET ) );
+
+		self::assertSame( 200, $response->get_status() );
+		self::assertSame( array( 'melhor_envio' ), array_column( WC_Shipping_Zone::$records[3]['methods'], 'id' ) );
+		self::assertSame( array( 'melhor_envio' ), array_column( WC_Shipping_Zone::$records[6]['methods'], 'id' ) );
 	}
 
 	public function test_handle_request_returns_500_when_secret_cannot_be_saved(): void {
@@ -189,6 +209,14 @@ final class SaveSecretControllerTest extends TestCase {
 		$this->controller->registerRoute();
 
 		return $captured;
+	}
+
+	private function givenMode( string $mode ): void {
+		Functions\when( 'get_option' )->alias(
+			static function ( string $option, $default = false ) use ( $mode ) {
+				return $option === 'melhor_envio_ui_mode' ? $mode : $default;
+			}
+		);
 	}
 
 	/**

@@ -63,18 +63,21 @@ final class ShippingZoneService {
 	}
 
 	private function coversBrazil( \WC_Shipping_Zone $zone ): bool {
+		$hasRegion = false;
+
 		foreach ( $zone->get_zone_locations() as $location ) {
 			if (
 				( $location->type === 'country' && $location->code === 'BR' )
 				|| ( $location->type === 'state' && strpos( $location->code, 'BR:' ) === 0 )
 				|| ( $location->type === 'continent' && $location->code === 'SA' )
-				|| $location->type === 'postcode'
 			) {
 				return true;
 			}
+
+			$hasRegion = $hasRegion || $location->type !== 'postcode';
 		}
 
-		return false;
+		return ! $hasRegion;
 	}
 
 	private function getBrazilZone(): \WC_Shipping_Zone {

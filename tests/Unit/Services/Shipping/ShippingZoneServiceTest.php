@@ -157,9 +157,9 @@ final class ShippingZoneServiceTest extends TestCase {
 	/**
 	 * @dataProvider brazilLocations
 	 */
-	public function test_ensure_method_in_all_zones_adds_method_to_zones_covering_brazil( string $type, string $code ): void {
+	public function test_ensure_method_in_all_zones_adds_method_to_zones_covering_brazil( array $locations ): void {
 		$this->givenZone( 1, array( $this->location( 'country', 'BR' ) ), array() );
-		$this->givenZone( 2, array( $this->location( 'country', 'PT' ), $this->location( $type, $code ) ), array() );
+		$this->givenZone( 2, $locations, array() );
 
 		$this->service->ensureMethodInAllZones();
 
@@ -168,9 +168,10 @@ final class ShippingZoneServiceTest extends TestCase {
 
 	public function brazilLocations(): array {
 		return array(
-			'state'     => array( 'state', 'BR:SP' ),
-			'continent' => array( 'continent', 'SA' ),
-			'postcode'  => array( 'postcode', '40000-000' ),
+			'state'         => array( array( $this->location( 'country', 'PT' ), $this->location( 'state', 'BR:SP' ) ) ),
+			'continent'     => array( array( $this->location( 'country', 'PT' ), $this->location( 'continent', 'SA' ) ) ),
+			'postcode only' => array( array( $this->location( 'postcode', '40000-000' ) ) ),
+			'empty'         => array( array() ),
 		);
 	}
 
@@ -188,10 +189,10 @@ final class ShippingZoneServiceTest extends TestCase {
 
 	public function foreignLocations(): array {
 		return array(
-			'portugal'  => array( array( $this->location( 'country', 'PT' ) ) ),
-			'argentina' => array( array( $this->location( 'country', 'AR' ), $this->location( 'state', 'AR:C' ) ) ),
-			'europe'    => array( array( $this->location( 'continent', 'EU' ) ) ),
-			'empty'     => array( array() ),
+			'portugal'          => array( array( $this->location( 'country', 'PT' ) ) ),
+			'portugal postcode' => array( array( $this->location( 'country', 'PT' ), $this->location( 'postcode', '1000-001' ) ) ),
+			'argentina'         => array( array( $this->location( 'country', 'AR' ), $this->location( 'state', 'AR:C' ) ) ),
+			'europe'            => array( array( $this->location( 'continent', 'EU' ) ) ),
 		);
 	}
 

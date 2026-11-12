@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Http\Controllers\Auth;
 
+use MelhorEnvio\Services\Admin\PluginModeService;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
 use MelhorEnvio\Http\Controllers\Concerns\ValidatesAuthentication;
@@ -52,7 +53,11 @@ final class QuotationTokenController extends RestEndpointContract {
 
 		update_option( self::TOKEN_OPTION, $quotationToken );
 
-		$this->shippingZoneSetup->ensureMethodRegistered();
+		if ( PluginModeService::isIntegradorMode() ) {
+			$this->shippingZoneSetup->ensureMethodInAllZones();
+		} else {
+			$this->shippingZoneSetup->ensureMethodRegistered();
+		}
 
 		return new WP_REST_Response(
 			array( 'message' => 'Quotation token saved successfully.' ),
