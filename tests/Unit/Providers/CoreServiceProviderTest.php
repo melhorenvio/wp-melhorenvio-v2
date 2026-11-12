@@ -16,6 +16,7 @@ use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
+use MelhorEnvio\Http\Controllers\Settings\MigrateModeController;
 use MelhorEnvio\Providers\CoreServiceProvider;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
@@ -71,6 +72,7 @@ final class CoreServiceProviderTest extends TestCase {
 			ShippingZoneService::class,
 			QuotationTokenController::class,
 			DisconnectController::class,
+			MigrateModeController::class,
 			ModeNoticeController::class,
 			NFeXmlUploadController::class,
 		);

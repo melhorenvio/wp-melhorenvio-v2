@@ -70,7 +70,7 @@ Não. Não há mensalidades nem contratos individuais com as transportadoras. Vo
 A cotação considera todas as transportadoras habilitadas na sua conta Melhor Envio, incluindo os Correios e diversas transportadoras privadas.
 
 = Uso a versão anterior do plugin. O que acontece ao atualizar? =
-Lojas que utilizam a versão anterior (legado) continuam funcionando normalmente e podem migrar para a nova versão a qualquer momento pelo próprio painel administrativo, sem perda de configurações.
+Lojas que utilizam a versão anterior (legado) continuam funcionando normalmente. Ao concluir a configuração no Melhor Integrador e salvar as primeiras configurações, o plugin passa sozinho para a nova versão: os serviços da versão anterior ficam ocultos, sem perda de configurações. Também é possível migrar antes pelo próprio painel administrativo. Para voltar, use o link "Voltar para versão anterior" na lista de plugins.
 
 = Preciso instalar um plugin de campos de checkout? =
 Não. A partir da versão 3.0, os campos necessários para o funcionamento do frete são adicionados automaticamente pelo próprio Melhor Envio. Se você já usa o plugin Calculadora de Frete e Campos Checkout para o Brasil, a compatibilidade continua garantida.
