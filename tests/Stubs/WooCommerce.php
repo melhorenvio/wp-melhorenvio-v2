@@ -144,11 +144,29 @@ if ( ! class_exists( 'WC_Shipping_Zone' ) ) {
 		}
 
 		public function get_shipping_methods( bool $enabled_only = false, string $context = 'admin' ): array {
-			return $this->methods;
+			if ( ! $enabled_only ) {
+				return $this->methods;
+			}
+
+			return array_values(
+				array_filter(
+					$this->methods,
+					static function ( $method ): bool {
+						return ( $method->enabled ?? 'yes' ) === 'yes';
+					}
+				)
+			);
 		}
 
 		public function add_shipping_method( string $type ): int {
 			$this->added_methods[] = $type;
+			$method                = (object) array( 'id' => $type, 'instance_id' => 1000 + count( $this->added_methods ) );
+			$this->methods[]       = $method;
+
+			if ( $this->id !== null && isset( self::$records[ $this->id ] ) ) {
+				self::$records[ $this->id ]['methods'][] = $method;
+			}
+
 			return count( $this->added_methods );
 		}
 

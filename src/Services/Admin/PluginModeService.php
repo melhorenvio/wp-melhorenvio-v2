@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Services\Admin;
 
+use MelhorEnvio\Services\Shipping\ShippingZoneService;
+
 final class PluginModeService {
 
 	private const OPTION_KEY = 'melhor_envio_ui_mode';
@@ -27,6 +29,7 @@ final class PluginModeService {
 
 		if ( $mode === 'integrador' ) {
 			delete_option( self::LEGACY_NOTICES_OPTION_KEY );
+			( new ShippingZoneService() )->ensureMethodInAllZones();
 		}
 
 		self::toggleMelhorEnvioShippingMethod( $mode === 'integrador' );
