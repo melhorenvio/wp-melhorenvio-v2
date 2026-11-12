@@ -109,6 +109,7 @@ final class ModeNoticeController {
 				</h2>
 				<p class="me-alert__description">
 					<?php esc_html_e( 'Refizemos a experiência de ponta a ponta para acabar com as instabilidades. Faça a migração para ter mais controle e automatizar sua rotina sem complicações.', 'melhor-envio-cotacao' ); ?>
+					<?php esc_html_e( 'A versão atual será descontinuada em 6 meses, e a migração leva poucos minutos.', 'melhor-envio-cotacao' ); ?>
 				</p>
 				<ul class="me-alert__chips">
 					<?php foreach ( $chips as $chip ) : ?>
