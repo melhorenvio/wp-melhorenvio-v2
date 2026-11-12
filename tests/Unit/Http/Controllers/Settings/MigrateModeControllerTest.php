@@ -78,6 +78,7 @@ final class MigrateModeControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_switches_to_integrador_mode(): void {
+		Functions\expect( 'get_option' )->once()->with( 'melhor_envio_ui_mode', 'legacy' )->andReturn( 'legacy' );
 		Functions\expect( 'update_option' )->once()->with( 'melhor_envio_ui_mode', 'integrador' );
 		Functions\expect( 'delete_option' )->once()->with( 'wp_option_notices_melhor_envio' );
 		$this->expectShippingMethodEnabled( 1 );
@@ -89,16 +90,17 @@ final class MigrateModeControllerTest extends TestCase {
 		self::assertSame( array( array( 'shipping', true ) ), \WC_Cache_Helper::$calls );
 	}
 
-	public function test_handle_request_is_idempotent(): void {
-		Functions\expect( 'update_option' )->twice()->with( 'melhor_envio_ui_mode', 'integrador' );
-		Functions\expect( 'delete_option' )->twice()->with( 'wp_option_notices_melhor_envio' );
-		$this->expectShippingMethodEnabled( 2 );
+	public function test_handle_request_keeps_shipping_methods_untouched_when_already_integrador(): void {
+		Functions\expect( 'get_option' )->once()->with( 'melhor_envio_ui_mode', 'legacy' )->andReturn( 'integrador' );
+		Functions\expect( 'update_option' )->never();
+		Functions\expect( 'delete_option' )->never();
+		$this->expectShippingMethodEnabled( 0 );
 
-		$first  = $this->controller->handleRequest();
-		$second = $this->controller->handleRequest();
+		$response = $this->controller->handleRequest();
 
-		self::assertSame( $first->get_data(), $second->get_data() );
-		self::assertSame( 200, $second->get_status() );
+		self::assertSame( 200, $response->get_status() );
+		self::assertSame( array( 'mode' => 'integrador' ), $response->get_data() );
+		self::assertSame( array(), \WC_Cache_Helper::$calls );
 	}
 
 	private function expectShippingMethodEnabled( int $times ): void {

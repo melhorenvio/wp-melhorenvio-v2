@@ -33,7 +33,9 @@ final class MigrateModeController extends RestEndpointContract {
 	}
 
 	public function handleRequest(): WP_REST_Response {
-		PluginModeService::setMode( 'integrador' );
+		if ( ! PluginModeService::isIntegradorMode() ) {
+			PluginModeService::setMode( 'integrador' );
+		}
 
 		return new WP_REST_Response( array( 'mode' => 'integrador' ), 200 );
 	}
