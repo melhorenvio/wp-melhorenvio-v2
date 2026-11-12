@@ -14,7 +14,9 @@ final class InvoiceKeyResolverService {
 
 	private const PROVIDER_META = 'nfe';
 
-	private const NFE_KEY_PATTERN = '/^\d{20}55\d{22}$/D';
+	public const NFE_KEY_DIGITS = '\d{20}55\d{22}';
+
+	private const NFE_KEY_PATTERN = '/^' . self::NFE_KEY_DIGITS . '$/D';
 
 	public function resolve( \WC_Order $order ): ?string {
 		$key = null;
