@@ -11,6 +11,7 @@ use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
+use MelhorEnvio\Http\Controllers\Order\InvoiceProviderKeyController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Admin\AppOriginMismatchController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
@@ -80,6 +81,9 @@ final class HookManager {
 
 		$orderNoteInvoiceKey = $this->container->get( OrderNoteInvoiceKeyController::class );
 		$orderNoteInvoiceKey->register();
+
+		$invoiceProviderKey = $this->container->get( InvoiceProviderKeyController::class );
+		$invoiceProviderKey->register();
 
 		$orderBulkImport = $this->container->get( OrderBulkImportController::class );
 		$orderBulkImport->register();

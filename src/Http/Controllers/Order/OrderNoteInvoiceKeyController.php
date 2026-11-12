@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MelhorEnvio\Http\Controllers\Order;
 
 use MelhorEnvio\Http\Controllers\Contracts\ControllerInterface;
+use MelhorEnvio\Services\Order\InvoiceKeyResolverService;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class OrderNoteInvoiceKeyController implements ControllerInterface {
 
 	// 20 digits (UF, AAMM, CNPJ) + model 55 (positions 21-22) + 22 digits.
-	private const NFE_KEY_PATTERN = '/\b\d{20}55\d{22}\b/';
+	private const NFE_KEY_PATTERN = '/\b' . InvoiceKeyResolverService::NFE_KEY_DIGITS . '\b/';
 
 	public function register(): void {
 		add_action( 'woocommerce_order_note_added', array( $this, 'extractInvoiceKey' ), 10, 2 );
