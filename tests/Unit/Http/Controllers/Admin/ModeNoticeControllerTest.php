@@ -93,7 +93,7 @@ final class ModeNoticeControllerTest extends TestCase {
 		self::assertStringContainsString( '🎧 Chamados em 1 clique', $output );
 		self::assertStringContainsString( 'Migrar agora', $output );
 		self::assertStringContainsString( 'Agora não', $output );
-		self::assertStringNotContainsString( 'descontinuada', $output );
+		self::assertStringContainsString( 'A versão atual será descontinuada em 6 meses, e a migração leva poucos minutos.', $output );
 	}
 
 	public function test_render_notice_outputs_nothing_in_integrador_mode(): void {

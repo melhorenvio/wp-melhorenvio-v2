@@ -179,7 +179,7 @@
             O plugin do Melhor Envio ficou ainda melhor 🚀
           </h2>
           <p class="me-migrate-card__description">
-            Melhorias para deixar sua operação mais rápida e fácil. A versão atual será descontinuada em 3 meses — e a migração leva poucos minutos.
+            Melhorias para deixar sua operação mais rápida e fácil. A versão atual será descontinuada em 6 meses, e a migração leva poucos minutos.
           </p>
           <ul class="me-migrate-card__chips">
             <li class="me-migrate-card__chip">Gestão centralizada</li>
