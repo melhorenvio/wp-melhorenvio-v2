@@ -112,7 +112,7 @@ final class DisconnectControllerTest extends TestCase {
 		self::assertSame( array(), WC_Shipping_Zone::$instances );
 	}
 
-	public function test_handle_request_only_removes_method_from_brazil_zones(): void {
+	public function test_handle_request_removes_method_from_every_zone(): void {
 		Functions\when( 'delete_option' )->justReturn( true );
 		WC_Shipping_Zone::$records[8] = array(
 			'locations' => array( (object) array( 'type' => 'country', 'code' => 'PT' ) ),
@@ -123,7 +123,7 @@ final class DisconnectControllerTest extends TestCase {
 
 		$this->controller->handleRequest();
 
-		self::assertSame( array(), WC_Shipping_Zone::$instances[0]->deleted_method_instance_ids );
+		self::assertSame( array( 30 ), WC_Shipping_Zone::$instances[0]->deleted_method_instance_ids );
 	}
 
 	/**
