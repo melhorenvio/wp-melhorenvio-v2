@@ -16,6 +16,7 @@ use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Checkout\CheckoutFieldsController;
 use MelhorEnvio\Http\Controllers\Frontend\ProductShippingCalculatorController;
+use MelhorEnvio\Http\Controllers\Order\InvoiceProviderKeyController;
 use MelhorEnvio\Http\Controllers\Order\NFeXmlUploadController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportController;
 use MelhorEnvio\Http\Controllers\Order\OrderBulkImportNoticeController;
@@ -53,6 +54,7 @@ final class HookManagerTest extends TestCase {
 		OrderMetaBackfillController::class,
 		OrderInvoiceKeyMetaBoxController::class,
 		OrderNoteInvoiceKeyController::class,
+		InvoiceProviderKeyController::class,
 		OrderBulkImportController::class,
 		OrderBulkImportNoticeController::class,
 	);
