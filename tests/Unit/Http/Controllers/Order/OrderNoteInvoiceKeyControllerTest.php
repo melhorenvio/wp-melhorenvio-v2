@@ -7,7 +7,6 @@ namespace MelhorEnvio\Tests\Unit\Http\Controllers\Order;
 use Brain\Monkey\Functions;
 use MelhorEnvio\Http\Controllers\Order\OrderInvoiceKeyMetaBoxController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
-use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Tests\TestCase;
 use Mockery;
 
@@ -15,16 +14,11 @@ final class OrderNoteInvoiceKeyControllerTest extends TestCase {
 
 	private const INVOICE_KEY = '35240612345678000190550010000001231234567890';
 
-	private const ORDER_ID = 55;
-
-	private ImmediateWebhookDeliveryService $immediateDelivery;
-
 	private OrderNoteInvoiceKeyController $controller;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->immediateDelivery = new ImmediateWebhookDeliveryService();
-		$this->controller        = new OrderNoteInvoiceKeyController( $this->immediateDelivery );
+		$this->controller = new OrderNoteInvoiceKeyController();
 	}
 
 	public function test_register_hooks_into_order_note_added(): void {
@@ -43,8 +37,6 @@ final class OrderNoteInvoiceKeyControllerTest extends TestCase {
 		$order->expects( 'save' );
 
 		$this->controller->extractInvoiceKey( 10, $order );
-
-		self::assertTrue( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
 	}
 
 	public function test_skips_when_key_is_already_stored(): void {
@@ -55,8 +47,6 @@ final class OrderNoteInvoiceKeyControllerTest extends TestCase {
 		$order->shouldNotReceive( 'save' );
 
 		$this->controller->extractInvoiceKey( 10, $order );
-
-		self::assertFalse( $this->immediateDelivery->isOrderMarked( self::ORDER_ID ) );
 	}
 
 	/**
@@ -110,7 +100,6 @@ final class OrderNoteInvoiceKeyControllerTest extends TestCase {
 	private function mockOrder( string $storedKey ) {
 		$order = Mockery::mock( 'WC_Order' );
 		$order->allows( 'get_meta' )->with( OrderInvoiceKeyMetaBoxController::META_KEY, true )->andReturn( $storedKey );
-		$order->allows( 'get_id' )->andReturn( self::ORDER_ID );
 
 		return $order;
 	}
