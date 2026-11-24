@@ -21,6 +21,7 @@ use MelhorEnvio\Services\Quotation\PostalCodeLocationClientService;
 use MelhorEnvio\Http\Controllers\Auth\DisconnectController;
 use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
+use MelhorEnvio\Http\Controllers\Settings\MigrateModeController;
 use MelhorEnvio\Services\Settings\IntegradorSettingsService;
 use MelhorEnvio\Services\Shipping\CartItemsBuilderService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
@@ -80,6 +81,12 @@ final class CoreServiceProvider extends AbstractServiceProvider {
 				$container->get( SecretService::class ),
 				$container->get( ShippingZoneService::class ),
 				$container->get( MelhorIntegradorWebhookService::class )
+			)
+		);
+		$this->container->singleton(
+			MigrateModeController::class,
+			static fn( Container $container ) => new MigrateModeController(
+				$container->get( SecretService::class )
 			)
 		);
 		$this->container->singleton( ModeNoticeController::class, ModeNoticeController::class );

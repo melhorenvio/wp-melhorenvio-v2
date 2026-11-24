@@ -21,6 +21,7 @@ use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
 use MelhorEnvio\Http\Controllers\Auth\QuotationTokenController;
 use MelhorEnvio\Http\Controllers\Auth\SaveSecretController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
+use MelhorEnvio\Http\Controllers\Settings\MigrateModeController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Order\OrderMetaPersister;
@@ -56,6 +57,9 @@ final class HookManager {
 
 		$saveSettingsEndpoint = $this->container->get( SaveSettingsController::class );
 		$saveSettingsEndpoint->register();
+
+		$migrateModeEndpoint = $this->container->get( MigrateModeController::class );
+		$migrateModeEndpoint->register();
 
 		$quotationAjaxHandler = $this->container->get( QuotationController::class );
 		$quotationAjaxHandler->register();

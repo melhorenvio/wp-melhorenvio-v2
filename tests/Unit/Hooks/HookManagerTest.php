@@ -24,6 +24,7 @@ use MelhorEnvio\Http\Controllers\Order\OrderMetaBackfillController;
 use MelhorEnvio\Http\Controllers\Order\OrderNoteInvoiceKeyController;
 use MelhorEnvio\Http\Controllers\Quotation\QuotationController;
 use MelhorEnvio\Http\Controllers\Settings\GetSettingsController;
+use MelhorEnvio\Http\Controllers\Settings\MigrateModeController;
 use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
@@ -46,6 +47,7 @@ final class HookManagerTest extends TestCase {
 		DisconnectController::class,
 		GetSettingsController::class,
 		SaveSettingsController::class,
+		MigrateModeController::class,
 		QuotationController::class,
 		NFeXmlUploadController::class,
 		ProductShippingCalculatorController::class,
