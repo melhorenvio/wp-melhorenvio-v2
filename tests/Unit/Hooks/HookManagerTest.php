@@ -63,6 +63,7 @@ final class HookManagerTest extends TestCase {
 		'woocommerce_shipping_methods',
 		'woocommerce_webhook_should_deliver',
 		'woocommerce_webhook_deliver_async',
+		'woocommerce_webhook_http_args',
 	);
 
 	private const CAPTURED_ACTIONS = array(
@@ -135,6 +136,7 @@ final class HookManagerTest extends TestCase {
 		self::assertSame( 3, $this->captured['woocommerce_webhook_should_deliver']['args'] );
 		self::assertSame( 10, $this->captured['woocommerce_webhook_deliver_async']['priority'] );
 		self::assertSame( 3, $this->captured['woocommerce_webhook_deliver_async']['args'] );
+		self::assertSame( 3, $this->captured['woocommerce_webhook_http_args']['args'] );
 		self::assertSame( 9, $this->captured['shutdown']['priority'] );
 		self::assertSame( 10, $this->captured['woocommerce_webhook_delivery']['priority'] );
 		self::assertSame( 5, $this->captured['woocommerce_webhook_delivery']['args'] );
@@ -487,7 +489,13 @@ final class HookManagerTest extends TestCase {
 	 */
 	public function test_delivery_keeps_pending_async_delivery( ?int $markedOrderId, string $topic, int $webhookId, $response, $responseCode ): void {
 		$this->givenImmediateDelivery( $markedOrderId, $topic );
-		Functions\expect( 'WC' )->never();
+		$queue = Mockery::mock( 'WC_Queue_Interface' );
+		$queue->allows( 'get_next' )->andReturn( new \DateTime() );
+		$queue->expects( 'cancel' )->never();
+		$queue->expects( 'add' )->never();
+		$wc = Mockery::mock();
+		$wc->allows( 'queue' )->andReturn( $queue );
+		Functions\when( 'WC' )->justReturn( $wc );
 		Functions\when( 'wc_get_order' )->justReturn( null );
 		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( $responseCode );
 
@@ -506,6 +514,40 @@ final class HookManagerTest extends TestCase {
 			'other topic'         => array( self::ORDER_ID, 'order.created', self::ME_WEBHOOK_ID, $success, 200 ),
 			'third party webhook' => array( self::ORDER_ID, 'order.updated', self::OTHER_WEBHOOK_ID, $success, 200 ),
 		);
+	}
+
+	public function test_delivery_schedules_async_delivery_after_immediate_failure_without_pending_one(): void {
+		$this->container->get( ImmediateWebhookDeliveryService::class )->markOrder( self::ORDER_ID );
+		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( '' );
+		$queueArgs = array(
+			'webhook_id' => self::ME_WEBHOOK_ID,
+			'arg'        => self::ORDER_ID,
+		);
+		$queue     = Mockery::mock( 'WC_Queue_Interface' );
+		$queue->expects( 'get_next' )->once()->with( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' )->andReturn( null );
+		$queue->expects( 'add' )->once()->with( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' );
+		$queue->expects( 'cancel' )->never();
+		$wc = Mockery::mock();
+		$wc->allows( 'queue' )->andReturn( $queue );
+		Functions\when( 'WC' )->justReturn( $wc );
+
+		$this->invoke( 'woocommerce_webhook_delivery', array(), new \WP_Error(), 5.0, self::ORDER_ID, self::ME_WEBHOOK_ID );
+
+		$this->assertMockExpectationsMet();
+	}
+
+	public function test_http_args_caps_timeout_of_immediate_delivery(): void {
+		$this->container->get( ImmediateWebhookDeliveryService::class )->markOrder( self::ORDER_ID );
+
+		$httpArgs = $this->invoke( 'woocommerce_webhook_http_args', array( 'timeout' => 60 ), self::ORDER_ID, self::ME_WEBHOOK_ID );
+
+		self::assertSame( 5, $httpArgs['timeout'] );
+	}
+
+	public function test_http_args_keeps_timeout_when_order_is_not_marked(): void {
+		$httpArgs = $this->invoke( 'woocommerce_webhook_http_args', array( 'timeout' => 60 ), self::ORDER_ID, self::ME_WEBHOOK_ID );
+
+		self::assertSame( 60, $httpArgs['timeout'] );
 	}
 
 	public function test_shutdown_finishes_request_when_an_order_is_marked(): void {

@@ -182,12 +182,20 @@ final class HookManager {
 		add_filter(
 			'woocommerce_webhook_deliver_async',
 			static function ( $deliverAsync, \WC_Webhook $webhook, $arg ) use ( $webhooks, $immediateDelivery ) {
-				$isMarkedOrderUpdate = is_numeric( $arg )
-					&& $immediateDelivery->isOrderMarked( (int) $arg )
-					&& 'order.updated' === $webhook->get_topic()
-					&& $webhooks->isMelhorIntegradorWebhook( $webhook );
+				return self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, $webhook->get_id() ) ? false : $deliverAsync;
+			},
+			10,
+			3
+		);
 
-				return $isMarkedOrderUpdate ? false : $deliverAsync;
+		add_filter(
+			'woocommerce_webhook_http_args',
+			static function ( $httpArgs, $arg, $webhookId ) use ( $webhooks, $immediateDelivery ) {
+				if ( self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, (int) $webhookId ) ) {
+					$httpArgs['timeout'] = min( $httpArgs['timeout'] ?? 5, 5 );
+				}
+
+				return $httpArgs;
 			},
 			10,
 			3
@@ -220,15 +228,17 @@ final class HookManager {
 			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport, $immediateDelivery ): void {
 				$topic = self::deliveredOrderTopic( $webhooks, $response, $webhook_id );
 
-				if ( 'order.updated' === $topic && $immediateDelivery->isOrderMarked( $arg ) ) {
-					WC()->queue()->cancel(
-						'woocommerce_deliver_webhook_async',
-						array(
-							'webhook_id' => $webhook_id,
-							'arg'        => $arg,
-						),
-						'woocommerce-webhooks'
+				if ( self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, $webhook_id ) ) {
+					$queueArgs = array(
+						'webhook_id' => $webhook_id,
+						'arg'        => $arg,
 					);
+
+					if ( null !== $topic ) {
+						WC()->queue()->cancel( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' );
+					} elseif ( null === WC()->queue()->get_next( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' ) ) {
+						WC()->queue()->add( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' );
+					}
 				}
 
 				$order = null !== $topic ? wc_get_order( $arg ) : null;
@@ -248,6 +258,16 @@ final class HookManager {
 			10,
 			5
 		);
+	}
+
+	private static function isImmediateDelivery( MelhorIntegradorWebhookService $webhooks, ImmediateWebhookDeliveryService $immediateDelivery, $arg, int $webhookId ): bool {
+		if ( ! is_numeric( $arg ) || ! $immediateDelivery->isOrderMarked( (int) $arg ) ) {
+			return false;
+		}
+
+		$webhook = new \WC_Webhook( $webhookId );
+
+		return 'order.updated' === $webhook->get_topic() && $webhooks->isMelhorIntegradorWebhook( $webhook );
 	}
 
 	/**
