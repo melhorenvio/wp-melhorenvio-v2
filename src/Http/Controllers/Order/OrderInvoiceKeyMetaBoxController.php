@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Http\Controllers\Order;
 
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,6 +18,12 @@ final class OrderInvoiceKeyMetaBoxController {
 	private const NONCE_FIELD    = 'me_invoice_key_nonce';
 	private const FIELD_NAME     = 'me_invoice_key';
 	private const XML_FIELD_NAME = 'me_nfe_raw_xml';
+
+	private ImmediateWebhookDeliveryService $immediateDelivery;
+
+	public function __construct( ImmediateWebhookDeliveryService $immediateDelivery ) {
+		$this->immediateDelivery = $immediateDelivery;
+	}
 
 	public function register(): void {
 		add_action( 'add_meta_boxes', array( $this, 'addMetaBox' ) );
@@ -286,13 +294,19 @@ final class OrderInvoiceKeyMetaBoxController {
 			? preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST[ self::FIELD_NAME ] ) ) )
 			: '';
 
+		$changed = (string) $order->get_meta( self::META_KEY, true ) !== $invoiceKey;
 		$order->update_meta_data( self::META_KEY, $invoiceKey );
 
 		if ( ! empty( $_POST[ self::XML_FIELD_NAME ] ) ) {
 			$rawXml = wp_unslash( $_POST[ self::XML_FIELD_NAME ] );
 			if ( strlen( $rawXml ) <= 512000 ) {
+				$changed = $changed || (string) $order->get_meta( '_me_invoice_xml_danfe', true ) !== $rawXml;
 				$order->update_meta_data( '_me_invoice_xml_danfe', $rawXml );
 			}
+		}
+
+		if ( $changed ) {
+			$this->immediateDelivery->markOrder( $orderId );
 		}
 
 		$order->save();

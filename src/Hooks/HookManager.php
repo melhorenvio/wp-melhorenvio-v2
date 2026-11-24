@@ -25,6 +25,7 @@ use MelhorEnvio\Http\Controllers\Settings\SaveSettingsController;
 use MelhorEnvio\Services\Order\ForceImportService;
 use MelhorEnvio\Services\Order\OrderMetaPersister;
 use MelhorEnvio\Services\Shipping\MelhorEnvioShippingService;
+use MelhorEnvio\Services\Webhook\ImmediateWebhookDeliveryService;
 use MelhorEnvio\Services\Webhook\MelhorIntegradorWebhookService;
 
 final class HookManager {
@@ -91,6 +92,7 @@ final class HookManager {
 		$this->registerWcAuthApproveGuard();
 		$this->registerHiddenOrderItemMeta();
 		$this->registerWebhookDeliveryFilter();
+		$this->registerImmediateWebhookDeliveryFilter();
 		$this->registerWebhookDeliveryHashUpdater();
 	}
 
@@ -173,14 +175,72 @@ final class HookManager {
 		);
 	}
 
+	private function registerImmediateWebhookDeliveryFilter(): void {
+		$webhooks          = $this->container->get( MelhorIntegradorWebhookService::class );
+		$immediateDelivery = $this->container->get( ImmediateWebhookDeliveryService::class );
+
+		add_filter(
+			'woocommerce_webhook_deliver_async',
+			static function ( $deliverAsync, \WC_Webhook $webhook, $arg ) use ( $webhooks, $immediateDelivery ) {
+				return self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, $webhook->get_id() ) ? false : $deliverAsync;
+			},
+			10,
+			3
+		);
+
+		add_filter(
+			'woocommerce_webhook_http_args',
+			static function ( $httpArgs, $arg, $webhookId ) use ( $webhooks, $immediateDelivery ) {
+				if ( self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, (int) $webhookId ) ) {
+					$httpArgs['timeout'] = min( $httpArgs['timeout'] ?? 5, 5 );
+				}
+
+				return $httpArgs;
+			},
+			10,
+			3
+		);
+
+		add_action(
+			'shutdown',
+			static function () use ( $immediateDelivery ): void {
+				if ( ! $immediateDelivery->hasMarkedOrders() ) {
+					return;
+				}
+
+				if ( function_exists( 'fastcgi_finish_request' ) ) {
+					fastcgi_finish_request();
+				} elseif ( function_exists( 'litespeed_finish_request' ) ) {
+					litespeed_finish_request();
+				}
+			},
+			9
+		);
+	}
+
 	private function registerWebhookDeliveryHashUpdater(): void {
-		$webhooks    = $this->container->get( MelhorIntegradorWebhookService::class );
-		$forceImport = $this->container->get( ForceImportService::class );
+		$webhooks          = $this->container->get( MelhorIntegradorWebhookService::class );
+		$forceImport       = $this->container->get( ForceImportService::class );
+		$immediateDelivery = $this->container->get( ImmediateWebhookDeliveryService::class );
 
 		add_action(
 			'woocommerce_webhook_delivery',
-			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport ): void {
+			static function ( array $http_args, $response, float $duration, int $arg, int $webhook_id ) use ( $webhooks, $forceImport, $immediateDelivery ): void {
 				$topic = self::deliveredOrderTopic( $webhooks, $response, $webhook_id );
+
+				if ( self::isImmediateDelivery( $webhooks, $immediateDelivery, $arg, $webhook_id ) ) {
+					$queueArgs = array(
+						'webhook_id' => $webhook_id,
+						'arg'        => $arg,
+					);
+
+					if ( null !== $topic ) {
+						WC()->queue()->cancel( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' );
+					} elseif ( null === WC()->queue()->get_next( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' ) ) {
+						WC()->queue()->add( 'woocommerce_deliver_webhook_async', $queueArgs, 'woocommerce-webhooks' );
+					}
+				}
+
 				$order = null !== $topic ? wc_get_order( $arg ) : null;
 
 				if ( ! $order instanceof \WC_Order ) {
@@ -198,6 +258,16 @@ final class HookManager {
 			10,
 			5
 		);
+	}
+
+	private static function isImmediateDelivery( MelhorIntegradorWebhookService $webhooks, ImmediateWebhookDeliveryService $immediateDelivery, $arg, int $webhookId ): bool {
+		if ( ! is_numeric( $arg ) || ! $immediateDelivery->isOrderMarked( (int) $arg ) ) {
+			return false;
+		}
+
+		$webhook = new \WC_Webhook( $webhookId );
+
+		return 'order.updated' === $webhook->get_topic() && $webhooks->isMelhorIntegradorWebhook( $webhook );
 	}
 
 	/**
