@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MelhorEnvio\Http\Controllers\Auth;
 
+use MelhorEnvio\Services\Admin\PluginModeService;
 use MelhorEnvio\Services\Auth\SecretService;
 use MelhorEnvio\Services\Auth\SignatureService;
 use MelhorEnvio\Services\Shipping\ShippingZoneService;
@@ -63,7 +64,11 @@ final class SaveSecretController extends RestEndpointContract {
 			);
 		}
 
-		$this->shippingZoneSetup->ensureMethodRegistered();
+		if ( PluginModeService::isIntegradorMode() ) {
+			$this->shippingZoneSetup->ensureMethodInAllZones();
+		} else {
+			$this->shippingZoneSetup->ensureMethodRegistered();
+		}
 
 		return new WP_REST_Response(
 			array( 'message' => 'Secret saved successfully.' ),

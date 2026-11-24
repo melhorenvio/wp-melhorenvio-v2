@@ -68,6 +68,33 @@ final class PluginModeServiceTest extends TestCase {
 		self::assertSame( array( array( 'shipping', true ) ), \WC_Cache_Helper::$calls );
 	}
 
+	public function test_set_mode_integrador_adds_melhor_envio_to_every_brazil_zone(): void {
+		Functions\when( 'update_option' )->justReturn( true );
+		Functions\when( 'delete_option' )->justReturn( true );
+		$this->expectShippingMethodToggle( 1 );
+		$this->givenZone( 1, 'country', 'BR', array( (object) array( 'id' => 'flat_rate', 'instance_id' => 3 ) ) );
+		$this->givenZone( 2, 'state', 'BR:BA', array() );
+		$this->givenZone( 3, 'country', 'PT', array() );
+
+		PluginModeService::setMode( 'integrador' );
+
+		self::assertSame( array( 'flat_rate', 'melhor_envio' ), $this->methodIds( 1 ) );
+		self::assertSame( array( 'melhor_envio' ), $this->methodIds( 2 ) );
+		self::assertSame( array(), $this->methodIds( 3 ) );
+	}
+
+	public function test_set_mode_legacy_does_not_add_shipping_method(): void {
+		Functions\when( 'update_option' )->justReturn( true );
+		$this->expectShippingMethodToggle( 0 );
+		$this->givenZone( 1, 'country', 'BR', array() );
+		$this->givenZone( 2, 'state', 'BR:BA', array() );
+
+		PluginModeService::setMode( 'legacy' );
+
+		self::assertSame( array(), $this->methodIds( 1 ) );
+		self::assertSame( array(), $this->methodIds( 2 ) );
+	}
+
 	/**
 	 * @dataProvider nonIntegradorModes
 	 */
@@ -85,6 +112,28 @@ final class PluginModeServiceTest extends TestCase {
 		return array(
 			'legacy' => array( 'legacy' ),
 			'empty'  => array( '' ),
+		);
+	}
+
+	private function givenZone( int $id, string $type, string $code, array $methods ): void {
+		\WC_Shipping_Zone::$records[ $id ] = array(
+			'locations' => array(
+				(object) array(
+					'code' => $code,
+					'type' => $type,
+				),
+			),
+			'methods'   => $methods,
+		);
+		\WC_Shipping_Zones::$zones[]       = array( 'id' => $id );
+	}
+
+	private function methodIds( int $zoneId ): array {
+		return array_map(
+			static function ( object $method ): string {
+				return $method->id;
+			},
+			\WC_Shipping_Zone::$records[ $zoneId ]['methods']
 		);
 	}
 

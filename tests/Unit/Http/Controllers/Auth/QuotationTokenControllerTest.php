@@ -72,6 +72,7 @@ final class QuotationTokenControllerTest extends TestCase {
 	}
 
 	public function test_handle_request_saves_token_and_registers_shipping_method_in_new_brazil_zone(): void {
+		Functions\when( 'get_option' )->justReturn( 'legacy' );
 		Functions\expect( 'update_option' )->once()->with( self::TOKEN_OPTION, 'token-123' );
 
 		$response = $this->controller->handleRequest( $this->requestWithToken( 'token-123' ) );
@@ -92,12 +93,51 @@ final class QuotationTokenControllerTest extends TestCase {
 			'methods'   => array( (object) array( 'id' => 'flat_rate', 'instance_id' => 1 ) ),
 		);
 		WC_Shipping_Zones::$zones     = array( array( 'id' => 4 ) );
+		Functions\when( 'get_option' )->justReturn( 'legacy' );
 		Functions\when( 'update_option' )->justReturn( true );
 
 		$this->controller->handleRequest( $this->requestWithToken( 'token-123' ) );
 
 		self::assertCount( 1, WC_Shipping_Zone::$instances );
 		self::assertSame( array( 'melhor_envio' ), WC_Shipping_Zone::$instances[0]->added_methods );
+	}
+
+	public function test_handle_request_in_integrador_mode_adds_method_to_every_brazil_zone_after_reconnect(): void {
+		WC_Shipping_Zone::$records[4] = array(
+			'locations' => array( (object) array( 'type' => 'country', 'code' => 'BR' ) ),
+			'methods'   => array(),
+		);
+		WC_Shipping_Zone::$records[5] = array(
+			'locations' => array( (object) array( 'type' => 'state', 'code' => 'BR:BA' ) ),
+			'methods'   => array( (object) array( 'id' => 'flat_rate', 'instance_id' => 1 ) ),
+		);
+		WC_Shipping_Zones::$zones     = array( array( 'id' => 4 ), array( 'id' => 5 ) );
+		Functions\when( 'get_option' )->justReturn( 'integrador' );
+		Functions\when( 'update_option' )->justReturn( true );
+
+		$this->controller->handleRequest( $this->requestWithToken( 'token-123' ) );
+
+		self::assertSame( array( 'melhor_envio' ), array_column( WC_Shipping_Zone::$records[4]['methods'], 'id' ) );
+		self::assertSame( array( 'flat_rate', 'melhor_envio' ), array_column( WC_Shipping_Zone::$records[5]['methods'], 'id' ) );
+	}
+
+	public function test_handle_request_in_legacy_mode_only_adds_method_to_brazil_zone(): void {
+		WC_Shipping_Zone::$records[4] = array(
+			'locations' => array( (object) array( 'type' => 'country', 'code' => 'BR' ) ),
+			'methods'   => array(),
+		);
+		WC_Shipping_Zone::$records[5] = array(
+			'locations' => array( (object) array( 'type' => 'state', 'code' => 'BR:BA' ) ),
+			'methods'   => array(),
+		);
+		WC_Shipping_Zones::$zones     = array( array( 'id' => 4 ), array( 'id' => 5 ) );
+		Functions\when( 'get_option' )->justReturn( 'legacy' );
+		Functions\when( 'update_option' )->justReturn( true );
+
+		$this->controller->handleRequest( $this->requestWithToken( 'token-123' ) );
+
+		self::assertSame( array( 'melhor_envio' ), array_column( WC_Shipping_Zone::$records[4]['methods'], 'id' ) );
+		self::assertSame( array(), WC_Shipping_Zone::$records[5]['methods'] );
 	}
 
 	private function captureRouteArgs(): array {

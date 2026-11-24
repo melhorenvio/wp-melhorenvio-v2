@@ -16,15 +16,9 @@ final class ShippingZoneService {
 		foreach ( \WC_Shipping_Zones::get_zones() as $zoneData ) {
 			$zone = new \WC_Shipping_Zone( $zoneData['id'] );
 
-			foreach ( $zone->get_zone_locations() as $location ) {
-				if ( $location->type !== 'country' || $location->code !== 'BR' ) {
-					continue;
-				}
-
-				foreach ( $zone->get_shipping_methods( false ) as $method ) {
-					if ( $method->id === self::METHOD_ID ) {
-						$zone->delete_shipping_method( $method->instance_id );
-					}
+			foreach ( $zone->get_shipping_methods( false ) as $method ) {
+				if ( $method->id === self::METHOD_ID ) {
+					$zone->delete_shipping_method( $method->instance_id );
 				}
 			}
 		}
@@ -37,13 +31,53 @@ final class ShippingZoneService {
 
 		$zone = $this->getBrazilZone();
 
+		if ( ! $this->hasMethod( $zone ) ) {
+			$zone->add_shipping_method( self::METHOD_ID );
+		}
+	}
+
+	public function ensureMethodInAllZones(): void {
+		if ( ! class_exists( 'WC_Shipping_Zones' ) ) {
+			return;
+		}
+
+		$this->ensureMethodRegistered();
+
+		foreach ( \WC_Shipping_Zones::get_zones() as $zoneData ) {
+			$zone = new \WC_Shipping_Zone( $zoneData['id'] );
+
+			if ( $this->coversBrazil( $zone ) && ! $this->hasMethod( $zone ) ) {
+				$zone->add_shipping_method( self::METHOD_ID );
+			}
+		}
+	}
+
+	private function hasMethod( \WC_Shipping_Zone $zone ): bool {
 		foreach ( $zone->get_shipping_methods( false ) as $method ) {
 			if ( $method->id === self::METHOD_ID ) {
-				return;
+				return true;
 			}
 		}
 
-		$zone->add_shipping_method( self::METHOD_ID );
+		return false;
+	}
+
+	private function coversBrazil( \WC_Shipping_Zone $zone ): bool {
+		$hasRegion = false;
+
+		foreach ( $zone->get_zone_locations() as $location ) {
+			if (
+				( $location->type === 'country' && $location->code === 'BR' )
+				|| ( $location->type === 'state' && strpos( $location->code, 'BR:' ) === 0 )
+				|| ( $location->type === 'continent' && $location->code === 'SA' )
+			) {
+				return true;
+			}
+
+			$hasRegion = $hasRegion || $location->type !== 'postcode';
+		}
+
+		return ! $hasRegion;
 	}
 
 	private function getBrazilZone(): \WC_Shipping_Zone {
