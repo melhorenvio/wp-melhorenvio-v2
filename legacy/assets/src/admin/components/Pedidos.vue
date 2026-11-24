@@ -176,15 +176,16 @@
       <section class="me-migrate-card" role="region" aria-labelledby="me-migrate-card-title">
         <div class="me-migrate-card__body">
           <h2 id="me-migrate-card-title" class="me-migrate-card__title">
-            O plugin do Melhor Envio ficou ainda melhor 🚀
+            A nova versão do Melhor Envio para WooCommerce está disponível! ✨
           </h2>
           <p class="me-migrate-card__description">
-            Melhorias para deixar sua operação mais rápida e fácil. A versão atual será descontinuada em 3 meses — e a migração leva poucos minutos.
+            Refizemos a experiência de ponta a ponta para acabar com as instabilidades. Faça a migração para ter mais controle e automatizar sua rotina sem complicações. A versão atual será descontinuada em janeiro de 2027, e a migração leva poucos minutos.
           </p>
           <ul class="me-migrate-card__chips">
-            <li class="me-migrate-card__chip">Gestão centralizada</li>
-            <li class="me-migrate-card__chip">Etiquetas em lote</li>
-            <li class="me-migrate-card__chip">Regras de frete inteligentes</li>
+            <li class="me-migrate-card__chip">📦 Etiquetas em lote</li>
+            <li class="me-migrate-card__chip">⚡ Configuração sem token</li>
+            <li class="me-migrate-card__chip">🚚 Rastreio e pós-envio</li>
+            <li class="me-migrate-card__chip">🎧 Chamados em 1 clique</li>
           </ul>
           <div class="me-migrate-card__actions">
             <button
@@ -192,7 +193,7 @@
               class="me-migrate-card__btn me-migrate-card__btn--primary"
               @click="migrateToIntegrador"
             >
-              Migrar para nova versão
+              Migrar agora
             </button>
           </div>
         </div>
