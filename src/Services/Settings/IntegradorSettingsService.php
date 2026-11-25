@@ -17,8 +17,6 @@ final class IntegradorSettingsService {
 		$stored = get_option( self::OPTION_KEY );
 
 		if ( is_array( $stored ) && ! empty( $stored ) ) {
-			// Um save do MI só com algumas seções deixa a option sem dimensions_default:
-			// nesse caso, usa a dimensão que o lojista configurou no legado (INT-2218).
 			if ( empty( $stored['dimensions_default'] ) ) {
 				$legacy = $this->getLegacySettings();
 
@@ -70,7 +68,6 @@ final class IntegradorSettingsService {
 			$settings['calculator']['position'] = $position;
 		}
 
-		// A chave antiga está na unidade da loja; dimensions_default é sempre cm/kg (INT-2218).
 		if ( is_array( $dimensions ) && ! empty( $dimensions ) ) {
 			$dim = array();
 

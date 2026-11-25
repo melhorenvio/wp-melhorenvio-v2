@@ -267,7 +267,7 @@ final class CartItemsBuilderServiceTest extends TestCase {
 	}
 
 	/**
-	 * dimensions_default is always in cm/kg (INT-2218), so it is not converted from the store unit.
+	 * dimensions_default is always in cm/kg, so it is not converted from the store unit.
 	 */
 	public function test_to_api_item_configured_defaults_are_not_converted_from_store_units(): void {
 		$this->options['woocommerce_dimension_unit']       = 'mm';
