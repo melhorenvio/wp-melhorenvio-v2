@@ -267,19 +267,37 @@ final class CartItemsBuilderServiceTest extends TestCase {
 	}
 
 	/**
-	 * Configured defaults are typed in the store unit (legacy ProductsService applied them as product
-	 * dimensions before converting), so unlike the hardcoded fallbacks they must be converted.
+	 * dimensions_default is always in cm/kg (INT-2218), so it is not converted from the store unit.
 	 */
-	public function test_to_api_item_converts_configured_defaults_from_store_units(): void {
+	public function test_to_api_item_configured_defaults_are_not_converted_from_store_units(): void {
 		$this->options['woocommerce_dimension_unit']       = 'mm';
 		$this->options['woocommerce_weight_unit']          = 'g';
 		$this->options['melhor_envio_integrador_settings'] = array(
 			'dimensions_default' => array(
-				'width'  => 100,
-				'height' => 40,
-				'length' => 150,
-				'weight' => 800,
+				'width'  => 10,
+				'height' => 4,
+				'length' => 15,
+				'weight' => 0.8,
 			),
+		);
+
+		$product = $this->mockProduct( 5, '10', array( 'width' => '', 'height' => '', 'length' => '', 'weight' => '' ) );
+		$item    = $this->service->toApiItem( $this->service->toLine( $product, 1, 10.0 ) );
+
+		self::assertEqualsWithDelta( array( 10.0, 4.0, 15.0, 0.8 ), array( $item['width'], $item['height'], $item['length'], $item['weight'] ), 0.0001 );
+	}
+
+	/**
+	 * The legacy key is in the store unit: it is converted once, when read, and not again in the quote.
+	 */
+	public function test_to_api_item_converts_legacy_default_dimensions_only_once(): void {
+		$this->options['woocommerce_dimension_unit']            = 'mm';
+		$this->options['woocommerce_weight_unit']               = 'g';
+		$this->options['melhor_envio_option_dimension_default'] = array(
+			'width'  => '100',
+			'height' => '40',
+			'length' => '150',
+			'weight' => '800',
 		);
 
 		$product = $this->mockProduct( 5, '10', array( 'width' => '', 'height' => '', 'length' => '', 'weight' => '' ) );

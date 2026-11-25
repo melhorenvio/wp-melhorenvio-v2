@@ -347,24 +347,30 @@ final class CartItemsBuilderService {
 	}
 
 	/**
-	 * Product and configured default dimensions are in the store unit; the hardcoded fallback is already in cm.
+	 * Only the product value is in the store unit; dimensions_default and the hardcoded fallback are already in cm.
 	 *
 	 * @param mixed $productValue
-	 * @param mixed $configuredValue
+	 * @param mixed $configuredCm
 	 */
-	private function resolveCm( $productValue, $configuredValue, float $fallbackCm ): float {
-		$value = (float) ( $productValue ?: $configuredValue );
-		return $value > 0 ? UnitConverter::toCm( $value ) : $fallbackCm;
+	private function resolveCm( $productValue, $configuredCm, float $fallbackCm ): float {
+		if ( (float) $productValue > 0 ) {
+			return UnitConverter::toCm( (float) $productValue );
+		}
+
+		return (float) $configuredCm > 0 ? (float) $configuredCm : $fallbackCm;
 	}
 
 	/**
-	 * Product and configured default weight are in the store unit; the hardcoded fallback is already in kg.
+	 * Only the product value is in the store unit; dimensions_default and the hardcoded fallback are already in kg.
 	 *
 	 * @param mixed $productValue
-	 * @param mixed $configuredValue
+	 * @param mixed $configuredKg
 	 */
-	private function resolveKg( $productValue, $configuredValue, float $fallbackKg ): float {
-		$value = (float) ( $productValue ?: $configuredValue );
-		return $value > 0 ? UnitConverter::toKg( $value ) : $fallbackKg;
+	private function resolveKg( $productValue, $configuredKg, float $fallbackKg ): float {
+		if ( (float) $productValue > 0 ) {
+			return UnitConverter::toKg( (float) $productValue );
+		}
+
+		return (float) $configuredKg > 0 ? (float) $configuredKg : $fallbackKg;
 	}
 }
