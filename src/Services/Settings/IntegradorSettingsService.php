@@ -6,10 +6,12 @@ namespace MelhorEnvio\Services\Settings;
 
 final class IntegradorSettingsService {
 
-	private const OPTION_KEY                 = 'melhor_envio_integrador_settings';
-	private const LEGACY_HIDE_CALCULATOR     = 'melhorenvio_hide_calculator_product';
-	private const LEGACY_CALCULATOR_POSITION = 'melhor_envio_option_where_show_calculator';
-	private const LEGACY_DIMENSION_DEFAULT   = 'melhor_envio_option_dimension_default';
+	private const OPTION_KEY                  = 'melhor_envio_integrador_settings';
+	private const LEGACY_HIDE_CALCULATOR      = 'melhorenvio_hide_calculator_product';
+	private const LEGACY_CALCULATOR_POSITION  = 'melhor_envio_option_where_show_calculator';
+	private const LEGACY_DIMENSION_DEFAULT    = 'melhor_envio_option_dimension_default';
+	private const LEGACY_HIDDEN_POSITION      = 'none';
+	private const DEFAULT_CALCULATOR_POSITION = 'woocommerce_before_add_to_cart_button';
 
 	public function getSettings(): array {
 		$stored = get_option( self::OPTION_KEY );
@@ -51,11 +53,11 @@ final class IntegradorSettingsService {
 		$settings = array();
 
 		$settings['calculator'] = array(
-			'enabled' => ! ( $hideCalculator === '1' || $hideCalculator === 1 || $hideCalculator === true ),
+			'enabled' => ! ( $hideCalculator === '1' || $hideCalculator === 1 || $hideCalculator === true || $position === self::LEGACY_HIDDEN_POSITION ),
 		);
 
 		if ( is_string( $position ) && ! empty( $position ) ) {
-			$settings['calculator']['position'] = $position;
+			$settings['calculator']['position'] = $position === self::LEGACY_HIDDEN_POSITION ? self::DEFAULT_CALCULATOR_POSITION : $position;
 		}
 
 		if ( is_array( $dimensions ) && ! empty( $dimensions ) ) {

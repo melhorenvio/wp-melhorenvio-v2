@@ -127,6 +127,25 @@ final class IntegradorSettingsServiceTest extends TestCase {
 		);
 	}
 
+	public function test_legacy_none_position_disables_calculator_with_default_position(): void {
+		$this->givenOptions(
+			array(
+				'melhorenvio_hide_calculator_product'         => '0',
+				'melhor_envio_option_where_show_calculator' => 'none',
+			)
+		);
+
+		self::assertSame(
+			array(
+				'calculator' => array(
+					'enabled'  => false,
+					'position' => 'woocommerce_before_add_to_cart_button',
+				),
+			),
+			$this->service->getSettings()
+		);
+	}
+
 	public function test_legacy_dimensions_are_cast_to_float(): void {
 		$this->givenOptions(
 			array(
