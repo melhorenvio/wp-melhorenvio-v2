@@ -16,12 +16,71 @@ final class IntegradorSettingsServiceTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
+
+		Functions\when( 'wc_get_dimension' )->alias(
+			static function ( $value, $toUnit, $fromUnit = '' ) {
+				return $value * array( 'cm' => 1.0, 'mm' => 0.1, 'in' => 2.54 )[ $fromUnit ];
+			}
+		);
+		Functions\when( 'wc_get_weight' )->alias(
+			static function ( $value, $toUnit, $fromUnit = '' ) {
+				return $value * array( 'kg' => 1.0, 'g' => 0.001, 'lbs' => 0.5 )[ $fromUnit ];
+			}
+		);
+
 		$this->service = new IntegradorSettingsService();
 	}
 
 	public function test_get_settings_returns_stored_settings(): void {
 		$stored = array( 'calculator' => array( 'enabled' => true ) );
 		$this->givenOptions( array( self::OPTION_KEY => $stored ) );
+
+		self::assertSame( $stored, $this->service->getSettings() );
+	}
+
+	public function test_stored_settings_without_dimensions_use_legacy_dimensions(): void {
+		$this->givenOptions(
+			array(
+				self::OPTION_KEY                        => array( 'calculator' => array( 'enabled' => true ) ),
+				'melhor_envio_option_dimension_default' => array(
+					'height' => '10',
+					'width'  => '20',
+					'length' => '30',
+					'weight' => '2',
+				),
+			)
+		);
+
+		self::assertSame(
+			array(
+				'calculator'         => array( 'enabled' => true ),
+				'dimensions_default' => array(
+					'height' => 10.0,
+					'width'  => 20.0,
+					'length' => 30.0,
+					'weight' => 2.0,
+				),
+			),
+			$this->service->getSettings()
+		);
+	}
+
+	public function test_stored_dimensions_win_over_legacy_dimensions(): void {
+		$stored = array(
+			'dimensions_default' => array(
+				'height' => 5,
+				'width'  => 6,
+				'length' => 7,
+				'weight' => 0.8,
+			),
+		);
+
+		$this->givenOptions(
+			array(
+				self::OPTION_KEY                        => $stored,
+				'melhor_envio_option_dimension_default' => array( 'width' => '20' ),
+			)
+		);
 
 		self::assertSame( $stored, $this->service->getSettings() );
 	}
@@ -150,6 +209,32 @@ final class IntegradorSettingsServiceTest extends TestCase {
 				),
 			),
 			$this->service->getSettings()
+		);
+	}
+
+	public function test_legacy_dimensions_are_converted_from_store_units_to_cm_and_kg(): void {
+		$this->givenOptions(
+			array(
+				'woocommerce_dimension_unit'            => 'in',
+				'woocommerce_weight_unit'               => 'g',
+				'melhor_envio_option_dimension_default' => array(
+					'height' => '10',
+					'width'  => '20',
+					'length' => '30',
+					'weight' => '800',
+				),
+			)
+		);
+
+		self::assertEqualsWithDelta(
+			array(
+				'height' => 25.4,
+				'width'  => 50.8,
+				'length' => 76.2,
+				'weight' => 0.8,
+			),
+			$this->service->getSettings()['dimensions_default'],
+			0.0001
 		);
 	}
 

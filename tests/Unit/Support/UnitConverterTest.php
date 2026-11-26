@@ -44,4 +44,19 @@ final class UnitConverterTest extends TestCase {
 
 		self::assertSame( 2.54, UnitConverter::toCm( 1.0 ) );
 	}
+
+	/**
+	 * Processo separado: depois que um teste faz stub de wc_get_*, a função passa a existir até o fim do processo.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_returns_value_unchanged_when_woocommerce_is_not_loaded(): void {
+		Functions\when( 'get_option' )->justReturn( 'in' );
+
+		self::assertFalse( function_exists( 'wc_get_dimension' ) );
+		self::assertFalse( function_exists( 'wc_get_weight' ) );
+		self::assertSame( 10.0, UnitConverter::toCm( 10.0 ) );
+		self::assertSame( 2.0, UnitConverter::toKg( 2.0 ) );
+	}
 }
