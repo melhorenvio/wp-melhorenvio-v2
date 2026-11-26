@@ -70,7 +70,7 @@ final class GetSettingsControllerTest extends TestCase {
 		);
 	}
 
-	public function test_handle_request_returns_stored_settings(): void {
+	public function test_handle_request_returns_stored_settings_with_units(): void {
 		$settings                               = array(
 			'calculator'         => array( 'enabled' => true, 'position' => 'woocommerce_after_add_to_cart_form' ),
 			'dimensions_default' => array( 'height' => 2.0 ),
@@ -80,7 +80,18 @@ final class GetSettingsControllerTest extends TestCase {
 		$response = $this->controller->handleRequest();
 
 		self::assertSame( 200, $response->get_status() );
-		self::assertSame( $settings, $response->get_data() );
+		self::assertSame( $settings + array( 'units' => array( 'dimensions' => 'cm', 'weight' => 'kg' ) ), $response->get_data() );
+	}
+
+	public function test_handle_request_marks_units_when_settings_come_from_legacy(): void {
+		Functions\when( 'wc_get_dimension' )->returnArg();
+		Functions\when( 'wc_get_weight' )->returnArg();
+		$this->options['melhor_envio_option_dimension_default'] = array( 'height' => '10', 'width' => '20', 'length' => '30', 'weight' => '2' );
+
+		$data = $this->controller->handleRequest()->get_data();
+
+		self::assertSame( array( 'dimensions' => 'cm', 'weight' => 'kg' ), $data['units'] );
+		self::assertArrayHasKey( 'dimensions_default', $data );
 	}
 
 	public function test_handle_request_returns_empty_settings_when_nothing_configured(): void {

@@ -17,6 +17,10 @@ final class GetSettingsController extends RestEndpointContract {
 
 	private IntegradorSettingsService $settingsService;
 	private const ROUTE = '/settings';
+	private const UNITS = array(
+		'dimensions' => 'cm',
+		'weight'     => 'kg',
+	);
 
 	public function __construct(
 		SecretService $secretManager,
@@ -39,6 +43,12 @@ final class GetSettingsController extends RestEndpointContract {
 	}
 
 	public function handleRequest(): WP_REST_Response {
-		return new WP_REST_Response( $this->settingsService->getSettings(), 200 );
+		$settings = $this->settingsService->getSettings();
+
+		if ( $settings !== array() ) {
+			$settings['units'] = self::UNITS;
+		}
+
+		return new WP_REST_Response( $settings, 200 );
 	}
 }
